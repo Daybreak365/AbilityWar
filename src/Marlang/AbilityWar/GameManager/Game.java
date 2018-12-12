@@ -62,7 +62,7 @@ public class Game extends Thread {
 	
 	public void broadcastPluginDescription() {
 		ArrayList<String> msg = Messager.getArrayList(
-				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 대전"),
+				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
 				ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + Plugin.getDescription().getVersion()),
 				ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &f_Marlang"),
 				ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f말랑&7#5908"));
