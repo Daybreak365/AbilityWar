@@ -1,9 +1,13 @@
 package Marlang.AbilityWar.Ability;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+
+import Marlang.AbilityWar.Utils.TimerBase;
 
 abstract public class AbilityBase {
 	
@@ -11,6 +15,8 @@ abstract public class AbilityBase {
 	String AbilityName;
 	Rank Rank;
 	String[] Explain;
+	
+	ArrayList<TimerBase> timers = new ArrayList<TimerBase>();
 	
 	boolean Restricted = true;
 	
@@ -23,6 +29,23 @@ abstract public class AbilityBase {
 	abstract public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct);
 	
 	abstract public void PassiveSkill(Event event);
+	
+	/**
+	 * ÇÃ·¹ÀÌ¾î ´É·Â »èÁ¦½Ã »ç¿ë
+	 */
+	public void DeleteAbility() {
+		for(TimerBase timer : timers) {
+			timer.ForceStopTimer();
+		}
+		
+		this.setPlayer(null);
+	}
+	
+	public void registerTimer(TimerBase timer) {
+		if(!timers.contains(timer)) {
+			timers.add(timer);
+		}
+	}
 	
 	public Player getPlayer() {
 		return player;
@@ -42,6 +65,10 @@ abstract public class AbilityBase {
 	
 	public String[] getExplain() {
 		return Explain;
+	}
+	
+	public void setExplain(String... Explain) {
+		this.Explain = Explain;
 	}
 	
 	public boolean isRestricted() {
@@ -74,12 +101,13 @@ abstract public class AbilityBase {
 	}
 	
 	public static enum Rank {
-		
-		S(ChatColor.translateAlternateColorCodes('&', "&dS ·©Å©")),
-		A(ChatColor.translateAlternateColorCodes('&', "&aA ·©Å©")),
-		B(ChatColor.translateAlternateColorCodes('&', "&bB ·©Å©")),
-		C(ChatColor.translateAlternateColorCodes('&', "&eC ·©Å©")),
-		D(ChatColor.translateAlternateColorCodes('&', "&7D ·©Å©"));
+
+		God(ChatColor.translateAlternateColorCodes('&', "&c½Å µî±Þ")),
+		S(ChatColor.translateAlternateColorCodes('&', "&dS µî±Þ")),
+		A(ChatColor.translateAlternateColorCodes('&', "&aA µî±Þ")),
+		B(ChatColor.translateAlternateColorCodes('&', "&bB µî±Þ")),
+		C(ChatColor.translateAlternateColorCodes('&', "&eC µî±Þ")),
+		D(ChatColor.translateAlternateColorCodes('&', "&7D µî±Þ"));
 		
 		String RankName;
 		

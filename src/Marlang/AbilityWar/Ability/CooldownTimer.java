@@ -12,16 +12,28 @@ public class CooldownTimer extends TimerBase {
 	
 	AbilityBase Ability;
 	Integer Cool;
-	
+	String AbilityName = "";
+
 	public CooldownTimer(AbilityBase Ability, Integer Cool) {
 		super(Cool);
 		this.Ability = Ability;
 		this.Cool = Cool;
 	}
+
+	public CooldownTimer(AbilityBase Ability, Integer Cool, String AbilityName) {
+		super(Cool);
+		this.Ability = Ability;
+		this.Cool = Cool;
+		this.AbilityName = AbilityName;
+	}
 	
 	public boolean isCooldown() {
 		if(isTimerRunning()) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			if(!AbilityName.isEmpty()) {
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			} else {
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			}
 		}
 		
 		return isTimerRunning();
@@ -36,12 +48,20 @@ public class CooldownTimer extends TimerBase {
 	public void TimerProcess(Integer Seconds) {
 
 		if(Seconds == (Cool / 2)) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(Seconds)));
+			if(!AbilityName.isEmpty()) {
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			} else {
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			}
 			EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 		}
 		
 		if(Seconds <= 5 && Seconds >= 1) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(Seconds)));
+			if(!AbilityName.isEmpty()) {
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			} else {
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			}
 			EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 		}
 	}

@@ -17,10 +17,12 @@ public class NumberUtil {
 	}
 	
 	public static String parseTimeString(Integer Second) {
+		Integer Hour = Second / 3600;
+		Second -= Hour * 3600;
 		Integer Minute = Second / 60;
 		Second -= Minute * 60;
 		
-		return (Minute != 0 ? Minute + "분 " : "") + (Second != 0 ? Second + "초" : "");
+		return (Hour != 0 ? Hour + "시간 " : "") + (Minute != 0 ? Minute + "분 " : "") + (Second >= 0 ? Second + "초" : "");
 	}
 	
 }

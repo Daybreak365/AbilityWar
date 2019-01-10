@@ -4,6 +4,5 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry excluding="src/" kind="src" path=""/>
 	<classpathentry kind="lib" path="C:/Users/user/Desktop/게임/Minecraft/API/20180712/spigot-api-1.12.2-R0.1-SNAPSHOT-shaded-b1648.jar"/>
-	<classpathentry kind="lib" path="C:/Users/user/Desktop/게임/Minecraft/플러그인/Essentials-2.x-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

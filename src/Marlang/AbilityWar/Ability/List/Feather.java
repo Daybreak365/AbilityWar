@@ -19,8 +19,11 @@ public class Feather extends AbilityBase {
 	
 	public Feather() {
 		super("깃털", Rank.A,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴&f를 좌클릭하면 15초간 비행할 수 있습니다. &c쿨타임 &7: &f80초"),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 15초간 비행할 수 있습니다. " + Messager.formatCooldown(80)),
 				ChatColor.translateAlternateColorCodes('&', "&f낙하 데미지를 무시합니다."));
+		
+		registerTimer(Cool);
+		registerTimer(Skill);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, 80);
@@ -49,7 +52,7 @@ public class Feather extends AbilityBase {
 	@Override
 	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.LeftClick)) {
+			if(ct.equals(ActiveClickType.RightClick)) {
 				if(!Skill.isTimerRunning()) {
 					if(!Cool.isCooldown()) {
 						Skill.Execute();

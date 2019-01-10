@@ -1,20 +1,34 @@
 package Marlang.AbilityWar.GameManager;
 
+import java.time.Instant;
+import java.util.HashMap;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveClickType;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveMaterialType;
+import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 
-public class GameListener implements Listener {
+public class GameListener extends Module implements Listener {
+	
+	public GameListener() {
+		RegisterListener(this);
+	}
+	
+	HashMap<String, Instant> InstantMap = new HashMap<String, Instant>();
 	
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
@@ -25,12 +39,19 @@ public class GameListener implements Listener {
 			if(mt != null) {
 				if(AbilityWarThread.getGame().getAbilities().containsKey(p)) {
 					AbilityBase Ability = AbilityWarThread.getGame().getAbilities().get(p);
-					if(Ability.isRestricted()) {
-						if(!AbilityWarThread.getGame().isAbilityRestricted()) {
+					if(!Ability.isRestricted()) {
+						if(InstantMap.containsKey(p.getName())) {
+							Instant Before = InstantMap.get(p.getName());
+							Instant Now = Instant.now();
+							long Duration = java.time.Duration.between(Before, Now).toMillis();
+							if(Duration >= 250) {
+								InstantMap.put(p.getName(), Instant.now());
+								Ability.ActiveSkill(mt, ct);
+							}
+						} else {
+							InstantMap.put(p.getName(), Instant.now());
 							Ability.ActiveSkill(mt, ct);
 						}
-					} else {
-						Ability.ActiveSkill(mt, ct);
 					}
 				}
 			}
@@ -40,20 +61,22 @@ public class GameListener implements Listener {
 	@EventHandler
 	public void onPlayerDamage(EntityDamageEvent e) {
 		if(AbilityWarThread.isGameTaskRunning()) {
-			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
-				if(Ability.isRestricted()) {
-					if(!AbilityWarThread.getGame().isAbilityRestricted()) {
-						Ability.PassiveSkill(e);
-					}
-				} else {
-					Ability.PassiveSkill(e);
-				}
-			}
-			
 			if(e.getEntity() instanceof Player) {
 				if(AbilityWarThread.getGame().getInvincibility().isTimerRunning()) {
 					e.setCancelled(true);
 				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onFoodLevelChange(FoodLevelChangeEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			if(AbilityWar.getSetting().getNoHunger()) {
+				e.setCancelled(true);
+				
+				Player p = (Player) e.getEntity();
+				p.setFoodLevel(19);
 			}
 		}
 	}
@@ -84,6 +107,58 @@ public class GameListener implements Listener {
 					Ability.setPlayer(joined);
 					game.getAbilities().remove(p);
 					game.getAbilities().put(joined, Ability);
+				}
+			}
+			
+			AbilitySelect select = AbilityWarThread.getAbilitySelect();
+			if(select != null) {
+				for(Player p : select.AbilitySelect.keySet()) {
+					if(p.getName().equals(joined.getName())) {
+						select.AbilitySelect.put(joined, select.AbilitySelect.get(p));
+						select.AbilitySelect.remove(p);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 패시브 Listener
+	 */
+	@EventHandler
+	public void EntityDamagePassive(EntityDamageEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				if(!Ability.isRestricted()) {
+					Ability.PassiveSkill(e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 패시브 Listener
+	 */
+	@EventHandler
+	public void ProjectileLaunchPassive(ProjectileLaunchEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				if(!Ability.isRestricted()) {
+					Ability.PassiveSkill(e);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 패시브 Listener
+	 */
+	@EventHandler
+	public void ProjectileHitPassive(ProjectileHitEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				if(!Ability.isRestricted()) {
+					Ability.PassiveSkill(e);
 				}
 			}
 		}

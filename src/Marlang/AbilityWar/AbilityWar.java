@@ -4,10 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import Marlang.AbilityWar.Config.AbilityWarSettings;
-import Marlang.AbilityWar.Config.SettingWizard;
 import Marlang.AbilityWar.GameManager.Game;
-import Marlang.AbilityWar.GameManager.GameListener;
 import Marlang.AbilityWar.GameManager.MainCommand;
+import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
@@ -25,6 +24,7 @@ public class AbilityWar extends JavaPlugin {
 		AbilityWarThread.Initialize(this);
 		Game.Initialize(this);
 		TimerBase.Initialize(this);
+		Module.Initialize(this);
 		
 		Settings.Setup();
 		
@@ -39,8 +39,6 @@ public class AbilityWar extends JavaPlugin {
 	
 	public void Load() {
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
-		Bukkit.getPluginManager().registerEvents(new GameListener(), this);
-		Bukkit.getPluginManager().registerEvents(new SettingWizard(), this);
 	}
 	
 	@Override

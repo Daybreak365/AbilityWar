@@ -42,7 +42,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 
 		return loaded;
 	}
-
+	
 	public void save() {
 
 		boolean saved = true;
@@ -278,5 +278,5 @@ public class CommentedConfiguration extends YamlConfiguration {
 			return false;
 		}
 	}
-
+	
 }

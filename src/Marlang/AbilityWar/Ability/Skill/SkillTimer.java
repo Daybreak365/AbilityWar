@@ -26,16 +26,6 @@ abstract public class SkillTimer extends TimerBase {
 	}
 	
 	/**
-	 * 쿨타임이 있는 지속 스킬
-	 */
-	public SkillTimer(AbilityBase Ability, Integer Count, SkillType SkillType, DurationTimer Duration) {
-		super(Count);
-		this.Ability = Ability;
-		this.SkillType = SkillType;
-		this.Duration = Duration;
-	}
-	
-	/**
 	 * 쿨타임이 있는 즉발 스킬
 	 */
 	public SkillTimer(AbilityBase Ability, Integer Count, SkillType SkillType, CooldownTimer Cool) {

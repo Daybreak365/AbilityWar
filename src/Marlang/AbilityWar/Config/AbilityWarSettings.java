@@ -2,6 +2,8 @@ package Marlang.AbilityWar.Config;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
@@ -39,6 +41,14 @@ public class AbilityWarSettings {
 		return Config.get(node.getPath());
 	}
 	
+	public boolean getNoHunger() {
+		return getBoolean(ConfigNodes.Game_NoHunger);
+	}
+	
+	public int getStartLevel() {
+		return getInt(ConfigNodes.Game_StartLevel);
+	}
+	
 	public boolean getInvincibilityEnable() {
 		return getBoolean(ConfigNodes.Game_Invincibility_Enable);
 	}
@@ -46,9 +56,21 @@ public class AbilityWarSettings {
 	public int getInvincibilityDuration() {
 		return getInt(ConfigNodes.Game_Invincibility_Duration);
 	}
-	
+
 	public ArrayList<ItemStack> getDefaultKit() {
 		return getItemStackList(ConfigNodes.Game_Kit);
+	}
+
+	public Location getSpawnLocation() {
+		return getLocation(ConfigNodes.Game_Spawn_Location);
+	}
+
+	public boolean getSpawnEnable() {
+		return getBoolean(ConfigNodes.Game_Spawn_Enable);
+	}
+
+	public boolean getOldEnchant() {
+		return getBoolean(ConfigNodes.Game_OldMechanics_Enchant);
 	}
 	
 	public int getInt(ConfigNodes node) {
@@ -57,7 +79,7 @@ public class AbilityWarSettings {
 			return Config.getInt(node.getPath());
 		} catch (Exception e) {
 			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
-			Config.set(node.getPath(), node.getDefault());
+			setNewProperty(node, node.getDefault());
 			Config.save();
 			return Config.getInt(node.getPath());
 		}
@@ -72,6 +94,31 @@ public class AbilityWarSettings {
 			Config.set(node.getPath(), node.getDefault());
 			Config.save();
 			return Config.getBoolean(node.getPath());
+		}
+	}
+	
+	public ArrayList<String> getStringList(ConfigNodes node) {
+		Reload();
+		try {
+			ArrayList<String> List = new ArrayList<String>();
+			
+			for(Object o : Config.getList(node.getPath())) {
+				List.add(o.toString());
+			}
+			
+			return List;
+		} catch (Exception e) {
+			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
+			setNewProperty(node, node.getDefault());
+			Config.save();
+			
+			ArrayList<String> List = new ArrayList<String>();
+			
+			for(Object o : Config.getList(node.getPath())) {
+				List.add(o.toString());
+			}
+			
+			return List;
 		}
 	}
 	
@@ -91,7 +138,7 @@ public class AbilityWarSettings {
 			return List;
 		} catch (Exception e) {
 			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
-			Config.set(node.getPath(), node.getDefault());
+			setNewProperty(node, node.getDefault());
 			Config.save();
 
 			ArrayList<ItemStack> List = new ArrayList<ItemStack>();
@@ -106,9 +153,22 @@ public class AbilityWarSettings {
 		}
 	}
 	
+	public Location getLocation(ConfigNodes node) {
+		Reload();
+		try {
+			return (Location) Config.get(node.getPath());
+		} catch (Exception e) {
+			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
+			setNewProperty(node, Bukkit.getWorlds().get(0).getSpawnLocation());
+			Config.save();
+			return (Location) Config.get(node.getPath());
+		}
+	}
+
 	public void setNewProperty(ConfigNodes node, Object value) {
 		Config.set(node.getPath(), value);
 		Config.save();
+		Setup();
 		Config.load();
 	}
 	

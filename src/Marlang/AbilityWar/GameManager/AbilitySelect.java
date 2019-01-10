@@ -34,10 +34,6 @@ public class AbilitySelect extends Thread {
 		for(Player p : Players) {
 			AbilitySelect.put(p, false);
 		}
-
-		for(AbilityList l : AbilityList.values()) {
-			IdleAbilities.add(l.getAbility());
-		}
 	}
 	
 	int AbilitySelectTime = 0;
@@ -65,7 +61,7 @@ public class AbilitySelect extends Thread {
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6능력이 강제로 확정되었습니다. 다른 플레이어를 기다려주세요."));
 			}
 			
-			Messager.broadcastStringList(Messager.getArrayList(
+			Messager.broadcastStringList(Messager.getStringList(
 					ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."),
 					ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayers() + "명")));
 		}
@@ -82,36 +78,63 @@ public class AbilitySelect extends Thread {
 	}
 	
 	public void randomAbilityToAll() {
-		Random random = new Random();
+		IdleAbilities.clear();
 		
-		for(Player p : AbilitySelect.keySet()) {
-			AbilityBase Ability = IdleAbilities.get(random.nextInt(IdleAbilities.size()));
-			IdleAbilities.remove(Ability);
-			Ability.setPlayer(p);
-			AbilityWarThread.getGame().getAbilities().put(p, Ability);
-			Messager.sendStringList(p, Messager.getArrayList(
-					ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
-					ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
-					ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 1회에 한해 능력을 변경할 수 있습니다.")));
+		for(String name : AbilityList.values()) {
+			try {
+				IdleAbilities.add(AbilityList.getByString(name).newInstance());
+			} catch (InstantiationException | IllegalAccessException e) {}
+		}
+		
+		if(AbilitySelect.keySet().size() <= IdleAbilities.size()) {
+			Random random = new Random();
+			
+			for(Player p : AbilitySelect.keySet()) {
+				AbilityBase Ability = IdleAbilities.get(random.nextInt(IdleAbilities.size()));
+				IdleAbilities.remove(Ability);
+				
+				Ability.setPlayer(p);
+				AbilityWarThread.getGame().getAbilities().put(p, Ability);
+				Messager.sendStringList(p, Messager.getStringList(
+						ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
+						ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
+						ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 1회에 한해 능력을 변경할 수 있습니다.")));
+			}
+		} else {
+			Messager.broadcastErrorMessage("능력의 수가 플레이어의 수보다 적어 게임을 진행할 수 없습니다.");
+			if(AbilityWarThread.isAbilitySelectTaskRunning()) {
+				AbilityWarThread.toggleAbilitySelectTask(false);
+			}
+			if(AbilityWarThread.isAbilitySelectTaskRunning()) {
+				AbilityWarThread.toggleAbilitySelectTask(false);
+			}
+			AbilityWarThread.toggleGameTask(false);
+			AbilityWarThread.setGame(null);
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 		}
 	}
 	
 	public void changeAbility(Player p) {
-		Random random = new Random();
-		
-		AbilityBase oldAbility = AbilityWarThread.getGame().getAbilities().get(p);
-		oldAbility.setPlayer(null);
-		AbilityBase Ability = IdleAbilities.get(random.nextInt(IdleAbilities.size()));
-		Ability.setPlayer(p);
-		
-		AbilityWarThread.getGame().getAbilities().put(p, Ability);
-		
-		Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
-		
-		decideAbility(p, false);
-		
-		IdleAbilities.add(oldAbility);
-		
+		if(IdleAbilities.size() > 0) {
+			Random random = new Random();
+			
+			AbilityBase oldAbility = AbilityWarThread.getGame().getAbilities().get(p);
+			oldAbility.setPlayer(null);
+			AbilityBase Ability = IdleAbilities.get(random.nextInt(IdleAbilities.size()));
+			IdleAbilities.remove(Ability);
+			
+			Ability.setPlayer(p);
+			
+			AbilityWarThread.getGame().getAbilities().put(p, Ability);
+			
+			Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
+			
+			decideAbility(p, false);
+
+			IdleAbilities.add(oldAbility);
+		} else {
+			Messager.sendErrorMessage(p, "능력을 변경할 수 없습니다.");
+		}
 	}
 	
 	public int getLeftPlayers() {
@@ -138,7 +161,7 @@ public class AbilitySelect extends Thread {
 	
 	public void AbilitySelectWarning(Integer Time) {
 		if(Time == 20) {
-			Messager.broadcastStringList(Messager.getArrayList(
+			Messager.broadcastStringList(Messager.getStringList(
 					ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."),
 					ChatColor.translateAlternateColorCodes('&', "&c/ability yes나 /ability no 명령어로 능력을 확정해주세요.")));
 			setAbilitySelectTime(0);

@@ -58,6 +58,13 @@ public class Messager {
 	public static void sendErrorMessage(CommandSender sender, String msg) {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &f") + msg);
 	}
+
+	/**
+	 * 오류 메시지를 공지합니다.
+	 */
+	public static void broadcastErrorMessage(String msg) {
+		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &f") + msg);
+	}
 	
 	/**
 	 * 메시지를 공지합니다.
@@ -120,9 +127,9 @@ public class Messager {
 	public static ArrayList<String> formatAbility(AbilityBase Ability) {
 		ArrayList<String> AbilityInfo = new ArrayList<String>();
 		AbilityInfo.add(formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"));
-		if(AbilityWarThread.getGame().isAbilityRestricted()) {
+		if(Ability.isRestricted()) {
 			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + Ability.getAbilityName() + " &f[&7능력 비활성화됨&f] " + Ability.getRank().getRankName()));
-		} else if(!AbilityWarThread.getGame().isAbilityRestricted()) {
+		} else {
 			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + Ability.getAbilityName() + " &f[&a능력 활성화됨&f] " + Ability.getRank().getRankName()));
 		}
 		
@@ -135,7 +142,13 @@ public class Messager {
 		return AbilityInfo;
 	}
 	
-
+	/**
+	 * 쿨타임 설명을 구성합니다.
+	 */
+	public static String formatCooldown(Integer Cool) {
+		return ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &7: &f" + Cool + "초");
+	}
+	
 	/**
 	 * 명령어 도움말을 구성합니다.
 	 */
@@ -155,9 +168,9 @@ public class Messager {
 	}
 	
 	/**
-	 * ArrayList를 만듭니다.
+	 * String ArrayList를 만듭니다.
 	 */
-	public static ArrayList<String> getArrayList(String... str) {
+	public static ArrayList<String> getStringList(String... str) {
 		ArrayList<String> Return = new ArrayList<String>();
 		for(String s : str) {
 			Return.add(s);
@@ -190,6 +203,28 @@ public class Messager {
 	public static void sendStringList(Player p, ArrayList<String> msg) {
 		for(String s : msg) {
 			p.sendMessage(s);
+		}
+	}
+	
+	/**
+	 * 첫번째 인수를 삭제합니다.
+	 */
+	public static String[] removeFirstArg(String[] args) {
+		return removeArgs(args, 1);
+	}
+	
+	/**
+	 * 배열에서 인수를 삭제합니다.
+	 */
+	public static String[] removeArgs(String[] args, int startIndex) {
+		if (args.length == 0)
+			return args;
+		else if (args.length < startIndex)
+			return new String[0];
+		else {
+			String[] newArgs = new String[args.length - startIndex];
+			System.arraycopy(args, startIndex, newArgs, 0, args.length - startIndex);
+			return newArgs;
 		}
 	}
 	

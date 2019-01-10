@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +13,9 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
+import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.TimerBase;
 
 /**
  * 게임 관리 클래스
@@ -27,15 +30,33 @@ public class Game extends Thread {
 	}
 	
 	int Seconds = 0;
-	
-	ArrayList<Player> Spectators = new ArrayList<Player>();
+
 	ArrayList<Player> Players = new ArrayList<Player>();
+	ArrayList<Player> Spectators = new ArrayList<Player>();
 	
 	HashMap<Player, AbilityBase> Abilities = new HashMap<Player, AbilityBase>();
 	
 	Invincibility invincibility = new Invincibility();
 	
 	boolean GameStarted = false;
+	
+	TimerBase NoHunger = new TimerBase() {
+		
+		@Override
+		public void TimerStart() {
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
+		}
+		
+		@Override
+		public void TimerProcess(Integer Seconds) {
+			for(Player p : getPlayers()) {
+				p.setFoodLevel(19);
+			}
+		}
+		
+		@Override
+		public void TimerEnd() {}
+	};
 	
 	@Override
 	public void run() {
@@ -50,6 +71,10 @@ public class Game extends Thread {
 			case 1:
 				SetupPlayers();
 				broadcastPlayerList();
+				if(Players.size() < 1) {
+					AbilityWarThread.toggleGameTask(false);
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 플레이어 수를 충족하지 못하여 게임을 중지합니다."));
+				}
 				break;
 			case 5:
 				broadcastPluginDescription();
@@ -68,18 +93,23 @@ public class Game extends Thread {
 				break;
 			case 20:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
+				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
 				break;
 			case 21:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
+				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
 				break;
 			case 22:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
+				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
 				break;
 			case 23:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
+				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
 				break;
 			case 24:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
+				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
 				break;
 			case 25:
 				GameStart();
@@ -104,7 +134,7 @@ public class Game extends Thread {
 	}
 	
 	public void broadcastPluginDescription() {
-		ArrayList<String> msg = Messager.getArrayList(
+		ArrayList<String> msg = Messager.getStringList(
 				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
 				ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + Plugin.getDescription().getVersion()),
 				ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &f_Marlang"),
@@ -114,8 +144,8 @@ public class Game extends Thread {
 	}
 	
 	public void broadcastAbilityReady() {
-		ArrayList<String> msg = Messager.getArrayList(
-				ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &b" + AbilityList.values().length + "개&f의 능력이 등록되어 있습니다."),
+		ArrayList<String> msg = Messager.getStringList(
+				ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &b" + AbilityList.values().size() + "개&f의 능력이 등록되어 있습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&7능력을 무작위로 할당합니다..."));
 		
 		Messager.broadcastStringList(msg);
@@ -124,7 +154,7 @@ public class Game extends Thread {
 	public void GameStart() {
 		setGameStarted(true);
 		
-		Messager.broadcastStringList(Messager.getArrayList(
+		Messager.broadcastStringList(Messager.getStringList(
 				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
 				ChatColor.translateAlternateColorCodes('&', "&f                            &cAbilityWar &f- &6능력자 전쟁              "),
 				ChatColor.translateAlternateColorCodes('&', "&f                                   게임 시작                            "),
@@ -137,10 +167,32 @@ public class Game extends Thread {
 			for(ItemStack is : DefaultKit) {
 				p.getInventory().addItem(is);
 			}
+			
+			p.setLevel(0);
+			if(AbilityWar.getSetting().getStartLevel() > 0) {
+				p.giveExpLevels(AbilityWar.getSetting().getStartLevel());
+				EffectUtil.sendSound(p, Sound.ENTITY_PLAYER_LEVELUP);
+			}
+			
+			if(AbilityWar.getSetting().getSpawnEnable()) {
+				p.teleport(AbilityWar.getSetting().getSpawnLocation());
+			}
+		}
+		
+		if(AbilityWar.getSetting().getNoHunger()) {
+			NoHunger.setPeriod(1);
+			NoHunger.StartTimer();
+		} else {
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 		}
 		
 		if(AbilityWar.getSetting().getInvincibilityEnable()) {
-			invincibility.setInvincibility();
+			invincibility.StartTimer();
+		} else {
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				Ability.setRestricted(false);
+			}
 		}
 	}
 	
@@ -153,16 +205,32 @@ public class Game extends Thread {
 		return invincibility;
 	}
 	
-	public ArrayList<Player> getSpectators() {
-		return Spectators;
-	}
-	
 	public ArrayList<Player> getPlayers() {
 		return Players;
 	}
 	
 	public HashMap<Player, AbilityBase> getAbilities() {
 		return Abilities;
+	}
+	
+	public void PrintAbilities() {
+		for(AbilityBase Ability : Abilities.values()) {
+			Bukkit.broadcastMessage(Ability.getPlayer().getName() + " : " + Ability.getAbilityName());
+		}
+	}
+	
+	public void addAbility(AbilityBase Ability) {
+		if(Ability.getPlayer() != null) {
+			Abilities.put(Ability.getPlayer(), Ability);
+		}
+	}
+	
+	public void removeAbility(Player p) {
+		if(Abilities.containsKey(p)) {
+			AbilityBase Ability = Abilities.get(p);
+			Ability.DeleteAbility();
+			Abilities.remove(p);
+		}
 	}
 	
 	public void SetupPlayers() {
@@ -185,18 +253,14 @@ public class Game extends Thread {
 		GameStarted = gameStarted;
 	}
 	
-	public boolean isAbilityRestricted() {
-		boolean bool = false;
-		
-		if(!isGameStarted()) {
-			bool = true;
+	public ArrayList<Player> getSpectators() {
+		return Spectators;
+	}
+	
+	public void toggleAbilityRestrict(boolean bool) {
+		for(AbilityBase a : Abilities.values()) {
+			a.setRestricted(bool);
 		}
-		
-		if(getInvincibility().isTimerRunning()) {
-			bool = true;
-		}
-		
-		return bool;
 	}
 	
 }

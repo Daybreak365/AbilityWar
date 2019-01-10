@@ -4,6 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
 import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
@@ -15,20 +17,16 @@ import Marlang.AbilityWar.Utils.TimerBase;
  */
 public class Invincibility extends TimerBase {
 	
-	static Integer Duration = AbilityWar.getSetting().getInvincibilityDuration();
+	static Integer Duration;
 	
 	public Invincibility() {
-		super(Duration * 60);
-		Messager.sendMessage(Duration + "분");
-	}
-	
-	public void setInvincibility() {
-		this.StartTimer();
+		super(AbilityWar.getSetting().getInvincibilityDuration() * 60);
+		Duration = AbilityWar.getSetting().getInvincibilityDuration();
 	}
 	
 	@Override
 	public void TimerStart() {
-		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 &f" + Duration + "분 &a동안 적용됩니다."));
+		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 &f" + NumberUtil.parseTimeString(Duration * 60) + "&a동안 적용됩니다."));
 	}
 	
 	@Override
@@ -51,6 +49,10 @@ public class Invincibility extends TimerBase {
 				ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
 				ChatColor.translateAlternateColorCodes('&', "&f초반 무적이 해제되었습니다."));
 		EffectUtil.broadcastSound(Sound.ENTITY_ENDERDRAGON_AMBIENT);
+		
+		for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+			Ability.setRestricted(false);
+		}
 	}
 	
 }
