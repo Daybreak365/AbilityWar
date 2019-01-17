@@ -12,12 +12,6 @@ import Marlang.AbilityWar.GameManager.Game;
  */
 public class AbilityWarThread {
 	
-	private static AbilityWar Plugin;
-	
-	public static void Initialize(AbilityWar Plugin) {
-		AbilityWarThread.Plugin = Plugin;
-	}
-
 	private static int GameTask = -1;
 	private static int AbilitySelectTask = -1;
 
@@ -28,7 +22,7 @@ public class AbilityWarThread {
 		if(bool && !isGameTaskRunning()) {
 			setGame(new Game());
 			while(!isGameTaskRunning()) {
-				GameTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(Plugin, getGame(), 0, 20);
+				GameTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), getGame(), 0, 20);
 			}
 		} else if(!bool && isGameTaskRunning()) {
 			Bukkit.getScheduler().cancelTask(GameTask);
@@ -45,7 +39,7 @@ public class AbilityWarThread {
 		if(bool && !isAbilitySelectTaskRunning()) {
 			setAbilitySelect(new AbilitySelect(getGame().getPlayers()));
 			while(!isAbilitySelectTaskRunning()) {
-				AbilitySelectTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(Plugin, getAbilitySelect(), 0, 20);
+				AbilitySelectTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), getAbilitySelect(), 0, 20);
 			}
 		} else if(!bool && isAbilitySelectTaskRunning()) {
 			Bukkit.getScheduler().cancelTask(AbilitySelectTask);

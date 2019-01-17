@@ -3,8 +3,8 @@ package Marlang.AbilityWar.GameManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
-import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
@@ -20,8 +20,8 @@ public class Invincibility extends TimerBase {
 	static Integer Duration;
 	
 	public Invincibility() {
-		super(AbilityWar.getSetting().getInvincibilityDuration() * 60);
-		Duration = AbilityWar.getSetting().getInvincibilityDuration();
+		super(AbilityWarSettings.getInvincibilityDuration() * 60);
+		Duration = AbilityWarSettings.getInvincibilityDuration();
 	}
 	
 	@Override

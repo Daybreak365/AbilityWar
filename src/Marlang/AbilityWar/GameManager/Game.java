@@ -6,12 +6,17 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.API.GameAPI;
+import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent;
+import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
+import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
@@ -23,22 +28,21 @@ import Marlang.AbilityWar.Utils.TimerBase;
  */
 public class Game extends Thread {
 	
-	private static AbilityWar Plugin;
-	
-	public static void Initialize(AbilityWar Plugin) {
-		Game.Plugin = Plugin;
-	}
-	
 	int Seconds = 0;
 
-	ArrayList<Player> Players = new ArrayList<Player>();
-	ArrayList<Player> Spectators = new ArrayList<Player>();
+	private ArrayList<Player> Players = new ArrayList<Player>();
 	
-	HashMap<Player, AbilityBase> Abilities = new HashMap<Player, AbilityBase>();
+	private static ArrayList<String> Spectators = new ArrayList<String>();
 	
-	Invincibility invincibility = new Invincibility();
+	private HashMap<Player, AbilityBase> Abilities = new HashMap<Player, AbilityBase>();
 	
-	boolean GameStarted = false;
+	private Invincibility invincibility = new Invincibility();
+	
+	private DeathManager deathManager = new DeathManager();
+	
+	private GameAPI gameAPI = new GameAPI(this);
+	
+	private boolean GameStarted = false;
 	
 	TimerBase NoHunger = new TimerBase() {
 		
@@ -80,13 +84,29 @@ public class Game extends Thread {
 				broadcastPluginDescription();
 				break;
 			case 10:
-				broadcastAbilityReady();
+				if(AbilityWarSettings.getDrawAbility()) {
+					broadcastAbilityReady();
+				} else {
+					this.Seconds += 4;
+				}
 				break;
 			case 13:
-				readyAbility();
+				if(AbilityWarSettings.getDrawAbility()) {
+					readyAbility();
+					
+					AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.AbilitySelect_STARTED, getGameAPI());
+					Bukkit.getPluginManager().callEvent(event);
+				}
 				break;
 			case 15:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "모든 플레이어가 능력을 &b확정&f했습니다."));
+				if(AbilityWarSettings.getDrawAbility()) {
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "모든 플레이어가 능력을 &b확정&f했습니다."));
+					
+					AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.AbilitySelect_FINISHED, getGameAPI());
+					Bukkit.getPluginManager().callEvent(event);
+				} else {
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
+				}
 				break;
 			case 17:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e잠시 후 게임이 시작됩니다."));
@@ -113,6 +133,9 @@ public class Game extends Thread {
 				break;
 			case 25:
 				GameStart();
+				
+				AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.Game_STARTED, getGameAPI());
+				Bukkit.getPluginManager().callEvent(event);
 				break;
 		}
 	}
@@ -136,8 +159,8 @@ public class Game extends Thread {
 	public void broadcastPluginDescription() {
 		ArrayList<String> msg = Messager.getStringList(
 				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
-				ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + Plugin.getDescription().getVersion()),
-				ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &f_Marlang"),
+				ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
+				ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &f_Marlang 말랑"),
 				ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f말랑&7#5908"));
 		
 		Messager.broadcastStringList(msg);
@@ -152,6 +175,38 @@ public class Game extends Thread {
 	}
 	
 	public void GameStart() {
+		Bukkit.getPluginManager().registerEvents(getDeathManager(), AbilityWar.getPlugin());
+		
+		GiveDefaultKits();
+		
+		for(Player p : Players) {
+			if(AbilityWarSettings.getSpawnEnable()) {
+				p.teleport(AbilityWarSettings.getSpawnLocation());
+			}
+		}
+		
+		if(AbilityWarSettings.getNoHunger()) {
+			NoHunger.setPeriod(1);
+			NoHunger.StartTimer();
+		} else {
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
+		}
+		
+		if(AbilityWarSettings.getInvincibilityEnable()) {
+			invincibility.StartTimer();
+		} else {
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				Ability.setRestricted(false);
+			}
+		}
+		
+		if(AbilityWarSettings.getClearWeather()) {
+			for(World w : Bukkit.getWorlds()) {
+				w.setStorm(false);
+			}
+		}
+		
 		setGameStarted(true);
 		
 		Messager.broadcastStringList(Messager.getStringList(
@@ -159,40 +214,49 @@ public class Game extends Thread {
 				ChatColor.translateAlternateColorCodes('&', "&f                            &cAbilityWar &f- &6능력자 전쟁              "),
 				ChatColor.translateAlternateColorCodes('&', "&f                                   게임 시작                            "),
 				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
-		
-		ArrayList<ItemStack> DefaultKit = AbilityWar.getSetting().getDefaultKit();
+	}
+
+	/**
+	 * 기본 킷 전체 지급
+	 */
+	public void GiveDefaultKits() {
+		ArrayList<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
 		
 		for(Player p : Players) {
-			p.getInventory().clear();
+			if(AbilityWarSettings.getInventoryClear()) {
+				p.getInventory().clear();
+			}
+			
 			for(ItemStack is : DefaultKit) {
 				p.getInventory().addItem(is);
 			}
 			
 			p.setLevel(0);
-			if(AbilityWar.getSetting().getStartLevel() > 0) {
-				p.giveExpLevels(AbilityWar.getSetting().getStartLevel());
+			if(AbilityWarSettings.getStartLevel() > 0) {
+				p.giveExpLevels(AbilityWarSettings.getStartLevel());
 				EffectUtil.sendSound(p, Sound.ENTITY_PLAYER_LEVELUP);
 			}
-			
-			if(AbilityWar.getSetting().getSpawnEnable()) {
-				p.teleport(AbilityWar.getSetting().getSpawnLocation());
-			}
+		}
+	}
+
+	/**
+	 * 기본 킷 유저 지급
+	 */
+	public void GiveDefaultKits(Player p) {
+		ArrayList<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
+
+		if(AbilityWarSettings.getInventoryClear()) {
+			p.getInventory().clear();
 		}
 		
-		if(AbilityWar.getSetting().getNoHunger()) {
-			NoHunger.setPeriod(1);
-			NoHunger.StartTimer();
-		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
+		for(ItemStack is : DefaultKit) {
+			p.getInventory().addItem(is);
 		}
 		
-		if(AbilityWar.getSetting().getInvincibilityEnable()) {
-			invincibility.StartTimer();
-		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
-			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
-				Ability.setRestricted(false);
-			}
+		p.setLevel(0);
+		if(AbilityWarSettings.getStartLevel() > 0) {
+			p.giveExpLevels(AbilityWarSettings.getStartLevel());
+			EffectUtil.sendSound(p, Sound.ENTITY_PLAYER_LEVELUP);
 		}
 	}
 	
@@ -205,6 +269,10 @@ public class Game extends Thread {
 		return invincibility;
 	}
 	
+	public DeathManager getDeathManager() {
+		return deathManager;
+	}
+	
 	public ArrayList<Player> getPlayers() {
 		return Players;
 	}
@@ -213,16 +281,8 @@ public class Game extends Thread {
 		return Abilities;
 	}
 	
-	public void PrintAbilities() {
-		for(AbilityBase Ability : Abilities.values()) {
-			Bukkit.broadcastMessage(Ability.getPlayer().getName() + " : " + Ability.getAbilityName());
-		}
-	}
-	
 	public void addAbility(AbilityBase Ability) {
-		if(Ability.getPlayer() != null) {
-			Abilities.put(Ability.getPlayer(), Ability);
-		}
+		Abilities.put(Ability.getPlayer(), Ability);
 	}
 	
 	public void removeAbility(Player p) {
@@ -237,11 +297,11 @@ public class Game extends Thread {
 		ArrayList<Player> Players = new ArrayList<Player>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!getSpectators().contains(p)) {
+			if(!getSpectators().contains(p.getName())) {
 				Players.add(p);
 			}
 		}
-
+		
 		this.Players = Players;
 	}
 	
@@ -253,7 +313,7 @@ public class Game extends Thread {
 		GameStarted = gameStarted;
 	}
 	
-	public ArrayList<Player> getSpectators() {
+	public static ArrayList<String> getSpectators() {
 		return Spectators;
 	}
 	
@@ -261,6 +321,10 @@ public class Game extends Thread {
 		for(AbilityBase a : Abilities.values()) {
 			a.setRestricted(bool);
 		}
+	}
+	
+	public GameAPI getGameAPI() {
+		return gameAPI;
 	}
 	
 }

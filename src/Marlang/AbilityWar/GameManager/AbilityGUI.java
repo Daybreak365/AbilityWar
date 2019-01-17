@@ -1,7 +1,5 @@
 package Marlang.AbilityWar.GameManager;
 
-import java.util.HashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -9,38 +7,39 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
-import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 
-public class AbilityGUI extends Module implements Listener {
+public class AbilityGUI implements Listener {
+
+	Player p;
 	
-	public AbilityGUI() {
-		RegisterListener(this);
+	Player target;
+	
+	public AbilityGUI(Player p, Player target, AbilityWar Plugin) {
+		this.p = p;
+		this.target = target;
+		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 	
-	static HashMap<Player, Integer> PlayerPage = new HashMap<Player, Integer>();
+	Integer PlayerPage = 1;
 	
-	static HashMap<Player, Player> AbilitySelect = new HashMap<Player, Player>();
+	Inventory AbilitySelectGUI;
 	
-	static Inventory AbilitySelectGUI;
-	
-	public static void openAbilitySelectGUI(Player p, Player target, Integer page) {
-		AbilitySelect.put(p, target);
-		
+	public void openAbilitySelectGUI(Integer page) {
 		try {
 			if ((AbilityList.values().size() - 1) / 36 + 1 < page)
 				page = 1;
 			if(page < 1) page = 1;
-			AbilitySelectGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e´É·Â ¸ñ·Ï"));
-			PlayerPage.put(p, page);
+			AbilitySelectGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &eëŠ¥ë ¥ ëª©ë¡"));
+			PlayerPage = page;
 			int Count = 0;
 			Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;
 			
@@ -49,7 +48,7 @@ public class AbilityGUI extends Module implements Listener {
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
 				im.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&2¢º &aÀÌ ´É·ÂÀ» ºÎ¿©ÇÏ·Á¸é Å¬¸¯ÇÏ¼¼¿ä.")
+						ChatColor.translateAlternateColorCodes('&', "&2Â» &fì´ ëŠ¥ë ¥ì„ ë¶€ì—¬í•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.")
 						));
 				is.setItemMeta(im);
 				
@@ -62,7 +61,7 @@ public class AbilityGUI extends Module implements Listener {
 			if(page > 1) {
 				ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 				ItemMeta previousMeta = previousPage.getItemMeta();
-				previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bÀÌÀü ÆäÀÌÁö"));
+				previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"));
 				previousPage.setItemMeta(previousMeta);
 				AbilitySelectGUI.setItem(48, previousPage);
 			}
@@ -70,7 +69,7 @@ public class AbilityGUI extends Module implements Listener {
 			if(page != MaxPage) {
 				ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 				ItemMeta nextMeta = nextPage.getItemMeta();
-				nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b´ÙÀ½ ÆäÀÌÁö"));
+				nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"));
 				nextPage.setItemMeta(nextMeta);
 				AbilitySelectGUI.setItem(50, nextPage);
 			}
@@ -78,7 +77,7 @@ public class AbilityGUI extends Module implements Listener {
 			ItemStack Page = new ItemStack(Material.PAPER, 1);
 			ItemMeta PageMeta = Page.getItemMeta();
 			PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-					"&6ÆäÀÌÁö &e" + page + " &6/ &e" + MaxPage));
+					"&6í˜ì´ì§€ &e" + page + " &6/ &e" + MaxPage));
 			Page.setItemMeta(PageMeta);
 			AbilitySelectGUI.setItem(49, Page);
 			
@@ -87,34 +86,25 @@ public class AbilityGUI extends Module implements Listener {
 	}
 	
 	@EventHandler
-	public void onClose(InventoryCloseEvent e) {
-		Player p = (Player) e.getPlayer();
-		if(AbilitySelect.containsKey(p)) {
-			AbilitySelect.remove(p);
-		}
-	}
-	
-	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(AbilitySelectGUI)) {
 			Player p = (Player) e.getWhoClicked();
 			e.setCancelled(true);
 			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bÀÌÀü ÆäÀÌÁö"))) {
-					openAbilitySelectGUI(p, AbilitySelect.get(p), PlayerPage.get(p) - 1);
-				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b´ÙÀ½ ÆäÀÌÁö"))) {
-					openAbilitySelectGUI(p, AbilitySelect.get(p), PlayerPage.get(p) + 1);
+				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"))) {
+					openAbilitySelectGUI(PlayerPage - 1);
+				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"))) {
+					openAbilitySelectGUI(PlayerPage + 1);
 				}
 			}
 			
 			if(e.getCurrentItem().getType().equals(Material.IRON_BLOCK)) {
 				if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-					Player target = Bukkit.getPlayer(AbilitySelect.get(p).getName());
 					String AbilityName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 					
 					Class<? extends AbilityBase> l = AbilityList.getByString(AbilityName);
 					try {
-						if(target != null) {
+						if(target.isOnline()) {
 							if(l != null) {
 								AbilityBase Ability = l.newInstance();
 								Ability.setPlayer(target);
@@ -131,21 +121,23 @@ public class AbilityGUI extends Module implements Listener {
 								
 								AbilityWarThread.getGame().removeAbility(target);
 								AbilityWarThread.getGame().addAbility(Ability);
+							} else {
+								throw new Exception();
 							}
 						} else {
-							throw new Exception("ÇØ´ç ÇÃ·¹ÀÌ¾î°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+							throw new Exception("í•´ë‹¹ í”Œë ˆì´ì–´ê°€ ì ‘ì†ì„ ì¢…ë£Œí•˜ì˜€ìŠµë‹ˆë‹¤.");
 						}
 					} catch(Exception ex) {
-						if(!ex.getMessage().isEmpty()) {
+						if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 							Messager.sendErrorMessage(p, ex.getMessage());
 						} else {
-							Messager.sendErrorMessage(p, "¼³Á¤ µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
+							Messager.sendErrorMessage(p, "ì„¤ì • ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 						}
 					}
 					
 					p.closeInventory();
 					
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a´ÔÀÌ &f" + target.getName() + "&a´Ô¿¡°Ô ´É·ÂÀ» ÀÓÀÇ·Î ºÎ¿©ÇÏ¿´½À´Ï´Ù."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&aë‹˜ì´ &f" + target.getName() + "&aë‹˜ì—ê²Œ ëŠ¥ë ¥ì„ ì„ì˜ë¡œ ë¶€ì—¬í•˜ì˜€ìŠµë‹ˆë‹¤."));
 				}
 			}
 		}

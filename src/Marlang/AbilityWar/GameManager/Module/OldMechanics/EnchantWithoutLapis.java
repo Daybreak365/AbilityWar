@@ -15,7 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Dye;
 
-import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 
@@ -77,7 +77,7 @@ public class EnchantWithoutLapis extends Module implements Listener {
 	}
 
 	private boolean isEnabled() {
-		return AbilityWar.getSetting().getOldEnchant();
+		return AbilityWarSettings.getOldEnchant();
 	}
 
 	private ItemStack getLapis() {

@@ -3,12 +3,17 @@ package Marlang.AbilityWar.Ability;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
+
+import Marlang.AbilityWar.Ability.List.Ares;
 import Marlang.AbilityWar.Ability.List.Assassin;
 import Marlang.AbilityWar.Ability.List.Demigod;
 import Marlang.AbilityWar.Ability.List.DiceGod;
 import Marlang.AbilityWar.Ability.List.EnergyBlocker;
 import Marlang.AbilityWar.Ability.List.FastRegeneration;
 import Marlang.AbilityWar.Ability.List.Feather;
+import Marlang.AbilityWar.Ability.List.Zeus;
+import Marlang.AbilityWar.Utils.Messager;
 
 public class AbilityList {
 	
@@ -20,6 +25,12 @@ public class AbilityList {
 	public static void registerAbility(String name, Class<? extends AbilityBase> Ability) {
 		if(!Abilities.containsKey(name)) {
 			Abilities.put(name, Ability);
+			
+			try {
+				Class.forName(Ability.getName());
+			} catch(Exception e) {
+				Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + name + " &f능력을 불러오지 못하였습니다."));
+			}
 		}
 	}
 	
@@ -33,6 +44,8 @@ public class AbilityList {
 		registerAbility("빠른 회복", FastRegeneration.class);
 		registerAbility("에너지 블로커", EnergyBlocker.class);
 		registerAbility("다이스 갓", DiceGod.class);
+		registerAbility("아레스", Ares.class);
+		registerAbility("제우스", Zeus.class);
 	}
 	
 	public static ArrayList<String> values() {

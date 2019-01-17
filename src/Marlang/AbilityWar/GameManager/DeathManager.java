@@ -1,5 +1,7 @@
 package Marlang.AbilityWar.GameManager;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,17 +10,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import Marlang.AbilityWar.GameManager.Module.Module;
+import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.Utils.AbilityWarThread;
+import Marlang.AbilityWar.Utils.Messager;
 
 /**
  * Death Manager
  * @author _Marlang 말랑
  */
-public class DeathManager extends Module implements Listener {
-	
-	public DeathManager() {
-		RegisterListener(this);
-	}
+public class DeathManager implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDeath(PlayerDeathEvent e) {
@@ -54,6 +55,49 @@ public class DeathManager extends Module implements Listener {
 			e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 죽었습니다."));
 		}
 		
+		if(AbilityWarThread.isGameTaskRunning()) {
+			if(AbilityWarThread.getGame().isGameStarted()) {
+				if(AbilityWarThread.getGame().getPlayers().contains(Victim)) {
+					if(AbilityWarSettings.getAbilityReveal()) {
+						if(AbilityWarThread.getGame().getAbilities().containsKey(Victim)) {
+							AbilityBase Ability = AbilityWarThread.getGame().getAbilities().get(Victim);
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + Ability.getAbilityName() + " &f능력이었습니다!"));
+						} else {
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
+						}
+					}
+					
+					if(AbilityWarSettings.getEliminate()) {
+						Eliminate(Victim);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 탈락된 유저 닉네임 목록
+	 */
+	private ArrayList<String> Eliminated = new ArrayList<String>();
+	
+	/**
+	 * 플레이어를 탈락시킵니다.
+	 * @param p   탈락시킬 플레이어입니다.
+	 */
+	public void Eliminate(Player p) {
+		Eliminated.add(p.getName());
+		p.kickPlayer(
+				ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
+				+ "\n"
+				+ ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
+		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + p.getName() + "&f님이 탈락하셨습니다."));
+	}
+	
+	/**
+	 * 플레이어의 탈락 여부를 확인합니다.
+	 */
+	public boolean isEliminated(Player p) {
+		return Eliminated.contains(p.getName());
 	}
 	
 }

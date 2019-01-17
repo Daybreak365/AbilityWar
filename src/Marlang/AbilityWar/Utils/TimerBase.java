@@ -20,15 +20,8 @@ abstract public class TimerBase {
 		}
 	}
 	
-	private static AbilityWar Plugin;
-	
-	public static void Initialize(AbilityWar Plugin) {
-		TimerBase.Plugin = Plugin;
-	}
-	
 	int Task = -1;
 	
-	boolean ReverseTimer;
 	boolean InfiniteTimer;
 	boolean ProcessDuringGame = true;
 	int Count;
@@ -44,13 +37,15 @@ abstract public class TimerBase {
 	
 	abstract public void TimerEnd();
 	
+	public void ForceTimerEnd() {}
+	
 	public boolean isTimerRunning() {
 		return Task != -1;
 	}
 	
 	public void StartTimer() {
 		TempCount = Count;
-		this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(Plugin, new TimerTask(), 0, Period);
+		this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
 		Tasks.add(this);
 		TimerStart();
 	}
@@ -66,6 +61,7 @@ abstract public class TimerBase {
 		Bukkit.getScheduler().cancelTask(Task);
 		TempCount = Count;
 		this.Task = -1;
+		ForceTimerEnd();
 	}
 	
 	public void setPeriod(Integer Period) {
@@ -83,23 +79,12 @@ abstract public class TimerBase {
 	public int getTempCount() {
 		return TempCount;
 	}
-
-	/**
-	 * 반전 타이머
-	 */
-	public TimerBase(int Count) {
-		this.ReverseTimer = true;
-		this.Count = Count;
-		InfiniteTimer = false;
-	}
 	
 	/**
 	 * 일반 타이머
 	 */
-	public TimerBase(int Count, int MaxCount) {
-		this.ReverseTimer = false;
+	public TimerBase(int Count) {
 		this.Count = Count;
-		this.MaxCount = MaxCount;
 		InfiniteTimer = false;
 	}
 	
@@ -119,19 +104,16 @@ abstract public class TimerBase {
 					if(InfiniteTimer) {
 						TimerProcess(-1);
 					} else {
-						TimerProcess(TempCount);
-						if(!ReverseTimer) {
-							if (TempCount >= MaxCount) {
-								StopTimer();
-							}
+						if(TempCount > 0) {
+							TimerProcess(TempCount);
 							
-							TempCount++;
-						} else {
 							if (TempCount <= 0) {
 								StopTimer();
 							}
 							
 							TempCount--;
+						} else {
+							StopTimer();
 						}
 					}
 				} else {
@@ -142,19 +124,12 @@ abstract public class TimerBase {
 					TimerProcess(-1);
 				} else {
 					TimerProcess(TempCount);
-					if(!ReverseTimer) {
-						if (TempCount >= MaxCount) {
-							StopTimer();
-						}
-						
-						TempCount++;
-					} else {
-						if (TempCount <= 0) {
-							StopTimer();
-						}
-						
-						TempCount--;
+					
+					if (TempCount <= 0) {
+						StopTimer();
 					}
+					
+					TempCount--;
 				}
 			}
 		}

@@ -12,14 +12,10 @@ import Marlang.AbilityWar.Utils.Messager;
 
 public class AbilityWarSettings {
 	
-	public AbilityWarSettings() {
-		Config = new CommentedConfiguration(FileManager.getFile("Config.yml"));
-	}
+	private static CommentedConfiguration Config = new CommentedConfiguration(FileManager.getFile("Config.yml"));
 	
-	CommentedConfiguration Config, newConfig;
-	
-	public void Setup() {
-		newConfig = new CommentedConfiguration(FileManager.getFile("Config.yml"));
+	public static void Setup() {
+		CommentedConfiguration newConfig = new CommentedConfiguration(FileManager.getFile("Config.yml"));
 		Config.load();
 		
 		for(ConfigNodes n : ConfigNodes.values()) {
@@ -37,44 +33,71 @@ public class AbilityWarSettings {
 		newConfig = null;
 	}
 	
-	public Object getConfig(ConfigNodes node) {
+	public static Object getConfig(ConfigNodes node) {
 		return Config.get(node.getPath());
 	}
 	
-	public boolean getNoHunger() {
+	public static boolean getNoHunger() {
 		return getBoolean(ConfigNodes.Game_NoHunger);
 	}
 	
-	public int getStartLevel() {
+	public static int getStartLevel() {
 		return getInt(ConfigNodes.Game_StartLevel);
 	}
 	
-	public boolean getInvincibilityEnable() {
+	public static boolean getInvincibilityEnable() {
 		return getBoolean(ConfigNodes.Game_Invincibility_Enable);
 	}
 	
-	public int getInvincibilityDuration() {
+	public static int getInvincibilityDuration() {
 		return getInt(ConfigNodes.Game_Invincibility_Duration);
 	}
-
-	public ArrayList<ItemStack> getDefaultKit() {
+	
+	public static boolean getInventoryClear() {
+		return getBoolean(ConfigNodes.Game_InventoryClear);
+	}
+	
+	public static boolean getDrawAbility() {
+		return getBoolean(ConfigNodes.Game_DrawAbility);
+	}
+	
+	public static boolean getInfiniteDurability() {
+		return getBoolean(ConfigNodes.Game_InfiniteDurability);
+	}
+	
+	public static boolean getFirewall() {
+		return getBoolean(ConfigNodes.Game_Firewall);
+	}
+	
+	public static boolean getEliminate() {
+		return getBoolean(ConfigNodes.Game_Deaeth_Eliminate);
+	}
+	
+	public static boolean getAbilityReveal() {
+		return getBoolean(ConfigNodes.Game_Deaeth_AbilityReveal);
+	}
+	
+	public static boolean getClearWeather() {
+		return getBoolean(ConfigNodes.Game_ClearWeather);
+	}
+	
+	public static ArrayList<ItemStack> getDefaultKit() {
 		return getItemStackList(ConfigNodes.Game_Kit);
 	}
 
-	public Location getSpawnLocation() {
+	public static Location getSpawnLocation() {
 		return getLocation(ConfigNodes.Game_Spawn_Location);
 	}
 
-	public boolean getSpawnEnable() {
+	public static boolean getSpawnEnable() {
 		return getBoolean(ConfigNodes.Game_Spawn_Enable);
 	}
 
-	public boolean getOldEnchant() {
+	public static boolean getOldEnchant() {
 		return getBoolean(ConfigNodes.Game_OldMechanics_Enchant);
 	}
 	
-	public int getInt(ConfigNodes node) {
-		Reload();
+	public static int getInt(ConfigNodes node) {
 		try {
 			return Config.getInt(node.getPath());
 		} catch (Exception e) {
@@ -85,8 +108,7 @@ public class AbilityWarSettings {
 		}
 	}
 	
-	public boolean getBoolean(ConfigNodes node) {
-		Reload();
+	public static boolean getBoolean(ConfigNodes node) {
 		try {
 			return Config.getBoolean(node.getPath());
 		} catch (Exception e) {
@@ -97,8 +119,7 @@ public class AbilityWarSettings {
 		}
 	}
 	
-	public ArrayList<String> getStringList(ConfigNodes node) {
-		Reload();
+	public static ArrayList<String> getStringList(ConfigNodes node) {
 		try {
 			ArrayList<String> List = new ArrayList<String>();
 			
@@ -122,8 +143,7 @@ public class AbilityWarSettings {
 		}
 	}
 	
-	public ArrayList<ItemStack> getItemStackList(ConfigNodes node) {
-		Reload();
+	public static ArrayList<ItemStack> getItemStackList(ConfigNodes node) {
 		try {
 			ArrayList<ItemStack> List = new ArrayList<ItemStack>();
 			
@@ -153,8 +173,7 @@ public class AbilityWarSettings {
 		}
 	}
 	
-	public Location getLocation(ConfigNodes node) {
-		Reload();
+	public static Location getLocation(ConfigNodes node) {
 		try {
 			return (Location) Config.get(node.getPath());
 		} catch (Exception e) {
@@ -165,14 +184,14 @@ public class AbilityWarSettings {
 		}
 	}
 
-	public void setNewProperty(ConfigNodes node, Object value) {
+	public static void setNewProperty(ConfigNodes node, Object value) {
 		Config.set(node.getPath(), value);
 		Config.save();
 		Setup();
 		Config.load();
 	}
 	
-	public void Reload() {
+	public static void Reload() {
 		Config.load();
 	}
 	

@@ -1,8 +1,10 @@
 package Marlang.AbilityWar.GameManager;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,12 +15,15 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 
-import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.API.Events.AbilityWarJoinEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveClickType;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveMaterialType;
+import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 
@@ -30,6 +35,9 @@ public class GameListener extends Module implements Listener {
 	
 	HashMap<String, Instant> InstantMap = new HashMap<String, Instant>();
 	
+	/**
+	 * 액티브 Listener
+	 */
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 		if(AbilityWarThread.isGameTaskRunning()) {
@@ -58,6 +66,34 @@ public class GameListener extends Module implements Listener {
 		}
 	}
 	
+	/**
+	 * 내구도 Listener
+	 */
+	@EventHandler
+	public void onArmorDurabilityChange(PlayerItemDamageEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			if(AbilityWarSettings.getInfiniteDurability()) {
+				e.setCancelled(true);
+				
+				e.getItem().setDurability((short) 0);
+			}
+		}
+	}
+	
+	/**
+	 * 날씨 Listener
+	 */
+	@EventHandler
+	public void onWeatherChange(WeatherChangeEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			if(AbilityWarThread.getGame().isGameStarted()) {
+				if(AbilityWarSettings.getClearWeather()) {
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+	
 	@EventHandler
 	public void onPlayerDamage(EntityDamageEvent e) {
 		if(AbilityWarThread.isGameTaskRunning()) {
@@ -68,11 +104,11 @@ public class GameListener extends Module implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent e) {
 		if(AbilityWarThread.isGameTaskRunning()) {
-			if(AbilityWar.getSetting().getNoHunger()) {
+			if(AbilityWarSettings.getNoHunger()) {
 				e.setCancelled(true);
 				
 				Player p = (Player) e.getEntity();
@@ -83,42 +119,57 @@ public class GameListener extends Module implements Listener {
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) {
+		Player joined = e.getPlayer();
 		if(AbilityWarThread.isGameTaskRunning()) {
 			Game game = AbilityWarThread.getGame();
-			Player joined = e.getPlayer();
-
+			
+			ArrayList<Player> PlayersToRemove = new ArrayList<Player>();
+			ArrayList<Player> PlayersToAdd = new ArrayList<Player>();
+			
 			for(Player p : game.getPlayers()) {
 				if(p.getName().equals(joined.getName())) {
-					game.getPlayers().remove(p);
-					game.getPlayers().add(joined);
+					PlayersToRemove.add(p);
+					PlayersToAdd.add(joined);
 				}
 			}
 			
-			for(Player p : game.getSpectators()) {
-				if(p.getName().equals(joined.getName())) {
-					game.getSpectators().remove(p);
-					game.getSpectators().add(joined);
-				}
-			}
+			game.getPlayers().removeAll(PlayersToRemove);
+			game.getPlayers().addAll(PlayersToAdd);
+			
+			ArrayList<Player> AbilitiesToRemove = new ArrayList<Player>();
+			HashMap<Player, AbilityBase> AbilitiesToAdd = new HashMap<Player, AbilityBase>();
 			
 			for(Player p : game.getAbilities().keySet()) {
 				if(p.getName().equals(joined.getName())) {
 					AbilityBase Ability = game.getAbilities().get(p);
 					Ability.setPlayer(joined);
-					game.getAbilities().remove(p);
-					game.getAbilities().put(joined, Ability);
+					AbilitiesToRemove.add(p);
+					AbilitiesToAdd.put(joined, Ability);
 				}
 			}
 			
+			game.getAbilities().keySet().removeAll(AbilitiesToRemove);
+			game.getAbilities().putAll(AbilitiesToAdd);
+			
 			AbilitySelect select = AbilityWarThread.getAbilitySelect();
 			if(select != null) {
+				ArrayList<Player> SelectToRemove = new ArrayList<Player>();
+				HashMap<Player, Boolean> SelectToAdd = new HashMap<Player, Boolean>();
+				
 				for(Player p : select.AbilitySelect.keySet()) {
 					if(p.getName().equals(joined.getName())) {
-						select.AbilitySelect.put(joined, select.AbilitySelect.get(p));
-						select.AbilitySelect.remove(p);
+						SelectToRemove.add(p);
+						SelectToAdd.put(joined, select.AbilitySelect.get(p));
 					}
 				}
+				
+				select.AbilitySelect.keySet().removeAll(SelectToRemove);
+				select.AbilitySelect.putAll(SelectToAdd);
 			}
+			
+			AbilityWarJoinEvent event = new AbilityWarJoinEvent(joined, game.getGameAPI());
+			Bukkit.getPluginManager().callEvent(event);
+			
 		}
 	}
 	

@@ -46,8 +46,11 @@ public class CooldownTimer extends TimerBase {
 	
 	@Override
 	public void TimerProcess(Integer Seconds) {
-
+		
+		boolean showed = false;
+		
 		if(Seconds == (Cool / 2)) {
+			showed = true;
 			if(!AbilityName.isEmpty()) {
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			} else {
@@ -57,12 +60,14 @@ public class CooldownTimer extends TimerBase {
 		}
 		
 		if(Seconds <= 5 && Seconds >= 1) {
-			if(!AbilityName.isEmpty()) {
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
-			} else {
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			if(!showed) {
+				if(!AbilityName.isEmpty()) {
+					Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				} else {
+					Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				}
+				EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 			}
-			EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 		}
 	}
 	

@@ -67,16 +67,19 @@ public class AbilitySelect extends Thread {
 		}
 	}
 	
-	public void Skip(Player admin) {
+	public void Skip(String admin) {
 		for(Player p : AbilitySelect.keySet()) {
 			if(!AbilitySelect.get(p)) {
 				decideAbility(p, false);
 			}
 		}
 
-		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin.getName() + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
+		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
 	}
 	
+	/**
+	 * 전체 능력 추첨
+	 */
 	public void randomAbilityToAll() {
 		IdleAbilities.clear();
 		
@@ -94,7 +97,8 @@ public class AbilitySelect extends Thread {
 				IdleAbilities.remove(Ability);
 				
 				Ability.setPlayer(p);
-				AbilityWarThread.getGame().getAbilities().put(p, Ability);
+				AbilityWarThread.getGame().addAbility(Ability);
+				
 				Messager.sendStringList(p, Messager.getStringList(
 						ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
 						ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
@@ -114,6 +118,9 @@ public class AbilitySelect extends Thread {
 		}
 	}
 	
+	/**
+	 * 유저 능력 재추첨
+	 */
 	public void changeAbility(Player p) {
 		if(IdleAbilities.size() > 0) {
 			Random random = new Random();
@@ -125,7 +132,7 @@ public class AbilitySelect extends Thread {
 			
 			Ability.setPlayer(p);
 			
-			AbilityWarThread.getGame().getAbilities().put(p, Ability);
+			AbilityWarThread.getGame().addAbility(Ability);
 			
 			Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
 			

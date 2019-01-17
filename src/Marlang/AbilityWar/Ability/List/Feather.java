@@ -11,33 +11,54 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.CooldownTimer;
 import Marlang.AbilityWar.Ability.Skill.SkillTimer;
 import Marlang.AbilityWar.Ability.Skill.SkillTimer.SkillType;
+import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
 
 public class Feather extends AbilityBase {
+
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("깃털", "Cooldown", 80, 
+			"# 쿨타임") {
+		
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
+
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("깃털", "Duration", 15, 
+			"# 지속시간") {
+		
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 0;
+		}
+		
+	};
 	
 	public Feather() {
 		super("깃털", Rank.A,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 15초간 비행할 수 있습니다. " + Messager.formatCooldown(80)),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 15초간 비행할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f낙하 데미지를 무시합니다."));
 		
 		registerTimer(Cool);
+		
 		registerTimer(Skill);
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, 80);
+	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, 15, SkillType.Active, Cool) {
+	SkillTimer Skill = new SkillTimer(this, DurationConfig.getValue(), SkillType.Active, Cool) {
 		
 		@Override
-		public void TimerStart() {
-			getPlayer().setAllowFlight(true);
-		}
+		public void TimerStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			
+			getPlayer().setAllowFlight(true);
+			getPlayer().setFlying(true);
 		}
 		
 		@Override

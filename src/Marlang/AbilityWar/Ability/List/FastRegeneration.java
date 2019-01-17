@@ -6,15 +6,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.TimerBase;
 
 public class FastRegeneration extends AbilityBase {
+	
+	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>("빠른회복", "RegenSpeed", 15,
+			"# 회복 속도를 설정합니다.",
+			"# 숫자가 낮을수록 회복이 더욱 빨라집니다.") {
+		
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 1;
+		}
+		
+	};
 	
 	public FastRegeneration() {
 		super("빠른 회복", Rank.A, 
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다.")
 				);
-		Skill.setPeriod(15);
+		Skill.setPeriod(RegenSpeedConfig.getValue());
 		registerTimer(Skill);
 		Skill.StartTimer();
 	}
@@ -28,10 +40,12 @@ public class FastRegeneration extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			if(!isRestricted()) {
 				Player p = getPlayer();
-				double MaxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-				
-				if(p.getHealth() < MaxHealth) {
-					p.setHealth((int) p.getHealth() + 1);
+				if(!p.isDead()) {
+					double MaxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+					
+					if(p.getHealth() < MaxHealth) {
+						p.setHealth((int) p.getHealth() + 1);
+					}
 				}
 			}
 		}
