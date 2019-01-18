@@ -13,6 +13,8 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.SettingWizard;
+import Marlang.AbilityWar.GameManager.Manager.GUI.AbilityGUI;
+import Marlang.AbilityWar.GameManager.Manager.GUI.SpectatorGUI;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;

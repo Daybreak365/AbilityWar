@@ -1,10 +1,8 @@
-package Marlang.AbilityWar.Ability.Skill;
+package Marlang.AbilityWar.Ability.Timer;
 
 import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Ability.CooldownTimer;
-import Marlang.AbilityWar.Ability.DurationTimer;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
 

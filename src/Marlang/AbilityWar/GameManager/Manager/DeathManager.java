@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.GameManager;
+package Marlang.AbilityWar.GameManager.Manager;
 
 import java.util.ArrayList;
 

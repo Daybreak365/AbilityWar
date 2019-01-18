@@ -1,8 +1,9 @@
-package Marlang.AbilityWar.Ability;
+package Marlang.AbilityWar.Ability.Timer;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
+import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;

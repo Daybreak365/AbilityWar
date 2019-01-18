@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.GameManager;
+package Marlang.AbilityWar.GameManager.Manager.GUI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

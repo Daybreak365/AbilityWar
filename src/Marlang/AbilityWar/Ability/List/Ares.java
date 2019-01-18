@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Ability.CooldownTimer;
-import Marlang.AbilityWar.Ability.Skill.SkillTimer;
-import Marlang.AbilityWar.Ability.Skill.SkillTimer.SkillType;
+import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
+import Marlang.AbilityWar.Ability.Timer.SkillTimer;
+import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;

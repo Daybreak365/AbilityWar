@@ -8,9 +8,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Ability.CooldownTimer;
-import Marlang.AbilityWar.Ability.Skill.SkillTimer;
-import Marlang.AbilityWar.Ability.Skill.SkillTimer.SkillType;
+import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
+import Marlang.AbilityWar.Ability.Timer.SkillTimer;
+import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;

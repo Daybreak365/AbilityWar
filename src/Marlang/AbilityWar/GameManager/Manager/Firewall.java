@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.GameManager;
+package Marlang.AbilityWar.GameManager.Manager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.GameManager.Game;
 import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 

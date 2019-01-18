@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.GameManager;
+package Marlang.AbilityWar.GameManager.Manager.GUI;
 
 import java.util.ArrayList;
 
@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityList;
+import Marlang.AbilityWar.GameManager.Game;
 import Marlang.AbilityWar.Utils.Messager;
 
 public class SpectatorGUI implements Listener {

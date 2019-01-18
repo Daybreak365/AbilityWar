@@ -4,8 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
 import Marlang.AbilityWar.AbilityWar;
-import Marlang.AbilityWar.GameManager.Firewall;
 import Marlang.AbilityWar.GameManager.GameListener;
+import Marlang.AbilityWar.GameManager.Manager.Firewall;
 import Marlang.AbilityWar.GameManager.Module.OldMechanics.EnchantWithoutLapis;
 
 abstract public class Module {

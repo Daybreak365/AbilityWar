@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class AbilitySelect extends Thread {
 	
-	HashMap<Player, Boolean> AbilitySelect = new HashMap<Player, Boolean>();
+	public HashMap<Player, Boolean> AbilitySelect = new HashMap<Player, Boolean>();
 
 	ArrayList<AbilityBase> IdleAbilities = new ArrayList<AbilityBase>();
 	
