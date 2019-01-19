@@ -57,7 +57,7 @@ public class CooldownTimer extends TimerBase {
 			} else {
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			}
-			EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+			EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 		}
 		
 		if(Seconds <= 5 && Seconds >= 1) {
@@ -67,7 +67,7 @@ public class CooldownTimer extends TimerBase {
 				} else {
 					Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 				}
-				EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+				EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 			}
 		}
 	}

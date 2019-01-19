@@ -35,7 +35,7 @@ abstract public class AbilityBase {
 	 */
 	public void DeleteAbility() {
 		for(TimerBase timer : timers) {
-			timer.ForceStopTimer();
+			timer.StopTimer(true);
 		}
 		
 		this.setPlayer(null);

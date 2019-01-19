@@ -179,6 +179,12 @@ public class Game extends Thread {
 	public void GameStart() {
 		Bukkit.getPluginManager().registerEvents(getDeathManager(), AbilityWar.getPlugin());
 		
+		Messager.broadcastStringList(Messager.getStringList(
+				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
+				ChatColor.translateAlternateColorCodes('&', "&f                            &cAbilityWar &f- &6능력자 전쟁              "),
+				ChatColor.translateAlternateColorCodes('&', "&f                                   게임 시작                            "),
+				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
+		
 		GiveDefaultKits();
 		
 		for(Player p : Players) {
@@ -210,12 +216,6 @@ public class Game extends Thread {
 		}
 		
 		setGameStarted(true);
-		
-		Messager.broadcastStringList(Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-				ChatColor.translateAlternateColorCodes('&', "&f                            &cAbilityWar &f- &6능력자 전쟁              "),
-				ChatColor.translateAlternateColorCodes('&', "&f                                   게임 시작                            "),
-				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class Game extends Thread {
 			p.setLevel(0);
 			if(AbilityWarSettings.getStartLevel() > 0) {
 				p.giveExpLevels(AbilityWarSettings.getStartLevel());
-				EffectUtil.sendSound(p, Sound.ENTITY_PLAYER_LEVELUP);
+				EffectUtil.playSound(p, Sound.ENTITY_PLAYER_LEVELUP);
 			}
 		}
 	}
@@ -258,7 +258,7 @@ public class Game extends Thread {
 		p.setLevel(0);
 		if(AbilityWarSettings.getStartLevel() > 0) {
 			p.giveExpLevels(AbilityWarSettings.getStartLevel());
-			EffectUtil.sendSound(p, Sound.ENTITY_PLAYER_LEVELUP);
+			EffectUtil.playSound(p, Sound.ENTITY_PLAYER_LEVELUP);
 		}
 	}
 	

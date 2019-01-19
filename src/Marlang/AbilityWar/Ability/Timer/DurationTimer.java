@@ -45,12 +45,12 @@ abstract public class DurationTimer extends TimerBase {
 		
 		if(Seconds == (Duration / 2)) {
 			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Seconds)));
-			EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+			EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 		}
 		
 		if(Seconds <= 5 && Seconds >= 1) {
 			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Seconds)));
-			EffectUtil.sendSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+			EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
 		}
 	}
 	

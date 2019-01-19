@@ -17,14 +17,14 @@ public class EffectUtil {
 	 */
 	public static void broadcastSound(Sound s) {
 		for(Player p : Bukkit.getOnlinePlayers()) {
-			p.playSound(p.getLocation(), s, 5, 1);
+			playSound(p, s);
 		}
 	}
 
 	/**
 	 * 소리를 플레이어에게 재생합니다.
 	 */
-	public static void sendSound(Player p, Sound s) {
+	public static void playSound(Player p, Sound s) {
 		p.playSound(p.getLocation(), s, 5, 1);
 	}
 

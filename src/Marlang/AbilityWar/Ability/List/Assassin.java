@@ -78,10 +78,10 @@ public class Assassin extends AbilityBase {
 				Entities.remove(e);
 				getPlayer().teleport(e);
 				e.damage(Damage, getPlayer());
-				EffectUtil.sendSound(getPlayer(), Sound.ENTITY_PLAYER_ATTACK_SWEEP);
-				EffectUtil.sendSound(getPlayer(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
+				EffectUtil.playSound(getPlayer(), Sound.ENTITY_PLAYER_ATTACK_SWEEP);
+				EffectUtil.playSound(getPlayer(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
 			} else {
-				this.StopTimer();
+				this.StopTimer(false);
 			}
 		}
 		

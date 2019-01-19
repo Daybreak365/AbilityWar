@@ -64,7 +64,7 @@ public class LocationUtil {
 
 		return Entities;
 	}
-
+	
 	public static ArrayList<Player> getNearbyPlayers(Player p, Integer Xdis, Integer Ydis) {
 		ArrayList<Player> Players = new ArrayList<Player>();
 		for (Entity e : p.getNearbyEntities(Xdis, Ydis, Xdis)) {
@@ -80,5 +80,5 @@ public class LocationUtil {
 
 		return Players;
 	}
-
+	
 }

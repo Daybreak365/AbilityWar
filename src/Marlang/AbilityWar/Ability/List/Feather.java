@@ -96,7 +96,7 @@ public class Feather extends AbilityBase {
 						if(e.getCause().equals(DamageCause.FALL)) {
 							e.setCancelled(true);
 							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a낙하 데미지를 받지 않습니다."));
-							EffectUtil.sendSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
+							EffectUtil.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
 						}
 					}
 				}
