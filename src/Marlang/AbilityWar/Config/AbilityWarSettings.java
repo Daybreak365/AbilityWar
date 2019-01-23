@@ -72,9 +72,13 @@ public class AbilityWarSettings {
 	public static boolean getEliminate() {
 		return getBoolean(ConfigNodes.Game_Deaeth_Eliminate);
 	}
-	
+
 	public static boolean getAbilityReveal() {
 		return getBoolean(ConfigNodes.Game_Deaeth_AbilityReveal);
+	}
+
+	public static boolean getItemDrop() {
+		return getBoolean(ConfigNodes.Game_Deaeth_ItemDrop);
 	}
 	
 	public static boolean getClearWeather() {
@@ -89,6 +93,10 @@ public class AbilityWarSettings {
 		return getLocation(ConfigNodes.Game_Spawn_Location);
 	}
 
+	public static boolean getVisualEffect() {
+		return getBoolean(ConfigNodes.Game_VisualEffect);
+	}
+	
 	public static boolean getSpawnEnable() {
 		return getBoolean(ConfigNodes.Game_Spawn_Enable);
 	}

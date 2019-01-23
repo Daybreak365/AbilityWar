@@ -3,6 +3,8 @@ package Marlang.AbilityWar.Utils.Library;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
+import Marlang.AbilityWar.Config.AbilityWarSettings;
+
 /**
  * 파티클 라이브러리
  * @author _Marlang 말랑
@@ -76,16 +78,20 @@ public class ParticleLib {
 		}
 
 		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ) {
-			Particle p = getParticle();
-			if(p != null) {
-				l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ);
+			if(AbilityWarSettings.getVisualEffect()) {
+				Particle p = getParticle();
+				if(p != null) {
+					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ);
+				}
 			}
 		}
 		
 		public <T> void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, T data) {
-			Particle p = getParticle();
-			if(p != null) {
-				l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, data);
+			if(AbilityWarSettings.getVisualEffect()) {
+				Particle p = getParticle();
+				if(p != null) {
+					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, data);
+				}
 			}
 		}
 		

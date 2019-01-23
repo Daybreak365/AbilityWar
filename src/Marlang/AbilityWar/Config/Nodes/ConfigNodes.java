@@ -1,8 +1,6 @@
 package Marlang.AbilityWar.Config.Nodes;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Utils.FileManager;
 import Marlang.AbilityWar.Utils.Messager;
@@ -21,7 +19,7 @@ public enum ConfigNodes {
 			"# 초반 무적 활성화 여부"),
 	Game_Invincibility_Duration("게임.초반무적.지속시간", 5,
 			"# 초반 무적 활성화 지속 시간 (단위: 분)"),
-	Game_Kit("게임.기본템", FileManager.getItemStackList(new ItemStack(Material.DIAMOND_SWORD)),
+	Game_Kit("게임.기본템", FileManager.getItemStackList(),
 			"# 기본템 설정"),
 	Game_InventoryClear("게임.인벤토리초기화", true,
 			"# 게임 시작시 인벤토리 초기화 여부"),
@@ -43,6 +41,9 @@ public enum ConfigNodes {
 	Game_Deaeth_AbilityReveal("게임.사망.능력공개", true,
 			"# 게임 진행 중 사망 시 능력 공개 여부",
 			"# true로 설정하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다."),
+	Game_Deaeth_ItemDrop("게임.사망.아이템드롭", true,
+			"# 게임 진행 중 사망 시 아이템 드롭 여부",
+			"# true로 설정하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다."),
 	Game_ClearWeather("게임.맑은날씨", false,
 			"# 맑은 날씨 고정 여부",
 			"# true로 설정하면 게임이 진행되는 동안 맑은 날씨로 고정됩니다."),
@@ -50,6 +51,8 @@ public enum ConfigNodes {
 			"# 스폰 위치 설정"),
 	Game_Spawn_Enable("게임.스폰.이동", true,
 			"# 초반 스폰 이동 활성화 여부"),
+	Game_VisualEffect("게임.시각효과", true,
+			"# 파티클 활성화 여부"),
 	Game_OldMechanics_Header("게임.구버전", "",
 			"# 마치 구 버전에서 플레이하고 있는 것처럼 느끼게 해줍니다.",
 			"# 구 버전 설정은 능력자 전쟁이 시작되면 적용됩니다."),

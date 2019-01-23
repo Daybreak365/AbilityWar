@@ -57,6 +57,11 @@ public class DeathManager implements Listener {
 		
 		if(AbilityWarThread.isGameTaskRunning()) {
 			if(AbilityWarThread.getGame().isGameStarted()) {
+				if(AbilityWarSettings.getItemDrop()) {
+					e.setKeepInventory(false);
+				} else {
+					e.setKeepInventory(true);
+				}
 				if(AbilityWarThread.getGame().getPlayers().contains(Victim)) {
 					if(AbilityWarSettings.getAbilityReveal()) {
 						if(AbilityWarThread.getGame().getAbilities().containsKey(Victim)) {

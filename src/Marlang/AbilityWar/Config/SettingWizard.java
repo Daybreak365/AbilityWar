@@ -119,14 +119,14 @@ public class SettingWizard implements Listener {
 	}
 	
 	public void openGameGUI() {
-		GameGUI = Bukkit.createInventory(p, 36, ChatColor.translateAlternateColorCodes('&', "&2&l게임 진행 설정"));
+		GameGUI = Bukkit.createInventory(p, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 진행 설정"));
 		
 		ItemStack Deco = new ItemStack(Material.STAINED_GLASS_PANE);
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);
 		
-		for(Integer i = 0; i < 36; i++) {
+		for(Integer i = 0; i < 45; i++) {
 			if(i.equals(12)) {
 				ItemStack Food = new ItemStack(Material.COOKED_BEEF, 1);
 				ItemMeta FoodMeta = Food.getItemMeta();
@@ -186,6 +186,18 @@ public class SettingWizard implements Listener {
 				ClearWeather.setItemMeta(ClearWeatherMeta);
 				
 				GameGUI.setItem(i, ClearWeather);
+			} else if(i.equals(30)) {
+				ItemStack VisualEffect = new ItemStack(Material.BLAZE_POWDER);
+				ItemMeta VisualEffectMeta = VisualEffect.getItemMeta();
+				VisualEffectMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b시각 효과"));
+				VisualEffectMeta.setLore(Messager.getStringList(
+						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다."),
+						"",
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getVisualEffect() ? "&a활성화" : "&c비활성화"))
+						));
+				VisualEffect.setItemMeta(VisualEffectMeta);
+				
+				GameGUI.setItem(i, VisualEffect);
 			} else {
 				GameGUI.setItem(i, Deco);
 			}
@@ -274,13 +286,25 @@ public class SettingWizard implements Listener {
 				ItemMeta AbilityRevealMeta = AbilityReveal.getItemMeta();
 				AbilityRevealMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 공개"));
 				AbilityRevealMeta.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다"),
+						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다."),
 						"",
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getAbilityReveal() ? "&a활성화" : "&c비활성화"))
 						));
 				AbilityReveal.setItemMeta(AbilityRevealMeta);
 				
 				DeathGUI.setItem(i, AbilityReveal);
+			} else if(i.equals(15)) {
+				ItemStack ItemDrop = new ItemStack(Material.CHEST);
+				ItemMeta ItemDropMeta = ItemDrop.getItemMeta();
+				ItemDropMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b아이템 드롭"));
+				ItemDropMeta.setLore(Messager.getStringList(
+						ChatColor.translateAlternateColorCodes('&', "&c비활성화&f하면 게임이 시작되고 난 후 사망하였을 때 아이템을 드롭하지 않습니다."),
+						"",
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getItemDrop() ? "&a활성화" : "&c비활성화"))
+						));
+				ItemDrop.setItemMeta(ItemDropMeta);
+				
+				DeathGUI.setItem(i, ItemDrop);
 			} else {
 				DeathGUI.setItem(i, Deco);
 			}
@@ -398,6 +422,9 @@ public class SettingWizard implements Listener {
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b맑은 날씨 고정"))) {
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_ClearWeather, !AbilityWarSettings.getClearWeather());
 						openGameGUI();
+					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b시각 효과"))) {
+						AbilityWarSettings.setNewProperty(ConfigNodes.Game_VisualEffect, !AbilityWarSettings.getVisualEffect());
+						openGameGUI();
 					}
 				}
 			}
@@ -433,6 +460,9 @@ public class SettingWizard implements Listener {
 					openDeathGUI();
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b능력 공개"))) {
 					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Deaeth_AbilityReveal, !AbilityWarSettings.getAbilityReveal());
+					openDeathGUI();
+				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b아이템 드롭"))) {
+					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Deaeth_ItemDrop, !AbilityWarSettings.getItemDrop());
 					openDeathGUI();
 				}
 			}
