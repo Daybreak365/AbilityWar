@@ -3,6 +3,8 @@ package Marlang.AbilityWar.Utils;
 import org.bukkit.Bukkit;
 
 import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent;
+import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
 import Marlang.AbilityWar.GameManager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Game;
 
@@ -25,6 +27,9 @@ public class AbilityWarThread {
 				GameTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), getGame(), 0, 20);
 			}
 		} else if(!bool && isGameTaskRunning()) {
+			AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.Game_ENDED, getGame().getGameAPI());
+			Bukkit.getPluginManager().callEvent(event);
+			
 			Bukkit.getScheduler().cancelTask(GameTask);
 			setGame(null);
 			GameTask = -1;

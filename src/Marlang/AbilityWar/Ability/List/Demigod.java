@@ -61,5 +61,8 @@ public class Demigod extends AbilityBase {
 			}
 		}
 	}
+
+	@Override
+	public void AbilityEvent(EventType type) {}
 	
 }

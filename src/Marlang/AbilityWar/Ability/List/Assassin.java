@@ -3,7 +3,6 @@ package Marlang.AbilityWar.Ability.List;
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Damageable;
 import org.bukkit.event.Event;
 
@@ -13,8 +12,8 @@ import Marlang.AbilityWar.Ability.Timer.SkillTimer;
 import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
-import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class Assassin extends AbilityBase {
 	
@@ -50,7 +49,7 @@ public class Assassin extends AbilityBase {
 	
 	public Assassin() {
 		super("암살자", Rank.A,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 최대 " + TeleportCountConfig.getValue() + "명의 적에게 텔레포트하며"),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 있는 적 " + TeleportCountConfig.getValue() + "명에게 텔레포트하며"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 		Skill.setPeriod(5);
 		
@@ -78,8 +77,8 @@ public class Assassin extends AbilityBase {
 				Entities.remove(e);
 				getPlayer().teleport(e);
 				e.damage(Damage, getPlayer());
-				EffectUtil.playSound(getPlayer(), Sound.ENTITY_PLAYER_ATTACK_SWEEP);
-				EffectUtil.playSound(getPlayer(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
+				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
+				SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 			} else {
 				this.StopTimer(false);
 			}
@@ -100,5 +99,8 @@ public class Assassin extends AbilityBase {
 	
 	@Override
 	public void PassiveSkill(Event event) {}
+
+	@Override
+	public void AbilityEvent(EventType type) {}
 	
 }

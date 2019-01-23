@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
+import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 
@@ -85,7 +86,9 @@ public class AbilitySelect extends Thread {
 		
 		for(String name : AbilityList.values()) {
 			try {
-				IdleAbilities.add(AbilityList.getByString(name).newInstance());
+				if(!AbilityWarSettings.getBlackList().contains(name)) {
+					IdleAbilities.add(AbilityList.getByString(name).newInstance());
+				}
 			} catch (InstantiationException | IllegalAccessException e) {}
 		}
 		
@@ -105,7 +108,7 @@ public class AbilitySelect extends Thread {
 						ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 1회에 한해 능력을 변경할 수 있습니다.")));
 			}
 		} else {
-			Messager.broadcastErrorMessage("능력의 수가 플레이어의 수보다 적어 게임을 진행할 수 없습니다.");
+			Messager.broadcastErrorMessage("사용 가능한 능력의 수가 플레이어의 수보다 적어 게임을 종료합니다.");
 			if(AbilityWarThread.isAbilitySelectTaskRunning()) {
 				AbilityWarThread.toggleAbilitySelectTask(false);
 			}
@@ -126,7 +129,7 @@ public class AbilitySelect extends Thread {
 			Random random = new Random();
 			
 			AbilityBase oldAbility = AbilityWarThread.getGame().getAbilities().get(p);
-			oldAbility.setPlayer(null);
+			oldAbility.DeleteAbility();
 			AbilityBase Ability = IdleAbilities.get(random.nextInt(IdleAbilities.size()));
 			IdleAbilities.remove(Ability);
 			

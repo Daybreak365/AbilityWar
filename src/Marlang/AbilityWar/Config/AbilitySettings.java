@@ -15,6 +15,7 @@ public class AbilitySettings {
 	private static void registerSetting(SettingObject<?> object) {
 		if(!Settings.contains(object)) {
 			Settings.add(object);
+			Setup();
 		}
 	}
 	

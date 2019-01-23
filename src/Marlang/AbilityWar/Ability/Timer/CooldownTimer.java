@@ -1,13 +1,12 @@
 package Marlang.AbilityWar.Ability.Timer;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
 import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class CooldownTimer extends TimerBase {
 	
@@ -57,7 +56,7 @@ public class CooldownTimer extends TimerBase {
 			} else {
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			}
-			EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 		}
 		
 		if(Seconds <= 5 && Seconds >= 1) {
@@ -67,7 +66,7 @@ public class CooldownTimer extends TimerBase {
 				} else {
 					Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 				}
-				EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 			}
 		}
 	}

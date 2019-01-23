@@ -96,6 +96,22 @@ public class AbilityWarSettings {
 	public static boolean getOldEnchant() {
 		return getBoolean(ConfigNodes.Game_OldMechanics_Enchant);
 	}
+
+	public static ArrayList<String> getBlackList() {
+		return getStringList(ConfigNodes.Game_BlackList);
+	}
+
+	public static void addBlackList(String name) {
+		ArrayList<String> list = getStringList(ConfigNodes.Game_BlackList);
+		list.add(name);
+		setNewProperty(ConfigNodes.Game_BlackList, list);
+	}
+
+	public static void removeBlackList(String name) {
+		ArrayList<String> list = getStringList(ConfigNodes.Game_BlackList);
+		list.remove(name);
+		setNewProperty(ConfigNodes.Game_BlackList, list);
+	}
 	
 	public static int getInt(ConfigNodes node) {
 		try {
@@ -123,8 +139,8 @@ public class AbilityWarSettings {
 		try {
 			ArrayList<String> List = new ArrayList<String>();
 			
-			for(Object o : Config.getList(node.getPath())) {
-				List.add(o.toString());
+			for(String s : Config.getStringList(node.getPath())) {
+				List.add(s);
 			}
 			
 			return List;

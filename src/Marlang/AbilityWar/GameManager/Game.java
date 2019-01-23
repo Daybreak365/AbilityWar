@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -20,9 +19,9 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Manager.DeathManager;
 import Marlang.AbilityWar.GameManager.Manager.Invincibility;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
-import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 /**
  * 게임 관리 클래스
@@ -38,7 +37,7 @@ public class Game extends Thread {
 	
 	private HashMap<Player, AbilityBase> Abilities = new HashMap<Player, AbilityBase>();
 	
-	private Invincibility invincibility = new Invincibility();
+	private Invincibility invincibility = new Invincibility(this);
 	
 	private DeathManager deathManager = new DeathManager();
 	
@@ -115,23 +114,23 @@ public class Game extends Thread {
 				break;
 			case 20:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
-				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
+				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
 				break;
 			case 21:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
-				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
+				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
 				break;
 			case 22:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
-				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
+				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
 				break;
 			case 23:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
-				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
+				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
 				break;
 			case 24:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
-				EffectUtil.broadcastSound(Sound.BLOCK_NOTE_HARP);
+				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
 				break;
 			case 25:
 				GameStart();
@@ -236,7 +235,7 @@ public class Game extends Thread {
 			p.setLevel(0);
 			if(AbilityWarSettings.getStartLevel() > 0) {
 				p.giveExpLevels(AbilityWarSettings.getStartLevel());
-				EffectUtil.playSound(p, Sound.ENTITY_PLAYER_LEVELUP);
+				SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
 			}
 		}
 	}
@@ -258,7 +257,7 @@ public class Game extends Thread {
 		p.setLevel(0);
 		if(AbilityWarSettings.getStartLevel() > 0) {
 			p.giveExpLevels(AbilityWarSettings.getStartLevel());
-			EffectUtil.playSound(p, Sound.ENTITY_PLAYER_LEVELUP);
+			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
 		}
 	}
 	

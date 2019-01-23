@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -17,6 +19,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import Marlang.AbilityWar.API.Events.AbilityWarJoinEvent;
@@ -200,7 +203,7 @@ public class GameListener extends Module implements Listener {
 			}
 		}
 	}
-	
+
 	/**
 	 * 패시브 Listener
 	 */
@@ -214,7 +217,49 @@ public class GameListener extends Module implements Listener {
 			}
 		}
 	}
-	
+
+	/**
+	 * 패시브 Listener
+	 */
+	@EventHandler
+	public void BlockBreakPassive(BlockBreakEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				if(!Ability.isRestricted()) {
+					Ability.PassiveSkill(e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 패시브 Listener
+	 */
+	@EventHandler
+	public void BlockExplodePassive(BlockExplodeEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				if(!Ability.isRestricted()) {
+					Ability.PassiveSkill(e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 패시브 Listener
+	 */
+	@EventHandler
+	public void BlockExplodePassive(PlayerMoveEvent e) {
+		if(AbilityWarThread.isGameTaskRunning()) {
+			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+				if(!Ability.isRestricted()) {
+					Ability.PassiveSkill(e);
+				}
+			}
+		}
+	}
+
 	public ActiveMaterialType getMaterialType(Material m) {
 		for(ActiveMaterialType Type : ActiveMaterialType.values()) {
 			if(Type.getMaterial().equals(m)) {

@@ -30,10 +30,21 @@ abstract public class AbilityBase {
 	
 	abstract public void PassiveSkill(Event event);
 	
+	abstract public void AbilityEvent(EventType type);
+	
+	public static enum EventType {
+		
+		AbilityDelete,
+		RestrictClear;
+		
+	}
+	
 	/**
 	 * 플레이어 능력 삭제시 사용
 	 */
 	public void DeleteAbility() {
+		AbilityEvent(EventType.AbilityDelete);
+		
 		for(TimerBase timer : timers) {
 			timer.StopTimer(true);
 		}
@@ -77,6 +88,10 @@ abstract public class AbilityBase {
 	
 	public void setRestricted(boolean restricted) {
 		Restricted = restricted;
+		
+		if(!restricted) {
+			AbilityEvent(EventType.RestrictClear);
+		}
 	}
 	
 	public static enum ActiveClickType {

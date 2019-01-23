@@ -3,7 +3,6 @@ package Marlang.AbilityWar.Ability.List;
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Particle;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -15,6 +14,7 @@ import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.ParticleLib;
 
 public class Ares extends AbilityBase {
 	
@@ -51,7 +51,8 @@ public class Ares extends AbilityBase {
 	public Ares() {
 		super("아레스", Rank.God, 
 				ChatColor.translateAlternateColorCodes('&', "&f전쟁의 신 아레스."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 데미지를 주며,"),
+				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 끌고 갑니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 		
 		registerTimer(Cool);
 		
@@ -62,7 +63,7 @@ public class Ares extends AbilityBase {
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, 7, SkillType.Active, Cool) {
+	SkillTimer Skill = new SkillTimer(this, 14, SkillType.Active, Cool) {
 		
 		boolean DashIntoTheAir = DashConfig.getValue();
 		int Damage = DamageConfig.getValue();
@@ -77,7 +78,7 @@ public class Ares extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			Player p = getPlayer();
 			
-			p.getWorld().spawnParticle(Particle.LAVA, p.getLocation(), 40, 4, 4, 4);
+			ParticleLib.LAVA.spawnParticle(p.getLocation(), 40, 4, 4, 4);
 			
 			if(DashIntoTheAir) {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection()));
@@ -90,6 +91,10 @@ public class Ares extends AbilityBase {
 					d.damage(Damage, p);
 					Attacked.add(d);
 				}
+			}
+			
+			for(Damageable d : Attacked) {
+				d.teleport(p);
 			}
 		}
 	};
@@ -107,5 +112,8 @@ public class Ares extends AbilityBase {
 	
 	@Override
 	public void PassiveSkill(Event event) {}
+
+	@Override
+	public void AbilityEvent(EventType type) {}
 	
 }

@@ -1,13 +1,12 @@
 package Marlang.AbilityWar.Ability.Timer;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
 import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 /**
  * Duration Timer
@@ -45,12 +44,12 @@ abstract public class DurationTimer extends TimerBase {
 		
 		if(Seconds == (Duration / 2)) {
 			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Seconds)));
-			EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 		}
 		
 		if(Seconds <= 5 && Seconds >= 1) {
 			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Seconds)));
-			EffectUtil.playSound(Ability.getPlayer(), Sound.BLOCK_NOTE_HAT);
+			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 		}
 	}
 	

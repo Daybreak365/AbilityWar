@@ -36,7 +36,8 @@ public class AbilityWarProgressEvent extends Event {
 	public static enum Progress {
 		
 		AbilitySelect_STARTED, AbilitySelect_FINISHED,
-		Game_STARTED;
+		Game_STARTED, Game_ENDED,
+		Invincibility_STARTED, Invincibility_ENDED;
 		
 	}
 	

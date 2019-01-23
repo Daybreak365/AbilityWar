@@ -5,12 +5,13 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Utils.FileManager;
+import Marlang.AbilityWar.Utils.Messager;
 
 public enum ConfigNodes {
 	
 	Game_Header("게임", "",
-			"# 모든 콘피그는 인게임에서 /va config 명령어로",
-			"# 변경할 수 있습니다."),
+			"# 모든 콘피그는 인게임에서 /ability config 명령어나",
+			"# /ability util 명령어로 변경할 수 있습니다."),
 	Game_NoHunger("게임.배고픔", true,
 			"# 배고픔 무제한 활성화 여부"),
 	Game_StartLevel("게임.레벨", 180,
@@ -53,7 +54,9 @@ public enum ConfigNodes {
 			"# 마치 구 버전에서 플레이하고 있는 것처럼 느끼게 해줍니다.",
 			"# 구 버전 설정은 능력자 전쟁이 시작되면 적용됩니다."),
 	Game_OldMechanics_Enchant("게임.구버전.마법부여", false,
-			"# 마법 부여를 청금석 없이 할 수 있게 해줍니다.");
+			"# 마법 부여를 청금석 없이 할 수 있게 해줍니다."),
+	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
+			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다.");
 	
 	String Path;
 	Object Default;

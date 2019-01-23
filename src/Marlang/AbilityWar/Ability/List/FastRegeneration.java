@@ -11,7 +11,7 @@ import Marlang.AbilityWar.Utils.TimerBase;
 
 public class FastRegeneration extends AbilityBase {
 	
-	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>("빠른회복", "RegenSpeed", 15,
+	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>("빠른회복", "RegenSpeed", 20,
 			"# 회복 속도를 설정합니다.",
 			"# 숫자가 낮을수록 회복이 더욱 빨라집니다.") {
 		
@@ -26,12 +26,11 @@ public class FastRegeneration extends AbilityBase {
 		super("빠른 회복", Rank.A, 
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다.")
 				);
-		Skill.setPeriod(RegenSpeedConfig.getValue());
-		registerTimer(Skill);
-		Skill.StartTimer();
+		Passive.setPeriod(RegenSpeedConfig.getValue());
+		registerTimer(Passive);
 	}
 	
-	TimerBase Skill = new TimerBase() {
+	TimerBase Passive = new TimerBase() {
 		
 		@Override
 		public void TimerStart() {}
@@ -60,5 +59,12 @@ public class FastRegeneration extends AbilityBase {
 	
 	@Override
 	public void PassiveSkill(Event event) {}
+
+	@Override
+	public void AbilityEvent(EventType type) {
+		if(type.equals(EventType.RestrictClear)) {
+			Passive.StartTimer();
+		}
+	}
 	
 }

@@ -1,7 +1,6 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -12,9 +11,9 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.SkillTimer;
 import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.EffectUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
+import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class Feather extends AbilityBase {
 
@@ -96,12 +95,15 @@ public class Feather extends AbilityBase {
 						if(e.getCause().equals(DamageCause.FALL)) {
 							e.setCancelled(true);
 							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a낙하 데미지를 받지 않습니다."));
-							EffectUtil.playSound(p, Sound.ENTITY_EXPERIENCE_ORB_PICKUP);
+							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 						}
 					}
 				}
 			}
 		}
 	}
+
+	@Override
+	public void AbilityEvent(EventType type) {}
 	
 }

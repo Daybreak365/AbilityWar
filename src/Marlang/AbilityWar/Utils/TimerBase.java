@@ -24,6 +24,7 @@ abstract public class TimerBase {
 
 	boolean InfiniteTimer;
 	boolean ProcessDuringGame = true;
+	boolean SilentNotice = false;
 	int Count;
 	int MaxCount;
 
@@ -58,7 +59,7 @@ abstract public class TimerBase {
 		Bukkit.getScheduler().cancelTask(Task);
 		TempCount = Count;
 		this.Task = -1;
-		if(!Silent) {
+		if(!Silent || getSilentNotice()) {
 			TimerEnd();
 		}
 	}
@@ -77,6 +78,14 @@ abstract public class TimerBase {
 
 	public int getTempCount() {
 		return TempCount;
+	}
+
+	public boolean getSilentNotice() {
+		return SilentNotice;
+	}
+
+	public void setSilentNotice(boolean silentNotice) {
+		SilentNotice = silentNotice;
 	}
 
 	/**
