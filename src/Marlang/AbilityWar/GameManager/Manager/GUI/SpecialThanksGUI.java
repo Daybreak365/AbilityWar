@@ -20,6 +20,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import Marlang.AbilityWar.AbilityWar;
 
+/**
+ * 기여자 목록 GUI
+ */
 public class SpecialThanksGUI implements Listener {
 	
 	private static final SpecialThank[] SpecialThanks = {

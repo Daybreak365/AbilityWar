@@ -1,5 +1,8 @@
 package Marlang.AbilityWar.GameManager.Manager.GUI;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,6 +20,9 @@ import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 
+/**
+ * 능력 부여 GUI
+ */
 public class AbilityGUI implements Listener {
 
 	Player p;
@@ -27,7 +33,18 @@ public class AbilityGUI implements Listener {
 		this.p = p;
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
+		
+		Values = new ArrayList<String>(AbilityList.values());
+		Values.sort(new Comparator<String>() {
+			
+			public int compare(String obj1, String obj2) {
+				return obj1.compareToIgnoreCase(obj2);
+			}
+			
+		});
 	}
+	
+	ArrayList<String> Values;
 	
 	Integer PlayerPage = 1;
 	
@@ -35,15 +52,15 @@ public class AbilityGUI implements Listener {
 	
 	public void openAbilitySelectGUI(Integer page) {
 		try {
-			if ((AbilityList.values().size() - 1) / 36 + 1 < page)
+			if ((Values.size() - 1) / 36 + 1 < page)
 				page = 1;
 			if(page < 1) page = 1;
 			AbilitySelectGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
 			PlayerPage = page;
 			int Count = 0;
-			Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;
+			Integer MaxPage = ((Values.size() - 1) / 36) + 1;
 			
-			for (String name : AbilityList.values()) {
+			for (String name : Values) {
 				ItemStack is = new ItemStack(Material.IRON_BLOCK);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));

@@ -18,11 +18,15 @@ import Marlang.AbilityWar.Ability.List.EnergyBlocker;
 import Marlang.AbilityWar.Ability.List.FastRegeneration;
 import Marlang.AbilityWar.Ability.List.Feather;
 import Marlang.AbilityWar.Ability.List.FireFightWithFire;
+import Marlang.AbilityWar.Ability.List.Flora;
 import Marlang.AbilityWar.Ability.List.Gladiator;
 import Marlang.AbilityWar.Ability.List.Hacker;
 import Marlang.AbilityWar.Ability.List.HigherBeing;
 import Marlang.AbilityWar.Ability.List.Muse;
+import Marlang.AbilityWar.Ability.List.Nex;
+import Marlang.AbilityWar.Ability.List.ShowmanShip;
 import Marlang.AbilityWar.Ability.List.Terrorist;
+import Marlang.AbilityWar.Ability.List.Virtus;
 import Marlang.AbilityWar.Ability.List.Void;
 import Marlang.AbilityWar.Ability.List.Yeti;
 import Marlang.AbilityWar.Ability.List.Zeus;
@@ -74,6 +78,10 @@ public class AbilityList {
 		registerAbility("해커", Hacker.class);
 		registerAbility("뮤즈", Muse.class);
 		registerAbility("추적자", Chaser.class);
+		registerAbility("플로라", Flora.class);
+		registerAbility("쇼맨쉽", ShowmanShip.class);
+		registerAbility("베르투스", Virtus.class);
+		registerAbility("넥스", Nex.class);
 	}
 	
 	public static ArrayList<String> values() {
@@ -85,7 +93,7 @@ public class AbilityList {
 		
 		return Values;
 	}
-	
+
 	public static Class<? extends AbilityBase> getByString(String name) {
 		return Abilities.get(name);
 	}

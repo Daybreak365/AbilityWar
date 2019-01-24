@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.GameManager.Manager.GUI;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +19,9 @@ import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.GameManager.Game;
 import Marlang.AbilityWar.Utils.Messager;
 
+/**
+ * 관전자 설정 GUI
+ */
 public class SpectatorGUI implements Listener {
 	
 	Player p;
@@ -45,6 +49,14 @@ public class SpectatorGUI implements Listener {
 				list.add(p);
 			}
 		}
+		
+		list.sort(new Comparator<String>() {
+			
+			public int compare(String obj1, String obj2) {
+				return obj1.compareToIgnoreCase(obj2);
+			}
+			
+		});
 		
 		return list;
 	}

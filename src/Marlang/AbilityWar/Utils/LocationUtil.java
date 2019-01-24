@@ -1,11 +1,15 @@
 package Marlang.AbilityWar.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -14,7 +18,6 @@ import Marlang.AbilityWar.GameManager.Game;
 
 /**
  * Location Util
- * 
  * @author _Marlang 말랑
  */
 public class LocationUtil {
@@ -28,28 +31,57 @@ public class LocationUtil {
 		
 		return ((X - Center_X) * (X - Center_X)) + ((Z - Center_Z) * (Z - Center_Z)) < (radius * radius);
 	}
+
+	public static ArrayList<Block> getBlocks(Location location, Integer radius) {
+		ArrayList<Block> Blocks = new ArrayList<Block>();
+		
+		Integer X = location.getBlockX();
+		Integer Y = location.getBlockY();
+		Integer	Z = location.getBlockZ();
+		
+		for (Integer x = X - radius; x <= X + radius; x++)
+			for (Integer y = Y - radius; y <= Y + radius; y++)
+				for (Integer z = Z - radius; z <= Z + radius; z++) {
+					Location l = new Location(location.getWorld(), x, y, z);
+					double distance = location.distance(l);
+					if (distance < (radius ^ 2)) {
+						if(!l.getBlock().getType().equals(Material.AIR)) {
+							Blocks.add(l.getBlock());
+						}
+					}
+				}
+		
+		return Blocks;
+	}
 	
+	/**
+	 * 기준에서 가장 가까운 플레이어를 받아옵니다.
+	 * @param Base 기준이 되는 플레이어.
+	 */
 	public static Player getNearestPlayer(Player Base) {
+		List<Player> Players;
+		
+		if(AbilityWarThread.isGameTaskRunning()) {
+			Game game = AbilityWarThread.getGame();
+			Players = game.getPlayers().stream().filter(p -> !game.getDeathManager().isEliminated(p)).collect(Collectors.toList());
+		} else {
+			Players = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+		}
+		
 		Location l = Base.getLocation();
-		Player closestPlayer = null;
-		double closestDistance = 0.0;
-
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (Game.getSpectators().contains(p.getName())) {
-				continue;
-			}
-
-			if (p.equals(Base))
-				continue;
-
-			double distance = p.getLocation().distanceSquared(l);
-			if (closestPlayer == null || distance < closestDistance) {
-				closestDistance = distance;
-				closestPlayer = p;
+		Double Distance = Double.MAX_VALUE;
+		Player player = null;
+		for(Player p : Players) {
+			if(!p.equals(Base)) {
+				Double d = l.distance(p.getLocation());
+				if(d < Distance) {
+					Distance = d;
+					player = p;
+				}
 			}
 		}
-
-		return closestPlayer;
+		
+		return player;
 	}
 
 	public static ArrayList<Location> getCircle(Location center, int radius, int amount, boolean HighestY) {
@@ -98,9 +130,12 @@ public class LocationUtil {
 		for (Entity e : p.getNearbyEntities(Xdis, Ydis, Xdis)) {
 			if (e instanceof Damageable) {
 				if (e instanceof Player) {
-					Player player = (Player) e;
-					if (Game.getSpectators().contains(player.getName())) {
-						continue;
+					if(AbilityWarThread.isGameTaskRunning()) {
+						Game game = AbilityWarThread.getGame();
+						Player player = (Player) e;
+						if(!game.getPlayers().contains(player) || game.getDeathManager().isEliminated(player)) {
+							continue;
+						}
 					}
 				}
 				Entities.add((Damageable) e);
@@ -115,9 +150,12 @@ public class LocationUtil {
 		for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
 			if (e instanceof Damageable) {
 				if (e instanceof Player) {
-					Player player = (Player) e;
-					if (Game.getSpectators().contains(player.getName())) {
-						continue;
+					if(AbilityWarThread.isGameTaskRunning()) {
+						Game game = AbilityWarThread.getGame();
+						Player player = (Player) e;
+						if(!game.getPlayers().contains(player) || game.getDeathManager().isEliminated(player)) {
+							continue;
+						}
 					}
 				}
 				Entities.add((Damageable) e);
@@ -132,9 +170,12 @@ public class LocationUtil {
 		for (Entity e : p.getNearbyEntities(Xdis, Ydis, Xdis)) {
 			if (e instanceof Damageable) {
 				if (e instanceof Player) {
-					Player player = (Player) e;
-					if (Game.getSpectators().contains(player.getName())) {
-						continue;
+					if(AbilityWarThread.isGameTaskRunning()) {
+						Game game = AbilityWarThread.getGame();
+						Player player = (Player) e;
+						if(!game.getPlayers().contains(player) || game.getDeathManager().isEliminated(player)) {
+							continue;
+						}
 					}
 				}
 				Entities.add((Damageable) e);
@@ -149,8 +190,12 @@ public class LocationUtil {
 		for (Entity e : p.getNearbyEntities(Xdis, Ydis, Xdis)) {
 			if (e instanceof Player) {
 				Player player = (Player) e;
-				if (Game.getSpectators().contains(player.getName())) {
-					continue;
+
+				if(AbilityWarThread.isGameTaskRunning()) {
+					Game game = AbilityWarThread.getGame();
+					if(game.getPlayers().contains(player) && !game.getDeathManager().isEliminated(player)) {
+						Players.add(player);
+					}
 				} else {
 					Players.add(player);
 				}
@@ -161,19 +206,23 @@ public class LocationUtil {
 	}
 
 	public static ArrayList<Player> getNearbyPlayers(Location l, Integer Xdis, Integer Ydis) {
-		ArrayList<Player> Entities = new ArrayList<Player>();
+		ArrayList<Player> Players = new ArrayList<Player>();
 		for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
 			if (e instanceof Player) {
 				Player player = (Player) e;
-				if (Game.getSpectators().contains(player.getName())) {
-					continue;
+
+				if(AbilityWarThread.isGameTaskRunning()) {
+					Game game = AbilityWarThread.getGame();
+					if(game.getPlayers().contains(player) && !game.getDeathManager().isEliminated(player)) {
+						Players.add(player);
+					}
 				} else {
-					Entities.add(player);
+					Players.add(player);
 				}
 			}
 		}
 
-		return Entities;
+		return Players;
 	}
 
 }

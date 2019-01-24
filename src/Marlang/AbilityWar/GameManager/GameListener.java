@@ -154,7 +154,7 @@ public class GameListener extends Module implements Listener {
 			game.getAbilities().keySet().removeAll(AbilitiesToRemove);
 			game.getAbilities().putAll(AbilitiesToAdd);
 			
-			AbilitySelect select = AbilityWarThread.getAbilitySelect();
+			AbilitySelect select = game.getAbilitySelect();
 			if(select != null) {
 				ArrayList<Player> SelectToRemove = new ArrayList<Player>();
 				HashMap<Player, Boolean> SelectToAdd = new HashMap<Player, Boolean>();

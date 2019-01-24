@@ -45,6 +45,7 @@ public class DarkVision extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 0), true);
+			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 40, 2), true);
 		}
 		
 		@Override

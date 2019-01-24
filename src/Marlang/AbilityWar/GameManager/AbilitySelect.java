@@ -12,12 +12,13 @@ import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.TimerBase;
 
 /**
  * 능력 선택
  * @author _Marlang 말랑
  */
-public class AbilitySelect extends Thread {
+public class AbilitySelect extends TimerBase {
 	
 	public HashMap<Player, Boolean> AbilitySelect = new HashMap<Player, Boolean>();
 
@@ -31,23 +32,17 @@ public class AbilitySelect extends Thread {
 		return AbilitySelect.put(p, bool);
 	}
 	
-	public AbilitySelect(ArrayList<Player> Players) {
+	private Game game;
+	
+	public AbilitySelect(ArrayList<Player> Players, Game game) {
 		for(Player p : Players) {
 			AbilitySelect.put(p, false);
 		}
+		
+		this.game = game;
 	}
 	
 	int AbilitySelectTime = 0;
-
-	@Override
-	public void run() {
-		if(!isEveryoneReady()) {
-			AbilitySelectTime++;
-			AbilitySelectWarning(getAbilitySelectTime());
-		} else {
-			AbilityWarThread.toggleAbilitySelectTask(false);
-		}
-	}
 	
 	/**
 	 * bool이 true면 일반 확정, false면 강제 확정
@@ -58,13 +53,13 @@ public class AbilitySelect extends Thread {
 			
 			if(bool) {
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6능력을 확정하셨습니다. 다른 플레이어를 기다려주세요."));
+				
+				Messager.broadcastStringList(Messager.getStringList(
+						ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."),
+						ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayers() + "명")));
 			} else {
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6능력이 강제로 확정되었습니다. 다른 플레이어를 기다려주세요."));
 			}
-			
-			Messager.broadcastStringList(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."),
-					ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayers() + "명")));
 		}
 	}
 	
@@ -100,7 +95,7 @@ public class AbilitySelect extends Thread {
 				IdleAbilities.remove(Ability);
 				
 				Ability.setPlayer(p);
-				AbilityWarThread.getGame().addAbility(Ability);
+				game.addAbility(Ability);
 				
 				Messager.sendStringList(p, Messager.getStringList(
 						ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
@@ -109,12 +104,7 @@ public class AbilitySelect extends Thread {
 			}
 		} else {
 			Messager.broadcastErrorMessage("사용 가능한 능력의 수가 플레이어의 수보다 적어 게임을 종료합니다.");
-			if(AbilityWarThread.isAbilitySelectTaskRunning()) {
-				AbilityWarThread.toggleAbilitySelectTask(false);
-			}
-			if(AbilityWarThread.isAbilitySelectTaskRunning()) {
-				AbilityWarThread.toggleAbilitySelectTask(false);
-			}
+			this.StopTimer(true);
 			AbilityWarThread.toggleGameTask(false);
 			AbilityWarThread.setGame(null);
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
@@ -128,20 +118,23 @@ public class AbilitySelect extends Thread {
 		if(IdleAbilities.size() > 0) {
 			Random random = new Random();
 			
-			AbilityBase oldAbility = AbilityWarThread.getGame().getAbilities().get(p);
-			oldAbility.DeleteAbility();
-			AbilityBase Ability = IdleAbilities.get(random.nextInt(IdleAbilities.size()));
-			IdleAbilities.remove(Ability);
-			
-			Ability.setPlayer(p);
-			
-			AbilityWarThread.getGame().addAbility(Ability);
-			
-			Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
-			
-			decideAbility(p, false);
+			AbilityBase oldAbility = game.getAbilities().get(p);
+			if(oldAbility != null) {
+				AbilityBase Ability = IdleAbilities.get(random.nextInt(IdleAbilities.size()));
+				IdleAbilities.remove(Ability);
+				Ability.setPlayer(p);
+				
+				game.removeAbility(p);
+				game.addAbility(Ability);
+				
+				Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
+				
+				decideAbility(p, false);
 
-			IdleAbilities.add(oldAbility);
+				try {
+					IdleAbilities.add(oldAbility.getClass().newInstance());
+				} catch(Exception ex) {}
+			}
 		} else {
 			Messager.sendErrorMessage(p, "능력을 변경할 수 없습니다.");
 		}
@@ -184,6 +177,32 @@ public class AbilitySelect extends Thread {
 
 	public int getAbilitySelectTime() {
 		return AbilitySelectTime;
+	}
+	
+	boolean AbilitySelectFinished = false;
+	
+	public boolean isAbilitySelectFinished() {
+		return AbilitySelectFinished;
+	}
+	
+	@Override
+	public void TimerStart() {
+		
+	}
+
+	@Override
+	public void TimerProcess(Integer Seconds) {
+		if(!isEveryoneReady()) {
+			AbilitySelectTime++;
+			AbilitySelectWarning(getAbilitySelectTime());
+		} else {
+			this.StopTimer(false);
+		}
+	}
+
+	@Override
+	public void TimerEnd() {
+		AbilitySelectFinished = true;
 	}
 	
 }

@@ -198,6 +198,18 @@ public class SettingWizard implements Listener {
 				VisualEffect.setItemMeta(VisualEffectMeta);
 				
 				GameGUI.setItem(i, VisualEffect);
+			} else if(i.equals(32)) {
+				ItemStack AbilityDraw = new ItemStack(Material.DISPENSER);
+				ItemMeta AbilityDrawMeta = AbilityDraw.getItemMeta();
+				AbilityDrawMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 추첨"));
+				AbilityDrawMeta.setLore(Messager.getStringList(
+						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
+						"",
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getDrawAbility() ? "&a활성화" : "&c비활성화"))
+						));
+				AbilityDraw.setItemMeta(AbilityDrawMeta);
+				
+				GameGUI.setItem(i, AbilityDraw);
 			} else {
 				GameGUI.setItem(i, Deco);
 			}
@@ -424,6 +436,9 @@ public class SettingWizard implements Listener {
 						openGameGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b시각 효과"))) {
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_VisualEffect, !AbilityWarSettings.getVisualEffect());
+						openGameGUI();
+					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b능력 추첨"))) {
+						AbilityWarSettings.setNewProperty(ConfigNodes.Game_DrawAbility, !AbilityWarSettings.getDrawAbility());
 						openGameGUI();
 					}
 				}

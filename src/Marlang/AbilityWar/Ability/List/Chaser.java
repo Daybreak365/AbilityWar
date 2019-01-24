@@ -40,9 +40,7 @@ public class Chaser extends AbilityBase {
 	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.LeftClick)) {
-				if(!Cool.isCooldown()) {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&a대상&f이 없습니다!"));
-				}
+				Cool.isCooldown();
 			} else if(ct.equals(ActiveClickType.RightClick)) {
 				if(target != null) {
 					int X = (int) target.getLocation().getX();

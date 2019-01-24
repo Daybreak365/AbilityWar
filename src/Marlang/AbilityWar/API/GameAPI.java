@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList;
 import Marlang.AbilityWar.API.Exception.GameException;
 import Marlang.AbilityWar.API.Exception.PlayerException;
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.GameManager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Game;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.TimerBase;
@@ -63,10 +64,7 @@ public class GameAPI {
 	public static void StopGame() throws GameException {
 		if(AbilityWarThread.isGameTaskRunning()) {
 			TimerBase.StopAllTasks();
-			HandlerList.unregisterAll(AbilityWarThread.getGame().getDeathManager());
-			if(AbilityWarThread.isAbilitySelectTaskRunning()) {
-				AbilityWarThread.toggleAbilitySelectTask(false);
-			}
+			HandlerList.unregisterAll(AbilityWarThread.getGame().getDeathManager());	
 			AbilityWarThread.toggleGameTask(false);
 			AbilityWarThread.setGame(null);
 		} else {
@@ -80,8 +78,9 @@ public class GameAPI {
 	 * @throws GameException 능력 선택이 진행중이지 않은 경우
 	 */
 	public void SkipAbilitySelect(String AdminName) throws GameException {
-		if(AbilityWarThread.isAbilitySelectTaskRunning()) {
-			AbilityWarThread.getAbilitySelect().Skip(AdminName);
+		AbilitySelect select = game.getAbilitySelect();
+		if(select != null && !select.isAbilitySelectFinished()) {
+			select.Skip(AdminName);
 		} else {
 			throw new GameException();
 		}
@@ -92,8 +91,9 @@ public class GameAPI {
 	 * @throws GameException 능력 선택이 진행중이지 않은 경우
 	 */
 	public void SkipAbilitySelect() throws GameException {
-		if(AbilityWarThread.isAbilitySelectTaskRunning()) {
-			AbilityWarThread.getAbilitySelect().Skip("CONSOLE");
+		AbilitySelect select = game.getAbilitySelect();
+		if(select != null && !select.isAbilitySelectFinished()) {
+			select.Skip("CONSOLE");
 		} else {
 			throw new GameException();
 		}

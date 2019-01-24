@@ -43,6 +43,8 @@ public class Game extends Thread {
 	
 	private GameAPI gameAPI = new GameAPI(this);
 	
+	private AbilitySelect abilitySelect;
+	
 	private boolean GameStarted = false;
 	
 	TimerBase NoHunger = new TimerBase() {
@@ -65,7 +67,7 @@ public class Game extends Thread {
 	
 	@Override
 	public void run() {
-		if(AbilityWarThread.getAbilitySelect() == null) {
+		if(abilitySelect == null || (abilitySelect != null && abilitySelect.isAbilitySelectFinished())) {
 			Seconds++;
 			GameProgress(Seconds);
 		}
@@ -262,8 +264,9 @@ public class Game extends Thread {
 	}
 	
 	public void readyAbility() {
-		AbilityWarThread.toggleAbilitySelectTask(true);
-		AbilityWarThread.getAbilitySelect().randomAbilityToAll();
+		abilitySelect = new AbilitySelect(getPlayers(), this);
+		abilitySelect.StartTimer();
+		abilitySelect.randomAbilityToAll();
 	}
 	
 	public Invincibility getInvincibility() {
@@ -322,6 +325,10 @@ public class Game extends Thread {
 		for(AbilityBase a : Abilities.values()) {
 			a.setRestricted(bool);
 		}
+	}
+	
+	public AbilitySelect getAbilitySelect() {
+		return abilitySelect;
 	}
 	
 	public GameAPI getGameAPI() {

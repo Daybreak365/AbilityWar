@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.GameManager.Manager.GUI;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +20,9 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
+/**
+ * 능력 금지 GUI
+ */
 public class BlackListGUI implements Listener {
 	
 	Player p;
@@ -46,6 +50,14 @@ public class BlackListGUI implements Listener {
 				list.add(name);
 			}
 		}
+		
+		list.sort(new Comparator<String>() {
+			
+			public int compare(String obj1, String obj2) {
+				return obj1.compareToIgnoreCase(obj2);
+			}
+			
+		});
 		
 		return list;
 	}
