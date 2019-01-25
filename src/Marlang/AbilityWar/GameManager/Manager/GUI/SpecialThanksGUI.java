@@ -11,14 +11,15 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-
-import Marlang.AbilityWar.AbilityWar;
+import org.bukkit.plugin.Plugin;
 
 /**
  * 기여자 목록 GUI
@@ -58,9 +59,9 @@ public class SpecialThanksGUI implements Listener {
 	
 	Player p;
 	
-	public SpecialThanksGUI(Player p, AbilityWar Plugin) {
+	public SpecialThanksGUI(Player p, Plugin plugin) {
 		this.p = p;
-		Bukkit.getPluginManager().registerEvents(this, Plugin);
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 	
 	Integer PlayerPage = 1;
@@ -185,6 +186,13 @@ public class SpecialThanksGUI implements Listener {
 		p.openInventory(STGUI);
 	}
 
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent e) {
+		if(e.getInventory().equals(this.STGUI)) {
+			HandlerList.unregisterAll(this);
+		}
+	}
+	
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(STGUI)) {

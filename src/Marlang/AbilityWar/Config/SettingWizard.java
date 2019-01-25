@@ -16,8 +16,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
-import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
 import Marlang.AbilityWar.Utils.FileManager;
 import Marlang.AbilityWar.Utils.Messager;
@@ -30,7 +30,7 @@ public class SettingWizard implements Listener {
 	
 	Player p;
 	
-	public SettingWizard(Player p, AbilityWar Plugin) {
+	public SettingWizard(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}

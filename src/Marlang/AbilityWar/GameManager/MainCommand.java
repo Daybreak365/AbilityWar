@@ -178,7 +178,7 @@ public class MainCommand implements CommandExecutor {
 						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 					}
 				}
-			} else if(split[0].equalsIgnoreCase("uti")) {
+			} else if(split[0].equalsIgnoreCase("util")) {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					if(p.isOp()) {
@@ -313,7 +313,7 @@ public class MainCommand implements CommandExecutor {
 						Messager.formatCommand(label, "skip", "모든 유저의 능력을 강제로 확정합니다.", true),
 						Messager.formatCommand(label, "reload", "능력자 전쟁 콘피그를 리로드합니다.", true),
 						Messager.formatCommand(label, "config", "능력자 전쟁 콘피그 명령어를 확인합니다.", true),
-						Messager.formatCommand(label, "uti", "능력자 전쟁 유틸 명령어를 확인합니다.", true),
+						Messager.formatCommand(label, "util", "능력자 전쟁 유틸 명령어를 확인합니다.", true),
 						Messager.formatCommand(label, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false)));
 				break;
 			default:
@@ -350,10 +350,10 @@ public class MainCommand implements CommandExecutor {
 				Messager.sendStringList(sender, Messager.getStringList(
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
-						Messager.formatCommand(label + " uti", "abi <대상>", "대상에게 능력을 임의로 부여합니다.", true),
-						Messager.formatCommand(label + " uti", "spec", "관전자 설정 GUI를 띄웁니다.", true),
-						Messager.formatCommand(label + " uti", "ablist", "능력자 목록을 확인합니다.", true),
-						Messager.formatCommand(label + " uti", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true)));
+						Messager.formatCommand(label + " util", "abi <대상>", "대상에게 능력을 임의로 부여합니다.", true),
+						Messager.formatCommand(label + " util", "spec", "관전자 설정 GUI를 띄웁니다.", true),
+						Messager.formatCommand(label + " util", "ablist", "능력자 목록을 확인합니다.", true),
+						Messager.formatCommand(label + " util", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true)));
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");

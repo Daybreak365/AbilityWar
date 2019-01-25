@@ -2,6 +2,7 @@ package Marlang.AbilityWar;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
@@ -19,9 +20,9 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class AbilityWar extends JavaPlugin {
 	
-	private static AbilityWar Plugin;
+	private static Plugin Plugin;
 	
-	public static AbilityWar getPlugin() {
+	public static Plugin getPlugin() {
 		return AbilityWar.Plugin;
 	}
 	

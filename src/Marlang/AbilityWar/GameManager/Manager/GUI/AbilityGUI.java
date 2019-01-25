@@ -8,13 +8,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
-import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
@@ -29,7 +31,7 @@ public class AbilityGUI implements Listener {
 	
 	Player target;
 	
-	public AbilityGUI(Player p, Player target, AbilityWar Plugin) {
+	public AbilityGUI(Player p, Player target, Plugin Plugin) {
 		this.p = p;
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
@@ -100,6 +102,13 @@ public class AbilityGUI implements Listener {
 			
 			p.openInventory(AbilitySelectGUI);
 		} catch(Exception e) {}
+	}
+	
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent e) {
+		if(e.getInventory().equals(this.AbilitySelectGUI)) {
+			HandlerList.unregisterAll(this);
+		}
 	}
 	
 	@EventHandler

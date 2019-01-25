@@ -2,16 +2,22 @@ package Marlang.AbilityWar.GameManager.Manager;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent;
+import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.GameManager.Game;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 
@@ -20,6 +26,23 @@ import Marlang.AbilityWar.Utils.Messager;
  * @author _Marlang 말랑
  */
 public class DeathManager implements Listener {
+	
+	Game game;
+	
+	public DeathManager(Game game) {
+		this.game = game;
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+	}
+	
+	/**
+	 * 게임 종료시 Listener Unregister
+	 */
+	@EventHandler
+	public void onGameProcess(AbilityWarProgressEvent e) {
+		if(e.getProgress().equals(Progress.Game_ENDED)) {
+			HandlerList.unregisterAll(this);
+		}
+	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onDeath(PlayerDeathEvent e) {
@@ -54,27 +77,25 @@ public class DeathManager implements Listener {
 		} else {
 			e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 죽었습니다."));
 		}
-		
-		if(AbilityWarThread.isGameTaskRunning()) {
-			if(AbilityWarThread.getGame().isGameStarted()) {
-				if(AbilityWarSettings.getItemDrop()) {
-					e.setKeepInventory(false);
-				} else {
-					e.setKeepInventory(true);
+
+		if(AbilityWarThread.getGame().isGameStarted()) {
+			if(AbilityWarSettings.getItemDrop()) {
+				e.setKeepInventory(false);
+			} else {
+				e.setKeepInventory(true);
+			}
+			if(AbilityWarThread.getGame().getPlayers().contains(Victim)) {
+				if(AbilityWarSettings.getAbilityReveal()) {
+					if(AbilityWarThread.getGame().getAbilities().containsKey(Victim)) {
+						AbilityBase Ability = AbilityWarThread.getGame().getAbilities().get(Victim);
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + Ability.getAbilityName() + " &f능력이었습니다!"));
+					} else {
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
+					}
 				}
-				if(AbilityWarThread.getGame().getPlayers().contains(Victim)) {
-					if(AbilityWarSettings.getAbilityReveal()) {
-						if(AbilityWarThread.getGame().getAbilities().containsKey(Victim)) {
-							AbilityBase Ability = AbilityWarThread.getGame().getAbilities().get(Victim);
-							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + Ability.getAbilityName() + " &f능력이었습니다!"));
-						} else {
-							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
-						}
-					}
-					
-					if(AbilityWarSettings.getEliminate()) {
-						Eliminate(Victim);
-					}
+				
+				if(AbilityWarSettings.getEliminate()) {
+					Eliminate(Victim);
 				}
 			}
 		}

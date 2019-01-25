@@ -48,7 +48,9 @@ abstract public class TimerBase {
 	public void StartTimer() {
 		TempCount = Count;
 		this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
-		Tasks.add(this);
+		if(ProcessDuringGame) {
+			Tasks.add(this);
+		}
 		TimerStart();
 	}
 

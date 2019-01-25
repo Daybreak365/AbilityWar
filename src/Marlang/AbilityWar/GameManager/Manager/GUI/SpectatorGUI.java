@@ -8,13 +8,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
-import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.GameManager.Game;
 import Marlang.AbilityWar.Utils.Messager;
@@ -26,7 +28,7 @@ public class SpectatorGUI implements Listener {
 	
 	Player p;
 	
-	public SpectatorGUI(Player p, AbilityWar Plugin) {
+	public SpectatorGUI(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
@@ -123,6 +125,14 @@ public class SpectatorGUI implements Listener {
 		SpectateGUI.setItem(49, Page);
 		
 		p.openInventory(SpectateGUI);
+	}
+
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent e) {
+		if(e.getInventory().equals(this.SpectateGUI)) {
+			HandlerList.unregisterAll(this);
+			Bukkit.broadcastMessage("Unregistered!");
+		}
 	}
 	
 	@EventHandler

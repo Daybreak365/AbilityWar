@@ -8,13 +8,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
-import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.Messager;
@@ -27,7 +29,7 @@ public class BlackListGUI implements Listener {
 	
 	Player p;
 	
-	public BlackListGUI(Player p, AbilityWar Plugin) {
+	public BlackListGUI(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
@@ -124,6 +126,13 @@ public class BlackListGUI implements Listener {
 		BlackListGUI.setItem(49, Page);
 		
 		p.openInventory(BlackListGUI);
+	}
+
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent e) {
+		if(e.getInventory().equals(this.BlackListGUI)) {
+			HandlerList.unregisterAll(this);
+		}
 	}
 	
 	@EventHandler

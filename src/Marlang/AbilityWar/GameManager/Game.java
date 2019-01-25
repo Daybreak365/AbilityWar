@@ -17,6 +17,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Manager.DeathManager;
+import Marlang.AbilityWar.GameManager.Manager.Firewall;
 import Marlang.AbilityWar.GameManager.Manager.Invincibility;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
@@ -39,7 +40,9 @@ public class Game extends Thread {
 	
 	private Invincibility invincibility = new Invincibility(this);
 	
-	private DeathManager deathManager = new DeathManager();
+	private DeathManager deathManager = new DeathManager(this);
+	
+	private Firewall fireWall = new Firewall(this);
 	
 	private GameAPI gameAPI = new GameAPI(this);
 	
@@ -178,8 +181,6 @@ public class Game extends Thread {
 	}
 	
 	public void GameStart() {
-		Bukkit.getPluginManager().registerEvents(getDeathManager(), AbilityWar.getPlugin());
-		
 		Messager.broadcastStringList(Messager.getStringList(
 				ChatColor.translateAlternateColorCodes('&', "&e¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á"),
 				ChatColor.translateAlternateColorCodes('&', "&f                            &cAbilityWar &f- &6´É·ÂÀÚ ÀüÀï              "),
@@ -277,6 +278,10 @@ public class Game extends Thread {
 		return deathManager;
 	}
 	
+	public Firewall getFireWall() {
+		return fireWall;
+	}
+
 	public ArrayList<Player> getPlayers() {
 		return Players;
 	}
