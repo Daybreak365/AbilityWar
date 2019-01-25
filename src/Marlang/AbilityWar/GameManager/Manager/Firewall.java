@@ -20,7 +20,7 @@ import Marlang.AbilityWar.GameManager.Game;
  */
 public class Firewall implements Listener {
 	
-	Game game;
+	private Game game;
 	
 	public Firewall(Game game) {
 		this.game = game;

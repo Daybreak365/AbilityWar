@@ -60,7 +60,7 @@ public class ParticleLib {
 	public static Particles WATER_DROP = new Particles("WATER_DROP");
 	public static Particles WATER_SPLASH = new Particles("WATER_SPLASH");
 	public static Particles WATER_WAKE = new Particles("WATER_WAKE");
-	
+
 	public static class Particles {
 
 		String particle;
@@ -86,15 +86,6 @@ public class ParticleLib {
 			}
 		}
 		
-		public <T> void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, T data) {
-			if(AbilityWarSettings.getVisualEffect()) {
-				Particle p = getParticle();
-				if(p != null) {
-					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, data);
-				}
-			}
-		}
-		
 	}
-	
+
 }

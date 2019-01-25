@@ -18,7 +18,6 @@ import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 
 /**
@@ -27,7 +26,7 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class DeathManager implements Listener {
 	
-	Game game;
+	private Game game;
 	
 	public DeathManager(Game game) {
 		this.game = game;
@@ -78,16 +77,16 @@ public class DeathManager implements Listener {
 			e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 죽었습니다."));
 		}
 
-		if(AbilityWarThread.getGame().isGameStarted()) {
+		if(game.isGameStarted()) {
 			if(AbilityWarSettings.getItemDrop()) {
 				e.setKeepInventory(false);
 			} else {
 				e.setKeepInventory(true);
 			}
-			if(AbilityWarThread.getGame().getPlayers().contains(Victim)) {
+			if(game.getPlayers().contains(Victim)) {
 				if(AbilityWarSettings.getAbilityReveal()) {
-					if(AbilityWarThread.getGame().getAbilities().containsKey(Victim)) {
-						AbilityBase Ability = AbilityWarThread.getGame().getAbilities().get(Victim);
+					if(game.getAbilities().containsKey(Victim)) {
+						AbilityBase Ability = game.getAbilities().get(Victim);
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + Ability.getAbilityName() + " &f능력이었습니다!"));
 					} else {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));

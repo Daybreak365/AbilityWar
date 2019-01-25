@@ -8,7 +8,6 @@ import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
 import Marlang.AbilityWar.Utils.TimerBase;
@@ -20,8 +19,8 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
  */
 public class Invincibility extends TimerBase {
 	
-	Integer Duration = AbilityWarSettings.getInvincibilityDuration();
-	Game game;
+	private Integer Duration = AbilityWarSettings.getInvincibilityDuration();
+	private Game game;
 	
 	public Invincibility(Game game) {
 		super(AbilityWarSettings.getInvincibilityDuration() * 60);
@@ -54,7 +53,7 @@ public class Invincibility extends TimerBase {
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 해제되었습니다."));
 		SoundLib.ENTITY_ENDERDRAGON_AMBIENT.broadcastSound();
 		
-		for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+		for(AbilityBase Ability : game.getAbilities().values()) {
 			Ability.setRestricted(false);
 		}
 		

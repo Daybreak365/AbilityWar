@@ -32,6 +32,8 @@ public class Game extends Thread {
 	
 	int Seconds = 0;
 
+	private GameListener gameListener = new GameListener(this);
+	
 	private ArrayList<Player> Players = new ArrayList<Player>();
 	
 	private static ArrayList<String> Spectators = new ArrayList<String>();
@@ -270,6 +272,10 @@ public class Game extends Thread {
 		abilitySelect.randomAbilityToAll();
 	}
 	
+	public GameListener getGameListener() {
+		return gameListener;
+	}
+
 	public Invincibility getInvincibility() {
 		return invincibility;
 	}

@@ -1,10 +1,13 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
@@ -13,6 +16,7 @@ import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class Nex extends AbilityBase {
 
@@ -26,7 +30,7 @@ public class Nex extends AbilityBase {
 	};
 
 	public Nex() {
-		super("³Ø½º", Rank.A,
+		super("³Ø½º", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f»ó´ë¹æÀ» Ã¶±«·Î Å¸°ÝÇÏ¸é ÇÏ´Ã·Î ²ø°í ¿Ã¶ó°¬´Ù°¡ ³»·Á¿À¸ç ¹Ù´Ú¿¡ ³»·Á Âï½À´Ï´Ù."),
 				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(CooldownConfig.getValue())));
 
@@ -45,6 +49,10 @@ public class Nex extends AbilityBase {
 		if (mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if (ct.equals(ActiveClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
+					for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
+						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
+					}
+					SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
 					Skill.StartTimer();
 					
 					Cool.StartTimer();
@@ -54,6 +62,7 @@ public class Nex extends AbilityBase {
 	}
 
 	boolean NoFall = false;
+	boolean RunSkill = false;
 
 	TimerBase Skill = new TimerBase(4) {
 
@@ -71,6 +80,7 @@ public class Nex extends AbilityBase {
 
 		@Override
 		public void TimerEnd() {
+			RunSkill = true;
 			Vector v = new Vector(0, -4, 0);
 
 			getPlayer().setVelocity(getPlayer().getVelocity().add(v));
@@ -88,11 +98,24 @@ public class Nex extends AbilityBase {
 						if (e.getCause().equals(DamageCause.FALL)) {
 							e.setCancelled(true);
 							NoFall = false;
-							
-							for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
-								player.damage(10, getPlayer());
-							}
 						}
+					}
+				}
+			}
+		} else if(event instanceof PlayerMoveEvent) {
+			PlayerMoveEvent e = (PlayerMoveEvent) event;
+			if(e.getPlayer().equals(getPlayer())) {
+				if(RunSkill) {
+					Block b = getPlayer().getLocation().getBlock();
+					Block db = getPlayer().getLocation().subtract(0, 1, 0).getBlock();
+					
+					if(!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
+						RunSkill = false;
+						for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
+							SoundLib.ENTITY_GENERIC_EXPLODE.playSound(player);
+							player.damage(10, getPlayer());
+						}
+						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
 					}
 				}
 			}

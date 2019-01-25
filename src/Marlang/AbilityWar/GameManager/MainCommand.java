@@ -177,6 +177,8 @@ public class MainCommand implements CommandExecutor {
 					} else {
 						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 					}
+				} else {
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
 				}
 			} else if(split[0].equalsIgnoreCase("util")) {
 				if(sender instanceof Player) {

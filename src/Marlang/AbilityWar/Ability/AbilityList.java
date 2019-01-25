@@ -22,6 +22,7 @@ import Marlang.AbilityWar.Ability.List.Flora;
 import Marlang.AbilityWar.Ability.List.Gladiator;
 import Marlang.AbilityWar.Ability.List.Hacker;
 import Marlang.AbilityWar.Ability.List.HigherBeing;
+import Marlang.AbilityWar.Ability.List.Ira;
 import Marlang.AbilityWar.Ability.List.Muse;
 import Marlang.AbilityWar.Ability.List.Nex;
 import Marlang.AbilityWar.Ability.List.ShowmanShip;
@@ -82,6 +83,7 @@ public class AbilityList {
 		registerAbility("쇼맨쉽", ShowmanShip.class);
 		registerAbility("베르투스", Virtus.class);
 		registerAbility("넥스", Nex.class);
+		registerAbility("이라", Ira.class);
 	}
 	
 	public static ArrayList<String> values() {
