@@ -74,8 +74,15 @@ public class AutoUpdate {
 			if(ServerBranch != null) {
 				if(PluginBranch.equals(ServerBranch)) { //동일 버전일 경우
 					if (!IsLatest(PluginBranch)) {
+						String LatestTag = getLatestTag(PluginBranch);
 						String LatestVersion = getLatestVersion(PluginBranch);
-						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f최신 버전이 발견되었습니다&7: &b" + LatestVersion));
+						Messager.sendMessage(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "업데이트"));
+						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b" + LatestTag + " &f업데이트 &f(&7v" + LatestVersion + "&f)"));
+						String[] split = getLatestPatch(PluginBranch).split("\\n");
+						for(String s : split) {
+							Messager.sendMessage(s);
+						}
+						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2--------------------------------------------------------------"));
 
 						URL fileURL = AbilityWar.getPlugin().getClass().getProtectionDomain().getCodeSource().getLocation();
 						
@@ -130,8 +137,15 @@ public class AutoUpdate {
 				}
 			} else {
 				if (!IsLatest(PluginBranch)) {
+					String LatestTag = getLatestTag(PluginBranch);
 					String LatestVersion = getLatestVersion(PluginBranch);
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f최신 버전이 발견되었습니다&7: &b" + LatestVersion));
+					Messager.sendMessage(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "업데이트"));
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b" + LatestTag + " &f업데이트 &f(&7v" + LatestVersion + "&f)"));
+					String[] split = getLatestPatch(PluginBranch).split("\\n");
+					for(String s : split) {
+						Messager.sendMessage(s);
+					}
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2--------------------------------------------------------------"));
 
 					URL fileURL = AbilityWar.getPlugin().getClass().getProtectionDomain().getCodeSource().getLocation();
 					
@@ -219,45 +233,48 @@ public class AutoUpdate {
 		}
 	}
 	
-	private void createPatchNote(Branch branch) {
-		try {
-			URL url = new URL("https://api.github.com/repos/" + Author + "/" + Repository + "/releases");
-			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+	private void createPatchNote(Branch branch) throws Exception {
+		File PatchNote = new File("AbilityWar 패치사항.yml");
+		if(!PatchNote.exists()) PatchNote.createNewFile();
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(PatchNote, false));
+		bw.write(getLatestPatch(branch));
+		bw.flush();
+		bw.close();
+	}
+	
+	private String getLatestPatch(Branch branch) throws Exception {
+		URL url = new URL("https://api.github.com/repos/" + Author + "/" + Repository + "/releases");
+		BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+		
+		String line;
+		String result = "";
+		
+		while((line = br.readLine()) != null) {
+			result = result.concat(line);
+		}
+		
+		JSONParser parser = new JSONParser();
+		JSONArray array = (JSONArray) parser.parse(result);
+		
+		JSONObject object = null;
+		
+		for(Integer i = 0; i < array.size(); i++) {
+			JSONObject o = (JSONObject) array.get(i);
 			
-			String line;
-			String result = "";
-			
-			while((line = br.readLine()) != null) {
-				result = result.concat(line);
+			String BranchName = (String) o.get("target_commitish");
+			if(BranchName.equalsIgnoreCase(branch.getName())) {
+				object = o;
+				break;
 			}
-			
-			JSONParser parser = new JSONParser();
-			JSONArray array = (JSONArray) parser.parse(result);
-			
-			JSONObject object = null;
-			
-			for(Integer i = 0; i < array.size(); i++) {
-				JSONObject o = (JSONObject) array.get(i);
-				
-				String BranchName = (String) o.get("target_commitish");
-				if(BranchName.equalsIgnoreCase(branch.getName())) {
-					object = o;
-					break;
-				}
-			}
-			
-			if(object != null) {
-				String Note = (String) object.get("body");
-				
-				File PatchNote = new File("AbilityWar 패치사항.yml");
-				if(!PatchNote.exists()) PatchNote.createNewFile();
-				
-				BufferedWriter bw = new BufferedWriter(new FileWriter(PatchNote, false));
-				bw.write(Note);
-				bw.flush();
-				bw.close();
-			}
-		} catch(Exception ex) {}
+		}
+		
+		if(object != null) {
+			String Note = (String) object.get("body");
+			return Note;
+		} else {
+			throw new Exception();
+		}
 	}
 	
 	private void Download(HttpURLConnection connection, OutputStream output, int bufferSize) throws IOException {
@@ -280,7 +297,7 @@ public class AutoUpdate {
 			throw new Exception();
 		}
 	}
-	
+
 	private String getLatestVersion(Branch branch) throws Exception {
 		URL url = new URL("https://api.github.com/repos/" + Author + "/" + Repository + "/releases");
 		BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
@@ -309,6 +326,41 @@ public class AutoUpdate {
 		
 		if(object != null) {
 			String Version = (String) object.get("name");
+			
+			return Version;
+		} else {
+			throw new Exception();
+		}
+	}
+
+	private String getLatestTag(Branch branch) throws Exception {
+		URL url = new URL("https://api.github.com/repos/" + Author + "/" + Repository + "/releases");
+		BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+		
+		String line;
+		String result = "";
+		
+		while((line = br.readLine()) != null) {
+			result = result.concat(line);
+		}
+
+		JSONParser parser = new JSONParser();
+		JSONArray array = (JSONArray) parser.parse(result);
+		
+		JSONObject object = null;
+		
+		for(Integer i = 0; i < array.size(); i++) {
+			JSONObject o = (JSONObject) array.get(i);
+			
+			String BranchName = (String) o.get("target_commitish");
+			if(BranchName.equalsIgnoreCase(branch.getName())) {
+				object = o;
+				break;
+			}
+		}
+		
+		if(object != null) {
+			String Version = (String) object.get("tag_name");
 			
 			return Version;
 		} else {

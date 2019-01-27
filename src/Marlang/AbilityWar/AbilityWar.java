@@ -28,7 +28,7 @@ public class AbilityWar extends JavaPlugin {
 		return AbilityWar.Plugin;
 	}
 	
-	AutoUpdate au = new AutoUpdate("Marlang365", "test", Branch.Alpha, Branch.getBranchByVersion(ServerVersion.getVersion()));
+	AutoUpdate au = new AutoUpdate("Marlang365", "test", Branch.Master, Branch.getBranchByVersion(ServerVersion.getVersion()));
 	
 	@Override
 	public void onEnable() {
