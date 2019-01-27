@@ -11,8 +11,8 @@ import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.MainCommand;
 import Marlang.AbilityWar.GameManager.Module.Module;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate;
 
 /**
  * Ability War 능력자 전쟁 플러그인
@@ -29,16 +29,19 @@ public class AbilityWar extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		AbilityWar.Plugin = this;
-		
-		Load();
-		
-		Module.Setup();
-		
-		AbilityWarSettings.Setup();
-		AbilitySettings.Setup();
 
-		Messager.sendMessage("Server Version: " + Bukkit.getBukkitVersion());
-		Messager.sendMessage("플러그인이 활성화되었습니다.");
+		if(!AutoUpdate.Check()) {
+			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
+			
+			Load();
+			
+			Module.Setup();
+			
+			AbilityWarSettings.Setup();
+			AbilitySettings.Setup();
+			
+			Messager.sendMessage("플러그인이 활성화되었습니다.");
+		}
 	}
 	
 	public void Load() {
@@ -56,9 +59,6 @@ public class AbilityWar extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		if(AbilityWarThread.isGameTaskRunning()) {
-			AbilityWarThread.toggleGameTask(false);
-		}
 		Messager.sendMessage("플러그인이 비활성화되었습니다.");
 	}
 	

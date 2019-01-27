@@ -21,7 +21,7 @@ public class Messager {
 	 * 콘솔에 메시지를 전송합니다.
 	 */
 	public static void sendMessage(String msg) {
-		System.out.println(Prefix + msg);
+		Bukkit.getConsoleSender().sendMessage(Prefix + msg);
 	}
 
 	/**

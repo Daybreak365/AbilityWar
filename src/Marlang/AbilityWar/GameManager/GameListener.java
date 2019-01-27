@@ -15,7 +15,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -193,7 +192,6 @@ public class GameListener implements Listener, EventExecutor {
 		registerPassive(ProjectileLaunchEvent.class);
 		registerPassive(ProjectileHitEvent.class);
 		registerPassive(BlockBreakEvent.class);
-		registerPassive(BlockExplodeEvent.class);
 		registerPassive(PlayerMoveEvent.class);
 	}
 	

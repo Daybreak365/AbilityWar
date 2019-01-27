@@ -1,5 +1,6 @@
 package Marlang.AbilityWar.Ability.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
@@ -10,7 +11,6 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
-import net.md_5.bungee.api.ChatColor;
 
 public class Virtus extends AbilityBase {
 

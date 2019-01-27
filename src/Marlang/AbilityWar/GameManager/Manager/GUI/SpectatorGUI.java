@@ -131,7 +131,6 @@ public class SpectatorGUI implements Listener {
 	public void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.SpectateGUI)) {
 			HandlerList.unregisterAll(this);
-			Bukkit.broadcastMessage("Unregistered!");
 		}
 	}
 	

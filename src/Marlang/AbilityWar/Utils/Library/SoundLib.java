@@ -564,18 +564,25 @@ public class SoundLib {
 
 	public static class Sounds {
 
-		String sound;
+		String soundName;
+		Sound sound = null;
 
-		public Sounds(String sound) {
-			this.sound = sound;
+		public Sounds(String soundName) {
+			this.soundName = soundName;
+
+			for(Sound s : Sound.values()) {
+				if(s.toString().equalsIgnoreCase(getName())) {
+					sound = s;
+				}
+			}
 		}
 
+		public String getName() {
+			return soundName;
+		}
+		
 		public Sound getSound() {
-			if(Sound.valueOf(sound) != null) {
-				return Sound.valueOf(sound);
-			} else {
-				return null;
-			}
+			return sound;
 		}
 		
 		public void playSound(Player p) {
@@ -586,11 +593,8 @@ public class SoundLib {
 		}
 		
 		public void broadcastSound() {
-			Sound s = getSound();
-			if(s != null) {
-				for(Player p : Bukkit.getOnlinePlayers()) {
-					p.playSound(p.getLocation(), s, 10, 1);
-				}
+			for(Player p : Bukkit.getOnlinePlayers()) {
+				playSound(p);
 			}
 		}
 		
@@ -609,22 +613,32 @@ public class SoundLib {
 	
 	public static class Instruments {
 
-		String instrument;
+		String instrumentName;
+		Instrument instrument = null;
 
-		public Instruments(String instrument) {
-			this.instrument = instrument;
+		public Instruments(String instrumentName) {
+			this.instrumentName = instrumentName;
+			
+			for(Instrument i : Instrument.values()) {
+				if(i.toString().equalsIgnoreCase(getName())) {
+					instrument = i;
+				}
+			}
 		}
 
+		public String getName() {
+			return instrumentName;
+		}
+		
 		public Instrument getInstrument() {
-			if(Instrument.valueOf(instrument) != null) {
-				return Instrument.valueOf(instrument);
-			} else {
-				return null;
-			}
+			return instrument;
 		}
 		
 		public void playInstrument(Player p, Note note) {
-			p.playNote(p.getLocation(), getInstrument(), note);
+			Instrument i = getInstrument();
+			if(i != null) {
+				p.playNote(p.getLocation(), i, note);
+			}
 		}
 		
 	}

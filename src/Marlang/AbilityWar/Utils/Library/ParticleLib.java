@@ -63,18 +63,25 @@ public class ParticleLib {
 
 	public static class Particles {
 
-		String particle;
+		String particleName;
+		Particle particle = null;
 
-		public Particles(String particle) {
-			this.particle = particle;
-		}
-
-		public Particle getParticle() {
-			if(Particle.valueOf(particle) != null) {
-				return Particle.valueOf(particle);
-			} else {
-				return null;
+		public Particles(String particleName) {
+			this.particleName = particleName;
+			
+			for(Particle p : Particle.values()) {
+				if(p.toString().equalsIgnoreCase(getName())) {
+					particle = p;
+				}
 			}
+		}
+		
+		public String getName() {
+			return particleName;
+		}
+		
+		private Particle getParticle() {
+			return particle;
 		}
 
 		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ) {

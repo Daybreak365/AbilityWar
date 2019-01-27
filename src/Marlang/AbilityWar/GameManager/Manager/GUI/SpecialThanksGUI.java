@@ -149,6 +149,7 @@ public class SpecialThanksGUI implements Listener {
 				public Location getBedSpawnLocation() {
 					return null;
 				}
+				
 			});
 			im.setLore(st.getRole());
 

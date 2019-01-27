@@ -2,6 +2,7 @@ package Marlang.AbilityWar.GameManager.Manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent;
 import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
@@ -52,6 +53,12 @@ public class Invincibility extends TimerBase {
 	public void TimerEnd() {
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 해제되었습니다."));
 		SoundLib.ENTITY_ENDERDRAGON_AMBIENT.broadcastSound();
+		
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			p.sendTitle(ChatColor.translateAlternateColorCodes('&', "&c&lWarning")
+					, ChatColor.translateAlternateColorCodes('&', "&f초반 무적이 해제되었습니다.")
+					, 20, 60, 20);
+		}
 		
 		for(AbilityBase Ability : game.getAbilities().values()) {
 			Ability.setRestricted(false);
