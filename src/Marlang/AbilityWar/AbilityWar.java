@@ -13,6 +13,8 @@ import Marlang.AbilityWar.GameManager.MainCommand;
 import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate;
+import Marlang.AbilityWar.Utils.AutoUpdate.ServerVersion;
+import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.Branch;
 
 /**
  * Ability War 능력자 전쟁 플러그인
@@ -26,11 +28,13 @@ public class AbilityWar extends JavaPlugin {
 		return AbilityWar.Plugin;
 	}
 	
+	AutoUpdate au = new AutoUpdate("Marlang365", "test", Branch.Alpha, Branch.getBranchByVersion(ServerVersion.getVersion()));
+	
 	@Override
 	public void onEnable() {
 		AbilityWar.Plugin = this;
-
-		if(!AutoUpdate.Check()) {
+		
+		if(!au.Check()) {
 			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 			
 			Load();
