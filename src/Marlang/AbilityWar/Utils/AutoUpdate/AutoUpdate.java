@@ -280,7 +280,7 @@ public class AutoUpdate {
 		}
 		
 		if(object != null) {
-			String Version = (String) object.get("tag_name");
+			String Version = (String) object.get("name");
 			
 			return Version;
 		} else {
