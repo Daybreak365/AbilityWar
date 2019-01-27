@@ -71,7 +71,7 @@ public class AutoUpdate {
 	
 	public boolean Check() {
 		try {
-			if(PluginBranch != null && ServerBranch != null) {
+			if(ServerBranch != null) {
 				if(PluginBranch.equals(ServerBranch)) { //동일 버전일 경우
 					if (!IsLatest(PluginBranch)) {
 						String LatestVersion = getLatestVersion(PluginBranch);
@@ -129,10 +129,38 @@ public class AutoUpdate {
 					return true;
 				}
 			} else {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 지원하지 않는 버전을 사용하고 있습니다."));
-				Bukkit.getPluginManager().disablePlugin(AbilityWar.getPlugin());
-				
-				return true;
+				if (!IsLatest(PluginBranch)) {
+					String LatestVersion = getLatestVersion(PluginBranch);
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f최신 버전이 발견되었습니다&7: &b" + LatestVersion));
+
+					URL fileURL = AbilityWar.getPlugin().getClass().getProtectionDomain().getCodeSource().getLocation();
+					
+					Bukkit.getPluginManager().disablePlugin(AbilityWar.getPlugin());
+					
+					URL url = getLatestRelease(PluginBranch);
+					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					connection.setRequestMethod("GET");
+					
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
+					
+					
+					FileOutputStream out = new FileOutputStream(getPluginPath(fileURL), false);
+					
+					Download(connection, out, 1024);
+					
+					createPatchNote(PluginBranch);
+					
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다. 서버를 종료합니다."));
+					Bukkit.shutdown();
+					out.close();
+					
+					return true;
+				} else {
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 지원하지 않는 버전을 사용하고 있습니다."));
+					Bukkit.getPluginManager().disablePlugin(AbilityWar.getPlugin());
+					
+					return true;
+				}
 			}
 		} catch (Exception ex) {
 			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인 최신 업데이트를 확인할 수 없습니다."));
