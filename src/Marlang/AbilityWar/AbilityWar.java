@@ -13,7 +13,6 @@ import Marlang.AbilityWar.GameManager.MainCommand;
 import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate;
-import Marlang.AbilityWar.Utils.AutoUpdate.ServerVersion;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.Branch;
 
 /**
@@ -28,7 +27,7 @@ public class AbilityWar extends JavaPlugin {
 		return AbilityWar.Plugin;
 	}
 	
-	AutoUpdate au = new AutoUpdate("Marlang365", "test", Branch.Master, Branch.getBranchByVersion(ServerVersion.getVersion()));
+	AutoUpdate au = new AutoUpdate("Marlang365", "test", this, Branch.Master);
 	
 	@Override
 	public void onEnable() {

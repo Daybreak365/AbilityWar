@@ -21,15 +21,18 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
+import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.MojangAPI;
+
 /**
  * 기여자 목록 GUI
  */
 public class SpecialThanksGUI implements Listener {
 	
 	private static final SpecialThank[] SpecialThanks = {
-				new SpecialThank("RainStar_", "능력 아이디어 제공"),
-				new SpecialThank("Cokes_86", "능력 아이디어 제공"),
-				new SpecialThank("fnfm", "능력 아이디어 제공")
+				new SpecialThank("f6cef0829b7e48c1a973532389b6e3e1", "능력 아이디어 제공"),
+				new SpecialThank("ecb53e2ffdf34089ae3486cff3fc5f34", "능력 아이디어 제공"),
+				new SpecialThank("2dcb3299e24049adb8bb554d862bd7be", "능력 아이디어 제공")
 			};
 	
 	public static class SpecialThank {
@@ -37,8 +40,12 @@ public class SpecialThanksGUI implements Listener {
 		String name;
 		String[] role;
 		
-		public SpecialThank(String name, String... role) {
-			this.name = name;
+		public SpecialThank(String UUID, String... role) {
+			try {
+				this.name = MojangAPI.getNickname(UUID);
+			} catch (Exception e) {
+				this.name = "Error";
+			}
 			this.role = role;
 		}
 		
@@ -80,79 +87,86 @@ public class SpecialThanksGUI implements Listener {
 		for (SpecialThank st : SpecialThanks) {
 			ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 			SkullMeta im = (SkullMeta) is.getItemMeta();
-			im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + st.getName()));
-			
-			im.setOwningPlayer(new OfflinePlayer() {
+			if(!st.getName().equals("Error")) {
+				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + st.getName()));
 				
-				@Override
-				public Map<String, Object> serialize() {
-					return null;
-				}
-				
-				@Override
-				public void setOp(boolean arg0) {}
-				
-				@Override
-				public boolean isOp() {
-					return false;
-				}
-				
-				@Override
-				public void setWhitelisted(boolean arg0) {}
-				
-				@Override
-				public boolean isWhitelisted() {
-					return false;
-				}
-				
-				@Override
-				public boolean isOnline() {
-					return false;
-				}
-				
-				@Override
-				public boolean isBanned() {
-					return false;
-				}
-				
-				@Override
-				public boolean hasPlayedBefore() {
-					return false;
-				}
-				
-				@Override
-				public UUID getUniqueId() {
-					return null;
-				}
-				
-				@Override
-				public Player getPlayer() {
-					return null;
-				}
-				
-				@Override
-				public String getName() {
-					return st.getName();
-				}
-				
-				@Override
-				public long getLastPlayed() {
-					return 0;
-				}
-				
-				@Override
-				public long getFirstPlayed() {
-					return 0;
-				}
-				
-				@Override
-				public Location getBedSpawnLocation() {
-					return null;
-				}
-				
-			});
-			im.setLore(st.getRole());
+				im.setOwningPlayer(new OfflinePlayer() {
+					
+					@Override
+					public Map<String, Object> serialize() {
+						return null;
+					}
+					
+					@Override
+					public void setOp(boolean arg0) {}
+					
+					@Override
+					public boolean isOp() {
+						return false;
+					}
+					
+					@Override
+					public void setWhitelisted(boolean arg0) {}
+					
+					@Override
+					public boolean isWhitelisted() {
+						return false;
+					}
+					
+					@Override
+					public boolean isOnline() {
+						return false;
+					}
+					
+					@Override
+					public boolean isBanned() {
+						return false;
+					}
+					
+					@Override
+					public boolean hasPlayedBefore() {
+						return false;
+					}
+					
+					@Override
+					public UUID getUniqueId() {
+						return null;
+					}
+					
+					@Override
+					public Player getPlayer() {
+						return null;
+					}
+					
+					@Override
+					public String getName() {
+						return st.getName();
+					}
+					
+					@Override
+					public long getLastPlayed() {
+						return 0;
+					}
+					
+					@Override
+					public long getFirstPlayed() {
+						return 0;
+					}
+					
+					@Override
+					public Location getBedSpawnLocation() {
+						return null;
+					}
+					
+				});
 
+				im.setLore(st.getRole());
+			} else {
+				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c오류"));
+
+				im.setLore(Messager.getStringList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
+			}
+			
 			is.setItemMeta(im);
 			
 			if (Count / 18 == page - 1) {

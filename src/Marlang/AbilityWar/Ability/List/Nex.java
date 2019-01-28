@@ -31,8 +31,8 @@ public class Nex extends AbilityBase {
 
 	public Nex() {
 		super("넥스", Rank.B,
-				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 하늘로 끌고 올라갔다가 내려오며 바닥에 내려 찍습니다."),
-				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다가 바닥으로 내려 찍으며"),
+				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 
 		registerTimer(Cool);
 
