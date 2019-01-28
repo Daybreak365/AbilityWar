@@ -8,11 +8,9 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
+import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.NumberUtil;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class Feather extends AbilityBase {
@@ -44,18 +42,15 @@ public class Feather extends AbilityBase {
 		
 		registerTimer(Cool);
 		
-		registerTimer(Skill);
+		registerTimer(Duration);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, DurationConfig.getValue(), SkillType.Active, Cool) {
+	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
 		@Override
-		public void TimerStart() {}
-		
-		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void DurationSkill(Integer Seconds) {
 			getPlayer().setAllowFlight(true);
 			getPlayer().setFlying(true);
 		}
@@ -63,7 +58,7 @@ public class Feather extends AbilityBase {
 		@Override
 		public void TimerEnd() {
 			getPlayer().setAllowFlight(false);
-			Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다."));
+			
 			super.TimerEnd();
 		}
 		
@@ -73,12 +68,8 @@ public class Feather extends AbilityBase {
 	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
-				if(!Skill.isTimerRunning()) {
-					if(!Cool.isCooldown()) {
-						Skill.Execute();
-					}
-				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Skill.getTempCount())));
+				if(!Duration.isDuration() && !Cool.isCooldown()) {
+					Duration.StartTimer();
 				}
 			}
 		}

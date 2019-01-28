@@ -8,11 +8,10 @@ import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class Assassin extends AbilityBase {
@@ -51,15 +50,15 @@ public class Assassin extends AbilityBase {
 		super("암살자", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 있는 적 " + TeleportCountConfig.getValue() + "명에게 텔레포트하며"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
-		Skill.setPeriod(5);
+		Duration.setPeriod(5);
 		
 		registerTimer(Cool);
-		registerTimer(Skill);
+		registerTimer(Duration);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, TeleportCountConfig.getValue(), SkillType.Active, Cool) {
+	TimerBase Duration = new TimerBase() {
 		
 		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
 		
@@ -84,6 +83,9 @@ public class Assassin extends AbilityBase {
 			}
 		}
 		
+		@Override
+		public void TimerEnd() {}
+		
 	};
 	
 	@Override
@@ -91,7 +93,9 @@ public class Assassin extends AbilityBase {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
-					Skill.Execute();
+					Duration.StartTimer();
+					
+					Cool.StartTimer();
 				}
 			}
 		}

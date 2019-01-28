@@ -10,8 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
+import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
@@ -37,25 +36,27 @@ public class Zeus extends AbilityBase {
 		
 		registerTimer(Cool);
 		
-		Skill.setPeriod(8);
+		Duration.setPeriod(8);
 		
-		registerTimer(Skill);
+		registerTimer(Duration);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, 3, SkillType.Active, Cool) {
-		
+	DurationTimer Duration = new DurationTimer(this, 3, Cool) {
+
 		Location center;
 		ArrayList<Location> Circle;
 		
 		@Override
 		public void TimerStart() {
 			center = getPlayer().getLocation();
+			
+			super.TimerStart();
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void DurationSkill(Integer Seconds) {
 			if(Seconds.equals(3)) {
 				Circle = LocationUtil.getCircle(center, 3, 10, true);
 			} else if(Seconds.equals(2)) {
@@ -76,8 +77,8 @@ public class Zeus extends AbilityBase {
 	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
-				if(!Cool.isCooldown()) {
-					Skill.Execute();
+				if(!Duration.isDuration() && !Cool.isCooldown()) {
+					Duration.StartTimer();
 				}
 			}
 		}

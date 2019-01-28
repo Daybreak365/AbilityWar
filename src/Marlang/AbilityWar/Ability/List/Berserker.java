@@ -8,11 +8,9 @@ import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
+import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.NumberUtil;
 
 public class Berserker extends AbilityBase {
 
@@ -54,28 +52,30 @@ public class Berserker extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "초간 데미지를 입힐 수 없습니다."));
 		
 		registerTimer(Cool);
-		registerTimer(Skill);
+		registerTimer(Duration);
 	}
 
 	Integer Strength = StrengthConfig.getValue();
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, 5, SkillType.Active, Cool) {
+	DurationTimer Duration = new DurationTimer(this, 5, Cool) {
 		
 		@Override
 		public void TimerStart() {
 			Strengthen = true;
+			
+			super.TimerStart();
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {}
+		public void DurationSkill(Integer Seconds) {}
 		
 		@Override
 		public void TimerEnd() {
-			super.TimerEnd();
-			
 			Strengthen = false;
+			
+			super.TimerEnd();
 		}
 		
 	};
@@ -86,12 +86,8 @@ public class Berserker extends AbilityBase {
 	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
-				if(!Skill.isTimerRunning()) {
-					if(!Cool.isCooldown()) {
-						Skill.Execute();
-					}
-				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Skill.getTempCount())));
+				if(!Duration.isDuration() && !Cool.isCooldown()) {
+					Duration.StartTimer();
 				}
 			}
 		}
@@ -105,6 +101,7 @@ public class Berserker extends AbilityBase {
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 			if(e.getDamager().equals(getPlayer())) {
 				if(Strengthen) {
+					if(Duration.isDuration()) Duration.StopTimer(false);
 					e.setDamage(e.getDamage() * Strength);
 					getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, DebuffTime * 20, 1), true);
 				}

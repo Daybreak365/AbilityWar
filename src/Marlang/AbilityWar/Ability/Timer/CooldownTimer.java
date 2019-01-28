@@ -7,6 +7,7 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
 import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.PacketUtil.ActionbarObject;
 
 public class CooldownTimer extends TimerBase {
 	
@@ -46,29 +47,30 @@ public class CooldownTimer extends TimerBase {
 	
 	@Override
 	public void TimerProcess(Integer Seconds) {
-		
-		boolean showed = false;
-		
-		if(Seconds == (Cool / 2)) {
-			showed = true;
-			if(!AbilityName.isEmpty()) {
+		ActionbarObject actionbar;
+		if(!AbilityName.isEmpty()) {
+			actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄðÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getTempCount())));
+			
+			if(Seconds == (Cool / 2)) {
+				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
-			} else {
+			} else if(Seconds <= 5 && Seconds >= 1) {
+				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			}
+		} else {
+			actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getTempCount())));
+			
+			if(Seconds == (Cool / 2)) {
+				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			} else if(Seconds <= 5 && Seconds >= 1) {
+				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			}
-			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 		}
 		
-		if(Seconds <= 5 && Seconds >= 1) {
-			if(!showed) {
-				if(!AbilityName.isEmpty()) {
-					Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
-				} else {
-					Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
-				}
-				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
-			}
-		}
+		actionbar.Send(Ability.getPlayer());
 	}
 	
 	@Override

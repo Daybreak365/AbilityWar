@@ -8,12 +8,10 @@ import org.bukkit.util.Vector;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
+import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.NumberUtil;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 
 public class Chaos extends AbilityBase {
@@ -56,15 +54,15 @@ public class Chaos extends AbilityBase {
 		
 		registerTimer(Cool);
 		
-		Skill.setPeriod(1);
+		Duration.setPeriod(1);
 		
-		registerTimer(Skill);
+		registerTimer(Duration);
 	}
 
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, DurationConfig.getValue() * 20, SkillType.Active, Cool) {
-		
+	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
+
 		Integer Distance = DistanceConfig.getValue();
 		
 		Location center;
@@ -72,10 +70,12 @@ public class Chaos extends AbilityBase {
 		@Override
 		public void TimerStart() {
 			center = getPlayer().getLocation();
+			
+			super.TimerStart();
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void DurationSkill(Integer Seconds) {
 			ParticleLib.SMOKE_NORMAL.spawnParticle(center, 100, 2, 2, 2);
 			for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, Distance, Distance)) {
 				if(!d.equals(getPlayer())) {
@@ -92,12 +92,8 @@ public class Chaos extends AbilityBase {
 	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
-				if(!Skill.isTimerRunning()) {
-					if(!Cool.isCooldown()) {
-						Skill.Execute();
-					}
-				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Skill.getTempCount() / 20)));
+				if(!Duration.isDuration() && !Cool.isCooldown()) {
+					Duration.StartTimer();
 				}
 			}
 		}

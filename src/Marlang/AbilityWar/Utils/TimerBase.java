@@ -78,6 +78,10 @@ abstract public class TimerBase {
 		return Count;
 	}
 
+	public int getPeriod() {
+		return Period;
+	}
+	
 	public int getTempCount() {
 		return TempCount;
 	}

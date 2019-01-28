@@ -1,10 +1,13 @@
 package Marlang.AbilityWar.Ability.Timer;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
+import Marlang.AbilityWar.Utils.PacketUtil.ActionbarObject;
 import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
@@ -25,32 +28,42 @@ abstract public class DurationTimer extends TimerBase {
 		this.CooldownTimer = CooldownTimer;
 	}
 	
-	abstract public void DurationSkill();
+	abstract public void DurationSkill(Integer Seconds);
 	
 	public boolean isDuration() {
 		if(isTimerRunning()) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(this.getTempCount())));
+			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(this.getTempCount()))));
 		}
 		
 		return isTimerRunning();
 	}
 	
 	@Override
-	public void TimerStart() {}
+	public void TimerStart() {
+		Counted = new ArrayList<Integer>();
+	}
+	
+	private ArrayList<Integer> Counted;
 	
 	@Override
 	public void TimerProcess(Integer Seconds) {
-		this.DurationSkill();
+		this.DurationSkill(Seconds);
+		ActionbarObject actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f: &e" + NumberUtil.parseTimeString(getFixedTime(Seconds))));
+		actionbar.Send(Ability.getPlayer());
 		
-		if(Seconds == (Duration / 2)) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Seconds)));
+		if(getFixedTime(Seconds) == (Duration / 2) && !Counted.contains(getFixedTime(Seconds))) {
+			Counted.add(getFixedTime(Seconds));
+			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(Seconds))));
+			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+		} else if(getFixedTime(Seconds) <= 5 && getFixedTime(Seconds) >= 1 && !Counted.contains(getFixedTime(Seconds))) {
+			Counted.add(getFixedTime(Seconds));
+			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(Seconds))));
 			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 		}
-		
-		if(Seconds <= 5 && Seconds >= 1) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(Seconds)));
-			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
-		}
+	}
+	
+	private int getFixedTime(Integer Seconds) {
+		return (int) (Seconds / (20 / getPeriod()));
 	}
 	
 	@Override

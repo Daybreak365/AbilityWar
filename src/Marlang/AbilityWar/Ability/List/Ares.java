@@ -9,8 +9,7 @@ import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer;
-import Marlang.AbilityWar.Ability.Timer.SkillTimer.SkillType;
+import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
@@ -56,14 +55,14 @@ public class Ares extends AbilityBase {
 		
 		registerTimer(Cool);
 		
-		Skill.setPeriod(1);
+		Duration.setPeriod(1);
 		
-		registerTimer(Skill);
+		registerTimer(Duration);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	SkillTimer Skill = new SkillTimer(this, 14, SkillType.Active, Cool) {
+	DurationTimer Duration = new DurationTimer(this, 14, Cool) {
 		
 		boolean DashIntoTheAir = DashConfig.getValue();
 		int Damage = DamageConfig.getValue();
@@ -72,10 +71,12 @@ public class Ares extends AbilityBase {
 		@Override
 		public void TimerStart() {
 			Attacked = new ArrayList<Damageable>();
+			
+			super.TimerStart();
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void DurationSkill(Integer Seconds) {
 			Player p = getPlayer();
 			
 			ParticleLib.LAVA.spawnParticle(p.getLocation(), 40, 4, 4, 4);
@@ -97,14 +98,15 @@ public class Ares extends AbilityBase {
 				d.teleport(p);
 			}
 		}
+		
 	};
 	
 	@Override
 	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
-				if(!Cool.isCooldown()) {
-					Skill.Execute();
+				if(!Duration.isDuration() && !Cool.isCooldown()) {
+					Duration.StartTimer();
 				}
 			}
 		}
