@@ -68,16 +68,20 @@ public class Virtus extends AbilityBase {
 	};
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
 					Activate.StartTimer();
 					
 					Cool.StartTimer();
+					
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 
 	@Override

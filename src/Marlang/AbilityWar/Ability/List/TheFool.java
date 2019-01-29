@@ -32,7 +32,7 @@ public class TheFool extends AbilityBase {
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
@@ -41,9 +41,13 @@ public class TheFool extends AbilityBase {
 					getPlayer().teleport(Spawn);
 					
 					Cool.StartTimer();
+					
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 
 	@Override

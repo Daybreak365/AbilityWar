@@ -102,14 +102,18 @@ public class Ares extends AbilityBase {
 	};
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.StartTimer();
+					
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 	
 	@Override

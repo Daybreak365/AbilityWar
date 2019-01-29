@@ -30,7 +30,9 @@ public class Ira extends AbilityBase {
 	}
 
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {}
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+		return false;
+	}
 
 	Integer ExplodeCount = 0;
 	

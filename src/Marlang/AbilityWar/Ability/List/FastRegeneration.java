@@ -55,7 +55,9 @@ public class FastRegeneration extends AbilityBase {
 	};
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {}
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+		return false;
+	}
 	
 	@Override
 	public void PassiveSkill(Event event) {}

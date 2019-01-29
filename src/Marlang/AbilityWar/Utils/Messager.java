@@ -12,6 +12,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 
 /**
  * 메시지 관리 클래스
+ * @author _Marlang 말랑
  */
 public class Messager {
 	

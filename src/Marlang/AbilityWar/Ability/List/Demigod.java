@@ -32,7 +32,9 @@ public class Demigod extends AbilityBase {
 	}
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {}
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+		return false;
+	}
 	
 	Integer Chance = ChanceConfig.getValue();
 	

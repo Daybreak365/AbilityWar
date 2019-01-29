@@ -56,22 +56,28 @@ public class Void extends AbilityBase {
 	};
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 
-					getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님에게 텔레포트합니다."));
-					getPlayer().teleport(target);
-					ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 20,1, 1, 1);
-					
-					Invincibility.StartTimer();
-					
-					Cool.StartTimer();
+					if(target != null) {
+						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님에게 텔레포트합니다."));
+						getPlayer().teleport(target);
+						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 20,1, 1, 1);
+						
+						Invincibility.StartTimer();
+						
+						Cool.StartTimer();
+					} else {
+						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
+					}
 				}
 			}
 		}
+		
+		return false;
 	}
 
 	@Override

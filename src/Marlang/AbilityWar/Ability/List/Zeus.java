@@ -10,10 +10,10 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.TimerBase;
 
 public class Zeus extends AbilityBase {
 	
@@ -36,14 +36,14 @@ public class Zeus extends AbilityBase {
 		
 		registerTimer(Cool);
 		
-		Duration.setPeriod(8);
+		Skill.setPeriod(8);
 		
-		registerTimer(Duration);
+		registerTimer(Skill);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	DurationTimer Duration = new DurationTimer(this, 3, Cool) {
+	TimerBase Skill = new TimerBase(3) {
 
 		Location center;
 		ArrayList<Location> Circle;
@@ -51,12 +51,10 @@ public class Zeus extends AbilityBase {
 		@Override
 		public void TimerStart() {
 			center = getPlayer().getLocation();
-			
-			super.TimerStart();
 		}
 		
 		@Override
-		public void DurationSkill(Integer Seconds) {
+		public void TimerProcess(Integer Seconds) {
 			if(Seconds.equals(3)) {
 				Circle = LocationUtil.getCircle(center, 3, 10, true);
 			} else if(Seconds.equals(2)) {
@@ -71,17 +69,26 @@ public class Zeus extends AbilityBase {
 			}
 		}
 		
+		@Override
+		public void TimerEnd() {}
+		
 	};
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
-				if(!Duration.isDuration() && !Cool.isCooldown()) {
-					Duration.StartTimer();
+				if(!Cool.isCooldown()) {
+					Skill.StartTimer();
+					
+					Cool.StartTimer();
+					
+					return true;
 				}
 			}
 		}
+		
+		return false;
 	}
 	
 	@Override

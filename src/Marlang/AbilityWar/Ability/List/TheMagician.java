@@ -34,7 +34,9 @@ public class TheMagician extends AbilityBase {
 	}
 
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {}
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+		return false;
+	}
 
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	

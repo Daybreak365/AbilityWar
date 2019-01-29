@@ -7,6 +7,10 @@ import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.Utils.AutoUpdate.ServerVersion;
 
+/**
+ * 패킷 유틸
+ * @author _Marlang 말랑
+ */
 public class PacketUtil {
 	
 	private static Integer Version = ServerVersion.getVersion();

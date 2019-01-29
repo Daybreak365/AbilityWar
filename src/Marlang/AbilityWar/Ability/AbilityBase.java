@@ -26,7 +26,7 @@ abstract public class AbilityBase {
 		this.Explain = Explain;
 	}
 	
-	abstract public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct);
+	abstract public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct);
 	
 	abstract public void PassiveSkill(Event event);
 	

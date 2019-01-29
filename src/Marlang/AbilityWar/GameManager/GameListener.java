@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -79,14 +80,24 @@ public class GameListener implements Listener, EventExecutor {
 						long Duration = java.time.Duration.between(Before, Now).toMillis();
 						if(Duration >= 250) {
 							InstantMap.put(p.getName(), Instant.now());
-							Ability.ActiveSkill(mt, ct);
+							ActiveSkill(Ability, mt, ct);
 						}
 					} else {
 						InstantMap.put(p.getName(), Instant.now());
-						Ability.ActiveSkill(mt, ct);
+						ActiveSkill(Ability, mt, ct);
 					}
 				}
 			}
+		}
+	}
+	
+	private static final String AbilityExecuted = ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다.");
+	
+	private void ActiveSkill(AbilityBase Ability, ActiveMaterialType mt, ActiveClickType ct) {
+		boolean Run = Ability.ActiveSkill(mt, ct);
+		
+		if(Run) {
+			Ability.getPlayer().sendMessage(AbilityExecuted);
 		}
 	}
 	

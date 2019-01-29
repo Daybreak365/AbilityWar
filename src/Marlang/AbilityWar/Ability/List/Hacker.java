@@ -71,7 +71,7 @@ public class Hacker extends AbilityBase {
 	};
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
@@ -88,12 +88,16 @@ public class Hacker extends AbilityBase {
 						Move.StartTimer();
 						
 						Cool.StartTimer();
+						
+						return true;
 					} else {
 						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
 					}
 				}
 			}
 		}
+		
+		return false;
 	}
 
 	@Override

@@ -37,7 +37,7 @@ public class Chaser extends AbilityBase {
 	Player target = null;
 	
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.LeftClick)) {
 				Cool.isCooldown();
@@ -53,6 +53,8 @@ public class Chaser extends AbilityBase {
 				}
 			}
 		}
+		
+		return false;
 	}
 
 	@Override

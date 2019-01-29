@@ -8,6 +8,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+/**
+ * Mojang 사이트 API
+ * @author _Marlang 말랑
+ */
 public class MojangAPI {
 	
 	public static String getNickname(String UUID) throws Exception {

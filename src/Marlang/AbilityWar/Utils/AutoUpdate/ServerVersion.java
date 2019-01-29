@@ -2,6 +2,10 @@ package Marlang.AbilityWar.Utils.AutoUpdate;
 
 import org.bukkit.Bukkit;
 
+/**
+ * Server Version
+ * @author _Marlang ¸»¶û
+ */
 public class ServerVersion {
 
 	private static Integer Version = getSimpleVersion();

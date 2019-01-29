@@ -29,7 +29,9 @@ public class HigherBeing extends AbilityBase {
 	}
 
 	@Override
-	public void ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {}
+	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+		return false;
+	}
 
 	Double Multiple = DamageConfig.getValue();
 	

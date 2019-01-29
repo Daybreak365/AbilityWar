@@ -75,6 +75,8 @@ public class CooldownTimer extends TimerBase {
 	
 	@Override
 	public void TimerEnd() {
+		ActionbarObject actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."));
+		actionbar.Send(Ability.getPlayer());
 		Ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."));
 	}
 	

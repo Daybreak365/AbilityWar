@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * File À¯Æ¿
+ * @author _Marlang ¸»¶û
+ */
 public class FileManager {
 	
 	private static File getDataFolder() {
