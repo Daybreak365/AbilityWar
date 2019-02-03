@@ -50,7 +50,7 @@ public class Virtus extends AbilityBase {
 	TimerBase Activate = new TimerBase(DurationConfig.getValue()) {
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			Activated = true;
 		}
 		

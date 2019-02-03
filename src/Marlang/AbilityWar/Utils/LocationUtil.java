@@ -21,7 +21,7 @@ import Marlang.AbilityWar.GameManager.Game;
  * @author _Marlang ¸»¶û
  */
 public class LocationUtil {
-
+	
 	public static boolean isInCircle(Location location, Location center, Double radius) {
 		Double X = location.getX();
 		Double Z = location.getZ();
@@ -32,7 +32,7 @@ public class LocationUtil {
 		return ((X - Center_X) * (X - Center_X)) + ((Z - Center_Z) * (Z - Center_Z)) < (radius * radius);
 	}
 
-	public static ArrayList<Block> getBlocks(Location location, Integer radius) {
+	public static ArrayList<Block> getBlocks(Location location, Integer radius, boolean hollow) {
 		ArrayList<Block> Blocks = new ArrayList<Block>();
 		
 		Integer X = location.getBlockX();
@@ -43,8 +43,8 @@ public class LocationUtil {
 			for (Integer y = Y - radius; y <= Y + radius; y++)
 				for (Integer z = Z - radius; z <= Z + radius; z++) {
 					Location l = new Location(location.getWorld(), x, y, z);
-					double distance = location.distance(l);
-					if (distance < (radius ^ 2)) {
+					double distance = location.distanceSquared(l);
+					if (distance < (radius * radius) && !(hollow && distance < ((radius - 1) * (radius - 1)))) {
 						if(!l.getBlock().getType().equals(Material.AIR)) {
 							Blocks.add(l.getBlock());
 						}

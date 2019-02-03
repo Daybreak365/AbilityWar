@@ -1,17 +1,22 @@
 package Marlang.AbilityWar.GameManager;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.SettingWizard;
@@ -24,7 +29,7 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
 import Marlang.AbilityWar.Utils.TimerBase;
 
-public class MainCommand implements CommandExecutor {
+public class MainCommand implements CommandExecutor, TabCompleter {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -61,11 +66,14 @@ public class MainCommand implements CommandExecutor {
 				if(sender.isOp()) {
 					if(AbilityWarThread.isGameTaskRunning()) {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + sender.getName() + "&f님이 게임을 중지시켰습니다."));
-						TimerBase.StopAllTasks();
+						TimerBase.ResetTasks();
+						
 						HandlerList.unregisterAll(AbilityWarThread.getGame().getDeathManager());
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
+						
 						AbilityWarThread.toggleGameTask(false);
 						AbilityWarThread.setGame(null);
+						
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 					}
@@ -122,7 +130,7 @@ public class MainCommand implements CommandExecutor {
 								if(!select.getAbilitySelect(p)) {
 									select.decideAbility(p, true);
 								} else {
-									p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
+									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
 								}
 							} else {
 								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
@@ -146,7 +154,7 @@ public class MainCommand implements CommandExecutor {
 								if(!select.getAbilitySelect(p)) {
 									select.changeAbility(p);
 								} else {
-									p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
+									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
 								}
 							} else {
 								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
@@ -161,24 +169,19 @@ public class MainCommand implements CommandExecutor {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
 				}
 			} else if(split[0].equalsIgnoreCase("skip")) {
-				if(sender instanceof Player) {
-					Player p = (Player) sender;
-					if(p.isOp()) {
-						if(AbilityWarThread.isGameTaskRunning()) {
-							AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-							if(select != null && !select.isAbilitySelectFinished()) {
-								select.Skip(p.getName());
-							} else {
-								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
-							}
+				if(sender.isOp()) {
+					if(AbilityWarThread.isGameTaskRunning()) {
+						AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
+						if(select != null && !select.isAbilitySelectFinished()) {
+							select.Skip(sender.getName());
 						} else {
-							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
 						}
 					} else {
-						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 				}
 			} else if(split[0].equalsIgnoreCase("util")) {
 				if(sender instanceof Player) {
@@ -273,11 +276,11 @@ public class MainCommand implements CommandExecutor {
 				}
 				
 				msg.add(ChatColor.translateAlternateColorCodes('&', "&2========================"));
-
+				
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 플레이어들의 능력을 확인하였습니다."));
 				
 				for(String m : msg) {
-					p.sendMessage(m);
+					Messager.sendMessage(p, m);
 				}
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
@@ -285,6 +288,13 @@ public class MainCommand implements CommandExecutor {
 		} else if(args[0].equalsIgnoreCase("blacklist")) {
 			BlackListGUI gui = new BlackListGUI(p, AbilityWar.getPlugin());
 			gui.openBlackListGUI(1);
+		} else if(args[0].equalsIgnoreCase("resetcool")) {
+			if(AbilityWarThread.isGameTaskRunning()) {
+				CooldownTimer.CoolReset();
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 플레이어들의 능력 쿨타임을 초기화하였습니다."));
+			} else {
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
+			}
 		} else {
 			if(NumberUtil.isInt(args[0])) {
 				sendHelpConfigCommand(p, label, Integer.valueOf(args[0]));
@@ -355,12 +365,76 @@ public class MainCommand implements CommandExecutor {
 						Messager.formatCommand(label + " util", "abi <대상>", "대상에게 능력을 임의로 부여합니다.", true),
 						Messager.formatCommand(label + " util", "spec", "관전자 설정 GUI를 띄웁니다.", true),
 						Messager.formatCommand(label + " util", "ablist", "능력자 목록을 확인합니다.", true),
-						Messager.formatCommand(label + " util", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true)));
+						Messager.formatCommand(label + " util", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true),
+						Messager.formatCommand(label + " util", "resetcool", "플레이어들의 능력 쿨타임을 초기화시킵니다.", true)));
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
 				break;
 		}
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
+		return parseTabComplete(sender, label, args);
+	}
+	
+	public List<String> parseTabComplete(CommandSender sender, String label, String[] args) {
+		if(label.equalsIgnoreCase("abilitywar") || label.equalsIgnoreCase("ability")
+		|| label.equalsIgnoreCase("aw") || label.equalsIgnoreCase("va")) {
+			switch(args.length) {
+				case 1:
+					ArrayList<String> Complete = Messager.getStringList(
+							"start", "stop", "check", "yes", "no",
+							"skip", "reload", "config", "util", "specialthanks");
+					
+					if(args[0].isEmpty()) {
+						return Complete;
+					} else {
+						return Complete.stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+					}
+				case 2:
+					if(args[0].equalsIgnoreCase("config")) {
+						ArrayList<String> Config = Messager.getStringList(
+								"kit", "spawn", "inv", "game", "death");
+						if(args[1].isEmpty()) {
+							return Config;
+						} else {
+							return Config.stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+						}
+					} else if(args[0].equalsIgnoreCase("util")) {
+						ArrayList<String> Util = Messager.getStringList(
+								"abi", "spec", "ablist", "blacklist", "resetcool");
+						if(args[1].isEmpty()) {
+							return Util;
+						} else {
+							return Util.stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+						}
+					}
+				case 3:
+					if(args[0].equalsIgnoreCase("util") && args[1].equalsIgnoreCase("abi")) {
+						ArrayList<String> Players = new ArrayList<String>();
+						for(Player p : Bukkit.getOnlinePlayers()) Players.add(p.getName());
+						Players.sort(new Comparator<String>() {
+							
+							public int compare(String obj1, String obj2) {
+								return obj1.compareToIgnoreCase(obj2);
+							}
+							
+						});
+						
+
+						if(args[2].isEmpty()) {
+							return Players;
+						} else {
+							return Players.stream().filter(s -> s.startsWith(args[2])).collect(Collectors.toList());
+						}
+					}
+					
+			}
+		}
+
+		return Messager.getStringList();
 	}
 	
 }

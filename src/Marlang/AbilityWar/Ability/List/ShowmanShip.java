@@ -23,7 +23,7 @@ public class ShowmanShip extends AbilityBase {
 	TimerBase Passive = new TimerBase() {
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {

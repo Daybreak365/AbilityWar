@@ -81,7 +81,13 @@ public class PacketUtil {
 			} catch(Exception ex) {}
 
 		}
-
+		
+		public void Broadcast(int fadeIn, int stay, int fadeOut) {
+			for(Player p : Bukkit.getOnlinePlayers()) {
+				Send(p, fadeIn, stay, fadeOut);
+			}
+		}
+		
 		private String getTitle() {
 			return Title;
 		}

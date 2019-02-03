@@ -1,21 +1,27 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.FallBlock;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.TimerBase.Data;
+import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class Nex extends AbilityBase {
@@ -29,6 +35,15 @@ public class Nex extends AbilityBase {
 
 	};
 
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("³Ø½º", "Damage", 8, "# µ¥¹ÌÁö") {
+
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 1;
+		}
+
+	};
+	
 	public Nex() {
 		super("³Ø½º", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é °øÁßÀ¸·Î ¿Ã¶ó°¬´Ù°¡ ¹Ù´ÚÀ¸·Î ³»·Á ÂïÀ¸¸ç"),
@@ -39,6 +54,10 @@ public class Nex extends AbilityBase {
 		Skill.setPeriod(10);
 
 		registerTimer(Skill);
+		
+		FallBlock.setPeriod(4);
+		
+		registerTimer(FallBlock);
 
 	}
 
@@ -71,7 +90,7 @@ public class Nex extends AbilityBase {
 	TimerBase Skill = new TimerBase(4) {
 
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			NoFall = true;
 			Vector v = new Vector(0, 4, 0);
 
@@ -91,7 +110,9 @@ public class Nex extends AbilityBase {
 		}
 
 	};
-
+	
+	Integer Damage = DamageConfig.getValue();
+	
 	@Override
 	public void PassiveSkill(Event event) {
 		if (event instanceof EntityDamageEvent) {
@@ -117,15 +138,64 @@ public class Nex extends AbilityBase {
 						RunSkill = false;
 						for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
 							SoundLib.ENTITY_GENERIC_EXPLODE.playSound(player);
-							player.damage(10, getPlayer());
+							player.damage(Damage, getPlayer());
 						}
 						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
+						
+						if(!db.getType().equals(Material.AIR)) {
+							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(db.getType()));
+						} else {
+							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));
+						}
+						
+						FallBlock.StartTimer(new Data<Location>(b.getLocation(), Location.class));
 					}
 				}
 			}
 		}
 	}
-
+	
+	TimerBase FallBlock = new TimerBase(5) {
+		
+		Location center;
+		
+		@Override
+		public void TimerStart(Data<?>... args) {
+			if(args.length > 0) {
+				Location l = args[0].getValue(Location.class);
+				if(l != null) {
+					center = l;
+				} else {
+					this.StopTimer(true);
+				}
+			} else {
+				this.StopTimer(true);
+			}
+		}
+		
+		@Override
+		public void TimerProcess(Integer Seconds) {
+			Integer Distance = 6 - Seconds;
+			
+			for(Block block : LocationUtil.getBlocks(center, Distance, true)) {
+				if(block.getLocation().getBlockY() == center.getBlockY() - 1) {
+					FallBlock fb = new FallBlock(block.getState().getData(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0));
+					fb.Spawn(false);
+				}
+			}
+			
+			for(Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+				if(!e.equals(getPlayer())) {
+					e.setVelocity(center.toVector().subtract(e.getLocation().toVector()).multiply(-1).setY(1.2));
+				}
+			}
+		}
+		
+		@Override
+		public void TimerEnd() {}
+		
+	};
+	
 	@Override
 	public void AbilityEvent(EventType type) {}
 

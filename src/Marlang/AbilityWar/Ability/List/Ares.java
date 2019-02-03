@@ -69,7 +69,7 @@ public class Ares extends AbilityBase {
 		ArrayList<Damageable> Attacked;
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			Attacked = new ArrayList<Damageable>();
 			
 			super.TimerStart();

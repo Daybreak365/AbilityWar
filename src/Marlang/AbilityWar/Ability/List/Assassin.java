@@ -65,7 +65,7 @@ public class Assassin extends AbilityBase {
 		Integer Damage = DamageConfig.getValue();
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			Entities.addAll(LocationUtil.getNearbyDamageableEntities(getPlayer(), 6, 3));
 		}
 		

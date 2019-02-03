@@ -25,4 +25,34 @@ public class NumberUtil {
 		return (Hour != 0 ? Hour + "시간 " : "") + (Minute != 0 ? Minute + "분 " : "") + (Second >= 0 ? Second + "초" : "");
 	}
 	
+	public static NumberStatus getNumberStatus(Number Number) {
+		if(Number.intValue() > 0) {
+			return NumberStatus.Plus;
+		} else if(Number.intValue() < 0) {
+			return NumberStatus.Minus;
+		} else {
+			return NumberStatus.Zero;
+		}
+	}
+	
+	public static enum NumberStatus {
+		
+		Minus,
+		Zero,
+		Plus;
+
+		public boolean isMinus() {
+			return this.equals(NumberStatus.Minus);
+		}
+
+		public boolean isZero() {
+			return this.equals(NumberStatus.Zero);
+		}
+
+		public boolean isPlus() {
+			return this.equals(NumberStatus.Plus);
+		}
+		
+	}
+	
 }

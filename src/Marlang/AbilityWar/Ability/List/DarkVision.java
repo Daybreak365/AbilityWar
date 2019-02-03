@@ -40,7 +40,7 @@ public class DarkVision extends AbilityBase {
 	TimerBase Dark = new TimerBase() {
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -58,7 +58,7 @@ public class DarkVision extends AbilityBase {
 		Integer Distance = DistanceConfig.getValue();
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {

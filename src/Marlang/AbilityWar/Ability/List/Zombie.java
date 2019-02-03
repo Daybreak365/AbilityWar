@@ -24,7 +24,7 @@ public class Zombie extends AbilityBase {
 	TimerBase Aim = new TimerBase() {
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {

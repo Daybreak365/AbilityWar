@@ -20,6 +20,7 @@ import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.TimerBase.Data;
 
 public class Gladiator extends AbilityBase {
 	
@@ -55,12 +56,25 @@ public class Gladiator extends AbilityBase {
 	
 	TimerBase FieldClear = new TimerBase(20) {
 		
+		Player target;
+		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {
+			if(args.length > 0) {
+				Player player = args[0].getValue(Player.class);
+				if(player != null) {
+					target = player;
+				} else {
+					this.StopTimer(true);
+				}
+			} else {
+				this.StopTimer(true);
+			}
+		}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			Messager.sendMessage(getTarget(), ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
+			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
 			Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
 		}
 		
@@ -76,24 +90,26 @@ public class Gladiator extends AbilityBase {
 		
 	};
 	
-	Player target;
-	
-	public void setTarget(Player p) {
-		this.target = p;
-	}
-	
-	public Player getTarget() {
-		return this.target;
-	}
-	
 	TimerBase Field = new TimerBase(26) {
 		
 		Integer Count;
 		Integer TotalCount;
 		Location center;
 		
+		Player target;
+		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
+			if(args.length > 0) {
+				Player player = args[0].getValue(Player.class);
+				if(player != null) {
+					target = player;
+				} else {
+					this.StopTimer(true);
+				}
+			} else {
+				this.StopTimer(true);
+			}
 			Count = 1;
 			TotalCount = 1;
 			center = getPlayer().getLocation();
@@ -143,9 +159,9 @@ public class Gladiator extends AbilityBase {
 			
 			getPlayer().teleport(teleport);
 			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 400, 4), true);
-			getTarget().teleport(teleport);
+			target.teleport(teleport);
 			
-			FieldClear.StartTimer();
+			FieldClear.StartTimer(new Data<Player>(target, Player.class));
 		}
 		
 	};
@@ -170,8 +186,7 @@ public class Gladiator extends AbilityBase {
 					if(!e.isCancelled()) {
 						if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_INGOT)) {
 							if(!Cool.isCooldown()) {
-								setTarget((Player) e.getEntity());
-								Field.StartTimer();
+								Field.StartTimer(new Data<Player>((Player) e.getEntity(), Player.class));
 								
 								Cool.StartTimer();
 							}

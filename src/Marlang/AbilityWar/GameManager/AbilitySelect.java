@@ -188,9 +188,7 @@ public class AbilitySelect extends TimerBase {
 	}
 	
 	@Override
-	public void TimerStart() {
-		
-	}
+	public void TimerStart(Data<?>... args) {}
 
 	@Override
 	public void TimerProcess(Integer Seconds) {

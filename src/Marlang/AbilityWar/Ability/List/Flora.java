@@ -47,7 +47,7 @@ public class Flora extends AbilityBase {
 		Location center;
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {

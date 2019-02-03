@@ -68,7 +68,7 @@ public class Chaos extends AbilityBase {
 		Location center;
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			center = getPlayer().getLocation();
 			
 			super.TimerStart();

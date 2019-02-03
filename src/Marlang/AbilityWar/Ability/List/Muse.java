@@ -12,10 +12,10 @@ import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
+import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
@@ -48,20 +48,22 @@ public class Muse extends AbilityBase {
 
 	Location center = null;
 	
-	TimerBase Skill = new TimerBase(90) {
+	DurationTimer Skill = new DurationTimer(this, 90, Cool) {
 		
 		Integer Count;
 		Integer SoundCount;
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			Count = 1;
 			SoundCount = 1;
 			center = getPlayer().getLocation();
+			
+			super.TimerStart(args);
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void DurationSkill(Integer Seconds) {
 			if(Count <= 10) {
 				for(Location l : LocationUtil.getCircle(center, Count, Count * 6, true)) {
 					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 1, 0, 0, 0);
@@ -134,6 +136,8 @@ public class Muse extends AbilityBase {
 		@Override
 		public void TimerEnd() {
 			center = null;
+			
+			super.TimerEnd();
 		}
 		
 	};
@@ -142,10 +146,8 @@ public class Muse extends AbilityBase {
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
 			if(ct.equals(ActiveClickType.RightClick)) {
-				if(!Cool.isCooldown()) {
+				if(!Skill.isDuration() && !Cool.isCooldown()) {
 					Skill.StartTimer();
-					
-					Cool.StartTimer();
 					
 					return true;
 				}

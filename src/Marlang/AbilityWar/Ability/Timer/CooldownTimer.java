@@ -1,15 +1,35 @@
 package Marlang.AbilityWar.Ability.Timer;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
+import Marlang.AbilityWar.Utils.PacketUtil.ActionbarObject;
 import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
-import Marlang.AbilityWar.Utils.PacketUtil.ActionbarObject;
 
 public class CooldownTimer extends TimerBase {
+	
+	/**
+	 * 쿨타임 초기화
+	 */
+	public static void CoolReset() {
+		ArrayList<TimerBase> Reset = new ArrayList<TimerBase>();
+		
+		for(TimerBase timer : TimerBase.getTasks()) {
+			if(timer instanceof CooldownTimer) {
+				Reset.add(timer);
+			}
+		}
+		
+		for(TimerBase timer : Reset) {
+			timer.StopTimer(false);
+		}
+		
+	}
 	
 	AbilityBase Ability;
 	Integer Cool;
@@ -41,9 +61,7 @@ public class CooldownTimer extends TimerBase {
 	}
 	
 	@Override
-	public void TimerStart() {
-		
-	}
+	public void TimerStart(Data<?>... args) {}
 	
 	@Override
 	public void TimerProcess(Integer Seconds) {

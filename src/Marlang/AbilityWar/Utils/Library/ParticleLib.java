@@ -92,6 +92,15 @@ public class ParticleLib {
 				}
 			}
 		}
+
+		public <T> void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, T arg) {
+			if(AbilityWarSettings.getVisualEffect()) {
+				Particle p = getParticle();
+				if(p != null) {
+					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, arg);
+				}
+			}
+		}
 		
 	}
 

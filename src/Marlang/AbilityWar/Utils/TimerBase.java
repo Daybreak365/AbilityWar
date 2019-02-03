@@ -12,11 +12,37 @@ import Marlang.AbilityWar.AbilityWar;
  */
 abstract public class TimerBase {
 
-	static ArrayList<TimerBase> Tasks = new ArrayList<TimerBase>();
+	private static ArrayList<TimerBase> Tasks = new ArrayList<TimerBase>();
+	
+	public static ArrayList<TimerBase> getTasks() {
+		return Tasks;
+	}
 
-	public static void StopAllTasks() {
-		for (TimerBase Task : Tasks) {
-			Task.StopTimer(true);
+	public static void ResetTasks() {
+		ArrayList<TimerBase> Reset = new ArrayList<TimerBase>(getTasks());
+		
+		for(TimerBase timer : Reset) {
+			timer.StopTimer(true);
+		}
+		
+		Tasks = new ArrayList<TimerBase>();
+	}
+
+	/**
+	 * Register TimerBase
+	 * @param timers
+	 */
+	static void Register(TimerBase timer) {
+		Tasks.add(timer);
+	}
+
+	/**
+	 * Unregister TimerBase
+	 * @param timers
+	 */
+	static void Unregister(TimerBase timer) {
+		if(Tasks.contains(timer)) {
+			Tasks.remove(timer);
 		}
 	}
 
@@ -32,7 +58,7 @@ abstract public class TimerBase {
 
 	int Period = 20;
 
-	abstract public void TimerStart();
+	abstract public void TimerStart(Data<?>... args);
 
 	abstract public void TimerProcess(Integer Seconds);
 
@@ -45,24 +71,29 @@ abstract public class TimerBase {
 	/**
 	 * 타이머를 시작합니다.
 	 */
-	public void StartTimer() {
-		TempCount = Count;
-		this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
-		if(ProcessDuringGame) {
-			Tasks.add(this);
+	public void StartTimer(Data<?>... args) {
+		if(!this.isTimerRunning()) {
+			TempCount = Count;
+			this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
+			if(ProcessDuringGame) {
+				Register(this);
+			}
+			TimerStart(args);
 		}
-		TimerStart();
 	}
 
 	/**
 	 * 타이머를 종료합니다.
 	 */
 	public void StopTimer(boolean Silent) {
-		Bukkit.getScheduler().cancelTask(Task);
-		TempCount = Count;
-		this.Task = -1;
-		if(!Silent || getSilentNotice()) {
-			TimerEnd();
+		if(this.isTimerRunning()) {
+			Bukkit.getScheduler().cancelTask(Task);
+			Unregister(this);
+			TempCount = Count;
+			this.Task = -1;
+			if(!Silent || getSilentNotice()) {
+				TimerEnd();
+			}
 		}
 	}
 
@@ -72,6 +103,10 @@ abstract public class TimerBase {
 
 	public void setProcessDuringGame(boolean bool) {
 		this.ProcessDuringGame = bool;
+	}
+
+	public int getTask() {
+		return Task;
 	}
 
 	public int getCount() {
@@ -86,6 +121,10 @@ abstract public class TimerBase {
 		return TempCount;
 	}
 
+	public int getFixedTime(Integer Seconds) {
+		return (int) (Seconds / (20 / getPeriod()));
+	}
+	
 	public boolean getSilentNotice() {
 		return SilentNotice;
 	}
@@ -108,8 +147,31 @@ abstract public class TimerBase {
 	public TimerBase() {
 		InfiniteTimer = true;
 	}
+	
+	public static class Data<T> {
+		
+		private final T value;
+		private final Class<T> valueClass;
+		
+		public Data(T value, Class<T> clazz) {
+			this.value = value;
+			this.valueClass = clazz;
+		}
+		
+		@SuppressWarnings("unchecked")
+		public <U> U getValue(Class<U> clazz) {
+			if(value != null) {
+				if(clazz.equals(valueClass)) {
+					return (U) value;
+				}
+			}
 
-	public final class TimerTask extends Thread {
+			return null;
+		}
+		
+	}
+	
+	private final class TimerTask extends Thread {
 
 		@Override
 		public void run() {

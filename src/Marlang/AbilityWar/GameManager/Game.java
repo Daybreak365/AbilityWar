@@ -55,7 +55,7 @@ public class Game extends Thread {
 	TimerBase NoHunger = new TimerBase() {
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
 		}
 		
@@ -108,7 +108,7 @@ public class Game extends Thread {
 				break;
 			case 15:
 				if(AbilityWarSettings.getDrawAbility()) {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "모든 플레이어가 능력을 &b확정&f했습니다."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 플레이어가 능력을 &b확정&f했습니다."));
 					
 					AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.AbilitySelect_FINISHED, getGameAPI());
 					Bukkit.getPluginManager().callEvent(event);

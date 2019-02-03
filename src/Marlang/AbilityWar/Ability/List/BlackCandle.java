@@ -35,7 +35,7 @@ public class BlackCandle extends AbilityBase {
 	TimerBase NoDebuff = new TimerBase() {
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {

@@ -63,7 +63,7 @@ public class GameAPI {
 	 */
 	public static void StopGame() throws GameException {
 		if(AbilityWarThread.isGameTaskRunning()) {
-			TimerBase.StopAllTasks();
+			TimerBase.ResetTasks();
 			HandlerList.unregisterAll(AbilityWarThread.getGame().getDeathManager());	
 			AbilityWarThread.toggleGameTask(false);
 			AbilityWarThread.setGame(null);

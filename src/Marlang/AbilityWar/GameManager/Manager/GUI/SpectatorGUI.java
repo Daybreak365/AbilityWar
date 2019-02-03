@@ -126,7 +126,7 @@ public class SpectatorGUI implements Listener {
 		
 		p.openInventory(SpectateGUI);
 	}
-
+	
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.SpectateGUI)) {

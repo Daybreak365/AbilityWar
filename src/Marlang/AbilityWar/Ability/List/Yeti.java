@@ -56,7 +56,7 @@ public class Yeti extends AbilityBase {
 	TimerBase Buff = new TimerBase() {
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -79,9 +79,11 @@ public class Yeti extends AbilityBase {
 		Location center;
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			Count = 1;
 			center = getPlayer().getLocation();
+			
+			center.getWorld().getHighestBlockAt(center).setType(Material.SNOW);
 		}
 		
 		@Override

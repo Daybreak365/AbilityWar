@@ -54,7 +54,7 @@ public class Hacker extends AbilityBase {
 	TimerBase Move = new TimerBase(DurationConfig.getValue() * 20) {
 		
 		@Override
-		public void TimerStart() {}
+		public void TimerStart(Data<?>... args) {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {

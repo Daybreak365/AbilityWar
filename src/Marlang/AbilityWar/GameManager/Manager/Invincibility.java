@@ -29,7 +29,7 @@ public class Invincibility extends TimerBase {
 	}
 	
 	@Override
-	public void TimerStart() {
+	public void TimerStart(Data<?>... args) {
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 &f" + NumberUtil.parseTimeString(Duration * 60) + "&a동안 적용됩니다."));
 	
 		AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.Invincibility_STARTED, game.getGameAPI());

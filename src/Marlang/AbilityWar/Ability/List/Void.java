@@ -41,7 +41,7 @@ public class Void extends AbilityBase {
 	TimerBase Invincibility = new TimerBase(5) {
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			Inv = true;
 		}
 		

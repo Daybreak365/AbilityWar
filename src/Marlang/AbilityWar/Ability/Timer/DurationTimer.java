@@ -39,7 +39,7 @@ abstract public class DurationTimer extends TimerBase {
 	}
 	
 	@Override
-	public void TimerStart() {
+	public void TimerStart(Data<?>... args) {
 		Counted = new ArrayList<Integer>();
 	}
 	
@@ -60,10 +60,6 @@ abstract public class DurationTimer extends TimerBase {
 			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(Seconds))));
 			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
 		}
-	}
-	
-	private int getFixedTime(Integer Seconds) {
-		return (int) (Seconds / (20 / getPeriod()));
 	}
 	
 	@Override

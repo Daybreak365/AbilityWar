@@ -49,7 +49,7 @@ public class Zeus extends AbilityBase {
 		ArrayList<Location> Circle;
 		
 		@Override
-		public void TimerStart() {
+		public void TimerStart(Data<?>... args) {
 			center = getPlayer().getLocation();
 		}
 		

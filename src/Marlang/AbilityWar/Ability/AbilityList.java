@@ -27,7 +27,9 @@ import Marlang.AbilityWar.Ability.List.Muse;
 import Marlang.AbilityWar.Ability.List.Nex;
 import Marlang.AbilityWar.Ability.List.ShowmanShip;
 import Marlang.AbilityWar.Ability.List.Terrorist;
+import Marlang.AbilityWar.Ability.List.TheEmpress;
 import Marlang.AbilityWar.Ability.List.TheFool;
+import Marlang.AbilityWar.Ability.List.TheHighPriestess;
 import Marlang.AbilityWar.Ability.List.TheMagician;
 import Marlang.AbilityWar.Ability.List.Virtus;
 import Marlang.AbilityWar.Ability.List.Void;
@@ -86,8 +88,10 @@ public class AbilityList {
 		registerAbility("베르투스", Virtus.class);
 		registerAbility("넥스", Nex.class);
 		registerAbility("이라", Ira.class);
-		registerAbility("The Fool", TheFool.class);
-		registerAbility("The Magician", TheMagician.class);
+		registerAbility("광대", TheFool.class);
+		registerAbility("마술사", TheMagician.class);
+		registerAbility("교황", TheHighPriestess.class);
+		registerAbility("여제", TheEmpress.class);
 	}
 	
 	public static ArrayList<String> values() {

@@ -142,12 +142,27 @@ public class Messager {
 		
 		return AbilityInfo;
 	}
-	
+
 	/**
 	 * 쿨타임 설명을 구성합니다.
 	 */
 	public static String formatCooldown(Integer Cool) {
 		return ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &7: &f" + Cool + "초");
+	}
+
+	/**
+	 * 타로카드 설명을 구성합니다.
+	 */
+	public static String formatTarotCard(Integer Number, String Name) {
+		String Num;
+		
+		if(Number < 10) {
+			Num = "0" + Number;
+		} else {
+			Num = String.valueOf(Number);
+		}
+		
+		return ChatColor.translateAlternateColorCodes('&', "&f타로카드 &e" + Num + " &f- &a" + Name);
 	}
 	
 	/**
