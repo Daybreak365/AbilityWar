@@ -6,11 +6,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -52,7 +52,7 @@ public class Gladiator extends AbilityBase {
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	HashMap<Block, MaterialData> Saves = new HashMap<Block, MaterialData>();
+	HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
 	
 	TimerBase FieldClear = new TimerBase(20) {
 		
@@ -81,8 +81,8 @@ public class Gladiator extends AbilityBase {
 		@Override
 		public void TimerEnd() {
 			for(Block b : Saves.keySet()) {
-				b.setType(Saves.get(b).getItemType());
-				b.getState().setData(Saves.get(b));
+				BlockState state = Saves.get(b);
+				b.setType(state.getType());
 			}
 			
 			Saves.clear();
@@ -113,7 +113,7 @@ public class Gladiator extends AbilityBase {
 			Count = 1;
 			TotalCount = 1;
 			center = getPlayer().getLocation();
-			Saves.putIfAbsent(center.clone().subtract(0, 1, 0).getBlock(), center.clone().subtract(0, 1, 0).getBlock().getState().getData());
+			Saves.putIfAbsent(center.clone().subtract(0, 1, 0).getBlock(), center.clone().subtract(0, 1, 0).getBlock().getState());
 			center.subtract(0, 1, 0).getBlock().setType(Material.SMOOTH_BRICK);
 		}
 		
@@ -121,23 +121,23 @@ public class Gladiator extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			if(TotalCount <= 10) {
 				for(Location l : LocationUtil.getCircle(center, Count, Count * this.getCount() * 30, false)) {
-					Saves.putIfAbsent(l.getBlock(), l.getBlock().getState().getData());
+					Saves.putIfAbsent(l.getBlock(), l.getBlock().getState());
 					l.getBlock().setType(Material.SMOOTH_BRICK);
 				}
 				
 				Count++;
 			} else if(TotalCount > 10 && TotalCount <= 15) {
 				for(Location l : LocationUtil.getCircle(center, Count - 1, Count * 30, false)) {
-					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState().getData());
+					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(Material.IRON_FENCE);
 				}
 				for(Location l : LocationUtil.getCircle(center, Count, Count * 30, false)) {
-					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState().getData());
+					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(Material.IRON_FENCE);
 				}
 			} else if(TotalCount > 15 && TotalCount <= 26) {
 				for(Location l : LocationUtil.getCircle(center, Count, Count * 30, false)) {
-					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState().getData());
+					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
 					l.add(0, 6, 0).getBlock().setType(Material.SMOOTH_BRICK);
 				}
 				
@@ -151,7 +151,7 @@ public class Gladiator extends AbilityBase {
 			Location check = center.clone().add(0, 6, 0);
 			
 			if(!check.getBlock().getType().equals(Material.SMOOTH_BRICK)) {
-				Saves.putIfAbsent(check.getBlock(), check.getBlock().getState().getData());
+				Saves.putIfAbsent(check.getBlock(), check.getBlock().getState());
 				check.getBlock().setType(Material.SMOOTH_BRICK);
 			}
 			

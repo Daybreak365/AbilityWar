@@ -1,5 +1,7 @@
 package Marlang.AbilityWar.Utils.Library;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
@@ -633,11 +635,17 @@ public class SoundLib {
 		public Instrument getInstrument() {
 			return instrument;
 		}
-		
+
 		public void playInstrument(Player p, Note note) {
 			Instrument i = getInstrument();
 			if(i != null) {
 				p.playNote(p.getLocation(), i, note);
+			}
+		}
+
+		public void playInstrument(List<Player> players, Note note) {
+			for(Player p : players) {
+				playInstrument(p, note);
 			}
 		}
 		

@@ -27,11 +27,20 @@ public class TheMagician extends AbilityBase {
 		
 	};
 
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("마술사", "Damage", 3, 
+			"# 데미지") {
+		
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 1;
+		}
+		
+	};
+
 	public TheMagician() {
 		super("마술사", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 플레이어들에게"),
-				ChatColor.translateAlternateColorCodes('&', "&f3만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				Messager.formatTarotCard(1, "The Magician"));
+				ChatColor.translateAlternateColorCodes('&', "&f3만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	@Override

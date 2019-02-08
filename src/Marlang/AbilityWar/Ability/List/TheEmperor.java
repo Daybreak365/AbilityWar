@@ -1,54 +1,82 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.TippedArrow;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionType;
+import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.TimerBase;
 
 public class TheEmperor extends AbilityBase {
 
+	public static SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>("황제", "DamageDecrease", 20, 
+			"# 공격 피해 감소량",
+			"# 10으로 설정하면 공격을 받았을 때 전체 대미지의 90%를 받습니다.") {
+		
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 1 && value <= 100;
+		}
+		
+	};
+	
 	public TheEmperor() {
-		super("황제", Rank.A,
-				ChatColor.translateAlternateColorCodes('&', "&f피가 한칸일 때 데미지를 받지 않습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f포션 화살을 맞으면 화살을 쏜 대상에게도 포션 효과를 동일하게 적용합니다."),
-				Messager.formatTarotCard(4, "The Emperor"));
+		super("황제", Rank.A, 
+				ChatColor.translateAlternateColorCodes('&', "&f느리고 품위있게 걸어가며 공격 피해가 일정량 감소합니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 이하일 때 공격 피해를 받지 않습니다."));
+		
+		registerTimer(Passive);
 	}
-
+	
+	TimerBase Passive = new TimerBase() {
+		
+		@Override
+		public void TimerStart(Data<?>... args) {}
+		
+		@Override
+		public void TimerProcess(Integer Seconds) {
+			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 1), true);
+		}
+		
+		@Override
+		public void TimerEnd() {}
+		
+	};
+	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
 		return false;
 	}
-
+	
+	Integer DamageDecrease = DamageDecreaseConfig.getValue();
+	
 	@Override
 	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
+		if(event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 			if(e.getEntity().equals(getPlayer())) {
-				if(getPlayer().getHealth() == 2) {
+				Double damage = (e.getDamage() / 100) * (100 - DamageDecrease);
+				Messager.broadcastMessage(e.getDamage() + " -> " + damage);
+				e.setDamage(damage);
+				
+				Integer Health = (int) getPlayer().getHealth();
+				Messager.broadcastMessage(Health.toString());
+				if(Health <= 2) {
 					e.setCancelled(true);
-				}
-			}
-		} else if(event instanceof ProjectileHitEvent) {
-			ProjectileHitEvent e = (ProjectileHitEvent) event;
-			if(e.getHitEntity() != null && e.getHitEntity().equals(getPlayer())) {
-				if(e.getEntity() instanceof TippedArrow) {
-					TippedArrow arrow = (TippedArrow) e.getEntity();
-					if(arrow.getShooter() instanceof LivingEntity) {
-						((LivingEntity) arrow.getShooter()).addPotionEffect(new PotionEffect(PotionType.FIRE_RESISTANCE.getEffectType(), 60, 0), true);
-					}
 				}
 			}
 		}
 	}
 
 	@Override
-	public void AbilityEvent(EventType type) {}
+	public void AbilityEvent(EventType type) {
+		if(type.equals(EventType.RestrictClear)) {
+			Passive.StartTimer();
+		}
+	}
 
 }

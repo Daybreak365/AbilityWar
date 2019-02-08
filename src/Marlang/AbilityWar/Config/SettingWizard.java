@@ -86,11 +86,12 @@ public class SettingWizard implements Listener {
 		
 		for(Integer i = 0; i < 27; i++) {
 			if(i.equals(11)) {
-				ItemStack Inv = new ItemStack(Material.WOOL, 1, (short) (AbilityWarSettings.getInvincibilityEnable() ? 5 : 14));
+				boolean InvincibilityEnable = AbilityWarSettings.getInvincibilityEnable();
+				ItemStack Inv = new ItemStack(Material.WOOL, 1, (short) (InvincibilityEnable ? 5 : 14));
 				ItemMeta InvMeta = Inv.getItemMeta();
 				InvMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적"));
 				InvMeta.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getInvincibilityEnable() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (InvincibilityEnable ? "&a활성화" : "&c비활성화"))
 						));
 				Inv.setItemMeta(InvMeta);
 				
@@ -148,7 +149,8 @@ public class SettingWizard implements Listener {
 						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 5레벨"),
 						ChatColor.translateAlternateColorCodes('&', "&c좌클릭         &6» &e- 1레벨"),
 						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 좌클릭 &6» &e- 5레벨"),
-						ChatColor.translateAlternateColorCodes('&', "&c휠클릭         &6» &e+ 10000레벨")
+						ChatColor.translateAlternateColorCodes('&', "&c휠클릭         &6» &e+ 10000레벨"),
+						ChatColor.translateAlternateColorCodes('&', "&cQ              &6» &e- 10000레벨")
 						));
 				Lev.setItemMeta(LevMeta);
 				
@@ -364,23 +366,24 @@ public class SettingWizard implements Listener {
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Enable, !AbilityWarSettings.getInvincibilityEnable());
 						openInvincibilityGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b초반 무적 시간"))) {
+						Integer InvincibilityDuration = AbilityWarSettings.getInvincibilityDuration();
 						if(e.getClick().equals(ClickType.RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, AbilityWarSettings.getInvincibilityDuration() + 1);
+							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration + 1);
 							openInvincibilityGUI();
 						} else if(e.getClick().equals(ClickType.SHIFT_RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, AbilityWarSettings.getInvincibilityDuration() + 5);
+							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration + 5);
 							openInvincibilityGUI();
 						} else if(e.getClick().equals(ClickType.LEFT)) {
-							if(AbilityWarSettings.getInvincibilityDuration() >= 2) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, AbilityWarSettings.getInvincibilityDuration() - 1);
+							if(InvincibilityDuration >= 2) {
+								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration - 1);
 								openInvincibilityGUI();
 							} else {
 								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, 1);
 								openInvincibilityGUI();
 							}
 						} else if(e.getClick().equals(ClickType.SHIFT_LEFT)) {
-							if(AbilityWarSettings.getInvincibilityDuration() >= 6) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, AbilityWarSettings.getInvincibilityDuration() - 5);
+							if(InvincibilityDuration >= 6) {
+								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration - 5);
 								openInvincibilityGUI();
 							} else {
 								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, 1);
@@ -399,31 +402,41 @@ public class SettingWizard implements Listener {
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_NoHunger, !AbilityWarSettings.getNoHunger());
 						openGameGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b초반 지급 레벨"))) {
+						Integer StartLevel = AbilityWarSettings.getStartLevel();
+						
 						if(e.getClick().equals(ClickType.RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, AbilityWarSettings.getStartLevel() + 1);
+							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel + 1);
 							openGameGUI();
 						} else if(e.getClick().equals(ClickType.SHIFT_RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, AbilityWarSettings.getStartLevel() + 5);
+							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel + 5);
 							openGameGUI();
 						} else if(e.getClick().equals(ClickType.LEFT)) {
-							if(AbilityWarSettings.getStartLevel() >= 1) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, AbilityWarSettings.getStartLevel() - 1);
+							if(StartLevel >= 1) {
+								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel - 1);
 								openGameGUI();
 							} else {
 								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, 0);
 								openGameGUI();
 							}
 						} else if(e.getClick().equals(ClickType.SHIFT_LEFT)) {
-							if(AbilityWarSettings.getStartLevel() >= 5) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, AbilityWarSettings.getStartLevel() - 5);
+							if(StartLevel >= 5) {
+								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel - 5);
 								openGameGUI();
 							} else {
 								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, 0);
 								openGameGUI();
 							}
 						} else if(e.getClick().equals(ClickType.MIDDLE)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, AbilityWarSettings.getStartLevel() + 10000);
+							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel + 10000);
 							openGameGUI();
+						} else if(e.getClick().equals(ClickType.DROP)) {
+							if(StartLevel >= 10000) {
+								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel - 10000);
+								openGameGUI();
+							} else {
+								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, 0);
+								openGameGUI();
+							}
 						}
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b내구도 무한"))) {
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_InfiniteDurability, !AbilityWarSettings.getInfiniteDurability());

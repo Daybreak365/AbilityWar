@@ -1,5 +1,6 @@
 package Marlang.AbilityWar.Utils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.UpdateObject;
 
 /**
  * 메시지 관리 클래스
@@ -23,6 +25,15 @@ public class Messager {
 	 */
 	public static void sendMessage(String msg) {
 		Bukkit.getConsoleSender().sendMessage(Prefix + msg);
+	}
+
+	/**
+	 * 콘솔에 메시지를 전송합니다.
+	 */
+	public static void sendMessage(ArrayList<String> messages) {
+		for(String msg : messages) {
+			sendMessage(msg);
+		}
 	}
 
 	/**
@@ -47,6 +58,13 @@ public class Messager {
 	}
 
 	/**
+	 * 콘솔에 오류 메시지를 전송합니다.
+	 */
+	public static void sendErrorMessage() {
+		System.out.println(Prefix + ChatColor.RED + "오류가 발생하였습니다.");
+	}
+	
+	/**
 	 * 플레이어에게 오류 메시지를 전송합니다.
 	 */
 	public static void sendErrorMessage(Player p, String msg) {
@@ -59,7 +77,7 @@ public class Messager {
 	public static void sendErrorMessage(CommandSender sender, String msg) {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &f") + msg);
 	}
-
+	
 	/**
 	 * 오류 메시지를 공지합니다.
 	 */
@@ -109,7 +127,7 @@ public class Messager {
 		Return += Center + Base.substring(Pivot + Center.length() / 2);
 		return Return;
 	}
-	
+
 	/**
 	 * 짧은 제목을 구성합니다.
 	 */
@@ -120,6 +138,23 @@ public class Messager {
 		String Return = ChatColor.translateAlternateColorCodes('&', First + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))));
 		Return += Center + Base.substring(Pivot + Center.length() / 2);
 		return Return;
+	}
+
+	/**
+	 * 업데이트 설명을 구성합니다.
+	 * @throws IOException 
+	 */
+	public static ArrayList<String> formatUpdate(UpdateObject update) throws IOException {
+		ArrayList<String> UpdateInfo = new ArrayList<String>();
+		UpdateInfo.add(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "업데이트"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + update.getTag() + " &f업데이트 &f(&7v" + update.getVersion() + "&f) "
+				+ "(&7" + (update.getFileSize() / 1024) + "KB&f)"));
+		for(String s : update.getPatchNote()) {
+			UpdateInfo.add(s);
+		}
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&2--------------------------------------------------------------"));
+		
+		return UpdateInfo;
 	}
 	
 	/**
@@ -148,21 +183,6 @@ public class Messager {
 	 */
 	public static String formatCooldown(Integer Cool) {
 		return ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &7: &f" + Cool + "초");
-	}
-
-	/**
-	 * 타로카드 설명을 구성합니다.
-	 */
-	public static String formatTarotCard(Integer Number, String Name) {
-		String Num;
-		
-		if(Number < 10) {
-			Num = "0" + Number;
-		} else {
-			Num = String.valueOf(Number);
-		}
-		
-		return ChatColor.translateAlternateColorCodes('&', "&f타로카드 &e" + Num + " &f- &a" + Name);
 	}
 	
 	/**

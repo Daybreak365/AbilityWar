@@ -2,6 +2,7 @@ package Marlang.AbilityWar.GameManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -226,7 +227,7 @@ public class Game extends Thread {
 	 * 기본 킷 전체 지급
 	 */
 	public void GiveDefaultKits() {
-		ArrayList<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
+		List<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
 		
 		for(Player p : Players) {
 			if(AbilityWarSettings.getInventoryClear()) {
@@ -249,7 +250,7 @@ public class Game extends Thread {
 	 * 기본 킷 유저 지급
 	 */
 	public void GiveDefaultKits(Player p) {
-		ArrayList<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
+		List<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
 
 		if(AbilityWarSettings.getInventoryClear()) {
 			p.getInventory().clear();

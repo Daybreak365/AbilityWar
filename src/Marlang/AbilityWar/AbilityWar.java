@@ -33,7 +33,7 @@ public class AbilityWar extends JavaPlugin {
 	public void onEnable() {
 		AbilityWar.Plugin = this;
 		
-		if(!au.Check()) {
+		if(au.Check()) {
 			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 			
 			Load();
@@ -62,6 +62,8 @@ public class AbilityWar extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		AbilityWarSettings.Refresh();
+		
 		Messager.sendMessage("플러그인이 비활성화되었습니다.");
 	}
 	

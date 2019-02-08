@@ -2,6 +2,7 @@ package Marlang.AbilityWar.GameManager.Manager.GUI;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -73,10 +74,12 @@ public class BlackListGUI implements Listener {
 		int Count = 0;
 		Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;
 		
+		List<String> blackList = AbilityWarSettings.getBlackList();
+		
 		for(String name : getBlackList()) {
 			ItemStack is;
 			
-			if(AbilityWarSettings.getBlackList().contains(name)) {
+			if(blackList.contains(name)) {
 				is = new ItemStack(Material.WOOL, 1, (short) 14);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));

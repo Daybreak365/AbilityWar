@@ -10,7 +10,7 @@ import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.Messager;
 
-public class TheFool extends AbilityBase {
+public class Clown extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("광대", "Cooldown", 3, 
 			"# 쿨타임") {
@@ -22,10 +22,9 @@ public class TheFool extends AbilityBase {
 		
 	};
 
-	public TheFool() {
+	public Clown() {
 		super("광대", Rank.D,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 스폰으로 이동합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				Messager.formatTarotCard(0, "The Fool"));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 스폰으로 이동합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	
 		registerTimer(Cool);
 	}

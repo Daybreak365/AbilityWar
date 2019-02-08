@@ -82,7 +82,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				}
 			} else if(split[0].equalsIgnoreCase("reload")) {
 				if(sender.isOp()) {
-					AbilityWarSettings.Reload();
+					AbilityWarSettings.Refresh();
 					AbilitySettings.Reload();
 					Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&2능력자 전쟁 콘피그&a가 리로드되었습니다."));
 				} else {
