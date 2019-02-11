@@ -15,7 +15,6 @@ public class AbilitySettings {
 	private static void registerSetting(SettingObject<?> object) {
 		if(!Settings.contains(object)) {
 			Settings.add(object);
-			Setup();
 		}
 	}
 	
@@ -36,11 +35,11 @@ public class AbilitySettings {
 		newConfig = null;
 	}
 	
-	public static abstract class SettingObject<T> {
+	abstract public static class SettingObject<T> {
 		
-		String Path;
-		T Default;
-		String[] Comments;
+		private String Path;
+		private T Default;
+		private String[] Comments;
 		
 		public SettingObject(String AbilityName, String Path, T Default, String... Comments) {
 			this.Path = AbilityName + "." + Path;
@@ -81,8 +80,9 @@ public class AbilitySettings {
 		
 	}
 	
-	public static void Reload() {
+	public static void Refresh() {
 		Config.load();
+		Setup();
 	}
 	
 }

@@ -66,13 +66,12 @@ public class BlackListGUI implements Listener {
 	}
 	
 	public void openBlackListGUI(Integer page) {
-		if ((AbilityList.values().size() - 1) / 36 + 1 < page)
-			page = 1;
+		Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;
+		if (MaxPage < page) page = 1;
 		if(page < 1) page = 1;
 		BlackListGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c&l✖ &8&l능력 블랙리스트 &c&l✖"));
 		PlayerPage = page;
 		int Count = 0;
-		Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;
 		
 		List<String> blackList = AbilityWarSettings.getBlackList();
 		

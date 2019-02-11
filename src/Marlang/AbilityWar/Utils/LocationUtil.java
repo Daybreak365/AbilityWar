@@ -31,25 +31,42 @@ public class LocationUtil {
 		
 		return ((X - Center_X) * (X - Center_X)) + ((Z - Center_Z) * (Z - Center_Z)) < (radius * radius);
 	}
-
-	public static ArrayList<Block> getBlocks(Location location, Integer radius, boolean hollow) {
+	
+	//TODO : 알고리즘 최적화
+	public static ArrayList<Block> getBlocks(Location location, Integer radius, boolean hollow, boolean top) {
 		ArrayList<Block> Blocks = new ArrayList<Block>();
 		
 		Integer X = location.getBlockX();
 		Integer Y = location.getBlockY();
 		Integer	Z = location.getBlockZ();
 		
-		for (Integer x = X - radius; x <= X + radius; x++)
-			for (Integer y = Y - radius; y <= Y + radius; y++)
+		for (Integer x = X - radius; x <= X + radius; x++) {
+			for (Integer y = Y - radius; y <= Y + radius; y++) {
 				for (Integer z = Z - radius; z <= Z + radius; z++) {
 					Location l = new Location(location.getWorld(), x, y, z);
 					double distance = location.distanceSquared(l);
 					if (distance < (radius * radius) && !(hollow && distance < ((radius - 1) * (radius - 1)))) {
-						if(!l.getBlock().getType().equals(Material.AIR)) {
-							Blocks.add(l.getBlock());
+						if(top) {
+							Location highest = l.getWorld().getHighestBlockAt(l).getLocation();
+							Block highestBlock = highest.getBlock();
+							if(highestBlock.getType().equals(Material.AIR)) {
+								Block lowBlock = highest.clone().subtract(0, 1, 0).getBlock();
+								if(!lowBlock.getType().equals(Material.AIR)) {
+									Blocks.add(lowBlock);
+								}
+							} else {
+								Blocks.add(highestBlock);
+							}
+						} else {
+							Block block = l.getBlock();
+							if(!block.getType().equals(Material.AIR)) {
+								Blocks.add(block);
+							}
 						}
 					}
 				}
+			}
+		}
 		
 		return Blocks;
 	}

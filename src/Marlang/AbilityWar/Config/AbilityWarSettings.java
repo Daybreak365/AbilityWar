@@ -123,7 +123,7 @@ public class AbilityWarSettings {
 	public static boolean getOldEnchant() {
 		return getBoolean(ConfigNodes.Game_OldMechanics_Enchant);
 	}
-
+	
 	/**
 	 * Integer Config
 	 */

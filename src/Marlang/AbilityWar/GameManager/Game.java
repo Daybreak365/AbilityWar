@@ -20,6 +20,7 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Manager.DeathManager;
 import Marlang.AbilityWar.GameManager.Manager.Firewall;
 import Marlang.AbilityWar.GameManager.Manager.Invincibility;
+import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
@@ -219,6 +220,8 @@ public class Game extends Thread {
 				w.setStorm(false);
 			}
 		}
+		
+		Script.RunAll();
 		
 		setGameStarted(true);
 	}

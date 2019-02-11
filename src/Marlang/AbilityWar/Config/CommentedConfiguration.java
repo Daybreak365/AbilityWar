@@ -28,6 +28,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 	public CommentedConfiguration(File file) {
 		this.Comments = new HashMap<String, String>();
 		this.file = file;
+		load();
 	}
 
 	public boolean load() {

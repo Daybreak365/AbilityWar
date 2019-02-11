@@ -257,16 +257,23 @@ public class AutoUpdate {
 		}
 		
 	}
+
+	/**
+	 * 플러그인을 Reload 합니다.
+	 */
+	public void reload(Plugin plugin) {
+		if (plugin != null) {
+			unload(plugin);
+			load(plugin);
+		}
+	}
 	
 	public void load(Plugin plugin) {
 		load(plugin.getName());
 	}
 	
 	/**
-	 * Loads and enables a plugin.
-	 *
-	 * @param name plugin's name
-	 * @return status message
+	 * 플러그인을 Load 합니다.
 	 */
 	public void load(String name) {
 
@@ -306,18 +313,6 @@ public class AutoUpdate {
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
-	}
-
-	/**
-	 * Reload a plugin.
-	 *
-	 * @param plugin the plugin to reload
-	 */
-	public void reload(Plugin plugin) {
-		if (plugin != null) {
-			unload(plugin);
-			load(plugin);
-		}
 	}
 	
 	/**

@@ -1,8 +1,10 @@
 package Marlang.AbilityWar.GameManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -24,6 +26,10 @@ import Marlang.AbilityWar.GameManager.Manager.GUI.AbilityGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.BlackListGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpecialThanksGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpectatorGUI;
+import Marlang.AbilityWar.GameManager.Script.Script;
+import Marlang.AbilityWar.GameManager.Script.ScriptException;
+import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
+import Marlang.AbilityWar.GameManager.Script.Objects.AbstractScript;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
@@ -37,7 +43,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		return true;
 	}
 	
-	public void parseCommand(CommandSender sender, String label, String[] split) {
+	private void parseCommand(CommandSender sender, String label, String[] split) {
 		if(split.length == 0) {
 			sendHelpCommand(sender, label, 1);
 		} else {
@@ -83,8 +89,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else if(split[0].equalsIgnoreCase("reload")) {
 				if(sender.isOp()) {
 					AbilityWarSettings.Refresh();
-					AbilitySettings.Reload();
-					Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&2´É·ÂÀÚ ÀüÀï ÄÜÇÇ±×&a°¡ ¸®·ÎµåµÇ¾ú½À´Ï´Ù."));
+					AbilitySettings.Refresh();
+					Script.LoadAll();
+					Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&2´É·ÂÀÚ ÀüÀï&aÀÌ ¸®·ÎµåµÇ¾ú½À´Ï´Ù."));
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
 				}
@@ -199,6 +206,36 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
 				}
+			} else if(split[0].equalsIgnoreCase("script")) {
+				if(sender instanceof Player) {
+					Player p = (Player) sender;
+					if(p.isOp()) {
+						if(split.length > 2) {
+							try {
+								Class<? extends AbstractScript> scriptClass = Script.getScriptClass(split[1]);
+								if(Pattern.compile("^[°¡-ÆRa-zA-Z0-9_]+$").matcher(split[2]).find()) {
+									File file = new File("plugins/" + AbilityWar.getPlugin().getName() + "/Script/" + split[2] + ".yml");
+									if(!file.exists()) {
+										ScriptWizard wizard = new ScriptWizard(p, AbilityWar.getPlugin(), scriptClass, split[2]);
+										wizard.openScriptWizard(1);
+									} else {
+										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + ".yml &f½ºÅ©¸³Æ® ÆÄÀÏÀÌ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù."));
+									}
+								} else {
+									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + "&fÀº(´Â) »ç¿ëÇÒ ¼ö ¾ø´Â ÀÌ¸§ÀÔ´Ï´Ù."));
+								}
+							} catch(ClassNotFoundException | IllegalArgumentException | ScriptException ex) {
+								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÁ¸ÀçÇÏÁö ¾Ê´Â ½ºÅ©¸³Æ® À¯ÇüÀÔ´Ï´Ù."));
+							}
+						} else {
+							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "»ç¿ë¹ý &7: &f/" + label + " script <À¯Çü> <ÀÌ¸§>"));
+						}
+					} else {
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+					}
+				} else {
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+				}
 			} else if(split[0].equalsIgnoreCase("specialthanks")) {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
@@ -214,7 +251,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	public void parseConfigCommand(Player p, String label, String[] args) {
+	private void parseConfigCommand(Player p, String label, String[] args) {
 		SettingWizard wizard = new SettingWizard(p, AbilityWar.getPlugin());
 		if(args[0].equalsIgnoreCase("kit")) {
 			wizard.openKitGUI();
@@ -235,7 +272,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	public void parseUtilCommand(Player p, String label, String[] args) {
+	private void parseUtilCommand(Player p, String label, String[] args) {
 		if(args[0].equalsIgnoreCase("abi")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
 				if(args.length < 2) {
@@ -299,12 +336,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			if(NumberUtil.isInt(args[0])) {
 				sendHelpConfigCommand(p, label, Integer.valueOf(args[0]));
 			} else {
-				Messager.sendErrorMessage(p, "Á¸ÀçÇÏÁö ¾Ê´Â ÄÜÇÇ±×ÀÔ´Ï´Ù.");
+				Messager.sendErrorMessage(p, "Á¸ÀçÇÏÁö ¾Ê´Â À¯Æ¿ÀÔ´Ï´Ù.");
 			}
 		}
 	}
 	
-	public void sendHelpCommand(CommandSender sender, String label, Integer Page) {
+	private void sendHelpCommand(CommandSender sender, String label, Integer Page) {
 		int AllPage = 2;
 		
 		switch(Page) {
@@ -334,7 +371,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	public void sendHelpConfigCommand(CommandSender sender, String label, Integer Page) {
+	private void sendHelpConfigCommand(CommandSender sender, String label, Integer Page) {
 		int AllPage = 1;
 		
 		switch(Page) {
@@ -354,7 +391,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	public void sendHelpUtilCommand(CommandSender sender, String label, Integer Page) {
+	private void sendHelpUtilCommand(CommandSender sender, String label, Integer Page) {
 		int AllPage = 1;
 		
 		switch(Page) {
@@ -379,14 +416,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		return parseTabComplete(sender, label, args);
 	}
 	
-	public List<String> parseTabComplete(CommandSender sender, String label, String[] args) {
+	private List<String> parseTabComplete(CommandSender sender, String label, String[] args) {
 		if(label.equalsIgnoreCase("abilitywar") || label.equalsIgnoreCase("ability")
 		|| label.equalsIgnoreCase("aw") || label.equalsIgnoreCase("va")) {
 			switch(args.length) {
 				case 1:
 					ArrayList<String> Complete = Messager.getStringList(
 							"start", "stop", "check", "yes", "no",
-							"skip", "reload", "config", "util", "specialthanks");
+							"skip", "reload", "config", "util", "script", "specialthanks");
 					
 					if(args[0].isEmpty()) {
 						return Complete;
@@ -409,6 +446,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							return Util;
 						} else {
 							return Util.stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+						}
+					} else if(args[0].equalsIgnoreCase("script")) {
+						List<String> list = Script.getRegisteredScripts();
+						
+						if(args[1].isEmpty()) {
+							return list;
+						} else {
+							return list.stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
 						}
 					}
 				case 3:

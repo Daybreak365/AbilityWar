@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.jar.JarFile;
 
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +36,7 @@ public class FileManager {
 		
 		return aList;
 	}
-	
+
 	public static File getFile(String File) {
 		
 		File f = new File(getDataFolder().getPath() + "/" + File);
@@ -54,6 +55,26 @@ public class FileManager {
 			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + f.getPath() + " 파일을 생성하지 못했습니다."));
 			return null;
 		}
+	}
+
+	public static File getFolder(String Folder) {
+		
+		File f = new File(getDataFolder().getPath() + "/" + Folder);
+
+		if(createDataFolder()) {
+			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f 폴더를 생성했습니다."));
+		}
+		
+		if(!f.exists()) {
+			f.mkdirs();
+		}
+		
+		return f;
+	}
+	
+	public static JarFile getJarFile(File file) throws IOException {
+		JarFile jarFile = new JarFile(file);
+		return jarFile;
 	}
 	
 }

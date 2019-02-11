@@ -151,13 +151,12 @@ public class SpecialThanksGUI implements Listener {
 	Inventory STGUI;
 	
 	public void openGUI(Integer page) {
-		if ((SpecialThanks.length - 1) / 18 + 1 < page)
-			page = 1;
+		Integer MaxPage = ((SpecialThanks.length - 1) / 18) + 1;
+		if (MaxPage < page) page = 1;
 		if(page < 1) page = 1;
 		STGUI = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&c&l✿ &0&lSpecial Thanks &c&l✿"));
 		PlayerPage = page;
 		int Count = 0;
-		Integer MaxPage = ((SpecialThanks.length - 1) / 18) + 1;
 		
 		for (SpecialThank st : SpecialThanks) {
 			ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
@@ -207,7 +206,7 @@ public class SpecialThanksGUI implements Listener {
 		
 		p.openInventory(STGUI);
 	}
-
+	
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.STGUI)) {

@@ -177,11 +177,9 @@ public class Nex extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			Integer Distance = 6 - Seconds;
 			
-			for(Block block : LocationUtil.getBlocks(center, Distance, true)) {
-				if(block.getLocation().getBlockY() == center.getBlockY() - 1) {
-					FallBlock fb = new FallBlock(block.getState().getData(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0));
-					fb.Spawn(false);
-				}
+			for(Block block : LocationUtil.getBlocks(center, Distance, true, true)) {
+				FallBlock fb = new FallBlock(block.getState().getData(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0));
+				fb.Spawn(false);
 			}
 			
 			for(Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {

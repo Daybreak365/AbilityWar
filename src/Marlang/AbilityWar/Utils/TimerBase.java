@@ -97,8 +97,9 @@ abstract public class TimerBase {
 		}
 	}
 
-	public void setPeriod(Integer Period) {
+	public TimerBase setPeriod(Integer Period) {
 		this.Period = Period;
+		return this;
 	}
 
 	public void setProcessDuringGame(boolean bool) {

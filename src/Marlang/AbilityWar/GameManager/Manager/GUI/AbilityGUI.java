@@ -53,55 +53,52 @@ public class AbilityGUI implements Listener {
 	Inventory AbilitySelectGUI;
 	
 	public void openAbilitySelectGUI(Integer page) {
-		try {
-			if ((Values.size() - 1) / 36 + 1 < page)
-				page = 1;
-			if(page < 1) page = 1;
-			AbilitySelectGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
-			PlayerPage = page;
-			int Count = 0;
-			Integer MaxPage = ((Values.size() - 1) / 36) + 1;
+		Integer MaxPage = ((Values.size() - 1) / 36) + 1;
+		if (MaxPage < page) page = 1;
+		if(page < 1) page = 1;
+		AbilitySelectGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
+		PlayerPage = page;
+		int Count = 0;
+		
+		for (String name : Values) {
+			ItemStack is = new ItemStack(Material.IRON_BLOCK);
+			ItemMeta im = is.getItemMeta();
+			im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
+			im.setLore(Messager.getStringList(
+					ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요.")
+					));
+			is.setItemMeta(im);
 			
-			for (String name : Values) {
-				ItemStack is = new ItemStack(Material.IRON_BLOCK);
-				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-				im.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요.")
-						));
-				is.setItemMeta(im);
-				
-				if (Count / 36 == page - 1) {
-					AbilitySelectGUI.setItem(Count % 36, is);
-				}
-				Count++;
+			if (Count / 36 == page - 1) {
+				AbilitySelectGUI.setItem(Count % 36, is);
 			}
-			
-			if(page > 1) {
-				ItemStack previousPage = new ItemStack(Material.ARROW, 1);
-				ItemMeta previousMeta = previousPage.getItemMeta();
-				previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
-				previousPage.setItemMeta(previousMeta);
-				AbilitySelectGUI.setItem(48, previousPage);
-			}
-			
-			if(page != MaxPage) {
-				ItemStack nextPage = new ItemStack(Material.ARROW, 1);
-				ItemMeta nextMeta = nextPage.getItemMeta();
-				nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
-				nextPage.setItemMeta(nextMeta);
-				AbilitySelectGUI.setItem(50, nextPage);
-			}
+			Count++;
+		}
+		
+		if(page > 1) {
+			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
+			ItemMeta previousMeta = previousPage.getItemMeta();
+			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
+			previousPage.setItemMeta(previousMeta);
+			AbilitySelectGUI.setItem(48, previousPage);
+		}
+		
+		if(page != MaxPage) {
+			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
+			ItemMeta nextMeta = nextPage.getItemMeta();
+			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
+			nextPage.setItemMeta(nextMeta);
+			AbilitySelectGUI.setItem(50, nextPage);
+		}
 
-			ItemStack Page = new ItemStack(Material.PAPER, 1);
-			ItemMeta PageMeta = Page.getItemMeta();
-			PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-					"&6페이지 &e" + page + " &6/ &e" + MaxPage));
-			Page.setItemMeta(PageMeta);
-			AbilitySelectGUI.setItem(49, Page);
-			
-			p.openInventory(AbilitySelectGUI);
-		} catch(Exception e) {}
+		ItemStack Page = new ItemStack(Material.PAPER, 1);
+		ItemMeta PageMeta = Page.getItemMeta();
+		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+				"&6페이지 &e" + page + " &6/ &e" + MaxPage));
+		Page.setItemMeta(PageMeta);
+		AbilitySelectGUI.setItem(49, Page);
+		
+		p.openInventory(AbilitySelectGUI);
 	}
 	
 	@EventHandler
