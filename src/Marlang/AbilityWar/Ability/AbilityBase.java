@@ -15,7 +15,6 @@ abstract public class AbilityBase {
 	String AbilityName;
 	Rank Rank;
 	String[] Explain;
-	String Category = "";
 	
 	ArrayList<TimerBase> timers = new ArrayList<TimerBase>();
 	
@@ -79,16 +78,8 @@ abstract public class AbilityBase {
 		return Explain;
 	}
 	
-	public String getCategory() {
-		return Category;
-	}
-
 	public void setExplain(String... Explain) {
 		this.Explain = Explain;
-	}
-	
-	public void setCategory(String Category) {
-		this.Category = Category;
 	}
 	
 	public boolean isRestricted() {

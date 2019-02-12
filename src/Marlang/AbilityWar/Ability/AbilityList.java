@@ -1,5 +1,7 @@
 package Marlang.AbilityWar.Ability;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -39,6 +41,7 @@ import Marlang.AbilityWar.Ability.List.Void;
 import Marlang.AbilityWar.Ability.List.Yeti;
 import Marlang.AbilityWar.Ability.List.Zeus;
 import Marlang.AbilityWar.Ability.List.Zombie;
+import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 
 public class AbilityList {
@@ -51,12 +54,16 @@ public class AbilityList {
 	public static void registerAbility(String name, Class<? extends AbilityBase> Ability) {
 		if(!Abilities.containsKey(name)) {
 			Abilities.put(name, Ability);
-			
-			try {
-				Class.forName(Ability.getName());
-			} catch(Exception e) {
-				Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + name + " &f능력을 불러오지 못하였습니다."));
+		}
+		
+		try {
+			for(Field field : Ability.getFields()) {
+				if(Modifier.isStatic(field.getModifiers()) && field.getType().equals(SettingObject.class)) {
+					field.get(new Object());
+				}
 			}
+		} catch (IllegalAccessException | IllegalArgumentException e) {
+			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
 		}
 	}
 	

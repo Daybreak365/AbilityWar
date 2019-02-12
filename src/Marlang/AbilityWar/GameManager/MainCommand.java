@@ -342,7 +342,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 	
 	private void sendHelpCommand(CommandSender sender, String label, Integer Page) {
-		int AllPage = 2;
+		int AllPage = 3;
 		
 		switch(Page) {
 			case 1:
@@ -363,6 +363,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Messager.formatCommand(label, "reload", "능력자 전쟁 콘피그를 리로드합니다.", true),
 						Messager.formatCommand(label, "config", "능력자 전쟁 콘피그 명령어를 확인합니다.", true),
 						Messager.formatCommand(label, "util", "능력자 전쟁 유틸 명령어를 확인합니다.", true),
+						Messager.formatCommand(label, "script", "능력자 전쟁 스크립트 편집을 시작합니다.", true)));
+				break;
+			case 3:
+				Messager.sendStringList(sender, Messager.getStringList(
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
 						Messager.formatCommand(label, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false)));
 				break;
 			default:

@@ -19,14 +19,14 @@ import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.UpdateObject;
 public class Messager {
 	
 	private static String Prefix = ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》&f");
-
+	
 	/**
 	 * 콘솔에 메시지를 전송합니다.
 	 */
 	public static void sendMessage(String msg) {
 		Bukkit.getConsoleSender().sendMessage(Prefix + msg);
 	}
-
+	
 	/**
 	 * 콘솔에 메시지를 전송합니다.
 	 */
@@ -49,7 +49,14 @@ public class Messager {
 	public static void sendMessage(CommandSender sender, String msg) {
 		sender.sendMessage(msg);
 	}
-
+	
+	/**
+	 * 콘솔에 디버그 메시지를 전송합니다.
+	 */
+	public static void sendDebugMessage(String msg) {
+		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&7AbilityWar 디버그&8] &f" + msg));
+	}
+	
 	/**
 	 * 콘솔에 오류 메시지를 전송합니다.
 	 */

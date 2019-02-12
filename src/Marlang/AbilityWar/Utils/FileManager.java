@@ -3,7 +3,6 @@ package Marlang.AbilityWar.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.jar.JarFile;
 
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
@@ -70,11 +69,6 @@ public class FileManager {
 		}
 		
 		return f;
-	}
-	
-	public static JarFile getJarFile(File file) throws IOException {
-		JarFile jarFile = new JarFile(file);
-		return jarFile;
 	}
 	
 }

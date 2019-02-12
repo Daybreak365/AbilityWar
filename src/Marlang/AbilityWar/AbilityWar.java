@@ -3,11 +3,11 @@ package Marlang.AbilityWar;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
+import Marlang.AbilityWar.Addon.AddonLoader;
 import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.MainCommand;
@@ -26,28 +26,31 @@ import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.Branch;
  */
 public class AbilityWar extends JavaPlugin {
 	
-	private static Plugin Plugin;
+	private static AbilityWar Plugin;
 	
-	public static Plugin getPlugin() {
+	public static AbilityWar getPlugin() {
 		return AbilityWar.Plugin;
 	}
 	
+	private AddonLoader addonLoader = new AddonLoader(this);
 	private AutoUpdate au = new AutoUpdate("Marlang365", "test", this, Branch.Master);
 	
 	@Override
 	public void onEnable() {
 		AbilityWar.Plugin = this;
 		
-		if(!Script.isRegistered(TeleportScript.class)) {
-			Script.registerScript(TeleportScript.class, new RequiredData("텔레포트 위치", Location.class, null));
-		}
-		
 		if(au.Check()) {
 			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
+			
+			if(!Script.isRegistered(TeleportScript.class)) {
+				Script.registerScript(TeleportScript.class, new RequiredData("텔레포트 위치", Location.class, null));
+			}
 			
 			Module.Setup();
 			
 			Load();
+			
+			addonLoader.loadAddons();
 			
 			/*
 			 * 서버 부팅이 끝나면 실행

@@ -17,6 +17,8 @@ import Marlang.AbilityWar.Utils.TimerBase;
  */
 public class GameAPI {
 	
+	//TODO: API 추가 개발
+	
 	Game game;
 	
 	public GameAPI(Game game) {

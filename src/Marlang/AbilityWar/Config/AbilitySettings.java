@@ -10,6 +10,8 @@ import Marlang.AbilityWar.Utils.FileManager;
  */
 public class AbilitySettings {
 	
+	//TODO: 능력 세부 설정 편집기 만들기
+	
 	private static ArrayList<SettingObject<?>> Settings = new ArrayList<SettingObject<?>>();
 	
 	private static void registerSetting(SettingObject<?> object) {
@@ -42,7 +44,7 @@ public class AbilitySettings {
 		private String[] Comments;
 		
 		public SettingObject(String AbilityName, String Path, T Default, String... Comments) {
-			this.Path = AbilityName + "." + Path;
+			this.Path = "능력." + AbilityName + "." + Path;
 			this.Default = Default;
 			this.Comments = Comments;
 			

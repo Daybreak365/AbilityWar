@@ -7,9 +7,6 @@ import Marlang.AbilityWar.Utils.Messager;
 
 public enum ConfigNodes {
 	
-	Game_Header("게임", "",
-			"# 모든 콘피그는 인게임에서 /ability config 명령어나",
-			"# /ability util 명령어로 변경할 수 있습니다."),
 	Game_NoHunger("게임.배고픔", true,
 			"# 배고픔 무제한 활성화 여부"),
 	Game_StartLevel("게임.레벨", 180,

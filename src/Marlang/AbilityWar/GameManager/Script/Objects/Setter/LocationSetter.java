@@ -47,7 +47,7 @@ public class LocationSetter extends Setter<Location> {
 			}
 		}
 	}
-
+	
 	private boolean Setting = false;
 	
 	@Override
