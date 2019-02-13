@@ -1,16 +1,13 @@
 package Marlang.AbilityWar.GameManager.Manager;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
-import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent;
-import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
-import Marlang.AbilityWar.GameManager.Game;
+import Marlang.AbilityWar.GameManager.Game.Game;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
+import Marlang.AbilityWar.Utils.PacketUtil.TitleObject;
 import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
@@ -31,9 +28,6 @@ public class Invincibility extends TimerBase {
 	@Override
 	public void TimerStart(Data<?>... args) {
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 &f" + NumberUtil.parseTimeString(Duration * 60) + "&a동안 적용됩니다."));
-	
-		AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.Invincibility_STARTED, game.getGameAPI());
-		Bukkit.getPluginManager().callEvent(event);
 	}
 	
 	@Override
@@ -51,21 +45,17 @@ public class Invincibility extends TimerBase {
 	
 	@Override
 	public void TimerEnd() {
+		game.setRestricted(false);
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 해제되었습니다."));
 		SoundLib.ENTITY_ENDERDRAGON_AMBIENT.broadcastSound();
 		
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			p.sendTitle(ChatColor.translateAlternateColorCodes('&', "&c&lWarning")
-					, ChatColor.translateAlternateColorCodes('&', "&f초반 무적이 해제되었습니다.")
-					, 20, 60, 20);
-		}
+		TitleObject title = new TitleObject(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
+				ChatColor.translateAlternateColorCodes('&', "&f초반 무적이 해제되었습니다."));
+		title.Broadcast(20, 60, 20);
 		
 		for(AbilityBase Ability : game.getAbilities().values()) {
 			Ability.setRestricted(false);
 		}
-		
-		AbilityWarProgressEvent event = new AbilityWarProgressEvent(Progress.Invincibility_ENDED, game.getGameAPI());
-		Bukkit.getPluginManager().callEvent(event);
 	}
 	
 }

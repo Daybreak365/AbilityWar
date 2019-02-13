@@ -14,7 +14,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
@@ -22,6 +21,8 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.SettingWizard;
+import Marlang.AbilityWar.GameManager.Game.Game;
+import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.GUI.AbilityGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.BlackListGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpecialThanksGUI;
@@ -33,7 +34,6 @@ import Marlang.AbilityWar.GameManager.Script.Objects.AbstractScript;
 import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.NumberUtil;
-import Marlang.AbilityWar.Utils.TimerBase;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 	
@@ -60,7 +60,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else if(split[0].equalsIgnoreCase("start")) {
 				if(sender.isOp()) {
 					if(!AbilityWarThread.isGameTaskRunning()) {
-						AbilityWarThread.toggleGameTask(true);
+						AbilityWarThread.startGame(new Game());
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + sender.getName() + "&f님이 게임을 시작시켰습니다."));
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 이미 진행되고 있습니다."));
@@ -72,14 +72,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(sender.isOp()) {
 					if(AbilityWarThread.isGameTaskRunning()) {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + sender.getName() + "&f님이 게임을 중지시켰습니다."));
-						TimerBase.ResetTasks();
-						
-						HandlerList.unregisterAll(AbilityWarThread.getGame().getDeathManager());
-						
-						AbilityWarThread.toggleGameTask(false);
-						AbilityWarThread.setGame(null);
-						
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
+							
+						AbilityWarThread.stopGame();
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 					}
@@ -133,8 +127,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					if(AbilityWarThread.isGameTaskRunning()) {
 						if(AbilityWarThread.getGame().getAbilities().containsKey(p)) {
 							AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-							if(select != null && !select.isAbilitySelectFinished()) {
-								if(!select.getAbilitySelect(p)) {
+							if(select != null && !select.isEnded()) {
+								if(!select.hasDecided(p)) {
 									select.decideAbility(p, true);
 								} else {
 									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
@@ -157,8 +151,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					if(AbilityWarThread.isGameTaskRunning()) {
 						if(AbilityWarThread.getGame().getAbilities().containsKey(p)) {
 							AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-							if(select != null && !select.isAbilitySelectFinished()) {
-								if(!select.getAbilitySelect(p)) {
+							if(select != null && !select.isEnded()) {
+								if(!select.hasDecided(p)) {
 									select.changeAbility(p);
 								} else {
 									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
@@ -179,7 +173,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(sender.isOp()) {
 					if(AbilityWarThread.isGameTaskRunning()) {
 						AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-						if(select != null && !select.isAbilitySelectFinished()) {
+						if(select != null && !select.isEnded()) {
 							select.Skip(sender.getName());
 						} else {
 							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
@@ -280,7 +274,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				} else {
 					if(Bukkit.getPlayerExact(args[1]) != null) {
 						Player target = Bukkit.getPlayerExact(args[1]);
-						if(AbilityWarThread.getGame().getPlayers().contains(target)) {
+						if(AbilityWarThread.getGame().getParticipants().contains(target)) {
 							AbilityGUI gui = new AbilityGUI(p, target, AbilityWar.getPlugin());
 							gui.openAbilitySelectGUI(1);
 						} else {

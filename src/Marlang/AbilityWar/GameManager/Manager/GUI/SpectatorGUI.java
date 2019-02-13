@@ -18,7 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import Marlang.AbilityWar.Ability.AbilityList;
-import Marlang.AbilityWar.GameManager.Game;
+import Marlang.AbilityWar.GameManager.Game.Game;
 import Marlang.AbilityWar.Utils.Messager;
 
 /**

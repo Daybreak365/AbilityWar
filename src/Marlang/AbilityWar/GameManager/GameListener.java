@@ -12,7 +12,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -28,35 +27,24 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.plugin.EventExecutor;
 
 import Marlang.AbilityWar.AbilityWar;
-import Marlang.AbilityWar.API.Events.AbilityWarJoinEvent;
-import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent;
-import Marlang.AbilityWar.API.Events.AbilityWarProgressEvent.Progress;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveClickType;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveMaterialType;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 
 public class GameListener implements Listener, EventExecutor {
 	
-	private Game game;
+	private AbstractGame game;
 	
-	public GameListener(Game game) {
-		this.game = game;
+	public GameListener(AbstractGame abstractGame) {
+		this.game = abstractGame;
 		
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		
 		for(Class<? extends Event> e : PassiveEvents) {
 			Bukkit.getPluginManager().registerEvent(e, this, EventPriority.HIGH, this, AbilityWar.getPlugin());
-		}
-	}
-
-	/**
-	 * 게임 종료시 Listener Unregister
-	 */
-	@EventHandler
-	public void onGameProcess(AbilityWarProgressEvent e) {
-		if(e.getProgress().equals(Progress.Game_ENDED)) {
-			HandlerList.unregisterAll(this);
 		}
 	}
 	
@@ -126,15 +114,6 @@ public class GameListener implements Listener, EventExecutor {
 	}
 	
 	@EventHandler
-	public void onPlayerDamage(EntityDamageEvent e) {
-		if(e.getEntity() instanceof Player) {
-			if(game.getInvincibility().isTimerRunning()) {
-				e.setCancelled(true);
-			}
-		}
-	}
-
-	@EventHandler
 	public void onFoodLevelChange(FoodLevelChangeEvent e) {
 		if(AbilityWarSettings.getNoHunger()) {
 			e.setCancelled(true);
@@ -151,15 +130,15 @@ public class GameListener implements Listener, EventExecutor {
 		ArrayList<Player> PlayersToRemove = new ArrayList<Player>();
 		ArrayList<Player> PlayersToAdd = new ArrayList<Player>();
 		
-		for(Player p : game.getPlayers()) {
+		for(Player p : game.getParticipants()) {
 			if(p.getName().equals(joined.getName())) {
 				PlayersToRemove.add(p);
 				PlayersToAdd.add(joined);
 			}
 		}
 		
-		game.getPlayers().removeAll(PlayersToRemove);
-		game.getPlayers().addAll(PlayersToAdd);
+		game.getParticipants().removeAll(PlayersToRemove);
+		game.getParticipants().addAll(PlayersToAdd);
 		
 		ArrayList<Player> AbilitiesToRemove = new ArrayList<Player>();
 		HashMap<Player, AbilityBase> AbilitiesToAdd = new HashMap<Player, AbilityBase>();
@@ -181,19 +160,16 @@ public class GameListener implements Listener, EventExecutor {
 			ArrayList<Player> SelectToRemove = new ArrayList<Player>();
 			HashMap<Player, Boolean> SelectToAdd = new HashMap<Player, Boolean>();
 			
-			for(Player p : select.AbilitySelect.keySet()) {
+			for(Player p : select.getMap().keySet()) {
 				if(p.getName().equals(joined.getName())) {
 					SelectToRemove.add(p);
-					SelectToAdd.put(joined, select.AbilitySelect.get(p));
+					SelectToAdd.put(joined, select.getMap().get(p));
 				}
 			}
 			
-			select.AbilitySelect.keySet().removeAll(SelectToRemove);
-			select.AbilitySelect.putAll(SelectToAdd);
+			select.getMap().keySet().removeAll(SelectToRemove);
+			select.getMap().putAll(SelectToAdd);
 		}
-		
-		AbilityWarJoinEvent event = new AbilityWarJoinEvent(joined, game.getGameAPI());
-		Bukkit.getPluginManager().callEvent(event);
 	}
 	
 	private static ArrayList<Class<? extends Event>> PassiveEvents = new ArrayList<Class<? extends Event>>();

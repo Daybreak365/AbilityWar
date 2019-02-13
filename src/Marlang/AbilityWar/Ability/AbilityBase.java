@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
+import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.TimerBase;
 
 abstract public class AbilityBase {
@@ -18,7 +19,7 @@ abstract public class AbilityBase {
 	
 	ArrayList<TimerBase> timers = new ArrayList<TimerBase>();
 	
-	boolean Restricted = true;
+	boolean Restricted = AbilityWarThread.isGameTaskRunning() ? AbilityWarThread.getGame().isRestricted() : false;
 	
 	public AbilityBase(String AbilityName, Rank Rank, String... Explain) {
 		this.AbilityName = AbilityName;

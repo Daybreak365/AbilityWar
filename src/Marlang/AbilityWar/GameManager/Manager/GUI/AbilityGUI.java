@@ -132,16 +132,6 @@ public class AbilityGUI implements Listener {
 								AbilityBase Ability = l.newInstance();
 								Ability.setPlayer(target);
 								
-								if(AbilityWarThread.getGame().getInvincibility().isTimerRunning()) {
-									Ability.setRestricted(true);
-								} else {
-									if(AbilityWarThread.getGame().isGameStarted()) {
-										Ability.setRestricted(false);
-									} else {
-										Ability.setRestricted(true);
-									}
-								}
-								
 								AbilityWarThread.getGame().removeAbility(target);
 								AbilityWarThread.getGame().addAbility(Ability);
 							} else {
