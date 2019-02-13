@@ -1,5 +1,7 @@
 package Marlang.AbilityWar.GameManager.Game;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -35,10 +37,11 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
 public class Game extends AbstractGame {
 	
 	public Game() {
+		setRestricted(Invincible);
 		registerEvent(EntityDamageEvent.class);
 	}
 	
-	int Seconds = 0;
+	private boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
 	
 	private Invincibility invincibility = new Invincibility(this);
 	
@@ -240,7 +243,7 @@ public class Game extends AbstractGame {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 		}
 		
-		if(AbilityWarSettings.getInvincibilityEnable()) {
+		if(Invincible) {
 			invincibility.StartTimer();
 		} else {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
@@ -347,16 +350,16 @@ public class Game extends AbstractGame {
 						try {
 							Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
 							Abilities.remove(abilityClass);
-							AbilityBase Ability = abilityClass.newInstance();
-
-							Ability.setPlayer(p);
+							Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Player.class);
+							AbilityBase Ability = constructor.newInstance(p);
 							Game.this.addAbility(Ability);
 							
 							Messager.sendStringList(p, Messager.getStringList(
 									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 1회에 한해 능력을 변경할 수 있습니다.")));
-						} catch (InstantiationException | IllegalAccessException e) {
+						} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
+								| IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
 						}
 					}
@@ -378,8 +381,8 @@ public class Game extends AbstractGame {
 							Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
 							Abilities.remove(abilityClass);
 							Abilities.add(oldAbility.getClass());
-							AbilityBase Ability = abilityClass.newInstance();
-							Ability.setPlayer(p);
+							Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Player.class);
+							AbilityBase Ability = constructor.newInstance(p);
 							
 							Game.this.removeAbility(p);
 							Game.this.addAbility(Ability);
@@ -387,7 +390,8 @@ public class Game extends AbstractGame {
 							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
 							
 							decideAbility(p, false);
-						} catch (InstantiationException | IllegalAccessException e) {
+						} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
+								| IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 변경하는 도중 오류가 발생하였습니다."));
 						}
 					}

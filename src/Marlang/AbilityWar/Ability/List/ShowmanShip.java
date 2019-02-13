@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -11,13 +12,12 @@ import Marlang.AbilityWar.Utils.TimerBase;
 
 public class ShowmanShip extends AbilityBase {
 
-	public ShowmanShip() {
-		super("쇼맨쉽", Rank.A,
+	public ShowmanShip(Player player) {
+		super(player, "쇼맨쉽", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f주변 10칸 이내에 있는 사람 수에 따라 효과를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&a1명 이하 &7: &f나약함  &a2명 이상 &7: &f힘 I  &a3명 이상 &7: &f힘 II"));
 		
 		Passive.setPeriod(5);
-		registerTimer(Passive);
 	}
 
 	TimerBase Passive = new TimerBase() {

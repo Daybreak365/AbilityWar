@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
@@ -34,13 +35,9 @@ public class Virtus extends AbilityBase {
 		
 	};
 	
-	public Virtus() {
-		super("베르투스", Rank.A,
+	public Virtus(Player player) {
+		super(player, "베르투스", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 데미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
-		
-		registerTimer(Cool);
-		
-		registerTimer(Activate);
 	}
 
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

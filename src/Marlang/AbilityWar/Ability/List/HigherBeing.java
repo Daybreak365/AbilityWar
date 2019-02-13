@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
@@ -21,8 +22,8 @@ public class HigherBeing extends AbilityBase {
 		
 	};
 	
-	public HigherBeing() {
-		super("상위존재", Rank.B,
+	public HigherBeing(Player player) {
+		super(player, "상위존재", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f자신보다 낮은 위치에 있는 생명체를 근접 공격 할 때"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DamageConfig.getValue() + "배 강력하게 공격합니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f자신보다 높은 위치에 있는 생명체는 근접 공격으로 데미지를 입힐 수 없습니다."));

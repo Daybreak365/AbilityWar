@@ -34,20 +34,14 @@ public class Gladiator extends AbilityBase {
 		
 	};
 
-	public Gladiator() {
-		super("글래디에이터", Rank.S,
+	public Gladiator(Player player) {
+		super(player, "글래디에이터", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 투기장이 생성되며 그 안에서"),
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다."));
 		
-		registerTimer(Cool);
-		
 		Field.setPeriod(2);
 		
-		registerTimer(Field);
-		
 		FieldClear.setSilentNotice(true);
-		
-		registerTimer(FieldClear);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

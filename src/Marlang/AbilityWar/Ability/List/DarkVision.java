@@ -23,18 +23,14 @@ public class DarkVision extends AbilityBase {
 		
 	};
 	
-	public DarkVision() {
-		super("심안", Rank.C,
+	public DarkVision(Player player) {
+		super(player, "심안", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f앞이 보이지 않는 대신, 플레이어의 " + DistanceConfig.getValue() + "칸 안에 있는 플레이어들은"),
 				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다."));
 		
 		Dark.setPeriod(2);
 		
-		registerTimer(Dark);
-		
 		Vision.setPeriod(2);
-
-		registerTimer(Vision);
 	}
 
 	TimerBase Dark = new TimerBase() {

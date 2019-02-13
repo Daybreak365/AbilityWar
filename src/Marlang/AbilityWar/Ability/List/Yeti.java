@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -37,20 +38,14 @@ public class Yeti extends AbilityBase {
 		
 	};
 
-	public Yeti() {
-		super("설인", Rank.S,
+	public Yeti(Player player) {
+		super(player, "설인", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f눈 위에 서 있으면 다양한 버프를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 		
 		Buff.setPeriod(1);
 		
-		registerTimer(Buff);
-		
 		Ice.setPeriod(3);
-		
-		registerTimer(Ice);
-		
-		registerTimer(Cool);
 	}
 	
 	TimerBase Buff = new TimerBase() {

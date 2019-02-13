@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
@@ -12,13 +13,12 @@ import Marlang.AbilityWar.Utils.TimerBase;
 
 public class Zombie extends AbilityBase {
 
-	public Zombie() {
-		super("좀비", Rank.C,
+	public Zombie(Player player) {
+		super(player, "좀비", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f받는 데미지가 50% 감소합니다. 지능이 떨어져서"),
 				ChatColor.translateAlternateColorCodes('&', "&f가끔 에임이 튑니다."));
 		
 		Aim.setPeriod(5);
-		registerTimer(Aim);
 	}
 
 	TimerBase Aim = new TimerBase() {

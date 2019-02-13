@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 
@@ -46,17 +47,13 @@ public class Chaos extends AbilityBase {
 		
 	};
 
-	public Chaos() {
-		super("카오스", Rank.God,
+	public Chaos(Player player) {
+		super(player, "카오스", Rank.God,
 				ChatColor.translateAlternateColorCodes('&', "&f시작의 신 카오스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 5초간 짙은 암흑 속으로 주변의 생명체들을"),
 				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 		
-		registerTimer(Cool);
-		
 		Duration.setPeriod(1);
-		
-		registerTimer(Duration);
 	}
 
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

@@ -25,14 +25,12 @@ public class EnergyBlocker extends AbilityBase {
 	
 	boolean Default = true;
 	
-	public EnergyBlocker() {
-		super("에너지 블로커", Rank.A,
+	public EnergyBlocker(Player player) {
+		super(player, "에너지 블로커", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 절반으로, 근거리 공격 피해를 두 배로 받거나"),
 				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 두 배로, 근거리 공격 피해를 절반으로 받을 수 있습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."));
-		
-		registerTimer(Cool);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

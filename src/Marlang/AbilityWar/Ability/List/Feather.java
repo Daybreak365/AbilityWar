@@ -35,14 +35,10 @@ public class Feather extends AbilityBase {
 		
 	};
 	
-	public Feather() {
-		super("깃털", Rank.A,
+	public Feather(Player player) {
+		super(player, "깃털", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 15초간 비행할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f낙하 데미지를 무시합니다."));
-		
-		registerTimer(Cool);
-		
-		registerTimer(Duration);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

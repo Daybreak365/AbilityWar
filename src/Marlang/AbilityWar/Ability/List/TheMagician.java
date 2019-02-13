@@ -37,8 +37,8 @@ public class TheMagician extends AbilityBase {
 		
 	};
 
-	public TheMagician() {
-		super("마술사", Rank.A,
+	public TheMagician(Player player) {
+		super(player, "마술사", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 플레이어들에게"),
 				ChatColor.translateAlternateColorCodes('&', "&f3만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

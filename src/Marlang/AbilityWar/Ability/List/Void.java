@@ -25,13 +25,10 @@ public class Void extends AbilityBase {
 		
 	};
 
-	public Void() {
-		super("보이드", Rank.A,
+	public Void(Player player) {
+		super(player, "보이드", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 제일 가까이 있는 플레이어에게 텔레포트합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f텔레포트를 하고 난 후 5초간 데미지를 입지 않습니다."));
-		
-		registerTimer(Cool);
-		registerTimer(Invincibility);
 	}
 
 	boolean Inv = false;

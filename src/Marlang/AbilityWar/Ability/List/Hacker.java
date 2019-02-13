@@ -35,16 +35,12 @@ public class Hacker extends AbilityBase {
 		
 	};
 	
-	public Hacker() {
-		super("해커", Rank.A,
+	public Hacker(Player player) {
+		super(player, "해커", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신에게 제일 가까운 플레이어의 좌표를 알리고"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DurationConfig.getValue() + "초간 해당 플레이어가 움직이지 못하게 합니다."));
 		
-		registerTimer(Cool);
-		
 		Move.setPeriod(1);
-		
-		registerTimer(Move);
 	}
 
 	Player CantMove = null;

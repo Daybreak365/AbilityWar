@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -24,8 +25,8 @@ public class FireFightWithFire extends AbilityBase {
 		
 	};
 	
-	public FireFightWithFire() {
-		super("이열치열", Rank.B,
+	public FireFightWithFire(Player player) {
+		super(player, "이열치열", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f불 데미지를 받을 때, " + ChanceConfig.getValue() + "% 확률로 체력을 회복합니다."));
 	}
 

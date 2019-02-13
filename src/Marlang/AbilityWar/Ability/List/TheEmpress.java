@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -43,15 +44,13 @@ public class TheEmpress extends AbilityBase {
 		
 	};
 	
-	public TheEmpress() {
-		super("여제", Rank.B,
+	public TheEmpress(Player player) {
+		super(player, "여제", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 현재 좌표에 따라 버프 혹은 아이템을 얻습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &a+ &f➡ 힘   10초 | 날카로움 IV 다이아 검"),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &c- &f➡ 저항 20초 | 방패"),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &a+ &f➡ 신속 30초 | 무한 활"),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &c- &f➡ 재생 20초 | 황금사과"));
-		
-		registerTimer(Cool);
 	}
 	
 	boolean EasterEgg = !EasterEggConfig.getValue();

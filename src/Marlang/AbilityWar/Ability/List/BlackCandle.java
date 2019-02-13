@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Ability.List;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffectType;
@@ -23,13 +24,11 @@ public class BlackCandle extends AbilityBase {
 		
 	};
 
-	public BlackCandle() {
-		super("검은 양초", Rank.B,
+	public BlackCandle(Player player) {
+		super(player, "검은 양초", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f디버프를 받지 않으며, 데미지를 받으면 " + ChanceConfig.getValue() + "% 확률로 체력 1.5칸을 회복합니다."));
 		
 		NoDebuff.setPeriod(10);
-		
-		registerTimer(NoDebuff);
 	}
 
 	TimerBase NoDebuff = new TimerBase() {

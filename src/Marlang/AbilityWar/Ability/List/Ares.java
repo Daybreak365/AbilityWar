@@ -47,17 +47,13 @@ public class Ares extends AbilityBase {
 		
 	};
 	
-	public Ares() {
-		super("아레스", Rank.God, 
+	public Ares(Player player) {
+		super(player, "아레스", Rank.God, 
 				ChatColor.translateAlternateColorCodes('&', "&f전쟁의 신 아레스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 데미지를 주며,"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 끌고 갑니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 		
-		registerTimer(Cool);
-		
 		Duration.setPeriod(1);
-		
-		registerTimer(Duration);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

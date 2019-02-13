@@ -114,8 +114,6 @@ abstract public class AbilitySelect extends TimerBase {
 	
 	@Override
 	public void TimerProcess(Integer Seconds) {
-		Messager.sendMessage(endCondition() + "");
-		
 		if(!endCondition()) {
 			Count++;
 			Warn();

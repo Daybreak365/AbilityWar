@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -26,12 +27,10 @@ public class Terrorist extends AbilityBase {
 		
 	};
 	
-	public Terrorist() {
-		super("테러리스트", Rank.A,
+	public Terrorist(Player player) {
+		super(player, "테러리스트", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신의 주위에 TNT 10개를 떨어뜨립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f폭발 데미지를 입지 않습니다."));
-		
-		registerTimer(Cool);
 	}
 
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

@@ -45,19 +45,13 @@ public class Pumpkin extends AbilityBase {
 		
 	};
 	
-	public Pumpkin() {
-		super("호박", Rank.C,
+	public Pumpkin(Player player) {
+		super(player, "호박", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 " + DurationConfig.getValue() + "초간"),
 				ChatColor.translateAlternateColorCodes('&', "&f귀속 저주가 걸린 호박을 씌웁니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"));
 		
-		registerTimer(Cool);
-		
 		Song.setPeriod(3);
-		
-		registerTimer(Song);
-		
-		registerTimer(Duration);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

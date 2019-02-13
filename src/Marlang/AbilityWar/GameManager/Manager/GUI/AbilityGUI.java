@@ -1,5 +1,6 @@
 package Marlang.AbilityWar.GameManager.Manager.GUI;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -125,22 +126,27 @@ public class AbilityGUI implements Listener {
 				if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 					String AbilityName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 					
-					Class<? extends AbilityBase> l = AbilityList.getByString(AbilityName);
+					Class<? extends AbilityBase> abilityClass = AbilityList.getByString(AbilityName);
 					try {
 						if(target.isOnline()) {
-							if(l != null) {
-								AbilityBase Ability = l.newInstance();
-								Ability.setPlayer(target);
-								
-								AbilityWarThread.getGame().removeAbility(target);
-								AbilityWarThread.getGame().addAbility(Ability);
+							if(abilityClass != null) {
+								Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Player.class);
+								if(constructor != null) {
+									AbilityBase Ability = constructor.newInstance(target);
+									
+									AbilityWarThread.getGame().removeAbility(target);
+									AbilityWarThread.getGame().addAbility(Ability);
+								} else {
+									throw new Exception("Reflection Error");
+								}
 							} else {
-								throw new Exception();
+								throw new Exception("Reflection Error");
 							}
 						} else {
 							throw new Exception("해당 플레이어가 접속을 종료하였습니다.");
 						}
 					} catch(Exception ex) {
+						ex.printStackTrace();
 						if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 							Messager.sendErrorMessage(p, ex.getMessage());
 						} else {

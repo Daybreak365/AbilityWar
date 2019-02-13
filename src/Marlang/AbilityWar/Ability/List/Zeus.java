@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -27,18 +28,13 @@ public class Zeus extends AbilityBase {
 		
 	};
 	
-	public Zeus() {
-		super("제우스", Rank.God,
+	public Zeus(Player player) {
+		super(player, "제우스", Rank.God,
 				ChatColor.translateAlternateColorCodes('&', "&f번개의 신 제우스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 번개를 떨어뜨리며 폭발을 일으킵니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f번개 데미지와 폭발 데미지를 받지 않습니다."));
 		
-		
-		registerTimer(Cool);
-		
 		Skill.setPeriod(8);
-		
-		registerTimer(Skill);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

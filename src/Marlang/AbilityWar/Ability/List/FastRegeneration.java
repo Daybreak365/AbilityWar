@@ -22,12 +22,12 @@ public class FastRegeneration extends AbilityBase {
 		
 	};
 	
-	public FastRegeneration() {
-		super("빠른 회복", Rank.A, 
+	public FastRegeneration(Player player) {
+		super(player, "빠른 회복", Rank.A, 
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다.")
 				);
+		
 		Passive.setPeriod(RegenSpeedConfig.getValue());
-		registerTimer(Passive);
 	}
 	
 	TimerBase Passive = new TimerBase() {

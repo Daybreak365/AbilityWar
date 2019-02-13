@@ -146,7 +146,7 @@ public class GameListener implements Listener, EventExecutor {
 		for(Player p : game.getAbilities().keySet()) {
 			if(p.getName().equals(joined.getName())) {
 				AbilityBase Ability = game.getAbilities().get(p);
-				Ability.setPlayer(joined);
+				Ability.updatePlayer(joined);
 				AbilitiesToRemove.add(p);
 				AbilitiesToAdd.put(joined, Ability);
 			}

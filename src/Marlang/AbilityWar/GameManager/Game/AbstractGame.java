@@ -43,7 +43,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	private boolean GameStarted = false;
 	
-	private Integer Seconds = 0;
+	protected Integer Seconds = 0;
 	
 	@Override
 	public void run() {
@@ -60,17 +60,43 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		Bukkit.getPluginManager().registerEvent(event, this, EventPriority.HIGHEST, this, AbilityWar.getPlugin());
 	}
 	
+	/**
+	 * 게임 진행
+	 */
 	abstract protected void progressGame(Integer Seconds);
 	
+	/**
+	 * 게임 진행 조건
+	 */
 	abstract protected boolean gameCondition();
 	
+	/**
+	 * 참여자 초깃값 설정
+	 */
 	abstract protected List<Player> setupParticipants();
 	
+	/**
+	 * AbilitySelect 초깃값 설정
+	 * 능력 할당을 하지 않을 예정이라면 null을 반환해도 됩니다.
+	 */
 	abstract protected AbilitySelect setupAbilitySelect();
 	
+	/**
+	 * 게임중 플레이어가 사망했을 경우 호출됨
+	 */
 	abstract public void onPlayerDeath(PlayerDeathEvent e);
 	
 	public void addAbility(AbilityBase Ability) {
+		if(isRestricted()) {
+			Ability.setRestricted(true);
+		} else {
+			if(isGameStarted()) {
+				Ability.setRestricted(false);
+			} else {
+				Ability.setRestricted(true);
+			}
+		}
+		
 		Abilities.put(Ability.getPlayer(), Ability);
 	}
 	

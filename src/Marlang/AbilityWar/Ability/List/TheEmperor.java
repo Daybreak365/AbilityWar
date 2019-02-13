@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.potion.PotionEffect;
@@ -24,12 +25,10 @@ public class TheEmperor extends AbilityBase {
 		
 	};
 	
-	public TheEmperor() {
-		super("황제", Rank.A, 
+	public TheEmperor(Player player) {
+		super(player, "황제", Rank.A, 
 				ChatColor.translateAlternateColorCodes('&', "&f느리고 품위있게 걸어가며 공격 피해가 일정량 감소합니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 이하일 때 공격 피해를 받지 않습니다."));
-		
-		registerTimer(Passive);
 	}
 	
 	TimerBase Passive = new TimerBase() {
