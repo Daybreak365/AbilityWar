@@ -16,10 +16,10 @@ import org.bukkit.plugin.EventExecutor;
 
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.GameManager.GameListener;
 import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.DeathManager;
 import Marlang.AbilityWar.GameManager.Manager.Firewall;
+import Marlang.AbilityWar.GameManager.Manager.GameListener;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.TimerBase;
 

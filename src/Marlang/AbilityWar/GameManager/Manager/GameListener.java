@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.GameManager;
+package Marlang.AbilityWar.GameManager.Manager;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -32,7 +32,6 @@ import Marlang.AbilityWar.Ability.AbilityBase.ActiveClickType;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveMaterialType;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
-import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 
 public class GameListener implements Listener, EventExecutor {
 	
