@@ -110,11 +110,14 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	/**
 	 * Ability.getPlayer()의 능력을 to에게 옮깁니다.
+	 * to가 게임에 참여중이지 않을 경우 아무 작업도 하지 않습니다.
 	 */
 	public void transferAbility(AbilityBase Ability, Player to) {
-		removeAbility(Ability.getPlayer());
-		Ability.updatePlayer(to);
-		addAbility(Ability);
+		if(isParticipating(to)) {
+			removeAbility(Ability.getPlayer());
+			Ability.updatePlayer(to);
+			addAbility(Ability);
+		}
 	}
 	
 	public static List<String> getSpectators() {
@@ -123,6 +126,10 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	public List<Player> getParticipants() {
 		return Participants;
+	}
+	
+	public boolean isParticipating(Player p) {
+		return Participants.contains(p);
 	}
 	
 	public HashMap<Player, AbilityBase> getAbilities() {
