@@ -24,7 +24,7 @@ abstract public class AbilityBase {
 	
 	private boolean Restricted = true;
 	
-	protected AbilityBase(Player player, String AbilityName, Rank Rank, String... Explain) {
+	public AbilityBase(Player player, String AbilityName, Rank Rank, String... Explain) {
 		this.player = player;
 		this.AbilityName = AbilityName;
 		this.Rank = Rank;
@@ -35,21 +35,12 @@ abstract public class AbilityBase {
 	
 	abstract public void PassiveSkill(Event event);
 	
-	abstract public void AbilityEvent(EventType type);
-	
-	public enum EventType {
-		
-		AbilityDelete,
-		RestrictClear;
-		
-	}
+	abstract public void onRestrictClear();
 	
 	/**
 	 * 플레이어 능력 삭제시 사용
 	 */
 	public void DeleteAbility() {
-		AbilityEvent(EventType.AbilityDelete);
-		
 		for(TimerBase timer : getTimers()) {
 			timer.StopTimer(true);
 		}
@@ -107,7 +98,7 @@ abstract public class AbilityBase {
 		Restricted = restricted;
 		
 		if(!restricted) {
-			AbilityEvent(EventType.RestrictClear);
+			onRestrictClear();
 		}
 	}
 	

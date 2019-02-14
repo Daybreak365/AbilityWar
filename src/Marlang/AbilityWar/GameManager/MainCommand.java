@@ -218,8 +218,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 								} else {
 									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + "&f은(는) 사용할 수 없는 이름입니다."));
 								}
-							} catch(ClassNotFoundException | IllegalArgumentException | ScriptException ex) {
+							} catch(ClassNotFoundException | ScriptException ex) {
 								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c존재하지 않는 스크립트 유형입니다."));
+							} catch(IllegalArgumentException ex) {
+								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c사용할 수 없는 스크립트 유형입니다."));
 							}
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " script <유형> <이름>"));

@@ -37,6 +37,7 @@ import Marlang.AbilityWar.Ability.List.TheEmpress;
 import Marlang.AbilityWar.Ability.List.TheHighPriestess;
 import Marlang.AbilityWar.Ability.List.TheMagician;
 import Marlang.AbilityWar.Ability.List.Virtus;
+import Marlang.AbilityWar.Ability.List.Virus;
 import Marlang.AbilityWar.Ability.List.Void;
 import Marlang.AbilityWar.Ability.List.Yeti;
 import Marlang.AbilityWar.Ability.List.Zeus;
@@ -105,6 +106,7 @@ public class AbilityList {
 		registerAbility("여제", TheEmpress.class);
 		registerAbility("황제", TheEmperor.class);
 		registerAbility("호박", Pumpkin.class);
+		registerAbility("바이러스", Virus.class);
 	}
 	
 	public static ArrayList<String> values() {

@@ -32,7 +32,6 @@ public class LocationUtil {
 		return ((X - Center_X) * (X - Center_X)) + ((Z - Center_Z) * (Z - Center_Z)) < (radius * radius);
 	}
 	
-	//TODO : 알고리즘 최적화
 	public static ArrayList<Block> getBlocks(Location location, Integer radius, boolean hollow, boolean top) {
 		ArrayList<Block> Blocks = new ArrayList<Block>();
 		
@@ -52,10 +51,14 @@ public class LocationUtil {
 							if(highestBlock.getType().equals(Material.AIR)) {
 								Block lowBlock = highest.clone().subtract(0, 1, 0).getBlock();
 								if(!lowBlock.getType().equals(Material.AIR)) {
-									Blocks.add(lowBlock);
+									if(!Blocks.contains(lowBlock)) {
+										Blocks.add(lowBlock);
+									}
 								}
 							} else {
-								Blocks.add(highestBlock);
+								if(!Blocks.contains(highestBlock)) {
+									Blocks.add(highestBlock);
+								}
 							}
 						} else {
 							Block block = l.getBlock();

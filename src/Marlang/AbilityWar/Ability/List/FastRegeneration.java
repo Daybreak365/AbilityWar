@@ -24,10 +24,7 @@ public class FastRegeneration extends AbilityBase {
 	
 	public FastRegeneration(Player player) {
 		super(player, "빠른 회복", Rank.A, 
-				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다.")
-				);
-		
-		Passive.setPeriod(RegenSpeedConfig.getValue());
+				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다."));
 	}
 	
 	TimerBase Passive = new TimerBase() {
@@ -52,7 +49,7 @@ public class FastRegeneration extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(RegenSpeedConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -63,10 +60,8 @@ public class FastRegeneration extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			Passive.StartTimer();
-		}
+	public void onRestrictClear() {
+		Passive.StartTimer();
 	}
 	
 }

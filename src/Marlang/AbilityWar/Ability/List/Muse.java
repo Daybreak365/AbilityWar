@@ -35,9 +35,6 @@ public class Muse extends AbilityBase {
 		super(player, "뮤즈", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여"),
 				ChatColor.translateAlternateColorCodes('&', "&f모두가 데미지를 받지 않는 지역을 만들어냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
-		
-		Skill.setPeriod(2);
-		
 	}
 
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -136,7 +133,7 @@ public class Muse extends AbilityBase {
 			super.TimerEnd();
 		}
 		
-	};
+	}.setPeriod(2);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -169,6 +166,6 @@ public class Muse extends AbilityBase {
 	}
 
 	@Override
-	public void AbilityEvent(EventType type) {}
+	public void onRestrictClear() {}
 
 }

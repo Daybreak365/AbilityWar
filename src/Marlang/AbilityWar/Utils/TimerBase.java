@@ -32,7 +32,7 @@ abstract public class TimerBase {
 	 * Register TimerBase
 	 * @param timers
 	 */
-	static void Register(TimerBase timer) {
+	private static void Register(TimerBase timer) {
 		Tasks.add(timer);
 	}
 
@@ -40,23 +40,21 @@ abstract public class TimerBase {
 	 * Unregister TimerBase
 	 * @param timers
 	 */
-	static void Unregister(TimerBase timer) {
+	private static void Unregister(TimerBase timer) {
 		if(Tasks.contains(timer)) {
 			Tasks.remove(timer);
 		}
 	}
 
-	int Task = -1;
+	private int Task = -1;
 
-	boolean InfiniteTimer;
-	boolean ProcessDuringGame = true;
-	boolean SilentNotice = false;
-	int Count;
-	int MaxCount;
+	protected boolean InfiniteTimer;
+	protected boolean ProcessDuringGame = true;
+	protected int Count;
 
-	int TempCount;
+	private int TempCount;
 
-	int Period = 20;
+	protected int Period = 20;
 
 	abstract public void TimerStart(Data<?>... args);
 
@@ -91,49 +89,34 @@ abstract public class TimerBase {
 			Unregister(this);
 			TempCount = Count;
 			this.Task = -1;
-			if(!Silent || getSilentNotice()) {
+			if(!Silent) {
 				TimerEnd();
 			}
 		}
 	}
-
-	public TimerBase setPeriod(Integer Period) {
-		this.Period = Period;
-		return this;
-	}
-
-	public void setProcessDuringGame(boolean bool) {
-		this.ProcessDuringGame = bool;
-	}
-
-	public int getTask() {
-		return Task;
-	}
-
+	
 	public int getCount() {
 		return Count;
-	}
-
-	public int getPeriod() {
-		return Period;
 	}
 	
 	public int getTempCount() {
 		return TempCount;
 	}
-
-	public int getFixedTime(Integer Seconds) {
-		return (int) (Seconds / (20 / getPeriod()));
+	
+	public TimerBase setPeriod(Integer Period) {
+		this.Period = Period;
+		return this;
 	}
 	
-	public boolean getSilentNotice() {
-		return SilentNotice;
+	public TimerBase setProcessDuringGame(boolean bool) {
+		this.ProcessDuringGame = bool;
+		return this;
 	}
-
-	public void setSilentNotice(boolean silentNotice) {
-		SilentNotice = silentNotice;
+	
+	public int getFixedTime(Integer Seconds) {
+		return (int) (Seconds / (20 / Period));
 	}
-
+	
 	/**
 	 * 일반 타이머
 	 */
@@ -141,7 +124,7 @@ abstract public class TimerBase {
 		this.Count = Count;
 		InfiniteTimer = false;
 	}
-
+	
 	/**
 	 * 무한 타이머
 	 */

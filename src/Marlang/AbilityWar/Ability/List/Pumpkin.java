@@ -50,8 +50,6 @@ public class Pumpkin extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 " + DurationConfig.getValue() + "초간"),
 				ChatColor.translateAlternateColorCodes('&', "&f귀속 저주가 걸린 호박을 씌웁니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"));
-		
-		Song.setPeriod(3);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -88,12 +86,16 @@ public class Pumpkin extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			if(Count.equals(1)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.D));
+				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
 			} else if(Count.equals(3)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.E));
+				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.E));
 			} else if(Count.equals(4)) {
 				SoundLib.BELL.playInstrument(Players, Note.sharp(1, Tone.F));
+				SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
 			} else if(Count.equals(7)) {
 				SoundLib.BELL.playInstrument(Players, Note.sharp(1, Tone.F));
+				SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
 			} else if(Count.equals(10)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(1, Tone.G));
 			} else if(Count.equals(12)) {
@@ -108,7 +110,7 @@ public class Pumpkin extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(3);
 	
 	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
@@ -172,6 +174,6 @@ public class Pumpkin extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {}
+	public void onRestrictClear() {}
 
 }

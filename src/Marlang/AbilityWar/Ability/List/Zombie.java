@@ -17,8 +17,6 @@ public class Zombie extends AbilityBase {
 		super(player, "좀비", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f받는 데미지가 50% 감소합니다. 지능이 떨어져서"),
 				ChatColor.translateAlternateColorCodes('&', "&f가끔 에임이 튑니다."));
-		
-		Aim.setPeriod(5);
 	}
 
 	TimerBase Aim = new TimerBase() {
@@ -42,7 +40,7 @@ public class Zombie extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(5);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -60,10 +58,8 @@ public class Zombie extends AbilityBase {
 	}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			Aim.StartTimer();
-		}
+	public void onRestrictClear() {
+		Aim.StartTimer();
 	}
 
 }

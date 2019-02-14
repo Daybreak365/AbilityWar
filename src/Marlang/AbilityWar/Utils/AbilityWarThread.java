@@ -15,6 +15,10 @@ public class AbilityWarThread {
 
 	private static AbstractGame Game;
 	
+	/**
+	 * 게임을 시작시킵니다.
+	 * @param Game 시작시킬 게임
+	 */
 	public static void startGame(AbstractGame Game) {
 		if(!isGameTaskRunning()) {
 			setGame(Game);
@@ -24,10 +28,13 @@ public class AbilityWarThread {
 		}
 	}
 	
+	/**
+	 * 진행중인 게임을 종료합니다.
+	 */
 	public static void stopGame() {
 		if(isGameTaskRunning()) {
 			//Notify
-			getGame().GameEnd();
+			getGame().onGameEnd();
 			//Notify
 			
 			Bukkit.getScheduler().cancelTask(GameTask);
@@ -36,15 +43,22 @@ public class AbilityWarThread {
 		}
 	}
 	
+	/**
+	 * 게임이 진행중일 경우 true, 아닐 경우 false를 반환합니다.
+	 */
 	public static boolean isGameTaskRunning() {
 		return GameTask != -1;
 	}
 	
+	/**
+	 * AbstractGame을 반환합니다.
+	 * 진행중인 게임이 없을 경우 null을 반환합니다.
+	 */
 	public static AbstractGame getGame() {
 		return Game;
 	}
 	
-	public static void setGame(AbstractGame game) {
+	private static void setGame(AbstractGame game) {
 		Game = game;
 	}
 	

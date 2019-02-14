@@ -42,10 +42,6 @@ public class Yeti extends AbilityBase {
 		super(player, "설인", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f눈 위에 서 있으면 다양한 버프를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
-		
-		Buff.setPeriod(1);
-		
-		Ice.setPeriod(3);
 	}
 	
 	TimerBase Buff = new TimerBase() {
@@ -66,7 +62,7 @@ public class Yeti extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(1);
 	
 	TimerBase Ice = new TimerBase(RangeConfig.getValue()) {
 		
@@ -95,7 +91,7 @@ public class Yeti extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(3);
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
@@ -120,10 +116,8 @@ public class Yeti extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			Buff.StartTimer();
-		}
+	public void onRestrictClear() {
+		Buff.StartTimer();
 	}
 
 }

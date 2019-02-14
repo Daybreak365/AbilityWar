@@ -52,8 +52,6 @@ public class TheHighPriestess extends AbilityBase {
 		super(player, "교황", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 주변 " + RangeConfig.getValue() + "칸을 자신의 영지로 선포합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f영지 안에서 자신은 재생 효과를, 상대방은 위더 효과를 받습니다."));
-		
-		Skill.setPeriod(1);
 	}
 
 	final Integer Duration = DurationConfig.getValue();
@@ -95,7 +93,7 @@ public class TheHighPriestess extends AbilityBase {
 			}
 		}
 		
-	};
+	}.setPeriod(1);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -117,6 +115,6 @@ public class TheHighPriestess extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {}
+	public void onRestrictClear() {}
 
 }

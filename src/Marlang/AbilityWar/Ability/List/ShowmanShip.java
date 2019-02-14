@@ -16,8 +16,6 @@ public class ShowmanShip extends AbilityBase {
 		super(player, "쇼맨쉽", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f주변 10칸 이내에 있는 사람 수에 따라 효과를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&a1명 이하 &7: &f나약함  &a2명 이상 &7: &f힘 I  &a3명 이상 &7: &f힘 II"));
-		
-		Passive.setPeriod(5);
 	}
 
 	TimerBase Passive = new TimerBase() {
@@ -41,7 +39,7 @@ public class ShowmanShip extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(5);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -52,10 +50,8 @@ public class ShowmanShip extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			Passive.StartTimer();
-		}
+	public void onRestrictClear() {
+		Passive.StartTimer();
 	}
 
 }

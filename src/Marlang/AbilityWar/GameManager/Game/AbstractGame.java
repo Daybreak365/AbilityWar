@@ -108,6 +108,15 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		}
 	}
 	
+	/**
+	 * Ability.getPlayer()의 능력을 to에게 옮깁니다.
+	 */
+	public void transferAbility(AbilityBase Ability, Player to) {
+		removeAbility(Ability.getPlayer());
+		Ability.updatePlayer(to);
+		addAbility(Ability);
+	}
+	
 	public static List<String> getSpectators() {
 		return Spectators;
 	}
@@ -138,7 +147,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	/**
 	 * AbilitySelect를 받아옵니다.
-	 * @return AbilitySelect (사용하지 않을 경우 Null 반환)
+	 * @return AbilitySelect (사용하지 않을 경우 Null 반환, 능력 추첨 전일 경우 null 반환)
 	 */
 	public AbilitySelect getAbilitySelect() {
 		return abilitySelect;
@@ -160,8 +169,9 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		return gameListener;
 	}
 	
-	public void GameEnd() {
+	public void onGameEnd() {
 		TimerBase.ResetTasks();
+		HandlerList.unregisterAll(getGameListener());
 		HandlerList.unregisterAll(this);
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 	}

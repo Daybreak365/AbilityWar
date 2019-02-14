@@ -32,8 +32,6 @@ public class Flora extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f꽃과 풍요의 여신."),
 				ChatColor.translateAlternateColorCodes('&', "&f주변에 있는 모든 플레이어에게 재생 효과를 주거나 신속 효과를 줍니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 효과를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
-		
-		Passive.setPeriod(1);
 	}
 	
 	EffectType type = EffectType.Speed;
@@ -62,7 +60,7 @@ public class Flora extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(1);
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
@@ -94,10 +92,8 @@ public class Flora extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			Passive.StartTimer();
-		}
+	public void onRestrictClear() {
+		Passive.StartTimer();
 	}
 
 	private enum EffectType {

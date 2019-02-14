@@ -28,18 +28,18 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class SettingWizard implements Listener {
 	
-	Player p;
+	private Player p;
 	
 	public SettingWizard(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 	
-	Inventory KitGUI;
-	Inventory InvGUI;
-	Inventory GameGUI;
-	Inventory SpawnGUI;
-	Inventory DeathGUI;
+	private Inventory KitGUI;
+	private Inventory InvGUI;
+	private Inventory GameGUI;
+	private Inventory SpawnGUI;
+	private Inventory DeathGUI;
 	
 	public void openKitGUI() {
 		KitGUI = Bukkit.createInventory(p, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 킷 설정"));

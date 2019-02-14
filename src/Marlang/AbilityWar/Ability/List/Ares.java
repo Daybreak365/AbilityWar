@@ -52,8 +52,6 @@ public class Ares extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f전쟁의 신 아레스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 데미지를 주며,"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 끌고 갑니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
-		
-		Duration.setPeriod(1);
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -95,7 +93,7 @@ public class Ares extends AbilityBase {
 			}
 		}
 		
-	};
+	}.setPeriod(1);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -116,6 +114,6 @@ public class Ares extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {}
+	public void onRestrictClear() {}
 	
 }

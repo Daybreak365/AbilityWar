@@ -27,8 +27,6 @@ public class BlackCandle extends AbilityBase {
 	public BlackCandle(Player player) {
 		super(player, "검은 양초", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f디버프를 받지 않으며, 데미지를 받으면 " + ChanceConfig.getValue() + "% 확률로 체력 1.5칸을 회복합니다."));
-		
-		NoDebuff.setPeriod(10);
 	}
 
 	TimerBase NoDebuff = new TimerBase() {
@@ -54,7 +52,7 @@ public class BlackCandle extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(5);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -80,10 +78,8 @@ public class BlackCandle extends AbilityBase {
 	}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			NoDebuff.StartTimer();
-		}
+	public void onRestrictClear() {
+		NoDebuff.StartTimer();
 	}
 
 }

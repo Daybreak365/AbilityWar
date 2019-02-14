@@ -27,10 +27,6 @@ public class DarkVision extends AbilityBase {
 		super(player, "심안", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f앞이 보이지 않는 대신, 플레이어의 " + DistanceConfig.getValue() + "칸 안에 있는 플레이어들은"),
 				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다."));
-		
-		Dark.setPeriod(2);
-		
-		Vision.setPeriod(2);
 	}
 
 	TimerBase Dark = new TimerBase() {
@@ -47,7 +43,7 @@ public class DarkVision extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(2);
 	
 	TimerBase Vision = new TimerBase() {
 		
@@ -66,7 +62,7 @@ public class DarkVision extends AbilityBase {
 		@Override
 		public void TimerEnd() {}
 		
-	};
+	}.setPeriod(2);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -77,11 +73,9 @@ public class DarkVision extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			Dark.StartTimer();
-			Vision.StartTimer();
-		}
+	public void onRestrictClear() {
+		Dark.StartTimer();
+		Vision.StartTimer();
 	}
 
 }

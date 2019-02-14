@@ -17,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -179,6 +180,7 @@ public class GameListener implements Listener, EventExecutor {
 		registerPassive(ProjectileHitEvent.class);
 		registerPassive(BlockBreakEvent.class);
 		registerPassive(PlayerMoveEvent.class);
+		registerPassive(PlayerDeathEvent.class);
 	}
 	
 	public static void registerPassive(Class<? extends Event> e) {
@@ -199,7 +201,7 @@ public class GameListener implements Listener, EventExecutor {
 
 	@Override
 	public void execute(Listener listener, Event e) throws EventException {
-		for(AbilityBase Ability : game.getAbilities().values()) {
+		for(AbilityBase Ability : new ArrayList<AbilityBase>(game.getAbilities().values())) {
 			if(!Ability.isRestricted()) {
 				Ability.PassiveSkill(e);
 			}

@@ -14,6 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.EventExecutor;
 
 import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
 import Marlang.AbilityWar.Utils.Messager;
 
@@ -34,7 +35,17 @@ public class DeathManager implements EventExecutor {
 	public void execute(Listener listener, Event event) throws EventException {
 		if(event instanceof PlayerDeathEvent) {
 			PlayerDeathEvent e = (PlayerDeathEvent) event;
-
+			
+			Player p = e.getEntity();
+			if(game.isGameStarted()) {
+				if(AbilityWarSettings.getItemDrop()) {
+					e.setKeepInventory(false);
+					p.getInventory().clear();
+				} else {
+					e.setKeepInventory(true);
+				}
+			}
+			
 			game.onPlayerDeath(e);
 		}
 	}

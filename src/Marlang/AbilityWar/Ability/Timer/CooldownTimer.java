@@ -61,6 +61,18 @@ public class CooldownTimer extends TimerBase {
 	}
 	
 	@Override
+	public CooldownTimer setPeriod(Integer Period) {
+		this.Period = Period;
+		return this;
+	}
+	
+	@Override
+	public CooldownTimer setProcessDuringGame(boolean bool) {
+		this.ProcessDuringGame = bool;
+		return this;
+	}
+	
+	@Override
 	public void TimerStart(Data<?>... args) {}
 	
 	@Override

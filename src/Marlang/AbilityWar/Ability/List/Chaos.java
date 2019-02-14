@@ -52,8 +52,6 @@ public class Chaos extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f시작의 신 카오스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 5초간 짙은 암흑 속으로 주변의 생명체들을"),
 				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
-		
-		Duration.setPeriod(1);
 	}
 
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -83,7 +81,7 @@ public class Chaos extends AbilityBase {
 			}
 		}
 		
-	};
+	}.setPeriod(1);
 	
 	@Override
 	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
@@ -104,6 +102,6 @@ public class Chaos extends AbilityBase {
 	public void PassiveSkill(Event event) {}
 
 	@Override
-	public void AbilityEvent(EventType type) {}
+	public void onRestrictClear() {}
 
 }

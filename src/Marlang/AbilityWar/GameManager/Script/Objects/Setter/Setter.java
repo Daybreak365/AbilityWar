@@ -1,5 +1,9 @@
 package Marlang.AbilityWar.GameManager.Script.Objects.Setter;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
@@ -52,13 +56,28 @@ abstract public class Setter<T> implements EventExecutor {
 	
 	abstract public ItemStack getItem();
 	
-	/*
-	 * Setter 직접 하나씩 등록해줘야함
-	 */
-	public static Setter<?> newInstance(Class<?> clazz, String Key, Object Default, ScriptWizard Wizard) throws IllegalArgumentException {
-		if(clazz.equals(Location.class)) {
-			return new LocationSetter(Key, (Location) Default, Wizard);
+	private static HashMap<Class<?>, Class<? extends Setter<?>>> SetterMap = new HashMap<Class<?>, Class<? extends Setter<?>>>();
+	
+	public static void registerSetter(Class<?> clazz, Class<? extends Setter<?>> setterClass) {
+		if(!SetterMap.containsKey(clazz)) {
+			SetterMap.put(clazz, setterClass);
 		}
+	}
+	
+	static {
+		registerSetter(Location.class, LocationSetter.class);
+	}
+	
+	public static Setter<?> newInstance(Class<?> clazz, String Key, Object Default, ScriptWizard Wizard) throws IllegalArgumentException {
+		try {
+			if(SetterMap.containsKey(clazz)) {
+				Class<? extends Setter<?>> setterClass = SetterMap.get(clazz);
+				Constructor<? extends Setter<?>> constructor;
+				constructor = setterClass.getConstructor(String.class, clazz, ScriptWizard.class);
+				return constructor.newInstance(Key, Default, Wizard);
+			}
+		} catch (NoSuchMethodException | SecurityException | InstantiationException
+				| IllegalAccessException | InvocationTargetException e) {}
 		
 		throw new IllegalArgumentException();
 	}

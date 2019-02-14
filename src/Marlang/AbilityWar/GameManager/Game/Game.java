@@ -165,11 +165,6 @@ public class Game extends AbstractGame {
 		}
 
 		if(this.isGameStarted()) {
-			if(AbilityWarSettings.getItemDrop()) {
-				e.setKeepInventory(false);
-			} else {
-				e.setKeepInventory(true);
-			}
 			if(this.getParticipants().contains(Victim)) {
 				if(AbilityWarSettings.getAbilityReveal()) {
 					if(this.getAbilities().containsKey(Victim)) {
@@ -251,10 +246,16 @@ public class Game extends AbstractGame {
 				Ability.setRestricted(false);
 			}
 		}
-		
-		if(AbilityWarSettings.getClearWeather()) {
-			for(World w : Bukkit.getWorlds()) {
+
+		for(World w : Bukkit.getWorlds()) {
+			if(AbilityWarSettings.getClearWeather()) {
 				w.setStorm(false);
+			}
+			
+			if(AbilityWarSettings.getItemDrop()) {
+				w.setGameRuleValue("keepInventory", "false");
+			} else {
+				w.setGameRuleValue("keepInventory", "true");
 			}
 		}
 		

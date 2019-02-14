@@ -72,10 +72,8 @@ public class TheEmperor extends AbilityBase {
 	}
 
 	@Override
-	public void AbilityEvent(EventType type) {
-		if(type.equals(EventType.RestrictClear)) {
-			Passive.StartTimer();
-		}
+	public void onRestrictClear() {
+		Passive.StartTimer();
 	}
 
 }

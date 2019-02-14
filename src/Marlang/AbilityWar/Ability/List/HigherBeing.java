@@ -54,6 +54,6 @@ public class HigherBeing extends AbilityBase {
 	}
 
 	@Override
-	public void AbilityEvent(EventType type) {}
+	public void onRestrictClear() {}
 
 }
