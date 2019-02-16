@@ -12,7 +12,6 @@ import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.MainCommand;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpecialThanksGUI;
-import Marlang.AbilityWar.GameManager.Module.Module;
 import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.GameManager.Script.Script.RequiredData;
 import Marlang.AbilityWar.GameManager.Script.Types.TeleportScript;
@@ -45,8 +44,6 @@ public class AbilityWar extends JavaPlugin {
 			if(!Script.isRegistered(TeleportScript.class)) {
 				Script.registerScript(TeleportScript.class, new RequiredData("텔레포트 위치", Location.class, null));
 			}
-			
-			Module.Setup();
 			
 			Load();
 			

@@ -13,9 +13,9 @@ import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 
 public class Ira extends AbilityBase {
 
-	public static SettingObject<Integer> AttackConfig = new SettingObject<Integer>("이라", "AttackTime", 2,
+	public static SettingObject<Integer> AttackConfig = new SettingObject<Integer>("이라", "AttackTime", 4,
 			"# 몇번 공격을 당하면 폭발을 일으킬지 설정합니다.",
-			"# 기본값: 2") {
+			"# 기본값: 4") {
 		
 		@Override
 		public boolean Condition(Integer value) {

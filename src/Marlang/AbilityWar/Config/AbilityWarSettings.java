@@ -123,6 +123,10 @@ public class AbilityWarSettings {
 	public static boolean getOldEnchant() {
 		return getBoolean(ConfigNodes.Game_OldMechanics_Enchant);
 	}
+
+	public static boolean getOldAttackCool() {
+		return getBoolean(ConfigNodes.Game_OldMechanics_AttackCooldown);
+	}
 	
 	/**
 	 * Integer Config
