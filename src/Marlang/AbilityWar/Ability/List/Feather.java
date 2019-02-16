@@ -46,16 +46,17 @@ public class Feather extends AbilityBase {
 	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
 		@Override
-		public void DurationSkill(Integer Seconds) {
+		public void onDurationStart() {}
+		
+		@Override
+		public void DurationProcess(Integer Seconds) {
 			getPlayer().setAllowFlight(true);
 			getPlayer().setFlying(true);
 		}
 		
 		@Override
-		public void TimerEnd() {
+		public void onDurationEnd() {
 			getPlayer().setAllowFlight(false);
-			
-			super.TimerEnd();
 		}
 		
 	};

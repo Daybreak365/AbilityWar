@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
-import Marlang.AbilityWar.Utils.NumberUtil;
+import Marlang.AbilityWar.Utils.Math.NumberUtil;
 
 public class TimeSetter extends Setter<Integer> {
 	

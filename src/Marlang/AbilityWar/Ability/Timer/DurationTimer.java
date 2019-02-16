@@ -6,10 +6,10 @@ import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.NumberUtil;
-import Marlang.AbilityWar.Utils.PacketUtil.ActionbarObject;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.NumberUtil;
+import Marlang.AbilityWar.Utils.PacketLib.ActionbarPacket;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 /**
  * Duration Timer
@@ -17,9 +17,9 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
  */
 abstract public class DurationTimer extends TimerBase {
 	
-	AbilityBase Ability;
-	CooldownTimer CooldownTimer;
-	Integer Duration;
+	private AbilityBase Ability;
+	private CooldownTimer CooldownTimer;
+	private Integer Duration;
 	
 	public DurationTimer(AbilityBase Ability, Integer Duration, CooldownTimer CooldownTimer) {
 		super(Duration);
@@ -28,7 +28,11 @@ abstract public class DurationTimer extends TimerBase {
 		this.CooldownTimer = CooldownTimer;
 	}
 	
-	abstract public void DurationSkill(Integer Seconds);
+	abstract protected void onDurationStart();
+	
+	abstract protected void DurationProcess(Integer Seconds);
+	
+	abstract protected void onDurationEnd();
 	
 	public boolean isDuration() {
 		if(isTimerRunning()) {
@@ -51,16 +55,21 @@ abstract public class DurationTimer extends TimerBase {
 	}
 	
 	@Override
-	public void TimerStart(Data<?>... args) {
+	protected void onStart() {
+		//Notify
+		this.onDurationStart();
+		
 		Counted = new ArrayList<Integer>();
 	}
 	
 	private ArrayList<Integer> Counted;
 	
 	@Override
-	public void TimerProcess(Integer Seconds) {
-		this.DurationSkill(Seconds);
-		ActionbarObject actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f: &e" + NumberUtil.parseTimeString(getFixedTime(Seconds))));
+	protected void TimerProcess(Integer Seconds) {
+		//Notify
+		this.DurationProcess(Seconds);
+		
+		ActionbarPacket actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f: &e" + NumberUtil.parseTimeString(getFixedTime(Seconds))), 0, 25, 0);
 		actionbar.Send(Ability.getPlayer());
 		
 		if(getFixedTime(Seconds) == (Duration / 2) && !Counted.contains(getFixedTime(Seconds))) {
@@ -75,7 +84,10 @@ abstract public class DurationTimer extends TimerBase {
 	}
 	
 	@Override
-	public void TimerEnd() {
+	protected void onEnd() {
+		//Notify
+		this.onDurationEnd();
+		
 		CooldownTimer.StartTimer();
 		Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다."));
 	}

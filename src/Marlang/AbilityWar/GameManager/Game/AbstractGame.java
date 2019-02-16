@@ -1,5 +1,7 @@
 package Marlang.AbilityWar.GameManager.Game;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +23,7 @@ import Marlang.AbilityWar.GameManager.Manager.DeathManager;
 import Marlang.AbilityWar.GameManager.Manager.Firewall;
 import Marlang.AbilityWar.GameManager.Manager.GameListener;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 abstract public class AbstractGame extends Thread implements Listener, EventExecutor {
 	
@@ -86,18 +88,50 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	 */
 	abstract public void onPlayerDeath(PlayerDeathEvent e);
 	
-	public void addAbility(AbilityBase Ability) {
-		if(isRestricted()) {
-			Ability.setRestricted(true);
+	public boolean hasAbility(Player p) {
+		return Abilities.containsKey(p) && Abilities.get(p) != null;
+	}
+	
+	/**
+	 * 플레이어에게 능력이 있을 경우 능력을 반환합니다.
+	 * 플레이어에게 능력이 없을 경우 null을 반환합니다.
+	 */
+	public AbilityBase getAbility(Player p) {
+		if(hasAbility(p)) {
+			return Abilities.get(p);
 		} else {
-			if(isGameStarted()) {
-				Ability.setRestricted(false);
-			} else {
-				Ability.setRestricted(true);
-			}
+			return null;
 		}
+	}
+	
+	public void addAbility(Player p, Class<? extends AbilityBase> abilityClass) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Player.class);
+		AbilityBase Ability = constructor.newInstance(p);
 		
-		Abilities.put(Ability.getPlayer(), Ability);
+		addAbility(Ability);
+	}
+	
+	private void addAbility(AbilityBase Ability) {
+		Player p = Ability.getPlayer();
+		if(isParticipating(p)) {
+			if(isRestricted()) {
+				Ability.setRestricted(true);
+			} else {
+				if(isGameStarted()) {
+					Ability.setRestricted(false);
+				} else {
+					Ability.setRestricted(true);
+				}
+			}
+			
+			if(hasAbility(p)) {
+				removeAbility(p);
+			}
+			
+			Abilities.put(p, Ability);
+		} else {
+			throw new IllegalArgumentException("대상이 게임에 참여중이지 않습니다.");
+		}
 	}
 	
 	public void removeAbility(Player p) {
@@ -120,6 +154,20 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		}
 	}
 	
+	public void swapAbility(AbilityBase one, AbilityBase two) {
+		Player onePlayer = one.getPlayer();
+		Player twoPlayer = two.getPlayer();
+		
+		removeAbility(onePlayer);
+		removeAbility(twoPlayer);
+		
+		one.updatePlayer(twoPlayer);
+		two.updatePlayer(onePlayer);
+		
+		addAbility(one);
+		addAbility(two);
+	}
+	
 	public static List<String> getSpectators() {
 		return Spectators;
 	}
@@ -130,10 +178,6 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	public boolean isParticipating(Player p) {
 		return Participants.contains(p);
-	}
-	
-	public HashMap<Player, AbilityBase> getAbilities() {
-		return Abilities;
 	}
 	
 	public DeathManager getDeathManager() {
@@ -158,6 +202,10 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	 */
 	public AbilitySelect getAbilitySelect() {
 		return abilitySelect;
+	}
+	
+	public HashMap<Player, AbilityBase> getAbilities() {
+		return Abilities;
 	}
 	
 	protected void setAbilitySelect(AbilitySelect abilitySelect) {

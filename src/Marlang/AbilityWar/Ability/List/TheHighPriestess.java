@@ -11,10 +11,10 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
 public class TheHighPriestess extends AbilityBase {
 
@@ -61,10 +61,10 @@ public class TheHighPriestess extends AbilityBase {
 	
 	DurationTimer Skill = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
 		
-		Location center;
+		private Location center;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		protected void onDurationStart() {
 			center = getPlayer().getLocation();
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
@@ -72,12 +72,10 @@ public class TheHighPriestess extends AbilityBase {
 					SoundLib.ENTITY_EVOCATION_ILLAGER_CAST_SPELL.playSound(p);
 				}
 			}
-			
-			super.TimerStart(args);
 		}
-		
+
 		@Override
-		public void DurationSkill(Integer Seconds) {
+		public void DurationProcess(Integer Seconds) {
 			for(Location l : LocationUtil.getCircle(center, Range, Range * Range, true)) {
 				ParticleLib.SPELL_INSTANT.spawnParticle(l, 1, 0, 0, 0);
 			}
@@ -92,6 +90,9 @@ public class TheHighPriestess extends AbilityBase {
 				}
 			}
 		}
+		
+		@Override
+		protected void onDurationEnd() {}
 		
 	}.setPeriod(1);
 	

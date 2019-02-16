@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
+import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 public class Virus extends AbilityBase {
 

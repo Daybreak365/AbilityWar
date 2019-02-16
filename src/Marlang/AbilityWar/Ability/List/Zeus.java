@@ -12,9 +12,9 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Zeus extends AbilityBase {
 	
@@ -43,7 +43,7 @@ public class Zeus extends AbilityBase {
 		ArrayList<Location> Circle;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onStart() {
 			center = getPlayer().getLocation();
 		}
 		
@@ -64,7 +64,7 @@ public class Zeus extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(8);
 	

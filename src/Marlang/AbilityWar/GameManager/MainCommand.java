@@ -31,9 +31,9 @@ import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.GameManager.Script.ScriptException;
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
 import Marlang.AbilityWar.GameManager.Script.Objects.AbstractScript;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.NumberUtil;
+import Marlang.AbilityWar.Utils.Math.NumberUtil;
+import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 	
@@ -274,16 +274,21 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(args.length < 2) {
 					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " util abi <대상>"));
 				} else {
-					if(Bukkit.getPlayerExact(args[1]) != null) {
-						Player target = Bukkit.getPlayerExact(args[1]);
-						if(AbilityWarThread.getGame().getParticipants().contains(target)) {
-							AbilityGUI gui = new AbilityGUI(p, target, AbilityWar.getPlugin());
-							gui.openAbilitySelectGUI(1);
-						} else {
-							Messager.sendErrorMessage(p, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
-						}
+					if(args[1].equalsIgnoreCase("@a")) {
+						AbilityGUI gui = new AbilityGUI(p, AbilityWar.getPlugin());
+						gui.openAbilityGUI(1);
 					} else {
-						Messager.sendErrorMessage(p, args[1] + "은(는) 존재하지 않는 플레이어입니다.");
+						if(Bukkit.getPlayerExact(args[1]) != null) {
+							Player target = Bukkit.getPlayerExact(args[1]);
+							if(AbilityWarThread.getGame().getParticipants().contains(target)) {
+								AbilityGUI gui = new AbilityGUI(p, target, AbilityWar.getPlugin());
+								gui.openAbilityGUI(1);
+							} else {
+								Messager.sendErrorMessage(p, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+							}
+						} else {
+							Messager.sendErrorMessage(p, args[1] + "은(는) 존재하지 않는 플레이어입니다.");
+						}
 					}
 				}
 			} else {
@@ -401,7 +406,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				Messager.sendStringList(sender, Messager.getStringList(
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
-						Messager.formatCommand(label + " util", "abi <대상>", "대상에게 능력을 임의로 부여합니다.", true),
+						Messager.formatCommand(label + " util", "abi <대상/@a>", "대상에게 능력을 임의로 부여합니다.", true),
 						Messager.formatCommand(label + " util", "spec", "관전자 설정 GUI를 띄웁니다.", true),
 						Messager.formatCommand(label + " util", "ablist", "능력자 목록을 확인합니다.", true),
 						Messager.formatCommand(label + " util", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true),
@@ -430,7 +435,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					if(args[0].isEmpty()) {
 						return Complete;
 					} else {
-						return Complete.stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+						return Complete.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
 					}
 				case 2:
 					if(args[0].equalsIgnoreCase("config")) {
@@ -439,7 +444,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(args[1].isEmpty()) {
 							return Config;
 						} else {
-							return Config.stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+							return Config.stream().filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
 						}
 					} else if(args[0].equalsIgnoreCase("util")) {
 						ArrayList<String> Util = Messager.getStringList(
@@ -447,7 +452,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(args[1].isEmpty()) {
 							return Util;
 						} else {
-							return Util.stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+							return Util.stream().filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
 						}
 					} else if(args[0].equalsIgnoreCase("script")) {
 						List<String> list = Script.getRegisteredScripts();
@@ -455,13 +460,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(args[1].isEmpty()) {
 							return list;
 						} else {
-							return list.stream().filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+							return list.stream().filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
 						}
 					}
 				case 3:
 					if(args[0].equalsIgnoreCase("util") && args[1].equalsIgnoreCase("abi")) {
 						ArrayList<String> Players = new ArrayList<String>();
 						for(Player p : Bukkit.getOnlinePlayers()) Players.add(p.getName());
+						Players.add("@a");
 						Players.sort(new Comparator<String>() {
 							
 							public int compare(String obj1, String obj2) {
@@ -474,7 +480,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(args[2].isEmpty()) {
 							return Players;
 						} else {
-							return Players.stream().filter(s -> s.startsWith(args[2])).collect(Collectors.toList());
+							return Players.stream().filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase())).collect(Collectors.toList());
 						}
 					}
 					

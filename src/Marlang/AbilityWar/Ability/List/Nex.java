@@ -17,12 +17,11 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.FallBlock;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
-import Marlang.AbilityWar.Utils.TimerBase.Data;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Nex extends AbilityBase {
 
@@ -79,7 +78,7 @@ public class Nex extends AbilityBase {
 	TimerBase Skill = new TimerBase(4) {
 
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onStart() {
 			NoFall = true;
 			Vector v = new Vector(0, 4, 0);
 
@@ -91,7 +90,7 @@ public class Nex extends AbilityBase {
 		}
 
 		@Override
-		public void TimerEnd() {
+		public void onEnd() {
 			RunSkill = true;
 			Vector v = new Vector(0, -4, 0);
 
@@ -137,7 +136,7 @@ public class Nex extends AbilityBase {
 							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));
 						}
 						
-						FallBlock.StartTimer(new Data<Location>(b.getLocation(), Location.class));
+						FallBlock.StartTimer();
 					}
 				}
 			}
@@ -149,24 +148,15 @@ public class Nex extends AbilityBase {
 		Location center;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
-			if(args.length > 0) {
-				Location l = args[0].getValue(Location.class);
-				if(l != null) {
-					center = l;
-				} else {
-					this.StopTimer(true);
-				}
-			} else {
-				this.StopTimer(true);
-			}
+		public void onStart() {
+			this.center = getPlayer().getLocation();
 		}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			Integer Distance = 6 - Seconds;
 			
-			for(Block block : LocationUtil.getBlocks(center, Distance, true, true)) {
+			for(Block block : LocationUtil.getBlocks(center, Distance, true, true, false)) {
 				FallBlock fb = new FallBlock(block.getState().getData(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0));
 				fb.Spawn(false);
 			}
@@ -179,7 +169,7 @@ public class Nex extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(4);
 	

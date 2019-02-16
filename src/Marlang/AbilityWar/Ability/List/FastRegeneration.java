@@ -7,7 +7,7 @@ import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class FastRegeneration extends AbilityBase {
 	
@@ -30,7 +30,7 @@ public class FastRegeneration extends AbilityBase {
 	TimerBase Passive = new TimerBase() {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -47,7 +47,7 @@ public class FastRegeneration extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(RegenSpeedConfig.getValue());
 	

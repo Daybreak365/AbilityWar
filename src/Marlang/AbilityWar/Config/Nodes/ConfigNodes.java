@@ -2,8 +2,8 @@ package Marlang.AbilityWar.Config.Nodes;
 
 import org.bukkit.Bukkit;
 
-import Marlang.AbilityWar.Utils.FileManager;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Data.FileManager;
 
 public enum ConfigNodes {
 	

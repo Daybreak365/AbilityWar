@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 /**
  * 능력 선택
@@ -17,12 +17,16 @@ import Marlang.AbilityWar.Utils.TimerBase;
  */
 abstract public class AbilitySelect extends TimerBase {
 	
-	protected ArrayList<Class<? extends AbilityBase>> Abilities = new ArrayList<Class<? extends AbilityBase>>();
+	protected List<Class<? extends AbilityBase>> Abilities = setupAbilities();
 	
 	private HashMap<Player, Boolean> AbilitySelect = new HashMap<Player, Boolean>();
 	
 	public HashMap<Player, Boolean> getMap() {
 		return AbilitySelect;
+	}
+
+	public List<Player> getPlayers() {
+		return new ArrayList<Player>(AbilitySelect.keySet());
 	}
 	
 	public boolean hasDecided(Player p) {
@@ -90,6 +94,8 @@ abstract public class AbilitySelect extends TimerBase {
 	
 	abstract protected List<Player> setupPlayers();
 	
+	abstract protected List<Class<? extends AbilityBase>> setupAbilities();
+	
 	abstract protected boolean endCondition();
 	
 	private boolean Ended = false;
@@ -110,7 +116,7 @@ abstract public class AbilitySelect extends TimerBase {
 	}
 	
 	@Override
-	public void TimerStart(Data<?>... args) {}
+	public void onStart() {}
 	
 	@Override
 	public void TimerProcess(Integer Seconds) {
@@ -123,7 +129,7 @@ abstract public class AbilitySelect extends TimerBase {
 	}
 	
 	@Override
-	public void TimerEnd() {
+	public void onEnd() {
 		Ended = true;
 	}
 	

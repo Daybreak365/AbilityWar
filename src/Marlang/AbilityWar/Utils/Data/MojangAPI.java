@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Utils;
+package Marlang.AbilityWar.Utils.Data;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

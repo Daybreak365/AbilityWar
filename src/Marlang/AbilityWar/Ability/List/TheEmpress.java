@@ -16,10 +16,10 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.NumberUtil;
-import Marlang.AbilityWar.Utils.NumberUtil.NumberStatus;
-import Marlang.AbilityWar.Utils.PacketUtil.TitleObject;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.NumberUtil;
+import Marlang.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
+import Marlang.AbilityWar.Utils.PacketLib.TitlePacket;
 
 public class TheEmpress extends AbilityBase {
 
@@ -101,8 +101,9 @@ public class TheEmpress extends AbilityBase {
 					} else if(X.isZero() && Z.isZero()) {
 						if(!EasterEgg) {
 							EasterEgg = true;
-							TitleObject title = new TitleObject(ChatColor.translateAlternateColorCodes('&', "&a여제의 가호"), "여제의 가호에 의해 모든 플레이어의 능력 쿨타임이 초기화되었습니다.");
-							title.Broadcast(15, 80, 15);
+							TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&a여제의 가호"),
+									"여제의 가호에 의해 모든 플레이어의 능력 쿨타임이 초기화되었습니다.", 15, 80, 15);
+							title.Broadcast();
 							
 							SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
 							

@@ -9,7 +9,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Zombie extends AbilityBase {
 
@@ -22,7 +22,7 @@ public class Zombie extends AbilityBase {
 	TimerBase Aim = new TimerBase() {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -38,7 +38,7 @@ public class Zombie extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(5);
 	

@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Utils;
+package Marlang.AbilityWar.Utils.Thread;
 
 import java.util.ArrayList;
 
@@ -56,11 +56,11 @@ abstract public class TimerBase {
 
 	protected int Period = 20;
 
-	abstract public void TimerStart(Data<?>... args);
+	abstract protected void onStart();
 
-	abstract public void TimerProcess(Integer Seconds);
+	abstract protected void TimerProcess(Integer Seconds);
 
-	abstract public void TimerEnd();
+	abstract protected void onEnd();
 
 	public boolean isTimerRunning() {
 		return Task != -1;
@@ -69,14 +69,14 @@ abstract public class TimerBase {
 	/**
 	 * 타이머를 시작합니다.
 	 */
-	public void StartTimer(Data<?>... args) {
+	public void StartTimer() {
 		if(!this.isTimerRunning()) {
 			TempCount = Count;
 			this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
 			if(ProcessDuringGame) {
 				Register(this);
 			}
-			TimerStart(args);
+			onStart();
 		}
 	}
 
@@ -90,7 +90,7 @@ abstract public class TimerBase {
 			TempCount = Count;
 			this.Task = -1;
 			if(!Silent) {
-				TimerEnd();
+				onEnd();
 			}
 		}
 	}
@@ -121,8 +121,8 @@ abstract public class TimerBase {
 	 * 일반 타이머
 	 */
 	public TimerBase(int Count) {
-		this.Count = Count;
 		InfiniteTimer = false;
+		this.Count = Count;
 	}
 	
 	/**
@@ -130,29 +130,7 @@ abstract public class TimerBase {
 	 */
 	public TimerBase() {
 		InfiniteTimer = true;
-	}
-	
-	public static class Data<T> {
-		
-		private final T value;
-		private final Class<T> valueClass;
-		
-		public Data(T value, Class<T> clazz) {
-			this.value = value;
-			this.valueClass = clazz;
-		}
-		
-		@SuppressWarnings("unchecked")
-		public <U> U getValue(Class<U> clazz) {
-			if(value != null) {
-				if(clazz.equals(valueClass)) {
-					return (U) value;
-				}
-			}
-
-			return null;
-		}
-		
+		this.Count = -1;
 	}
 	
 	private final class TimerTask extends Thread {

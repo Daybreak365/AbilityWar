@@ -11,10 +11,10 @@ import org.bukkit.potion.PotionEffectType;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Yeti extends AbilityBase {
 
@@ -47,7 +47,7 @@ public class Yeti extends AbilityBase {
 	TimerBase Buff = new TimerBase() {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -60,7 +60,7 @@ public class Yeti extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(1);
 	
@@ -70,7 +70,7 @@ public class Yeti extends AbilityBase {
 		Location center;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onStart() {
 			Count = 1;
 			center = getPlayer().getLocation();
 			
@@ -89,7 +89,7 @@ public class Yeti extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(3);
 	

@@ -2,7 +2,6 @@ package Marlang.AbilityWar.Ability.List;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,10 +17,10 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Pumpkin extends AbilityBase {
 
@@ -61,23 +60,8 @@ public class Pumpkin extends AbilityBase {
 		Integer Count;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
-			if(args.length > 0) {
-				Set<?> list = args[0].getValue(Set.class);
-				if(list != null) {
-					Players = new ArrayList<Player>();
-					
-					for(Object o : list) {
-						if(o instanceof Player) {
-							Players.add((Player) o);
-						}
-					}
-				} else {
-					this.StopTimer(true);
-				}
-			} else {
-				this.StopTimer(true);
-			}
+		public void onStart() {
+			this.Players = new ArrayList<Player>(Pumpkin.this.Players.keySet());
 			
 			Count = 1;
 		}
@@ -108,35 +92,30 @@ public class Pumpkin extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(3);
+
+	HashMap<Player, ItemStack> Players;
 	
 	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
-		HashMap<Player, ItemStack> Players;
-		
-		@SuppressWarnings("rawtypes")
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onDurationStart() {
 			Players = new HashMap<Player, ItemStack>();
 			LocationUtil.getNearbyPlayers(getPlayer(), 30, 30).stream().forEach(p -> Players.put(p, p.getInventory().getHelmet()));
-			Song.StartTimer(new Data<Set>(Players.keySet(), Set.class));
-			
-			super.TimerStart(args);
+			Song.StartTimer();
 		}
 		
 		@Override
-		public void DurationSkill(Integer Seconds) {
+		public void DurationProcess(Integer Seconds) {
 			ItemStack Pumpkin = getPumpkin(Seconds);
 			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Pumpkin));
 		}
 		
 		@Override
-		public void TimerEnd() {
+		public void onDurationEnd() {
 			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
-			
-			super.TimerEnd();
 		}
 		
 		private ItemStack getPumpkin(Integer Time) {

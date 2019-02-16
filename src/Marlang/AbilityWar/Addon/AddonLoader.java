@@ -16,8 +16,8 @@ import java.util.zip.ZipEntry;
 import org.bukkit.plugin.Plugin;
 
 import Marlang.AbilityWar.AbilityWar;
-import Marlang.AbilityWar.Utils.FileManager;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Data.FileManager;
 
 public class AddonLoader {
 	
@@ -37,6 +37,8 @@ public class AddonLoader {
 				Messager.sendDebugMessage(file.getName() + " 파일이 올바른 애드온이 아닙니다.");
 			} catch (IOException e) {
 				Messager.sendDebugMessage(file.getName() + " 파일을 불러올 수 없습니다.");
+			} catch (Exception e) {
+				Messager.sendDebugMessage(file.getName() + " 애드온을 불러오는 도중 예상치 못한 오류가 발생하였습니다.");
 			}
 		}
 		
@@ -45,7 +47,7 @@ public class AddonLoader {
 		}
 	}
 	
-	private Addon loadAddon(File file) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private Addon loadAddon(File file) throws Exception {
 		JarFile jar = new JarFile(file);
 		
 		URL[] url = { file.toURI().toURL() };

@@ -8,10 +8,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Hacker extends AbilityBase {
 
@@ -48,7 +48,7 @@ public class Hacker extends AbilityBase {
 	TimerBase Move = new TimerBase(DurationConfig.getValue() * 20) {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -58,7 +58,7 @@ public class Hacker extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {
+		public void onEnd() {
 			CantMove = null;
 		}
 		

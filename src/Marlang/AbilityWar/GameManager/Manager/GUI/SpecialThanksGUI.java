@@ -22,7 +22,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.MojangAPI;
+import Marlang.AbilityWar.Utils.Data.MojangAPI;
 
 /**
  * 기여자 목록 GUI

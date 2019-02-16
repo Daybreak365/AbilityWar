@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Utils;
+package Marlang.AbilityWar.Utils.Data;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
+
+import Marlang.AbilityWar.Utils.Messager;
 
 /**
  * File À¯Æ¿

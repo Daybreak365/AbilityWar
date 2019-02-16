@@ -13,9 +13,9 @@ import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.GameManager.Script.ScriptException.State;
 import Marlang.AbilityWar.GameManager.Script.Objects.AbstractScript;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
-import Marlang.AbilityWar.Utils.FileManager;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Data.FileManager;
+import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 /**
  * 스크립트

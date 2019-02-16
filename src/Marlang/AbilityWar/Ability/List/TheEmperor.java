@@ -10,7 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class TheEmperor extends AbilityBase {
 
@@ -34,7 +34,7 @@ public class TheEmperor extends AbilityBase {
 	TimerBase Passive = new TimerBase() {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -42,7 +42,7 @@ public class TheEmperor extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	};
 	

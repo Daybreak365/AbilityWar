@@ -8,8 +8,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class DarkVision extends AbilityBase {
 	
@@ -32,7 +32,7 @@ public class DarkVision extends AbilityBase {
 	TimerBase Dark = new TimerBase() {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -41,7 +41,7 @@ public class DarkVision extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(2);
 	
@@ -50,7 +50,7 @@ public class DarkVision extends AbilityBase {
 		Integer Distance = DistanceConfig.getValue();
 		
 		@Override
-		public void TimerStart(Data<?>... args) {}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -60,7 +60,7 @@ public class DarkVision extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(2);
 	

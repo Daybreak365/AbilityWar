@@ -83,7 +83,7 @@ public class ParticleLib {
 		private Particle getParticle() {
 			return particle;
 		}
-
+		
 		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ) {
 			if(AbilityWarSettings.getVisualEffect()) {
 				Particle p = getParticle();
@@ -93,7 +93,16 @@ public class ParticleLib {
 			}
 		}
 
-		public <T> void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, T arg) {
+		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, double extra) {
+			if(AbilityWarSettings.getVisualEffect()) {
+				Particle p = getParticle();
+				if(p != null) {
+					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, extra);
+				}
+			}
+		}
+
+		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, Object arg) {
 			if(AbilityWarSettings.getVisualEffect()) {
 				Particle p = getParticle();
 				if(p != null) {

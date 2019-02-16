@@ -26,16 +26,16 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class SpectatorGUI implements Listener {
 	
-	Player p;
+	private Player p;
 	
 	public SpectatorGUI(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 	
-	Integer PlayerPage = 1;
+	private Integer PlayerPage = 1;
 	
-	Inventory SpectateGUI;
+	private Inventory SpectateGUI;
 	
 	public ArrayList<String> getPlayers() {
 		ArrayList<String> list = new ArrayList<String>();

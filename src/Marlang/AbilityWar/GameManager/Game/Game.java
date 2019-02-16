@@ -1,6 +1,5 @@
 package Marlang.AbilityWar.GameManager.Game;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +24,10 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.Invincibility;
 import Marlang.AbilityWar.GameManager.Script.Script;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 /**
  * 게임 관리 클래스
@@ -48,7 +47,7 @@ public class Game extends AbstractGame {
 	TimerBase NoHunger = new TimerBase() {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onStart() {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
 		}
 		
@@ -60,7 +59,7 @@ public class Game extends AbstractGame {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 	};
 	
 	@Override
@@ -167,8 +166,8 @@ public class Game extends AbstractGame {
 		if(this.isGameStarted()) {
 			if(this.getParticipants().contains(Victim)) {
 				if(AbilityWarSettings.getAbilityReveal()) {
-					if(this.getAbilities().containsKey(Victim)) {
-						AbilityBase Ability = this.getAbilities().get(Victim);
+					if(this.hasAbility(Victim)) {
+						AbilityBase Ability = this.getAbility(Victim);
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + Ability.getAbilityName() + " &f능력이었습니다!"));
 					} else {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
@@ -242,7 +241,7 @@ public class Game extends AbstractGame {
 			invincibility.StartTimer();
 		} else {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
-			for(AbilityBase Ability : AbilityWarThread.getGame().getAbilities().values()) {
+			for(AbilityBase Ability : this.getAbilities().values()) {
 				Ability.setRestricted(false);
 			}
 		}
@@ -335,25 +334,27 @@ public class Game extends AbstractGame {
 			}
 			
 			@Override
-			protected void drawAbility() {
-				Abilities.clear();
-				
+			protected List<Class<? extends AbilityBase>> setupAbilities() {
+				List<Class<? extends AbilityBase>> list = new ArrayList<>();
 				for(String name : AbilityList.values()) {
 					if(!AbilityWarSettings.getBlackList().contains(name)) {
-						Abilities.add(AbilityList.getByString(name));
+						list.add(AbilityList.getByString(name));
 					}
 				}
 				
-				if(getMap().size() <= Abilities.size()) {
+				return list;
+			}
+			
+			@Override
+			protected void drawAbility() {
+				if(getPlayers().size() <= Abilities.size()) {
 					Random random = new Random();
 					
-					for(Player p : getMap().keySet()) {
+					for(Player p : getPlayers()) {
+						Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
 						try {
-							Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
+							Game.this.addAbility(p, abilityClass);
 							Abilities.remove(abilityClass);
-							Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Player.class);
-							AbilityBase Ability = constructor.newInstance(p);
-							Game.this.addAbility(Ability);
 							
 							Messager.sendStringList(p, Messager.getStringList(
 									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
@@ -362,6 +363,7 @@ public class Game extends AbstractGame {
 						} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
 								| IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
+							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}
 					}
 				} else {
@@ -376,17 +378,15 @@ public class Game extends AbstractGame {
 				if(Abilities.size() > 0) {
 					Random random = new Random();
 					
-					AbilityBase oldAbility = Game.this.getAbilities().get(p);
+					AbilityBase oldAbility = Game.this.getAbility(p);
 					if(oldAbility != null) {
+						Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
 						try {
-							Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
 							Abilities.remove(abilityClass);
 							Abilities.add(oldAbility.getClass());
-							Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Player.class);
-							AbilityBase Ability = constructor.newInstance(p);
 							
 							Game.this.removeAbility(p);
-							Game.this.addAbility(Ability);
+							Game.this.addAbility(p, abilityClass);
 							
 							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
 							
@@ -394,6 +394,7 @@ public class Game extends AbstractGame {
 						} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
 								| IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 변경하는 도중 오류가 발생하였습니다."));
+							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}
 					}
 				} else {
@@ -403,7 +404,7 @@ public class Game extends AbstractGame {
 
 			@Override
 			protected boolean endCondition() {
-				for(Player Key : getMap().keySet()) {
+				for(Player Key : getPlayers()) {
 					if(!hasDecided(Key)) {
 						return false;
 					}

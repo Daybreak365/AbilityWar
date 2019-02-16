@@ -2,7 +2,7 @@ package Marlang.AbilityWar.Config;
 
 import java.util.ArrayList;
 
-import Marlang.AbilityWar.Utils.FileManager;
+import Marlang.AbilityWar.Utils.Data.FileManager;
 
 /**
  * 능력 세부 설정

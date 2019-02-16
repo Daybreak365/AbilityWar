@@ -19,8 +19,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
-import Marlang.AbilityWar.Utils.FileManager;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Data.FileManager;
 
 /**
  * 콘피그 설정 마법사

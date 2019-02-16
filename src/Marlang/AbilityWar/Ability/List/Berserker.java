@@ -60,20 +60,16 @@ public class Berserker extends AbilityBase {
 	DurationTimer Duration = new DurationTimer(this, 5, Cool) {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onDurationStart() {
 			Strengthen = true;
-			
-			super.TimerStart();
 		}
 		
 		@Override
-		public void DurationSkill(Integer Seconds) {}
+		public void DurationProcess(Integer Seconds) {}
 		
 		@Override
-		public void TimerEnd() {
+		public void onDurationEnd() {
 			Strengthen = false;
-			
-			super.TimerEnd();
 		}
 		
 	};

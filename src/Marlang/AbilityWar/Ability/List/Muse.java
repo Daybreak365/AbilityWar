@@ -14,10 +14,10 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
 public class Muse extends AbilityBase {
 
@@ -47,16 +47,14 @@ public class Muse extends AbilityBase {
 		Integer SoundCount;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onDurationStart() {
 			Count = 1;
 			SoundCount = 1;
 			center = getPlayer().getLocation();
-			
-			super.TimerStart(args);
 		}
 		
 		@Override
-		public void DurationSkill(Integer Seconds) {
+		public void DurationProcess(Integer Seconds) {
 			if(Count <= 10) {
 				for(Location l : LocationUtil.getCircle(center, Count, Count * 6, true)) {
 					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 1, 0, 0, 0);
@@ -127,10 +125,8 @@ public class Muse extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {
+		public void onDurationEnd() {
 			center = null;
-			
-			super.TimerEnd();
 		}
 		
 	}.setPeriod(2);

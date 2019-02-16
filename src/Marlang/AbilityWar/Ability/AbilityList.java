@@ -11,31 +11,41 @@ import Marlang.AbilityWar.Ability.List.Ares;
 import Marlang.AbilityWar.Ability.List.Assassin;
 import Marlang.AbilityWar.Ability.List.Berserker;
 import Marlang.AbilityWar.Ability.List.BlackCandle;
+import Marlang.AbilityWar.Ability.List.BombArrow;
+import Marlang.AbilityWar.Ability.List.Brewer;
+import Marlang.AbilityWar.Ability.List.Celebrity;
 import Marlang.AbilityWar.Ability.List.Chaos;
 import Marlang.AbilityWar.Ability.List.Chaser;
 import Marlang.AbilityWar.Ability.List.Clown;
+import Marlang.AbilityWar.Ability.List.Curse;
 import Marlang.AbilityWar.Ability.List.DarkVision;
 import Marlang.AbilityWar.Ability.List.Demigod;
+import Marlang.AbilityWar.Ability.List.DevilBoots;
 import Marlang.AbilityWar.Ability.List.DiceGod;
 import Marlang.AbilityWar.Ability.List.EnergyBlocker;
+import Marlang.AbilityWar.Ability.List.ExpertOfFall;
 import Marlang.AbilityWar.Ability.List.FastRegeneration;
 import Marlang.AbilityWar.Ability.List.Feather;
 import Marlang.AbilityWar.Ability.List.FireFightWithFire;
 import Marlang.AbilityWar.Ability.List.Flora;
 import Marlang.AbilityWar.Ability.List.Gladiator;
 import Marlang.AbilityWar.Ability.List.Hacker;
+import Marlang.AbilityWar.Ability.List.Hermit;
 import Marlang.AbilityWar.Ability.List.HigherBeing;
+import Marlang.AbilityWar.Ability.List.Imprison;
 import Marlang.AbilityWar.Ability.List.Ira;
 import Marlang.AbilityWar.Ability.List.Muse;
 import Marlang.AbilityWar.Ability.List.Nex;
 import Marlang.AbilityWar.Ability.List.OnlyOddNumber;
 import Marlang.AbilityWar.Ability.List.Pumpkin;
 import Marlang.AbilityWar.Ability.List.ShowmanShip;
+import Marlang.AbilityWar.Ability.List.SuperNova;
 import Marlang.AbilityWar.Ability.List.Terrorist;
 import Marlang.AbilityWar.Ability.List.TheEmperor;
 import Marlang.AbilityWar.Ability.List.TheEmpress;
 import Marlang.AbilityWar.Ability.List.TheHighPriestess;
 import Marlang.AbilityWar.Ability.List.TheMagician;
+import Marlang.AbilityWar.Ability.List.TimeRewind;
 import Marlang.AbilityWar.Ability.List.Virtus;
 import Marlang.AbilityWar.Ability.List.Virus;
 import Marlang.AbilityWar.Ability.List.Void;
@@ -55,16 +65,18 @@ public class AbilityList {
 	public static void registerAbility(String name, Class<? extends AbilityBase> Ability) {
 		if(!Abilities.containsKey(name)) {
 			Abilities.put(name, Ability);
-		}
-		
-		try {
-			for(Field field : Ability.getFields()) {
-				if(Modifier.isStatic(field.getModifiers()) && field.getType().equals(SettingObject.class)) {
-					field.get(new Object());
+			
+			try {
+				for(Field field : Ability.getFields()) {
+					if(Modifier.isStatic(field.getModifiers()) && field.getType().equals(SettingObject.class)) {
+						field.get(new Object());
+					}
 				}
+			} catch (IllegalAccessException | IllegalArgumentException e) {
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
 			}
-		} catch (IllegalAccessException | IllegalArgumentException e) {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+		} else {
+			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 		}
 	}
 	
@@ -107,6 +119,16 @@ public class AbilityList {
 		registerAbility("황제", TheEmperor.class);
 		registerAbility("호박", Pumpkin.class);
 		registerAbility("바이러스", Virus.class);
+		registerAbility("헤르밋", Hermit.class);
+		registerAbility("악마의 부츠", DevilBoots.class);
+		registerAbility("폭발 화살", BombArrow.class);
+		registerAbility("양조사", Brewer.class);
+		registerAbility("구속", Imprison.class);
+		registerAbility("초신성", SuperNova.class);
+		registerAbility("유명 인사", Celebrity.class);
+		registerAbility("낙법의 달인", ExpertOfFall.class);
+		registerAbility("컬스", Curse.class);
+		registerAbility("시간 역행", TimeRewind.class);
 	}
 	
 	public static ArrayList<String> values() {

@@ -36,7 +36,7 @@ public class Demigod extends AbilityBase {
 		return false;
 	}
 	
-	Integer Chance = ChanceConfig.getValue();
+	private Integer Chance = ChanceConfig.getValue();
 	
 	@Override
 	public void PassiveSkill(Event event) {

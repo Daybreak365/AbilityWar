@@ -17,10 +17,9 @@ import org.bukkit.potion.PotionEffectType;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
-import Marlang.AbilityWar.Utils.TimerBase.Data;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Gladiator extends AbilityBase {
 	
@@ -46,21 +45,8 @@ public class Gladiator extends AbilityBase {
 	
 	TimerBase FieldClear = new TimerBase(20) {
 		
-		Player target;
-		
 		@Override
-		public void TimerStart(Data<?>... args) {
-			if(args.length > 0) {
-				Player player = args[0].getValue(Player.class);
-				if(player != null) {
-					target = player;
-				} else {
-					this.StopTimer(true);
-				}
-			} else {
-				this.StopTimer(true);
-			}
-		}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
@@ -69,7 +55,7 @@ public class Gladiator extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {
+		public void onEnd() {
 			for(Block b : Saves.keySet()) {
 				BlockState state = Saves.get(b);
 				b.setType(state.getType());
@@ -80,26 +66,16 @@ public class Gladiator extends AbilityBase {
 		
 	};
 	
+	Player target = null;
+	
 	TimerBase Field = new TimerBase(26) {
 		
 		Integer Count;
 		Integer TotalCount;
 		Location center;
 		
-		Player target;
-		
 		@Override
-		public void TimerStart(Data<?>... args) {
-			if(args.length > 0) {
-				Player player = args[0].getValue(Player.class);
-				if(player != null) {
-					target = player;
-				} else {
-					this.StopTimer(true);
-				}
-			} else {
-				this.StopTimer(true);
-			}
+		public void onStart() {
 			Count = 1;
 			TotalCount = 1;
 			center = getPlayer().getLocation();
@@ -137,7 +113,7 @@ public class Gladiator extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {
+		public void onEnd() {
 			Location check = center.clone().add(0, 6, 0);
 			
 			if(!check.getBlock().getType().equals(Material.SMOOTH_BRICK)) {
@@ -151,7 +127,8 @@ public class Gladiator extends AbilityBase {
 			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 400, 4), true);
 			target.teleport(teleport);
 			
-			FieldClear.StartTimer(new Data<Player>(target, Player.class));
+			Gladiator.this.target = target;
+			FieldClear.StartTimer();
 		}
 		
 	}.setPeriod(2);
@@ -176,7 +153,8 @@ public class Gladiator extends AbilityBase {
 					if(!e.isCancelled()) {
 						if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_INGOT)) {
 							if(!Cool.isCooldown()) {
-								Field.StartTimer(new Data<Player>((Player) e.getEntity(), Player.class));
+								this.target = (Player) e.getEntity();
+								Field.StartTimer();
 								
 								Cool.StartTimer();
 							}

@@ -12,8 +12,8 @@ import org.bukkit.event.Event;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Validate;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 abstract public class AbilityBase {
 	
@@ -35,7 +35,7 @@ abstract public class AbilityBase {
 	
 	abstract public void PassiveSkill(Event event);
 	
-	abstract public void onRestrictClear();
+	abstract protected void onRestrictClear();
 	
 	/**
 	 * 플레이어 능력 삭제시 사용

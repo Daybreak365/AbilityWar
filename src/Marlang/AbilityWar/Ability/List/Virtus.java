@@ -9,9 +9,9 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Virtus extends AbilityBase {
 
@@ -47,7 +47,7 @@ public class Virtus extends AbilityBase {
 	TimerBase Activate = new TimerBase(DurationConfig.getValue()) {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onStart() {
 			Activated = true;
 		}
 		
@@ -58,7 +58,7 @@ public class Virtus extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {
+		public void onEnd() {
 			Activated = false;
 		}
 		

@@ -28,16 +28,16 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
  */
 public class BlackListGUI implements Listener {
 	
-	Player p;
+	private Player p;
 	
 	public BlackListGUI(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 	
-	Integer PlayerPage = 1;
+	private Integer PlayerPage = 1;
 	
-	Inventory BlackListGUI;
+	private Inventory BlackListGUI;
 	
 	public ArrayList<String> getBlackList() {
 		ArrayList<String> list = new ArrayList<String>();

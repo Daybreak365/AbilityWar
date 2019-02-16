@@ -8,10 +8,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Void extends AbilityBase {
 
@@ -38,7 +38,7 @@ public class Void extends AbilityBase {
 	TimerBase Invincibility = new TimerBase(5) {
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onStart() {
 			Inv = true;
 		}
 		
@@ -46,7 +46,7 @@ public class Void extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {}
 		
 		@Override
-		public void TimerEnd() {
+		public void onEnd() {
 			Inv = false;
 		}
 		

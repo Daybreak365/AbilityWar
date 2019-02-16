@@ -6,10 +6,10 @@ import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.NumberUtil;
-import Marlang.AbilityWar.Utils.PacketUtil.ActionbarObject;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.NumberUtil;
+import Marlang.AbilityWar.Utils.PacketLib.ActionbarPacket;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class CooldownTimer extends TimerBase {
 	
@@ -73,13 +73,13 @@ public class CooldownTimer extends TimerBase {
 	}
 	
 	@Override
-	public void TimerStart(Data<?>... args) {}
+	public void onStart() {}
 	
 	@Override
 	public void TimerProcess(Integer Seconds) {
-		ActionbarObject actionbar;
+		ActionbarPacket actionbar;
 		if(!AbilityName.isEmpty()) {
-			actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getTempCount())));
+			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getTempCount())), 0, 25, 0);
 			
 			if(Seconds == (Cool / 2)) {
 				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
@@ -89,7 +89,7 @@ public class CooldownTimer extends TimerBase {
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			}
 		} else {
-			actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getTempCount())));
+			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getTempCount())), 0, 25, 0);
 			
 			if(Seconds == (Cool / 2)) {
 				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
@@ -104,8 +104,8 @@ public class CooldownTimer extends TimerBase {
 	}
 	
 	@Override
-	public void TimerEnd() {
-		ActionbarObject actionbar = new ActionbarObject(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."));
+	public void onEnd() {
+		ActionbarPacket actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."), 0, 50, 0);
 		actionbar.Send(Ability.getPlayer());
 		Ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."));
 	}

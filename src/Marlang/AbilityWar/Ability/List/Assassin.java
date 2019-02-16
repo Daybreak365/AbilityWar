@@ -10,10 +10,10 @@ import org.bukkit.event.Event;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class Assassin extends AbilityBase {
 	
@@ -55,14 +55,14 @@ public class Assassin extends AbilityBase {
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	TimerBase Duration = new TimerBase() {
+	TimerBase Duration = new TimerBase(TeleportCountConfig.getValue()) {
 		
 		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
 		
 		Integer Damage = DamageConfig.getValue();
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onStart() {
 			Entities.addAll(LocationUtil.getNearbyDamageableEntities(getPlayer(), 6, 3));
 		}
 		
@@ -81,7 +81,7 @@ public class Assassin extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerEnd() {}
+		public void onEnd() {}
 		
 	}.setPeriod(5);
 	

@@ -11,9 +11,9 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
 public class Ares extends AbilityBase {
 	
@@ -58,19 +58,17 @@ public class Ares extends AbilityBase {
 	
 	DurationTimer Duration = new DurationTimer(this, 14, Cool) {
 		
-		boolean DashIntoTheAir = DashConfig.getValue();
-		int Damage = DamageConfig.getValue();
-		ArrayList<Damageable> Attacked;
+		private boolean DashIntoTheAir = DashConfig.getValue();
+		private int Damage = DamageConfig.getValue();
+		private ArrayList<Damageable> Attacked;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		protected void onDurationStart() {
 			Attacked = new ArrayList<Damageable>();
-			
-			super.TimerStart();
 		}
 		
 		@Override
-		public void DurationSkill(Integer Seconds) {
+		public void DurationProcess(Integer Seconds) {
 			Player p = getPlayer();
 			
 			ParticleLib.LAVA.spawnParticle(p.getLocation(), 40, 4, 4, 4);
@@ -92,6 +90,9 @@ public class Ares extends AbilityBase {
 				d.teleport(p);
 			}
 		}
+		
+		@Override
+		protected void onDurationEnd() {}
 		
 	}.setPeriod(1);
 	

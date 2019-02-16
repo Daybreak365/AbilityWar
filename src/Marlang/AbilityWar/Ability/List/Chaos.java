@@ -11,9 +11,9 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.LocationUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
+import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
 public class Chaos extends AbilityBase {
 
@@ -63,14 +63,12 @@ public class Chaos extends AbilityBase {
 		Location center;
 		
 		@Override
-		public void TimerStart(Data<?>... args) {
+		public void onDurationStart() {
 			center = getPlayer().getLocation();
-			
-			super.TimerStart();
 		}
 		
 		@Override
-		public void DurationSkill(Integer Seconds) {
+		public void DurationProcess(Integer Seconds) {
 			ParticleLib.SMOKE_NORMAL.spawnParticle(center, 100, 2, 2, 2);
 			for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, Distance, Distance)) {
 				if(!d.equals(getPlayer())) {
@@ -80,6 +78,9 @@ public class Chaos extends AbilityBase {
 				}
 			}
 		}
+
+		@Override
+		protected void onDurationEnd() {}
 		
 	}.setPeriod(1);
 	

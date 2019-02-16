@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Utils;
+package Marlang.AbilityWar.Utils.Thread;
 
 import org.bukkit.Bukkit;
 

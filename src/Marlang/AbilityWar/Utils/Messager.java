@@ -54,7 +54,7 @@ public class Messager {
 	 * 콘솔에 디버그 메시지를 전송합니다.
 	 */
 	public static void sendDebugMessage(String msg) {
-		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&7AbilityWar 디버그&8] &f" + msg));
+		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&7AbilityWar&8] &f" + msg));
 	}
 	
 	/**

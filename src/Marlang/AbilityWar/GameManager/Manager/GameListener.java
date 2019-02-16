@@ -59,8 +59,8 @@ public class GameListener implements Listener, EventExecutor {
 		ActiveMaterialType mt = getMaterialType(p.getInventory().getItemInMainHand().getType());
 		ActiveClickType ct = (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) ? ActiveClickType.RightClick : ActiveClickType.LeftClick;
 		if(mt != null) {
-			if(game.getAbilities().containsKey(p)) {
-				AbilityBase Ability = game.getAbilities().get(p);
+			if(game.hasAbility(p)) {
+				AbilityBase Ability = game.getAbility(p);
 				if(!Ability.isRestricted()) {
 					if(InstantMap.containsKey(p.getName())) {
 						Instant Before = InstantMap.get(p.getName());

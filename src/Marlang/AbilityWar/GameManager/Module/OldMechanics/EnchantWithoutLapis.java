@@ -17,7 +17,7 @@ import org.bukkit.material.Dye;
 
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Module.Module;
-import Marlang.AbilityWar.Utils.AbilityWarThread;
+import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 public class EnchantWithoutLapis extends Module implements Listener {
 

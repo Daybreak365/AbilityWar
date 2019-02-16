@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.TimerBase;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 abstract public class AbstractScript implements Serializable {
 	
@@ -47,7 +47,7 @@ abstract public class AbstractScript implements Serializable {
 			int loopCount = LoopCount;
 			
 			@Override
-			public void TimerStart(Data<?>... args) {}
+			public void onStart() {}
 			
 			@Override
 			public void TimerProcess(Integer Seconds) {
@@ -59,7 +59,7 @@ abstract public class AbstractScript implements Serializable {
 			}
 			
 			@Override
-			public void TimerEnd() {
+			public void onEnd() {
 				Execute();
 				Messager.broadcastMessage(getRunMessage());
 				if(Loop) {

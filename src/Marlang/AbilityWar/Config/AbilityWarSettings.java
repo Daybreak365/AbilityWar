@@ -8,8 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
-import Marlang.AbilityWar.Utils.FileManager;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Data.FileManager;
 
 public class AbilityWarSettings {
 

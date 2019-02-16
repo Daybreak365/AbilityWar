@@ -70,7 +70,6 @@ public class AbilityWar extends JavaPlugin {
 	
 	private void Load() {
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
-		
 
 		try {
 			//OfflinePlayer Pre-Load
