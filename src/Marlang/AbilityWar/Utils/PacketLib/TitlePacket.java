@@ -4,8 +4,6 @@ import java.lang.reflect.Constructor;
 
 import org.bukkit.entity.Player;
 
-import Marlang.AbilityWar.Utils.Messager;
-
 public class TitlePacket extends AbstractPacket {
 	
 	private String Title;
@@ -47,10 +45,7 @@ public class TitlePacket extends AbstractPacket {
 			sendPacket(p, TimePacket);
 			sendPacket(p, TitlePacket);
 			sendPacket(p, SubTitlePacket);
-		} catch(Exception ex) {
-			Messager.broadcastMessage("오류난거임?");
-			ex.printStackTrace();
-		}
+		} catch(Exception ex) {}
 	}
 	
 }

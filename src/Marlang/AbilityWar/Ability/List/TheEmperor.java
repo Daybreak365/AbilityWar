@@ -59,7 +59,6 @@ public class TheEmperor extends AbilityBase {
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
 			if(e.getEntity().equals(getPlayer())) {
 				Double damage = (e.getDamage() / 100) * (100 - DamageDecrease);
-				Messager.broadcastMessage(e.getDamage() + " -> " + damage);
 				e.setDamage(damage);
 				
 				Integer Health = (int) getPlayer().getHealth();
