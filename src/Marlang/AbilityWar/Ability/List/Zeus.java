@@ -50,11 +50,11 @@ public class Zeus extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			if(Seconds.equals(3)) {
-				Circle = LocationUtil.getCircle(center, 3, 5, true);
+				Circle = LocationUtil.getCircle(center, 3, 7, true);
 			} else if(Seconds.equals(2)) {
-				Circle = LocationUtil.getCircle(center, 5, 5, true);
+				Circle = LocationUtil.getCircle(center, 5, 7, true);
 			} else if(Seconds.equals(1)) {
-				Circle = LocationUtil.getCircle(center, 7, 5, true);
+				Circle = LocationUtil.getCircle(center, 7, 7, true);
 			}
 			
 			for(Location l : Circle) {
