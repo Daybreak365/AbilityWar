@@ -41,28 +41,30 @@ public class Ira extends AbilityBase {
 	public void PassiveSkill(Event event) {
 		if(event instanceof EntityDamageByEntityEvent) {
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				if(ExplodeCount >= AttackConfig.getValue() - 1) {
-					ExplodeCount = 0;
-					
-					Entity Damager = e.getDamager();
-					
-					if(Damager instanceof Projectile) {
-						if(((Projectile) Damager).getShooter() instanceof LivingEntity) {
-							LivingEntity entity = (LivingEntity) ((Projectile) Damager).getShooter();
-							getPlayer().getWorld().createExplosion(entity.getLocation(), 1, false);
-							if(entity.getVelocity().getY() > 0) {
-								entity.setVelocity(entity.getVelocity().setY(0));
+			if(!e.isCancelled()) {
+				if(e.getEntity().equals(getPlayer())) {
+					if(ExplodeCount >= AttackConfig.getValue() - 1) {
+						ExplodeCount = 0;
+						
+						Entity Damager = e.getDamager();
+						
+						if(Damager instanceof Projectile) {
+							if(((Projectile) Damager).getShooter() instanceof LivingEntity) {
+								LivingEntity entity = (LivingEntity) ((Projectile) Damager).getShooter();
+								getPlayer().getWorld().createExplosion(entity.getLocation(), 1, false);
+								if(entity.getVelocity().getY() > 0) {
+									entity.setVelocity(entity.getVelocity().setY(0));
+								}
+							}
+						} else {
+							getPlayer().getWorld().createExplosion(Damager.getLocation(), 1, false);
+							if(Damager.getVelocity().getY() > 0) {
+								Damager.setVelocity(Damager.getVelocity().setY(0));
 							}
 						}
 					} else {
-						getPlayer().getWorld().createExplosion(Damager.getLocation(), 1, false);
-						if(Damager.getVelocity().getY() > 0) {
-							Damager.setVelocity(Damager.getVelocity().setY(0));
-						}
+						ExplodeCount++;
 					}
-				} else {
-					ExplodeCount++;
 				}
 			}
 		}
