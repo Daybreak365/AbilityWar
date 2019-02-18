@@ -110,14 +110,18 @@ public class AbilityWarSettings {
 
 	public static void addBlackList(String name) {
 		List<String> list = getStringList(ConfigNodes.Game_BlackList);
-		list.add(name);
-		setNewProperty(ConfigNodes.Game_BlackList, list);
+		if(!list.contains(name)) {
+			list.add(name);
+			setNewProperty(ConfigNodes.Game_BlackList, list);
+		}
 	}
 
 	public static void removeBlackList(String name) {
 		List<String> list = getStringList(ConfigNodes.Game_BlackList);
-		list.remove(name);
-		setNewProperty(ConfigNodes.Game_BlackList, list);
+		if(list.contains(name)) {
+			list.remove(name);
+			setNewProperty(ConfigNodes.Game_BlackList, list);
+		}
 	}
 
 	public static boolean getOldEnchant() {
@@ -236,7 +240,7 @@ public class AbilityWarSettings {
 		Cache.put(node, value);
 	}
 	
-	public static void Refresh() {
+	public static void Save() {
 		for(ConfigNodes node : Cache.keySet()) {
 			if(node != null) {
 				Config.set(node.getPath(), Cache.get(node));
@@ -244,8 +248,11 @@ public class AbilityWarSettings {
 		}
 		
 		Config.save();
-		Setup();
+	}
+	
+	public static void Refresh() {
 		Config.load();
+		Setup();
 	}
 	
 }

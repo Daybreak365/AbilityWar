@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -18,6 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityBase.Rank;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.Messager;
@@ -104,6 +108,46 @@ public class BlackListGUI implements Listener {
 			Count++;
 		}
 		
+		Integer RankCount = 37;
+		Rank[] forEach = Rank.values();
+		ArrayUtils.reverse(forEach);
+		for(Rank r : forEach) {
+			ItemStack RankItem;
+			switch(r) {
+				case D:
+					RankItem = new ItemStack(Material.STONE);
+					break;
+				case C:
+					RankItem = new ItemStack(Material.IRON_BLOCK);
+					break;
+				case B:
+					RankItem = new ItemStack(Material.GOLD_BLOCK);
+					break;
+				case A:
+					RankItem = new ItemStack(Material.DIAMOND_BLOCK);
+					break;
+				case S:
+					RankItem = new ItemStack(Material.EMERALD_BLOCK);
+					break;
+				case GOD:
+					RankItem = new ItemStack(Material.SEA_LANTERN);
+					break;
+				default:
+					RankItem = new ItemStack(Material.BEACON);
+					break;
+			}
+			ItemMeta RankMeta = RankItem.getItemMeta();
+			String RankName = r.getRankName();
+			RankMeta.setDisplayName(RankName);
+			RankMeta.setLore(Messager.getStringList(
+					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 하려면 좌클릭,"),
+					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 해제하려면 우클릭을 해주세요.")
+					));
+			RankItem.setItemMeta(RankMeta);
+			BlackListGUI.setItem(RankCount, RankItem);
+			RankCount++;
+		}
+		
 		if(page > 1) {
 			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta previousMeta = previousPage.getItemMeta();
@@ -134,6 +178,7 @@ public class BlackListGUI implements Listener {
 	public void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.BlackListGUI)) {
 			HandlerList.unregisterAll(this);
+			AbilityWarSettings.Save();
 		}
 	}
 	
@@ -146,24 +191,68 @@ public class BlackListGUI implements Listener {
 					openBlackListGUI(PlayerPage - 1);
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
 					openBlackListGUI(PlayerPage + 1);
+				} else {
+					String ItemName = e.getCurrentItem().getItemMeta().getDisplayName();
+					
+					if(e.getCurrentItem().getType().equals(Material.WOOL)) {
+						String StripItemName = ChatColor.stripColor(ItemName);
+						if(StripItemName.equals(StripItemName))
+						if(e.getCurrentItem().getType().equals(Material.WOOL) && e.getCurrentItem().getDurability() == (short) 14) {
+							AbilityWarSettings.removeBlackList(StripItemName);
+							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+							openBlackListGUI(PlayerPage);
+						} else if(e.getCurrentItem().getType().equals(Material.WOOL) && e.getCurrentItem().getDurability() == (short) 5) {
+							AbilityWarSettings.addBlackList(StripItemName);
+							SoundLib.BLOCK_ANVIL_LAND.playSound(p);
+							openBlackListGUI(PlayerPage);
+						}
+					} else {
+						for(Rank r : Rank.values()) {
+							if(ItemName.equals(r.getRankName())) {
+								if(e.getClick().equals(ClickType.LEFT)) {
+									addBlacklistAll(r);
+									SoundLib.BLOCK_ANVIL_LAND.playSound(p);
+									openBlackListGUI(PlayerPage);
+								} else if(e.getClick().equals(ClickType.RIGHT)) {
+									removeBlacklistAll(r);
+									SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+									openBlackListGUI(PlayerPage);
+								}
+							}
+						}
+					}
 				}
 			}
-			
-			if(e.getCurrentItem() != null && e.getCurrentItem().getType() != null && e.getCurrentItem().getType().equals(Material.WOOL)) {
-				if(e.getCurrentItem().getDurability() == (short) 14) {
-					String abiName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-					
-					AbilityWarSettings.removeBlackList(abiName);
-					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
-					openBlackListGUI(PlayerPage);
-				} else if(e.getCurrentItem().getDurability() == (short) 5) {
-					String abiName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-					
-					AbilityWarSettings.addBlackList(abiName);
-					SoundLib.BLOCK_ANVIL_LAND.playSound(p);
-					openBlackListGUI(PlayerPage);
+		}
+	}
+	
+	private List<String> getAbilities(Rank r) {
+		List<String> list = new ArrayList<String>();
+		
+		for(String name : AbilityList.values()) {
+			Class<? extends AbilityBase> clazz = AbilityList.getByString(name);
+			try {
+				AbilityBase Ability = clazz.getConstructor(Player.class).newInstance(Bukkit.getPlayer(""));
+				if(Ability.getRank().equals(r)) {
+					list.add(name);
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+		}
+		
+		return list;
+	}
+	
+	private void addBlacklistAll(Rank r) {
+		for(String name : getAbilities(r)) {
+			AbilityWarSettings.addBlackList(name);
+		}
+	}
+	
+	private void removeBlacklistAll(Rank r) {
+		for(String name : getAbilities(r)) {
+			AbilityWarSettings.removeBlackList(name);
 		}
 	}
 	

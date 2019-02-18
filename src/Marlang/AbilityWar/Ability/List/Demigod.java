@@ -26,7 +26,7 @@ public class Demigod extends AbilityBase {
 	};
 	
 	public Demigod(Player player) {
-		super(player, "데미갓", Rank.God,
+		super(player, "데미갓", Rank.GOD,
 				ChatColor.translateAlternateColorCodes('&', "&f반신반인의 능력자입니다. 공격을 받으면"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + ChanceConfig.getValue() + "% 확률로 5초간 랜덤 버프가 발동됩니다."));
 	}

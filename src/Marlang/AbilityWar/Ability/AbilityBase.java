@@ -130,8 +130,9 @@ abstract public class AbilityBase {
 	}
 	
 	public enum Rank {
-
-		God(ChatColor.translateAlternateColorCodes('&', "&c신 등급")),
+		
+		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&5Special 등급")),
+		GOD(ChatColor.translateAlternateColorCodes('&', "&c신 등급")),
 		S(ChatColor.translateAlternateColorCodes('&', "&dS 등급")),
 		A(ChatColor.translateAlternateColorCodes('&', "&aA 등급")),
 		B(ChatColor.translateAlternateColorCodes('&', "&bB 등급")),

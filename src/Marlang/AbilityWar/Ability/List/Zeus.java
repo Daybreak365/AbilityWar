@@ -29,7 +29,7 @@ public class Zeus extends AbilityBase {
 	};
 	
 	public Zeus(Player player) {
-		super(player, "제우스", Rank.God,
+		super(player, "제우스", Rank.GOD,
 				ChatColor.translateAlternateColorCodes('&', "&f번개의 신 제우스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 번개를 떨어뜨리며 폭발을 일으킵니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f번개 데미지와 폭발 데미지를 받지 않습니다."));

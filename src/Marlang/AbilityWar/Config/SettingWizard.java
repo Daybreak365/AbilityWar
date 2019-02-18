@@ -332,6 +332,7 @@ public class SettingWizard implements Listener {
 		if(e.getInventory().equals(this.SpawnGUI) || e.getInventory().equals(this.KitGUI) || e.getInventory().equals(this.InvGUI)
 		|| e.getInventory().equals(this.GameGUI) || e.getInventory().equals(this.DeathGUI)) {
 			HandlerList.unregisterAll(this);
+			AbilityWarSettings.Save();
 		}
 	}
 	

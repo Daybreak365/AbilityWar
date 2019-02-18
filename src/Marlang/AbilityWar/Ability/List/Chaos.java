@@ -48,7 +48,7 @@ public class Chaos extends AbilityBase {
 	};
 
 	public Chaos(Player player) {
-		super(player, "카오스", Rank.God,
+		super(player, "카오스", Rank.GOD,
 				ChatColor.translateAlternateColorCodes('&', "&f시작의 신 카오스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 5초간 짙은 암흑 속으로 주변의 생명체들을"),
 				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
