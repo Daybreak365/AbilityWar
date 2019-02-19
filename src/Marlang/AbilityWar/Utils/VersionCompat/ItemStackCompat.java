@@ -6,43 +6,9 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class ItemStackCompat {
-
-	public static ItemStack addEnchantment(ItemStack item, Enchantment enchant, int level) {
-		if(ServerVersion.getVersion() >= enchant.getVersion()) {
-			org.bukkit.enchantments.Enchantment enchantment = org.bukkit.enchantments.Enchantment.getByName(enchant.toString());
-			if(enchantment != null) {
-				item.addEnchantment(enchantment, level);
-			}
-		}
-		
-		return item;
-	}
-
-	public static ItemStack addUnsafeEnchantment(ItemStack item, Enchantment enchant, int level) {
-		if(ServerVersion.getVersion() >= enchant.getVersion()) {
-			org.bukkit.enchantments.Enchantment enchantment = org.bukkit.enchantments.Enchantment.getByName(enchant.toString());
-			if(enchantment != null) {
-				item.addUnsafeEnchantment(enchantment, level);
-			}
-		}
-		
-		return item;
-	}
-
-	public static ItemStack removeEnchantment(ItemStack item, Enchantment enchant) {
-		if(ServerVersion.getVersion() >= enchant.getVersion()) {
-			org.bukkit.enchantments.Enchantment enchantment = org.bukkit.enchantments.Enchantment.getByName(enchant.toString());
-			if(enchantment != null) {
-				item.removeEnchantment(enchantment);
-			}
-		}
-		
-		return item;
-	}
 	
 	@SuppressWarnings("deprecation")
 	public static SkullMeta setOwner(SkullMeta meta, String Player) {

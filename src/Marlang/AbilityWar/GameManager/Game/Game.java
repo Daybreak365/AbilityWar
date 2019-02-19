@@ -105,23 +105,23 @@ public class Game extends AbstractGame {
 				break;
 			case 20:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
-				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
+				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 21:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
-				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
+				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 22:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
-				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
+				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 23:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
-				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
+				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 24:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
-				SoundLib.BLOCK_NOTE_HARP.broadcastSound();
+				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 25:
 				GameStart();

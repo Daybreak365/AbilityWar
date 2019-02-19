@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Utils.PacketLib;
+package Marlang.AbilityWar.Utils.Library.Packet;
 
 import java.lang.reflect.Constructor;
 

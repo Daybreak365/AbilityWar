@@ -10,9 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EnchantLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
-import Marlang.AbilityWar.Utils.VersionCompat.Enchantment;
-import Marlang.AbilityWar.Utils.VersionCompat.ItemStackCompat;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class Curse extends AbilityBase {
@@ -62,22 +61,22 @@ public class Curse extends AbilityBase {
 							if(Count > 0) {
 								ItemStack Helmet = p.getInventory().getHelmet();
 								if(Helmet != null) {
-									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Helmet, Enchantment.BINDING_CURSE, 1));
+									p.getInventory().setHelmet(EnchantLib.BINDING_CURSE.addEnchantment(Helmet, 1));
 								}
 
 								ItemStack Chestplate = p.getInventory().getChestplate();
 								if(Chestplate != null) {
-									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Chestplate, Enchantment.BINDING_CURSE, 1));
+									p.getInventory().setChestplate(EnchantLib.BINDING_CURSE.addEnchantment(Chestplate, 1));
 								}
 								
 								ItemStack Leggings = p.getInventory().getLeggings();
 								if(Leggings != null) {
-									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Leggings, Enchantment.BINDING_CURSE, 1));
+									p.getInventory().setLeggings(EnchantLib.BINDING_CURSE.addEnchantment(Leggings, 1));
 								}
 
 								ItemStack Boots = p.getInventory().getBoots();
 								if(Boots != null) {
-									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Boots, Enchantment.BINDING_CURSE, 1));
+									p.getInventory().setBoots(EnchantLib.BINDING_CURSE.addEnchantment(Boots, 1));
 								}
 								
 								SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(p);

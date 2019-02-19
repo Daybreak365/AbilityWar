@@ -7,8 +7,8 @@ import org.bukkit.ChatColor;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Packet.ActionbarPacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
-import Marlang.AbilityWar.Utils.PacketLib.ActionbarPacket;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 public class CooldownTimer extends TimerBase {
@@ -82,20 +82,20 @@ public class CooldownTimer extends TimerBase {
 			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄðÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getTempCount())), 0, 25, 0);
 			
 			if(Seconds == (Cool / 2)) {
-				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			} else if(Seconds <= 5 && Seconds >= 1) {
-				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			}
 		} else {
 			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getTempCount())), 0, 25, 0);
 			
 			if(Seconds == (Cool / 2)) {
-				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			} else if(Seconds <= 5 && Seconds >= 1) {
-				SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
 				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄðÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
 			}
 		}

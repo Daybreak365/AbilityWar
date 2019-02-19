@@ -7,8 +7,8 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game.Game;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
-import Marlang.AbilityWar.Utils.PacketLib.TitlePacket;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 /**
@@ -39,7 +39,7 @@ public class Invincibility extends TimerBase {
 
 		if(Seconds <= 5 && Seconds >= 1) {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
-			SoundLib.BLOCK_NOTE_HARP.broadcastSound();
+			SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 		}
 	}
 	
@@ -47,7 +47,7 @@ public class Invincibility extends TimerBase {
 	public void onEnd() {
 		game.setRestricted(false);
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a초반 무적이 해제되었습니다."));
-		SoundLib.ENTITY_ENDERDRAGON_AMBIENT.broadcastSound();
+		SoundLib.ENTITY_ENDER_DRAGON_AMBIENT.broadcastSound();
 		
 		TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
 				ChatColor.translateAlternateColorCodes('&', "&f초반 무적이 해제되었습니다."), 20, 60, 20);

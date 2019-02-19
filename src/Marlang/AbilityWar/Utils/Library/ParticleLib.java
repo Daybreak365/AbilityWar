@@ -1,15 +1,17 @@
 package Marlang.AbilityWar.Utils.Library;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.Utils.Library.Packet.ParticlePacket;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * 파티클 라이브러리
- * 
  * @author _Marlang 말랑
+ * @since 2019-02-19
  */
 public class ParticleLib {
 	
@@ -70,34 +72,42 @@ public class ParticleLib {
 	
 	public static class Particles {
 		
-		String particleName = "";
+		private String particleName = "";
+		private Particle particle = null;
+		private Effect effect = null;
 
-		public Particles(String Name13, String Name12, String Name11, String Name10, String Name9, String Name8, String Name7) {
+		private Particles(String Name13, String Name12, String Name11, String Name10, String Name9, String Name8, String Name7) {
 			switch (ServerVersion.getVersion()) {
 			case 13:
 				particleName = Name13;
+				particle = getParticle();
 				break;
 			case 12:
 				particleName = Name12;
+				particle = getParticle();
 				break;
 			case 11:
 				particleName = Name11;
+				particle = getParticle();
 				break;
 			case 10:
 				particleName = Name10;
+				particle = getParticle();
 				break;
 			case 9:
 				particleName = Name9;
+				particle = getParticle();
 				break;
 			case 8:
 				particleName = Name8;
 				break;
 			case 7:
+				effect = getEffect();
 				particleName = Name7;
 				break;
 			}
 		}
-		
+
 		/**
 		 * 1.9버전 이상
 		 */
@@ -113,29 +123,74 @@ public class ParticleLib {
 			return particle;
 		}
 		
+		/**
+		 * 1.7.10버전 이하
+		 */
+		private Effect getEffect() {
+			Effect effect = null;
+			
+			for (Effect e : Effect.values()) {
+				if (e.toString().equalsIgnoreCase(particleName)) {
+					effect = e;
+				}
+			}
+			
+			return effect;
+		}
+		
 		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ) {
 			if (AbilityWarSettings.getVisualEffect()) {
-				Particle p = getParticle();
-				if (p != null) {
-					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ);
+				if(ServerVersion.getVersion() >= 9) {
+					Particle p = particle;
+					if (p != null) {
+						l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ);
+					}
+				} else if (ServerVersion.getVersion() == 8) {
+					ParticlePacket packet = new ParticlePacket(particleName, l, (float) offsetX, (float) offsetY, (float) offsetZ, Count);
+					packet.Broadcast();
+				} else if (ServerVersion.getVersion() <= 7) {
+					Effect e = effect;
+					if (e != null) {
+						l.getWorld().playEffect(l, e, Count);
+					}
 				}
 			}
 		}
 
 		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, double extra) {
 			if (AbilityWarSettings.getVisualEffect()) {
-				Particle p = getParticle();
-				if (p != null) {
-					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, extra);
+				if(ServerVersion.getVersion() >= 9) {
+					Particle p = particle;
+					if (p != null) {
+						l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, extra);
+					}
+				} else if (ServerVersion.getVersion() == 8) {
+					ParticlePacket packet = new ParticlePacket(particleName, l, (float) offsetX, (float) offsetY, (float) offsetZ, (float) extra, Count);
+					packet.Broadcast();
+				} else if (ServerVersion.getVersion() <= 7) {
+					Effect e = effect;
+					if (e != null) {
+						l.getWorld().playEffect(l, e, Count);
+					}
 				}
 			}
 		}
 
 		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, Object arg) {
 			if (AbilityWarSettings.getVisualEffect()) {
-				Particle p = getParticle();
-				if (p != null) {
-					l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, arg);
+				if(ServerVersion.getVersion() >= 9) {
+					Particle p = particle;
+					if (p != null) {
+						l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, arg);
+					}
+				} else if (ServerVersion.getVersion() == 8) {
+					ParticlePacket packet = new ParticlePacket(particleName, l, (float) offsetX, (float) offsetY, (float) offsetZ, Count);
+					packet.Broadcast();
+				} else if (ServerVersion.getVersion() <= 7) {
+					Effect e = effect;
+					if (e != null) {
+						l.getWorld().playEffect(l, e, Count);
+					}
 				}
 			}
 		}

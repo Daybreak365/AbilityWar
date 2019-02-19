@@ -62,7 +62,7 @@ public class TheMagician extends AbilityBase {
 							if(!p.equals(getPlayer())) {
 								if(LocationUtil.isInCircle(p.getLocation(), center, 5.0)) {
 									p.damage(3, p);
-									SoundLib.ENTITY_ILLUSION_ILLAGER_CAST_SPELL.playSound(p);
+									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(p);
 								}
 							}
 						}

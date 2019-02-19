@@ -69,7 +69,7 @@ public class TheHighPriestess extends AbilityBase {
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
 				if(LocationUtil.isInCircle(p.getLocation(), center, Double.valueOf(Range))) {
-					SoundLib.ENTITY_EVOCATION_ILLAGER_CAST_SPELL.playSound(p);
+					SoundLib.ENTITY_EVOKER_CAST_SPELL.playSound(p);
 				}
 			}
 		}

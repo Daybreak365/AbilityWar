@@ -7,8 +7,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
-import Marlang.AbilityWar.Utils.PacketLib.TitlePacket;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 public class Hermit extends AbilityBase {

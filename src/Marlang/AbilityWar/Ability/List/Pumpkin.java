@@ -18,11 +18,10 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EnchantLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
-import Marlang.AbilityWar.Utils.VersionCompat.Enchantment;
-import Marlang.AbilityWar.Utils.VersionCompat.ItemStackCompat;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 public class Pumpkin extends AbilityBase {
@@ -134,7 +133,7 @@ public class Pumpkin extends AbilityBase {
 					ChatColor.translateAlternateColorCodes('&', "&f남은 시간&7: &a" + Time + "초")
 					));
 			Pumpkin.setItemMeta(PumpkinMeta);
-			ItemStackCompat.addEnchantment(Pumpkin, Enchantment.BINDING_CURSE, 1);
+			EnchantLib.BINDING_CURSE.addEnchantment(Pumpkin, 1);
 			return Pumpkin;
 		}
 		

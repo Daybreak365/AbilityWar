@@ -62,7 +62,7 @@ public class BombArrow extends AbilityBase {
 						Random r = new Random();
 						
 						if((r.nextInt(100) + 1) <= Chance) {
-							SoundLib.BLOCK_NOTE_BELL.playSound(getPlayer());
+							SoundLib.BLOCK_NOTE_BLOCK_BELL.playSound(getPlayer());
 							Location l = arrow.getLocation();
 							l.getWorld().createExplosion(l, 2, false);
 						}

@@ -13,12 +13,11 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EnchantLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
-import Marlang.AbilityWar.Utils.PacketLib.TitlePacket;
-import Marlang.AbilityWar.Utils.VersionCompat.Enchantment;
-import Marlang.AbilityWar.Utils.VersionCompat.ItemStackCompat;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
@@ -77,7 +76,7 @@ public class TheEmpress extends AbilityBase {
 							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.INCREASE_DAMAGE, 200, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.DIAMOND_SWORD);
-							getPlayer().getInventory().addItem(ItemStackCompat.addEnchantment(is, Enchantment.DAMAGE_ALL, 4));
+							getPlayer().getInventory().addItem(EnchantLib.DAMAGE_ALL.addEnchantment(is, 4));
 						}
 					} else if(X.isPlus() && Z.isMinus()) {
 						if(bool) {
@@ -94,7 +93,7 @@ public class TheEmpress extends AbilityBase {
 							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.SPEED, 600, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.BOW);
-							getPlayer().getInventory().addItem(ItemStackCompat.addEnchantment(is, Enchantment.ARROW_INFINITE, 1));
+							getPlayer().getInventory().addItem(EnchantLib.ARROW_INFINITE.addEnchantment(is, 1));
 						}
 					} else if(X.isMinus() && Z.isMinus()) {
 						if(bool) {

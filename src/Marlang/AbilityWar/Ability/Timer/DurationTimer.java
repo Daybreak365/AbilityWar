@@ -7,8 +7,8 @@ import org.bukkit.ChatColor;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Packet.ActionbarPacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
-import Marlang.AbilityWar.Utils.PacketLib.ActionbarPacket;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 /**
@@ -75,11 +75,11 @@ abstract public class DurationTimer extends TimerBase {
 		if(getFixedTime(Seconds) == (Duration / 2) && !Counted.contains(getFixedTime(Seconds))) {
 			Counted.add(getFixedTime(Seconds));
 			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(Seconds))));
-			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+			SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
 		} else if(getFixedTime(Seconds) <= 5 && getFixedTime(Seconds) >= 1 && !Counted.contains(getFixedTime(Seconds))) {
 			Counted.add(getFixedTime(Seconds));
 			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(Seconds))));
-			SoundLib.BLOCK_NOTE_HAT.playSound(Ability.getPlayer());
+			SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
 		}
 	}
 	
