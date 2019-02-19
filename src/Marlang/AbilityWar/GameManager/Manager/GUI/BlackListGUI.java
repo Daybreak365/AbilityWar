@@ -26,6 +26,7 @@ import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * 능력 금지 GUI
@@ -130,7 +131,11 @@ public class BlackListGUI implements Listener {
 					RankItem = new ItemStack(Material.EMERALD_BLOCK);
 					break;
 				case GOD:
-					RankItem = new ItemStack(Material.SEA_LANTERN);
+					if(ServerVersion.getVersion() >= 8) {
+						RankItem = new ItemStack(Material.SEA_LANTERN);
+					} else {
+						RankItem = new ItemStack(Material.PACKED_ICE);
+					}
 					break;
 				default:
 					RankItem = new ItemStack(Material.BEACON);

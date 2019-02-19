@@ -6,11 +6,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class BlackCandle extends AbilityBase {
 
@@ -36,17 +37,17 @@ public class BlackCandle extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
-			getPlayer().removePotionEffect(PotionEffectType.CONFUSION);
-			getPlayer().removePotionEffect(PotionEffectType.GLOWING);
-			getPlayer().removePotionEffect(PotionEffectType.HARM);
-			getPlayer().removePotionEffect(PotionEffectType.HUNGER);
-			getPlayer().removePotionEffect(PotionEffectType.POISON);
-			getPlayer().removePotionEffect(PotionEffectType.SLOW);
-			getPlayer().removePotionEffect(PotionEffectType.SLOW_DIGGING);
-			getPlayer().removePotionEffect(PotionEffectType.UNLUCK);
-			getPlayer().removePotionEffect(PotionEffectType.WEAKNESS);
-			getPlayer().removePotionEffect(PotionEffectType.WITHER);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.BLINDNESS);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.CONFUSION);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.GLOWING);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.HARM);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.HUNGER);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.POISON);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.SLOW);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.SLOW_DIGGING);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.UNLUCK);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.WEAKNESS);
+			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.WITHER);
 		}
 		
 		@Override

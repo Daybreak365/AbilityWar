@@ -5,8 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
@@ -15,6 +13,8 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Yeti extends AbilityBase {
 
@@ -54,8 +54,8 @@ public class Yeti extends AbilityBase {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if(m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK)) {
-				getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5, 1), true);
-				getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 5, 0), true);
+				PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.SPEED, 5, 1, true);
+				PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.INCREASE_DAMAGE, 5, 0, true);
 			}
 		}
 		

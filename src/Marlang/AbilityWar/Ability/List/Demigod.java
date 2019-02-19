@@ -6,11 +6,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Demigod extends AbilityBase {
 	
@@ -51,11 +51,11 @@ public class Demigod extends AbilityBase {
 						if((r.nextInt(100) + 1) <= Chance) {
 							Integer Buff = r.nextInt(3);
 							if(Buff.equals(0)) {
-								p.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 100, 0), true);
+								PlayerCompat.addPotionEffect(p, PotionEffectType.ABSORPTION, 100, 0, true);
 							} else if(Buff.equals(1)) {
-								p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 1), true);
+								PlayerCompat.addPotionEffect(p, PotionEffectType.REGENERATION, 100, 0, true);
 							} else if(Buff.equals(2)) {
-								p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 1), true);
+								PlayerCompat.addPotionEffect(p, PotionEffectType.DAMAGE_RESISTANCE, 100, 1, true);
 							}
 						}
 					}

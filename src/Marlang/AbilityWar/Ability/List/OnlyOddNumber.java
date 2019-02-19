@@ -1,13 +1,13 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class OnlyOddNumber extends AbilityBase {
 
@@ -65,7 +65,7 @@ public class OnlyOddNumber extends AbilityBase {
 		if(event instanceof EntityDamageEvent) {
 			EntityDamageEvent e = (EntityDamageEvent) event;
 			if(e.getEntity().equals(getPlayer())) {
-				Double doubleMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+				Double doubleMaxHealth = PlayerCompat.getMaxHealth(getPlayer());
 				Double doubleHealth = getPlayer().getHealth();
 				
 				Integer Health = (int) getPlayer().getHealth();

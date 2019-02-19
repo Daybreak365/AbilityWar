@@ -3,7 +3,7 @@ package Marlang.AbilityWar.Utils.PacketLib;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import Marlang.AbilityWar.Utils.AutoUpdate.ServerVersion;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 abstract public class AbstractPacket {
 	

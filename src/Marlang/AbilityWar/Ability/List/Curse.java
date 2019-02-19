@@ -2,7 +2,6 @@ package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -12,6 +11,9 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.VersionCompat.Enchantment;
+import Marlang.AbilityWar.Utils.VersionCompat.ItemStackCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class Curse extends AbilityBase {
 
@@ -56,30 +58,26 @@ public class Curse extends AbilityBase {
 				if(e.getEntity() instanceof Player) {
 					Player p = (Player) e.getEntity();
 					if(!e.isCancelled()) {
-						if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_INGOT)) {
+						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
 							if(Count > 0) {
 								ItemStack Helmet = p.getInventory().getHelmet();
 								if(Helmet != null) {
-									Helmet.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
-									p.getInventory().setHelmet(Helmet);
+									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Helmet, Enchantment.BINDING_CURSE, 1));
 								}
 
 								ItemStack Chestplate = p.getInventory().getChestplate();
 								if(Chestplate != null) {
-									Chestplate.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
-									p.getInventory().setChestplate(Chestplate);
+									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Chestplate, Enchantment.BINDING_CURSE, 1));
 								}
 								
 								ItemStack Leggings = p.getInventory().getLeggings();
 								if(Leggings != null) {
-									Leggings.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
-									p.getInventory().setLeggings(Leggings);
+									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Leggings, Enchantment.BINDING_CURSE, 1));
 								}
 
 								ItemStack Boots = p.getInventory().getBoots();
 								if(Boots != null) {
-									Boots.addUnsafeEnchantment(Enchantment.BINDING_CURSE, 1);
-									p.getInventory().setBoots(Boots);
+									p.getInventory().setHelmet(ItemStackCompat.addEnchantment(Boots, Enchantment.BINDING_CURSE, 1));
 								}
 								
 								SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(p);

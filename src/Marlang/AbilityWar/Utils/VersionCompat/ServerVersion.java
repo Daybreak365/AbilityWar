@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Utils.AutoUpdate;
+package Marlang.AbilityWar.Utils.VersionCompat;
 
 import org.bukkit.Bukkit;
 

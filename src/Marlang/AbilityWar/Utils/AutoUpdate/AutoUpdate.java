@@ -35,6 +35,7 @@ import org.json.simple.parser.JSONParser;
 
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * Github Auto Update

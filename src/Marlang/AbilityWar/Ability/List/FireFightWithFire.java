@@ -3,7 +3,6 @@ package Marlang.AbilityWar.Ability.List;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -11,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class FireFightWithFire extends AbilityBase {
 
@@ -48,7 +48,7 @@ public class FireFightWithFire extends AbilityBase {
 						
 						Double health = getPlayer().getHealth() + damage;
 						
-						if(health > getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) health = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+						if(health > PlayerCompat.getMaxHealth(getPlayer())) health = PlayerCompat.getMaxHealth(getPlayer());
 						
 						if(!getPlayer().isDead()) {
 							getPlayer().setHealth(health);

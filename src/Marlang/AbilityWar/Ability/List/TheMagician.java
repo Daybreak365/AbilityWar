@@ -57,7 +57,7 @@ public class TheMagician extends AbilityBase {
 			if(e.getEntity() instanceof Arrow) {
 				if(e.getEntity().getShooter().equals(getPlayer())) {
 					if(!Cool.isCooldown()) {
-						Location center = e.getHitBlock() != null ? e.getHitBlock().getLocation() : e.getHitEntity().getLocation();
+						Location center = e.getEntity().getLocation();
 						for(Player p : LocationUtil.getNearbyPlayers(center, 5, 5)) {
 							if(!p.equals(getPlayer())) {
 								if(LocationUtil.isInCircle(p.getLocation(), center, 5.0)) {

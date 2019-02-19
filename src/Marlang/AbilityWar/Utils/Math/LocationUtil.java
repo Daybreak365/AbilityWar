@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * Location Util
@@ -202,23 +203,49 @@ public class LocationUtil {
 	}
 
 	public static ArrayList<Damageable> getNearbyDamageableEntities(Location l, Integer Xdis, Integer Ydis) {
-		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-		for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
-			if (e instanceof Damageable) {
-				if (e instanceof Player) {
-					if (AbilityWarThread.isGameTaskRunning()) {
-						AbstractGame game = AbilityWarThread.getGame();
-						Player player = (Player) e;
-						if (!game.getParticipants().contains(player) || game.getDeathManager().isEliminated(player)) {
-							continue;
+		if(ServerVersion.getVersion() >= 9) {
+			ArrayList<Damageable> Entities = new ArrayList<Damageable>();
+			for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
+				if (e instanceof Damageable) {
+					if (e instanceof Player) {
+						if (AbilityWarThread.isGameTaskRunning()) {
+							AbstractGame game = AbilityWarThread.getGame();
+							Player player = (Player) e;
+							if (!game.getParticipants().contains(player) || game.getDeathManager().isEliminated(player)) {
+								continue;
+							}
+						}
+					}
+					Entities.add((Damageable) e);
+				}
+			}
+
+			return Entities;
+		} else {
+			ArrayList<Damageable> Entities = new ArrayList<Damageable>();
+			for (Entity e : l.getWorld().getEntities()) {
+				Location targetLocation = e.getLocation();
+				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= Ydis) {
+					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= Xdis
+					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= Xdis) {
+						if (e instanceof Damageable) {
+							if (e instanceof Player) {
+								if (AbilityWarThread.isGameTaskRunning()) {
+									AbstractGame game = AbilityWarThread.getGame();
+									Player player = (Player) e;
+									if (!game.getParticipants().contains(player) || game.getDeathManager().isEliminated(player)) {
+										continue;
+									}
+								}
+							}
+							Entities.add((Damageable) e);
 						}
 					}
 				}
-				Entities.add((Damageable) e);
 			}
+			
+			return Entities;
 		}
-
-		return Entities;
 	}
 
 	public static ArrayList<Damageable> getNearbyDamageableEntities(Entity p, Integer Xdis, Integer Ydis) {
@@ -269,23 +296,49 @@ public class LocationUtil {
 	}
 
 	public static ArrayList<Player> getNearbyPlayers(Location l, Integer Xdis, Integer Ydis) {
-		ArrayList<Player> Players = new ArrayList<Player>();
-		for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
-			if (e instanceof Player) {
-				Player player = (Player) e;
+		if(ServerVersion.getVersion() >= 9) {
+			ArrayList<Player> Players = new ArrayList<Player>();
+			for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
+				if (e instanceof Player) {
+					Player player = (Player) e;
 
-				if (AbilityWarThread.isGameTaskRunning()) {
-					AbstractGame game = AbilityWarThread.getGame();
-					if (game.getParticipants().contains(player) && !game.getDeathManager().isEliminated(player)) {
+					if (AbilityWarThread.isGameTaskRunning()) {
+						AbstractGame game = AbilityWarThread.getGame();
+						if (game.getParticipants().contains(player) && !game.getDeathManager().isEliminated(player)) {
+							Players.add(player);
+						}
+					} else {
 						Players.add(player);
 					}
-				} else {
-					Players.add(player);
 				}
 			}
-		}
 
-		return Players;
+			return Players;
+		} else {
+			ArrayList<Player> Players = new ArrayList<Player>();
+			for (Entity e : l.getWorld().getEntities()) {
+				Location targetLocation = e.getLocation();
+				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= Ydis) {
+					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= Xdis
+					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= Xdis) {
+						if (e instanceof Player) {
+							Player player = (Player) e;
+
+							if (AbilityWarThread.isGameTaskRunning()) {
+								AbstractGame game = AbilityWarThread.getGame();
+								if (game.getParticipants().contains(player) && !game.getDeathManager().isEliminated(player)) {
+									Players.add(player);
+								}
+							} else {
+								Players.add(player);
+							}
+						}
+					}
+				}
+			}
+			
+			return Players;
+		}
 	}
 
 }

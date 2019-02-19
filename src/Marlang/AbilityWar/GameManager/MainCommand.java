@@ -263,7 +263,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			if(NumberUtil.isInt(args[0])) {
 				sendHelpConfigCommand(p, label, Integer.valueOf(args[0]));
 			} else {
-				Messager.sendErrorMessage(p, "존재하지 않는 유틸입니다.");
+				Messager.sendErrorMessage(p, "존재하지 않는 콘피그입니다.");
 			}
 		}
 	}

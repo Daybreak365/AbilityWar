@@ -12,6 +12,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * Falling Block
@@ -37,14 +38,22 @@ public class FallBlock implements Listener {
 		this.vector = vector;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public FallingBlock Spawn(boolean SetBlock) {
-		fb = world.spawnFallingBlock(location, Data);
+		if(ServerVersion.getVersion() >= 11) {
+			fb = world.spawnFallingBlock(location, Data);
+		} else {
+			fb = world.spawnFallingBlock(location, Data.getItemType(), Data.getData());
+		}
 		
 		if(!SetBlock) {
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		}
 		
-		fb.setInvulnerable(true);
+		if(ServerVersion.getVersion() >= 9) {
+			fb.setInvulnerable(true);
+		}
+		
 		fb.setDropItem(false);
 		
 		fb.setVelocity(vector);

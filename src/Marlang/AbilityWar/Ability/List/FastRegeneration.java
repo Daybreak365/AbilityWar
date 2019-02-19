@@ -1,13 +1,13 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class FastRegeneration extends AbilityBase {
 	
@@ -37,7 +37,7 @@ public class FastRegeneration extends AbilityBase {
 			if(!isRestricted()) {
 				Player p = getPlayer();
 				if(!p.isDead()) {
-					double MaxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+					double MaxHealth = PlayerCompat.getMaxHealth(p);
 					
 					if(p.getHealth() < MaxHealth) {
 						p.setHealth((int) p.getHealth() + 1);

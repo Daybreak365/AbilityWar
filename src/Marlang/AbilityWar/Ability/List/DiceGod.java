@@ -3,17 +3,16 @@ package Marlang.AbilityWar.Ability.List;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class DiceGod extends AbilityBase {
 
@@ -48,22 +47,22 @@ public class DiceGod extends AbilityBase {
 					
 					if(random.equals(0)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c재생 &f효과를 받았습니다."));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.REGENERATION, 200, 1, true);
 					} else if(random.equals(1)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b신속 &f효과를 받았습니다."));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 200, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.SPEED, 200, 1, true);
 					} else if(random.equals(2)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6힘 &f효과를 받았습니다."));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.INCREASE_DAMAGE, 200, 1, true);
 					} else if(random.equals(3)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5위더 &f효과를 받았습니다."));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 200, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.WITHER, 200, 1, true);
 					} else if(random.equals(4)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8구속 &f효과를 받았습니다."));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.SLOW, 200, 1, true);
 					} else if(random.equals(5)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7나약함 &f효과를 받았습니다."));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 200, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.WEAKNESS, 200, 1, true);
 					}
 					
 					Cool.StartTimer();
@@ -88,7 +87,7 @@ public class DiceGod extends AbilityBase {
 					
 					Double health = getPlayer().getHealth() + damage;
 					
-					if(health > getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) health = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+					if(health > PlayerCompat.getMaxHealth(getPlayer())) health = PlayerCompat.getMaxHealth(getPlayer());
 					
 					if(!getPlayer().isDead()) {
 						getPlayer().setHealth(health);

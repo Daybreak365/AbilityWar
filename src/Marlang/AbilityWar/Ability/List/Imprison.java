@@ -14,6 +14,7 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class Imprison extends AbilityBase {
 
@@ -52,7 +53,7 @@ public class Imprison extends AbilityBase {
 			if(e.getDamager().equals(getPlayer())) {
 				if(e.getEntity() instanceof Player) {
 					if(!e.isCancelled()) {
-						if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_INGOT)) {
+						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
 							if(!Cool.isCooldown()) {
 								List<Block> blocks = LocationUtil.getBlocks(e.getEntity().getLocation(), 3, true, false, true);
 								for(Block b : blocks) {

@@ -19,6 +19,14 @@ public class NumberUtil {
 		return isInt;
 	}
 
+	public static double Subtract(Double one, Double two) {
+		if (one > two) {
+			return one - two;
+		} else {
+			return two - one;
+		}
+	}
+
 	public static String parseTimeString(Integer Second) {
 		Integer Hour = Second / 3600;
 		Second -= Hour * 3600;

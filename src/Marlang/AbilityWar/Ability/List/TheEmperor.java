@@ -4,13 +4,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class TheEmperor extends AbilityBase {
 
@@ -38,7 +38,7 @@ public class TheEmperor extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 30, 1), true);
+			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.SLOW, 30, 1, true);
 		}
 		
 		@Override

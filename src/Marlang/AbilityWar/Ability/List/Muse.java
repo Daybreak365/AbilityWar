@@ -7,8 +7,6 @@ import org.bukkit.Note.Tone;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
@@ -18,6 +16,8 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Muse extends AbilityBase {
 
@@ -110,7 +110,7 @@ public class Muse extends AbilityBase {
 				
 				for(Player p : LocationUtil.getNearbyPlayers(center, 10, 200)) {
 					if(LocationUtil.isInCircle(p.getLocation(), center, 20.0)) {
-						p.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 4, 0), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.GLOWING, 4, 0, true);
 					}
 					
 					if(SoundCount % 5 == 0) {

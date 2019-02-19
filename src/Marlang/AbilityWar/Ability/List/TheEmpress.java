@@ -5,12 +5,9 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
@@ -20,6 +17,11 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
 import Marlang.AbilityWar.Utils.PacketLib.TitlePacket;
+import Marlang.AbilityWar.Utils.VersionCompat.Enchantment;
+import Marlang.AbilityWar.Utils.VersionCompat.ItemStackCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 public class TheEmpress extends AbilityBase {
 
@@ -48,7 +50,7 @@ public class TheEmpress extends AbilityBase {
 		super(player, "여제", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 현재 좌표에 따라 버프 혹은 아이템을 얻습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &a+ &f➡ 힘   10초 | 날카로움 IV 다이아 검"),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &c- &f➡ 저항 20초 | 방패"),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &c- &f➡ 저항 20초 | " + ((ServerVersion.getVersion() >= 9) ? "방패" : "거미줄")),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &a+ &f➡ 신속 30초 | 무한 활"),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &c- &f➡ 재생 20초 | 황금사과"));
 	}
@@ -72,29 +74,31 @@ public class TheEmpress extends AbilityBase {
 					
 					if(X.isPlus() && Z.isPlus()) {
 						if(bool) {
-							getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 200, 0), true);
+							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.INCREASE_DAMAGE, 200, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.DIAMOND_SWORD);
-							is.addEnchantment(Enchantment.DAMAGE_ALL, 4);
-							getPlayer().getInventory().addItem(is);
+							getPlayer().getInventory().addItem(ItemStackCompat.addEnchantment(is, Enchantment.DAMAGE_ALL, 4));
 						}
 					} else if(X.isPlus() && Z.isMinus()) {
 						if(bool) {
-							getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 400, 0), true);
+							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.DAMAGE_RESISTANCE, 400, 1, true);
 						} else {
-							getPlayer().getInventory().addItem(new ItemStack(Material.SHIELD));
+							if(ServerVersion.getVersion() >= 9) {
+								getPlayer().getInventory().addItem(new ItemStack(Material.SHIELD));
+							} else {
+								getPlayer().getInventory().addItem(new ItemStack(Material.WEB, 15));
+							}
 						}
 					} else if(X.isMinus() && Z.isPlus()) {
 						if(bool) {
-							getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 600, 1), true);
+							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.SPEED, 600, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.BOW);
-							is.addEnchantment(Enchantment.ARROW_INFINITE, 1);
-							getPlayer().getInventory().addItem(is);
+							getPlayer().getInventory().addItem(ItemStackCompat.addEnchantment(is, Enchantment.ARROW_INFINITE, 1));
 						}
 					} else if(X.isMinus() && Z.isMinus()) {
 						if(bool) {
-							getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 400, 1), true);
+							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.REGENERATION, 400, 1, true);
 						} else {
 							getPlayer().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
 						}

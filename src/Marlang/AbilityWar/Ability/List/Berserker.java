@@ -4,14 +4,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Berserker extends AbilityBase {
 
@@ -101,7 +101,7 @@ public class Berserker extends AbilityBase {
 				if(Strengthen) {
 					if(Duration.isDuration()) Duration.StopTimer(false);
 					e.setDamage(e.getDamage() * Strength);
-					getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, DebuffTime * 20, 1), true);
+					PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.WEAKNESS, DebuffTime * 20, 1, true);
 				}
 			}
 		}

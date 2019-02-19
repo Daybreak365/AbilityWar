@@ -33,6 +33,7 @@ import Marlang.AbilityWar.Ability.AbilityBase.ActiveClickType;
 import Marlang.AbilityWar.Ability.AbilityBase.ActiveMaterialType;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class GameListener implements Listener, EventExecutor {
 	
@@ -56,7 +57,7 @@ public class GameListener implements Listener, EventExecutor {
 	@EventHandler
 	public void onInteract(PlayerInteractEvent e) {
 		Player p = e.getPlayer();
-		ActiveMaterialType mt = getMaterialType(p.getInventory().getItemInMainHand().getType());
+		ActiveMaterialType mt = getMaterialType(PlayerCompat.getItemInHand(p).getType());
 		ActiveClickType ct = (e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) ? ActiveClickType.RightClick : ActiveClickType.LeftClick;
 		if(mt != null) {
 			if(game.hasAbility(p)) {

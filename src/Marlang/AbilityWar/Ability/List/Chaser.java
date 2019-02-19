@@ -10,6 +10,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class Chaser extends AbilityBase {
 
@@ -62,7 +63,7 @@ public class Chaser extends AbilityBase {
 			if(e.getDamager().equals(getPlayer())) {
 				if(e.getEntity() instanceof Player) {
 					if(!e.isCancelled()) {
-						if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_INGOT)) {
+						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
 							if(!Cool.isCooldown()) {
 								Player p = (Player) e.getEntity();
 								this.target = p;

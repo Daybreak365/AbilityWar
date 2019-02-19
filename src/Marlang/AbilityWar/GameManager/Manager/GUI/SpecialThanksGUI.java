@@ -1,14 +1,10 @@
 package Marlang.AbilityWar.GameManager.Manager.GUI;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -23,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.MojangAPI;
+import Marlang.AbilityWar.Utils.VersionCompat.ItemStackCompat;
 
 /**
  * 기여자 목록 GUI
@@ -39,7 +36,6 @@ public class SpecialThanksGUI implements Listener {
 		
 		private String name;
 		private String[] role;
-		private OfflinePlayer offlinePlayer;
 		
 		public SpecialThank(String UUID, String... role) {
 			try {
@@ -48,76 +44,6 @@ public class SpecialThanksGUI implements Listener {
 				this.name = "Error";
 			}
 			this.role = role;
-			
-			this.offlinePlayer = new OfflinePlayer() {
-				
-				@Override
-				public Map<String, Object> serialize() {
-					return null;
-				}
-				
-				@Override
-				public void setOp(boolean arg0) {}
-				
-				@Override
-				public boolean isOp() {
-					return false;
-				}
-				
-				@Override
-				public void setWhitelisted(boolean arg0) {}
-				
-				@Override
-				public boolean isWhitelisted() {
-					return false;
-				}
-				
-				@Override
-				public boolean isOnline() {
-					return false;
-				}
-				
-				@Override
-				public boolean isBanned() {
-					return false;
-				}
-				
-				@Override
-				public boolean hasPlayedBefore() {
-					return false;
-				}
-				
-				@Override
-				public UUID getUniqueId() {
-					return null;
-				}
-				
-				@Override
-				public Player getPlayer() {
-					return null;
-				}
-				
-				@Override
-				public String getName() {
-					return SpecialThank.this.getName();
-				}
-				
-				@Override
-				public long getLastPlayed() {
-					return 0;
-				}
-				
-				@Override
-				public long getFirstPlayed() {
-					return 0;
-				}
-				
-				@Override
-				public Location getBedSpawnLocation() {
-					return null;
-				}
-				
-			};
 		}
 		
 		public String getName() {
@@ -131,10 +57,6 @@ public class SpecialThanksGUI implements Listener {
 			}
 			
 			return list;
-		}
-		
-		public OfflinePlayer getOfflinePlayer() {
-			return offlinePlayer;
 		}
 		
 	}
@@ -164,7 +86,7 @@ public class SpecialThanksGUI implements Listener {
 			if(!st.getName().equals("Error")) {
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + st.getName()));
 				
-				im.setOwningPlayer(st.getOfflinePlayer());
+				ItemStackCompat.setOwner(im, st.getName());
 
 				im.setLore(st.getRole());
 			} else {

@@ -7,9 +7,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -21,6 +21,9 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
+import Marlang.AbilityWar.Utils.VersionCompat.Enchantment;
+import Marlang.AbilityWar.Utils.VersionCompat.ItemStackCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 public class Pumpkin extends AbilityBase {
 
@@ -98,10 +101,13 @@ public class Pumpkin extends AbilityBase {
 
 	HashMap<Player, ItemStack> Players;
 	
+	boolean Binding = false;
+	
 	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
 		@Override
 		public void onDurationStart() {
+			Binding = true;
 			Players = new HashMap<Player, ItemStack>();
 			LocationUtil.getNearbyPlayers(getPlayer(), 30, 30).stream().forEach(p -> Players.put(p, p.getInventory().getHelmet()));
 			Song.StartTimer();
@@ -116,6 +122,7 @@ public class Pumpkin extends AbilityBase {
 		@Override
 		public void onDurationEnd() {
 			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
+			Binding = false;
 		}
 		
 		private ItemStack getPumpkin(Integer Time) {
@@ -127,8 +134,7 @@ public class Pumpkin extends AbilityBase {
 					ChatColor.translateAlternateColorCodes('&', "&f남은 시간&7: &a" + Time + "초")
 					));
 			Pumpkin.setItemMeta(PumpkinMeta);
-			Pumpkin.addEnchantment(Enchantment.BINDING_CURSE, 1);
-			
+			ItemStackCompat.addEnchantment(Pumpkin, Enchantment.BINDING_CURSE, 1);
 			return Pumpkin;
 		}
 		
@@ -150,7 +156,20 @@ public class Pumpkin extends AbilityBase {
 	}
 
 	@Override
-	public void PassiveSkill(Event event) {}
+	public void PassiveSkill(Event event) {
+		if(ServerVersion.getVersion() < 11) {
+			if(event instanceof InventoryClickEvent) {
+				if(Binding) {
+					InventoryClickEvent e = (InventoryClickEvent) event;
+					if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasLore()) {
+						if(e.getCurrentItem().getItemMeta().getLore().contains(ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"))) {
+							e.setCancelled(true);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public void onRestrictClear() {}

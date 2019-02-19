@@ -11,8 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
@@ -20,6 +18,8 @@ import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Gladiator extends AbilityBase {
 	
@@ -124,7 +124,8 @@ public class Gladiator extends AbilityBase {
 			Location teleport = center.clone().add(0, 1, 0);
 			
 			getPlayer().teleport(teleport);
-			getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 400, 4), true);
+			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.ABSORPTION, 400, 4, true);
+			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.DAMAGE_RESISTANCE, 400, 0, true);
 			target.teleport(teleport);
 			
 			Gladiator.this.target = target;
@@ -151,7 +152,7 @@ public class Gladiator extends AbilityBase {
 			if(e.getDamager().equals(getPlayer())) {
 				if(e.getEntity() instanceof Player) {
 					if(!e.isCancelled()) {
-						if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.IRON_INGOT)) {
+						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
 							if(!Cool.isCooldown()) {
 								this.target = (Player) e.getEntity();
 								Field.StartTimer();

@@ -4,8 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
@@ -15,6 +13,8 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
+import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class TheHighPriestess extends AbilityBase {
 
@@ -83,9 +83,9 @@ public class TheHighPriestess extends AbilityBase {
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
 				if(LocationUtil.isInCircle(p.getLocation(), center, Double.valueOf(Range))) {
 					if(p.equals(getPlayer())) {
-						p.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 100, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.REGENERATION, 100, 1, true);
 					} else {
-						p.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 100, 1), true);
+						PlayerCompat.addPotionEffect(p, PotionEffectType.WITHER, 100, 1, true);
 					}
 				}
 			}
