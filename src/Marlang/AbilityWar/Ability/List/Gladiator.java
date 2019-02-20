@@ -16,6 +16,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
@@ -80,7 +81,7 @@ public class Gladiator extends AbilityBase {
 			TotalCount = 1;
 			center = getPlayer().getLocation();
 			Saves.putIfAbsent(center.clone().subtract(0, 1, 0).getBlock(), center.clone().subtract(0, 1, 0).getBlock().getState());
-			center.subtract(0, 1, 0).getBlock().setType(Material.SMOOTH_BRICK);
+			center.subtract(0, 1, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 		}
 		
 		@Override
@@ -88,23 +89,23 @@ public class Gladiator extends AbilityBase {
 			if(TotalCount <= 10) {
 				for(Location l : LocationUtil.getCircle(center, Count, Count * this.getCount() * 30, false)) {
 					Saves.putIfAbsent(l.getBlock(), l.getBlock().getState());
-					l.getBlock().setType(Material.SMOOTH_BRICK);
+					l.getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
 				
 				Count++;
 			} else if(TotalCount > 10 && TotalCount <= 15) {
 				for(Location l : LocationUtil.getCircle(center, Count - 1, Count * 30, false)) {
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
-					l.add(0, TotalCount - 10, 0).getBlock().setType(Material.IRON_FENCE);
+					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 				for(Location l : LocationUtil.getCircle(center, Count, Count * 30, false)) {
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
-					l.add(0, TotalCount - 10, 0).getBlock().setType(Material.IRON_FENCE);
+					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 			} else if(TotalCount > 15 && TotalCount <= 26) {
 				for(Location l : LocationUtil.getCircle(center, Count, Count * 30, false)) {
 					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
-					l.add(0, 6, 0).getBlock().setType(Material.SMOOTH_BRICK);
+					l.add(0, 6, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
 				
 				Count--;
@@ -116,9 +117,9 @@ public class Gladiator extends AbilityBase {
 		public void onEnd() {
 			Location check = center.clone().add(0, 6, 0);
 			
-			if(!check.getBlock().getType().equals(Material.SMOOTH_BRICK)) {
+			if(!check.getBlock().getType().equals(MaterialLib.STONE_BRICKS.getMaterial())) {
 				Saves.putIfAbsent(check.getBlock(), check.getBlock().getState());
-				check.getBlock().setType(Material.SMOOTH_BRICK);
+				check.getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 			}
 			
 			Location teleport = center.clone().add(0, 1, 0);

@@ -10,8 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.Library.EnchantLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class Curse extends AbilityBase {

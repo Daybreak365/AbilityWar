@@ -13,8 +13,9 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.Library.EnchantLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
@@ -85,7 +86,7 @@ public class TheEmpress extends AbilityBase {
 							if(ServerVersion.getVersion() >= 9) {
 								getPlayer().getInventory().addItem(new ItemStack(Material.SHIELD));
 							} else {
-								getPlayer().getInventory().addItem(new ItemStack(Material.WEB, 15));
+								getPlayer().getInventory().addItem(MaterialLib.COBWEB.getItem());
 							}
 						}
 					} else if(X.isMinus() && Z.isPlus()) {

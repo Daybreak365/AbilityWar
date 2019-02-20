@@ -20,6 +20,9 @@ import org.bukkit.plugin.Plugin;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.GameManager.Game.Game;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
+import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
 
 /**
  * 관전자 설정 GUI
@@ -76,7 +79,7 @@ public class SpectatorGUI implements Listener {
 			ItemStack is;
 			
 			if(Game.getSpectators().contains(player)) {
-				is = new ItemStack(Material.WOOL, 1, (short) 14);
+				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
 				im.setLore(Messager.getStringList(
@@ -85,7 +88,7 @@ public class SpectatorGUI implements Listener {
 						));
 				is.setItemMeta(im);
 			} else {
-				is = new ItemStack(Material.WOOL, 1, (short) 5);
+				is = ItemLib.WOOL.getItemStack(ItemColor.LIME);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
 				im.setLore(Messager.getStringList(
@@ -147,9 +150,9 @@ public class SpectatorGUI implements Listener {
 				}
 			}
 			
-			if(e.getCurrentItem() != null && e.getCurrentItem().getType() != null && e.getCurrentItem().getType().equals(Material.WOOL)) {
+			if(e.getCurrentItem() != null && e.getCurrentItem().getType() != null && ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
 				try {
-					if(e.getCurrentItem().getDurability() == (short) 14) {
+					if(MaterialLib.RED_WOOL.compareMaterial(e.getCurrentItem())) {
 						String targetName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 						
 						String target = null;
@@ -169,7 +172,7 @@ public class SpectatorGUI implements Listener {
 						} else {
 							throw new Exception("해당 플레이어가 존재하지 않습니다.");
 						}
-					} else if(e.getCurrentItem().getDurability() == (short) 5) {
+					} else if(MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
 						String target = Bukkit.getPlayerExact(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName())).getName();
 						if(target != null) {
 							if(!Game.getSpectators().contains(target)) {

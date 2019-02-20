@@ -1,6 +1,10 @@
 package Marlang.AbilityWar.Utils.VersionCompat;
 
+import java.lang.reflect.Field;
+
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 
 /**
  * Server Version
@@ -40,6 +44,27 @@ public class ServerVersion {
 	
 	public static Integer getVersion() {
 		return Version;
+	}
+	
+	/**
+	 * 버전 호환 작업
+	 */
+	public static void VersionCompat(Plugin plugin) {
+		if(getVersion() >= 13) {
+			setAPIVersion(plugin, "1.13");
+		}
+	}
+	
+	private static void setAPIVersion(Plugin plugin, String Version) {
+		try {
+			PluginDescriptionFile desc = plugin.getDescription();
+			Field apiVersion = PluginDescriptionFile.class.getDeclaredField("apiVersion");
+			apiVersion.setAccessible(true);
+			apiVersion.set(desc, Version);
+			apiVersion.setAccessible(false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

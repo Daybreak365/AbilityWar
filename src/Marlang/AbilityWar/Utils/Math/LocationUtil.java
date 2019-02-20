@@ -182,9 +182,9 @@ public class LocationUtil {
 		return locations;
 	}
 
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Player p, Integer Xdis, Integer Ydis) {
+	public static ArrayList<Damageable> getNearbyDamageableEntities(Player p, Integer HorizontalDis, Integer VerticalDis) {
 		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-		for (Entity e : p.getNearbyEntities(Xdis, Ydis, Xdis)) {
+		for (Entity e : p.getNearbyEntities(HorizontalDis, VerticalDis, HorizontalDis)) {
 			if (e instanceof Damageable) {
 				if (e instanceof Player) {
 					if (AbilityWarThread.isGameTaskRunning()) {
@@ -202,10 +202,10 @@ public class LocationUtil {
 		return Entities;
 	}
 
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Location l, Integer Xdis, Integer Ydis) {
+	public static ArrayList<Damageable> getNearbyDamageableEntities(Location l, Integer HorizontalDis, Integer VerticalDis) {
 		if(ServerVersion.getVersion() >= 9) {
 			ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-			for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
+			for (Entity e : l.getWorld().getNearbyEntities(l, HorizontalDis, VerticalDis, HorizontalDis)) {
 				if (e instanceof Damageable) {
 					if (e instanceof Player) {
 						if (AbilityWarThread.isGameTaskRunning()) {
@@ -225,9 +225,9 @@ public class LocationUtil {
 			ArrayList<Damageable> Entities = new ArrayList<Damageable>();
 			for (Entity e : l.getWorld().getEntities()) {
 				Location targetLocation = e.getLocation();
-				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= Ydis) {
-					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= Xdis
-					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= Xdis) {
+				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= VerticalDis) {
+					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= HorizontalDis
+					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= HorizontalDis) {
 						if (e instanceof Damageable) {
 							if (e instanceof Player) {
 								if (AbilityWarThread.isGameTaskRunning()) {
@@ -248,9 +248,9 @@ public class LocationUtil {
 		}
 	}
 
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Entity p, Integer Xdis, Integer Ydis) {
+	public static ArrayList<Damageable> getNearbyDamageableEntities(Entity p, Integer HorizontalDis, Integer VerticalDis) {
 		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-		for (Entity e : p.getNearbyEntities(Xdis, Ydis, Xdis)) {
+		for (Entity e : p.getNearbyEntities(HorizontalDis, VerticalDis, HorizontalDis)) {
 			if (e instanceof Damageable) {
 				if (e instanceof Player) {
 					if (AbilityWarThread.isGameTaskRunning()) {
@@ -295,10 +295,10 @@ public class LocationUtil {
 		return Players;
 	}
 
-	public static ArrayList<Player> getNearbyPlayers(Location l, Integer Xdis, Integer Ydis) {
+	public static ArrayList<Player> getNearbyPlayers(Location l, Integer HorizontalDis, Integer VerticalDis) {
 		if(ServerVersion.getVersion() >= 9) {
 			ArrayList<Player> Players = new ArrayList<Player>();
-			for (Entity e : l.getWorld().getNearbyEntities(l, Xdis, Ydis, Xdis)) {
+			for (Entity e : l.getWorld().getNearbyEntities(l, HorizontalDis, VerticalDis, HorizontalDis)) {
 				if (e instanceof Player) {
 					Player player = (Player) e;
 
@@ -318,9 +318,9 @@ public class LocationUtil {
 			ArrayList<Player> Players = new ArrayList<Player>();
 			for (Entity e : l.getWorld().getEntities()) {
 				Location targetLocation = e.getLocation();
-				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= Ydis) {
-					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= Xdis
-					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= Xdis) {
+				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= VerticalDis) {
+					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= HorizontalDis
+					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= HorizontalDis) {
 						if (e instanceof Player) {
 							Player player = (Player) e;
 

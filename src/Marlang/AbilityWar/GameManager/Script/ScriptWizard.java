@@ -26,6 +26,7 @@ import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Setter;
 import Marlang.AbilityWar.GameManager.Script.Objects.Setter.StringSetter;
 import Marlang.AbilityWar.GameManager.Script.Objects.Setter.TimeSetter;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 
 /**
  * Script Wizard
@@ -87,7 +88,7 @@ public class ScriptWizard implements Listener {
 		ScriptGUI.setItem(5, PreRunMessage.getItem());
 		ScriptGUI.setItem(6, RunMessage.getItem());
 		
-		ItemStack Deco = new ItemStack(Material.STAINED_GLASS_PANE);
+		ItemStack Deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);

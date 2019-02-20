@@ -18,6 +18,7 @@ import Marlang.AbilityWar.GameManager.Script.Types.TeleportScript;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.Branch;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * Ability War 능력자 전쟁 플러그인
@@ -37,6 +38,8 @@ public class AbilityWar extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		AbilityWar.Plugin = this;
+		
+		ServerVersion.VersionCompat(this);
 		
 		if(au.Check()) {
 			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());

@@ -26,6 +26,9 @@ import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
+import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
@@ -84,7 +87,7 @@ public class BlackListGUI implements Listener {
 			ItemStack is;
 			
 			if(blackList.contains(name)) {
-				is = new ItemStack(Material.WOOL, 1, (short) 14);
+				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
 				im.setLore(Messager.getStringList(
@@ -93,7 +96,7 @@ public class BlackListGUI implements Listener {
 						));
 				is.setItemMeta(im);
 			} else {
-				is = new ItemStack(Material.WOOL, 1, (short) 5);
+				is = ItemLib.WOOL.getItemStack(ItemColor.LIME);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
 				im.setLore(Messager.getStringList(
@@ -199,14 +202,14 @@ public class BlackListGUI implements Listener {
 				} else {
 					String ItemName = e.getCurrentItem().getItemMeta().getDisplayName();
 					
-					if(e.getCurrentItem().getType().equals(Material.WOOL)) {
+					if(ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
 						String StripItemName = ChatColor.stripColor(ItemName);
 						if(StripItemName.equals(StripItemName))
-						if(e.getCurrentItem().getType().equals(Material.WOOL) && e.getCurrentItem().getDurability() == (short) 14) {
+						if(MaterialLib.RED_WOOL.compareMaterial(e.getCurrentItem())) {
 							AbilityWarSettings.removeBlackList(StripItemName);
 							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 							openBlackListGUI(PlayerPage);
-						} else if(e.getCurrentItem().getType().equals(Material.WOOL) && e.getCurrentItem().getDurability() == (short) 5) {
+						} else if(MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
 							AbilityWarSettings.addBlackList(StripItemName);
 							SoundLib.BLOCK_ANVIL_LAND.playSound(p);
 							openBlackListGUI(PlayerPage);

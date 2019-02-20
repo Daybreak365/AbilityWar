@@ -21,6 +21,9 @@ import org.bukkit.plugin.Plugin;
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
+import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
+import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 
 /**
  * 콘피그 설정 마법사
@@ -44,17 +47,17 @@ public class SettingWizard implements Listener {
 	public void openKitGUI() {
 		KitGUI = Bukkit.createInventory(p, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 킷 설정"));
 		
-		ItemStack Confirm = new ItemStack(Material.WOOL, 1, (short) 5);
+		ItemStack Confirm = ItemLib.WOOL.getItemStack(ItemColor.LIME);
 		ItemMeta ConfirmMeta = Confirm.getItemMeta();
 		ConfirmMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a확인"));
 		Confirm.setItemMeta(ConfirmMeta);
 		
-		ItemStack Reset = new ItemStack(Material.WOOL, 1, (short) 14);
+		ItemStack Reset = ItemLib.WOOL.getItemStack(ItemColor.RED);
 		ItemMeta ResetMeta = Reset.getItemMeta();
 		ResetMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c초기화"));
 		Reset.setItemMeta(ResetMeta);
 		
-		ItemStack Deco = new ItemStack(Material.STAINED_GLASS_PANE);
+		ItemStack Deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);
@@ -78,8 +81,8 @@ public class SettingWizard implements Listener {
 
 	public void openInvincibilityGUI() {
 		InvGUI = Bukkit.createInventory(p, 27, ChatColor.translateAlternateColorCodes('&', "&2&l초반 무적 설정"));
-		
-		ItemStack Deco = new ItemStack(Material.STAINED_GLASS_PANE);
+
+		ItemStack Deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);
@@ -87,7 +90,8 @@ public class SettingWizard implements Listener {
 		for(Integer i = 0; i < 27; i++) {
 			if(i.equals(11)) {
 				boolean InvincibilityEnable = AbilityWarSettings.getInvincibilityEnable();
-				ItemStack Inv = new ItemStack(Material.WOOL, 1, (short) (InvincibilityEnable ? 5 : 14));
+				ItemColor color = InvincibilityEnable ? ItemColor.LIME : ItemColor.RED;
+				ItemStack Inv = ItemLib.WOOL.getItemStack(color);
 				ItemMeta InvMeta = Inv.getItemMeta();
 				InvMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적"));
 				InvMeta.setLore(Messager.getStringList(
@@ -97,7 +101,7 @@ public class SettingWizard implements Listener {
 				
 				InvGUI.setItem(i, Inv);
 			} else if(i.equals(15)) {
-				ItemStack Inv = new ItemStack(Material.WATCH, 1);
+				ItemStack Inv = MaterialLib.CLOCK.getItem();
 				ItemMeta InvMeta = Inv.getItemMeta();
 				InvMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적 시간"));
 				InvMeta.setLore(Messager.getStringList(
@@ -121,8 +125,8 @@ public class SettingWizard implements Listener {
 	
 	public void openGameGUI() {
 		GameGUI = Bukkit.createInventory(p, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 진행 설정"));
-		
-		ItemStack Deco = new ItemStack(Material.STAINED_GLASS_PANE);
+
+		ItemStack Deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);
@@ -139,7 +143,7 @@ public class SettingWizard implements Listener {
 				
 				GameGUI.setItem(i, Food);
 			} else if(i.equals(14)) {
-				ItemStack Lev = new ItemStack(Material.EXP_BOTTLE, 1);
+				ItemStack Lev = MaterialLib.EXPERIENCE_BOTTLE.getItem();
 				ItemMeta LevMeta = Lev.getItemMeta();
 				LevMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 지급 레벨"));
 				LevMeta.setLore(Messager.getStringList(
@@ -179,7 +183,7 @@ public class SettingWizard implements Listener {
 				
 				GameGUI.setItem(i, Firewall);
 			} else if(i.equals(24)) {
-				ItemStack ClearWeather = new ItemStack(Material.SNOW_BALL);
+				ItemStack ClearWeather = MaterialLib.SNOWBALL.getItem();
 				ItemMeta ClearWeatherMeta = ClearWeather.getItemMeta();
 				ClearWeatherMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b맑은 날씨 고정"));
 				ClearWeatherMeta.setLore(Messager.getStringList(
@@ -222,8 +226,8 @@ public class SettingWizard implements Listener {
 
 	public void openSpawnGUI() {
 		SpawnGUI = Bukkit.createInventory(p, 27, ChatColor.translateAlternateColorCodes('&', "&2&l스폰 설정"));
-		
-		ItemStack Deco = new ItemStack(Material.STAINED_GLASS_PANE);
+
+		ItemStack Deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);
@@ -274,8 +278,8 @@ public class SettingWizard implements Listener {
 	
 	public void openDeathGUI() {
 		DeathGUI = Bukkit.createInventory(p, 27, ChatColor.translateAlternateColorCodes('&', "&2&l플레이어 사망 설정"));
-		
-		ItemStack Deco = new ItemStack(Material.STAINED_GLASS_PANE);
+
+		ItemStack Deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);
@@ -296,7 +300,7 @@ public class SettingWizard implements Listener {
 				
 				DeathGUI.setItem(i, Eliminate);
 			} else if(i.equals(13)) {
-				ItemStack AbilityReveal = new ItemStack(Material.EYE_OF_ENDER);
+				ItemStack AbilityReveal = MaterialLib.ENDER_EYE.getItem();
 				ItemMeta AbilityRevealMeta = AbilityReveal.getItemMeta();
 				AbilityRevealMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 공개"));
 				AbilityRevealMeta.setLore(Messager.getStringList(

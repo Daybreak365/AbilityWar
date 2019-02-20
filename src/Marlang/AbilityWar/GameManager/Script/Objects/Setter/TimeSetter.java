@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
@@ -13,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 
 public class TimeSetter extends Setter<Integer> {
@@ -47,7 +47,7 @@ public class TimeSetter extends Setter<Integer> {
 	
 	@Override
 	public ItemStack getItem() {
-		ItemStack watch = new ItemStack(Material.WATCH);
+		ItemStack watch = new ItemStack(MaterialLib.CLOCK.getMaterial());
 		ItemMeta watchMeta = watch.getItemMeta();
 		watchMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 		
