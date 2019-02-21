@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -62,9 +63,9 @@ public class Feather extends AbilityBase {
 	};
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(ct.equals(ClickType.RightClick)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.StartTimer();
 					
@@ -97,5 +98,8 @@ public class Feather extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
 	
 }

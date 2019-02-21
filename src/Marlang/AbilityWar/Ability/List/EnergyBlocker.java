@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -36,9 +37,9 @@ public class EnergyBlocker extends AbilityBase {
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(ct.equals(ClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
 					Default = !Default;
 					Player p = getPlayer();
@@ -50,7 +51,7 @@ public class EnergyBlocker extends AbilityBase {
 					
 					Cool.StartTimer();
 				}
-			} else if(ct.equals(ActiveClickType.LeftClick)) {
+			} else if(ct.equals(ClickType.LeftClick)) {
 				if(Default) {
 					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f절반&7, &a근거리 &f두 배"));
 				} else {
@@ -94,5 +95,8 @@ public class EnergyBlocker extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
 	
 }

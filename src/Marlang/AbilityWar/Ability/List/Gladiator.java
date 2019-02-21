@@ -4,13 +4,12 @@ import java.util.HashMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
@@ -87,23 +86,27 @@ public class Gladiator extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			if(TotalCount <= 10) {
-				for(Location l : LocationUtil.getCircle(center, Count, Count * this.getCount() * 30, false)) {
-					Saves.putIfAbsent(l.getBlock(), l.getBlock().getState());
-					l.getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
+				for(Block b : LocationUtil.getBlocks(center, Count, false)) {
+					Saves.putIfAbsent(b, b.getState());
+					b.setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
 				
 				Count++;
 			} else if(TotalCount > 10 && TotalCount <= 15) {
-				for(Location l : LocationUtil.getCircle(center, Count - 1, Count * 30, false)) {
+				for(Block b : LocationUtil.getBlocks(center, Count - 2, true)) {
+					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
-				for(Location l : LocationUtil.getCircle(center, Count, Count * 30, false)) {
+				
+				for(Block b : LocationUtil.getBlocks(center, Count - 1, true)) {
+					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 			} else if(TotalCount > 15 && TotalCount <= 26) {
-				for(Location l : LocationUtil.getCircle(center, Count, Count * 30, false)) {
+				for(Block b : LocationUtil.getBlocks(center, Count, true)) {
+					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
 					l.add(0, 6, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
@@ -136,35 +139,13 @@ public class Gladiator extends AbilityBase {
 	}.setPeriod(2);
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.LeftClick)) {
-				Cool.isCooldown();
-			}
-		}
-		
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
 	@Override
 	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getDamager().equals(getPlayer())) {
-				if(e.getEntity() instanceof Player) {
-					if(!e.isCancelled()) {
-						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
-							if(!Cool.isCooldown()) {
-								this.target = (Player) e.getEntity();
-								Field.StartTimer();
-								
-								Cool.StartTimer();
-							}
-						}
-					}
-				}
-			}
-		} else if(event instanceof BlockBreakEvent) {
+		if(event instanceof BlockBreakEvent) {
 			BlockBreakEvent e = (BlockBreakEvent) event;
 			if(Saves.keySet().contains(e.getBlock())) {
 				if(!e.isCancelled()) {
@@ -178,5 +159,23 @@ public class Gladiator extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(entity != null) {
+				if(entity instanceof Player) {
+					if(!Cool.isCooldown()) {
+						this.target = (Player) entity;
+						Field.StartTimer();
+						
+						Cool.StartTimer();
+					}
+				}
+			} else {
+				Cool.isCooldown();
+			}
+		}
+	}
 	
 }

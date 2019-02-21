@@ -2,6 +2,7 @@ package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -51,7 +52,7 @@ public class Flora extends AbilityBase {
 			}
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, 6, 200)) {
-				if(LocationUtil.isInCircle(p.getLocation(), center, 12.0)) {
+				if(LocationUtil.isInCircle(center, p.getLocation(), 6.0)) {
 					PlayerCompat.addPotionEffect(p, type.getPotionEffect(), 40, 1, true);
 				}
 			}
@@ -65,9 +66,9 @@ public class Flora extends AbilityBase {
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(ct.equals(ClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
 					Player p = getPlayer();
 					if(type.equals(EffectType.Speed)) {
@@ -80,7 +81,7 @@ public class Flora extends AbilityBase {
 					
 					Cool.StartTimer();
 				}
-			} else if(ct.equals(ActiveClickType.LeftClick)) {
+			} else if(ct.equals(ClickType.LeftClick)) {
 				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: " + type.getName()));
 			}
 		}
@@ -118,5 +119,8 @@ public class Flora extends AbilityBase {
 		}
 		
 	}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
 	
 }

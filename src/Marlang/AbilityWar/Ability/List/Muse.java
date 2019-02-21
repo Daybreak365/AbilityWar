@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -109,14 +110,14 @@ public class Muse extends AbilityBase {
 				}
 				
 				for(Player p : LocationUtil.getNearbyPlayers(center, 10, 200)) {
-					if(LocationUtil.isInCircle(p.getLocation(), center, 20.0)) {
+					if(LocationUtil.isInCircle(center, p.getLocation(), 10.0)) {
 						PlayerCompat.addPotionEffect(p, PotionEffectType.GLOWING, 4, 0, true);
-					}
-					
-					if(SoundCount % 5 == 0) {
-						SoundCount = 1;
 						
-						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+						if(SoundCount % 5 == 0) {
+							SoundCount = 1;
+							
+							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+						}
 					}
 				}
 				
@@ -132,9 +133,9 @@ public class Muse extends AbilityBase {
 	}.setPeriod(2);
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(ct.equals(ClickType.RightClick)) {
 				if(!Skill.isDuration() && !Cool.isCooldown()) {
 					Skill.StartTimer();
 					
@@ -152,7 +153,7 @@ public class Muse extends AbilityBase {
 			EntityDamageEvent e = (EntityDamageEvent) event;
 			if(center != null) {
 				if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
-					if(LocationUtil.isInCircle(e.getEntity().getLocation(), center, 20.0)) {
+					if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
 						ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
 						e.setCancelled(true);
 					}
@@ -164,4 +165,7 @@ public class Muse extends AbilityBase {
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

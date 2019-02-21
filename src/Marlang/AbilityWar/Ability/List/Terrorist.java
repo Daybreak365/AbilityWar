@@ -2,6 +2,7 @@ package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -36,9 +37,9 @@ public class Terrorist extends AbilityBase {
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(ct.equals(ClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
 					for(int i = 0; i < 10; i++) {
 						for(Location l : LocationUtil.getCircle(getPlayer().getLocation(), i, 20, true)) {
@@ -75,4 +76,7 @@ public class Terrorist extends AbilityBase {
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

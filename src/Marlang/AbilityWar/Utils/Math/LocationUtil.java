@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -25,16 +24,15 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class LocationUtil {
 
-	public static boolean isInCircle(Location location, Location center, Double radius) {
-		Double X = location.getX();
-		Double Z = location.getZ();
-
-		Double Center_X = center.getX();
-		Double Center_Z = center.getZ();
-
-		return ((X - Center_X) * (X - Center_X)) + ((Z - Center_Z) * (Z - Center_Z)) < (radius * radius);
+	public static boolean isInCircle(Location center, Location location, double radius) {
+		if(center.getWorld().equals(location.getWorld())) {
+			double distance = center.distance(location);
+			return (distance <= radius);
+		} else {
+			return false;
+		}
 	}
-
+	
 	public static List<Block> getBlocks(Location location, Integer radius, boolean hollow, boolean top,
 			boolean alsoAir) {
 		List<Block> Blocks = new ArrayList<Block>();
@@ -93,6 +91,32 @@ public class LocationUtil {
 
 		return Blocks;
 	}
+	
+	/**
+	 * 범위 안에서 같은 Y 좌표에 있는 블록들을 List로 반환합니다.
+	 * @param center 중심
+	 * @param radius 반지름
+	 * @return
+	 */
+	public static List<Block> getBlocks(Location center, Integer radius, boolean hollow) {
+		List<Block> blocks = new ArrayList<Block>();
+
+		Integer X = center.getBlockX();
+		Integer Y = center.getBlockY();
+		Integer Z = center.getBlockZ();
+
+		for (Integer x = X - radius; x <= X + radius; x++) {
+			for (Integer z = Z - radius; z <= Z + radius; z++) {
+				Location l = new Location(center.getWorld(), x, Y, z);
+				double distance = center.distance(l);
+				if (distance <= radius && !(hollow && distance < (radius - 1))) {
+					blocks.add(l.getBlock());
+				}
+			}
+		}
+
+		return blocks;
+	}
 
 	/**
 	 * 기준에서 가장 가까운 플레이어를 받아옵니다.
@@ -125,16 +149,19 @@ public class LocationUtil {
 
 		return player;
 	}
-
-	public static List<Location> getSphere(Location center, double r, Integer Count) {
+	
+	public static List<Location> getSphere(Location center, double r, int Amount) {
 		List<Location> locations = new ArrayList<Location>();
-		for (double i = 0; i <= Math.PI; i += Math.PI / Count) {
-			double radius = Math.sin(i) * r;
-			double y = Math.cos(i) * r;
-			for (double a = 0; a < Math.PI * 2; a += Math.PI / Count) {
-				double x = Math.cos(a) * radius;
-				double z = Math.sin(a) * radius;
-				locations.add(center.clone().add(x, y, z));
+		
+		if(Amount > 0) {
+			for (double i = 0; i <= Math.PI; i += Math.PI / Amount) {
+				double radius = Math.sin(i) * r;
+				double y = Math.cos(i) * r;
+				for (double a = 0; a < Math.PI * 2; a += Math.PI / Amount) {
+					double x = Math.cos(a) * radius;
+					double z = Math.sin(a) * radius;
+					locations.add(center.clone().add(x, y, z));
+				}
 			}
 		}
 		
@@ -146,22 +173,20 @@ public class LocationUtil {
 	}
 
 	public static ArrayList<Location> getCircle(Location center, double radius, int amount, boolean HighestY) {
-		World world = center.getWorld();
-		double increment = (2 * Math.PI) / amount;
 		ArrayList<Location> locations = new ArrayList<Location>();
-
-		for (int i = 0; i < amount; i++) {
-			double angle = i * increment;
-			double x = center.getX() + (radius * Math.cos(angle));
-			double z = center.getZ() + (radius * Math.sin(angle));
-
-			if (HighestY) {
-				locations.add(new Location(world, x, world.getHighestBlockYAt((int) x, (int) z) + 1, z));
-			} else {
-				locations.add(new Location(world, x, center.getY(), z));
+		
+		if(amount > 0) {
+			for(double degree = 0; degree < 360; degree += (360 / amount)) {
+				double radians = Math.toRadians(degree);
+				double X = Math.cos(radians) * radius;
+				double Z = Math.sin(radians) * radius;
+				
+				Location location = center.clone().add(X, 0, Z);
+				if(HighestY) location.setY(location.getWorld().getHighestBlockYAt(location) + 1);
+				locations.add(location);
 			}
 		}
-
+		
 		return locations;
 	}
 

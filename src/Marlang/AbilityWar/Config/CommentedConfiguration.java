@@ -14,9 +14,12 @@ import java.io.Writer;
 import java.util.HashMap;
 
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
+
+import Marlang.AbilityWar.Config.configuration.file.YamlConfiguration;
 
 /**
+ * Configuration 패치를 진행하여 하위 버전에서도 콘피그가 깨지지 않습니다.
+ * 
  * 주석 콘피그
  * @author dumptruckman, _Marlang 말랑
  */

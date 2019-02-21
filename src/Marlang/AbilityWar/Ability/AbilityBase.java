@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -31,9 +32,11 @@ abstract public class AbilityBase {
 		this.Explain = Explain;
 	}
 	
-	abstract public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct);
+	abstract public boolean ActiveSkill(MaterialType mt, ClickType ct);
 	
 	abstract public void PassiveSkill(Event event);
+	
+	abstract public void TargetSkill(MaterialType mt, Entity entity);
 	
 	abstract protected void onRestrictClear();
 	
@@ -108,18 +111,31 @@ abstract public class AbilityBase {
 		this.player = player;
 	}
 	
-	public enum ActiveClickType {
-		RightClick, LeftClick;
+	public enum ClickType {
+		/**
+		 * ¿ìÅ¬¸¯
+		 */
+		RightClick,
+		/**
+		 * ÁÂÅ¬¸¯
+		 */
+		LeftClick;
 	}
 	
-	public enum ActiveMaterialType {
+	public enum MaterialType {
 		
+		/**
+		 * Ã¶±«
+		 */
 		Iron_Ingot(Material.IRON_INGOT),
+		/**
+		 * ±Ý±«
+		 */
 		Gold_Ingot(Material.GOLD_INGOT);
 		
-		Material material;
+		private Material material;
 		
-		private ActiveMaterialType(Material material) {
+		private MaterialType(Material material) {
 			this.material = material;
 		}
 		
@@ -139,7 +155,7 @@ abstract public class AbilityBase {
 		C(ChatColor.translateAlternateColorCodes('&', "&eC µî±Þ")),
 		D(ChatColor.translateAlternateColorCodes('&', "&7D µî±Þ"));
 		
-		String RankName;
+		private String RankName;
 		
 		private Rank(String RankName) {
 			this.RankName = RankName;

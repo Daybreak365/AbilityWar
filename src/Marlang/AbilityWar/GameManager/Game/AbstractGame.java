@@ -168,6 +168,14 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		addAbility(two);
 	}
 	
+	abstract public void GiveDefaultKit(Player p);
+	
+	public void GiveDefaultKit() {
+		for(Player p : getParticipants()) {
+			GiveDefaultKit(p);
+		}
+	}
+	
 	public static List<String> getSpectators() {
 		return Spectators;
 	}

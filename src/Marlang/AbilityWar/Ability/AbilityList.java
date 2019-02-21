@@ -61,6 +61,8 @@ public class AbilityList {
 	
 	/**
 	 * 능력 등록
+	 * @param name			능력 이름
+	 * @param Ability		능력 클래스
 	 */
 	public static void registerAbility(String name, Class<? extends AbilityBase> Ability) {
 		if(!Abilities.containsKey(name)) {

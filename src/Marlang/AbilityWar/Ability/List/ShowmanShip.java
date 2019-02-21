@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -42,7 +43,7 @@ public class ShowmanShip extends AbilityBase {
 	}.setPeriod(5);
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
@@ -54,4 +55,7 @@ public class ShowmanShip extends AbilityBase {
 		Passive.StartTimer();
 	}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

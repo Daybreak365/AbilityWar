@@ -31,7 +31,7 @@ public class Ira extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
@@ -73,4 +73,7 @@ public class Ira extends AbilityBase {
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

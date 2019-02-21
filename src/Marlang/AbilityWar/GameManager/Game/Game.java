@@ -222,7 +222,7 @@ public class Game extends AbstractGame {
 				ChatColor.translateAlternateColorCodes('&', "&f                                   게임 시작                            "),
 				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
 		
-		GiveDefaultKits();
+		GiveDefaultKit();
 		
 		for(Player p : getParticipants()) {
 			if(AbilityWarSettings.getSpawnEnable()) {
@@ -262,38 +262,17 @@ public class Game extends AbstractGame {
 		
 		setGameStarted(true);
 	}
-
-	/**
-	 * 기본 킷 전체 지급
-	 */
-	public void GiveDefaultKits() {
-		List<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
-		
-		for(Player p : getParticipants()) {
-			if(AbilityWarSettings.getInventoryClear()) {
-				p.getInventory().clear();
-			}
-			
-			for(ItemStack is : DefaultKit) {
-				p.getInventory().addItem(is);
-			}
-			
-			p.setLevel(0);
-			if(AbilityWarSettings.getStartLevel() > 0) {
-				p.giveExpLevels(AbilityWarSettings.getStartLevel());
-				SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
-			}
-		}
-	}
-
+	
 	/**
 	 * 기본 킷 유저 지급
 	 */
-	public void GiveDefaultKits(Player p) {
+	@Override
+	public void GiveDefaultKit(Player p) {
 		List<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
 
 		if(AbilityWarSettings.getInventoryClear()) {
 			p.getInventory().clear();
+			p.updateInventory();
 		}
 		
 		for(ItemStack is : DefaultKit) {

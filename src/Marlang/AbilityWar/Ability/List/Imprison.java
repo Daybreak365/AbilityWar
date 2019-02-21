@@ -5,16 +5,15 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class Imprison extends AbilityBase {
 
@@ -36,40 +35,34 @@ public class Imprison extends AbilityBase {
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.LeftClick)) {
-				Cool.isCooldown();
-			}
-		}
-		
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
 	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getDamager().equals(getPlayer())) {
-				if(e.getEntity() instanceof Player) {
-					if(!e.isCancelled()) {
-						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
-							if(!Cool.isCooldown()) {
-								List<Block> blocks = LocationUtil.getBlocks(e.getEntity().getLocation(), 3, true, false, true);
-								for(Block b : blocks) {
-									b.setType(Material.GLASS);
-								}
-								
-								Cool.StartTimer();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}
-
+	
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(entity != null) {
+				if(entity instanceof Player) {
+					if(!Cool.isCooldown()) {
+						List<Block> blocks = LocationUtil.getBlocks(entity.getLocation(), 3, true, false, true);
+						for(Block b : blocks) {
+							b.setType(Material.GLASS);
+						}
+						
+						Cool.StartTimer();
+					}
+				}
+			} else {
+				Cool.isCooldown();
+			}
+		}
+	}
+	
 }

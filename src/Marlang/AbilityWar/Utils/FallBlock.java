@@ -1,7 +1,10 @@
 package Marlang.AbilityWar.Utils;
 
+import java.lang.reflect.Method;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
@@ -20,30 +23,52 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class FallBlock implements Listener {
 
-	private final MaterialData Data;
-	private final Location location;
-	private final World world;
+	private Object Data = null;
+	private Location location;
+	private World world;
 	private Vector vector = new Vector(0, 0, 0);
 
-	public FallBlock(MaterialData Data, Location location) {
-		this.Data = Data;
+	public FallBlock(Material Data, Location location) {
+		if(ServerVersion.getVersion() >= 13) {
+			try {
+				Method method = Material.class.getDeclaredMethod("createBlockData");
+				this.Data = method.invoke(Data);
+			} catch(Exception ex) {ex.printStackTrace();}
+		} else {
+			this.Data = new MaterialData(Data);
+		}
 		this.location = location;
 		this.world = location.getWorld();
 	}
 
-	public FallBlock(MaterialData Data, Location location, Vector vector) {
-		this.Data = Data;
+	public FallBlock(Material Data, Location location, Vector vector) {
+		if(ServerVersion.getVersion() >= 13) {
+			try {
+				Method method = Material.class.getDeclaredMethod("createBlockData");
+				this.Data = method.invoke(Data);
+			} catch(Exception ex) {ex.printStackTrace();}
+		} else {
+			this.Data = new MaterialData(Data);
+		}
 		this.location = location;
 		this.world = location.getWorld();
 		this.vector = vector;
 	}
 	
+	/**
+	 * FallingBlock를 스폰하지 못했을 경우 null 반환
+	 */
 	@SuppressWarnings("deprecation")
 	public FallingBlock Spawn(boolean SetBlock) {
-		if(ServerVersion.getVersion() >= 11) {
-			fb = world.spawnFallingBlock(location, Data);
+		if(ServerVersion.getVersion() >= 13) {
+			try {
+				Method spawnFallingBlock = World.class.getDeclaredMethod("spawnFallingBlock", Location.class, Class.forName("org.bukkit.block.data.BlockData"));
+				fb = (FallingBlock) spawnFallingBlock.invoke(world, location, Class.forName("org.bukkit.block.data.BlockData").cast(Data));
+			} catch(Exception ex) {}
+		} else if(ServerVersion.getVersion() >= 11) {
+			fb = world.spawnFallingBlock(location, (MaterialData) Data);
 		} else {
-			fb = world.spawnFallingBlock(location, Data.getItemType(), Data.getData());
+			fb = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), ((MaterialData) Data).getData());
 		}
 		
 		if(!SetBlock) {

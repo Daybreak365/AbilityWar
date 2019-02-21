@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -43,7 +44,7 @@ public class Zombie extends AbilityBase {
 	}.setPeriod(5);
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
@@ -62,4 +63,7 @@ public class Zombie extends AbilityBase {
 		Aim.StartTimer();
 	}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

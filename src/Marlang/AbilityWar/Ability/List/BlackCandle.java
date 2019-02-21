@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Ability.List;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -56,7 +57,7 @@ public class BlackCandle extends AbilityBase {
 	}.setPeriod(5);
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
@@ -83,4 +84,7 @@ public class BlackCandle extends AbilityBase {
 		NoDebuff.StartTimer();
 	}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

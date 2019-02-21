@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -44,7 +45,7 @@ public class TheMagician extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
@@ -60,7 +61,7 @@ public class TheMagician extends AbilityBase {
 						Location center = e.getEntity().getLocation();
 						for(Player p : LocationUtil.getNearbyPlayers(center, 5, 5)) {
 							if(!p.equals(getPlayer())) {
-								if(LocationUtil.isInCircle(p.getLocation(), center, 5.0)) {
+								if(LocationUtil.isInCircle(center, p.getLocation(), 5.0)) {
 									p.damage(3, p);
 									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(p);
 								}
@@ -80,5 +81,8 @@ public class TheMagician extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
 	
 }

@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -19,7 +20,7 @@ public class DevilBoots extends AbilityBase {
 	}
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 	
@@ -46,5 +47,8 @@ public class DevilBoots extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
 	
 }

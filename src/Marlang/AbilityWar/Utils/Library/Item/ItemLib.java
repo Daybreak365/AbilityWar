@@ -7,7 +7,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
@@ -239,6 +242,96 @@ public class ItemLib {
 		item.setItemMeta(setOwner(meta, owner));
 		
 		return item;
+	}
+	
+	public static class PotionBuilder {
+		
+		private Object Potion;
+		private PotionType effectType;
+		private boolean Extended = false;
+		private boolean Upgraded = false;
+
+		public PotionBuilder(PotionType effect, PotionShape type) {
+			if(ServerVersion.getVersion() >= 9) {
+				switch(type) {
+					case NORMAL:
+						Potion = new ItemStack(Material.POTION);
+						break;
+					case SPLASH:
+						Potion = new ItemStack(Material.SPLASH_POTION);
+						break;
+					case LINGERING:
+						Potion = new ItemStack(Material.LINGERING_POTION);
+						break;
+				}
+			} else {
+				try {
+					Class<?> potionClass = Class.forName("org.bukkit.potion.Potion");
+					Potion = potionClass.getConstructor(PotionType.class).newInstance(effect);
+					potionClass.getMethod("setSplash", boolean.class).invoke(potionClass.cast(Potion), type.equals(PotionShape.SPLASH));
+				} catch(Exception ex) {}
+			}
+			
+			this.effectType = effect;
+		}
+		
+		public PotionBuilder setExtended(boolean Extended) {
+			this.Extended = Extended;
+			return this;
+		}
+		
+		public PotionBuilder setUpgraded(boolean Upgraded) {
+			this.Upgraded = Upgraded;
+			return this;
+		}
+		
+		/**
+		 * 포션을 ItemStack으로 받아옵니다.
+		 * @param Amount	개수
+		 * @return			ItemStack, 오류가 났을 경우 null을 반환
+		 */
+		public ItemStack getItemStack(int Amount) {
+			if(ServerVersion.getVersion() >= 9) {
+				ItemStack potion = (ItemStack) Potion;
+				potion.setAmount(Amount);
+				PotionMeta meta = (PotionMeta) potion.getItemMeta();
+				try {
+					boolean Extend = Extended, Upgrade = Upgraded;
+					if(!effectType.isExtendable()) Extend = false;
+					if(!effectType.isUpgradeable()) Upgrade = false;
+
+					meta.setBasePotionData(new PotionData(effectType, Extend, Upgrade));
+				} catch(Exception ex) {}
+				potion.setItemMeta(meta);
+				
+				return potion;
+			} else {
+				try {
+					Class<?> potionClass = Class.forName("org.bukkit.potion.Potion");
+					potionClass.getMethod("setHasExtendedDuration", boolean.class).invoke(potionClass.cast(Potion), Extended);
+					potionClass.getMethod("setLevel", int.class).invoke(potionClass.cast(Potion), Upgraded ? 2 : 1);
+					return (ItemStack) potionClass.getMethod("toItemStack", int.class).invoke(potionClass.cast(Potion), Amount);
+				} catch(Exception ex) {}
+			}
+			
+			return null;
+		}
+		
+		public enum PotionShape {
+			/**
+			 * 일반 물약
+			 */
+			NORMAL,
+			/**
+			 * 투척용 물약
+			 */
+			SPLASH,
+			/**
+			 * 잔류형 물약
+			 */
+			LINGERING;
+		}
+		
 	}
 	
 }

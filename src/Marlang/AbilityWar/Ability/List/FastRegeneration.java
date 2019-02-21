@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -52,7 +53,7 @@ public class FastRegeneration extends AbilityBase {
 	}.setPeriod(RegenSpeedConfig.getValue());
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 	
@@ -63,5 +64,8 @@ public class FastRegeneration extends AbilityBase {
 	public void onRestrictClear() {
 		Passive.StartTimer();
 	}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
 	
 }

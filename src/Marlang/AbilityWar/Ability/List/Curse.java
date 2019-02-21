@@ -1,10 +1,9 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
@@ -12,7 +11,6 @@ import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class Curse extends AbilityBase {
 
@@ -35,62 +33,54 @@ public class Curse extends AbilityBase {
 	private Integer Count = CountConfig.getValue();
 
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.LeftClick)) {
-				if(Count > 0) {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&a대상&f이 없습니다!"));
-				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c이미 능력을 사용하였습니다."));
-				}
-			}
-		}
-		
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
 	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getDamager().equals(getPlayer())) {
-				if(e.getEntity() instanceof Player) {
-					Player p = (Player) e.getEntity();
-					if(!e.isCancelled()) {
-						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
-							if(Count > 0) {
-								ItemStack Helmet = p.getInventory().getHelmet();
-								if(Helmet != null) {
-									p.getInventory().setHelmet(EnchantLib.BINDING_CURSE.addEnchantment(Helmet, 1));
-								}
-
-								ItemStack Chestplate = p.getInventory().getChestplate();
-								if(Chestplate != null) {
-									p.getInventory().setChestplate(EnchantLib.BINDING_CURSE.addEnchantment(Chestplate, 1));
-								}
-								
-								ItemStack Leggings = p.getInventory().getLeggings();
-								if(Leggings != null) {
-									p.getInventory().setLeggings(EnchantLib.BINDING_CURSE.addEnchantment(Leggings, 1));
-								}
-
-								ItemStack Boots = p.getInventory().getBoots();
-								if(Boots != null) {
-									p.getInventory().setBoots(EnchantLib.BINDING_CURSE.addEnchantment(Boots, 1));
-								}
-								
-								SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(p);
-								
-								Count--;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(entity != null) {
+				if(entity instanceof Player) {
+					Player p = (Player) entity;
+					if(Count > 0) {
+						ItemStack Helmet = p.getInventory().getHelmet();
+						if(Helmet != null) {
+							p.getInventory().setHelmet(EnchantLib.BINDING_CURSE.addEnchantment(Helmet, 1));
+						}
+
+						ItemStack Chestplate = p.getInventory().getChestplate();
+						if(Chestplate != null) {
+							p.getInventory().setChestplate(EnchantLib.BINDING_CURSE.addEnchantment(Chestplate, 1));
+						}
+						
+						ItemStack Leggings = p.getInventory().getLeggings();
+						if(Leggings != null) {
+							p.getInventory().setLeggings(EnchantLib.BINDING_CURSE.addEnchantment(Leggings, 1));
+						}
+
+						ItemStack Boots = p.getInventory().getBoots();
+						if(Boots != null) {
+							p.getInventory().setBoots(EnchantLib.BINDING_CURSE.addEnchantment(Boots, 1));
+						}
+						
+						SoundLib.ENTITY_ELDER_GUARDIAN_CURSE.playSound(p);
+						
+						Count--;
+					}
+				}
+			} else {
+				if(Count <= 0) {
+					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c더 이상 이 능력을 사용할 수 없습니다!"));
+				}
+			}
+		}
+	}
+	
 }

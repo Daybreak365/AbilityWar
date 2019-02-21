@@ -2,6 +2,7 @@ package Marlang.AbilityWar.GameManager.Manager.GUI;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,8 +22,8 @@ import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.GameManager.Game.Game;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
-import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 
 /**
  * 관전자 설정 GUI
@@ -40,7 +41,7 @@ public class SpectatorGUI implements Listener {
 	
 	private Inventory SpectateGUI;
 	
-	public ArrayList<String> getPlayers() {
+	public List<String> getPlayers() {
 		ArrayList<String> list = new ArrayList<String>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
@@ -67,15 +68,16 @@ public class SpectatorGUI implements Listener {
 	}
 	
 	public void openSpectateGUI(Integer page) {
-		if ((AbilityList.values().size() - 1) / 36 + 1 < page)
+		List<String> Players = getPlayers();
+		Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;MaxPage = 100;
+		if (MaxPage < page)
 			page = 1;
 		if(page < 1) page = 1;
 		SpectateGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&b플레이어 &f목록"));
 		PlayerPage = page;
 		int Count = 0;
-		Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;
 		
-		for(String player : getPlayers()) {
+		for(String player : Players) {
 			ItemStack is;
 			
 			if(Game.getSpectators().contains(player)) {

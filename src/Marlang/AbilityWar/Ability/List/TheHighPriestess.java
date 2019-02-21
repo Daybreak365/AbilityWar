@@ -2,6 +2,7 @@ package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -68,7 +69,7 @@ public class TheHighPriestess extends AbilityBase {
 			center = getPlayer().getLocation();
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
-				if(LocationUtil.isInCircle(p.getLocation(), center, Double.valueOf(Range))) {
+				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range))) {
 					SoundLib.ENTITY_EVOKER_CAST_SPELL.playSound(p);
 				}
 			}
@@ -81,7 +82,7 @@ public class TheHighPriestess extends AbilityBase {
 			}
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
-				if(LocationUtil.isInCircle(p.getLocation(), center, Double.valueOf(Range))) {
+				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range))) {
 					if(p.equals(getPlayer())) {
 						PlayerCompat.addPotionEffect(p, PotionEffectType.REGENERATION, 100, 1, true);
 					} else {
@@ -97,9 +98,9 @@ public class TheHighPriestess extends AbilityBase {
 	}.setPeriod(1);
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if (mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if (ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if (mt.equals(MaterialType.Iron_Ingot)) {
+			if (ct.equals(ClickType.RightClick)) {
 				if(!Skill.isDuration() && !Cool.isCooldown()) {
 					
 					Skill.StartTimer();
@@ -118,4 +119,7 @@ public class TheHighPriestess extends AbilityBase {
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

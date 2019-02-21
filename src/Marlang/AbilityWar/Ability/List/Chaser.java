@@ -2,6 +2,7 @@ package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -36,11 +37,11 @@ public class Chaser extends AbilityBase {
 	Player target = null;
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.LeftClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(ct.equals(ClickType.LeftClick)) {
 				Cool.isCooldown();
-			} else if(ct.equals(ActiveClickType.RightClick)) {
+			} else if(ct.equals(ClickType.RightClick)) {
 				if(target != null) {
 					int X = (int) target.getLocation().getX();
 					int Y = (int) target.getLocation().getY();
@@ -81,4 +82,7 @@ public class Chaser extends AbilityBase {
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

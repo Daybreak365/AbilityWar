@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -51,9 +52,9 @@ public class TimeRewind extends AbilityBase {
 	Integer Time = TimeConfig.getValue();
 	
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if(mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if(ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if(mt.equals(MaterialType.Iron_Ingot)) {
+			if(ct.equals(ClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
 					Skill.StartTimer();
 					
@@ -143,5 +144,8 @@ public class TimeRewind extends AbilityBase {
 		}
 		
 	}
+
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
 	
 }

@@ -25,29 +25,55 @@ public class TitlePacket extends AbstractPacket {
 	public void Send(Player p) {
 		if(ServerVersion.getVersion() >= 8) {
 			try {
-				Object Title = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
-						.getMethod("a", String.class)
-						.invoke(null, "{\"text\": \"" + this.Title + "\"}");
-				Object SubTitle = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
-						.getMethod("a", String.class)
-						.invoke(null, "{\"text\": \"" + this.SubTitle + "\"}");
-				
-				Constructor<?> Constructor = getNMSClass("PacketPlayOutTitle").getConstructor(
-						getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
-						getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
-				Object TimePacket = Constructor.newInstance(
-						getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES").get(null),
-						Title, this.fadeIn, this.stay, this.fadeOut);
-				Object TitlePacket = Constructor.newInstance(
-						getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE").get(null),
-						Title, this.fadeIn, this.stay, this.fadeOut);
-				Object SubTitlePacket = Constructor.newInstance(
-						getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("SUBTITLE").get(null),
-						SubTitle, this.fadeIn, this.stay, this.fadeOut);
+				if(ServerVersion.getVersion() >= 11) {
+					p.sendTitle(Title, SubTitle, fadeIn, stay, fadeOut);
+				} else if(ServerVersion.getVersion() >= 9) {
+					Object Title = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+							.getMethod("a", String.class)
+							.invoke(null, "{\"text\": \"" + this.Title + "\"}");
+					Object SubTitle = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+							.getMethod("a", String.class)
+							.invoke(null, "{\"text\": \"" + this.SubTitle + "\"}");
+					
+					Constructor<?> Constructor = getNMSClass("PacketPlayOutTitle").getConstructor(
+							getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
+							getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
+					Object TimePacket = Constructor.newInstance(
+							getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES").get(null),
+							Title, this.fadeIn, this.stay, this.fadeOut);
+					Object TitlePacket = Constructor.newInstance(
+							getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE").get(null),
+							Title, this.fadeIn, this.stay, this.fadeOut);
+					Object SubTitlePacket = Constructor.newInstance(
+							getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("SUBTITLE").get(null),
+							SubTitle, this.fadeIn, this.stay, this.fadeOut);
 
-				sendPacket(p, TimePacket);
-				sendPacket(p, TitlePacket);
-				sendPacket(p, SubTitlePacket);
+					sendPacket(p, TimePacket);
+					sendPacket(p, TitlePacket);
+					sendPacket(p, SubTitlePacket);
+				} else {
+					Object Title = getNMSClass("ChatSerializer").getMethod("a", String.class)
+							.invoke(null, "{\"text\": \"" + this.Title + "\"}");
+					Object SubTitle = getNMSClass("ChatSerializer").getMethod("a", String.class)
+							.invoke(null, "{\"text\": \"" + this.SubTitle + "\"}");
+					
+					Constructor<?> Constructor = getNMSClass("PacketPlayOutTitle").getConstructor(
+							getNMSClass("EnumTitleAction"),
+							getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
+					Object TimePacket = Constructor.newInstance(
+							getNMSClass("EnumTitleAction").getField("TIMES").get(null),
+							Title, this.fadeIn, this.stay, this.fadeOut);
+					Object TitlePacket = Constructor.newInstance(
+							getNMSClass("EnumTitleAction").getField("TITLE").get(null),
+							Title, this.fadeIn, this.stay, this.fadeOut);
+					Object SubTitlePacket = Constructor.newInstance(
+							getNMSClass("EnumTitleAction").getField("SUBTITLE").get(null),
+							SubTitle, this.fadeIn, this.stay, this.fadeOut);
+
+					sendPacket(p, TimePacket);
+					sendPacket(p, TitlePacket);
+					sendPacket(p, SubTitlePacket);
+				}
 			} catch(Exception ex) {}
 		}
 	}

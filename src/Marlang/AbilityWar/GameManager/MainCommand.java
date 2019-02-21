@@ -32,6 +32,7 @@ import Marlang.AbilityWar.GameManager.Script.ScriptException;
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
 import Marlang.AbilityWar.GameManager.Script.Objects.AbstractScript;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
@@ -333,9 +334,35 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 			}
+		} else if(args[0].equalsIgnoreCase("kit")) {
+			if(AbilityWarThread.isGameTaskRunning()) {
+				if(args.length < 2) {
+					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " util kit <대상>"));
+				} else {
+					if(args[1].equalsIgnoreCase("@a")) {
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 &f전체 유저&a에게 기본템을 다시 지급하였습니다."));
+						AbilityWarThread.getGame().GiveDefaultKit();
+					} else {
+						if(Bukkit.getPlayerExact(args[1]) != null) {
+							Player target = Bukkit.getPlayerExact(args[1]);
+							if(AbilityWarThread.getGame().getParticipants().contains(target)) {
+								AbilityWarThread.getGame().GiveDefaultKit(target);
+								SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(target);
+								Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 &f" + target.getName() + "&a님에게 기본템을 다시 지급하였습니다."));
+							} else {
+								Messager.sendErrorMessage(p, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+							}
+						} else {
+							Messager.sendErrorMessage(p, args[1] + "은(는) 존재하지 않는 플레이어입니다.");
+						}
+					}
+				}
+			} else {
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
+			}
 		} else {
 			if(NumberUtil.isInt(args[0])) {
-				sendHelpConfigCommand(p, label, Integer.valueOf(args[0]));
+				sendHelpUtilCommand(p, label, Integer.valueOf(args[0]));
 			} else {
 				Messager.sendErrorMessage(p, "존재하지 않는 유틸입니다.");
 			}
@@ -399,7 +426,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendHelpUtilCommand(CommandSender sender, String label, Integer Page) {
-		int AllPage = 1;
+		int AllPage = 2;
 		
 		switch(Page) {
 			case 1:
@@ -411,6 +438,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Messager.formatCommand(label + " util", "ablist", "능력자 목록을 확인합니다.", true),
 						Messager.formatCommand(label + " util", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true),
 						Messager.formatCommand(label + " util", "resetcool", "플레이어들의 능력 쿨타임을 초기화시킵니다.", true)));
+				break;
+			case 2:
+				Messager.sendStringList(sender, Messager.getStringList(
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
+						Messager.formatCommand(label + " util", "kit <대상>", "대상에게 기본템을 다시 지급합니다.", true)));
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -448,7 +481,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						}
 					} else if(args[0].equalsIgnoreCase("util")) {
 						ArrayList<String> Util = Messager.getStringList(
-								"abi", "spec", "ablist", "blacklist", "resetcool");
+								"abi", "spec", "ablist", "blacklist", "resetcool", "kit");
 						if(args[1].isEmpty()) {
 							return Util;
 						} else {
@@ -464,7 +497,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						}
 					}
 				case 3:
-					if(args[0].equalsIgnoreCase("util") && args[1].equalsIgnoreCase("abi")) {
+					if(args[0].equalsIgnoreCase("util") && (args[1].equalsIgnoreCase("abi") || args[1].equalsIgnoreCase("kit"))) {
 						ArrayList<String> Players = new ArrayList<String>();
 						for(Player p : Bukkit.getOnlinePlayers()) Players.add(p.getName());
 						Players.add("@a");

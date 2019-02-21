@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -29,7 +30,7 @@ public class Hermit extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
@@ -41,8 +42,8 @@ public class Hermit extends AbilityBase {
 			PlayerMoveEvent e = (PlayerMoveEvent) event;
 			Player p = e.getPlayer();
 			if(p.getWorld().equals(getPlayer().getWorld())) {
-				if(!LocationUtil.isInCircle(e.getFrom(), getPlayer().getLocation(), Double.valueOf(Distance)) && 
-						LocationUtil.isInCircle(e.getTo(), getPlayer().getLocation(), Double.valueOf(Distance))) {
+				if(!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), Double.valueOf(Distance)) && 
+						LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), Double.valueOf(Distance))) {
 					if(AbilityWarThread.isGameTaskRunning() && AbilityWarThread.getGame().isParticipating(p)) {
 						TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&8헤르밋"),
 								ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + " &f접근중"), 5, 30, 5);
@@ -56,4 +57,7 @@ public class Hermit extends AbilityBase {
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }

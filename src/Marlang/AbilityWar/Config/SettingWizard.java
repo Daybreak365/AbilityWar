@@ -24,6 +24,7 @@ import Marlang.AbilityWar.Utils.Data.FileManager;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * 콘피그 설정 마법사
@@ -170,7 +171,12 @@ public class SettingWizard implements Listener {
 				
 				GameGUI.setItem(i, Dur);
 			} else if(i.equals(22)) {
-				ItemStack Firewall = new ItemStack(Material.BARRIER);
+				ItemStack Firewall;
+				if(ServerVersion.getVersion() >= 8) {
+					Firewall = new ItemStack(Material.BARRIER);
+				} else {
+					Firewall = new ItemStack(Material.BEDROCK);
+				}
 				ItemMeta FirewallMeta = Firewall.getItemMeta();
 				FirewallMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b방화벽"));
 				FirewallMeta.setLore(Messager.getStringList(

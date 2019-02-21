@@ -1,10 +1,13 @@
 package Marlang.AbilityWar.Ability.List;
 
+import java.lang.reflect.Method;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -22,6 +25,7 @@ import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 public class Nex extends AbilityBase {
 
@@ -52,9 +56,9 @@ public class Nex extends AbilityBase {
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(ActiveMaterialType mt, ActiveClickType ct) {
-		if (mt.equals(ActiveMaterialType.Iron_Ingot)) {
-			if (ct.equals(ActiveClickType.RightClick)) {
+	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+		if (mt.equals(MaterialType.Iron_Ingot)) {
+			if (ct.equals(ClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
 					for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
@@ -131,9 +135,25 @@ public class Nex extends AbilityBase {
 						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
 						
 						if(!db.getType().equals(Material.AIR)) {
-							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(db.getType()));
+							if(ServerVersion.getVersion() >= 13) {
+								try {
+									Method method = Material.class.getDeclaredMethod("createBlockData");
+									Object BlockData = method.invoke(db.getType());
+									ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
+								} catch(Exception ex) {}
+							} else {
+								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(db.getType()));
+							}
 						} else {
-							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));
+							if(ServerVersion.getVersion() >= 13) {
+								try {
+									Method method = Material.class.getDeclaredMethod("createBlockData");
+									Object BlockData = method.invoke(b.getType());
+									ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
+								} catch(Exception ex) {}
+							} else {
+								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));
+							}
 						}
 						
 						FallBlock.StartTimer();
@@ -157,7 +177,7 @@ public class Nex extends AbilityBase {
 			Integer Distance = 6 - Seconds;
 			
 			for(Block block : LocationUtil.getBlocks(center, Distance, true, true, false)) {
-				FallBlock fb = new FallBlock(block.getState().getData(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0));
+				FallBlock fb = new FallBlock(block.getType(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0));
 				fb.Spawn(false);
 			}
 			
@@ -176,4 +196,7 @@ public class Nex extends AbilityBase {
 	@Override
 	public void onRestrictClear() {}
 
+	@Override
+	public void TargetSkill(MaterialType mt, Entity entity) {}
+	
 }
