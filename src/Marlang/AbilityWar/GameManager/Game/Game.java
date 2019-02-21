@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -22,6 +23,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
+import Marlang.AbilityWar.GameManager.Manager.InfiniteDurability;
 import Marlang.AbilityWar.GameManager.Manager.Invincibility;
 import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.Utils.Messager;
@@ -41,6 +43,8 @@ public class Game extends AbstractGame {
 	}
 	
 	private boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
+	
+	private InfiniteDurability infiniteDurability = new InfiniteDurability();
 	
 	private Invincibility invincibility = new Invincibility(this);
 	
@@ -245,7 +249,13 @@ public class Game extends AbstractGame {
 				Ability.setRestricted(false);
 			}
 		}
-
+		
+		if(AbilityWarSettings.getInfiniteDurability()) {
+			Bukkit.getPluginManager().registerEvents(infiniteDurability, AbilityWar.getPlugin());
+		} else {
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
+		}
+		
 		for(World w : Bukkit.getWorlds()) {
 			if(AbilityWarSettings.getClearWeather()) {
 				w.setStorm(false);
@@ -406,6 +416,11 @@ public class Game extends AbstractGame {
 				}
 			}
 		}
+	}
+
+	@Override
+	protected void onEnd() {
+		HandlerList.unregisterAll(infiniteDurability);
 	}
 	
 }

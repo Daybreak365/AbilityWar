@@ -232,7 +232,10 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		return gameListener;
 	}
 	
+	abstract protected void onEnd();
+	
 	public void onGameEnd() {
+		onEnd();
 		TimerBase.ResetTasks();
 		HandlerList.unregisterAll(getGameListener());
 		HandlerList.unregisterAll(this);

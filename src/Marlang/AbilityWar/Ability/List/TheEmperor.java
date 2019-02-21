@@ -8,7 +8,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
@@ -63,7 +62,6 @@ public class TheEmperor extends AbilityBase {
 				e.setDamage(damage);
 				
 				Integer Health = (int) getPlayer().getHealth();
-				Messager.broadcastMessage(Health.toString());
 				if(Health <= 2) {
 					e.setCancelled(true);
 				}
