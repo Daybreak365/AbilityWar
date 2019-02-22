@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 
@@ -55,6 +56,9 @@ import Marlang.AbilityWar.Ability.List.Zombie;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
 
+/**
+ * 능력자 전쟁 플러그인의 능력 목록을 관리하는 클래스입니다.
+ */
 public class AbilityList {
 	
 	private static HashMap<String, Class<? extends AbilityBase>> Abilities = new HashMap<String, Class<? extends AbilityBase>>();
@@ -133,7 +137,10 @@ public class AbilityList {
 		registerAbility("시간 역행", TimeRewind.class);
 	}
 	
-	public static ArrayList<String> values() {
+	/**
+	 * 등록된 능력들의 이름을 String List로 반환합니다.
+	 */
+	public static List<String> values() {
 		ArrayList<String> Values = new ArrayList<String>();
 		
 		for(String s : Abilities.keySet()) {
@@ -143,6 +150,11 @@ public class AbilityList {
 		return Values;
 	}
 
+	/**
+	 * 등록된 능력 중 해당 이름의 능력을 반환합니다.
+	 * @param name	능력의 이름
+	 * @return		능력 Class
+	 */
 	public static Class<? extends AbilityBase> getByString(String name) {
 		return Abilities.get(name);
 	}

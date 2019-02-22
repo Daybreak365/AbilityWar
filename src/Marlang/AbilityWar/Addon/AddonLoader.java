@@ -31,6 +31,10 @@ public class AddonLoader {
 	
 	private static AddonLoader addonLoader = null;
 	
+	/**
+	 * AddonLoader 인스턴스를 반환합니다.
+	 * @return
+	 */
 	public static AddonLoader getInstance() {
 		if(addonLoader != null) {
 			return addonLoader;
@@ -42,6 +46,9 @@ public class AddonLoader {
 	
 	private ArrayList<Addon> Addons = new ArrayList<Addon>();
 	
+	/**
+	 * 불러와진 애드온들의 설명 목록을 반환합니다.
+	 */
 	public List<DescriptionFile> getDescriptions() {
 		List<DescriptionFile> desc = new ArrayList<DescriptionFile>();
 		for(Addon addon : Addons) {
@@ -51,6 +58,9 @@ public class AddonLoader {
 		return desc;
 	}
 	
+	/**
+	 * 애드온 폴더에 있는 모든 애드온을 불러옵니다.
+	 */
 	public void loadAddons() {
 		for(File file : FileManager.getFolder("Addon").listFiles()) {
 			try {
@@ -78,43 +88,45 @@ public class AddonLoader {
 		}
 	}
 	
+	/**
+	 * 애드온을 불러옵니다.
+	 * @param file			애드온의 기반이 되는 파일
+	 * @return				불러온 애드온
+	 * @throws Exception	애드온을 불러오는 도중 오류가 발생하였을 경우
+	 */
 	private Addon loadAddon(File file) throws Exception {
-		try {
-			JarFile jar = new JarFile(file);
-			URL[] url = { file.toURI().toURL() };
-			URLClassLoader loader = new URLClassLoader(url, AbilityWar.class.getClassLoader());
+		JarFile jar = new JarFile(file);
+		URL[] url = { file.toURI().toURL() };
+		URLClassLoader loader = new URLClassLoader(url, AbilityWar.class.getClassLoader());
+		
+		DescriptionFile description = new DescriptionFile(jar);
+		Class<?> mainClass = loader.loadClass(description.getMain());
+		
+		if(mainClass.getSuperclass() != null && mainClass.getSuperclass().equals(Addon.class)) {
+			Addon addon = (Addon) mainClass.newInstance();
+			//DescriptionFile Initialize
+			Field field = mainClass.getSuperclass().getDeclaredField("description");
+			field.setAccessible(true);
+			field.set(addon, description);
+			field.setAccessible(false);
+			//DescriptionFile Initialize
 			
-			DescriptionFile description = new DescriptionFile(jar);
-			Class<?> mainClass = loader.loadClass(description.getMain());
+			Enumeration<JarEntry> entries = jar.entries();
 			
-			if(mainClass.getSuperclass() != null && mainClass.getSuperclass().equals(Addon.class)) {
-				Addon addon = (Addon) mainClass.newInstance();
-				//DescriptionFile Initialize
-				Field field = mainClass.getSuperclass().getDeclaredField("description");
-				field.setAccessible(true);
-				field.set(addon, description);
-				field.setAccessible(false);
-				//DescriptionFile Initialize
-				
-				Enumeration<JarEntry> entries = jar.entries();
-				
-				while(entries.hasMoreElements()) {
-					JarEntry entry = entries.nextElement();
-					if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
-						String className = entry.getName().replaceAll("/", ".").replace(".class", "");
-						loader.loadClass(className);
-					}
+			while(entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
+					String className = entry.getName().replaceAll("/", ".").replace(".class", "");
+					loader.loadClass(className);
 				}
-				loader.close();
-				
-				return addon;
-			} else {
-				loader.close();
-				
-				throw new InstantiationException();
 			}
-		} catch(IOException exception) {
-			throw new IOException();
+			loader.close();
+			
+			return addon;
+		} else {
+			loader.close();
+			
+			throw new InstantiationException();
 		}
 	}
 	

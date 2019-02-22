@@ -18,7 +18,7 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * Falling Block
+ * FallingBlock을 더욱 편하게 사용하기 위해 만든 유틸입니다.
  * @author _Marlang 말랑
  */
 public abstract class FallBlock implements Listener {
@@ -28,6 +28,11 @@ public abstract class FallBlock implements Listener {
 	private World world;
 	private Vector vector = new Vector(0, 0, 0);
 
+	/**
+	 * Fallblock의 기본 생성자입니다.
+	 * @param Data		생성할 FallingBlock의 종류
+	 * @param location	생성할 위치
+	 */
 	public FallBlock(Material Data, Location location) {
 		if(ServerVersion.getVersion() >= 13) {
 			try {
@@ -41,6 +46,12 @@ public abstract class FallBlock implements Listener {
 		this.world = location.getWorld();
 	}
 
+	/**
+	 * Fallblock의 기본 생성자입니다.
+	 * @param Data		생성할 FallingBlock의 종류
+	 * @param location	생성할 위치
+	 * @param vector	생성할 때 적용할 벡터
+	 */
 	public FallBlock(Material Data, Location location, Vector vector) {
 		if(ServerVersion.getVersion() >= 13) {
 			try {
@@ -56,7 +67,10 @@ public abstract class FallBlock implements Listener {
 	}
 	
 	/**
-	 * FallingBlock를 스폰하지 못했을 경우 null 반환
+	 * FallinBlock을 스폰합니다.
+	 * @param setBlock 	FallingBlock이 땅에 떨어졌을 때 블록 설치으로 설치될지 여부
+	 * @return 			스폰한 FallingBlock
+	 * 					FallingBlock를 스폰하지 못했을 경우 null 반환
 	 */
 	@SuppressWarnings("deprecation")
 	public FallingBlock Spawn(boolean setBlock) {
@@ -88,8 +102,15 @@ public abstract class FallBlock implements Listener {
 	private boolean setBlock;
 	private FallingBlock fb;
 	
+	/**
+	 * FallingBlock 스폰한 엔티티가 땅에 떨어졌을 때 호출됩니다.
+	 * @param block	FallingBlock 엔티티
+	 */
 	abstract public void onChangeBlock(FallingBlock block);
 	
+	/**
+	 * FallingBlock이 땅에 떨어졌을 때 블록 설치 캔슬 및 onChangeBlock() 호출을 위해 사용됩니다.
+	 */
 	@EventHandler
 	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
 		if(fb.equals(e.getEntity())) {

@@ -30,6 +30,7 @@ public class AbilityWarThread {
 	
 	/**
 	 * 진행중인 게임을 종료합니다.
+	 * 진행중인 게임이 없을 경우 아무 작업도 하지 않습니다.
 	 */
 	public static void stopGame() {
 		if(isGameTaskRunning()) {

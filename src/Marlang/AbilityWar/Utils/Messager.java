@@ -250,14 +250,14 @@ public class Messager {
 	}
 	
 	/**
-	 * 첫번째 인수를 삭제합니다.
+	 * String 배열에서 첫번째 인수를 삭제합니다.
 	 */
 	public static String[] removeFirstArg(String[] args) {
 		return removeArgs(args, 1);
 	}
 	
 	/**
-	 * 배열에서 인수를 삭제합니다.
+	 * String 배열에서 인수를 삭제합니다.
 	 */
 	public static String[] removeArgs(String[] args, int startIndex) {
 		if (args.length == 0)
