@@ -32,6 +32,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityBase.ClickType;
 import Marlang.AbilityWar.Ability.AbilityBase.MaterialType;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.GameManager.Events.EventCaller;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
@@ -43,6 +44,8 @@ public class GameListener implements Listener, EventExecutor {
 		this.game = abstractGame;
 		
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+		
+		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, this, EventPriority.HIGHEST, new EventCaller(), AbilityWar.getPlugin());
 		
 		for(Class<? extends Event> e : PassiveEvents) {
 			Bukkit.getPluginManager().registerEvent(e, this, EventPriority.HIGH, this, AbilityWar.getPlugin());
