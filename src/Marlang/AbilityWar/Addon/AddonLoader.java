@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -19,7 +19,26 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 
+/**
+ * 애드온에 직접적으로 엑세스하여 처리하는 로더입니다.
+ * @author _Marlang 말랑
+ */
 public class AddonLoader {
+	
+	private AddonLoader() {
+		//외부에서 AddonLoader를 인스턴스화하지 못하도록 방지
+	}
+	
+	private static AddonLoader addonLoader = null;
+	
+	public static AddonLoader getInstance() {
+		if(addonLoader != null) {
+			return addonLoader;
+		} else {
+			addonLoader = new AddonLoader();
+			return addonLoader;
+		}
+	}
 	
 	private ArrayList<Addon> Addons = new ArrayList<Addon>();
 	
@@ -60,47 +79,50 @@ public class AddonLoader {
 	}
 	
 	private Addon loadAddon(File file) throws Exception {
-		JarFile jar = new JarFile(file);
-		
-		URL[] url = { file.toURI().toURL() };
-		URLClassLoader loader = new URLClassLoader(url, AbilityWar.class.getClassLoader());
-		
-		DescriptionFile description = new DescriptionFile(jar);
-		Class<?> mainClass = loader.loadClass(description.getAddonMain());
-		
-		if(mainClass.getSuperclass().equals(Addon.class)) {
-			Addon addon = (Addon) mainClass.newInstance();
-			//DescriptionFile Initialize
-			Method setDescription = mainClass.getSuperclass().getDeclaredMethod("setDescription", DescriptionFile.class);
-			setDescription.setAccessible(true);
-			setDescription.invoke(addon, description);
-			setDescription.setAccessible(false);
-			//DescriptionFile Initialize
+		try {
+			JarFile jar = new JarFile(file);
+			URL[] url = { file.toURI().toURL() };
+			URLClassLoader loader = new URLClassLoader(url, AbilityWar.class.getClassLoader());
 			
-			Enumeration<JarEntry> entries = jar.entries();
+			DescriptionFile description = new DescriptionFile(jar);
+			Class<?> mainClass = loader.loadClass(description.getMain());
 			
-			while(entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
-					String className = entry.getName().replaceAll("/", ".").replace(".class", "");
-					loader.loadClass(className);
+			if(mainClass.getSuperclass() != null && mainClass.getSuperclass().equals(Addon.class)) {
+				Addon addon = (Addon) mainClass.newInstance();
+				//DescriptionFile Initialize
+				Field field = mainClass.getSuperclass().getDeclaredField("description");
+				field.setAccessible(true);
+				field.set(addon, description);
+				field.setAccessible(false);
+				//DescriptionFile Initialize
+				
+				Enumeration<JarEntry> entries = jar.entries();
+				
+				while(entries.hasMoreElements()) {
+					JarEntry entry = entries.nextElement();
+					if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
+						String className = entry.getName().replaceAll("/", ".").replace(".class", "");
+						loader.loadClass(className);
+					}
 				}
+				loader.close();
+				
+				return addon;
+			} else {
+				loader.close();
+				
+				throw new InstantiationException();
 			}
-			loader.close();
-			
-			return addon;
-		} else {
-			loader.close();
-			
+		} catch(IOException exception) {
 			throw new IOException();
 		}
 	}
 	
 	public class DescriptionFile {
 
-		private final String AddonName;
-		private final String AddonMain;
-		private final String AddonVersion;
+		private final String Name;
+		private final String Main;
+		private final String Version;
 		
 		private DescriptionFile(JarFile jarFile) throws IOException {
 			ZipEntry entry = jarFile.getEntry("addon.yml");
@@ -124,9 +146,9 @@ public class AddonLoader {
 				}
 				
 				if(!AddonName.isEmpty() && !AddonMain.isEmpty() && !AddonVersion.isEmpty()) {
-					this.AddonName = AddonName;
-					this.AddonMain = AddonMain;
-					this.AddonVersion = AddonVersion;
+					this.Name = AddonName;
+					this.Main = AddonMain;
+					this.Version = AddonVersion;
 				} else {
 					throw new IOException();
 				}
@@ -135,16 +157,16 @@ public class AddonLoader {
 			}
 		}
 		
-		public String getAddonName() {
-			return AddonName;
+		public String getName() {
+			return Name;
 		}
 		
-		public String getAddonMain() {
-			return AddonMain;
+		public String getMain() {
+			return Main;
 		}
 		
-		public String getAddonVersion() {
-			return AddonVersion;
+		public String getVersion() {
+			return Version;
 		}
 		
 	}

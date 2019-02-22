@@ -36,6 +36,7 @@ public class ServerVersion {
 			try {
 				Version = Integer.valueOf(versionArray[1]);
 			} catch (NumberFormatException ex) {
+				//Ignore: Should Never Happen
 			}
 		}
 
@@ -63,7 +64,7 @@ public class ServerVersion {
 			apiVersion.set(desc, Version);
 			apiVersion.setAccessible(false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//Ignore: Should Never Happen
 		}
 	}
 	

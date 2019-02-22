@@ -10,8 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
-import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
-import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Validate;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
@@ -57,12 +55,10 @@ abstract public class AbilityBase {
 		for(Field field : this.getClass().getDeclaredFields()) {
 			try {
 				field.setAccessible(true);
-				if(field.getType().isAssignableFrom(TimerBase.class)) {
+				Class<?> type = field.getType();
+				Class<?> superClass = type.getSuperclass();
+				if(type.equals(TimerBase.class) ||(superClass != null && superClass.equals(TimerBase.class))) {
 					Timers.add((TimerBase) field.get(this));
-				} else if(field.getType().isAssignableFrom(DurationTimer.class)) {
-					Timers.add((DurationTimer) field.get(this));
-				} else if(field.getType().isAssignableFrom(CooldownTimer.class)) {
-					Timers.add((CooldownTimer) field.get(this));
 				}
 				field.setAccessible(false);
 			} catch (IllegalArgumentException | IllegalAccessException | NullPointerException exception) {
