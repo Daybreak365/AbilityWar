@@ -11,11 +11,10 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class TheHighPriestess extends AbilityBase {
 
@@ -84,9 +83,9 @@ public class TheHighPriestess extends AbilityBase {
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
 				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range))) {
 					if(p.equals(getPlayer())) {
-						PlayerCompat.addPotionEffect(p, PotionEffectType.REGENERATION, 100, 1, true);
+						EffectLib.REGENERATION.addPotionEffect(p, 100, 1, true);
 					} else {
-						PlayerCompat.addPotionEffect(p, PotionEffectType.WITHER, 100, 1, true);
+						EffectLib.WITHER.addPotionEffect(p, 100, 1, true);
 					}
 				}
 			}

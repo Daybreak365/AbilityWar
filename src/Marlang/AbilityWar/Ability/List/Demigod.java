@@ -10,8 +10,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 
 public class Demigod extends AbilityBase {
 	
@@ -52,11 +51,11 @@ public class Demigod extends AbilityBase {
 						if((r.nextInt(100) + 1) <= Chance) {
 							Integer Buff = r.nextInt(3);
 							if(Buff.equals(0)) {
-								PlayerCompat.addPotionEffect(p, PotionEffectType.ABSORPTION, 100, 0, true);
+								EffectLib.ABSORPTION.addPotionEffect(p, 100, 0, true);
 							} else if(Buff.equals(1)) {
-								PlayerCompat.addPotionEffect(p, PotionEffectType.REGENERATION, 100, 0, true);
+								EffectLib.REGENERATION.addPotionEffect(p, 100, 0, true);
 							} else if(Buff.equals(2)) {
-								PlayerCompat.addPotionEffect(p, PotionEffectType.DAMAGE_RESISTANCE, 100, 1, true);
+								EffectLib.DAMAGE_RESISTANCE.addPotionEffect(p, 100, 1, true);
 							}
 						}
 					}

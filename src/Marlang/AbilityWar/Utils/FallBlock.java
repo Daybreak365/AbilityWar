@@ -21,7 +21,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  * Falling Block
  * @author _Marlang 말랑
  */
-public class FallBlock implements Listener {
+public abstract class FallBlock implements Listener {
 
 	private Object Data = null;
 	private Location location;
@@ -59,7 +59,7 @@ public class FallBlock implements Listener {
 	 * FallingBlock를 스폰하지 못했을 경우 null 반환
 	 */
 	@SuppressWarnings("deprecation")
-	public FallingBlock Spawn(boolean SetBlock) {
+	public FallingBlock Spawn(boolean setBlock) {
 		if(ServerVersion.getVersion() >= 13) {
 			try {
 				Method spawnFallingBlock = World.class.getDeclaredMethod("spawnFallingBlock", Location.class, Class.forName("org.bukkit.block.data.BlockData"));
@@ -71,9 +71,8 @@ public class FallBlock implements Listener {
 			fb = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), ((MaterialData) Data).getData());
 		}
 		
-		if(!SetBlock) {
-			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		}
+		this.setBlock = setBlock;
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		
 		if(ServerVersion.getVersion() >= 9) {
 			fb.setInvulnerable(true);
@@ -86,13 +85,19 @@ public class FallBlock implements Listener {
 		return fb;
 	}
 	
-	FallingBlock fb;
+	private boolean setBlock;
+	private FallingBlock fb;
+	
+	abstract public void onChangeBlock(FallingBlock block);
 	
 	@EventHandler
 	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
 		if(fb.equals(e.getEntity())) {
-			e.setCancelled(true);
-			e.getEntity().remove();
+			onChangeBlock(fb);
+			if(!setBlock) {
+				e.setCancelled(true);
+				e.getEntity().remove();
+			}
 			
 			HandlerList.unregisterAll(this);
 		}

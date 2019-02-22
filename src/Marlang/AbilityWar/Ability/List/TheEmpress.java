@@ -14,14 +14,13 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 public class TheEmpress extends AbilityBase {
@@ -75,14 +74,14 @@ public class TheEmpress extends AbilityBase {
 					
 					if(X.isPlus() && Z.isPlus()) {
 						if(bool) {
-							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.INCREASE_DAMAGE, 200, 1, true);
+							EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 200, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.DIAMOND_SWORD);
 							getPlayer().getInventory().addItem(EnchantLib.DAMAGE_ALL.addEnchantment(is, 4));
 						}
 					} else if(X.isPlus() && Z.isMinus()) {
 						if(bool) {
-							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.DAMAGE_RESISTANCE, 400, 1, true);
+							EffectLib.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 1, true);
 						} else {
 							if(ServerVersion.getVersion() >= 9) {
 								getPlayer().getInventory().addItem(new ItemStack(Material.SHIELD));
@@ -92,14 +91,14 @@ public class TheEmpress extends AbilityBase {
 						}
 					} else if(X.isMinus() && Z.isPlus()) {
 						if(bool) {
-							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.SPEED, 600, 1, true);
+							EffectLib.SPEED.addPotionEffect(getPlayer(), 600, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.BOW);
 							getPlayer().getInventory().addItem(EnchantLib.ARROW_INFINITE.addEnchantment(is, 1));
 						}
 					} else if(X.isMinus() && Z.isMinus()) {
 						if(bool) {
-							PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.REGENERATION, 400, 1, true);
+							EffectLib.REGENERATION.addPotionEffect(getPlayer(), 400, 1, true);
 						} else {
 							getPlayer().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
 						}

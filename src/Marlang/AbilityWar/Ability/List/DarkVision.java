@@ -7,10 +7,9 @@ import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class DarkVision extends AbilityBase {
 	
@@ -37,8 +36,8 @@ public class DarkVision extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.BLINDNESS, 40, 0, true);
-			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.SPEED, 40, 3, true);
+			EffectLib.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
+			EffectLib.SPEED.addPotionEffect(getPlayer(), 40, 3, true);
 		}
 		
 		@Override
@@ -56,7 +55,7 @@ public class DarkVision extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), Distance, Distance)) {
-				PlayerCompat.addPotionEffect(p, PotionEffectType.GLOWING, 10, 0, true);
+				EffectLib.GLOWING.addPotionEffect(p, 10, 0, true);
 			}
 		}
 		

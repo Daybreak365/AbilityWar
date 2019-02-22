@@ -9,6 +9,8 @@ import org.bukkit.Note.Tone;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
@@ -73,9 +75,23 @@ public class TimeRewind extends AbilityBase {
 			if(e.getEntity().equals(getPlayer())) {
 				array = new AdvancedArray<>(PlayerData.class, Time * 20);
 			}
+		} else if(event instanceof EntityDamageEvent) {
+			EntityDamageEvent e = (EntityDamageEvent) event;
+			if(e.getEntity().equals(getPlayer()) && Rewinding) {
+				e.setCancelled(true);
+			}
+			
+			if(e instanceof EntityDamageByEntityEvent) {
+				EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) e;
+				if(damageEvent.getDamager().equals(getPlayer()) && Rewinding) {
+					e.setCancelled(true);
+				}
+			}
 		}
 	}
-
+	
+	boolean Rewinding = false;
+	
 	AdvancedArray<PlayerData> array = new AdvancedArray<>(PlayerData.class, Time * 20);
 	
 	DurationTimer Skill = new DurationTimer(this, Time * 20, Cool) {
@@ -84,6 +100,7 @@ public class TimeRewind extends AbilityBase {
 		
 		@Override
 		public void onDurationStart() {
+			Rewinding = true;
 			this.list = array.getList();
 		}
 		
@@ -98,6 +115,7 @@ public class TimeRewind extends AbilityBase {
 		
 		@Override
 		public void onDurationEnd() {
+			Rewinding = false;
 			SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
 			SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(0, Tone.F));
 			SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));

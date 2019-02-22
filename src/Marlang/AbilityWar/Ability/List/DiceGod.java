@@ -12,8 +12,8 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class DiceGod extends AbilityBase {
 
@@ -48,22 +48,22 @@ public class DiceGod extends AbilityBase {
 					
 					if(random.equals(0)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c재생 &f효과를 받았습니다."));
-						PlayerCompat.addPotionEffect(p, PotionEffectType.REGENERATION, 200, 1, true);
+						EffectLib.REGENERATION.addPotionEffect(p, 200, 1, true);
 					} else if(random.equals(1)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b신속 &f효과를 받았습니다."));
-						PlayerCompat.addPotionEffect(p, PotionEffectType.SPEED, 200, 1, true);
+						EffectLib.SPEED.addPotionEffect(p, 200, 1, true);
 					} else if(random.equals(2)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6힘 &f효과를 받았습니다."));
-						PlayerCompat.addPotionEffect(p, PotionEffectType.INCREASE_DAMAGE, 200, 1, true);
+						EffectLib.INCREASE_DAMAGE.addPotionEffect(p, 200, 1, true);
 					} else if(random.equals(3)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5위더 &f효과를 받았습니다."));
-						PlayerCompat.addPotionEffect(p, PotionEffectType.WITHER, 200, 1, true);
+						EffectLib.WITHER.addPotionEffect(p, 200, 1, true);
 					} else if(random.equals(4)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8구속 &f효과를 받았습니다."));
-						PlayerCompat.addPotionEffect(p, PotionEffectType.SLOW, 200, 1, true);
+						EffectLib.SLOW.addPotionEffect(p, 200, 1, true);
 					} else if(random.equals(5)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7나약함 &f효과를 받았습니다."));
-						PlayerCompat.addPotionEffect(p, PotionEffectType.WEAKNESS, 200, 1, true);
+						EffectLib.WEAKNESS.addPotionEffect(p, 200, 1, true);
 					}
 					
 					Cool.StartTimer();

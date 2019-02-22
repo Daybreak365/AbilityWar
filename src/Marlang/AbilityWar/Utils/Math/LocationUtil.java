@@ -33,19 +33,24 @@ public class LocationUtil {
 		}
 	}
 	
-	public static List<Block> getBlocks(Location location, Integer radius, boolean hollow, boolean top,
+	/**
+	 * 범위 안에 있는 블록들을 List로 반환합니다.
+	 * @param center 중심
+	 * @param radius 반지름
+	 */
+	public static List<Block> getBlocks(Location center, Integer radius, boolean hollow, boolean top,
 			boolean alsoAir) {
 		List<Block> Blocks = new ArrayList<Block>();
 
-		Integer X = location.getBlockX();
-		Integer Y = location.getBlockY();
-		Integer Z = location.getBlockZ();
+		Integer X = center.getBlockX();
+		Integer Y = center.getBlockY();
+		Integer Z = center.getBlockZ();
 
 		for (Integer x = X - radius; x <= X + radius; x++) {
 			for (Integer y = Y - radius; y <= Y + radius; y++) {
 				for (Integer z = Z - radius; z <= Z + radius; z++) {
-					Location l = new Location(location.getWorld(), x, y, z);
-					double distance = location.distanceSquared(l);
+					Location l = new Location(center.getWorld(), x, y, z);
+					double distance = center.distanceSquared(l);
 					if (distance < (radius * radius) && !(hollow && distance < ((radius - 1) * (radius - 1)))) {
 						if (top) {
 							Location highest = l.getWorld().getHighestBlockAt(l).getLocation();
@@ -96,9 +101,8 @@ public class LocationUtil {
 	 * 범위 안에서 같은 Y 좌표에 있는 블록들을 List로 반환합니다.
 	 * @param center 중심
 	 * @param radius 반지름
-	 * @return
 	 */
-	public static List<Block> getBlocks(Location center, Integer radius, boolean hollow) {
+	public static List<Block> getBlocksAtSameY(Location center, Integer radius, boolean hollow) {
 		List<Block> blocks = new ArrayList<Block>();
 
 		Integer X = center.getBlockX();

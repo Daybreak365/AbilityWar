@@ -6,10 +6,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class ShowmanShip extends AbilityBase {
 
@@ -29,11 +28,11 @@ public class ShowmanShip extends AbilityBase {
 			Integer Count = LocationUtil.getNearbyPlayers(getPlayer(), 10, 10).size();
 			
 			if(Count <= 1) {
-				PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.WEAKNESS, 20, 0, true);
+				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), 20, 0, true);
 			} else if(Count > 1 && Count <= 2) {
-				PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.INCREASE_DAMAGE, 20, 1, true);
+				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 1, true);
 			} else {
-				PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.INCREASE_DAMAGE, 20, 2, true);
+				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 2, true);
 			}
 		}
 		

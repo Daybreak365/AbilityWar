@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -177,7 +178,13 @@ public class Nex extends AbilityBase {
 			Integer Distance = 6 - Seconds;
 			
 			for(Block block : LocationUtil.getBlocks(center, Distance, true, true, false)) {
-				FallBlock fb = new FallBlock(block.getType(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0));
+				FallBlock fb = new FallBlock(block.getType(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0)) {
+					
+					@Override
+					public void onChangeBlock(FallingBlock block) {}
+					
+				};
+				
 				fb.Spawn(false);
 			}
 			

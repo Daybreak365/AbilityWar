@@ -8,9 +8,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class TheEmperor extends AbilityBase {
 
@@ -38,7 +37,7 @@ public class TheEmperor extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.SLOW, 30, 1, true);
+			EffectLib.SLOW.addPotionEffect(getPlayer(), 30, 1, true);
 		}
 		
 		@Override

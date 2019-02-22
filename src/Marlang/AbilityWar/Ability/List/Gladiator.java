@@ -15,11 +15,10 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Gladiator extends AbilityBase {
 	
@@ -86,26 +85,26 @@ public class Gladiator extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			if(TotalCount <= 10) {
-				for(Block b : LocationUtil.getBlocks(center, Count, false)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, false)) {
 					Saves.putIfAbsent(b, b.getState());
 					b.setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
 				
 				Count++;
 			} else if(TotalCount > 10 && TotalCount <= 15) {
-				for(Block b : LocationUtil.getBlocks(center, Count - 2, true)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 2, true)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 				
-				for(Block b : LocationUtil.getBlocks(center, Count - 1, true)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 1, true)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 			} else if(TotalCount > 15 && TotalCount <= 26) {
-				for(Block b : LocationUtil.getBlocks(center, Count, true)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
 					l.add(0, 6, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
@@ -128,8 +127,8 @@ public class Gladiator extends AbilityBase {
 			Location teleport = center.clone().add(0, 1, 0);
 			
 			getPlayer().teleport(teleport);
-			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.ABSORPTION, 400, 4, true);
-			PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.DAMAGE_RESISTANCE, 400, 0, true);
+			EffectLib.ABSORPTION.addPotionEffect(getPlayer(), 400, 4, true);
+			EffectLib.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);
 			target.teleport(teleport);
 			
 			Gladiator.this.target = target;

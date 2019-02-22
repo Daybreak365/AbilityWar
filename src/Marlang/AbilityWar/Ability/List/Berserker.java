@@ -11,8 +11,7 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 
 public class Berserker extends AbilityBase {
 
@@ -102,7 +101,7 @@ public class Berserker extends AbilityBase {
 				if(Strengthen) {
 					if(Duration.isDuration()) Duration.StopTimer(false);
 					e.setDamage(e.getDamage() * Strength);
-					PlayerCompat.addPotionEffect(getPlayer(), PotionEffectType.WEAKNESS, DebuffTime * 20, 1, true);
+					EffectLib.WEAKNESS.addPotionEffect(getPlayer(), DebuffTime * 20, 1, true);
 				}
 			}
 		}

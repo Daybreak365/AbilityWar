@@ -11,7 +11,6 @@ import Marlang.AbilityWar.Addon.AddonLoader;
 import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.MainCommand;
-import Marlang.AbilityWar.GameManager.Manager.GUI.SpecialThanksGUI;
 import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.GameManager.Script.Script.RequiredData;
 import Marlang.AbilityWar.GameManager.Script.Types.TeleportScript;
@@ -32,7 +31,7 @@ public class AbilityWar extends JavaPlugin {
 		return AbilityWar.Plugin;
 	}
 	
-	private AddonLoader addonLoader = new AddonLoader(this);
+	private AddonLoader addonLoader = new AddonLoader();
 	private AutoUpdate au = new AutoUpdate("Marlang365", "test", this, Branch.Master);
 	
 	@Override
@@ -51,6 +50,7 @@ public class AbilityWar extends JavaPlugin {
 			Load();
 			
 			addonLoader.loadAddons();
+			addonLoader.onEnable();
 			
 			/*
 			 * 서버 부팅이 끝나면 실행
@@ -72,9 +72,6 @@ public class AbilityWar extends JavaPlugin {
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
 
 		try {
-			//OfflinePlayer Pre-Load
-			Class.forName(SpecialThanksGUI.class.getName());
-			
 			for(String name : AbilityList.values()) {
 				Class<? extends AbilityBase> Ability = AbilityList.getByString(name);
 				Class.forName(Ability.getName());
@@ -84,10 +81,15 @@ public class AbilityWar extends JavaPlugin {
 		}
 	}
 	
+	public AddonLoader getAddonLoader() {
+		return addonLoader;
+	}
+	
 	@Override
 	public void onDisable() {
 		AbilityWarSettings.Refresh();
 		AbilitySettings.Refresh();
+		addonLoader.onDisable();
 		
 		Messager.sendMessage("플러그인이 비활성화되었습니다.");
 	}

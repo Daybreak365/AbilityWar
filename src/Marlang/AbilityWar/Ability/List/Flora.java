@@ -10,11 +10,10 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Flora extends AbilityBase {
 
@@ -53,7 +52,11 @@ public class Flora extends AbilityBase {
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, 6, 200)) {
 				if(LocationUtil.isInCircle(center, p.getLocation(), 6.0)) {
-					PlayerCompat.addPotionEffect(p, type.getPotionEffect(), 40, 1, true);
+					if(type.equals(EffectType.Speed)) {
+						EffectLib.SPEED.addPotionEffect(p, 40, 1, true);
+					} else if(type.equals(EffectType.Regeneration)) {
+						EffectLib.REGENERATION.addPotionEffect(p, 40, 1, true);
+					}
 				}
 			}
 		}
@@ -99,21 +102,15 @@ public class Flora extends AbilityBase {
 
 	private enum EffectType {
 		
-		Regeneration(PotionEffectType.REGENERATION, ChatColor.translateAlternateColorCodes('&', "&c犁积")),
-		Speed(PotionEffectType.SPEED, ChatColor.translateAlternateColorCodes('&', "&b脚加"));
+		Regeneration(ChatColor.translateAlternateColorCodes('&', "&c犁积")),
+		Speed(ChatColor.translateAlternateColorCodes('&', "&b脚加"));
 		
-		PotionEffectType potionEffect;
 		String name;
 		
-		private EffectType(PotionEffectType potionEffect, String name) {
-			this.potionEffect = potionEffect;
+		private EffectType(String name) {
 			this.name = name;
 		}
-
-		public PotionEffectType getPotionEffect() {
-			return potionEffect;
-		}
-
+		
 		public String getName() {
 			return name;
 		}

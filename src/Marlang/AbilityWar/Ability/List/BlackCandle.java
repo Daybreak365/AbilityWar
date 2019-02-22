@@ -10,9 +10,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class BlackCandle extends AbilityBase {
 
@@ -38,17 +37,17 @@ public class BlackCandle extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.BLINDNESS);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.CONFUSION);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.GLOWING);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.HARM);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.HUNGER);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.POISON);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.SLOW);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.SLOW_DIGGING);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.UNLUCK);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.WEAKNESS);
-			PlayerCompat.removePotionEffect(getPlayer(), PotionEffectType.WITHER);
+			EffectLib.BLINDNESS.removePotionEffect(getPlayer());
+			EffectLib.CONFUSION.removePotionEffect(getPlayer());
+			EffectLib.GLOWING.removePotionEffect(getPlayer());
+			EffectLib.HARM.removePotionEffect(getPlayer());
+			EffectLib.HUNGER.removePotionEffect(getPlayer());
+			EffectLib.POISON.removePotionEffect(getPlayer());
+			EffectLib.SLOW.removePotionEffect(getPlayer());
+			EffectLib.SLOW_DIGGING.removePotionEffect(getPlayer());
+			EffectLib.UNLUCK.removePotionEffect(getPlayer());
+			EffectLib.WEAKNESS.removePotionEffect(getPlayer());
+			EffectLib.WITHER.removePotionEffect(getPlayer());
 		}
 		
 		@Override

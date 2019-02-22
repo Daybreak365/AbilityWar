@@ -14,11 +14,10 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
-import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
-import Marlang.AbilityWar.Utils.VersionCompat.PotionEffectType;
 
 public class Muse extends AbilityBase {
 
@@ -111,7 +110,7 @@ public class Muse extends AbilityBase {
 				
 				for(Player p : LocationUtil.getNearbyPlayers(center, 10, 200)) {
 					if(LocationUtil.isInCircle(center, p.getLocation(), 10.0)) {
-						PlayerCompat.addPotionEffect(p, PotionEffectType.GLOWING, 4, 0, true);
+						EffectLib.GLOWING.addPotionEffect(p, 4, 0, true);
 						
 						if(SoundCount % 5 == 0) {
 							SoundCount = 1;

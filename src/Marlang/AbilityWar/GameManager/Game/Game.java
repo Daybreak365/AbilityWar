@@ -37,6 +37,14 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
  */
 public class Game extends AbstractGame {
 	
+	private static List<String> messages = new ArrayList<String>();
+	
+	public static void registerMessage(String... msg) {
+		for(String m : msg) {
+			messages.add(m);
+		}
+	}
+	
 	public Game() {
 		setRestricted(Invincible);
 		registerEvent(EntityDamageEvent.class);
@@ -207,6 +215,10 @@ public class Game extends AbstractGame {
 				ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
 				ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &f_Marlang 말랑"),
 				ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f말랑&7#5908"));
+		
+		for(String m : messages) {
+			msg.add(m);
+		}
 		
 		Messager.broadcastStringList(msg);
 	}
