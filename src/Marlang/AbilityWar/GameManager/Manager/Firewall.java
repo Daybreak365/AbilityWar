@@ -57,7 +57,7 @@ public class Firewall implements EventExecutor {
 				if(!canLogin) {
 					e.disallow(Result.KICK_OTHER,
 							ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
-							+ "\n"
+							+ System.lineSeparator()
 							+ ChatColor.translateAlternateColorCodes('&', "&f게임 진행중이므로 접속할 수 없습니다."));
 				}
 			}
@@ -68,7 +68,7 @@ public class Firewall implements EventExecutor {
 				if(game.getDeathManager().isEliminated(p) && !p.isOp()) {
 					e.disallow(Result.KICK_OTHER,
 							ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
-							+ "\n"
+							+ System.lineSeparator()
 							+ ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
 				}
 			}

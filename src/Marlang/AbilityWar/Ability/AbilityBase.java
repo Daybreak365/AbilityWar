@@ -52,7 +52,7 @@ abstract public class AbilityBase {
 	/**
 	 * 패시브 스킬 발동을 위해 사용됩니다.
 	 * GameListener에서 호출합니다.
-	 * 패시브 이벤트는 GameListener.registerPassive(Class<? extends Event>)로 등록할 수 있습니다.
+	 * 패시브 이벤트는 GameListener.registerPassive(Class<? extends Event> clazz)로 등록할 수 있습니다.
 	 * @param event		패시브 이벤트
 	 */
 	abstract public void PassiveSkill(Event event);

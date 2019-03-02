@@ -1,6 +1,5 @@
 package Marlang.AbilityWar.GameManager.Game;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -76,7 +75,7 @@ public class Game extends AbstractGame {
 	
 	@Override
 	protected boolean gameCondition() {
-		return getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded());
+		return true;
 	}
 	
 	@Override
@@ -102,7 +101,7 @@ public class Game extends AbstractGame {
 			case 13:
 				if(AbilityWarSettings.getDrawAbility()) {
 					//능력 할당 시작
-					this.setAbilitySelect(setupAbilitySelect());
+					this.startAbilitySelect();
 				}
 				break;
 			case 15:
@@ -361,8 +360,7 @@ public class Game extends AbstractGame {
 									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 1회에 한해 능력을 변경할 수 있습니다.")));
-						} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
-								| IllegalArgumentException | InvocationTargetException e) {
+						} catch (Exception e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}
@@ -392,8 +390,7 @@ public class Game extends AbstractGame {
 							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
 							
 							decideAbility(p, false);
-						} catch (InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException
-								| IllegalArgumentException | InvocationTargetException e) {
+						} catch (Exception e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 변경하는 도중 오류가 발생하였습니다."));
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}

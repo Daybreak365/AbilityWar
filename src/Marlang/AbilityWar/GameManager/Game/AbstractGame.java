@@ -1,17 +1,14 @@
 package Marlang.AbilityWar.GameManager.Game;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.EventExecutor;
@@ -22,8 +19,6 @@ import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.DeathManager;
 import Marlang.AbilityWar.GameManager.Manager.Firewall;
 import Marlang.AbilityWar.GameManager.Manager.GameListener;
-import Marlang.AbilityWar.Utils.Messager;
-import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
 abstract public class AbstractGame extends Thread implements Listener, EventExecutor {
 	
@@ -33,10 +28,12 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	private HashMap<Player, AbilityBase> Abilities = new HashMap<Player, AbilityBase>();
 	
+	@SuppressWarnings("unused")
 	private GameListener gameListener = new GameListener(this);
 	
 	private DeathManager deathManager = new DeathManager(this);
 	
+	@SuppressWarnings("unused")
 	private Firewall fireWall = new Firewall(this);
 	
 	private AbilitySelect abilitySelect;
@@ -50,8 +47,10 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	@Override
 	public void run() {
 		if(gameCondition()) {
-			Seconds++;
-			progressGame(Seconds);
+			if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
+				Seconds++;
+				progressGame(Seconds);
+			}
 		}
 	}
 	
@@ -88,6 +87,11 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	 */
 	abstract public void onPlayerDeath(PlayerDeathEvent e);
 	
+	/**
+	 * 플레이어가 능력자인지 확인합니다.
+	 * @param p	확인할 플레이어
+	 * @return	능력자 여부
+	 */
 	public boolean hasAbility(Player p) {
 		return Abilities.containsKey(p) && Abilities.get(p) != null;
 	}
@@ -104,13 +108,23 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		}
 	}
 	
-	public void addAbility(Player p, Class<? extends AbilityBase> abilityClass) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	/**
+	 * 플레이어에게 해당 능력을 부여합니다.
+	 * @param p				능력을 부여할 플레이어
+	 * @param abilityClass	부여할 능력의 종류 (능력 클래스)
+	 * @throws Exception	능력을 부여하는 도중 오류가 발생하였을 경우
+	 */
+	public void addAbility(Player p, Class<? extends AbilityBase> abilityClass) throws Exception {
 		Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Player.class);
 		AbilityBase Ability = constructor.newInstance(p);
 		
 		addAbility(Ability);
 	}
 	
+	/**
+	 * AbilityBase를 능력 목록에 추가합니다.
+	 * @param Ability
+	 */
 	private void addAbility(AbilityBase Ability) {
 		Player p = Ability.getPlayer();
 		if(isParticipating(p)) {
@@ -134,6 +148,10 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		}
 	}
 	
+	/**
+	 * 플레이어의 능력을 제거합니다.
+	 * @param p		능력을 제거할 플레이어
+	 */
 	public void removeAbility(Player p) {
 		if(Abilities.containsKey(p)) {
 			AbilityBase Ability = Abilities.get(p);
@@ -154,6 +172,11 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		}
 	}
 	
+	/**
+	 * one.getPlayer()와 two.getPlayer()의 능력을 서로 뒤바꿉니다.
+	 * @param one	첫번째 플레이어
+	 * @param two	두번째 플레이어
+	 */
 	public void swapAbility(AbilityBase one, AbilityBase two) {
 		Player onePlayer = one.getPlayer();
 		Player twoPlayer = two.getPlayer();
@@ -168,26 +191,50 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		addAbility(two);
 	}
 	
+	/**
+	 * 플레이어에게 기본 킷을 지급합니다.
+	 * @param p	킷을 지급할 플레이어
+	 */
 	abstract public void GiveDefaultKit(Player p);
 	
+	/**
+	 * 모든 플레이어들에게 기본 킷을 지급합니다.
+	 */
 	public void GiveDefaultKit() {
 		for(Player p : getParticipants()) {
 			GiveDefaultKit(p);
 		}
 	}
 	
+	/**
+	 * 관전자 목록을 반환합니다.
+	 * @return	관전자 목록
+	 */
 	public static List<String> getSpectators() {
 		return Spectators;
 	}
 	
+	/**
+	 * 참여자 목록을 반환합니다.
+	 * @return	참여자 목록
+	 */
 	public List<Player> getParticipants() {
 		return Participants;
 	}
 	
+	/**
+	 * 대상 플레이어의 참여 여부를 반환합니다.
+	 * @param p	대상 플레이어
+	 * @return	대상 플레이어의 참여 여부
+	 */
 	public boolean isParticipating(Player p) {
 		return Participants.contains(p);
 	}
 	
+	/**
+	 * DeathManager를 반환합니다.
+	 * @return	DeathManager
+	 */
 	public DeathManager getDeathManager() {
 		return deathManager;
 	}
@@ -216,30 +263,14 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		return Abilities;
 	}
 	
-	protected void setAbilitySelect(AbilitySelect abilitySelect) {
-		this.abilitySelect = abilitySelect;
+	protected void startAbilitySelect() {
+		this.abilitySelect = setupAbilitySelect();
 	}
 	
 	protected void setGameStarted(boolean gameStarted) {
 		GameStarted = gameStarted;
 	}
 	
-	protected Firewall getFireWall() {
-		return fireWall;
-	}
-	
-	protected GameListener getGameListener() {
-		return gameListener;
-	}
-	
 	abstract protected void onEnd();
-	
-	public void onGameEnd() {
-		onEnd();
-		TimerBase.ResetTasks();
-		HandlerList.unregisterAll(getGameListener());
-		HandlerList.unregisterAll(this);
-		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
-	}
 	
 }

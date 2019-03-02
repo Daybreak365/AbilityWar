@@ -1,9 +1,16 @@
 package Marlang.AbilityWar.Utils.Thread;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.Utils.Messager;
 
 /**
  * Ability War 플러그인 쓰레드
@@ -35,12 +42,29 @@ public class AbilityWarThread {
 	public static void stopGame() {
 		if(isGameTaskRunning()) {
 			//Notify
-			getGame().onGameEnd();
-			//Notify
+			try {
+				Method onEnd = AbstractGame.class.getDeclaredMethod("onEnd");
+				onEnd.setAccessible(true);
+				onEnd.invoke(getGame());
+				onEnd.setAccessible(false);
+				
+				TimerBase.ResetTasks();
+				
+				Field gameListener = AbstractGame.class.getDeclaredField("gameListener");
+				gameListener.setAccessible(true);
+				HandlerList.unregisterAll((Listener) gameListener.get(getGame()));
+				gameListener.setAccessible(false);
+				
+				HandlerList.unregisterAll(getGame());
+			} catch(Exception ex) {
+				//Should Not Happen
+			}
 			
 			Bukkit.getScheduler().cancelTask(GameTask);
 			setGame(null);
 			GameTask = -1;
+			
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 		}
 	}
 	

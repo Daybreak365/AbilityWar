@@ -221,7 +221,7 @@ public class GameListener implements Listener, EventExecutor {
 		}
 	}
 	
-	public MaterialType getMaterialType(Material m) {
+	private MaterialType getMaterialType(Material m) {
 		for(MaterialType Type : MaterialType.values()) {
 			if(Type.getMaterial().equals(m)) {
 				return Type;
