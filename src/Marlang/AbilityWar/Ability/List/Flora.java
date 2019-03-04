@@ -9,6 +9,7 @@ import org.bukkit.event.Event;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
@@ -27,8 +28,8 @@ public class Flora extends AbilityBase {
 		
 	};
 	
-	public Flora(Player player) {
-		super(player, "플로라", Rank.GOD,
+	public Flora(Participant participant) {
+		super(participant, "플로라", Rank.GOD,
 				ChatColor.translateAlternateColorCodes('&', "&f꽃과 풍요의 여신."),
 				ChatColor.translateAlternateColorCodes('&', "&f주변에 있는 모든 플레이어에게 재생 효과를 주거나 신속 효과를 줍니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 효과를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));

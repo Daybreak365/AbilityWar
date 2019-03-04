@@ -37,6 +37,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  * 소리 라이브러리
  * @author _Marlang 말랑
  * @since 2019-02-19
+ * @version 1.0
  */
 public class SoundLib {
 	

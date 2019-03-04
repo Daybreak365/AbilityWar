@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
@@ -23,8 +24,8 @@ public class DarkVision extends AbilityBase {
 		
 	};
 	
-	public DarkVision(Player player) {
-		super(player, "심안", Rank.C,
+	public DarkVision(Participant participant) {
+		super(participant, "심안", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f앞이 보이지 않는 대신, 플레이어의 " + DistanceConfig.getValue() + "칸 안에 있는 플레이어들은"),
 				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다."));
 	}

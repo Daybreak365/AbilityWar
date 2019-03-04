@@ -2,9 +2,9 @@ package Marlang.AbilityWar.GameManager.Manager;
 
 import org.bukkit.ChatColor;
 
-import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game.Game;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
@@ -53,8 +53,10 @@ public class Invincibility extends TimerBase {
 				ChatColor.translateAlternateColorCodes('&', "&f초반 무적이 해제되었습니다."), 20, 60, 20);
 		title.Broadcast();
 		
-		for(AbilityBase Ability : game.getAbilities().values()) {
-			Ability.setRestricted(false);
+		for(Participant participant : game.getParticipants()) {
+			if(participant.hasAbility()) {
+				participant.getAbility().setRestricted(false);
+			}
 		}
 	}
 	

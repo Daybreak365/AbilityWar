@@ -2,12 +2,12 @@ package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class OnlyOddNumber extends AbilityBase {
@@ -45,8 +45,8 @@ public class OnlyOddNumber extends AbilityBase {
 		
 	};
 	
-	public OnlyOddNumber(Player player) {
-		super(player, "홀수강박증", Rank.S,
+	public OnlyOddNumber(Participant participant) {
+		super(participant, "홀수강박증", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f체력이 최대 체력의 " + PercentageConfig.getValue() + "% 이하일 때"),
 				ChatColor.translateAlternateColorCodes('&', "&f공격을 받으면 체력에 따라 다른 효과를 받습니다. &f체력이 홀수일 경우 데미지를"),
 				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% 줄여 받고, 체력이 짝수일 경우 데미지를 " + EvenNumberConfig.getValue() + "% 늘려 받습니다."));

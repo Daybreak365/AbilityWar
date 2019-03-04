@@ -3,13 +3,13 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 
 public class Ira extends AbilityBase {
 
@@ -24,8 +24,8 @@ public class Ira extends AbilityBase {
 		
 	};
 	
-	public Ira(Player player) {
-		super(player, "이라", Rank.S,
+	public Ira(Participant participant) {
+		super(participant, "이라", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f" + AttackConfig.getValue() + "번 공격을 당할 때마다 상대방의 위치에 폭발을 일으킵니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f자기 자신도 폭발 데미지를 입습니다."));
 	}

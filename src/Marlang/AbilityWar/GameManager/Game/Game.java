@@ -24,6 +24,7 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.InfiniteDurability;
 import Marlang.AbilityWar.GameManager.Manager.Invincibility;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
@@ -64,8 +65,8 @@ public class Game extends AbstractGame {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			for(Player p : getParticipants()) {
-				p.setFoodLevel(19);
+			for(Participant p : getParticipants()) {
+				p.getPlayer().setFoodLevel(19);
 			}
 		}
 		
@@ -175,10 +176,11 @@ public class Game extends AbstractGame {
 		}
 
 		if(this.isGameStarted()) {
-			if(this.getParticipants().contains(Victim)) {
+			if(Participant.checkParticipant(Victim) && this.isParticipating(Victim)) {
 				if(AbilityWarSettings.getAbilityReveal()) {
-					if(this.hasAbility(Victim)) {
-						AbilityBase Ability = this.getAbility(Victim);
+					Participant participant = Participant.Construct(this, Victim);
+					if(participant.hasAbility()) {
+						AbilityBase Ability = participant.getAbility();
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + Ability.getAbilityName() + " &f능력이었습니다!"));
 					} else {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
@@ -198,9 +200,9 @@ public class Game extends AbstractGame {
         ArrayList<String> msg = new ArrayList<String>();
 		
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==== &e게임 참여자 목록 &6===="));
-		for(Player p : getParticipants()) {
+		for(Participant p : getParticipants()) {
 			Count++;
-			msg.add(ChatColor.translateAlternateColorCodes('&', "&a" + Count + ". &f" + p.getName()));
+			msg.add(ChatColor.translateAlternateColorCodes('&', "&a" + Count + ". &f" + p.getPlayer().getName()));
 		}
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&e총 인원수 : " + Count + "명"));
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==========================="));
@@ -239,9 +241,9 @@ public class Game extends AbstractGame {
 		
 		GiveDefaultKit();
 		
-		for(Player p : getParticipants()) {
+		for(Participant p : getParticipants()) {
 			if(AbilityWarSettings.getSpawnEnable()) {
-				p.teleport(AbilityWarSettings.getSpawnLocation());
+				p.getPlayer().teleport(AbilityWarSettings.getSpawnLocation());
 			}
 		}
 		
@@ -256,8 +258,10 @@ public class Game extends AbstractGame {
 			invincibility.StartTimer();
 		} else {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
-			for(AbilityBase Ability : this.getAbilities().values()) {
-				Ability.setRestricted(false);
+			for(Participant participant : this.getParticipants()) {
+				if(participant.hasAbility()) {
+					participant.getAbility().setRestricted(false);
+				}
 			}
 		}
 		
@@ -312,12 +316,12 @@ public class Game extends AbstractGame {
 	}
 	
 	@Override
-	protected List<Player> setupParticipants() {
-		List<Player> Participants = new ArrayList<Player>();
+	protected List<Participant> setupParticipants() {
+		List<Participant> Participants = new ArrayList<Participant>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			if(!getSpectators().contains(p.getName())) {
-				Participants.add(p);
+				Participants.add(Participant.Construct(this, p));
 			}
 		}
 		
@@ -329,8 +333,8 @@ public class Game extends AbstractGame {
 		return new AbilitySelect() {
 			
 			@Override
-			protected List<Player> setupPlayers() {
-				return getParticipants();
+			protected List<Participant> setupPlayers() {
+				return Game.this.getParticipants();
 			}
 			
 			@Override
@@ -347,13 +351,15 @@ public class Game extends AbstractGame {
 			
 			@Override
 			protected void drawAbility() {
-				if(getPlayers().size() <= Abilities.size()) {
+				if(getSelectors().size() <= Abilities.size()) {
 					Random random = new Random();
 					
-					for(Player p : getPlayers()) {
+					for(Participant participant : getSelectors()) {
+						Player p = participant.getPlayer();
+						
 						Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
 						try {
-							Game.this.addAbility(p, abilityClass);
+							participant.setAbility(abilityClass);
 							Abilities.remove(abilityClass);
 							
 							Messager.sendStringList(p, Messager.getStringList(
@@ -373,23 +379,24 @@ public class Game extends AbstractGame {
 			}
 			
 			@Override
-			public void changeAbility(Player p) {
+			public void changeAbility(Participant participant) {
+				Player p = participant.getPlayer();
+				
 				if(Abilities.size() > 0) {
 					Random random = new Random();
 					
-					AbilityBase oldAbility = Game.this.getAbility(p);
-					if(oldAbility != null) {
+					if(participant.hasAbility()) {
+						Class<? extends AbilityBase> oldAbilityClass = participant.getAbility().getClass();
 						Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
 						try {
 							Abilities.remove(abilityClass);
-							Abilities.add(oldAbility.getClass());
+							Abilities.add(oldAbilityClass);
 							
-							Game.this.removeAbility(p);
-							Game.this.addAbility(p, abilityClass);
+							participant.setAbility(abilityClass);
 							
 							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
 							
-							decideAbility(p, false);
+							decideAbility(participant, false);
 						} catch (Exception e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 변경하는 도중 오류가 발생하였습니다."));
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
@@ -402,7 +409,7 @@ public class Game extends AbstractGame {
 
 			@Override
 			protected boolean endCondition() {
-				for(Player Key : getPlayers()) {
+				for(Participant Key : getSelectors()) {
 					if(!hasDecided(Key)) {
 						return false;
 					}

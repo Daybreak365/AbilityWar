@@ -10,6 +10,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
@@ -48,8 +49,8 @@ public class TheHighPriestess extends AbilityBase {
 		
 	};
 
-	public TheHighPriestess(Player player) {
-		super(player, "교황", Rank.A,
+	public TheHighPriestess(Participant participant) {
+		super(participant, "교황", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 주변 " + RangeConfig.getValue() + "칸을 자신의 영지로 선포합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f영지 안에서 자신은 재생 효과를, 상대방은 위더 효과를 받습니다."));
 	}

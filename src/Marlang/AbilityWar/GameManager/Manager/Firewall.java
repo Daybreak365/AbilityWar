@@ -15,6 +15,7 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
 import Marlang.AbilityWar.GameManager.Game.Game;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 
 /**
  * πÊ»≠∫Æ
@@ -42,8 +43,8 @@ public class Firewall implements EventExecutor {
 					canLogin = true;
 				}
 				
-				for(Player player : game.getParticipants()) {
-					if(player.getName().equals(p.getName())) {
+				for(Participant participant : game.getParticipants()) {
+					if(participant.getPlayer().getName().equals(p.getName())) {
 						canLogin = true;
 					}
 				}

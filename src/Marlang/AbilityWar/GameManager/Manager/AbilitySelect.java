@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
@@ -19,26 +20,26 @@ abstract public class AbilitySelect extends TimerBase {
 	
 	protected List<Class<? extends AbilityBase>> Abilities = setupAbilities();
 	
-	private HashMap<Player, Boolean> AbilitySelect = new HashMap<Player, Boolean>();
+	private HashMap<Participant, Boolean> AbilitySelect = new HashMap<Participant, Boolean>();
 	
-	public HashMap<Player, Boolean> getMap() {
+	public HashMap<Participant, Boolean> getMap() {
 		return AbilitySelect;
 	}
 
-	public List<Player> getPlayers() {
-		return new ArrayList<Player>(AbilitySelect.keySet());
+	public List<Participant> getSelectors() {
+		return new ArrayList<Participant>(AbilitySelect.keySet());
 	}
 	
-	public boolean hasDecided(Player p) {
+	public boolean hasDecided(Participant p) {
 		return AbilitySelect.get(p);
 	}
 	
-	private boolean setDecided(Player p, Boolean bool) {
+	private boolean setDecided(Participant p, Boolean bool) {
 		return AbilitySelect.put(p, bool);
 	}
 	
 	public AbilitySelect() {
-		for(Player p : setupPlayers()) {
+		for(Participant p : setupPlayers()) {
 			AbilitySelect.put(p, false);
 		}
 		
@@ -49,9 +50,11 @@ abstract public class AbilitySelect extends TimerBase {
 	/**
 	 * bool이 true면 일반 확정, false면 강제 확정
 	 */
-	public void decideAbility(Player p, Boolean bool) {
-		if(AbilitySelect.containsKey(p)) {
-			setDecided(p, true);
+	public void decideAbility(Participant participant, Boolean bool) {
+		Player p = participant.getPlayer();
+		
+		if(AbilitySelect.containsKey(participant)) {
+			setDecided(participant, true);
 			
 			if(bool) {
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6능력을 확정하셨습니다. 다른 플레이어를 기다려주세요."));
@@ -68,7 +71,7 @@ abstract public class AbilitySelect extends TimerBase {
 
 	private int getLeftPlayers() {
 		int i = 0;
-		for(Player p : AbilitySelect.keySet()) {
+		for(Participant p : AbilitySelect.keySet()) {
 			if(!AbilitySelect.get(p)) {
 				i++;
 			}
@@ -78,7 +81,7 @@ abstract public class AbilitySelect extends TimerBase {
 	}
 	
 	public void Skip(String admin) {
-		for(Player p : AbilitySelect.keySet()) {
+		for(Participant p : AbilitySelect.keySet()) {
 			if(!AbilitySelect.get(p)) {
 				decideAbility(p, false);
 			}
@@ -90,9 +93,9 @@ abstract public class AbilitySelect extends TimerBase {
 	
 	abstract protected void drawAbility();
 	
-	public abstract void changeAbility(Player p);
+	public abstract void changeAbility(Participant participant);
 	
-	abstract protected List<Player> setupPlayers();
+	abstract protected List<Participant> setupPlayers();
 	
 	abstract protected List<Class<? extends AbilityBase>> setupAbilities();
 	

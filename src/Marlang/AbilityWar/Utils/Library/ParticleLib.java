@@ -35,6 +35,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  * 파티클 라이브러리
  * @author _Marlang 말랑
  * @since 2019-02-19
+ * @version 1.1
  */
 public class ParticleLib {
 	
@@ -63,9 +64,9 @@ public class ParticleLib {
 	public static Particles FOOTSTEP = new Particles("", "FOOTSTEP", "FOOTSTEP", "FOOTSTEP", "FOOTSTEP", "FOOTSTEP", "");
 	public static Particles HEART = new Particles("HEART", "HEART", "HEART", "HEART", "HEART", "HEART", "");
 	public static Particles ITEM_CRACK = new Particles("ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "");
-	public static Particles LAVA = new Particles("LAVA", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "");
-	public static Particles MOB_APPEARANCE = new Particles("MOB_APPEARANCE", "LAVA", "LAVA", "LAVA", "LAVA", "LAVA", "");
-	public static Particles NAUTILUS = new Particles("NAUTILUS", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "");
+	public static Particles LAVA = new Particles("LAVA", "LAVA", "LAVA", "LAVA", "LAVA", "LAVA", "");
+	public static Particles MOB_APPEARANCE = new Particles("MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "");
+	public static Particles NAUTILUS = new Particles("NAUTILUS", "", "", "", "", "", "");
 	public static Particles NOTE = new Particles("NOTE", "NOTE", "NOTE", "NOTE", "NOTE", "NOTE", "");
 	public static Particles PORTAL = new Particles("PORTAL", "PORTAL", "PORTAL", "PORTAL", "PORTAL", "PORTAL", "");
 	public static Particles REDSTONE = new Particles("REDSTONE", "REDSTONE", "REDSTONE", "REDSTONE", "REDSTONE", "REDSTONE", "");

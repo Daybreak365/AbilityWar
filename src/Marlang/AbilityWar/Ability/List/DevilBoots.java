@@ -4,18 +4,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 
 public class DevilBoots extends AbilityBase {
 
-	public DevilBoots(Player player) {
-		super(player, "악마의 부츠", Rank.B,
+	public DevilBoots(Participant participant) {
+		super(participant, "악마의 부츠", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f지나가는 자리에 불이 붙습니다. 화염 피해를 받지 않습니다."));
 	}
 	

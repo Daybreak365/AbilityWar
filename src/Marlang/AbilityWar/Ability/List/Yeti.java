@@ -5,12 +5,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
@@ -38,8 +38,8 @@ public class Yeti extends AbilityBase {
 
 	};
 
-	public Yeti(Player player) {
-		super(player, "설인", Rank.S, ChatColor.translateAlternateColorCodes('&', "&f눈 위에 서 있으면 다양한 버프를 받습니다."),
+	public Yeti(Participant participant) {
+		super(participant, "설인", Rank.S, ChatColor.translateAlternateColorCodes('&', "&f눈 위에 서 있으면 다양한 버프를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&',
 						"&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

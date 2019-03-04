@@ -20,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
@@ -29,7 +30,7 @@ import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 public class AbilityGUI implements Listener {
 
 	private Player p;
-	private Player target;
+	private Participant target;
 
 	public AbilityGUI(Player p, Plugin Plugin) {
 		this.p = p;
@@ -45,7 +46,7 @@ public class AbilityGUI implements Listener {
 		});
 	}
 
-	public AbilityGUI(Player p, Player target, Plugin Plugin) {
+	public AbilityGUI(Player p, Participant target, Plugin Plugin) {
 		this.p = p;
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
@@ -145,13 +146,11 @@ public class AbilityGUI implements Listener {
 							if(AbilityWarThread.isGameTaskRunning()) {
 								AbstractGame game = AbilityWarThread.getGame();
 								if(target != null) {
-									game.removeAbility(target);
-									game.addAbility(target, abilityClass);
-									Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getName() + "&a님에게 능력을 임의로 부여하였습니다."));
+									target.setAbility(abilityClass);
+									Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님에게 능력을 임의로 부여하였습니다."));
 								} else {
-									for(Player target : game.getParticipants()) {
-										game.removeAbility(target);
-										game.addAbility(target, abilityClass);
+									for(Participant participant : game.getParticipants()) {
+										participant.setAbility(abilityClass);
 									}
 									Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a에게 능력을 임의로 부여하였습니다."));
 								}

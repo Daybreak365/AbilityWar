@@ -4,13 +4,13 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 public class FireFightWithFire extends AbilityBase {
@@ -26,8 +26,8 @@ public class FireFightWithFire extends AbilityBase {
 		
 	};
 	
-	public FireFightWithFire(Player player) {
-		super(player, "이열치열", Rank.B,
+	public FireFightWithFire(Participant participant) {
+		super(participant, "이열치열", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f불 데미지를 받을 때, " + ChanceConfig.getValue() + "% 확률로 체력을 회복합니다."));
 	}
 

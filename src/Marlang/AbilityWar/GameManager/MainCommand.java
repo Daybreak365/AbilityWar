@@ -21,12 +21,14 @@ import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.SettingWizard;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame;
 import Marlang.AbilityWar.GameManager.Game.Game;
 import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.GUI.AbilityGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.BlackListGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpecialThanksGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpectatorGUI;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.GameManager.Script.ScriptException;
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
@@ -110,11 +112,16 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					if(AbilityWarThread.isGameTaskRunning()) {
-						if(AbilityWarThread.getGame().getAbilities().containsKey(p)) {
-							AbilityBase Ability = AbilityWarThread.getGame().getAbilities().get(p);
-							Messager.sendStringList(p, Messager.formatAbility(Ability));
+						AbstractGame game = AbilityWarThread.getGame();
+						if(Participant.checkParticipant(p) && game.isParticipating(p)) {
+							Participant participant = Participant.Construct(game, p);
+							if(participant.hasAbility()) {
+								Messager.sendStringList(p, Messager.formatAbility(participant.getAbility()));
+							} else {
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
+							}
 						} else {
-							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c게임에 참가하고 있지 않습니다."));
 						}
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
@@ -126,19 +133,25 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					if(AbilityWarThread.isGameTaskRunning()) {
-						if(AbilityWarThread.getGame().getAbilities().containsKey(p)) {
-							AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-							if(select != null && !select.isEnded()) {
-								if(!select.hasDecided(p)) {
-									select.decideAbility(p, true);
+						AbstractGame game = AbilityWarThread.getGame();
+						if(Participant.checkParticipant(p) && game.isParticipating(p)) {
+							Participant participant = Participant.Construct(game, p);
+							if(participant.hasAbility()) {
+								AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
+								if(select != null && !select.isEnded()) {
+									if(!select.hasDecided(participant)) {
+										select.decideAbility(participant, true);
+									} else {
+										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
+									}
 								} else {
-									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
+									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
 								}
 							} else {
-								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
 							}
 						} else {
-							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c게임에 참가하고 있지 않습니다."));
 						}
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
@@ -150,19 +163,25 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					if(AbilityWarThread.isGameTaskRunning()) {
-						if(AbilityWarThread.getGame().getAbilities().containsKey(p)) {
-							AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-							if(select != null && !select.isEnded()) {
-								if(!select.hasDecided(p)) {
-									select.changeAbility(p);
+						AbstractGame game = AbilityWarThread.getGame();
+						if(Participant.checkParticipant(p) && game.isParticipating(p)) {
+							Participant participant = Participant.Construct(game, p);
+							if(participant.hasAbility()) {
+								AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
+								if(select != null && !select.isEnded()) {
+									if(!select.hasDecided(participant)) {
+										select.changeAbility(participant);
+									} else {
+										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
+									}
 								} else {
-									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
+									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
 								}
 							} else {
-								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
 							}
 						} else {
-							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c게임에 참가하고 있지 않습니다."));
 						}
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
@@ -280,12 +299,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						gui.openAbilityGUI(1);
 					} else {
 						if(Bukkit.getPlayerExact(args[1]) != null) {
-							Player target = Bukkit.getPlayerExact(args[1]);
-							if(AbilityWarThread.getGame().getParticipants().contains(target)) {
+							AbstractGame game = AbilityWarThread.getGame();
+							Player t = Bukkit.getPlayerExact(args[1]);
+							if(Participant.checkParticipant(t) && game.isParticipating(t)) {
+								Participant target = Participant.Construct(game, t);
 								AbilityGUI gui = new AbilityGUI(p, target, AbilityWar.getPlugin());
 								gui.openAbilityGUI(1);
 							} else {
-								Messager.sendErrorMessage(p, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+								Messager.sendErrorMessage(p, t.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 							}
 						} else {
 							Messager.sendErrorMessage(p, args[1] + "은(는) 존재하지 않는 플레이어입니다.");
@@ -304,10 +325,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				msg.add(ChatColor.translateAlternateColorCodes('&', "&2===== &a능력자 목록 &2====="));
 
 				Integer Count = 0;
-				for(Player player : AbilityWarThread.getGame().getAbilities().keySet()) {
-					Count++;
-					AbilityBase Ability = AbilityWarThread.getGame().getAbilities().get(player);
-					msg.add(ChatColor.translateAlternateColorCodes('&', "&e" + Count + ". &f" + player.getName() + " &7: &c" + Ability.getAbilityName()));
+				for(Participant participant : AbilityWarThread.getGame().getParticipants()) {
+					if(participant.hasAbility()) {
+						Count++;
+						AbilityBase Ability = participant.getAbility();
+						msg.add(ChatColor.translateAlternateColorCodes('&', "&e" + Count + ". &f" + participant.getPlayer().getName() + " &7: &c" + Ability.getAbilityName()));
+					}
 				}
 				
 				if(Count.equals(0)) {
@@ -345,7 +368,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					} else {
 						if(Bukkit.getPlayerExact(args[1]) != null) {
 							Player target = Bukkit.getPlayerExact(args[1]);
-							if(AbilityWarThread.getGame().getParticipants().contains(target)) {
+							if(AbilityWarThread.getGame().isParticipating(target)) {
 								AbilityWarThread.getGame().GiveDefaultKit(target);
 								SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(target);
 								Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 &f" + target.getName() + "&a님에게 기본템을 다시 지급하였습니다."));

@@ -3,13 +3,13 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 
 public class Clown extends AbilityBase {
@@ -24,8 +24,8 @@ public class Clown extends AbilityBase {
 		
 	};
 
-	public Clown(Player player) {
-		super(player, "광대", Rank.D,
+	public Clown(Participant participant) {
+		super(participant, "광대", Rank.D,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 스폰으로 이동합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 

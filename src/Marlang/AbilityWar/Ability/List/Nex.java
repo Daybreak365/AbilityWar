@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.FallBlock;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
@@ -48,8 +49,8 @@ public class Nex extends AbilityBase {
 
 	};
 	
-	public Nex(Player player) {
-		super(player, "넥스", Rank.B,
+	public Nex(Participant participant) {
+		super(participant, "넥스", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다가 바닥으로 내려 찍으며"),
 				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

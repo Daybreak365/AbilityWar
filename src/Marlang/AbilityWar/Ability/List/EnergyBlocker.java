@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 
 public class EnergyBlocker extends AbilityBase {
@@ -26,8 +27,8 @@ public class EnergyBlocker extends AbilityBase {
 	
 	boolean Default = true;
 	
-	public EnergyBlocker(Player player) {
-		super(player, "에너지 블로커", Rank.A,
+	public EnergyBlocker(Participant participant) {
+		super(participant, "에너지 블로커", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 절반으로, 근거리 공격 피해를 두 배로 받거나"),
 				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 두 배로, 근거리 공격 피해를 절반으로 받을 수 있습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())),

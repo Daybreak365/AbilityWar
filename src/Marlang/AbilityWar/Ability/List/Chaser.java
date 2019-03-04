@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
@@ -25,8 +26,8 @@ public class Chaser extends AbilityBase {
 		
 	};
 	
-	public Chaser(Player player) {
-		super(player, "추적자", Rank.B,
+	public Chaser(Participant participant) {
+		super(participant, "추적자", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 대상에게 추적 장치를 부착합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f이후 철괴를 우클릭하면 추적 장치를 부착한 플레이어의 좌표를 알 수 있습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f추적 장치는 한명에게만 부착할 수 있습니다."));

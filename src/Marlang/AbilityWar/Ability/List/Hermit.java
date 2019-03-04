@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
@@ -24,8 +25,8 @@ public class Hermit extends AbilityBase {
 		
 	};
 
-	public Hermit(Player player) {
-		super(player, "헤르밋", Rank.C,
+	public Hermit(Participant participant) {
+		super(participant, "헤르밋", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f자신의 주변 " + DistanceConfig.getValue() + "칸 내에 플레이어가 들어올 경우 알려줍니다."));
 	}
 

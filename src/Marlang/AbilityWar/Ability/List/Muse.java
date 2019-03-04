@@ -13,6 +13,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
@@ -31,8 +32,8 @@ public class Muse extends AbilityBase {
 		
 	};
 	
-	public Muse(Player player) {
-		super(player, "뮤즈", Rank.S,
+	public Muse(Participant participant) {
+		super(participant, "뮤즈", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여"),
 				ChatColor.translateAlternateColorCodes('&', "&f모두가 데미지를 받지 않는 지역을 만들어냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}

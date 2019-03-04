@@ -12,6 +12,7 @@ import org.bukkit.event.Event;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
@@ -27,8 +28,8 @@ public class Imprison extends AbilityBase {
 		
 	};
 	
-	public Imprison(Player player) {
-		super(player, "구속", Rank.B,
+	public Imprison(Participant participant) {
+		super(participant, "구속", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 대상을 유리막 속에 가둡니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 

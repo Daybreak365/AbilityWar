@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Validate;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
@@ -19,7 +20,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
  */
 abstract public class AbilityBase {
 	
-	private Player player;
+	private Participant participant;
 	private String AbilityName;
 	private Rank Rank;
 	private String[] Explain;
@@ -33,8 +34,8 @@ abstract public class AbilityBase {
 	 * @param Rank			능력 랭크
 	 * @param Explain		능력 설명
 	 */
-	public AbilityBase(Player player, String AbilityName, Rank Rank, String... Explain) {
-		this.player = player;
+	public AbilityBase(Participant participant, String AbilityName, Rank Rank, String... Explain) {
+		this.participant = participant;
 		this.AbilityName = AbilityName;
 		this.Rank = Rank;
 		this.Explain = Explain;
@@ -80,7 +81,7 @@ abstract public class AbilityBase {
 			timer.StopTimer(true);
 		}
 		
-		this.player = null;
+		this.participant = null;
 	}
 	
 	/**
@@ -111,7 +112,14 @@ abstract public class AbilityBase {
 	 * 능력을 소유하는 플레이어를 반환합니다.
 	 */
 	public Player getPlayer() {
-		return player;
+		return participant.getPlayer();
+	}
+
+	/**
+	 * 능력을 소유하는 참가자를 반환합니다.
+	 */
+	public Participant getParticipant() {
+		return participant;
 	}
 
 	/**
@@ -165,10 +173,10 @@ abstract public class AbilityBase {
 	 * @param player						능력을 소유할 플레이어
 	 * @throws IllegalArgumentException		플레이어가 null일 경우 발생
 	 */
-	public void updatePlayer(Player player) throws IllegalArgumentException {
-		Validate.NotNull(player);
+	public void updateParticipant(Participant participant) throws IllegalArgumentException {
+		Validate.NotNull(participant);
 		
-		this.player = player;
+		this.participant = participant;
 	}
 	
 	public enum ClickType {

@@ -18,6 +18,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
@@ -47,8 +48,8 @@ public class Pumpkin extends AbilityBase {
 		
 	};
 	
-	public Pumpkin(Player player) {
-		super(player, "호박", Rank.C,
+	public Pumpkin(Participant participant) {
+		super(participant, "호박", Rank.C,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 " + DurationConfig.getValue() + "초간"),
 				ChatColor.translateAlternateColorCodes('&', "&f귀속 저주가 걸린 호박을 씌웁니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"));

@@ -11,6 +11,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
@@ -38,8 +39,8 @@ public class TheMagician extends AbilityBase {
 		
 	};
 
-	public TheMagician(Player player) {
-		super(player, "마술사", Rank.A,
+	public TheMagician(Participant participant) {
+		super(participant, "마술사", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 플레이어들에게"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DamageConfig.getValue() + "만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

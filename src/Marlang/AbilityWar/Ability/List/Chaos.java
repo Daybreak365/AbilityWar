@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 
@@ -12,6 +11,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
@@ -48,8 +48,8 @@ public class Chaos extends AbilityBase {
 		
 	};
 
-	public Chaos(Player player) {
-		super(player, "카오스", Rank.GOD,
+	public Chaos(Participant participant) {
+		super(participant, "카오스", Rank.GOD,
 				ChatColor.translateAlternateColorCodes('&', "&f시작의 신 카오스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 5초간 짙은 암흑 속으로 주변의 생명체들을"),
 				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));

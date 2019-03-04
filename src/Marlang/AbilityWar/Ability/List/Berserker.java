@@ -2,7 +2,6 @@ package Marlang.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
@@ -10,6 +9,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 
@@ -46,8 +46,8 @@ public class Berserker extends AbilityBase {
 		
 	};
 	
-	public Berserker(Player player) {
-		super(player, "버서커", Rank.B,
+	public Berserker(Participant participant) {
+		super(participant, "버서커", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭한 후 5초 안에 하는 다음 공격이 강화됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f강화된 공격은 " + StrengthConfig.getValue() + "배의 데미지를 내며, 강화된 공격을 사용한 후"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "초간 데미지를 입힐 수 없습니다."));

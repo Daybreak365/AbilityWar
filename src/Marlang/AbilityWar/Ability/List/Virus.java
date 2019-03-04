@@ -7,12 +7,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 public class Virus extends AbilityBase {
 
-	public Virus(Player player) {
-		super(player, "바이러스", Rank.D,
+	public Virus(Participant participant) {
+		super(participant, "바이러스", Rank.D,
 				ChatColor.translateAlternateColorCodes('&', "&f이 능력은 당신을 죽인 사람에게 옮겨갑니다."));
 	}
 
@@ -29,7 +30,7 @@ public class Virus extends AbilityBase {
 				Player Killer = getPlayer().getKiller();
 				if(Killer != null) {
 					if(AbilityWarThread.isGameTaskRunning()) {
-						AbilityWarThread.getGame().transferAbility(this, Killer);
+						this.getParticipant().transferAbility(Killer);
 					}
 				}
 			}

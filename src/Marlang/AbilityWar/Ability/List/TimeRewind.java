@@ -17,6 +17,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.AdvancedArray;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
@@ -44,8 +45,8 @@ public class TimeRewind extends AbilityBase {
 		
 	};
 
-	public TimeRewind(Player player) {
-		super(player, "시간 역행", Rank.S,
+	public TimeRewind(Participant participant) {
+		super(participant, "시간 역행", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 시간을 역행해 " + TimeConfig.getValue() + "초 전으로 돌아갑니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	

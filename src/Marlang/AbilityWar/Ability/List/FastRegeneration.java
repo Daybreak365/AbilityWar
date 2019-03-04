@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
@@ -23,8 +24,8 @@ public class FastRegeneration extends AbilityBase {
 		
 	};
 	
-	public FastRegeneration(Player player) {
-		super(player, "빠른 회복", Rank.A, 
+	public FastRegeneration(Participant participant) {
+		super(participant, "빠른 회복", Rank.A, 
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다."));
 	}
 	

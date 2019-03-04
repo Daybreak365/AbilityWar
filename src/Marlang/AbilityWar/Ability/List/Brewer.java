@@ -12,6 +12,7 @@ import org.bukkit.potion.PotionType;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
@@ -30,8 +31,8 @@ public class Brewer extends AbilityBase {
 		
 	};
 	
-	public Brewer(Player player) {
-		super(player, "양조사", Rank.B,
+	public Brewer(Participant participant) {
+		super(participant, "양조사", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 랜덤한 포션 하나를 얻습니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	

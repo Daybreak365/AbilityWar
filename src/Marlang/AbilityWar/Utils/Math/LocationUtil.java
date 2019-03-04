@@ -3,7 +3,6 @@ package Marlang.AbilityWar.Utils.Math;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,6 +13,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
@@ -132,8 +132,14 @@ public class LocationUtil {
 
 		if (AbilityWarThread.isGameTaskRunning()) {
 			AbstractGame game = AbilityWarThread.getGame();
-			Players = game.getParticipants().stream().filter(p -> !game.getDeathManager().isEliminated(p))
-					.collect(Collectors.toList());
+			
+			Players = new ArrayList<Player>();
+			for(Participant participant : game.getParticipants()) {
+				Player p = participant.getPlayer();
+				if(!game.getDeathManager().isEliminated(p)) {
+					Players.add(p);
+				}
+			}
 		} else {
 			Players = new ArrayList<Player>(Bukkit.getOnlinePlayers());
 		}
@@ -219,7 +225,7 @@ public class LocationUtil {
 					if (AbilityWarThread.isGameTaskRunning()) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player player = (Player) e;
-						if (!game.getParticipants().contains(player) || game.getDeathManager().isEliminated(player)) {
+						if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
 							continue;
 						}
 					}
@@ -240,7 +246,7 @@ public class LocationUtil {
 						if (AbilityWarThread.isGameTaskRunning()) {
 							AbstractGame game = AbilityWarThread.getGame();
 							Player player = (Player) e;
-							if (!game.getParticipants().contains(player) || game.getDeathManager().isEliminated(player)) {
+							if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
 								continue;
 							}
 						}
@@ -262,7 +268,7 @@ public class LocationUtil {
 								if (AbilityWarThread.isGameTaskRunning()) {
 									AbstractGame game = AbilityWarThread.getGame();
 									Player player = (Player) e;
-									if (!game.getParticipants().contains(player) || game.getDeathManager().isEliminated(player)) {
+									if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
 										continue;
 									}
 								}
@@ -285,7 +291,7 @@ public class LocationUtil {
 					if (AbilityWarThread.isGameTaskRunning()) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player player = (Player) e;
-						if (!game.getParticipants().contains(player) || game.getDeathManager().isEliminated(player)) {
+						if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
 							continue;
 						}
 					}
@@ -312,7 +318,7 @@ public class LocationUtil {
 
 				if (AbilityWarThread.isGameTaskRunning()) {
 					AbstractGame game = AbilityWarThread.getGame();
-					if (game.getParticipants().contains(player) && !game.getDeathManager().isEliminated(player)) {
+					if (game.isParticipating(player) && !game.getDeathManager().isEliminated(player)) {
 						Players.add(player);
 					}
 				} else {
@@ -333,7 +339,7 @@ public class LocationUtil {
 
 					if (AbilityWarThread.isGameTaskRunning()) {
 						AbstractGame game = AbilityWarThread.getGame();
-						if (game.getParticipants().contains(player) && !game.getDeathManager().isEliminated(player)) {
+						if (game.isParticipating(player) && !game.getDeathManager().isEliminated(player)) {
 							Players.add(player);
 						}
 					} else {
@@ -355,7 +361,7 @@ public class LocationUtil {
 
 							if (AbilityWarThread.isGameTaskRunning()) {
 								AbstractGame game = AbilityWarThread.getGame();
-								if (game.getParticipants().contains(player) && !game.getDeathManager().isEliminated(player)) {
+								if (game.isParticipating(player) && !game.getDeathManager().isEliminated(player)) {
 									Players.add(player);
 								}
 							} else {

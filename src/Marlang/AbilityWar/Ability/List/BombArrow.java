@@ -7,13 +7,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 public class BombArrow extends AbilityBase {
@@ -29,8 +29,8 @@ public class BombArrow extends AbilityBase {
 		
 	};
 	
-	public BombArrow(Player player) {
-		super(player, "Æø¹ßÈ­»ì", Rank.S,
+	public BombArrow(Participant participant) {
+		super(participant, "Æø¹ßÈ­»ì", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&fÈ­»ìÀ» ¸ÂÃèÀ» ¶§ " + ChanceConfig.getValue() + "% È®·ü·Î Æø¹ßÀ» ÀÏÀ¸Åµ´Ï´Ù."));
 	}
 

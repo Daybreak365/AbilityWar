@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
@@ -32,8 +33,8 @@ public class Gladiator extends AbilityBase {
 		
 	};
 
-	public Gladiator(Player player) {
-		super(player, "글래디에이터", Rank.S,
+	public Gladiator(Participant participant) {
+		super(participant, "글래디에이터", Rank.S,
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 투기장이 생성되며 그 안에서"),
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다."));
 	}

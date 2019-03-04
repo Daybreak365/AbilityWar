@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
@@ -48,8 +48,8 @@ public class Assassin extends AbilityBase {
 		
 	};
 	
-	public Assassin(Player player) {
-		super(player, "암살자", Rank.A,
+	public Assassin(Participant participant) {
+		super(participant, "암살자", Rank.A,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 있는 적 " + TeleportCountConfig.getValue() + "명에게 텔레포트하며"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

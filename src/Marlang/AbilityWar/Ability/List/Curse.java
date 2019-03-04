@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
@@ -24,8 +25,8 @@ public class Curse extends AbilityBase {
 		
 	};
 
-	public Curse(Player player) {
-		super(player, "컬스", Rank.B,
+	public Curse(Participant participant) {
+		super(participant, "컬스", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 상대방이 착용하고 있는 모든 갑옷에 귀속저주를 겁니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f" + CountConfig.getValue() + "번만 사용할 수 있습니다."));
 	}

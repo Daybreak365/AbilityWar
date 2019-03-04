@@ -3,12 +3,12 @@ package Marlang.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
+import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
@@ -25,8 +25,8 @@ public class SuperNova extends AbilityBase {
 		
 	};
 
-	public SuperNova(Player player) {
-		super(player, "초신성", Rank.B,
+	public SuperNova(Participant participant) {
+		super(participant, "초신성", Rank.B,
 				ChatColor.translateAlternateColorCodes('&', "&f마지막 순간에 큰 폭발을 일으키고 사망합니다."));
 	}
 	
