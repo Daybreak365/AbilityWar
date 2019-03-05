@@ -60,9 +60,9 @@ public enum ConfigNodes {
 	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
 			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다.");
 	
-	String Path;
-	Object Default;
-	String[] Comments;
+	private String Path;
+	private Object Default;
+	private String[] Comments;
 	
 	ConfigNodes(String Path, Object Default, String... Comments) {
 		

@@ -204,7 +204,6 @@ public class ItemLib {
 				
 				@Override
 				public org.bukkit.entity.Player getPlayer() {
-					// TODO Auto-generated method stub
 					return null;
 				}
 				

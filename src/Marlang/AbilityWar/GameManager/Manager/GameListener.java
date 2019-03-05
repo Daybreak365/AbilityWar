@@ -29,13 +29,14 @@ import Marlang.AbilityWar.GameManager.Object.Participant;
 public class GameListener implements Listener, EventExecutor {
 	
 	private AbstractGame game;
+	private EventCaller eventCaller = new EventCaller();
 	
 	public GameListener(AbstractGame abstractGame) {
 		this.game = abstractGame;
 		
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		
-		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, this, EventPriority.HIGHEST, new EventCaller(), AbilityWar.getPlugin());
+		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, this, EventPriority.HIGHEST, eventCaller, AbilityWar.getPlugin());
 		
 		for(Class<? extends Event> e : PassiveEvents) {
 			Bukkit.getPluginManager().registerEvent(e, this, EventPriority.HIGH, this, AbilityWar.getPlugin());

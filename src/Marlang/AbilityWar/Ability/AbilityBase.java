@@ -21,9 +21,9 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 abstract public class AbilityBase {
 	
 	private Participant participant;
-	private String AbilityName;
-	private Rank Rank;
-	private String[] Explain;
+	private final String AbilityName;
+	private final Rank Rank;
+	private final String[] Explain;
 	
 	private boolean Restricted = true;
 	
@@ -141,13 +141,6 @@ abstract public class AbilityBase {
 	 */
 	public String[] getExplain() {
 		return Explain;
-	}
-
-	/**
-	 * 능력의 설명을 설정합니다.
-	 */
-	protected void setExplain(String... Explain) {
-		this.Explain = Explain;
 	}
 
 	/**
