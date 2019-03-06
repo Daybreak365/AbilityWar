@@ -21,14 +21,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
-import Marlang.AbilityWar.Ability.AbilityBase.Rank;
 import Marlang.AbilityWar.Ability.AbilityList;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
-import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
+import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
@@ -50,7 +51,7 @@ public class BlackListGUI implements Listener {
 	public ArrayList<String> getBlackList() {
 		ArrayList<String> list = new ArrayList<String>();
 		
-		for(String name : AbilityList.values()) {
+		for(String name : AbilityList.nameValues()) {
 			if(!list.contains(name)) {
 				list.add(name);
 			}
@@ -74,7 +75,7 @@ public class BlackListGUI implements Listener {
 	}
 	
 	public void openBlackListGUI(Integer page) {
-		Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;
+		Integer MaxPage = ((AbilityList.nameValues().size() - 1) / 36) + 1;
 		if (MaxPage < page) page = 1;
 		if(page < 1) page = 1;
 		BlackListGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c&l✖ &8&l능력 블랙리스트 &c&l✖"));
@@ -237,15 +238,13 @@ public class BlackListGUI implements Listener {
 	private List<String> getAbilities(Rank r) {
 		List<String> list = new ArrayList<String>();
 		
-		for(String name : AbilityList.values()) {
+		for(String name : AbilityList.nameValues()) {
 			Class<? extends AbilityBase> clazz = AbilityList.getByString(name);
-			try {
-				AbilityBase Ability = clazz.getConstructor(Player.class).newInstance(Bukkit.getPlayer(""));
-				if(Ability.getRank().equals(r)) {
+			AbilityManifest manifest = clazz.getAnnotation(AbilityManifest.class);
+			if(manifest != null) {
+				if(manifest.Rank().equals(r)) {
 					list.add(name);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 		

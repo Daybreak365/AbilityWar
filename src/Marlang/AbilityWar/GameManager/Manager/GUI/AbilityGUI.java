@@ -36,7 +36,7 @@ public class AbilityGUI implements Listener {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 		
-		Values = new ArrayList<String>(AbilityList.values());
+		Values = new ArrayList<String>(AbilityList.nameValues());
 		Values.sort(new Comparator<String>() {
 			
 			public int compare(String obj1, String obj2) {
@@ -51,7 +51,7 @@ public class AbilityGUI implements Listener {
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 		
-		Values = new ArrayList<String>(AbilityList.values());
+		Values = new ArrayList<String>(AbilityList.nameValues());
 		Values.sort(new Comparator<String>() {
 			
 			public int compare(String obj1, String obj2) {

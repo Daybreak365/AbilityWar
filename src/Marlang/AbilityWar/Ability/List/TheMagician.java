@@ -9,6 +9,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -17,6 +19,7 @@ import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
+@AbilityManifest(Name = "마술사", Rank = Rank.A)
 public class TheMagician extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("마술사", "Cooldown", 5, 
@@ -40,7 +43,7 @@ public class TheMagician extends AbilityBase {
 	};
 
 	public TheMagician(Participant participant) {
-		super(participant, "마술사", Rank.A,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 플레이어들에게"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DamageConfig.getValue() + "만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

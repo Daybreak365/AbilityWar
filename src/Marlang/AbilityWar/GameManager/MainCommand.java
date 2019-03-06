@@ -329,7 +329,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					if(participant.hasAbility()) {
 						Count++;
 						AbilityBase Ability = participant.getAbility();
-						msg.add(ChatColor.translateAlternateColorCodes('&', "&e" + Count + ". &f" + participant.getPlayer().getName() + " &7: &c" + Ability.getAbilityName()));
+						String name = Ability.getName();
+						if(name != null) {
+							msg.add(ChatColor.translateAlternateColorCodes('&', "&e" + Count + ". &f" + participant.getPlayer().getName() + " &7: &c" + name));
+						}
 					}
 				}
 				

@@ -9,6 +9,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -16,6 +18,7 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
+@AbilityManifest(Name = "테러리스트", Rank = Rank.A)
 public class Terrorist extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("테러리스트", "Cooldown", 100,
@@ -29,7 +32,7 @@ public class Terrorist extends AbilityBase {
 	};
 	
 	public Terrorist(Participant participant) {
-		super(participant, "테러리스트", Rank.A,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신의 주위에 TNT 10개를 떨어뜨립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f폭발 데미지를 입지 않습니다."));
 	}

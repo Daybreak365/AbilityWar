@@ -4,12 +4,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Validate;
@@ -21,9 +21,9 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 abstract public class AbilityBase {
 	
 	private Participant participant;
-	private final String AbilityName;
-	private final Rank Rank;
-	private final String[] Explain;
+	private final String[] explain;
+	private final String name;
+	private final Rank rank;
 	
 	private boolean Restricted = true;
 	
@@ -34,11 +34,19 @@ abstract public class AbilityBase {
 	 * @param Rank			능력 랭크
 	 * @param Explain		능력 설명
 	 */
-	public AbilityBase(Participant participant, String AbilityName, Rank Rank, String... Explain) {
+	public AbilityBase(Participant participant, String... explain) {
 		this.participant = participant;
-		this.AbilityName = AbilityName;
-		this.Rank = Rank;
-		this.Explain = Explain;
+		this.explain = explain;
+		
+		AbilityManifest manifest = this.getClass().getAnnotation(AbilityManifest.class);
+		
+		if(manifest != null) {
+			this.name = manifest.Name();
+			this.rank = manifest.Rank();
+		} else {
+			this.name = null;
+			this.rank = null;
+		}
 	}
 	
 	/**
@@ -123,24 +131,26 @@ abstract public class AbilityBase {
 	}
 
 	/**
-	 * 능력의 이름을 반환합니다.
-	 */
-	public String getAbilityName() {
-		return AbilityName;
-	}
-
-	/**
-	 * 능력의 랭크를 반환합니다.
-	 */
-	public Rank getRank() {
-		return Rank;
-	}
-
-	/**
 	 * 능력의 설명을 반환합니다.
 	 */
 	public String[] getExplain() {
-		return Explain;
+		return explain;
+	}
+
+	/**
+	 * 능력의 이름을 반환합니다.
+	 * 능력 클래스에 AbilityManifest 어노테이션이 존재하지 않을 경우 null을 반환할 수 있습니다.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * 능력의 등급을 반환합니다.
+	 * 능력 클래스에 AbilityManifest 어노테이션이 존재하지 않을 경우 null을 반환할 수 있습니다.
+	 */
+	public Rank getRank() {
+		return rank;
 	}
 
 	/**
@@ -206,47 +216,6 @@ abstract public class AbilityBase {
 		
 	}
 	
-	public enum Rank {
-		
-		/**
-		 * Special 등급
-		 */
-		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&5Special 등급")),
-		/**
-		 * 신 등급
-		 */
-		GOD(ChatColor.translateAlternateColorCodes('&', "&c신 등급")),
-		/**
-		 * S 등급
-		 */
-		S(ChatColor.translateAlternateColorCodes('&', "&dS 등급")),
-		/**
-		 * A 등급
-		 */
-		A(ChatColor.translateAlternateColorCodes('&', "&aA 등급")),
-		/**
-		 * B 등급
-		 */
-		B(ChatColor.translateAlternateColorCodes('&', "&bB 등급")),
-		/**
-		 * C 등급
-		 */
-		C(ChatColor.translateAlternateColorCodes('&', "&eC 등급")),
-		/**
-		 * D 등급
-		 */
-		D(ChatColor.translateAlternateColorCodes('&', "&7D 등급"));
-		
-		private String RankName;
-		
-		private Rank(String RankName) {
-			this.RankName = RankName;
-		}
-		
-		public String getRankName() {
-			return RankName;
-		}
-		
-	}
+	
 	
 }

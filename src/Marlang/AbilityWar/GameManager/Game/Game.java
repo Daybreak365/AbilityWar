@@ -181,7 +181,11 @@ public class Game extends AbstractGame {
 					Participant participant = Participant.Construct(this, Victim);
 					if(participant.hasAbility()) {
 						AbilityBase Ability = participant.getAbility();
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + Ability.getAbilityName() + " &f능력이었습니다!"));
+						
+						String name = Ability.getName();
+						if(name != null) {
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + name + " &f능력이었습니다!"));
+						}
 					} else {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
 					}
@@ -226,7 +230,7 @@ public class Game extends AbstractGame {
 	
 	public void broadcastAbilityReady() {
 		ArrayList<String> msg = Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &b" + AbilityList.values().size() + "개&f의 능력이 등록되어 있습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &b" + AbilityList.nameValues().size() + "개&f의 능력이 등록되어 있습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&7능력을 무작위로 할당합니다..."));
 		
 		Messager.broadcastStringList(msg);
@@ -340,7 +344,7 @@ public class Game extends AbstractGame {
 			@Override
 			protected List<Class<? extends AbilityBase>> setupAbilities() {
 				List<Class<? extends AbilityBase>> list = new ArrayList<>();
-				for(String name : AbilityList.values()) {
+				for(String name : AbilityList.nameValues()) {
 					if(!AbilityWarSettings.getBlackList().contains(name)) {
 						list.add(AbilityList.getByString(name));
 					}

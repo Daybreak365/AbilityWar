@@ -7,12 +7,15 @@ import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
+@AbilityManifest(Name = "유명 인사", Rank = Rank.D)
 public class Celebrity extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("유명 인사", "Cooldown", 60,
@@ -26,7 +29,7 @@ public class Celebrity extends AbilityBase {
 	};
 
 	public Celebrity(Participant participant) {
-		super(participant, "유명 인사", Rank.D,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 모든 플레이어가 자신의 방향을 바라봅니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	

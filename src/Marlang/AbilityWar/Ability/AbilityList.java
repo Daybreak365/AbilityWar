@@ -3,7 +3,6 @@ package Marlang.AbilityWar.Ability;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -61,90 +60,120 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class AbilityList {
 	
-	private static HashMap<String, Class<? extends AbilityBase>> Abilities = new HashMap<String, Class<? extends AbilityBase>>();
+	private static ArrayList<Class<? extends AbilityBase>> Abilities = new ArrayList<>();
 	
 	/**
-	 * 능력 등록
+	 * 능력을 등록합니다.
+	 * 
+	 * 능력을 등록하기 전, AbilityManifest 어노테이션이 클래스에 존재하는지,
+	 * 겹치는 이름은 없는지, 생성자는 올바른지 확인해주시길 바랍니다.
+	 * 
+	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
 	 * @param name			능력 이름
 	 * @param Ability		능력 클래스
 	 */
-	public static void registerAbility(String name, Class<? extends AbilityBase> Ability) {
-		if(!Abilities.containsKey(name)) {
-			Abilities.put(name, Ability);
+	public static void registerAbility(Class<? extends AbilityBase> Ability) {
+		if(!Abilities.contains(Ability)) {
+			AbilityManifest manifest = Ability.getAnnotation(AbilityManifest.class);
 			
-			try {
-				for(Field field : Ability.getFields()) {
-					if(Modifier.isStatic(field.getModifiers()) && field.getType().equals(SettingObject.class)) {
-						field.get(new Object());
+			if(manifest != null) {
+				if(!containsName(manifest.Name())) {
+					Abilities.add(Ability);
+					
+					try {
+						for(Field field : Ability.getFields()) {
+							if(field.getType().equals(SettingObject.class) && Modifier.isStatic(field.getModifiers())) {
+								field.get(null);
+							}
+						}
+					} catch (IllegalAccessException | IllegalArgumentException e) {
+						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
 					}
+				} else {
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
-			} catch (IllegalAccessException | IllegalArgumentException e) {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+			} else {
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력은 AbilityManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
 			}
-		} else {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 		}
+	}
+	
+	private static boolean containsName(String name) {
+		for(Class<? extends AbilityBase> abilityClass : Abilities) {
+			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
+			if(manifest != null) {
+				if(manifest.Name().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
 	 * 플러그인 기본 능력 등록
 	 */
 	static {
-		registerAbility("암살자", Assassin.class);
-		registerAbility("깃털", Feather.class);
-		registerAbility("데미갓", Demigod.class);
-		registerAbility("빠른 회복", FastRegeneration.class);
-		registerAbility("에너지 블로커", EnergyBlocker.class);
-		registerAbility("다이스 갓", DiceGod.class);
-		registerAbility("아레스", Ares.class);
-		registerAbility("제우스", Zeus.class);
-		registerAbility("버서커", Berserker.class);
-		registerAbility("좀비", Zombie.class);
-		registerAbility("테러리스트", Terrorist.class);
-		registerAbility("설인", Yeti.class);
-		registerAbility("글래디에이터", Gladiator.class);
-		registerAbility("카오스", Chaos.class);
-		registerAbility("보이드", Void.class);
-		registerAbility("심안", DarkVision.class);
-		registerAbility("상위존재", HigherBeing.class);
-		registerAbility("검은 양초", BlackCandle.class);
-		registerAbility("이열치열", FireFightWithFire.class);
-		registerAbility("해커", Hacker.class);
-		registerAbility("뮤즈", Muse.class);
-		registerAbility("추적자", Chaser.class);
-		registerAbility("플로라", Flora.class);
-		registerAbility("쇼맨쉽", ShowmanShip.class);
-		registerAbility("베르투스", Virtus.class);
-		registerAbility("넥스", Nex.class);
-		registerAbility("이라", Ira.class);
-		registerAbility("홀수강박증", OnlyOddNumber.class);
-		registerAbility("광대", Clown.class);
-		registerAbility("마술사", TheMagician.class);
-		registerAbility("교황", TheHighPriestess.class);
-		registerAbility("여제", TheEmpress.class);
-		registerAbility("황제", TheEmperor.class);
-		registerAbility("호박", Pumpkin.class);
-		registerAbility("바이러스", Virus.class);
-		registerAbility("헤르밋", Hermit.class);
-		registerAbility("악마의 부츠", DevilBoots.class);
-		registerAbility("폭발 화살", BombArrow.class);
-		registerAbility("양조사", Brewer.class);
-		registerAbility("구속", Imprison.class);
-		registerAbility("초신성", SuperNova.class);
-		registerAbility("유명 인사", Celebrity.class);
-		registerAbility("낙법의 달인", ExpertOfFall.class);
-		registerAbility("컬스", Curse.class);
-		registerAbility("시간 역행", TimeRewind.class);
+		registerAbility(Assassin.class);
+		registerAbility(Feather.class);
+		registerAbility(Demigod.class);
+		registerAbility(FastRegeneration.class);
+		registerAbility(EnergyBlocker.class);
+		registerAbility(DiceGod.class);
+		registerAbility(Ares.class);
+		registerAbility(Zeus.class);
+		registerAbility(Berserker.class);
+		registerAbility(Zombie.class);
+		registerAbility(Terrorist.class);
+		registerAbility(Yeti.class);
+		registerAbility(Gladiator.class);
+		registerAbility(Chaos.class);
+		registerAbility(Void.class);
+		registerAbility(DarkVision.class);
+		registerAbility(HigherBeing.class);
+		registerAbility(BlackCandle.class);
+		registerAbility(FireFightWithFire.class);
+		registerAbility(Hacker.class);
+		registerAbility(Muse.class);
+		registerAbility(Chaser.class);
+		registerAbility(Flora.class);
+		registerAbility(ShowmanShip.class);
+		registerAbility(Virtus.class);
+		registerAbility(Nex.class);
+		registerAbility(Ira.class);
+		registerAbility(OnlyOddNumber.class);
+		registerAbility(Clown.class);
+		registerAbility(TheMagician.class);
+		registerAbility(TheHighPriestess.class);
+		registerAbility(TheEmpress.class);
+		registerAbility(TheEmperor.class);
+		registerAbility(Pumpkin.class);
+		registerAbility(Virus.class);
+		registerAbility(Hermit.class);
+		registerAbility(DevilBoots.class);
+		registerAbility(BombArrow.class);
+		registerAbility(Brewer.class);
+		registerAbility(Imprison.class);
+		registerAbility(SuperNova.class);
+		registerAbility(Celebrity.class);
+		registerAbility(ExpertOfFall.class);
+		registerAbility(Curse.class);
+		registerAbility(TimeRewind.class);
 	}
 	
 	/**
 	 * 등록된 능력들의 이름을 String List로 반환합니다.
+	 * AbilityManifest가 존재하지 않는 능력은 포함되지 않습니다.
 	 */
-	public static List<String> values() {
+	public static List<String> nameValues() {
 		ArrayList<String> Values = new ArrayList<String>();
 		
-		for(String s : Abilities.keySet()) {
-			Values.add(s);
+		for(Class<? extends AbilityBase> abilityClass : Abilities) {
+			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
+			if(manifest != null) {
+				Values.add(manifest.Name());
+			}
 		}
 		
 		return Values;
@@ -152,11 +181,21 @@ public class AbilityList {
 
 	/**
 	 * 등록된 능력 중 해당 이름의 능력을 반환합니다.
+	 * AbilityManifest가 존재하지 않는 능력이거나 존재하지 않는 능력일 경우 null을 반환합니다.
 	 * @param name	능력의 이름
 	 * @return		능력 Class
 	 */
 	public static Class<? extends AbilityBase> getByString(String name) {
-		return Abilities.get(name);
+		for(Class<? extends AbilityBase> abilityClass : Abilities) {
+			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
+			if(manifest != null) {
+				if(manifest.Name().equalsIgnoreCase(name)) {
+					return abilityClass;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 }

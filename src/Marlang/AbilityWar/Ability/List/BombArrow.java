@@ -12,10 +12,13 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
+@AbilityManifest(Name = "Æø¹ßÈ­»ì", Rank = Rank.S)
 public class BombArrow extends AbilityBase {
 
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>("Æø¹ßÈ­»ì", "Chance", 50,
@@ -30,7 +33,7 @@ public class BombArrow extends AbilityBase {
 	};
 	
 	public BombArrow(Participant participant) {
-		super(participant, "Æø¹ßÈ­»ì", Rank.S,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&fÈ­»ìÀ» ¸ÂÃèÀ» ¶§ " + ChanceConfig.getValue() + "% È®·ü·Î Æø¹ßÀ» ÀÏÀ¸Åµ´Ï´Ù."));
 	}
 

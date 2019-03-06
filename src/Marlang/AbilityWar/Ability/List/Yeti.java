@@ -8,6 +8,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -17,6 +19,7 @@ import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+@AbilityManifest(Name = "설인", Rank = Rank.S)
 public class Yeti extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("설인", "Cooldown", 80, "# 쿨타임") {
@@ -39,9 +42,9 @@ public class Yeti extends AbilityBase {
 	};
 
 	public Yeti(Participant participant) {
-		super(participant, "설인", Rank.S, ChatColor.translateAlternateColorCodes('&', "&f눈 위에 서 있으면 다양한 버프를 받습니다."),
-				ChatColor.translateAlternateColorCodes('&',
-						"&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant,
+				ChatColor.translateAlternateColorCodes('&', "&f눈 위에 서 있으면 다양한 버프를 받습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	TimerBase Buff = new TimerBase() {

@@ -5,15 +5,18 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+@AbilityManifest(Name = "쇼맨쉽", Rank = Rank.A)
 public class ShowmanShip extends AbilityBase {
 
 	public ShowmanShip(Participant participant) {
-		super(participant, "쇼맨쉽", Rank.A,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f주변 10칸 이내에 있는 사람 수에 따라 효과를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&a1명 이하 &7: &f나약함  &a2명 이상 &7: &f힘 II  &a3명 이상 &7: &f힘 III"));
 	}

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.UpdateObject;
 
 /**
@@ -170,14 +171,20 @@ public class Messager {
 	public static ArrayList<String> formatAbility(AbilityBase Ability) {
 		ArrayList<String> AbilityInfo = new ArrayList<String>();
 		AbilityInfo.add(formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"));
-		if(Ability.isRestricted()) {
-			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + Ability.getAbilityName() + " &f[&7능력 비활성화됨&f] " + Ability.getRank().getRankName()));
-		} else {
-			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + Ability.getAbilityName() + " &f[&a능력 활성화됨&f] " + Ability.getRank().getRankName()));
-		}
 		
-		for(String s : Ability.getExplain()) {
-			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&f" + s));
+		String name = Ability.getName();
+		Rank rank = Ability.getRank();
+		
+		if(name != null && rank != null) {
+			String Restricted = Ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]";
+			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + Restricted + " " + rank.getRankName()));
+			
+			for(String s : Ability.getExplain()) {
+				AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&f" + s));
+			}
+		} else {
+			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&c능력 설명을 불러오는 도중 오류가 발생하였습니다."));
+			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
 		}
 		
 		AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&a-----------------------------------------"));

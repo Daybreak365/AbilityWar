@@ -7,6 +7,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -15,6 +17,7 @@ import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+@AbilityManifest(Name = "해커", Rank = Rank.A)
 public class Hacker extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("해커", "Cooldown", 180, 
@@ -38,7 +41,7 @@ public class Hacker extends AbilityBase {
 	};
 	
 	public Hacker(Participant participant) {
-		super(participant, "해커", Rank.A,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신에게 제일 가까운 플레이어의 좌표를 알리고"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DurationConfig.getValue() + "초간 해당 플레이어가 움직이지 못하게 합니다."));
 	}

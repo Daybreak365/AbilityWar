@@ -9,10 +9,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 
+@AbilityManifest(Name = "데미갓", Rank = Rank.GOD)
 public class Demigod extends AbilityBase {
 	
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>("데미갓", "Chance", 40,
@@ -27,7 +30,7 @@ public class Demigod extends AbilityBase {
 	};
 	
 	public Demigod(Participant participant) {
-		super(participant, "데미갓", Rank.GOD,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f반신반인의 능력자입니다. 공격을 받으면"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + ChanceConfig.getValue() + "% 확률로 5초간 랜덤 버프가 발동됩니다."));
 	}

@@ -8,13 +8,16 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
+@AbilityManifest(Name = "낙법의 달인", Rank = Rank.C)
 public class ExpertOfFall extends AbilityBase {
 
 	public ExpertOfFall(Participant participant) {
-		super(participant, "낙법의 달인", Rank.C,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f낙하해 땅에 닿았을 때 자동으로 물낙법을 합니다."));
 	}
 

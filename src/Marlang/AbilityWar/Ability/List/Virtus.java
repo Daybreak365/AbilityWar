@@ -6,6 +6,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -14,6 +16,7 @@ import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+@AbilityManifest(Name = "베르투스", Rank = Rank.A)
 public class Virtus extends AbilityBase {
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("베르투스", "Duration", 3,
@@ -37,7 +40,7 @@ public class Virtus extends AbilityBase {
 	};
 	
 	public Virtus(Participant participant) {
-		super(participant, "베르투스", Rank.A,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 데미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 

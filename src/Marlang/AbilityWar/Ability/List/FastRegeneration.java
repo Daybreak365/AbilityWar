@@ -6,11 +6,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
+@AbilityManifest(Name = "빠른 회복", Rank = Rank.A)
 public class FastRegeneration extends AbilityBase {
 	
 	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>("빠른회복", "RegenSpeed", 20,
@@ -25,7 +28,7 @@ public class FastRegeneration extends AbilityBase {
 	};
 	
 	public FastRegeneration(Participant participant) {
-		super(participant, "빠른 회복", Rank.A, 
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다."));
 	}
 	

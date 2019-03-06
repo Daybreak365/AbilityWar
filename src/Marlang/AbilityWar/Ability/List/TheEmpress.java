@@ -10,6 +10,8 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -23,6 +25,7 @@ import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
+@AbilityManifest(Name = "여제", Rank = Rank.B)
 public class TheEmpress extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("여제", "Cooldown", 70, 
@@ -47,7 +50,7 @@ public class TheEmpress extends AbilityBase {
 	};
 	
 	public TheEmpress(Participant participant) {
-		super(participant, "여제", Rank.B,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 현재 좌표에 따라 버프 혹은 아이템을 얻습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &a+ &f➡ 힘   10초 | 날카로움 IV 다이아 검"),
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &c- &f➡ 저항 20초 | " + ((ServerVersion.getVersion() >= 9) ? "방패" : "거미줄")),

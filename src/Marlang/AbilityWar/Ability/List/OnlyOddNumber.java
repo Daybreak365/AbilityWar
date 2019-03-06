@@ -6,10 +6,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
+@AbilityManifest(Name = "홀수강박증", Rank = Rank.S)
 public class OnlyOddNumber extends AbilityBase {
 
 	public static SettingObject<Integer> PercentageConfig = new SettingObject<Integer>("홀수강박증", "Percentage", 79, 
@@ -46,7 +49,7 @@ public class OnlyOddNumber extends AbilityBase {
 	};
 	
 	public OnlyOddNumber(Participant participant) {
-		super(participant, "홀수강박증", Rank.S,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f체력이 최대 체력의 " + PercentageConfig.getValue() + "% 이하일 때"),
 				ChatColor.translateAlternateColorCodes('&', "&f공격을 받으면 체력에 따라 다른 효과를 받습니다. &f체력이 홀수일 경우 데미지를"),
 				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% 줄여 받고, 체력이 짝수일 경우 데미지를 " + EvenNumberConfig.getValue() + "% 늘려 받습니다."));

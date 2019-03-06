@@ -7,12 +7,15 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
 
+@AbilityManifest(Name = "컬스", Rank = Rank.B)
 public class Curse extends AbilityBase {
 
 	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>("컬스", "Count", 1,
@@ -26,7 +29,7 @@ public class Curse extends AbilityBase {
 	};
 
 	public Curse(Participant participant) {
-		super(participant, "컬스", Rank.B,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 상대방이 착용하고 있는 모든 갑옷에 귀속저주를 겁니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f" + CountConfig.getValue() + "번만 사용할 수 있습니다."));
 	}

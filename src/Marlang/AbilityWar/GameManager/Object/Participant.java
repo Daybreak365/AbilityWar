@@ -226,12 +226,10 @@ public class Participant implements EventExecutor {
 	 * 이 플레이어의 능력을 to에게 옮깁니다.
 	 * to가 게임에 참여하고 있지 않거나 이 플레이어에게 능력이 없을 경우 아무 작업도 하지 않습니다.
 	 */
-	public void transferAbility(Player to) {
-		if(hasAbility() && this.game.isParticipating(to) && Participant.checkParticipant(to)) {
+	public void transferAbility(Participant target) {
+		if(hasAbility()) {
 			AbilityBase Ability = getAbility();
 			removeAbility();
-			
-			Participant target = Participant.Construct(this.game, to);
 			
 			Ability.updateParticipant(target);
 			

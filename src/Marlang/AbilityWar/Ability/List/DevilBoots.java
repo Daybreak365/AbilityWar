@@ -10,12 +10,15 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 
+@AbilityManifest(Name = "악마의 부츠", Rank = Rank.B)
 public class DevilBoots extends AbilityBase {
 
 	public DevilBoots(Participant participant) {
-		super(participant, "악마의 부츠", Rank.B,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f지나가는 자리에 불이 붙습니다. 화염 피해를 받지 않습니다."));
 	}
 	

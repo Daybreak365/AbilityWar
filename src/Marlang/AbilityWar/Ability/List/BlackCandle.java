@@ -8,11 +8,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.EffectLib;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+@AbilityManifest(Name = "검은 양초", Rank = Rank.B)
 public class BlackCandle extends AbilityBase {
 
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>("검은양초", "Chance", 10,
@@ -26,7 +29,7 @@ public class BlackCandle extends AbilityBase {
 	};
 
 	public BlackCandle(Participant participant) {
-		super(participant, "검은 양초", Rank.B,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f디버프를 받지 않으며, 데미지를 받으면 " + ChanceConfig.getValue() + "% 확률로 체력 1.5칸을 회복합니다."));
 	}
 

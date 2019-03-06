@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -17,6 +19,7 @@ import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
+@AbilityManifest(Name = "아레스", Rank = Rank.GOD)
 public class Ares extends AbilityBase {
 	
 	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("아레스", "Damage", 8, 
@@ -50,7 +53,7 @@ public class Ares extends AbilityBase {
 	};
 	
 	public Ares(Participant participant) {
-		super(participant, "아레스", Rank.GOD, 
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f전쟁의 신 아레스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 데미지를 주며,"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 끌고 갑니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));

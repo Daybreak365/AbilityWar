@@ -10,6 +10,8 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -20,6 +22,7 @@ import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 
+@AbilityManifest(Name = "뮤즈", Rank = Rank.S)
 public class Muse extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("뮤즈", "Cooldown", 80, 
@@ -33,7 +36,7 @@ public class Muse extends AbilityBase {
 	};
 	
 	public Muse(Participant participant) {
-		super(participant, "뮤즈", Rank.S,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여"),
 				ChatColor.translateAlternateColorCodes('&', "&f모두가 데미지를 받지 않는 지역을 만들어냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}

@@ -8,9 +8,12 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 
+@AbilityManifest(Name = "이라", Rank = Rank.S)
 public class Ira extends AbilityBase {
 
 	public static SettingObject<Integer> AttackConfig = new SettingObject<Integer>("이라", "AttackTime", 4,
@@ -25,7 +28,7 @@ public class Ira extends AbilityBase {
 	};
 	
 	public Ira(Participant participant) {
-		super(participant, "이라", Rank.S,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f" + AttackConfig.getValue() + "번 공격을 당할 때마다 상대방의 위치에 폭발을 일으킵니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f자기 자신도 폭발 데미지를 입습니다."));
 	}

@@ -6,12 +6,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 
+@AbilityManifest(Name = "±¤´ë", Rank = Rank.D)
 public class Clown extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("±¤´ë", "Cooldown", 3, 
@@ -25,7 +28,7 @@ public class Clown extends AbilityBase {
 	};
 
 	public Clown(Participant participant) {
-		super(participant, "±¤´ë", Rank.D,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ½ºÆùÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 

@@ -7,12 +7,15 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Library.ParticleLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+@AbilityManifest(Name = "초신성", Rank = Rank.B)
 public class SuperNova extends AbilityBase {
 
 	public static SettingObject<Integer> SizeConfig = new SettingObject<Integer>("초신성", "Size", 10,
@@ -26,7 +29,7 @@ public class SuperNova extends AbilityBase {
 	};
 
 	public SuperNova(Participant participant) {
-		super(participant, "초신성", Rank.B,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f마지막 순간에 큰 폭발을 일으키고 사망합니다."));
 	}
 	

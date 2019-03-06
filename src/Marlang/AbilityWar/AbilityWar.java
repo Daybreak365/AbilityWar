@@ -72,7 +72,7 @@ public class AbilityWar extends JavaPlugin {
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
 
 		try {
-			for(String name : AbilityList.values()) {
+			for(String name : AbilityList.nameValues()) {
 				Class<? extends AbilityBase> Ability = AbilityList.getByString(name);
 				Class.forName(Ability.getName());
 			}

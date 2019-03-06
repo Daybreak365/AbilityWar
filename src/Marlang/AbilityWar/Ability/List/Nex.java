@@ -18,6 +18,8 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -29,6 +31,7 @@ import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
+@AbilityManifest(Name = "넥스", Rank = Rank.B)
 public class Nex extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("넥스", "Cooldown", 120, "# 쿨타임") {
@@ -50,7 +53,7 @@ public class Nex extends AbilityBase {
 	};
 	
 	public Nex(Participant participant) {
-		super(participant, "넥스", Rank.B,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다가 바닥으로 내려 찍으며"),
 				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

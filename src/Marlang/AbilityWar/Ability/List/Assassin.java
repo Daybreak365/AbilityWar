@@ -8,6 +8,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
+import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
 import Marlang.AbilityWar.GameManager.Object.Participant;
@@ -16,6 +18,7 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+@AbilityManifest(Name = "암살자", Rank = Rank.A)
 public class Assassin extends AbilityBase {
 	
 	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("암살자", "Damage", 10, 
@@ -49,7 +52,7 @@ public class Assassin extends AbilityBase {
 	};
 	
 	public Assassin(Participant participant) {
-		super(participant, "암살자", Rank.A,
+		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 있는 적 " + TeleportCountConfig.getValue() + "명에게 텔레포트하며"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}

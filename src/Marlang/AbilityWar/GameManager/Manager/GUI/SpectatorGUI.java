@@ -69,7 +69,7 @@ public class SpectatorGUI implements Listener {
 	
 	public void openSpectateGUI(Integer page) {
 		List<String> Players = getPlayers();
-		Integer MaxPage = ((AbilityList.values().size() - 1) / 36) + 1;MaxPage = 100;
+		Integer MaxPage = ((AbilityList.nameValues().size() - 1) / 36) + 1;MaxPage = 100;
 		if (MaxPage < page)
 			page = 1;
 		if(page < 1) page = 1;
