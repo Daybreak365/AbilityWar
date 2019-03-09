@@ -12,7 +12,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.GameManager.Object.Participant;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 @AbilityManifest(Name = "이열치열", Rank = Rank.B)

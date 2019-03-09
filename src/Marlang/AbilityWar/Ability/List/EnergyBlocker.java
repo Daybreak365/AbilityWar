@@ -12,7 +12,7 @@ import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.GameManager.Object.Participant;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 
 @AbilityManifest(Name = "에너지 블로커", Rank = Rank.A)

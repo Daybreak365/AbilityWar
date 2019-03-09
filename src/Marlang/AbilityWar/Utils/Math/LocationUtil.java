@@ -13,7 +13,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
-import Marlang.AbilityWar.GameManager.Object.Participant;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 

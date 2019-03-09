@@ -12,6 +12,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
  */
 public class ServerVersion {
 
+	private static String VersionString = getVersionString();
 	private static Integer Version = getSimpleVersion();
 	
 	/**
@@ -31,7 +32,7 @@ public class ServerVersion {
 	 */
 	private static Integer getSimpleVersion() {
 		Integer Version = -1;
-		String[] versionArray = getVersionString().split("_");
+		String[] versionArray = VersionString.split("_");
 		if (versionArray.length >= 2) {
 			try {
 				Version = Integer.valueOf(versionArray[1]);
@@ -45,6 +46,10 @@ public class ServerVersion {
 	
 	public static Integer getVersion() {
 		return Version;
+	}
+	
+	public static String getStringVersion() {
+		return VersionString;
 	}
 	
 	/**

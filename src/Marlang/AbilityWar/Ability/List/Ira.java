@@ -11,7 +11,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.GameManager.Object.Participant;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 
 @AbilityManifest(Name = "ÀÌ¶ף", Rank = Rank.S)
 public class Ira extends AbilityBase {

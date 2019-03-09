@@ -17,15 +17,22 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
  */
 abstract public class DurationTimer extends TimerBase {
 	
-	private AbilityBase Ability;
-	private CooldownTimer CooldownTimer;
-	private Integer Duration;
-	
+	private final AbilityBase Ability;
+	private final CooldownTimer CooldownTimer;
+	private final Integer Duration;
+
 	public DurationTimer(AbilityBase Ability, Integer Duration, CooldownTimer CooldownTimer) {
 		super(Duration);
 		this.Ability = Ability;
 		this.Duration = Duration;
 		this.CooldownTimer = CooldownTimer;
+	}
+
+	public DurationTimer(AbilityBase Ability, Integer Duration) {
+		super(Duration);
+		this.Ability = Ability;
+		this.Duration = Duration;
+		this.CooldownTimer = null;
 	}
 	
 	abstract protected void onDurationStart();
@@ -88,7 +95,10 @@ abstract public class DurationTimer extends TimerBase {
 		//Notify
 		this.onDurationEnd();
 		
-		CooldownTimer.StartTimer();
+		if(CooldownTimer != null) {
+			CooldownTimer.StartTimer();
+		}
+		
 		Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다."));
 	}
 	

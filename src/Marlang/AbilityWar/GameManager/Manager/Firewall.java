@@ -14,8 +14,8 @@ import org.bukkit.plugin.EventExecutor;
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.GameManager.Game.Game;
-import Marlang.AbilityWar.GameManager.Object.Participant;
 
 /**
  * πÊ»≠∫Æ

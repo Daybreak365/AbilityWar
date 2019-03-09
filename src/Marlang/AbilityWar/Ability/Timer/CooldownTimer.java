@@ -31,8 +31,8 @@ public class CooldownTimer extends TimerBase {
 		
 	}
 	
-	private AbilityBase Ability;
-	private Integer Cool;
+	private final AbilityBase Ability;
+	private final Integer Cool;
 	private String AbilityName = "";
 
 	public CooldownTimer(AbilityBase Ability, Integer Cool) {

@@ -44,7 +44,7 @@ public class AddonLoader {
 		}
 	}
 	
-	private ArrayList<Addon> Addons = new ArrayList<Addon>();
+	private final ArrayList<Addon> Addons = new ArrayList<Addon>();
 	
 	/**
 	 * 불러와진 애드온들의 설명 목록을 반환합니다.

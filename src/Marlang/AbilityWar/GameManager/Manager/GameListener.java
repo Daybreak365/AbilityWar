@@ -24,7 +24,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Events.EventCaller;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
-import Marlang.AbilityWar.GameManager.Object.Participant;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 
 public class GameListener implements Listener, EventExecutor {
 	

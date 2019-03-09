@@ -9,7 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
-import Marlang.AbilityWar.GameManager.Object.Participant;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 @AbilityManifest(Name = "바이러스", Rank = Rank.D)
@@ -32,8 +32,8 @@ public class Virus extends AbilityBase {
 			if(e.getEntity().equals(getPlayer())) {
 				if(AbilityWarThread.isGameTaskRunning()) {
 					Player Killer = getPlayer().getKiller();
-					if(Killer != null && AbilityWarThread.getGame().isParticipating(Killer) && Participant.checkParticipant(Killer)) {
-						Participant target = Participant.Construct(AbilityWarThread.getGame(), Killer);
+					if(Killer != null && AbilityWarThread.getGame().isParticipating(Killer)) {
+						Participant target = AbilityWarThread.getGame().getParticipant(Killer);
 						this.getParticipant().transferAbility(target);
 					}
 				}

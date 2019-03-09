@@ -54,14 +54,14 @@ public class AutoUpdate {
 		this.Repository = Repository;
 		this.Plugin = Plugin;
 		this.PluginBranch = PluginBranch;
-		this.ServerBranch = Branch.getBranchByVersion(ServerVersion.getVersion());
+		this.ServerBranch = Branch.getBranch(ServerVersion.getVersion());
 	}
 
 	/**
 	 * 업데이트 확인
 	 * @return 최신버전 여부 (업데이트를 확인할 수 없을 경우에도 True 반환)
 	 */
-	public boolean Check() {
+	public final boolean Check() {
 		try {
 			if(ServerBranch != null) {
 				if(PluginBranch.equals(ServerBranch)) { //동일 버전일 경우
@@ -121,11 +121,11 @@ public class AutoUpdate {
 		return false;
 	}
 	
-	private boolean isPluginLatest(UpdateObject Update) throws Exception {
+	private final boolean isPluginLatest(UpdateObject Update) throws Exception {
 		return Plugin.getDescription().getVersion().equalsIgnoreCase(Update.getVersion());
 	}
 	
-	private void Download(UpdateObject Update) throws IOException {
+	private final void Download(UpdateObject Update) throws IOException {
 		HttpURLConnection connection = (HttpURLConnection) Update.getDownloadURL().openConnection();
 		connection.setRequestMethod("GET");
 		
@@ -143,7 +143,7 @@ public class AutoUpdate {
 		output.close();
 	}
 	
-	private String getJarPath() {
+	private final String getJarPath() {
 		URL fileURL = Plugin.getClass().getProtectionDomain().getCodeSource().getLocation();
 
 		String path = fileURL.getPath();
@@ -153,7 +153,7 @@ public class AutoUpdate {
 		return "plugins/" + Jar;
 	}
 	
-	private UpdateObject getLatestUpdate(String Branch) throws Exception {
+	private final UpdateObject getLatestUpdate(String Branch) throws Exception {
 		URL releases = new URL("https://api.github.com/repos/" + Author + "/" + Repository + "/releases");
 		BufferedReader br = new BufferedReader(new InputStreamReader(releases.openStream(), "UTF-8"));
 		
@@ -189,7 +189,7 @@ public class AutoUpdate {
 		throw new Exception();
 	}
 	
-	public class UpdateObject {
+	public final class UpdateObject {
 		
 		private String Version;
 		private String Tag;
@@ -227,8 +227,7 @@ public class AutoUpdate {
 	
 	public enum Branch {
 		
-		Master("master", "1.12"),
-		Alpha("1.13", "1.13");
+		Master("master", "1.13.2 ~ 1.8");
 		
 		String Name;
 		String Version;
@@ -246,37 +245,28 @@ public class AutoUpdate {
 			return Version;
 		}
 		
-		public static Branch getBranchByVersion(Integer Version) {
+		public static Branch getBranch(Integer Version) {
 			switch(Version) {
-				case 12:
+				case 8: case 9: case 10:
+				case 11: case 12: case 13: {
 					return Branch.Master;
-				case 13:
-					return Branch.Alpha;
-				default:
+				}
+				default: {
 					return null;
+				}
 			}
 		}
 		
 	}
 
-	/**
-	 * 플러그인을 Reload 합니다.
-	 */
-	public void reload(Plugin plugin) {
-		if (plugin != null) {
-			unload(plugin);
-			load(plugin);
-		}
-	}
-	
-	public void load(Plugin plugin) {
+	private void load(Plugin plugin) {
 		load(plugin.getName());
 	}
 	
 	/**
 	 * 플러그인을 Load 합니다.
 	 */
-	public void load(String name) {
+	private void load(String name) {
 
 		Plugin target = null;
 
@@ -320,7 +310,7 @@ public class AutoUpdate {
 	 * 플러그인을 Unload합니다.
 	 */
 	@SuppressWarnings("unchecked")
-	public void unload(Plugin plugin) {
+	private void unload(Plugin plugin) {
 
 		String name = plugin.getName();
 

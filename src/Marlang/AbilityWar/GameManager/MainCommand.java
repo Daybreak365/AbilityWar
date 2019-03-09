@@ -22,13 +22,13 @@ import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.SettingWizard;
 import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.GameManager.Game.Game;
 import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.GUI.AbilityGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.BlackListGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpecialThanksGUI;
 import Marlang.AbilityWar.GameManager.Manager.GUI.SpectatorGUI;
-import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.GameManager.Script.ScriptException;
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
@@ -113,8 +113,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Player p = (Player) sender;
 					if(AbilityWarThread.isGameTaskRunning()) {
 						AbstractGame game = AbilityWarThread.getGame();
-						if(Participant.checkParticipant(p) && game.isParticipating(p)) {
-							Participant participant = Participant.Construct(game, p);
+						if(game.isParticipating(p)) {
+							Participant participant = game.getParticipant(p);
 							if(participant.hasAbility()) {
 								Messager.sendStringList(p, Messager.formatAbility(participant.getAbility()));
 							} else {
@@ -134,8 +134,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Player p = (Player) sender;
 					if(AbilityWarThread.isGameTaskRunning()) {
 						AbstractGame game = AbilityWarThread.getGame();
-						if(Participant.checkParticipant(p) && game.isParticipating(p)) {
-							Participant participant = Participant.Construct(game, p);
+						if(game.isParticipating(p)) {
+							Participant participant = game.getParticipant(p);
 							if(participant.hasAbility()) {
 								AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
 								if(select != null && !select.isEnded()) {
@@ -164,8 +164,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Player p = (Player) sender;
 					if(AbilityWarThread.isGameTaskRunning()) {
 						AbstractGame game = AbilityWarThread.getGame();
-						if(Participant.checkParticipant(p) && game.isParticipating(p)) {
-							Participant participant = Participant.Construct(game, p);
+						if(game.isParticipating(p)) {
+							Participant participant = game.getParticipant(p);
 							if(participant.hasAbility()) {
 								AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
 								if(select != null && !select.isEnded()) {
@@ -300,13 +300,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					} else {
 						if(Bukkit.getPlayerExact(args[1]) != null) {
 							AbstractGame game = AbilityWarThread.getGame();
-							Player t = Bukkit.getPlayerExact(args[1]);
-							if(Participant.checkParticipant(t) && game.isParticipating(t)) {
-								Participant target = Participant.Construct(game, t);
+							Player targetPlayer = Bukkit.getPlayerExact(args[1]);
+							if(game.isParticipating(targetPlayer)) {
+								Participant target = game.getParticipant(targetPlayer);
 								AbilityGUI gui = new AbilityGUI(p, target, AbilityWar.getPlugin());
 								gui.openAbilityGUI(1);
 							} else {
-								Messager.sendErrorMessage(p, t.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+								Messager.sendErrorMessage(p, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 							}
 						} else {
 							Messager.sendErrorMessage(p, args[1] + "은(는) 존재하지 않는 플레이어입니다.");

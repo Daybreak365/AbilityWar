@@ -31,8 +31,8 @@ public class AbilityWar extends JavaPlugin {
 		return AbilityWar.Plugin;
 	}
 	
-	private AddonLoader addonLoader = AddonLoader.getInstance();
-	private AutoUpdate au = new AutoUpdate("Marlang365", "test", this, Branch.Master);
+	private final AddonLoader addonLoader = AddonLoader.getInstance();
+	private final AutoUpdate au = new AutoUpdate("Marlang365", "AbilityWar", this, Branch.Master);
 	
 	@Override
 	public void onEnable() {

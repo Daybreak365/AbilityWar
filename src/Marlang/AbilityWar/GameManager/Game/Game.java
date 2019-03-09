@@ -24,7 +24,6 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.GameManager.Manager.AbilitySelect;
 import Marlang.AbilityWar.GameManager.Manager.InfiniteDurability;
 import Marlang.AbilityWar.GameManager.Manager.Invincibility;
-import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.GameManager.Script.Script;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
@@ -176,11 +175,11 @@ public class Game extends AbstractGame {
 		}
 
 		if(this.isGameStarted()) {
-			if(Participant.checkParticipant(Victim) && this.isParticipating(Victim)) {
+			if(this.isParticipating(Victim)) {
 				if(AbilityWarSettings.getAbilityReveal()) {
-					Participant participant = Participant.Construct(this, Victim);
-					if(participant.hasAbility()) {
-						AbilityBase Ability = participant.getAbility();
+					Participant victim = this.getParticipant(Victim);
+					if(victim.hasAbility()) {
+						AbilityBase Ability = victim.getAbility();
 						
 						String name = Ability.getName();
 						if(name != null) {
@@ -320,16 +319,16 @@ public class Game extends AbstractGame {
 	}
 	
 	@Override
-	protected List<Participant> setupParticipants() {
-		List<Participant> Participants = new ArrayList<Participant>();
+	protected List<Player> setupPlayers() {
+		List<Player> Players = new ArrayList<Player>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			if(!getSpectators().contains(p.getName())) {
-				Participants.add(Participant.Construct(this, p));
+				Players.add(p);
 			}
 		}
 		
-		return Participants;
+		return Players;
 	}
 	
 	@Override

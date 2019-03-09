@@ -3,8 +3,8 @@ package Marlang.AbilityWar.GameManager.Manager;
 import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.GameManager.Game.Game;
-import Marlang.AbilityWar.GameManager.Object.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
