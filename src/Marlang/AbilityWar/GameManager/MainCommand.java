@@ -469,7 +469,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				Messager.sendStringList(sender, Messager.getStringList(
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
-						Messager.formatCommand(label + " util", "kit <대상>", "대상에게 기본템을 다시 지급합니다.", true)));
+						Messager.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true)));
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");

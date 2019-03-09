@@ -196,7 +196,7 @@ public class AutoUpdate {
 		private URL downloadURL;
 		private String[] patchNote;
 		
-		public UpdateObject(String Version, String Tag, URL downloadURL, String... patchNote) {
+		private UpdateObject(String Version, String Tag, URL downloadURL, String... patchNote) {
 			this.Version = Version;
 			this.Tag = Tag;
 			this.downloadURL = downloadURL;

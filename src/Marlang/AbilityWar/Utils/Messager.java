@@ -106,8 +106,8 @@ public class Messager {
 	public static String formatTitle(String title) {
 		String Base = "______________________________________________________________";
 		int Pivot = Base.length() / 2;
-		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + "&e" + title + "&6" + " ]");
-		String Return = ChatColor.translateAlternateColorCodes('&', "&6" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))));
+		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + "&e" + title + "&6" + " ]&m&l");
+		String Return = ChatColor.translateAlternateColorCodes('&', "&6&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r&6");
 		Return += Center + Base.substring(Pivot + Center.length() / 2);
 		return Return;
 	}
@@ -118,8 +118,8 @@ public class Messager {
 	public static String formatShortTitle(String title) {
 		String Base = "_____________________________________";
 		int Pivot = Base.length() / 2;
-		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + "&e" + title + "&6" + " ]");
-		String Return = ChatColor.translateAlternateColorCodes('&', "&6" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))));
+		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + "&e" + title + "&6" + " ]&m&l");
+		String Return = ChatColor.translateAlternateColorCodes('&', "&6&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r&6");
 		Return += Center + Base.substring(Pivot + Center.length() / 2);
 		return Return;
 	}
@@ -130,8 +130,8 @@ public class Messager {
 	public static String formatTitle(ChatColor First, ChatColor Second, String title) {
 		String Base = "______________________________________________________________";
 		int Pivot = Base.length() / 2;
-		String Center = "[ " + Second + title + First + " ]";
-		String Return = ChatColor.translateAlternateColorCodes('&', First + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))));
+		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + Second + title + First + " ]&m&l");
+		String Return = ChatColor.translateAlternateColorCodes('&', First + "&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r" + First);
 		Return += Center + Base.substring(Pivot + Center.length() / 2);
 		return Return;
 	}
@@ -142,8 +142,8 @@ public class Messager {
 	public static String formatShortTitle(ChatColor First, ChatColor Second, String title) {
 		String Base = "_____________________________________";
 		int Pivot = Base.length() / 2;
-		String Center = "[ " + Second + title + First + " ]";
-		String Return = ChatColor.translateAlternateColorCodes('&', First + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))));
+		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + Second + title + First + " ]&m&l");
+		String Return = ChatColor.translateAlternateColorCodes('&', First + "&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r" + First);
 		Return += Center + Base.substring(Pivot + Center.length() / 2);
 		return Return;
 	}
@@ -160,7 +160,7 @@ public class Messager {
 		for(String s : update.getPatchNote()) {
 			UpdateInfo.add(s);
 		}
-		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&2--------------------------------------------------------------"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&2----------------------------------------------------------"));
 		
 		return UpdateInfo;
 	}
@@ -187,7 +187,7 @@ public class Messager {
 			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
 		}
 		
-		AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&a-----------------------------------------"));
+		AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&a---------------------------------------"));
 		
 		return AbilityInfo;
 	}

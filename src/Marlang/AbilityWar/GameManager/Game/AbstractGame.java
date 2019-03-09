@@ -52,7 +52,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	private boolean GameStarted = false;
 	
-	protected Integer Seconds = 0;
+	private Integer Seconds = 0;
 	
 	@Override
 	public void run() {
@@ -201,6 +201,14 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		return abilitySelect;
 	}
 	
+	protected Integer getSeconds() {
+		return Seconds;
+	}
+
+	protected void setSeconds(Integer seconds) {
+		Seconds = seconds;
+	}
+
 	protected void startAbilitySelect() {
 		this.abilitySelect = setupAbilitySelect();
 	}

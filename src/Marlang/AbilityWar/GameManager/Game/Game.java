@@ -85,7 +85,7 @@ public class Game extends AbstractGame {
 				broadcastPlayerList();
 				if(getParticipants().size() < 1) {
 					AbilityWarThread.stopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 플레이어 수를 충족하지 못하여 게임을 중지합니다."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다."));
 				}
 				break;
 			case 5:
@@ -95,7 +95,7 @@ public class Game extends AbstractGame {
 				if(AbilityWarSettings.getDrawAbility()) {
 					broadcastAbilityReady();
 				} else {
-					this.Seconds += 4;
+					this.setSeconds(this.getSeconds() + 4);
 				}
 				break;
 			case 13:
@@ -106,7 +106,7 @@ public class Game extends AbstractGame {
 				break;
 			case 15:
 				if(AbilityWarSettings.getDrawAbility()) {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 플레이어가 능력을 &b확정&f했습니다."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 참가자가 능력을 &b확정&f했습니다."));
 				} else {
 					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
 				}
@@ -375,7 +375,7 @@ public class Game extends AbstractGame {
 						}
 					}
 				} else {
-					Messager.broadcastErrorMessage("사용 가능한 능력의 수가 플레이어의 수보다 적어 게임을 종료합니다.");
+					Messager.broadcastErrorMessage("사용 가능한 능력의 수가 참가자의 수보다 적어 게임을 종료합니다.");
 					AbilityWarThread.stopGame();
 					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 				}
