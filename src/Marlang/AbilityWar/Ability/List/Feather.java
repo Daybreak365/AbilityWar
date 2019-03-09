@@ -17,7 +17,7 @@ import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "", Rank = Rank.A)
+@AbilityManifest(Name = "ฑ๊ละ", Rank = Rank.A)
 public class Feather extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("ฑ๊ละ", "Cooldown", 80, 
