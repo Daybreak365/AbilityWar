@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.GameManager.Script.Objects.Setter;
+package Marlang.AbilityWar.GameManager.Script.Objects.Setter.Special;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
+import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Setter;
 import Marlang.AbilityWar.Utils.Messager;
 
 public class LoopSetter extends Setter<Boolean> {

@@ -15,8 +15,19 @@ public class Validate {
 		if(objects != null) {
 			for(Object o : objects) {
 				if(o == null) {
-					throw new IllegalArgumentException("Null");
+					throw new IllegalArgumentException("Null이 되어서는 안됩니다.");
 				}
+			}
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	public static void MinimumConstant(Class<?> enumClass, int count) throws IllegalArgumentException {
+		NotNull(enumClass);
+		if(enumClass.isEnum()) {
+			if(enumClass.getEnumConstants().length < count) {
+				throw new IllegalArgumentException(enumClass.getName() + "에 최소 " + count + "개의 상수가 있어야 합니다.");
 			}
 		} else {
 			throw new IllegalArgumentException();

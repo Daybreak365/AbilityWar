@@ -42,10 +42,8 @@ public class AbilityWar extends JavaPlugin {
 		
 		if(au.Check()) {
 			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
-			
-			if(!Script.isRegistered(TeleportScript.class)) {
-				Script.registerScript(TeleportScript.class, new RequiredData("텔레포트 위치", Location.class, null));
-			}
+
+			Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
 			
 			Load();
 			

@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.GameManager.Script.ScriptException.State;
 import Marlang.AbilityWar.GameManager.Script.Objects.AbstractScript;
+import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Setter;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
@@ -67,7 +68,7 @@ abstract public class Script {
 	 *                                  이미 사용하고 있는 이름일 경우,
 	 *                                  이미 등록된 스크립트 클래스일 경우
 	 */
-	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData... requiredDatas) throws IllegalArgumentException {
+	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) throws IllegalArgumentException {
 		for(ScriptRegisteration check : ScriptTypes) {
 			if(check.getClazz().getSimpleName().equalsIgnoreCase(clazz.getSimpleName())) {
 				throw new IllegalArgumentException("이미 사용중인 스크립트 이름입니다.");
@@ -127,9 +128,9 @@ abstract public class Script {
 	public static class ScriptRegisteration {
 		
 		private final Class<? extends AbstractScript> clazz;
-		private final RequiredData[] requiredDatas;
+		private final RequiredData<?>[] requiredDatas;
 		
-		public ScriptRegisteration(Class<? extends AbstractScript> clazz, RequiredData... requiredDatas) {
+		public ScriptRegisteration(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) {
 			this.clazz = clazz;
 			this.requiredDatas = requiredDatas;
 		}
@@ -138,34 +139,61 @@ abstract public class Script {
 			return clazz;
 		}
 		
-		public RequiredData[] getRequiredDatas() {
+		public RequiredData<?>[] getRequiredDatas() {
 			return requiredDatas;
 		}
 		
 	}
 	
-	public static class RequiredData {
+	public static class RequiredData<T> {
 		
 		private final String Key;
-		private final Class<?> clazz;
-		private final Object Default;
+		private final Class<T> clazz;
+		private final T Default;
+		private final Class<? extends Setter<T>> setterClass;
 		
-		public <T> RequiredData(String Key, Class<T> clazz, T Default) {
+		public RequiredData(String Key, Class<T> clazz, T Default) {
 			this.Key = Key;
 			this.clazz = clazz;
 			this.Default = Default;
+			this.setterClass = null;
+		}
+
+		public RequiredData(String Key, Class<T> clazz) {
+			this.Key = Key;
+			this.clazz = clazz;
+			this.Default = null;
+			this.setterClass = null;
+		}
+
+		public RequiredData(String Key, Class<T> clazz, Class<? extends Setter<T>> setterClass) {
+			this.Key = Key;
+			this.clazz = clazz;
+			this.Default = null;
+			this.setterClass = setterClass;
+		}
+
+		public RequiredData(String Key, Class<T> clazz, T Default, Class<? extends Setter<T>> setterClass) {
+			this.Key = Key;
+			this.clazz = clazz;
+			this.Default = Default;
+			this.setterClass = setterClass;
 		}
 		
 		public String getKey() {
 			return Key;
 		}
 		
-		public Class<?> getClazz() {
+		public Class<T> getClazz() {
 			return clazz;
 		}
 		
-		public Object getDefault() {
+		public T getDefault() {
 			return Default;
+		}
+
+		public Class<? extends Setter<T>> getSetterClass() {
+			return setterClass;
 		}
 		
 	}

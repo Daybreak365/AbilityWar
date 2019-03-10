@@ -14,6 +14,7 @@ import org.bukkit.plugin.EventExecutor;
 
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
+import Marlang.AbilityWar.Utils.Validate;
 
 abstract public class Setter<T> implements EventExecutor {
 	
@@ -67,19 +68,23 @@ abstract public class Setter<T> implements EventExecutor {
 	static {
 		registerSetter(Location.class, LocationSetter.class);
 	}
-	
+
 	public static Setter<?> newInstance(Class<?> clazz, String Key, Object Default, ScriptWizard Wizard) throws IllegalArgumentException {
 		try {
-			if(SetterMap.containsKey(clazz)) {
-				Class<? extends Setter<?>> setterClass = SetterMap.get(clazz);
-				Constructor<? extends Setter<?>> constructor;
-				constructor = setterClass.getConstructor(String.class, clazz, ScriptWizard.class);
-				return constructor.newInstance(Key, Default, Wizard);
+			if(!clazz.isEnum()) {
+				if(SetterMap.containsKey(clazz)) {
+					Class<? extends Setter<?>> setterClass = SetterMap.get(clazz);
+					Constructor<? extends Setter<?>> constructor = setterClass.getConstructor(String.class, clazz, ScriptWizard.class);
+					return constructor.newInstance(Key, Default, Wizard);
+				}
+			} else {
+				Validate.MinimumConstant(clazz, 1);
+				return new EnumSetter(Key, clazz.getEnumConstants()[0], Wizard);
 			}
 		} catch (NoSuchMethodException | SecurityException | InstantiationException
 				| IllegalAccessException | InvocationTargetException e) {}
 		
 		throw new IllegalArgumentException();
 	}
-	
+
 }

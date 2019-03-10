@@ -48,7 +48,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	
 	private void parseCommand(CommandSender sender, String label, String[] split) {
 		if(split.length == 0) {
-			sendHelpCommand(sender, label, 1);
+			Messager.sendStringList(sender, Messager.getStringList(
+					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
+					ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
+					ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &f_Marlang 말랑"),
+					ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f말랑&7#5908"),
+					ChatColor.translateAlternateColorCodes('&', "&3&o/" + label + " help &7&o로 명령어 도움말을 확인하세요.")));
 		} else {
 			if(split[0].equalsIgnoreCase("help")) {
 				if(split.length > 1) {
@@ -242,6 +247,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c존재하지 않는 스크립트 유형입니다."));
 							} catch(IllegalArgumentException ex) {
 								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c사용할 수 없는 스크립트 유형입니다."));
+								if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+									Messager.sendErrorMessage(ex.getMessage());
+								}
 							}
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " script <유형> <이름>"));

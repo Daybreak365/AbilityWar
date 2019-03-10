@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.GameManager.Script.Objects.Setter;
+package Marlang.AbilityWar.GameManager.Script.Objects.Setter.Special;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import Marlang.AbilityWar.GameManager.Script.ScriptWizard;
+import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Setter;
 import Marlang.AbilityWar.Utils.Messager;
 
 public class LoopCountSetter extends Setter<Integer> {
@@ -26,10 +27,10 @@ public class LoopCountSetter extends Setter<Integer> {
 	@Override
 	public void onClick(ClickType click) {
 		if(!click.equals(ClickType.DROP)) {
-			if(getValue() > 0) {
-				if(click.equals(ClickType.RIGHT)) {
-					this.setValue(this.getValue() + 1);
-				} else if(click.equals(ClickType.LEFT)) {
+			if(click.equals(ClickType.RIGHT)) {
+				this.setValue(this.getValue() + 1);
+			} else if(click.equals(ClickType.LEFT)) {
+				if(getValue() > 0) {
 					if(this.getValue() >= 2) {
 						this.setValue(this.getValue() - 1);
 					} else {

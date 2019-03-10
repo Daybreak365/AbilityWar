@@ -62,14 +62,14 @@ public class Messager {
 	 * 콘솔에 오류 메시지를 전송합니다.
 	 */
 	public static void sendErrorMessage(String msg) {
-		System.out.println(Prefix + ChatColor.RED + msg);
+		System.out.println(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &r&c" + msg));
 	}
 
 	/**
 	 * 콘솔에 오류 메시지를 전송합니다.
 	 */
 	public static void sendErrorMessage() {
-		System.out.println(Prefix + ChatColor.RED + "오류가 발생하였습니다.");
+		System.out.println(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &r&c오류가 발생하였습니다."));
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class Messager {
 	 * 제목을 구성합니다.
 	 */
 	public static String formatTitle(String title) {
-		String Base = "______________________________________________________________";
+		String Base = "___________________________________________________________________";
 		int Pivot = Base.length() / 2;
 		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + "&e" + title + "&6" + " ]&m&l");
 		String Return = ChatColor.translateAlternateColorCodes('&', "&6&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r&6");
@@ -128,7 +128,7 @@ public class Messager {
 	 * 제목을 구성합니다.
 	 */
 	public static String formatTitle(ChatColor First, ChatColor Second, String title) {
-		String Base = "______________________________________________________________";
+		String Base = "___________________________________________________________________";
 		int Pivot = Base.length() / 2;
 		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + Second + title + First + " ]&m&l");
 		String Return = ChatColor.translateAlternateColorCodes('&', First + "&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r" + First);

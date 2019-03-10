@@ -20,11 +20,11 @@ import org.bukkit.plugin.Plugin;
 import Marlang.AbilityWar.GameManager.Script.Script.RequiredData;
 import Marlang.AbilityWar.GameManager.Script.Script.ScriptRegisteration;
 import Marlang.AbilityWar.GameManager.Script.Objects.AbstractScript;
-import Marlang.AbilityWar.GameManager.Script.Objects.Setter.LoopCountSetter;
-import Marlang.AbilityWar.GameManager.Script.Objects.Setter.LoopSetter;
 import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Setter;
 import Marlang.AbilityWar.GameManager.Script.Objects.Setter.StringSetter;
-import Marlang.AbilityWar.GameManager.Script.Objects.Setter.TimeSetter;
+import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Special.LoopCountSetter;
+import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Special.LoopSetter;
+import Marlang.AbilityWar.GameManager.Script.Objects.Setter.Special.TimeSetter;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 
@@ -44,9 +44,21 @@ public class ScriptWizard implements Listener {
 		this.scriptName = scriptName;
 		
 		ScriptRegisteration reg = Script.getRegisteration(scriptClass);
-		for(RequiredData data : reg.getRequiredDatas()) {
-			Setter<?> setter = Setter.newInstance(data.getClazz(), data.getKey(), data.getDefault(), this);
-			Setters.add(setter);
+		for(RequiredData<?> data : reg.getRequiredDatas()) {
+			if(data.getSetterClass() == null) {
+				Setter<?> setter = Setter.newInstance(data.getClazz(), data.getKey(), data.getDefault(), this);
+				Setters.add(setter);
+			} else {
+				Constructor<? extends Setter<?>> setterConstructor;
+				try {
+					setterConstructor = data.getSetterClass().getConstructor(String.class, data.getClazz(), ScriptWizard.class);
+					Setter<?> setter = setterConstructor.newInstance(data.getKey(), data.getDefault(), this);
+					Setters.add(setter);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					throw new IllegalArgumentException();
+				}
+			}
 		}
 		
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
@@ -161,6 +173,8 @@ public class ScriptWizard implements Listener {
 					openScriptWizard(PlayerPage + 1);
 				} else if(displayName.equals(ChatColor.translateAlternateColorCodes('&', "&a저장"))) {
 					if(canSave()) {
+						Exception exception = null;
+						
 						try {
 							ArrayList<Class<?>> classList = new ArrayList<Class<?>>();
 							ArrayList<Object> valueList = new ArrayList<Object>();
@@ -199,10 +213,24 @@ public class ScriptWizard implements Listener {
 							AbstractScript script = (AbstractScript) constructor.newInstance(valueList.toArray(new Object[valueList.size()]));
 							Script.Save(script);
 							Script.AddScript(script);
-							p.closeInventory();
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f스크립트를 저장하였습니다."));
 						} catch(Exception ex) {
+							exception = ex;
+						}
+						
+						p.closeInventory();
+						
+						if(exception == null) {
+							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f스크립트를 저장하였습니다."));
+						} else {
 							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c스크립트를 저장하던 도중 오류가 발생하였습니다."));
+
+							if(exception.getMessage() != null && !exception.getMessage().isEmpty()) {
+								if(exception instanceof NoSuchMethodException) {
+									Messager.sendErrorMessage(exception.getMessage() + " 메소드가 존재하지 않습니다.");
+								} else {
+									Messager.sendErrorMessage(exception.getMessage());
+								}
+							}
 						}
 					}
 				} else {
