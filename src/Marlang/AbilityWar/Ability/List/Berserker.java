@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.Library.EffectLib;
 @AbilityManifest(Name = "버서커", Rank = Rank.B)
 public class Berserker extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("버서커", "Cooldown", 80,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -28,7 +28,7 @@ public class Berserker extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> StrengthConfig = new SettingObject<Integer>("버서커", "Strength", 3,
+	public static SettingObject<Integer> StrengthConfig = new SettingObject<Integer>(Berserker.class, "Strength", 3,
 			"# 공격 강화 배수") {
 		
 		@Override
@@ -38,7 +38,7 @@ public class Berserker extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DebuffConfig = new SettingObject<Integer>("버서커", "Debuff", 10,
+	public static SettingObject<Integer> DebuffConfig = new SettingObject<Integer>(Berserker.class, "Debuff", 10,
 			"# 능력 사용 후 디버프를 받는 시간",
 			"# 단위 : 초") {
 		

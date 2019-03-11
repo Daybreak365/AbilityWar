@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.Messager;
 @AbilityManifest(Name = "에너지 블로커", Rank = Rank.A)
 public class EnergyBlocker extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("에너지블로커", "Cooldown", 10, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(EnergyBlocker.class, "Cooldown", 10, 
 			"# 쿨타임") {
 		
 		@Override

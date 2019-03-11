@@ -21,7 +21,7 @@ import Marlang.AbilityWar.Utils.Math.LocationUtil;
 @AbilityManifest(Name = "카오스", Rank = Rank.GOD)
 public class Chaos extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("카오스", "Cooldown", 80,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -31,7 +31,7 @@ public class Chaos extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("카오스", "Duration", 5,
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Chaos.class, "Duration", 5,
 			"# 능력 지속 시간") {
 		
 		@Override
@@ -41,7 +41,7 @@ public class Chaos extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>("카오스", "Distance", 5,
+	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Chaos.class, "Distance", 5,
 			"# 거리 설정") {
 		
 		@Override

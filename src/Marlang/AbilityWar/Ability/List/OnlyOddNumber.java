@@ -15,7 +15,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 @AbilityManifest(Name = "홀수강박증", Rank = Rank.S)
 public class OnlyOddNumber extends AbilityBase {
 
-	public static SettingObject<Integer> PercentageConfig = new SettingObject<Integer>("홀수강박증", "Percentage", 79, 
+	public static SettingObject<Integer> PercentageConfig = new SettingObject<Integer>(OnlyOddNumber.class, "Percentage", 79, 
 			"# 체력이 몇 퍼센트 이하일 때 능력이 발동될지 설정합니다.",
 			"# 1 이상, 100 이하의 수 중 홀수로만 설정할 수 있습니다.") {
 		
@@ -26,7 +26,7 @@ public class OnlyOddNumber extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>("홀수강박증", "OddNumber", 39, 
+	public static SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 39, 
 			"# 체력이 홀수일 때 데미지를 몇 퍼센트 줄여 받을지 설정합니다.",
 			"# 60으로 설정하면 원래 데미지의 40%를 받습니다.") {
 		
@@ -37,7 +37,7 @@ public class OnlyOddNumber extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> EvenNumberConfig = new SettingObject<Integer>("홀수강박증", "EvenNumber", 29, 
+	public static SettingObject<Integer> EvenNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "EvenNumber", 29, 
 			"# 체력이 짝수일 때 데미지를 몇 퍼센트 늘려 받을지 설정합니다.",
 			"# 30으로 설정하면 원래 데미지의 130%를 받습니다.") {
 		

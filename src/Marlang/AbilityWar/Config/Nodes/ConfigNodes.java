@@ -53,10 +53,6 @@ public enum ConfigNodes {
 	Game_OldMechanics_Header("게임.구버전", "",
 			"# 마치 구 버전에서 플레이하고 있는 것처럼 느끼게 해줍니다.",
 			"# 구 버전 설정은 능력자 전쟁이 시작되면 적용됩니다."),
-	Game_OldMechanics_Enchant("게임.구버전.마법부여", false,
-			"# 마법 부여를 청금석 없이 할 수 있게 해줍니다."),
-	Game_OldMechanics_AttackCooldown("게임.구버전.공격쿨타임", false,
-			"# 공격 쿨타임이 사라지게 해줍니다."),
 	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
 			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다.");
 	

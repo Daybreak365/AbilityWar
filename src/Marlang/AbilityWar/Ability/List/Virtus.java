@@ -19,7 +19,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "베르투스", Rank = Rank.A)
 public class Virtus extends AbilityBase {
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("베르투스", "Duration", 3,
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 3,
 			"# 능력 지속시간") {
 		
 		@Override
@@ -29,7 +29,7 @@ public class Virtus extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("베르투스", "Cooldown", 70,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Virtus.class, "Cooldown", 70,
 			"# 쿨타임") {
 		
 		@Override

@@ -20,7 +20,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "보이드", Rank = Rank.A)
 public class Void extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("보이드", "Cooldown", 80,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Void.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override

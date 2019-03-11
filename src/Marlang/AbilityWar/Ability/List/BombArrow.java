@@ -21,7 +21,7 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
 @AbilityManifest(Name = "폭발화살", Rank = Rank.S)
 public class BombArrow extends AbilityBase {
 
-	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>("폭발화살", "Chance", 50,
+	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BombArrow.class, "Chance", 50,
 			"# 화살을 맞췄을 때 몇 퍼센트 확률로 폭발을 일으킬지 설정합니다.",
 			"# 50은 50%를 의미합니다.") {
 		

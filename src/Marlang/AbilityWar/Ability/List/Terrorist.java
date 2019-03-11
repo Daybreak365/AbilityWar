@@ -21,7 +21,7 @@ import Marlang.AbilityWar.Utils.Math.LocationUtil;
 @AbilityManifest(Name = "테러리스트", Rank = Rank.A)
 public class Terrorist extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("테러리스트", "Cooldown", 100,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
 			"# 쿨타임") {
 		
 		@Override

@@ -22,7 +22,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "설인", Rank = Rank.S)
 public class Yeti extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("설인", "Cooldown", 80, "# 쿨타임") {
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -31,7 +31,7 @@ public class Yeti extends AbilityBase {
 
 	};
 
-	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>("설인", "Range", 10,
+	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Yeti.class, "Range", 10,
 			"# 스킬 사용 시 눈 지형으로 바꿀 범위") {
 
 		@Override

@@ -17,7 +17,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "심안", Rank = Rank.D)
 public class DarkVision extends AbilityBase {
 	
-	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>("심안", "Distance", 30,
+	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
 			"# 거리 설정") {
 		
 		@Override

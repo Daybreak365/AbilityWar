@@ -104,34 +104,30 @@ public class AbilityWarSettings {
 		return getBoolean(ConfigNodes.Game_VisualEffect);
 	}
 
+	public static boolean isBlackListed(String abilityName) {
+		return getBlackList().contains(abilityName);
+	}
+	
 	public static List<String> getBlackList() {
 		return getStringList(ConfigNodes.Game_BlackList);
 	}
 
-	public static void addBlackList(String name) {
+	public static void addBlackList(String abilityName) {
 		List<String> list = getStringList(ConfigNodes.Game_BlackList);
-		if(!list.contains(name)) {
-			list.add(name);
+		if(!list.contains(abilityName)) {
+			list.add(abilityName);
 			setNewProperty(ConfigNodes.Game_BlackList, list);
 		}
 	}
 
-	public static void removeBlackList(String name) {
+	public static void removeBlackList(String abilityName) {
 		List<String> list = getStringList(ConfigNodes.Game_BlackList);
-		if(list.contains(name)) {
-			list.remove(name);
+		if(list.contains(abilityName)) {
+			list.remove(abilityName);
 			setNewProperty(ConfigNodes.Game_BlackList, list);
 		}
 	}
 
-	public static boolean getOldEnchant() {
-		return getBoolean(ConfigNodes.Game_OldMechanics_Enchant);
-	}
-
-	public static boolean getOldAttackCool() {
-		return getBoolean(ConfigNodes.Game_OldMechanics_AttackCooldown);
-	}
-	
 	/**
 	 * Integer Config
 	 */

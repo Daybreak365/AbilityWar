@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.Library.Item.EnchantLib;
 @AbilityManifest(Name = "컬스", Rank = Rank.B)
 public class Curse extends AbilityBase {
 
-	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>("컬스", "Count", 1,
+	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 1,
 			"# 능력 사용횟수") {
 		
 		@Override

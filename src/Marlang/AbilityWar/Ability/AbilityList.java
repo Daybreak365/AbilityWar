@@ -87,7 +87,13 @@ public class AbilityList {
 							}
 						}
 					} catch (IllegalAccessException | IllegalArgumentException e) {
-						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+						Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+					} catch (Exception ex) {
+						if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+							Messager.sendErrorMessage(ex.getMessage());
+						} else {
+							Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+						}
 					}
 				} else {
 					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));

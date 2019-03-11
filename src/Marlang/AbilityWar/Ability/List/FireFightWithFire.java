@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 @AbilityManifest(Name = "이열치열", Rank = Rank.B)
 public class FireFightWithFire extends AbilityBase {
 
-	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>("이열치열", "Chance", 50,
+	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(FireFightWithFire.class, "Chance", 50,
 			"# 공격을 받았을 시 몇 퍼센트 확률로 회복을 할지 설정합니다.",
 			"# 50은 50%를 의미합니다.") {
 		

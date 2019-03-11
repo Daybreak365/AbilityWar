@@ -19,7 +19,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 @AbilityManifest(Name = "추적자", Rank = Rank.B)
 public class Chaser extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("추적자", "Cooldown", 120,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaser.class, "Cooldown", 120,
 			"# 쿨타임") {
 		
 		@Override

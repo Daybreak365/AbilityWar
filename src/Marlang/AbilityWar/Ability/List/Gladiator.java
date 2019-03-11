@@ -26,7 +26,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "글래디에이터", Rank = Rank.S)
 public class Gladiator extends AbilityBase {
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("글래디에이터", "Cooldown", 120,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
 			"# 쿨타임") {
 		
 		@Override

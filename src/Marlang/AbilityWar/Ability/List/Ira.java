@@ -16,7 +16,7 @@ import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
 @AbilityManifest(Name = "이라", Rank = Rank.S)
 public class Ira extends AbilityBase {
 
-	public static SettingObject<Integer> AttackConfig = new SettingObject<Integer>("이라", "AttackTime", 4,
+	public static SettingObject<Integer> AttackConfig = new SettingObject<Integer>(Ira.class, "AttackTime", 4,
 			"# 몇번 공격을 당하면 폭발을 일으킬지 설정합니다.",
 			"# 기본값: 4") {
 		

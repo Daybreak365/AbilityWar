@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "검은 양초", Rank = Rank.B)
 public class BlackCandle extends AbilityBase {
 
-	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>("검은양초", "Chance", 10,
+	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 10,
 			"# 데미지를 받았을 시 체력을 회복할 확률") {
 		
 		@Override

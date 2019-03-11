@@ -28,7 +28,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 @AbilityManifest(Name = "여제", Rank = Rank.B)
 public class TheEmpress extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("여제", "Cooldown", 70, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheEmpress.class, "Cooldown", 70, 
 			"# 쿨타임") {
 		
 		@Override
@@ -38,7 +38,7 @@ public class TheEmpress extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Boolean> EasterEggConfig = new SettingObject<Boolean>("여제", "EasterEgg", true, 
+	public static SettingObject<Boolean> EasterEggConfig = new SettingObject<Boolean>(TheEmpress.class, "EasterEgg", true, 
 			"# 이스터에그 활성화 여부",
 			"# false로 설정하면 이스터에그가 발동되지 않습니다.") {
 		

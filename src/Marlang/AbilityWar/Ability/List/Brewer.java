@@ -24,7 +24,7 @@ import Marlang.AbilityWar.Utils.Library.Item.ItemLib.PotionBuilder.PotionShape;
 @AbilityManifest(Name = "양조사", Rank = Rank.B)
 public class Brewer extends AbilityBase {
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("양조사", "Cooldown", 45, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Brewer.class, "Cooldown", 45, 
 			"# 쿨타임") {
 		
 		@Override

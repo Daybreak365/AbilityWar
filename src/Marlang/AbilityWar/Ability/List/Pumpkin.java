@@ -31,7 +31,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 @AbilityManifest(Name = "호박", Rank = Rank.C)
 public class Pumpkin extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("호박", "Cooldown", 80, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80, 
 			"# 쿨타임") {
 		
 		@Override
@@ -41,7 +41,7 @@ public class Pumpkin extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("호박", "Duration", 15, 
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Pumpkin.class, "Duration", 15, 
 			"# 지속 시간") {
 		
 		@Override

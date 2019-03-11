@@ -22,7 +22,7 @@ import Marlang.AbilityWar.Utils.Math.LocationUtil;
 @AbilityManifest(Name = "마술사", Rank = Rank.A)
 public class TheMagician extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("마술사", "Cooldown", 5, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 5, 
 			"# 쿨타임") {
 		
 		@Override
@@ -32,7 +32,7 @@ public class TheMagician extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("마술사", "Damage", 3, 
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(TheMagician.class, "Damage", 3, 
 			"# 데미지") {
 		
 		@Override

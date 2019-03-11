@@ -36,7 +36,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
  */
 public class Game extends AbstractGame {
 	
-	private static List<String> messages = new ArrayList<String>();
+	private final static List<String> messages = new ArrayList<String>();
 	
 	public static void registerMessage(String... msg) {
 		for(String m : msg) {
@@ -51,11 +51,11 @@ public class Game extends AbstractGame {
 	
 	private boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
 	
-	private InfiniteDurability infiniteDurability = new InfiniteDurability();
+	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 	
-	private Invincibility invincibility = new Invincibility(this);
+	private final Invincibility invincibility = new Invincibility(this);
 	
-	TimerBase NoHunger = new TimerBase() {
+	private final TimerBase NoHunger = new TimerBase() {
 		
 		@Override
 		public void onStart() {
@@ -343,9 +343,9 @@ public class Game extends AbstractGame {
 			@Override
 			protected List<Class<? extends AbilityBase>> setupAbilities() {
 				List<Class<? extends AbilityBase>> list = new ArrayList<>();
-				for(String name : AbilityList.nameValues()) {
-					if(!AbilityWarSettings.getBlackList().contains(name)) {
-						list.add(AbilityList.getByString(name));
+				for(String abilityName : AbilityList.nameValues()) {
+					if(!AbilityWarSettings.isBlackListed(abilityName)) {
+						list.add(AbilityList.getByString(abilityName));
 					}
 				}
 				

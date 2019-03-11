@@ -22,7 +22,7 @@ import Marlang.AbilityWar.Utils.Math.LocationUtil;
 @AbilityManifest(Name = "교황", Rank = Rank.A)
 public class TheHighPriestess extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("교황", "Cooldown", 80,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheHighPriestess.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -32,7 +32,7 @@ public class TheHighPriestess extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("교황", "Duration", 6,
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(TheHighPriestess.class, "Duration", 6,
 			"# 스킬 지속시간") {
 		
 		@Override
@@ -42,7 +42,7 @@ public class TheHighPriestess extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>("교황", "Range", 8,
+	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(TheHighPriestess.class, "Range", 8,
 			"# 스킬 사용 시 자신의 영지로 선포할 범위") {
 		
 		@Override

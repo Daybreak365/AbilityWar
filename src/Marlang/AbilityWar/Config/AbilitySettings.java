@@ -2,6 +2,8 @@ package Marlang.AbilityWar.Config;
 
 import java.util.ArrayList;
 
+import Marlang.AbilityWar.Ability.AbilityBase;
+import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 
 /**
@@ -39,15 +41,21 @@ public class AbilitySettings {
 	
 	abstract public static class SettingObject<T> {
 		
-		private String Path;
-		private T Default;
-		private String[] Comments;
+		private final String Path;
+		private final T Default;
+		private final String[] Comments;
 		
-		public SettingObject(String AbilityName, String Path, T Default, String... Comments) {
-			this.Path = "능력." + AbilityName + "." + Path;
+		public SettingObject(Class<? extends AbilityBase> abilityClass, String Path, T Default, String... Comments) {
+			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
+			if(manifest != null) {
+				this.Path = "능력." + manifest.Name() + "." + Path;
+			} else {
+				throw new IllegalArgumentException(abilityClass.getName() + " 클래스에 AbilityManifest 어노테이션이 존재하지 않습니다.");
+			}
+			
 			this.Default = Default;
 			this.Comments = Comments;
-			
+
 			registerSetting(this);
 		}
 		

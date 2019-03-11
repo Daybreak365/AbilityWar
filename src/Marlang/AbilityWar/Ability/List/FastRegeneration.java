@@ -16,7 +16,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 @AbilityManifest(Name = "빠른 회복", Rank = Rank.A)
 public class FastRegeneration extends AbilityBase {
 	
-	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>("빠른회복", "RegenSpeed", 20,
+	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>(FastRegeneration.class, "RegenSpeed", 20,
 			"# 회복 속도를 설정합니다.",
 			"# 숫자가 낮을수록 회복이 더욱 빨라집니다.") {
 		

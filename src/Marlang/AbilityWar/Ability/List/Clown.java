@@ -17,7 +17,7 @@ import Marlang.AbilityWar.Utils.Messager;
 @AbilityManifest(Name = "±¤´ë", Rank = Rank.D)
 public class Clown extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("±¤´ë", "Cooldown", 3, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Clown.class, "Cooldown", 3, 
 			"# ÄðÅ¸ÀÓ") {
 		
 		@Override

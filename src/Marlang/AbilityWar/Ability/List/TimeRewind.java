@@ -28,7 +28,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "시간 역행", Rank = Rank.S)
 public class TimeRewind extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("시간 역행", "Cooldown", 100, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100, 
 			"# 쿨타임") {
 		
 		@Override
@@ -38,7 +38,7 @@ public class TimeRewind extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> TimeConfig = new SettingObject<Integer>("시간 역행", "Time", 5, 
+	public static SettingObject<Integer> TimeConfig = new SettingObject<Integer>(TimeRewind.class, "Time", 5, 
 			"# 능력을 사용했을 때 몇초 전으로 돌아갈지 설정합니다.") {
 		
 		@Override

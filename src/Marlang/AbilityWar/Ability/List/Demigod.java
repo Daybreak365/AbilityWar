@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.Library.EffectLib;
 @AbilityManifest(Name = "데미갓", Rank = Rank.GOD)
 public class Demigod extends AbilityBase {
 	
-	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>("데미갓", "Chance", 40,
+	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(Demigod.class, "Chance", 40,
 			"# 공격을 받았을 시 몇 퍼센트 확률로 랜덤 버프를 받을지 설정합니다.",
 			"# 40은 40%를 의미합니다.") {
 		

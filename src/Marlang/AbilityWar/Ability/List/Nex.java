@@ -34,7 +34,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 @AbilityManifest(Name = "³Ø½º", Rank = Rank.B)
 public class Nex extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("³Ø½º", "Cooldown", 120, "# ÄðÅ¸ÀÓ") {
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# ÄðÅ¸ÀÓ") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -43,7 +43,7 @@ public class Nex extends AbilityBase {
 
 	};
 
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("³Ø½º", "Damage", 8, "# µ¥¹ÌÁö") {
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 8, "# µ¥¹ÌÁö") {
 
 		@Override
 		public boolean Condition(Integer value) {

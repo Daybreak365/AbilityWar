@@ -20,7 +20,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "해커", Rank = Rank.A)
 public class Hacker extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("해커", "Cooldown", 180, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180, 
 			"# 쿨타임") {
 		
 		@Override
@@ -30,7 +30,7 @@ public class Hacker extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("해커", "Duration", 5, 
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Hacker.class, "Duration", 5, 
 			"# 능력 지속시간") {
 		
 		@Override

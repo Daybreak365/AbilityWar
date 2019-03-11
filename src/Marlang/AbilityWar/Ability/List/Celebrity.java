@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 @AbilityManifest(Name = "유명 인사", Rank = Rank.D)
 public class Celebrity extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("유명 인사", "Cooldown", 60,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 60,
 			"# 쿨타임") {
 		
 		@Override

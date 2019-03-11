@@ -25,7 +25,7 @@ import Marlang.AbilityWar.Utils.Math.LocationUtil;
 @AbilityManifest(Name = "¹ÂÁî", Rank = Rank.S)
 public class Muse extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("¹ÂÁî", "Cooldown", 80, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Muse.class, "Cooldown", 80, 
 			"# ÄğÅ¸ÀÓ") {
 		
 		@Override

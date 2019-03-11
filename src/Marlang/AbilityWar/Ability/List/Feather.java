@@ -20,7 +20,7 @@ import Marlang.AbilityWar.Utils.Library.SoundLib;
 @AbilityManifest(Name = "±Í≈–", Rank = Rank.A)
 public class Feather extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("±Í≈–", "Cooldown", 80, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80, 
 			"# ƒ≈∏¿”") {
 		
 		@Override
@@ -30,7 +30,7 @@ public class Feather extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>("±Í≈–", "Duration", 15, 
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Feather.class, "Duration", 15, 
 			"# ¡ˆº”Ω√∞£") {
 		
 		@Override

@@ -21,7 +21,7 @@ import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 @AbilityManifest(Name = "´ÙÀÌ½º °«", Rank = Rank.GOD)
 public class DiceGod extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("´ÙÀÌ½º°«", "Cooldown", 60, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 60, 
 			"# ÄğÅ¸ÀÓ") {
 		
 		@Override

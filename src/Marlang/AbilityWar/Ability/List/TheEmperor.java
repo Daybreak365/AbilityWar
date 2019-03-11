@@ -16,7 +16,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "황제", Rank = Rank.A)
 public class TheEmperor extends AbilityBase {
 
-	public static SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>("황제", "DamageDecrease", 20, 
+	public static SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>(TheEmperor.class, "DamageDecrease", 20, 
 			"# 공격 피해 감소량",
 			"# 10으로 설정하면 공격을 받았을 때 전체 대미지의 90%를 받습니다.") {
 		

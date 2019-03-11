@@ -22,7 +22,7 @@ import Marlang.AbilityWar.Utils.Math.LocationUtil;
 @AbilityManifest(Name = "아레스", Rank = Rank.GOD)
 public class Ares extends AbilityBase {
 	
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("아레스", "Damage", 8, 
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "Damage", 8, 
 			"# 스킬 데미지") {
 		
 		@Override
@@ -32,7 +32,7 @@ public class Ares extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("아레스", "Cooldown", 60, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Ares.class, "Cooldown", 60, 
 			"# 쿨타임") {
 		
 		@Override
@@ -42,7 +42,7 @@ public class Ares extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Boolean> DashConfig = new SettingObject<Boolean>("아레스", "DashIntoTheAir", false, 
+	public static SettingObject<Boolean> DashConfig = new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false, 
 			"# true로 설정하면 아레스 능력 사용 시 공중으로 돌진 할 수 있습니다.") {
 		
 		@Override

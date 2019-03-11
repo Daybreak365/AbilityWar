@@ -21,7 +21,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "암살자", Rank = Rank.A)
 public class Assassin extends AbilityBase {
 	
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>("암살자", "Damage", 10, 
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 10, 
 			"# 스킬 데미지") {
 		
 		@Override
@@ -31,7 +31,7 @@ public class Assassin extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>("암살자", "Cooldown", 60, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Assassin.class, "Cooldown", 60, 
 			"# 쿨타임") {
 		
 		@Override
@@ -41,7 +41,7 @@ public class Assassin extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Integer> TeleportCountConfig = new SettingObject<Integer>("암살자", "TeleportCount", 4,
+	public static SettingObject<Integer> TeleportCountConfig = new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
 			"# 능력 사용 시 텔레포트 횟수") {
 		
 		@Override
