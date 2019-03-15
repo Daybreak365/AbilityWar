@@ -26,7 +26,7 @@ import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 
 /**
- * ê´?? „? ?„¤? • GUI
+ * ê´€ì „ì ì„¤ì • GUI
  */
 public class SpectatorGUI implements Listener {
 	
@@ -73,7 +73,7 @@ public class SpectatorGUI implements Listener {
 		if (MaxPage < page)
 			page = 1;
 		if(page < 1) page = 1;
-		SpectateGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&b?”Œ? ˆ?´?–´ &fëª©ë¡"));
+		SpectateGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&bí”Œë ˆì´ì–´ &fëª©ë¡"));
 		PlayerPage = page;
 		int Count = 0;
 		
@@ -85,8 +85,8 @@ public class SpectatorGUI implements Listener {
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
 				im.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&7?´ ?”Œ? ˆ?´?–´?Š” ê²Œì„?—?„œ ?˜ˆ?™¸?©?‹ˆ?‹¤."),
-						ChatColor.translateAlternateColorCodes('&', "&bÂ» &f?˜ˆ?™¸ ì²˜ë¦¬ë¥? ?•´? œ?•˜? ¤ë©? ?´ë¦??•˜?„¸?š”.")
+						ChatColor.translateAlternateColorCodes('&', "&7ì´ í”Œë ˆì´ì–´ëŠ” ê²Œì„ì—ì„œ ì˜ˆì™¸ë©ë‹ˆë‹¤."),
+						ChatColor.translateAlternateColorCodes('&', "&bÂ» &fì˜ˆì™¸ ì²˜ë¦¬ë¥¼ í•´ì œí•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.")
 						));
 				is.setItemMeta(im);
 			} else {
@@ -94,8 +94,8 @@ public class SpectatorGUI implements Listener {
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
 				im.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&7?´ ?”Œ? ˆ?´?–´?Š” ê²Œì„?—?„œ ?˜ˆ?™¸?˜ì§? ?•Š?Šµ?‹ˆ?‹¤."),
-						ChatColor.translateAlternateColorCodes('&', "&bÂ» &f?˜ˆ?™¸ ì²˜ë¦¬ë¥? ?•˜? ¤ë©? ?´ë¦??•˜?„¸?š”.")
+						ChatColor.translateAlternateColorCodes('&', "&7ì´ í”Œë ˆì´ì–´ëŠ” ê²Œì„ì—ì„œ ì˜ˆì™¸ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."),
+						ChatColor.translateAlternateColorCodes('&', "&bÂ» &fì˜ˆì™¸ ì²˜ë¦¬ë¥¼ í•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.")
 						));
 				is.setItemMeta(im);
 			}
@@ -109,7 +109,7 @@ public class SpectatorGUI implements Listener {
 		if(page > 1) {
 			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?´? „ ?˜?´ì§?"));
+			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"));
 			previousPage.setItemMeta(previousMeta);
 			SpectateGUI.setItem(48, previousPage);
 		}
@@ -117,7 +117,7 @@ public class SpectatorGUI implements Listener {
 		if(page != MaxPage) {
 			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?‹¤?Œ ?˜?´ì§?"));
+			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"));
 			nextPage.setItemMeta(nextMeta);
 			SpectateGUI.setItem(50, nextPage);
 		}
@@ -125,7 +125,7 @@ public class SpectatorGUI implements Listener {
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
 		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6?˜?´ì§? &e" + page + " &6/ &e" + MaxPage));
+				"&6í˜ì´ì§€ &e" + page + " &6/ &e" + MaxPage));
 		Page.setItemMeta(PageMeta);
 		SpectateGUI.setItem(49, Page);
 		
@@ -145,9 +145,9 @@ public class SpectatorGUI implements Listener {
 			e.setCancelled(true);
 			Player p = (Player) e.getWhoClicked();
 			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b?´? „ ?˜?´ì§?"))) {
+				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"))) {
 					openSpectateGUI(PlayerPage - 1);
-				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b?‹¤?Œ ?˜?´ì§?"))) {
+				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"))) {
 					openSpectateGUI(PlayerPage + 1);
 				}
 			}
@@ -172,7 +172,7 @@ public class SpectatorGUI implements Listener {
 							
 							openSpectateGUI(PlayerPage);
 						} else {
-							throw new Exception("?•´?‹¹ ?”Œ? ˆ?´?–´ê°? ì¡´ì¬?•˜ì§? ?•Š?Šµ?‹ˆ?‹¤.");
+							throw new Exception("í•´ë‹¹ í”Œë ˆì´ì–´ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 						}
 					} else if(MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
 						String target = Bukkit.getPlayerExact(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName())).getName();
@@ -183,14 +183,14 @@ public class SpectatorGUI implements Listener {
 							
 							openSpectateGUI(PlayerPage);
 						} else {
-							throw new Exception("?•´?‹¹ ?”Œ? ˆ?´?–´ê°? ì¡´ì¬?•˜ì§? ?•Š?Šµ?‹ˆ?‹¤.");
+							throw new Exception("í•´ë‹¹ í”Œë ˆì´ì–´ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 						}
 					}
 				} catch(Exception ex) {
 					if(!ex.getMessage().isEmpty()) {
 						Messager.sendErrorMessage(p, ex.getMessage());
 					} else {
-						Messager.sendErrorMessage(p, "?„¤? • ?„ì¤? ?˜¤ë¥˜ê? ë°œìƒ?•˜???Šµ?‹ˆ?‹¤.");
+						Messager.sendErrorMessage(p, "ì„¤ì • ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 					}
 				}
 			}

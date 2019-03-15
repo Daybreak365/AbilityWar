@@ -33,7 +33,7 @@ import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * ?Š¥? ¥ ê¸ˆì? GUI
+ * ëŠ¥ë ¥ ê¸ˆì§€ GUI
  */
 public class BlackListGUI implements Listener {
 	
@@ -78,7 +78,7 @@ public class BlackListGUI implements Listener {
 		Integer MaxPage = ((AbilityList.nameValues().size() - 1) / 36) + 1;
 		if (MaxPage < page) page = 1;
 		if(page < 1) page = 1;
-		BlackListGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c&l?œ– &8&l?Š¥? ¥ ë¸”ë™ë¦¬ìŠ¤?Š¸ &c&l?œ–"));
+		BlackListGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c&lâœ– &8&lëŠ¥ë ¥ ë¸”ë™ë¦¬ìŠ¤íŠ¸ &c&lâœ–"));
 		PlayerPage = page;
 		int Count = 0;
 		
@@ -92,8 +92,8 @@ public class BlackListGUI implements Listener {
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
 				im.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&7?´ ?Š¥? ¥?? ?Š¥? ¥?„ ì¶”ì²¨?•  ?•Œ ?˜ˆ?™¸?©?‹ˆ?‹¤."),
-						ChatColor.translateAlternateColorCodes('&', "&bÂ» &f?˜ˆ?™¸ ì²˜ë¦¬ë¥? ?•´? œ?•˜? ¤ë©? ?´ë¦??•˜?„¸?š”.")
+						ChatColor.translateAlternateColorCodes('&', "&7ì´ ëŠ¥ë ¥ì€ ëŠ¥ë ¥ì„ ì¶”ì²¨í•  ë•Œ ì˜ˆì™¸ë©ë‹ˆë‹¤."),
+						ChatColor.translateAlternateColorCodes('&', "&bÂ» &fì˜ˆì™¸ ì²˜ë¦¬ë¥¼ í•´ì œí•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.")
 						));
 				is.setItemMeta(im);
 			} else {
@@ -101,8 +101,8 @@ public class BlackListGUI implements Listener {
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
 				im.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&7?´ ?Š¥? ¥?? ?Š¥? ¥?„ ì¶”ì²¨?•  ?•Œ ?˜ˆ?™¸?˜ì§? ?•Š?Šµ?‹ˆ?‹¤."),
-						ChatColor.translateAlternateColorCodes('&', "&bÂ» &f?˜ˆ?™¸ ì²˜ë¦¬ë¥? ?•˜? ¤ë©? ?´ë¦??•˜?„¸?š”.")
+						ChatColor.translateAlternateColorCodes('&', "&7ì´ ëŠ¥ë ¥ì€ ëŠ¥ë ¥ì„ ì¶”ì²¨í•  ë•Œ ì˜ˆì™¸ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."),
+						ChatColor.translateAlternateColorCodes('&', "&bÂ» &fì˜ˆì™¸ ì²˜ë¦¬ë¥¼ í•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.")
 						));
 				is.setItemMeta(im);
 			}
@@ -149,8 +149,8 @@ public class BlackListGUI implements Listener {
 			String RankName = r.getRankName();
 			RankMeta.setDisplayName(RankName);
 			RankMeta.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&fëª¨ë“  " + RankName + " &f?Š¥? ¥?„ ?˜ˆ?™¸ ì²˜ë¦¬ ?•˜? ¤ë©? ì¢Œí´ë¦?,"),
-					ChatColor.translateAlternateColorCodes('&', "&fëª¨ë“  " + RankName + " &f?Š¥? ¥?„ ?˜ˆ?™¸ ì²˜ë¦¬ ?•´? œ?•˜? ¤ë©? ?š°?´ë¦??„ ?•´ì£¼ì„¸?š”.")
+					ChatColor.translateAlternateColorCodes('&', "&fëª¨ë“  " + RankName + " &fëŠ¥ë ¥ì„ ì˜ˆì™¸ ì²˜ë¦¬ í•˜ë ¤ë©´ ì¢Œí´ë¦­,"),
+					ChatColor.translateAlternateColorCodes('&', "&fëª¨ë“  " + RankName + " &fëŠ¥ë ¥ì„ ì˜ˆì™¸ ì²˜ë¦¬ í•´ì œí•˜ë ¤ë©´ ìš°í´ë¦­ì„ í•´ì£¼ì„¸ìš”.")
 					));
 			RankItem.setItemMeta(RankMeta);
 			BlackListGUI.setItem(RankCount, RankItem);
@@ -160,7 +160,7 @@ public class BlackListGUI implements Listener {
 		if(page > 1) {
 			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?´? „ ?˜?´ì§?"));
+			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"));
 			previousPage.setItemMeta(previousMeta);
 			BlackListGUI.setItem(48, previousPage);
 		}
@@ -168,7 +168,7 @@ public class BlackListGUI implements Listener {
 		if(page != MaxPage) {
 			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?‹¤?Œ ?˜?´ì§?"));
+			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"));
 			nextPage.setItemMeta(nextMeta);
 			BlackListGUI.setItem(50, nextPage);
 		}
@@ -176,7 +176,7 @@ public class BlackListGUI implements Listener {
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
 		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6?˜?´ì§? &e" + page + " &6/ &e" + MaxPage));
+				"&6í˜ì´ì§€ &e" + page + " &6/ &e" + MaxPage));
 		Page.setItemMeta(PageMeta);
 		BlackListGUI.setItem(49, Page);
 		
@@ -196,9 +196,9 @@ public class BlackListGUI implements Listener {
 		if(e.getInventory().equals(BlackListGUI)) {
 			e.setCancelled(true);
 			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b?´? „ ?˜?´ì§?"))) {
+				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"))) {
 					openBlackListGUI(PlayerPage - 1);
-				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b?‹¤?Œ ?˜?´ì§?"))) {
+				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"))) {
 					openBlackListGUI(PlayerPage + 1);
 				} else {
 					String ItemName = e.getCurrentItem().getItemMeta().getDisplayName();

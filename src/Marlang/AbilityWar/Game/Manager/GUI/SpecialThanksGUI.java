@@ -22,14 +22,14 @@ import Marlang.AbilityWar.Utils.Data.MojangAPI;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
 
 /**
- * ê¸°ì—¬? ëª©ë¡ GUI
+ * ê¸°ì—¬ì ëª©ë¡ GUI
  */
 public class SpecialThanksGUI implements Listener {
 	
 	private static final SpecialThank[] SpecialThanks = {
-				new SpecialThank("f6cef0829b7e48c1a973532389b6e3e1", "?Š¥? ¥ ?•„?´?””?–´ ? œê³?"),
-				new SpecialThank("ecb53e2ffdf34089ae3486cff3fc5f34", "?Š¥? ¥ ?•„?´?””?–´ ? œê³?"),
-				new SpecialThank("2dcb3299e24049adb8bb554d862bd7be", "?Š¥? ¥ ?•„?´?””?–´ ? œê³?")
+				new SpecialThank("f6cef0829b7e48c1a973532389b6e3e1", "ëŠ¥ë ¥ ì•„ì´ë””ì–´ ì œê³µ"),
+				new SpecialThank("ecb53e2ffdf34089ae3486cff3fc5f34", "ëŠ¥ë ¥ ì•„ì´ë””ì–´ ì œê³µ"),
+				new SpecialThank("2dcb3299e24049adb8bb554d862bd7be", "ëŠ¥ë ¥ ì•„ì´ë””ì–´ ì œê³µ")
 			};
 	
 	public static class SpecialThank {
@@ -76,7 +76,7 @@ public class SpecialThanksGUI implements Listener {
 		Integer MaxPage = ((SpecialThanks.length - 1) / 18) + 1;
 		if (MaxPage < page) page = 1;
 		if(page < 1) page = 1;
-		STGUI = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&c&l?œ¿ &0&lSpecial Thanks &c&l?œ¿"));
+		STGUI = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&c&lâœ¿ &0&lSpecial Thanks &c&lâœ¿"));
 		PlayerPage = page;
 		int Count = 0;
 		
@@ -88,9 +88,9 @@ public class SpecialThanksGUI implements Listener {
 				
 				im.setLore(st.getRole());
 			} else {
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c?˜¤ë¥?"));
+				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&cì˜¤ë¥˜"));
 
-				im.setLore(Messager.getStringList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f?— ?—°ê²°í•  ?ˆ˜ ?—†?Šµ?‹ˆ?‹¤.")));
+				im.setLore(Messager.getStringList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&fì— ì—°ê²°í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.")));
 			}
 			
 			is.setItemMeta(im);
@@ -104,7 +104,7 @@ public class SpecialThanksGUI implements Listener {
 		if(page > 1) {
 			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?´? „ ?˜?´ì§?"));
+			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"));
 			previousPage.setItemMeta(previousMeta);
 			STGUI.setItem(21, previousPage);
 		}
@@ -112,7 +112,7 @@ public class SpecialThanksGUI implements Listener {
 		if(page != MaxPage) {
 			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?‹¤?Œ ?˜?´ì§?"));
+			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"));
 			nextPage.setItemMeta(nextMeta);
 			STGUI.setItem(23, nextPage);
 		}
@@ -120,7 +120,7 @@ public class SpecialThanksGUI implements Listener {
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
 		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6?˜?´ì§? &e" + page + " &6/ &e" + MaxPage));
+				"&6í˜ì´ì§€ &e" + page + " &6/ &e" + MaxPage));
 		Page.setItemMeta(PageMeta);
 		STGUI.setItem(22, Page);
 		
@@ -139,9 +139,9 @@ public class SpecialThanksGUI implements Listener {
 		if(e.getInventory().equals(STGUI)) {
 			e.setCancelled(true);
 			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b?´? „ ?˜?´ì§?"))) {
+				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bì´ì „ í˜ì´ì§€"))) {
 					openGUI(PlayerPage - 1);
-				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b?‹¤?Œ ?˜?´ì§?"))) {
+				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&bë‹¤ìŒ í˜ì´ì§€"))) {
 					openGUI(PlayerPage + 1);
 				}
 			}

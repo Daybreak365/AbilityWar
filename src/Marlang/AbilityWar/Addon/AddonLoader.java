@@ -62,14 +62,22 @@ public class AddonLoader {
 	}
 	
 	public static void onEnable() {
-		for(Addon addon : Addons) {
-			addon.onEnable();
+		try {
+			for(Addon addon : Addons) {
+				addon.onEnable();
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	
 	public static void onDisable() {
-		for(Addon addon : Addons) {
-			addon.onDisable();
+		try {
+			for(Addon addon : Addons) {
+				addon.onDisable();
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	
