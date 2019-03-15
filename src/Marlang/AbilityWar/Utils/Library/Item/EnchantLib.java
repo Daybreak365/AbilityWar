@@ -8,6 +8,10 @@ import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
+/**
+ * Enchant 라이브러리
+ * @author _Marlang 말랑
+ */
 public class EnchantLib {
 	
 	public static Enchants ARROW_DAMAGE = new Enchants("ARROW_DAMAGE", "power", 5);

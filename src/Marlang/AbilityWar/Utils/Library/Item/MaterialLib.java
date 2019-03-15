@@ -30,6 +30,10 @@ import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
+/**
+ * Material 라이브러리
+ * @author _Marlang 말랑
+ */
 public enum MaterialLib {
 	
 	ACACIA_BOAT(0, "BOAT_ACACIA"),

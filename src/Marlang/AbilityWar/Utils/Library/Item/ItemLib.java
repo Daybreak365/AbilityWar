@@ -14,6 +14,10 @@ import org.bukkit.potion.PotionType;
 
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
+/**
+ * Item 라이브러리
+ * @author _Marlang 말랑
+ */
 public class ItemLib {
 	
 	public static ColouredItem WOOL = new ColouredItem() {
