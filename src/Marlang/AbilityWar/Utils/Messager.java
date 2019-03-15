@@ -160,7 +160,7 @@ public class Messager {
 		for(String s : update.getPatchNote()) {
 			UpdateInfo.add(s);
 		}
-		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&2----------------------------------------------------------"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&2---------------------------------------------------------------"));
 		
 		return UpdateInfo;
 	}
