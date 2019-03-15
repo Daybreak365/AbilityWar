@@ -51,13 +51,13 @@ abstract public class DurationTimer extends TimerBase {
 	
 	@Override
 	public DurationTimer setPeriod(Integer Period) {
-		this.Period = Period;
+		super.setPeriod(Period);
 		return this;
 	}
 	
 	@Override
 	public DurationTimer setProcessDuringGame(boolean bool) {
-		this.ProcessDuringGame = bool;
+		super.setProcessDuringGame(bool);
 		return this;
 	}
 	

@@ -10,7 +10,7 @@ import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
 import Marlang.AbilityWar.Config.AbilitySettings.SettingObject;
-import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
+import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.LocationUtil;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;

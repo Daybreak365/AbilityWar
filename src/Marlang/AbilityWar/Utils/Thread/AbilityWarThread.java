@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import Marlang.AbilityWar.AbilityWar;
-import Marlang.AbilityWar.GameManager.Game.AbstractGame;
+import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Utils.Messager;
 
 /**
@@ -20,10 +20,11 @@ public class AbilityWarThread {
 	
 	private static int GameTask = -1;
 
-	private static AbstractGame Game;
+	private static AbstractGame Game = null;
 	
 	/**
 	 * 게임을 시작시킵니다.
+	 * 진행중인 게임이 있을 경우 아무 작업도 하지 않습니다.
 	 * @param Game 시작시킬 게임
 	 */
 	public static void startGame(AbstractGame Game) {

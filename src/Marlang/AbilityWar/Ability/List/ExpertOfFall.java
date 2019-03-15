@@ -10,7 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
-import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
+import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
 
 @AbilityManifest(Name = "낙법의 달인", Rank = Rank.C)

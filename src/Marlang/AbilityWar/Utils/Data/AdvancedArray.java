@@ -7,10 +7,10 @@ import java.util.List;
 
 public class AdvancedArray<T> {
 	
-	T[] array;
+	private T[] array;
 	
 	@SuppressWarnings("unchecked")
-	public AdvancedArray(Class<T> clazz, Integer Size) {
+	public AdvancedArray(Class<T> clazz, int Size) {
 		this.array = (T[]) Array.newInstance(clazz, Size);
 	}
 	
@@ -18,9 +18,9 @@ public class AdvancedArray<T> {
 		T tempLast = null;
 		T Last = null;
 		
-		for(Integer i = 0; i < array.length; i++) {
+		for(int i = 0; i < array.length; i++) {
 			tempLast = array[i];
-			if(i.equals(0)) {
+			if(i == 0) {
 				array[i] = t;
 			} else {
 				array[i] = Last;

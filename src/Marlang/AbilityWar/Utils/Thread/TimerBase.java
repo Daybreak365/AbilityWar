@@ -48,13 +48,13 @@ abstract public class TimerBase {
 
 	private int Task = -1;
 
-	protected boolean InfiniteTimer;
-	protected boolean ProcessDuringGame = true;
-	protected int Count;
+	private boolean InfiniteTimer;
+	private boolean ProcessDuringGame = true;
+	private int Count;
 
 	private int TempCount;
 
-	protected int Period = 20;
+	private int Period = 20;
 
 	abstract protected void onStart();
 

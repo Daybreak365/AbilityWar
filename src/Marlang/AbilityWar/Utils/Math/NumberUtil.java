@@ -1,7 +1,5 @@
 package Marlang.AbilityWar.Utils.Math;
 
-import java.util.Random;
-
 /**
  * Math Util
  * 
@@ -64,9 +62,4 @@ public class NumberUtil {
 
 	}
 
-	public static <T extends Enum<?>> T randomEnum(Class<T> clazz) {
-		Random r = new Random();
-		Integer X = r.nextInt(clazz.getEnumConstants().length);
-		return clazz.getEnumConstants()[X];
-	}
 }

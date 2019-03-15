@@ -57,7 +57,7 @@ public abstract class FallBlock implements Listener {
 			try {
 				Method method = Material.class.getDeclaredMethod("createBlockData");
 				this.Data = method.invoke(Data);
-			} catch(Exception ex) {ex.printStackTrace();}
+			} catch(Exception ex) {}
 		} else {
 			this.Data = new MaterialData(Data);
 		}

@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
-import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
+import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
 
 @AbilityManifest(Name = "¾Ç¸¶ÀÇ ºÎÃ÷", Rank = Rank.B)
 public class DevilBoots extends AbilityBase {

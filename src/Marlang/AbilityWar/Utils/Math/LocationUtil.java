@@ -12,8 +12,8 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import Marlang.AbilityWar.GameManager.Game.AbstractGame;
-import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
+import Marlang.AbilityWar.Game.Games.AbstractGame;
+import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 

@@ -9,7 +9,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityManifest;
 import Marlang.AbilityWar.Ability.AbilityManifest.Rank;
-import Marlang.AbilityWar.GameManager.Game.AbstractGame.Participant;
+import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 
 @AbilityManifest(Name = "바이러스", Rank = Rank.D)

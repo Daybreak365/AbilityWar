@@ -29,27 +29,12 @@ public class AddonLoader {
 		//외부에서 AddonLoader를 인스턴스화하지 못하도록 방지
 	}
 	
-	private static AddonLoader addonLoader = null;
-	
-	/**
-	 * AddonLoader 인스턴스를 반환합니다.
-	 * @return
-	 */
-	public static AddonLoader getInstance() {
-		if(addonLoader != null) {
-			return addonLoader;
-		} else {
-			addonLoader = new AddonLoader();
-			return addonLoader;
-		}
-	}
-	
-	private final ArrayList<Addon> Addons = new ArrayList<Addon>();
+	private static final ArrayList<Addon> Addons = new ArrayList<Addon>();
 	
 	/**
 	 * 불러와진 애드온들의 설명 목록을 반환합니다.
 	 */
-	public List<DescriptionFile> getDescriptions() {
+	public static List<DescriptionFile> getDescriptions() {
 		List<DescriptionFile> desc = new ArrayList<DescriptionFile>();
 		for(Addon addon : Addons) {
 			desc.add(addon.getDescription());
@@ -61,7 +46,7 @@ public class AddonLoader {
 	/**
 	 * 애드온 폴더에 있는 모든 애드온을 불러옵니다.
 	 */
-	public void loadAddons() {
+	public static void loadAddons() {
 		for(File file : FileManager.getFolder("Addon").listFiles()) {
 			try {
 				Addons.add(loadAddon(file));
@@ -76,13 +61,13 @@ public class AddonLoader {
 		}
 	}
 	
-	public void onEnable() {
+	public static void onEnable() {
 		for(Addon addon : Addons) {
 			addon.onEnable();
 		}
 	}
 	
-	public void onDisable() {
+	public static void onDisable() {
 		for(Addon addon : Addons) {
 			addon.onDisable();
 		}
@@ -94,7 +79,7 @@ public class AddonLoader {
 	 * @return				불러온 애드온
 	 * @throws Exception	애드온을 불러오는 도중 오류가 발생하였을 경우
 	 */
-	private Addon loadAddon(File file) throws Exception {
+	private static Addon loadAddon(File file) throws Exception {
 		JarFile jar = new JarFile(file);
 		URL[] url = { file.toURI().toURL() };
 		URLClassLoader loader = new URLClassLoader(url, AbilityWar.class.getClassLoader());
@@ -130,7 +115,7 @@ public class AddonLoader {
 		}
 	}
 	
-	public class DescriptionFile {
+	public static class DescriptionFile {
 
 		private final String Name;
 		private final String Main;

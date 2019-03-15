@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 
 import org.bukkit.entity.Player;
 
+import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
+
 public class ActionbarPacket extends AbstractPacket {
 	
 	private String Message;
@@ -26,24 +28,26 @@ public class ActionbarPacket extends AbstractPacket {
 	}
 
 	public void Send(Player p) {
-		try {
-			Object Actionbar = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
-					.getMethod("a", String.class)
-					.invoke(null, "{\"text\": \"" + this.Message + "\"}");
+		if(ServerVersion.getVersion() >= 8) {
+			try {
+				Object Actionbar = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0]
+						.getMethod("a", String.class)
+						.invoke(null, "{\"text\": \"" + this.Message + "\"}");
 
-			Constructor<?> Constructor = getNMSClass("PacketPlayOutTitle").getConstructor(
-					getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
-					getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
-			Object TimePacket = Constructor.newInstance(
-					getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES").get(null),
-					Actionbar, this.fadeIn, this.stay, this.fadeOut);
-			Object ActionbarPacket = Constructor.newInstance(
-					getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("ACTIONBAR").get(null),
-					Actionbar, fadeIn, stay, fadeOut);
+				Constructor<?> Constructor = getNMSClass("PacketPlayOutTitle").getConstructor(
+						getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0],
+						getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
+				Object TimePacket = Constructor.newInstance(
+						getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES").get(null),
+						Actionbar, this.fadeIn, this.stay, this.fadeOut);
+				Object ActionbarPacket = Constructor.newInstance(
+						getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("ACTIONBAR").get(null),
+						Actionbar, fadeIn, stay, fadeOut);
 
-			sendPacket(p, TimePacket);
-			sendPacket(p, ActionbarPacket);
-		} catch(Exception ex) {}
+				sendPacket(p, TimePacket);
+				sendPacket(p, ActionbarPacket);
+			} catch(Exception ex) {}
+		}
 	}
 	
 }

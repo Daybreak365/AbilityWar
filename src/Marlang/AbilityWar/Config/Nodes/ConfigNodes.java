@@ -60,7 +60,7 @@ public enum ConfigNodes {
 	private Object Default;
 	private String[] Comments;
 	
-	ConfigNodes(String Path, Object Default, String... Comments) {
+	private ConfigNodes(String Path, Object Default, String... Comments) {
 		
 		this.Path = Path;
 		this.Default = Default;
