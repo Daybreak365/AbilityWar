@@ -17,14 +17,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import Marlang.AbilityWar.Game.Script.Script.RequiredData;
+import Marlang.AbilityWar.Game.Script.Script.ScriptRegisteration;
 import Marlang.AbilityWar.Game.Script.Objects.AbstractScript;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Setter;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.StringSetter;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Special.LoopCountSetter;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Special.LoopSetter;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Special.TimeSetter;
-import Marlang.AbilityWar.Game.Script.Script.RequiredData;
-import Marlang.AbilityWar.Game.Script.Script.ScriptRegisteration;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 
@@ -72,15 +72,15 @@ public class ScriptWizard implements Listener {
 	public TimeSetter Time = new TimeSetter(this);
 	public LoopSetter Loop = new LoopSetter(this);
 	public LoopCountSetter LoopCount = new LoopCountSetter(this);
-	public StringSetter PreRunMessage = new StringSetter("?��?�� ?���? 메시�?", "&e%Time%&f�? ?��?�� &e%ScriptName% &f?��?��립트�? ?��?��?��?��?��.", this);
-	public StringSetter RunMessage = new StringSetter("?��?�� 메시�?", "&e%ScriptName% &f?��?��립트�? ?��?��?��?��?��?��?��.", this);
+	public StringSetter PreRunMessage = new StringSetter("실행 예고 메시지", "&e%Time%&f초 후에 &e%ScriptName% &f스크립트가 실행됩니다.", this);
+	public StringSetter RunMessage = new StringSetter("실행 메시지", "&e%ScriptName% &f스크립트가 실행되었습니다.", this);
 	// Default Setters
 	
 	private ArrayList<Setter<?>> Setters = new ArrayList<Setter<?>>();
 	
 	public void openScriptWizard(Integer page) {
 		PlayerPage = page;
-		ScriptGUI = Bukkit.createInventory(null, 45, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &0?��?��립트 ?���?"));
+		ScriptGUI = Bukkit.createInventory(null, 45, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &0스크립트 편집"));
 		
 		Integer MaxPage = ((Setters.size() - 1) / 18) + 1;
 		if (MaxPage < page) page = 1;
@@ -115,7 +115,7 @@ public class ScriptWizard implements Listener {
 		if(page > 1) {
 			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?��?�� ?��?���?"));
+			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
 			previousPage.setItemMeta(previousMeta);
 			ScriptGUI.setItem(39, previousPage);
 		}
@@ -123,7 +123,7 @@ public class ScriptWizard implements Listener {
 		if(page != MaxPage) {
 			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b?��?�� ?��?���?"));
+			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
 			nextPage.setItemMeta(nextMeta);
 			ScriptGUI.setItem(41, nextPage);
 		}
@@ -131,15 +131,15 @@ public class ScriptWizard implements Listener {
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
 		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6?��?���? &e" + page + " &6/ &e" + MaxPage));
+				"&6페이지 &e" + page + " &6/ &e" + MaxPage));
 		Page.setItemMeta(PageMeta);
 		ScriptGUI.setItem(40, Page);
 		
 		ItemStack Confirm = new ItemStack(Material.PAPER, 1);
 		ItemMeta ConfirmMeta = Confirm.getItemMeta();
-		ConfirmMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a???��"));
+		ConfirmMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a저장"));
 		ConfirmMeta.setLore(Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&f???�� " + (canSave() ? "&a�??��" : "&c불�??��"))
+				ChatColor.translateAlternateColorCodes('&', "&f저장 " + (canSave() ? "&a가능" : "&c불가능"))
 				));
 		Confirm.setItemMeta(ConfirmMeta);
 		ScriptGUI.setItem(44, Confirm);
@@ -167,11 +167,11 @@ public class ScriptWizard implements Listener {
 			&& Clicked.hasItemMeta() && Clicked.getItemMeta().hasDisplayName()) {
 				String displayName = Clicked.getItemMeta().getDisplayName();
 				
-				if(displayName.equals(ChatColor.translateAlternateColorCodes('&', "&b?��?�� ?��?���?"))) {
+				if(displayName.equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
 					openScriptWizard(PlayerPage - 1);
-				} else if(displayName.equals(ChatColor.translateAlternateColorCodes('&', "&b?��?�� ?��?���?"))) {
+				} else if(displayName.equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
 					openScriptWizard(PlayerPage + 1);
-				} else if(displayName.equals(ChatColor.translateAlternateColorCodes('&', "&a???��"))) {
+				} else if(displayName.equals(ChatColor.translateAlternateColorCodes('&', "&a저장"))) {
 					if(canSave()) {
 						Exception exception = null;
 						
@@ -179,31 +179,31 @@ public class ScriptWizard implements Listener {
 							ArrayList<Class<?>> classList = new ArrayList<Class<?>>();
 							ArrayList<Object> valueList = new ArrayList<Object>();
 							
-							//?��?��립트 ?���?
+							//스크립트 이름
 							classList.add(String.class);
 							valueList.add(scriptName);
 							
-							//?���?
+							//시간
 							classList.add(int.class);
 							valueList.add(Time.getValue());
 							
-							//반복 ?���?
+							//반복 여부
 							classList.add(boolean.class);
 							valueList.add(Loop.getValue());
 
-							//반복 ?��?��
+							//반복 횟수
 							classList.add(int.class);
 							valueList.add(LoopCount.getValue());
 							
-							//?��?�� ?���? 메시�?
+							//실행 예고 메시지
 							classList.add(String.class);
 							valueList.add(PreRunMessage.getValue());
 
-							//?��?�� 메시�?
+							//실행 메시지
 							classList.add(String.class);
 							valueList.add(RunMessage.getValue());
 							
-							//커스?? ?��?��?��
+							//커스텀 데이터
 							for(Setter<?> setter : Setters) {
 								classList.add(setter.getValue().getClass());
 								valueList.add(setter.getValue());
@@ -220,13 +220,13 @@ public class ScriptWizard implements Listener {
 						p.closeInventory();
 						
 						if(exception == null) {
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f?��?��립트�? ???��?��???��?��?��."));
+							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f스크립트를 저장하였습니다."));
 						} else {
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c?��?��립트�? ???��?��?�� ?���? ?��류�? 발생?��???��?��?��."));
+							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c스크립트를 저장하던 도중 오류가 발생하였습니다."));
 
 							if(exception.getMessage() != null && !exception.getMessage().isEmpty()) {
 								if(exception instanceof NoSuchMethodException) {
-									Messager.sendErrorMessage(exception.getMessage() + " 메소?���? 존재?���? ?��?��?��?��.");
+									Messager.sendErrorMessage(exception.getMessage() + " 메소드가 존재하지 않습니다.");
 								} else {
 									Messager.sendErrorMessage(exception.getMessage());
 								}
@@ -252,7 +252,7 @@ public class ScriptWizard implements Listener {
 	}
 	
 	/**
-	 * Listener�? Unregister?���? ?���? ?��벤토리�?? ?��?��?��?��.
+	 * Listener가 Unregister되지 않게 인벤토리를 닫습니다.
 	 */
 	public void safeClose() {
 		safeClose = true;

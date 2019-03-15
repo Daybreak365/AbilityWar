@@ -134,7 +134,7 @@ public class AutoUpdate {
 		
 		byte[] data = new byte[1024];
 		
-		Integer Count;
+		int Count;
 		while ((Count = input.read(data)) >= 0) {
 			output.write(data, 0, Count);
 		}
