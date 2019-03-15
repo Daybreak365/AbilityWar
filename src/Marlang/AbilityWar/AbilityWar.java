@@ -41,25 +41,8 @@ public class AbilityWar extends JavaPlugin {
 		
 		if(au.Check()) {
 			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
-
-			Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
 			
 			Load();
-			
-			AddonLoader.loadAddons();
-			AddonLoader.onEnable();
-			
-			/*
-			 * 서버 부팅이 끝나면 실행
-			 */
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-				@Override
-				public void run() {
-					AbilityWarSettings.Setup();
-					AbilitySettings.Setup();
-					Script.LoadAll();
-				}
-			});
 			
 			Messager.sendMessage("플러그인이 활성화되었습니다.");
 		}
@@ -67,6 +50,8 @@ public class AbilityWar extends JavaPlugin {
 	
 	private void Load() {
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
+
+		Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
 
 		try {
 			for(String name : AbilityList.nameValues()) {
@@ -76,6 +61,22 @@ public class AbilityWar extends JavaPlugin {
 		} catch(ClassNotFoundException e) {
 			Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&f능력을 불러오던 도중 오류가 발생하였습니다."));
 		}
+
+		AddonLoader.loadAddons();
+		AddonLoader.onEnable();
+		
+		/*
+		 * 서버 부팅이 끝나면 실행
+		 */
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			@Override
+			public void run() {
+				AbilityWarSettings.Setup();
+				AbilitySettings.Setup();
+				Script.LoadAll();
+			}
+		});
+		
 	}
 	
 	@Override

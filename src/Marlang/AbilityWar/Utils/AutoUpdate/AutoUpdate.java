@@ -227,7 +227,7 @@ public class AutoUpdate {
 	
 	public enum Branch {
 		
-		Master("master", "1.13.2 ~ 1.8");
+		Master("master", "1.8 ~ 1.13.2");
 		
 		String Name;
 		String Version;
