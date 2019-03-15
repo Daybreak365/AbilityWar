@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 
+import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Script.Objects.AbstractScript;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Setter;
 import Marlang.AbilityWar.Game.Script.ScriptException.State;
@@ -29,10 +30,10 @@ abstract public class Script {
 	/**
 	 * 모든 스크립트를 시작시킵니다.
 	 */
-	public static void RunAll() {
+	public static void RunAll(AbstractGame game) {
 		if(AbilityWarThread.isGameTaskRunning()) {
 			for(AbstractScript script : Scripts) {
-				script.Start();
+				script.Start(game);
 			}
 		}
 	}

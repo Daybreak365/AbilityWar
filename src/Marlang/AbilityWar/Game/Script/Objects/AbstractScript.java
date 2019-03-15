@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.bukkit.ChatColor;
 
+import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
@@ -19,7 +20,7 @@ abstract public class AbstractScript implements Serializable {
 	private final String RunMessage;
 	private transient TimerBase Timer;
 	
-	protected AbstractScript(String ScriptName, int Time, boolean Loop, int LoopCount, String PreRunMessage, String RunMessage) {
+	public AbstractScript(String ScriptName, int Time, boolean Loop, int LoopCount, String PreRunMessage, String RunMessage) {
 		this.ScriptName = ScriptName;
 		this.Time = Time;
 		this.Loop = Loop;
@@ -29,7 +30,11 @@ abstract public class AbstractScript implements Serializable {
 		this.Timer = newTimer();
 	}
 	
-	public void Start() {
+	private transient AbstractGame game;
+	
+	public void Start(AbstractGame game) {
+		this.game = game;
+		
 		if(Timer != null) {
 			Timer.StartTimer();
 		} else {
@@ -60,7 +65,7 @@ abstract public class AbstractScript implements Serializable {
 			
 			@Override
 			public void onEnd() {
-				Execute();
+				Execute(game);
 				Messager.broadcastMessage(getRunMessage());
 				if(Loop) {
 					if(loopCount > -1) {
@@ -97,6 +102,6 @@ abstract public class AbstractScript implements Serializable {
 		return ChatColor.translateAlternateColorCodes('&', RunMessage.replaceAll("%ScriptName%", this.getScriptName()));
 	}
 
-	abstract public void Execute();
+	abstract protected void Execute(AbstractGame game);
 	
 }

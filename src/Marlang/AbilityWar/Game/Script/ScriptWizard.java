@@ -205,7 +205,7 @@ public class ScriptWizard implements Listener {
 							
 							//커스텀 데이터
 							for(Setter<?> setter : Setters) {
-								classList.add(setter.getValue().getClass());
+								classList.add(setter.getClazz());
 								valueList.add(setter.getValue());
 							}
 							

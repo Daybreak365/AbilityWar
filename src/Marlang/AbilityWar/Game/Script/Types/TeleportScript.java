@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Script.Objects.AbstractScript;
 import Marlang.AbilityWar.Game.Script.Objects.SerializableLocation;
 
@@ -19,7 +20,7 @@ public class TeleportScript extends AbstractScript {
 	}
 	
 	@Override
-	public void Execute() {
+	public void Execute(AbstractGame game) {
 		try {
 			for(Player p : Bukkit.getOnlinePlayers()) {
 				p.teleport(location.getLocation());

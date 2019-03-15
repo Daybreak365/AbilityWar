@@ -232,7 +232,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(split.length > 2) {
 							try {
 								Class<? extends AbstractScript> scriptClass = Script.getScriptClass(split[1]);
-								if(Pattern.compile("^[°¡-ÆRa-zA-Z0-9_]+$").matcher(split[2]).find()) {
+								if(Pattern.compile("^[°¡-ÆRa-zA-Z0-9_]+$").matcher(split[2]).find() && split[2].length() <= 10) {
 									File file = new File("plugins/" + AbilityWar.getPlugin().getName() + "/Script/" + split[2] + ".yml");
 									if(!file.exists()) {
 										ScriptWizard wizard = new ScriptWizard(p, AbilityWar.getPlugin(), scriptClass, split[2]);

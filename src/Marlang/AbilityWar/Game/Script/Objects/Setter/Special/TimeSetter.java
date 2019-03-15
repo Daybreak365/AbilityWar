@@ -19,7 +19,7 @@ import Marlang.AbilityWar.Utils.Math.NumberUtil;
 public class TimeSetter extends Setter<Integer> {
 	
 	public TimeSetter(ScriptWizard Wizard) {
-		super("?‹œê°?", 30, Wizard);
+		super("ì‹œê°„", 30, Wizard);
 	}
 	
 	@Override
@@ -55,16 +55,16 @@ public class TimeSetter extends Setter<Integer> {
 		List<String> Lore = new ArrayList<String>();
 		
 		if(getWizard().Loop.getValue()) {
-			Lore.add(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ ?‹œ?‘ ?›„ &e" + NumberUtil.parseTimeString(this.getValue()) + "&fë§ˆë‹¤ ?‹¤?–‰?©?‹ˆ?‹¤."));
+			Lore.add(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ ì‹œì‘ í›„ &e" + NumberUtil.parseTimeString(this.getValue()) + "&fë§ˆë‹¤ ì‹¤í–‰ë©ë‹ˆë‹¤."));
 		} else {
-			Lore.add(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ ?‹œ?‘ &e" + NumberUtil.parseTimeString(this.getValue()) + " &f?›„?— ?‹¤?–‰?©?‹ˆ?‹¤."));
+			Lore.add(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ ì‹œì‘ &e" + NumberUtil.parseTimeString(this.getValue()) + " &fí›„ì— ì‹¤í–‰ë©ë‹ˆë‹¤."));
 		}
 		
 		Lore.add("");
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&c?š°?´ë¦?         &6Â» &e+ 1ì´?"));
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cSHIFT + ?š°?´ë¦? &6Â» &e+ 1ë¶?"));
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cì¢Œí´ë¦?         &6Â» &e- 1ì´?"));
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cSHIFT + ì¢Œí´ë¦? &6Â» &e- 1ë¶?"));
+		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cìš°í´ë¦­         &6Â» &e+ 1ì´ˆ"));
+		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cSHIFT + ìš°í´ë¦­ &6Â» &e+ 1ë¶„"));
+		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cì¢Œí´ë¦­         &6Â» &e- 1ì´ˆ"));
+		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cSHIFT + ì¢Œí´ë¦­ &6Â» &e- 1ë¶„"));
 		
 		watchMeta.setLore(Lore);
 		

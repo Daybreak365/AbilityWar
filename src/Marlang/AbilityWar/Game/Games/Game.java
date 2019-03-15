@@ -286,7 +286,7 @@ public class Game extends AbstractGame {
 			}
 		}
 		
-		Script.RunAll();
+		Script.RunAll(this);
 		
 		setGameStarted(true);
 	}

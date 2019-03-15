@@ -45,6 +45,14 @@ abstract public class Setter<T> implements EventExecutor {
 		return Wizard;
 	}
 	
+	public Class<?> getClazz() {
+		if(getValue().getClass().getSuperclass().isEnum()) {
+			return getValue().getClass().getSuperclass();
+		} else {
+			return getValue().getClass();
+		}
+	}
+	
 	protected void registerEvent(Class<? extends Event> event) {
 		Bukkit.getPluginManager().registerEvent(event, Wizard, EventPriority.HIGH, this, AbilityWar.getPlugin());
 	}

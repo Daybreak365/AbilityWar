@@ -16,7 +16,7 @@ import Marlang.AbilityWar.Utils.Messager;
 public class LoopCountSetter extends Setter<Integer> {
 
 	public LoopCountSetter(ScriptWizard Wizard) {
-		super("ë°˜ë³µ ?šŸ?ˆ˜", -1, Wizard);
+		super("ë°˜ë³µ íšŸìˆ˜", -1, Wizard);
 	}
 
 	@Override
@@ -56,20 +56,20 @@ public class LoopCountSetter extends Setter<Integer> {
 		if(getWizard().Loop.getValue()) {
 			if(getValue() > 0) {
 				loopCountMeta.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&e" + getValue() + "ë²? &fë°˜ë³µ ?‹¤?–‰?©?‹ˆ?‹¤."),
-						ChatColor.translateAlternateColorCodes('&', "&c?š°?´ë¦?    &6Â» &e+ 1?šŒ"),
-						ChatColor.translateAlternateColorCodes('&', "&cì¢Œí´ë¦?    &6Â» &e- 1?šŒ"),
-						ChatColor.translateAlternateColorCodes('&', "&cQ         &6Â» &eë¬´í•œë°˜ë³µ ?† ê¸?")
+						ChatColor.translateAlternateColorCodes('&', "&e" + getValue() + "ë²ˆ &fë°˜ë³µ ì‹¤í–‰ë©ë‹ˆë‹¤."),
+						ChatColor.translateAlternateColorCodes('&', "&cìš°í´ë¦­    &6Â» &e+ 1íšŒ"),
+						ChatColor.translateAlternateColorCodes('&', "&cì¢Œí´ë¦­    &6Â» &e- 1íšŒ"),
+						ChatColor.translateAlternateColorCodes('&', "&cQ         &6Â» &eë¬´í•œë°˜ë³µ í† ê¸€")
 						));
 			} else {
 				loopCountMeta.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&eë¬´í•œ &fë°˜ë³µ?©?‹ˆ?‹¤."),
-						ChatColor.translateAlternateColorCodes('&', "&cQ         &6Â» &eë¬´í•œë°˜ë³µ ?† ê¸?")
+						ChatColor.translateAlternateColorCodes('&', "&eë¬´í•œ &fë°˜ë³µë©ë‹ˆë‹¤."),
+						ChatColor.translateAlternateColorCodes('&', "&cQ         &6Â» &eë¬´í•œë°˜ë³µ í† ê¸€")
 						));
 			}
 		} else {
 			loopCountMeta.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&fë°˜ë³µ ?‹¤?–‰?´ ?™œ?„±?™”?˜ì§? ?•Š?•„ ?‚¬?š©?•  ?ˆ˜ ?—†?Š” ?„¤? •?…?‹ˆ?‹¤.")
+					ChatColor.translateAlternateColorCodes('&', "&fë°˜ë³µ ì‹¤í–‰ì´ í™œì„±í™”ë˜ì§€ ì•Šì•„ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ì„¤ì •ì…ë‹ˆë‹¤.")
 					));
 		}
 		

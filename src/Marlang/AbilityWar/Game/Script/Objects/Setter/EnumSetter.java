@@ -21,7 +21,15 @@ public class EnumSetter extends Setter<Object> {
 	
 	public EnumSetter(String Key, Object Default, ScriptWizard Wizard) throws IllegalArgumentException {
 		super(Key, Default, Wizard);
-		this.enumClass = Default.getClass();
+		if(Default.getClass().isEnum()) {
+			this.enumClass = Default.getClass();
+		} else {
+			if(Default.getClass().getSuperclass().isEnum()) {
+				this.enumClass = Default.getClass().getSuperclass();
+			} else {
+				throw new IllegalArgumentException();
+			}
+		}
 		this.maxNumber = enumClass.getEnumConstants().length - 1;
 	}
 
@@ -66,9 +74,9 @@ public class EnumSetter extends Setter<Object> {
 			}
 		}
 		
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f? „ì²? ?ƒ?ˆ˜&7: &a" + (maxNumber + 1) + "&fê°?, ?˜„?¬ ?ƒ?ˆ˜&7: &a" + (number + 1) + "&fë²ˆì§¸"));
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f?´? „ ?ƒ?ˆ˜ë¡? ë³?ê²½í•˜? ¤ë©? &cì¢Œí´ë¦?&f?•˜?„¸?š”."));
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f?‹¤?Œ ?ƒ?ˆ˜ë¡? ë³?ê²½í•˜? ¤ë©? &c?š°?´ë¦?&f?•˜?„¸?š”."));
+		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&fì „ì²´ ìƒìˆ˜&7: &a" + (maxNumber + 1) + "&fê°œ, í˜„ì¬ ìƒìˆ˜&7: &a" + (number + 1) + "&fë²ˆì§¸"));
+		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&fì´ì „ ìƒìˆ˜ë¡œ ë³€ê²½í•˜ë ¤ë©´ &cì¢Œí´ë¦­&fí•˜ì„¸ìš”."));
+		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&fë‹¤ìŒ ìƒìˆ˜ë¡œ ë³€ê²½í•˜ë ¤ë©´ &cìš°í´ë¦­&fí•˜ì„¸ìš”."));
 		
 		enumItemMeta.setLore(enumItemLore);
 		
