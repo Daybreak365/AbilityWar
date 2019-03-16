@@ -19,7 +19,6 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * Location Util
- * 
  * @author _Marlang ¸»¶û
  */
 public class LocationUtil {

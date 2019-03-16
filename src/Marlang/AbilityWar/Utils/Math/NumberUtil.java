@@ -1,8 +1,7 @@
 package Marlang.AbilityWar.Utils.Math;
 
 /**
- * Math Util
- * 
+ * Number Util
  * @author _Marlang ¸»¶û
  */
 public class NumberUtil {
