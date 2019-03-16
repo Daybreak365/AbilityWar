@@ -9,6 +9,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -121,7 +122,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 			GiveDefaultKit(p.getPlayer());
 		}
 	}
-	
+
 	/**
 	 * 관전자 목록을 반환합니다.
 	 * @return	관전자 목록
@@ -281,8 +282,18 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 										Instant Now = Instant.now();
 										long Duration = java.time.Duration.between(lastClick, Now).toMillis();
 										if (Duration >= 250) {
-											this.lastClick = Now;
-											Ability.TargetSkill(mt, e.getEntity());
+											Entity target = e.getEntity();
+											
+											if(target instanceof Player) {
+												Player t = (Player) target;
+												if(AbstractGame.this.isParticipating(t)) {
+													this.lastClick = Now;
+													Ability.TargetSkill(mt, e.getEntity());
+												}
+											} else {
+												this.lastClick = Now;
+												Ability.TargetSkill(mt, e.getEntity());
+											}
 										}
 									}
 								}

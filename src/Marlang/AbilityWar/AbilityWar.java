@@ -14,8 +14,8 @@ import Marlang.AbilityWar.Game.MainCommand;
 import Marlang.AbilityWar.Game.Script.Script;
 import Marlang.AbilityWar.Game.Script.Script.RequiredData;
 import Marlang.AbilityWar.Game.Script.Types.ChangeAbilityScript;
-import Marlang.AbilityWar.Game.Script.Types.TeleportScript;
 import Marlang.AbilityWar.Game.Script.Types.ChangeAbilityScript.ChangeTarget;
+import Marlang.AbilityWar.Game.Script.Types.TeleportScript;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate;
 import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.Branch;
@@ -34,7 +34,7 @@ public class AbilityWar extends JavaPlugin {
 	}
 	
 	private final AutoUpdate au = new AutoUpdate("Marlang365", "AbilityWar", this, Branch.Master);
-	
+
 	@Override
 	public void onEnable() {
 		AbilityWar.Plugin = this;
