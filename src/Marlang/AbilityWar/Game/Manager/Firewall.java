@@ -14,8 +14,8 @@ import org.bukkit.plugin.EventExecutor;
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
-import Marlang.AbilityWar.Game.Games.Game;
 import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
+import Marlang.AbilityWar.Game.Games.Game;
 
 /**
  * πÊ»≠∫Æ
@@ -36,8 +36,9 @@ public class Firewall implements EventExecutor {
 
 			boolean canLogin = false;
 			
+			Player p = e.getPlayer();
+			
 			if(AbilityWarSettings.getFirewall()) {
-				Player p = e.getPlayer();
 				
 				if(p.isOp()) {
 					canLogin = true;
@@ -64,8 +65,6 @@ public class Firewall implements EventExecutor {
 			}
 			
 			if(AbilityWarSettings.getEliminate()) {
-				Player p = e.getPlayer();
-				
 				if(game.getDeathManager().isEliminated(p) && !p.isOp()) {
 					e.disallow(Result.KICK_OTHER,
 							ChatColor.translateAlternateColorCodes('&', "&2°∂&aAbilityWar&2°∑")

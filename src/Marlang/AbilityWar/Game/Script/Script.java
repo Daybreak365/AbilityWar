@@ -69,18 +69,20 @@ abstract public class Script {
 	 *                                  이미 사용하고 있는 이름일 경우,
 	 *                                  이미 등록된 스크립트 클래스일 경우
 	 */
-	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) throws IllegalArgumentException {
+	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) {
 		for(ScriptRegisteration check : ScriptTypes) {
 			if(check.getClazz().getSimpleName().equalsIgnoreCase(clazz.getSimpleName())) {
-				throw new IllegalArgumentException("이미 사용중인 스크립트 이름입니다.");
+				Messager.sendMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
+				return;
 			}
 		}
 		
-		if(!isRegistered(clazz)) {
-			ScriptTypes.add(new ScriptRegisteration(clazz, requiredDatas));
-		} else {
-			throw new IllegalArgumentException("이미 등록된 스크립트입니다.");
+		if(isRegistered(clazz)) {
+			Messager.sendMessage(clazz.getName() + " 스크립트는 이미 등록되었습니다.");
+			return;
 		}
+		
+		ScriptTypes.add(new ScriptRegisteration(clazz, requiredDatas));
 	}
 	
 	public static ScriptRegisteration getRegisteration(Class<? extends AbstractScript> clazz) throws IllegalArgumentException, ScriptException {

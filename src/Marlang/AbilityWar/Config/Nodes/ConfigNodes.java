@@ -2,6 +2,7 @@ package Marlang.AbilityWar.Config.Nodes;
 
 import org.bukkit.Bukkit;
 
+import Marlang.AbilityWar.Game.Games.Game;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 
@@ -50,11 +51,10 @@ public enum ConfigNodes {
 			"# 초반 스폰 이동 활성화 여부"),
 	Game_VisualEffect("게임.시각효과", true,
 			"# 파티클 활성화 여부"),
-	Game_OldMechanics_Header("게임.구버전", "",
-			"# 마치 구 버전에서 플레이하고 있는 것처럼 느끼게 해줍니다.",
-			"# 구 버전 설정은 능력자 전쟁이 시작되면 적용됩니다."),
 	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
-			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다.");
+			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
+	Game_Mode("게임.모드", Game.class.getName(),
+			"# 게임 모드 클래스");
 	
 	private String Path;
 	private Object Default;

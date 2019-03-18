@@ -136,38 +136,40 @@ public class AbilityGUI implements Listener {
 				}
 			}
 			
-			if(e.getCurrentItem().getType().equals(Material.IRON_BLOCK)) {
-				if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-					String AbilityName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-					
-					Class<? extends AbilityBase> abilityClass = AbilityList.getByString(AbilityName);
-					try {
-						if(abilityClass != null) {
-							if(AbilityWarThread.isGameTaskRunning()) {
-								AbstractGame game = AbilityWarThread.getGame();
-								if(target != null) {
-									target.setAbility(abilityClass);
-									Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님에게 능력을 임의로 부여하였습니다."));
-								} else {
-									for(Participant participant : game.getParticipants()) {
-										participant.setAbility(abilityClass);
+			if(e.getCurrentItem() != null) {
+				if(e.getCurrentItem().getType().equals(Material.IRON_BLOCK)) {
+					if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
+						String AbilityName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+						
+						Class<? extends AbilityBase> abilityClass = AbilityList.getByString(AbilityName);
+						try {
+							if(abilityClass != null) {
+								if(AbilityWarThread.isGameTaskRunning()) {
+									AbstractGame game = AbilityWarThread.getGame();
+									if(target != null) {
+										target.setAbility(abilityClass);
+										Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님에게 능력을 임의로 부여하였습니다."));
+									} else {
+										for(Participant participant : game.getParticipants()) {
+											participant.setAbility(abilityClass);
+										}
+										Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a에게 능력을 임의로 부여하였습니다."));
 									}
-									Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a에게 능력을 임의로 부여하였습니다."));
 								}
+							} else {
+								throw new Exception("Reflection Error");
 							}
-						} else {
-							throw new Exception("Reflection Error");
+						} catch(Exception ex) {
+							ex.printStackTrace();
+							if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+								Messager.sendErrorMessage(p, ex.getMessage());
+							} else {
+								Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
+							}
 						}
-					} catch(Exception ex) {
-						ex.printStackTrace();
-						if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-							Messager.sendErrorMessage(p, ex.getMessage());
-						} else {
-							Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
-						}
+						
+						p.closeInventory();
 					}
-					
-					p.closeInventory();
 				}
 			}
 		}

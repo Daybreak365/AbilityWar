@@ -22,13 +22,14 @@ import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.SettingWizard;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
-import Marlang.AbilityWar.Game.Games.Game;
+import Marlang.AbilityWar.Game.Games.AbstractGame.AbilitySelect;
 import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
-import Marlang.AbilityWar.Game.Manager.AbilitySelect;
 import Marlang.AbilityWar.Game.Manager.GUI.AbilityGUI;
 import Marlang.AbilityWar.Game.Manager.GUI.BlackListGUI;
+import Marlang.AbilityWar.Game.Manager.GUI.GameModeGUI;
 import Marlang.AbilityWar.Game.Manager.GUI.SpecialThanksGUI;
 import Marlang.AbilityWar.Game.Manager.GUI.SpectatorGUI;
+import Marlang.AbilityWar.Game.Manager.Mode.GameMode;
 import Marlang.AbilityWar.Game.Script.Script;
 import Marlang.AbilityWar.Game.Script.ScriptException;
 import Marlang.AbilityWar.Game.Script.ScriptWizard;
@@ -68,7 +69,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else if(split[0].equalsIgnoreCase("start")) {
 				if(sender.isOp()) {
 					if(!AbilityWarThread.isGameTaskRunning()) {
-						AbilityWarThread.startGame(new Game());
+						if(!GameMode.startGame()) {
+							Messager.sendErrorMessage(sender, "게임을 시작시키는 도중에 오류가 발생하여 기본 게임을 시작시킵니다.");
+						}
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + sender.getName() + "&f님이 게임을 시작시켰습니다."));
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 이미 진행되고 있습니다."));
@@ -141,19 +144,19 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						AbstractGame game = AbilityWarThread.getGame();
 						if(game.isParticipating(p)) {
 							Participant participant = game.getParticipant(p);
-							if(participant.hasAbility()) {
-								AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-								if(select != null && !select.isEnded()) {
+							AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
+							if(select != null && !select.isEnded()) {
+								if(select.isSelector(participant)) {
 									if(!select.hasDecided(participant)) {
-										select.decideAbility(participant, true);
+										select.decideAbility(participant);
 									} else {
 										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
 									}
 								} else {
-									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
+									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신은 능력을 선택하고 있지 않습니다."));
 								}
 							} else {
-								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
 							}
 						} else {
 							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c게임에 참가하고 있지 않습니다."));
@@ -171,19 +174,19 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						AbstractGame game = AbilityWarThread.getGame();
 						if(game.isParticipating(p)) {
 							Participant participant = game.getParticipant(p);
-							if(participant.hasAbility()) {
-								AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
-								if(select != null && !select.isEnded()) {
+							AbilitySelect select = AbilityWarThread.getGame().getAbilitySelect();
+							if(select != null && !select.isEnded()) {
+								if(select.isSelector(participant)) {
 									if(!select.hasDecided(participant)) {
-										select.changeAbility(participant);
+										select.alterAbility(participant);
 									} else {
 										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이미 능력 선택을 마치셨습니다."));
 									}
 								} else {
-									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
+									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신은 능력을 선택하고 있지 않습니다."));
 								}
 							} else {
-								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
 							}
 						} else {
 							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c게임에 참가하고 있지 않습니다."));
@@ -254,6 +257,18 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " script <유형> <이름>"));
 						}
+					} else {
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
+					}
+				} else {
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
+				}
+			} else if(split[0].equalsIgnoreCase("gamemode")) {
+				if(sender instanceof Player) {
+					Player p = (Player) sender;
+					if(p.isOp()) {
+						GameModeGUI gui = new GameModeGUI(p, AbilityWar.getPlugin());
+						gui.openGameModeGUI(1);
 					} else {
 						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 					}
@@ -431,6 +446,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				Messager.sendStringList(sender, Messager.getStringList(
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
+						Messager.formatCommand(label, "gamemode", "능력자 전쟁 게임 모드를 설정합니다.", true),
 						Messager.formatCommand(label, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false)));
 				break;
 			default:
@@ -497,7 +513,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				case 1:
 					ArrayList<String> Complete = Messager.getStringList(
 							"start", "stop", "check", "yes", "no",
-							"skip", "reload", "config", "util", "script", "specialthanks");
+							"skip", "reload", "config", "util", "script", "gamemode", "specialthanks");
 					
 					if(args[0].isEmpty()) {
 						return Complete;

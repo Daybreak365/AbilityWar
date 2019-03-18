@@ -21,7 +21,6 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
-import Marlang.AbilityWar.Game.Manager.AbilitySelect;
 import Marlang.AbilityWar.Game.Manager.InfiniteDurability;
 import Marlang.AbilityWar.Game.Manager.Invincibility;
 import Marlang.AbilityWar.Game.Script.Script;
@@ -34,6 +33,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
  * 게임 관리 클래스
  * @author _Marlang 말랑
  */
+@GameManifest(Name = "게임", Description = { "§f능력자 전쟁 플러그인의 기본 게임입니다." })
 public class Game extends AbstractGame {
 	
 	private final static List<String> messages = new ArrayList<String>();
@@ -323,7 +323,7 @@ public class Game extends AbstractGame {
 		List<Player> Players = new ArrayList<Player>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!getSpectators().contains(p.getName())) {
+			if(!isSpectator(p.getName())) {
 				Players.add(p);
 			}
 		}
@@ -340,8 +340,7 @@ public class Game extends AbstractGame {
 				return Game.this.getParticipants();
 			}
 			
-			@Override
-			protected List<Class<? extends AbilityBase>> setupAbilities() {
+			private List<Class<? extends AbilityBase>> setupAbilities() {
 				List<Class<? extends AbilityBase>> list = new ArrayList<>();
 				for(String abilityName : AbilityList.nameValues()) {
 					if(!AbilityWarSettings.isBlackListed(abilityName)) {
@@ -352,23 +351,27 @@ public class Game extends AbstractGame {
 				return list;
 			}
 			
+			private List<Class<? extends AbilityBase>> abilities;
+			
 			@Override
 			protected void drawAbility() {
-				if(getSelectors().size() <= Abilities.size()) {
+				abilities = setupAbilities();
+				
+				if(getSelectors().size() <= abilities.size()) {
 					Random random = new Random();
 					
 					for(Participant participant : getSelectors()) {
 						Player p = participant.getPlayer();
 						
-						Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
+						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
 						try {
 							participant.setAbility(abilityClass);
-							Abilities.remove(abilityClass);
+							abilities.remove(abilityClass);
 							
 							Messager.sendStringList(p, Messager.getStringList(
 									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 1회에 한해 능력을 변경할 수 있습니다.")));
+									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")));
 						} catch (Exception e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
@@ -382,24 +385,22 @@ public class Game extends AbstractGame {
 			}
 			
 			@Override
-			public void changeAbility(Participant participant) {
+			protected boolean changeAbility(Participant participant) {
 				Player p = participant.getPlayer();
 				
-				if(Abilities.size() > 0) {
+				if(abilities.size() > 0) {
 					Random random = new Random();
 					
 					if(participant.hasAbility()) {
 						Class<? extends AbilityBase> oldAbilityClass = participant.getAbility().getClass();
-						Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
+						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
 						try {
-							Abilities.remove(abilityClass);
-							Abilities.add(oldAbilityClass);
+							abilities.remove(abilityClass);
+							abilities.add(oldAbilityClass);
 							
 							participant.setAbility(abilityClass);
 							
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
-							
-							decideAbility(participant, false);
+							return true;
 						} catch (Exception e) {
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 변경하는 도중 오류가 발생하였습니다."));
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
@@ -408,19 +409,18 @@ public class Game extends AbstractGame {
 				} else {
 					Messager.sendErrorMessage(p, "능력을 변경할 수 없습니다.");
 				}
+				
+				return false;
 			}
 
 			@Override
-			protected boolean endCondition() {
-				for(Participant Key : getSelectors()) {
-					if(!hasDecided(Key)) {
-						return false;
-					}
-				}
-				
-				return true;
+			protected void onSelectEnd() {}
+
+			@Override
+			protected int getChangeCount() {
+				return 1;
 			}
-			
+
 		};
 	}
 	

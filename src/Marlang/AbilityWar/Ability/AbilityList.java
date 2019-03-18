@@ -69,7 +69,6 @@ public class AbilityList {
 	 * 겹치는 이름은 없는지, 생성자는 올바른지 확인해주시길 바랍니다.
 	 * 
 	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
-	 * @param name			능력 이름
 	 * @param Ability		능력 클래스
 	 */
 	public static void registerAbility(Class<? extends AbilityBase> Ability) {

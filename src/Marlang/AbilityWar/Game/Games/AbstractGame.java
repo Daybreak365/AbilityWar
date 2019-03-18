@@ -26,16 +26,34 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityBase.ClickType;
 import Marlang.AbilityWar.Ability.AbilityBase.MaterialType;
-import Marlang.AbilityWar.Game.Manager.AbilitySelect;
 import Marlang.AbilityWar.Game.Manager.DeathManager;
 import Marlang.AbilityWar.Game.Manager.Firewall;
 import Marlang.AbilityWar.Game.Manager.GameListener;
 import Marlang.AbilityWar.Utils.Messager;
+import Marlang.AbilityWar.Utils.Thread.TimerBase;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
 
 abstract public class AbstractGame extends Thread implements Listener, EventExecutor {
 	
 	private static List<String> Spectators = new ArrayList<String>();
+	
+	public static boolean isSpectator(String name) {
+		return Spectators.contains(name);
+	}
+	
+	public static void addSpectator(String name) {
+		if(!Spectators.contains(name)) {
+			Spectators.add(name);
+		}
+	}
+	
+	public static void removeSpectator(String name) {
+		Spectators.remove(name);
+	}
+	
+	public static List<String> getSpectators() {
+		return Spectators;
+	}
 	
 	private List<Participant> Participants = setupParticipants();
 	
@@ -124,14 +142,6 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	}
 
 	/**
-	 * 관전자 목록을 반환합니다.
-	 * @return	관전자 목록
-	 */
-	public static List<String> getSpectators() {
-		return Spectators;
-	}
-
-	/**
 	 * 참여자 목록을 반환합니다.
 	 * @return	참여자 목록
 	 */
@@ -193,7 +203,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	public boolean isGameStarted() {
 		return GameStarted;
 	}
-	
+
 	/**
 	 * AbilitySelect를 받아옵니다.
 	 * @return AbilitySelect (사용하지 않을 경우 Null 반환, 능력 추첨 전일 경우 null 반환)
@@ -432,6 +442,152 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 			this.player = player;
 		}
 
+	}
+	
+	abstract public class AbilitySelect extends TimerBase {
+		
+		private HashMap<Participant, Integer> Selectors = new HashMap<Participant, Integer>();
+		
+		public HashMap<Participant, Integer> getMap() {
+			return Selectors;
+		}
+
+		public List<Participant> getSelectors() {
+			return new ArrayList<Participant>(Selectors.keySet());
+		}
+		
+		public boolean hasDecided(Participant p) {
+			return Selectors.get(p) <= 0;
+		}
+		
+		private void setRemainingChangeCount(Participant participant, int count) {
+			Selectors.put(participant, count);
+			
+			if(count == 0) {
+				Player p = participant.getPlayer();
+
+				Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요."));
+				
+				Messager.broadcastStringList(Messager.getStringList(
+						ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."),
+						ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayers() + "명")));
+			}
+		}
+		
+		private void setDecided(Participant participant) {
+			setRemainingChangeCount(participant, 0);
+		}
+		
+		public boolean isSelector(Participant participant) {
+			return Selectors.containsKey(participant);
+		}
+		
+		protected AbilitySelect() {
+			final int ChangeCount = getChangeCount();
+			
+			for(Participant p : setupPlayers()) {
+				Selectors.put(p, ChangeCount);
+			}
+			
+			this.drawAbility();
+			this.StartTimer();
+		}
+		
+		public void decideAbility(Participant participant) {
+			if(isSelector(participant)) {
+				setDecided(participant);
+			}
+		}
+		
+		private int getLeftPlayers() {
+			int i = 0;
+			for(Participant p : Selectors.keySet()) {
+				if(!hasDecided(p)) {
+					i++;
+				}
+			}
+			
+			return i;
+		}
+		
+		public void Skip(String admin) {
+			for(Participant p : Selectors.keySet()) {
+				if(!hasDecided(p)) {
+					decideAbility(p);
+				}
+			}
+
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
+			this.StopTimer(false);
+		}
+		
+		/**
+		 * 능력 변경 가능 횟수를 반환합니다.
+		 */
+		abstract protected int getChangeCount();
+		
+		abstract protected void drawAbility();
+		
+		abstract protected boolean changeAbility(Participant participant);
+		
+		abstract protected List<Participant> setupPlayers();
+		
+		abstract protected void onSelectEnd();
+		
+		public void alterAbility(Participant participant) {
+			if(isSelector(participant) && !hasDecided(participant)) {
+				setRemainingChangeCount(participant, Selectors.get(participant) - 1);
+				if(changeAbility(participant)) {
+					Player p = participant.getPlayer();
+					
+					Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
+				}
+			}
+		}
+		
+		private boolean Ended = false;
+		
+		public boolean isEnded() {
+			return Ended;
+		}
+		
+		private boolean isEveryoneSelected() {
+			for(Participant Key : getSelectors()) {
+				if(!hasDecided(Key)) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		private int Count = 0;
+		
+		@Override
+		public void onStart() {}
+		
+		@Override
+		public void TimerProcess(Integer Seconds) {
+			if(!isEveryoneSelected()) {
+				Count++;
+				
+				if(Count >= 20) {
+					Messager.broadcastStringList(Messager.getStringList(
+							ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."),
+							ChatColor.translateAlternateColorCodes('&', "&c/ability yes나 /ability no 명령어로 능력을 확정해주세요.")));
+					Count = 0;
+				}
+			} else {
+				this.StopTimer(false);
+			}
+		}
+		
+		@Override
+		public void onEnd() {
+			Ended = true;
+			onSelectEnd();
+		}
+		
 	}
 	
 }

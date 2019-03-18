@@ -50,9 +50,9 @@ abstract public class TimerBase {
 
 	private boolean InfiniteTimer;
 	private boolean ProcessDuringGame = true;
-	private int Count;
+	private int MaxCount;
 
-	private int TempCount;
+	private int Count;
 
 	private int Period = 20;
 
@@ -71,7 +71,7 @@ abstract public class TimerBase {
 	 */
 	public void StartTimer() {
 		if(!this.isTimerRunning()) {
-			TempCount = Count;
+			Count = MaxCount;
 			this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
 			if(ProcessDuringGame) {
 				Register(this);
@@ -87,7 +87,7 @@ abstract public class TimerBase {
 		if(this.isTimerRunning()) {
 			Bukkit.getScheduler().cancelTask(Task);
 			Unregister(this);
-			TempCount = Count;
+			Count = MaxCount;
 			this.Task = -1;
 			if(!Silent) {
 				onEnd();
@@ -95,12 +95,12 @@ abstract public class TimerBase {
 		}
 	}
 	
-	public int getCount() {
-		return Count;
+	public int getMaxCount() {
+		return MaxCount;
 	}
 	
-	public int getTempCount() {
-		return TempCount;
+	public int getCount() {
+		return Count;
 	}
 	
 	public TimerBase setPeriod(Integer Period) {
@@ -122,7 +122,7 @@ abstract public class TimerBase {
 	 */
 	public TimerBase(int Count) {
 		InfiniteTimer = false;
-		this.Count = Count;
+		this.MaxCount = Count;
 	}
 	
 	/**
@@ -130,7 +130,7 @@ abstract public class TimerBase {
 	 */
 	public TimerBase() {
 		InfiniteTimer = true;
-		this.Count = -1;
+		this.MaxCount = -1;
 	}
 	
 	private final class TimerTask extends Thread {
@@ -142,14 +142,14 @@ abstract public class TimerBase {
 					if (InfiniteTimer) {
 						TimerProcess(-1);
 					} else {
-						if (TempCount > 0) {
-							TimerProcess(TempCount);
+						if (Count > 0) {
+							TimerProcess(Count);
 
-							if (TempCount <= 0) {
+							if (Count <= 0) {
 								StopTimer(false);
 							}
 
-							TempCount--;
+							Count--;
 						} else {
 							StopTimer(false);
 						}
@@ -161,13 +161,13 @@ abstract public class TimerBase {
 				if (InfiniteTimer) {
 					TimerProcess(-1);
 				} else {
-					TimerProcess(TempCount);
+					TimerProcess(Count);
 
-					if (TempCount <= 0) {
+					if (Count <= 0) {
 						StopTimer(false);
 					}
 
-					TempCount--;
+					Count--;
 				}
 			}
 		}

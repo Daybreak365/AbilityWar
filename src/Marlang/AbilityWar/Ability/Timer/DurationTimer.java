@@ -43,7 +43,7 @@ abstract public class DurationTimer extends TimerBase {
 	
 	public boolean isDuration() {
 		if(isTimerRunning()) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(this.getTempCount()))));
+			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(getFixedTime(this.getCount()))));
 		}
 		
 		return isTimerRunning();

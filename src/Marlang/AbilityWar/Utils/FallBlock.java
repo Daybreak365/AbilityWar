@@ -76,8 +76,9 @@ public abstract class FallBlock implements Listener {
 	public FallingBlock Spawn(boolean setBlock) {
 		if(ServerVersion.getVersion() >= 13) {
 			try {
-				Method spawnFallingBlock = World.class.getDeclaredMethod("spawnFallingBlock", Location.class, Class.forName("org.bukkit.block.data.BlockData"));
-				fb = (FallingBlock) spawnFallingBlock.invoke(world, location, Class.forName("org.bukkit.block.data.BlockData").cast(Data));
+				Class<?> blockDataClass = Class.forName("org.bukkit.block.data.BlockData");
+				Method spawnFallingBlock = World.class.getDeclaredMethod("spawnFallingBlock", Location.class, blockDataClass);
+				fb = (FallingBlock) spawnFallingBlock.invoke(world, location, blockDataClass.cast(Data));
 			} catch(Exception ex) {}
 		} else if(ServerVersion.getVersion() >= 11) {
 			fb = world.spawnFallingBlock(location, (MaterialData) Data);

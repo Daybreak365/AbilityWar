@@ -59,7 +59,7 @@ public class Flora extends AbilityBase {
 					if(type.equals(EffectType.Speed)) {
 						EffectLib.SPEED.addPotionEffect(p, 40, 1, true);
 					} else if(type.equals(EffectType.Regeneration)) {
-						EffectLib.REGENERATION.addPotionEffect(p, 40, 1, true);
+						EffectLib.REGENERATION.addPotionEffect(p, 100, 2, true);
 					}
 				}
 			}

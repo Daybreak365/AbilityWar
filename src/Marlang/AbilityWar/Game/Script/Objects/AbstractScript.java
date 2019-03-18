@@ -56,7 +56,7 @@ abstract public class AbstractScript implements Serializable {
 			
 			@Override
 			public void TimerProcess(Integer Seconds) {
-				if(Seconds == (this.getCount() / 2)) {
+				if(Seconds == (this.getMaxCount() / 2)) {
 					Messager.broadcastMessage(getPreRunMessage(Seconds));
 				} else if(Seconds <= 5 && Seconds >= 1) {
 					Messager.broadcastMessage(getPreRunMessage(Seconds));

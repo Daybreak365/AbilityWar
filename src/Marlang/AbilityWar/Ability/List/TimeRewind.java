@@ -105,7 +105,7 @@ public class TimeRewind extends AbilityBase {
 		@Override
 		public void onDurationStart() {
 			Rewinding = true;
-			this.list = array.getList();
+			this.list = array.toList();
 		}
 		
 		@Override

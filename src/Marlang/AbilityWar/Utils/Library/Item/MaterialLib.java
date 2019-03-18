@@ -887,10 +887,10 @@ public enum MaterialLib {
 	ZOMBIE_VILLAGER_SPAWN_EGG(0, "MONSTER_EGG"),
 	ZOMBIE_WALL_HEAD(0, "SKULL","SKULL_ITEM");
 	
-	String[] m;
-	int data;
+	private String[] m;
+	private int data;
 	
-	MaterialLib(int data, String... m){
+	private MaterialLib(int data, String... m){
 		this.m = m;
 		this.data = data;
 	}

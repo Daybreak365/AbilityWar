@@ -11,8 +11,14 @@ import org.bukkit.ChatColor;
 @Target(ElementType.TYPE)
 public @interface AbilityManifest {
 
+	/**
+	 * 능력 이름
+	 */
 	public String Name();
 	
+	/**
+	 * 능력 랭크
+	 */
 	public Rank Rank();
 
 	public enum Rank {

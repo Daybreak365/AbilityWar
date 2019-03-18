@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
+import Marlang.AbilityWar.Game.Games.AbstractGame;
+import Marlang.AbilityWar.Game.Games.Game;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 
@@ -126,6 +128,26 @@ public class AbilityWarSettings {
 			list.remove(abilityName);
 			setNewProperty(ConfigNodes.Game_BlackList, list);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Class<? extends AbstractGame> getGameMode() {
+		try {
+			Class<?> clazz = Class.forName(getString(ConfigNodes.Game_Mode));
+			if(clazz.getSuperclass().equals(AbstractGame.class)) {
+				return (Class<? extends AbstractGame>) clazz;
+			}
+		} catch (ClassNotFoundException e) {}
+		
+		setNewProperty(ConfigNodes.Game_Mode, Game.class.getName());
+		return Game.class;
+	}
+
+	/**
+	 * String Config
+	 */
+	public static String getString(ConfigNodes node) {
+		return get(node, String.class);
 	}
 
 	/**

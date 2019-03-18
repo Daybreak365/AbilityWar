@@ -80,7 +80,7 @@ public class SpectatorGUI implements Listener {
 		for(String player : Players) {
 			ItemStack is;
 			
-			if(Game.getSpectators().contains(player)) {
+			if(Game.isSpectator(player)) {
 				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
@@ -166,9 +166,7 @@ public class SpectatorGUI implements Listener {
 						}
 						
 						if(target != null) {
-							if(Game.getSpectators().contains(target)) {
-								Game.getSpectators().remove(target);
-							}
+							Game.removeSpectator(target);
 							
 							openSpectateGUI(PlayerPage);
 						} else {
@@ -177,9 +175,7 @@ public class SpectatorGUI implements Listener {
 					} else if(MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
 						String target = Bukkit.getPlayerExact(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName())).getName();
 						if(target != null) {
-							if(!Game.getSpectators().contains(target)) {
-								Game.getSpectators().add(target);
-							}
+							Game.addSpectator(target);
 							
 							openSpectateGUI(PlayerPage);
 						} else {

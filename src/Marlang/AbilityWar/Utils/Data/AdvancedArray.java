@@ -29,7 +29,7 @@ public class AdvancedArray<T> {
 		}
 	}
 	
-	public List<T> getList() {
+	public List<T> toList() {
 		List<T> list = new ArrayList<>(Arrays.asList(array));
 		return list;
 	}

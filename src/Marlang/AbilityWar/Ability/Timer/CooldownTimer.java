@@ -51,9 +51,9 @@ public class CooldownTimer extends TimerBase {
 	public boolean isCooldown() {
 		if(isTimerRunning()) {
 			if(!AbilityName.isEmpty()) {
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
 			} else {
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
 			}
 		}
 		
@@ -79,24 +79,24 @@ public class CooldownTimer extends TimerBase {
 	public void TimerProcess(Integer Seconds) {
 		ActionbarPacket actionbar;
 		if(!AbilityName.isEmpty()) {
-			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getTempCount())), 0, 25, 0);
+			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 			
 			if(Seconds == (Cool / 2)) {
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
 			} else if(Seconds <= 5 && Seconds >= 1) {
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
 			}
 		} else {
-			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getTempCount())), 0, 25, 0);
+			actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 			
 			if(Seconds == (Cool / 2)) {
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
 			} else if(Seconds <= 5 && Seconds >= 1) {
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(Ability.getPlayer());
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getTempCount())));
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
 			}
 		}
 		

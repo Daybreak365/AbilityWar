@@ -76,7 +76,7 @@ public class Chaos extends AbilityBase {
 			ParticleLib.SMOKE_NORMAL.spawnParticle(center, 100, 2, 2, 2);
 			for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, Distance, Distance)) {
 				if(!d.equals(getPlayer())) {
-					d.damage(0.5);
+					d.damage(0.7);
 					Vector vector = center.toVector().subtract(d.getLocation().toVector());
 					d.setVelocity(vector);
 				}
