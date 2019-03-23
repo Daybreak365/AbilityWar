@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Game.Manager.Mode;
+package Marlang.AbilityWar.Game.Games.Mode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
-import Marlang.AbilityWar.Game.Games.Game;
 import Marlang.AbilityWar.Game.Games.GameManifest;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
@@ -18,11 +17,11 @@ import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
  * @author _Marlang ¸»¶û
  */
 public class GameMode {
-
+	
 	private static ArrayList<Class<? extends AbstractGame>> modeList = new ArrayList<>();
 
 	static {
-		registerGameMode(Game.class);
+		registerGameMode(DefaultGame.class);
 	}
 
 	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {
@@ -91,8 +90,8 @@ public class GameMode {
 			AbilityWarThread.startGame(AbilityWarSettings.getGameMode().newInstance());
 			return true;
 		} catch (InstantiationException | IllegalAccessException e) {
-			AbilityWarSettings.setNewProperty(ConfigNodes.Game_Mode, Game.class.getName());
-			AbilityWarThread.startGame(new Game());
+			AbilityWarSettings.setNewProperty(ConfigNodes.Game_Mode, DefaultGame.class.getName());
+			AbilityWarThread.startGame(new DefaultGame());
 			return false;
 		}
 	}

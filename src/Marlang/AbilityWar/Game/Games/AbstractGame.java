@@ -29,6 +29,7 @@ import Marlang.AbilityWar.Ability.AbilityBase.MaterialType;
 import Marlang.AbilityWar.Game.Manager.DeathManager;
 import Marlang.AbilityWar.Game.Manager.Firewall;
 import Marlang.AbilityWar.Game.Manager.GameListener;
+import Marlang.AbilityWar.Game.Manager.Invincibility;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 import Marlang.AbilityWar.Utils.VersionCompat.PlayerCompat;
@@ -55,15 +56,17 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		return Spectators;
 	}
 	
-	private List<Participant> Participants = setupParticipants();
+	private final List<Participant> Participants = setupParticipants();
 	
 	@SuppressWarnings("unused")
-	private GameListener gameListener = new GameListener(this);
+	private final GameListener gameListener = new GameListener(this);
 	
-	private DeathManager deathManager = new DeathManager(this);
+	private final DeathManager deathManager = new DeathManager(this);
+
+	private final Invincibility invincibility = new Invincibility(this);
 	
 	@SuppressWarnings("unused")
-	private Firewall fireWall = new Firewall(this);
+	private final Firewall fireWall = new Firewall(this);
 	
 	private AbilitySelect abilitySelect;
 	
@@ -212,6 +215,10 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		return abilitySelect;
 	}
 	
+	public Invincibility getInvincibility() {
+		return invincibility;
+	}
+
 	protected Integer getSeconds() {
 		return Seconds;
 	}
@@ -233,10 +240,8 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	public class Participant implements EventExecutor {
 	
 		private Player player;
-		private final AbstractGame game;
 
 		private Participant(AbstractGame game, Player player) {
-			this.game = game;
 			this.player = player;
 
 			Bukkit.getPluginManager().registerEvent(PlayerLoginEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
@@ -347,16 +352,8 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 			
 			Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Participant.class);
 			AbilityBase ability = constructor.newInstance(this);
-			
-			if(this.game.isRestricted()) {
-				ability.setRestricted(true);
-			} else {
-				if(this.game.isGameStarted()) {
-					ability.setRestricted(false);
-				} else {
-					ability.setRestricted(true);
-				}
-			}
+
+			ability.setRestricted(isRestricted() || !isGameStarted());
 
 			this.ability = ability;
 		}
@@ -369,16 +366,8 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 			if(hasAbility()) {
 				removeAbility();
 			}
-			
-			if(this.game.isRestricted()) {
-				ability.setRestricted(true);
-			} else {
-				if(this.game.isGameStarted()) {
-					ability.setRestricted(false);
-				} else {
-					ability.setRestricted(true);
-				}
-			}
+
+			ability.setRestricted(isRestricted() || !isGameStarted());
 			
 			this.ability = ability;
 		}
@@ -393,7 +382,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		
 		public void removeAbility() {
 			if(getAbility() != null) {
-				getAbility().DeleteAbility();
+				getAbility().Delete();
 				ability = null;
 			}
 		}
@@ -540,7 +529,14 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 				if(changeAbility(participant)) {
 					Player p = participant.getPlayer();
 					
-					Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
+					if(!hasDecided(participant)) {
+						Messager.sendStringList(p, Messager.getStringList(
+								ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
+								ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
+								ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")));
+					} else {
+						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
+					}
 				}
 			}
 		}

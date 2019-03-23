@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Game.Games;
+package Marlang.AbilityWar.Game.Games.Mode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,9 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
+import Marlang.AbilityWar.Game.Games.AbstractGame;
+import Marlang.AbilityWar.Game.Games.GameManifest;
 import Marlang.AbilityWar.Game.Manager.InfiniteDurability;
-import Marlang.AbilityWar.Game.Manager.Invincibility;
 import Marlang.AbilityWar.Game.Script.Script;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
@@ -34,7 +35,7 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
  * @author _Marlang 말랑
  */
 @GameManifest(Name = "게임", Description = { "§f능력자 전쟁 플러그인의 기본 게임입니다." })
-public class Game extends AbstractGame {
+public class DefaultGame extends AbstractGame {
 	
 	private final static List<String> messages = new ArrayList<String>();
 	
@@ -44,7 +45,7 @@ public class Game extends AbstractGame {
 		}
 	}
 	
-	public Game() {
+	public DefaultGame() {
 		setRestricted(Invincible);
 		registerEvent(EntityDamageEvent.class);
 	}
@@ -52,8 +53,6 @@ public class Game extends AbstractGame {
 	private boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
 	
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
-	
-	private final Invincibility invincibility = new Invincibility(this);
 	
 	private final TimerBase NoHunger = new TimerBase() {
 		
@@ -258,7 +257,7 @@ public class Game extends AbstractGame {
 		}
 		
 		if(Invincible) {
-			invincibility.StartTimer();
+			getInvincibility().Start(false);
 		} else {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 			for(Participant participant : this.getParticipants()) {
@@ -314,10 +313,6 @@ public class Game extends AbstractGame {
 		}
 	}
 	
-	public Invincibility getInvincibility() {
-		return invincibility;
-	}
-	
 	@Override
 	protected List<Player> setupPlayers() {
 		List<Player> Players = new ArrayList<Player>();
@@ -337,7 +332,7 @@ public class Game extends AbstractGame {
 			
 			@Override
 			protected List<Participant> setupPlayers() {
-				return Game.this.getParticipants();
+				return DefaultGame.this.getParticipants();
 			}
 			
 			private List<Class<? extends AbilityBase>> setupAbilities() {
@@ -402,7 +397,7 @@ public class Game extends AbstractGame {
 							
 							return true;
 						} catch (Exception e) {
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 변경하는 도중 오류가 발생하였습니다."));
+							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님의 능력을 변경하는 도중 오류가 발생하였습니다."));
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}
 					}
@@ -430,7 +425,7 @@ public class Game extends AbstractGame {
 			EntityDamageEvent e = (EntityDamageEvent) event;
 			
 			if(e.getEntity() instanceof Player) {
-				if(this.getInvincibility().isTimerRunning()) {
+				if(this.getInvincibility().isInvincible()) {
 					e.setCancelled(true);
 				}
 			}

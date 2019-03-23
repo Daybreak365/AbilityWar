@@ -2,7 +2,7 @@ package Marlang.AbilityWar.Config.Nodes;
 
 import org.bukkit.Bukkit;
 
-import Marlang.AbilityWar.Game.Games.Game;
+import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 
@@ -53,7 +53,7 @@ public enum ConfigNodes {
 			"# 파티클 활성화 여부"),
 	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
 			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
-	Game_Mode("게임.모드", Game.class.getName(),
+	Game_Mode("게임.모드", DefaultGame.class.getName(),
 			"# 게임 모드 클래스");
 	
 	private String Path;

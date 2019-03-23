@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Games.GameManifest;
-import Marlang.AbilityWar.Game.Manager.Mode.GameMode;
+import Marlang.AbilityWar.Game.Games.Mode.GameMode;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 
@@ -55,17 +55,24 @@ public class GameModeGUI implements Listener {
 					
 					if(gameClass.equals(mode)) {
 						is = MaterialLib.ENCHANTED_BOOK.getItem();
+						ItemMeta im = is.getItemMeta();
+						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
+						im.setLore(Messager.getStringList(
+								manifest.Description(),
+								ChatColor.translateAlternateColorCodes('&', "&7선택된 게임모드입니다.")
+								));
+						is.setItemMeta(im);
 					} else {
 						is = MaterialLib.BOOK.getItem();
+						ItemMeta im = is.getItemMeta();
+						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
+						im.setLore(Messager.getStringList(
+								manifest.Description(),
+								ChatColor.translateAlternateColorCodes('&', "&b» &f이 게임모드를 선택하려면 클릭하세요.")
+								));
+						is.setItemMeta(im);
 					}
 
-					ItemMeta im = is.getItemMeta();
-					im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-					im.setLore(Messager.getStringList(
-							manifest.Description()
-							));
-					is.setItemMeta(im);
-					
 					if (Count / 18 == page - 1) {
 						GameModeGUI.setItem(Count % 18, is);
 					}
@@ -104,6 +111,7 @@ public class GameModeGUI implements Listener {
 	public void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.GameModeGUI)) {
 			HandlerList.unregisterAll(this);
+			AbilityWarSettings.Save();
 		}
 	}
 	

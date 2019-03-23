@@ -84,12 +84,16 @@ abstract public class AbilityBase {
 	 * 플레이어 능력 삭제시 사용됩니다.
 	 * 플레이어의 능력이 변경될 때 자동으로 호출됩니다.
 	 */
-	public void DeleteAbility() {
+	public void Delete() {
+		this.StopAllTimers();
+		
+		this.participant = null;
+	}
+	
+	public void StopAllTimers() {
 		for(TimerBase timer : getTimers()) {
 			timer.StopTimer(true);
 		}
-		
-		this.participant = null;
 	}
 	
 	/**

@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
-import Marlang.AbilityWar.Game.Games.Game;
+import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 
@@ -139,8 +139,8 @@ public class AbilityWarSettings {
 			}
 		} catch (ClassNotFoundException e) {}
 		
-		setNewProperty(ConfigNodes.Game_Mode, Game.class.getName());
-		return Game.class;
+		setNewProperty(ConfigNodes.Game_Mode, DefaultGame.class.getName());
+		return DefaultGame.class;
 	}
 
 	/**

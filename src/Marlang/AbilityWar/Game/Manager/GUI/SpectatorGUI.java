@@ -18,8 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import Marlang.AbilityWar.Ability.AbilityList;
-import Marlang.AbilityWar.Game.Games.Game;
+import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
@@ -50,7 +49,7 @@ public class SpectatorGUI implements Listener {
 			}
 		}
 		
-		for(String p : Game.getSpectators()) {
+		for(String p : DefaultGame.getSpectators()) {
 			if(!list.contains(p)) {
 				list.add(p);
 			}
@@ -69,7 +68,7 @@ public class SpectatorGUI implements Listener {
 	
 	public void openSpectateGUI(Integer page) {
 		List<String> Players = getPlayers();
-		Integer MaxPage = ((AbilityList.nameValues().size() - 1) / 36) + 1;MaxPage = 100;
+		Integer MaxPage = ((Players.size() - 1) / 36) + 1;
 		if (MaxPage < page)
 			page = 1;
 		if(page < 1) page = 1;
@@ -80,7 +79,7 @@ public class SpectatorGUI implements Listener {
 		for(String player : Players) {
 			ItemStack is;
 			
-			if(Game.isSpectator(player)) {
+			if(DefaultGame.isSpectator(player)) {
 				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
@@ -159,14 +158,14 @@ public class SpectatorGUI implements Listener {
 						
 						String target = null;
 						
-						for(String player : Game.getSpectators()) {
+						for(String player : DefaultGame.getSpectators()) {
 							if(player.equals(targetName)) {
 								target = player;
 							}
 						}
 						
 						if(target != null) {
-							Game.removeSpectator(target);
+							DefaultGame.removeSpectator(target);
 							
 							openSpectateGUI(PlayerPage);
 						} else {
@@ -175,7 +174,7 @@ public class SpectatorGUI implements Listener {
 					} else if(MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
 						String target = Bukkit.getPlayerExact(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName())).getName();
 						if(target != null) {
-							Game.addSpectator(target);
+							DefaultGame.addSpectator(target);
 							
 							openSpectateGUI(PlayerPage);
 						} else {

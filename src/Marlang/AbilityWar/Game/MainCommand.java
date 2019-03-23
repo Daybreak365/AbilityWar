@@ -24,12 +24,13 @@ import Marlang.AbilityWar.Config.SettingWizard;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Games.AbstractGame.AbilitySelect;
 import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
+import Marlang.AbilityWar.Game.Games.Mode.GameMode;
+import Marlang.AbilityWar.Game.Manager.Invincibility;
 import Marlang.AbilityWar.Game.Manager.GUI.AbilityGUI;
 import Marlang.AbilityWar.Game.Manager.GUI.BlackListGUI;
 import Marlang.AbilityWar.Game.Manager.GUI.GameModeGUI;
 import Marlang.AbilityWar.Game.Manager.GUI.SpecialThanksGUI;
 import Marlang.AbilityWar.Game.Manager.GUI.SpectatorGUI;
-import Marlang.AbilityWar.Game.Manager.Mode.GameMode;
 import Marlang.AbilityWar.Game.Script.Script;
 import Marlang.AbilityWar.Game.Script.ScriptException;
 import Marlang.AbilityWar.Game.Script.ScriptWizard;
@@ -409,6 +410,19 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 			}
+		} else if(args[0].equalsIgnoreCase("inv")) {
+			if(AbilityWarThread.isGameTaskRunning()) {
+				Invincibility invincibility = AbilityWarThread.getGame().getInvincibility();
+				if(invincibility.isInvincible()) {
+					invincibility.Stop();
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 무적 상태를 &f비활성화&a하셨습니다."));
+				} else {
+					invincibility.Start(true);
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 무적 상태를 &f활성화&a하셨습니다."));
+				}
+			} else {
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
+			}
 		} else {
 			if(NumberUtil.isInt(args[0])) {
 				sendHelpUtilCommand(p, label, Integer.valueOf(args[0]));
@@ -493,7 +507,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				Messager.sendStringList(sender, Messager.getStringList(
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
-						Messager.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true)));
+						Messager.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true),
+						Messager.formatCommand(label + " util", "inv", "무적 상태를 토글합니다.", true)));
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -531,7 +546,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						}
 					} else if(args[0].equalsIgnoreCase("util")) {
 						ArrayList<String> Util = Messager.getStringList(
-								"abi", "spec", "ablist", "blacklist", "resetcool", "kit");
+								"abi", "spec", "ablist", "blacklist", "resetcool", "kit", "inv");
 						if(args[1].isEmpty()) {
 							return Util;
 						} else {

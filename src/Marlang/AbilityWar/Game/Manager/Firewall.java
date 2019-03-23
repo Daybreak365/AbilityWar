@@ -15,7 +15,7 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
-import Marlang.AbilityWar.Game.Games.Game;
+import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
 
 /**
  * 방화벽
@@ -50,7 +50,7 @@ public class Firewall implements EventExecutor {
 					}
 				}
 				
-				for(String playerName : Game.getSpectators()) {
+				for(String playerName : DefaultGame.getSpectators()) {
 					if(p.getName().equals(playerName)) {
 						canLogin = true;
 					}
@@ -59,7 +59,7 @@ public class Firewall implements EventExecutor {
 				if(!canLogin) {
 					e.disallow(Result.KICK_OTHER,
 							ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
-							+ System.lineSeparator()
+							+ "\n"
 							+ ChatColor.translateAlternateColorCodes('&', "&f게임 진행중이므로 접속할 수 없습니다."));
 				}
 			}
@@ -68,7 +68,7 @@ public class Firewall implements EventExecutor {
 				if(game.getDeathManager().isEliminated(p) && !p.isOp()) {
 					e.disallow(Result.KICK_OTHER,
 							ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
-							+ System.lineSeparator()
+							+ "\n"
 							+ ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
 				}
 			}

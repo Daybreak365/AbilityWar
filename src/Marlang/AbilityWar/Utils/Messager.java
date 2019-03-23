@@ -216,6 +216,22 @@ public class Messager {
 	public static String formatCommand(String Label, String Command, String Help) {
 		return ChatColor.translateAlternateColorCodes('&', "&6/" + Label + " &e" + Command + " &7: &f" + Help);
 	}
+
+	/**
+	 * String ArrayList¸¦ ¸¸µì´Ï´Ù.
+	 */
+	public static ArrayList<String> getStringList(String[] arr, String... str) {
+		ArrayList<String> Return = new ArrayList<String>();
+		for(String s : arr) {
+			Return.add(s);
+		}
+		
+		for(String s : str) {
+			Return.add(s);
+		}
+		
+		return Return;
+	}
 	
 	/**
 	 * String ArrayList¸¦ ¸¸µì´Ï´Ù.

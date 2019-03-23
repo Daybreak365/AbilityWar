@@ -1,11 +1,9 @@
 package Marlang.AbilityWar;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.AbilityList;
 import Marlang.AbilityWar.Addon.AddonLoader;
 import Marlang.AbilityWar.Config.AbilitySettings;
@@ -33,7 +31,7 @@ public class AbilityWar extends JavaPlugin {
 		return AbilityWar.Plugin;
 	}
 	
-	private final AutoUpdate au = new AutoUpdate("Marlang365", "AbilityWar", this, Branch.Master);
+	private final AutoUpdate au = new AutoUpdate("Marlang365a", "AbilityWar", this, Branch.Master);
 
 	@Override
 	public void onEnable() {
@@ -55,15 +53,8 @@ public class AbilityWar extends JavaPlugin {
 
 		Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
 		Script.registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("능력 변경 대상", ChangeTarget.class));
-		
-		try {
-			for(String name : AbilityList.nameValues()) {
-				Class<? extends AbilityBase> Ability = AbilityList.getByString(name);
-				Class.forName(Ability.getName());
-			}
-		} catch(ClassNotFoundException e) {
-			Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&f능력을 불러오던 도중 오류가 발생하였습니다."));
-		}
+
+		AbilityList.nameValues();
 
 		AddonLoader.loadAddons();
 		AddonLoader.onEnable();
