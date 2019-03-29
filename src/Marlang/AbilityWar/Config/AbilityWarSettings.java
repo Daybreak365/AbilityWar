@@ -9,7 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
-import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
+import Marlang.AbilityWar.Game.Games.Default.DefaultGame;
+import Marlang.AbilityWar.Utils.ReflectionUtil;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 
@@ -133,11 +134,11 @@ public class AbilityWarSettings {
 	@SuppressWarnings("unchecked")
 	public static Class<? extends AbstractGame> getGameMode() {
 		try {
-			Class<?> clazz = Class.forName(getString(ConfigNodes.Game_Mode));
+			Class<?> clazz = ReflectionUtil.ClassUtil.forName(getString(ConfigNodes.Game_Mode));
 			if(clazz.getSuperclass().equals(AbstractGame.class)) {
 				return (Class<? extends AbstractGame>) clazz;
 			}
-		} catch (ClassNotFoundException e) {}
+		} catch (ClassNotFoundException e) {e.printStackTrace();}
 		
 		setNewProperty(ConfigNodes.Game_Mode, DefaultGame.class.getName());
 		return DefaultGame.class;

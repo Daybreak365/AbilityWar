@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
+import Marlang.AbilityWar.Game.Games.Default.DefaultGame;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib;
 import Marlang.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;

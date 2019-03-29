@@ -6,6 +6,8 @@ package Marlang.AbilityWar.Utils.Math;
  */
 public class NumberUtil {
 
+	private NumberUtil() {}
+	
 	public static boolean isInt(String s) {
 		boolean isInt = true;
 		try {

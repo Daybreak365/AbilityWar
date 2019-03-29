@@ -18,6 +18,8 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class AbilityWarThread {
 	
+	private AbilityWarThread() {}
+	
 	private static int GameTask = -1;
 
 	private static AbstractGame Game = null;

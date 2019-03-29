@@ -8,6 +8,7 @@ import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.SoundLib;
+import Marlang.AbilityWar.Utils.Library.Packet.TitlePacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
@@ -36,7 +37,6 @@ public class Invincibility {
 						for(Participant participant : game.getParticipants()) {
 							if(participant.hasAbility()) {
 								AbilityBase ability = participant.getAbility();
-								ability.StopAllTimers();
 								ability.setRestricted(true);
 							}
 						}
@@ -60,7 +60,9 @@ public class Invincibility {
 					@Override
 					protected void onEnd() {
 						game.setRestricted(false);
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c&lWarning! &f무적이 해제되었습니다."));
+						TitlePacket titlePacket = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
+								ChatColor.translateAlternateColorCodes('&', "&f무적이 해제되었습니다."), 20, 60, 20);
+						titlePacket.Broadcast();
 						SoundLib.ENTITY_ENDER_DRAGON_AMBIENT.broadcastSound();
 						
 						for(Participant participant : game.getParticipants()) {
@@ -79,7 +81,6 @@ public class Invincibility {
 						for(Participant participant : game.getParticipants()) {
 							if(participant.hasAbility()) {
 								AbilityBase ability = participant.getAbility();
-								ability.StopAllTimers();
 								ability.setRestricted(true);
 							}
 						}
@@ -92,7 +93,9 @@ public class Invincibility {
 					@Override
 					protected void onEnd() {
 						game.setRestricted(false);
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c&lWarning! &f무적이 해제되었습니다."));
+						TitlePacket titlePacket = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
+								ChatColor.translateAlternateColorCodes('&', "&f무적이 해제되었습니다."), 20, 60, 20);
+						titlePacket.Broadcast();
 						SoundLib.ENTITY_ENDER_DRAGON_AMBIENT.broadcastSound();
 						
 						for(Participant participant : game.getParticipants()) {

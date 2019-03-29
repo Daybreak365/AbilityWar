@@ -19,7 +19,7 @@ abstract public class AbstractPacket {
 	
 	protected Class<?> getNMSClass(String className) {
 		try {
-			return Class.forName("net.minecraft.server." + getVersionString() + "." + className);
+			return Class.forName("net.minecraft.server." + ServerVersion.getStringVersion() + "." + className);
 		} catch (Exception ex) {
 			return null;
 		}
@@ -31,18 +31,6 @@ abstract public class AbstractPacket {
 			Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
 			playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
 		} catch (Exception ex) {}
-	}
-	
-	/**
-	 * 서버 버전을 String으로 받아옵니다. Ex. v1_12_R1
-	 */
-	private String getVersionString() {
-		String[] versionArray = Bukkit.getServer().getClass().getName().replace('.', ',').split(",");
-		if (versionArray.length >= 4) {
-			return versionArray[3];
-		} else {
-			return "";
-		}
 	}
 	
 	protected Integer getVersion() {

@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerCompat {
 	
+	private PlayerCompat() {}
+	
 	/**
 	 * 플레이어의 손에 있는 아이템을 반환합니다.
 	 * @param p	손에 있는 아이템을 확인할 플레이어

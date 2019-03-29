@@ -20,30 +20,24 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class ItemLib {
 	
-	public static ColouredItem WOOL = new ColouredItem() {
-		
-		@Override
-		public String getName() {
-			return "WOOL";
-		}
-		
-	};
+	private ItemLib() {}
 	
-	abstract public static class ColouredItem {
+	public static ColouredItem WOOL = new ColouredItem("WOOL");
+	
+	public static class ColouredItem {
 		
-		private ColouredItem() {}
+		private final String materialName;
 		
-		/**
-		 * Material 이름
-		 */
-		abstract public String getName();
+		private ColouredItem(String materialName) {
+			this.materialName = materialName;
+		}
 		
 		public ItemStack getItemStack(ItemColor color) {
 			if(ServerVersion.getVersion() >= 13) {
-				Material material = Material.valueOf(color.toString() + "_" + getName());
+				Material material = Material.valueOf(color.toString() + "_" + this.materialName);
 				return new ItemStack(material);
 			} else {
-				Material material = Material.valueOf(getName());
+				Material material = Material.valueOf(this.materialName);
 				return new ItemStack(material, 1, color.getDamage());
 			}
 		}
@@ -55,9 +49,9 @@ public class ItemLib {
 					name = name.replaceAll(color.toString() + "_", "");
 				}
 				
-				return name.equalsIgnoreCase(getName());
+				return name.equalsIgnoreCase(this.materialName);
 			} else {
-				return material.toString().equalsIgnoreCase(getName());
+				return material.toString().equalsIgnoreCase(this.materialName);
 			}
 		}
 		
@@ -291,9 +285,9 @@ public class ItemLib {
 		/**
 		 * 포션을 ItemStack으로 받아옵니다.
 		 * @param Amount	개수
-		 * @return			ItemStack, 오류가 났을 경우 null을 반환
+		 * @return			ItemStack
 		 */
-		public ItemStack getItemStack(int Amount) {
+		public ItemStack getItemStack(int Amount) throws Exception {
 			if(ServerVersion.getVersion() >= 9) {
 				ItemStack potion = (ItemStack) Potion;
 				potion.setAmount(Amount);
@@ -309,15 +303,11 @@ public class ItemLib {
 				
 				return potion;
 			} else {
-				try {
-					Class<?> potionClass = Class.forName("org.bukkit.potion.Potion");
-					potionClass.getMethod("setHasExtendedDuration", boolean.class).invoke(potionClass.cast(Potion), Extended);
-					potionClass.getMethod("setLevel", int.class).invoke(potionClass.cast(Potion), Upgraded ? 2 : 1);
-					return (ItemStack) potionClass.getMethod("toItemStack", int.class).invoke(potionClass.cast(Potion), Amount);
-				} catch(Exception ex) {}
+				Class<?> potionClass = Class.forName("org.bukkit.potion.Potion");
+				potionClass.getMethod("setHasExtendedDuration", boolean.class).invoke(potionClass.cast(Potion), Extended);
+				potionClass.getMethod("setLevel", int.class).invoke(potionClass.cast(Potion), Upgraded ? 2 : 1);
+				return (ItemStack) potionClass.getMethod("toItemStack", int.class).invoke(potionClass.cast(Potion), Amount);
 			}
-			
-			return null;
 		}
 		
 		public enum PotionShape {

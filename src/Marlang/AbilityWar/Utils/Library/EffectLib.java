@@ -13,6 +13,8 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class EffectLib {
 	
+	private EffectLib() {}
+	
 	public static Effects ABSORPTION = new Effects("ABSORPTION", 6);
 	public static Effects BLINDNESS = new Effects("BLINDNESS", 5);
 	public static Effects CONFUSION = new Effects("CONFUSION", 5);

@@ -23,6 +23,8 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class LocationUtil {
 
+	private LocationUtil() {}
+	
 	public static boolean isInCircle(Location center, Location location, double radius) {
 		if(center.getWorld().equals(location.getWorld())) {
 			double distance = center.distance(location);

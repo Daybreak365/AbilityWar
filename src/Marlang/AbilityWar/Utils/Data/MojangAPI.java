@@ -14,6 +14,8 @@ import org.json.simple.parser.JSONParser;
  */
 public class MojangAPI {
 	
+	private MojangAPI() {}
+	
 	public static String getNickname(String UUID) throws Exception {
 		URL nicknames = new URL("https://api.mojang.com/user/profiles/" + UUID + "/names");
 		BufferedReader br = new BufferedReader(new InputStreamReader(nicknames.openStream(), "UTF-8"));

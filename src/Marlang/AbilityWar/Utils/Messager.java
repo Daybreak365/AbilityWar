@@ -19,7 +19,13 @@ import Marlang.AbilityWar.Utils.AutoUpdate.AutoUpdate.UpdateObject;
  */
 public class Messager {
 	
+	private Messager() {}
+	
 	private static final String Prefix = ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》&f");
+	
+	public static String getPrefix() {
+		return Prefix;
+	}
 	
 	/**
 	 * 콘솔에 메시지를 전송합니다.

@@ -41,6 +41,8 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class SoundLib {
 	
+	private SoundLib() {}
+	
 	public static Sounds AMBIENT_CAVE = new Sounds("AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENCE_CAVE");
 	public static Sounds AMBIENT_UNDERWATER_ENTER = new Sounds("AMBIENT_UNDERWATER_ENTER", "", "", "", "", "");
 	public static Sounds AMBIENT_UNDERWATER_EXIT = new Sounds("AMBIENT_UNDERWATER_EXIT", "", "", "", "", "");

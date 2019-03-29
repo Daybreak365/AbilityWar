@@ -12,6 +12,8 @@ abstract public class Addon {
 
 	private DescriptionFile description;
 
+	private ClassLoader classLoader;
+	
 	abstract public void onEnable();
 
 	abstract public void onDisable();
@@ -28,6 +30,13 @@ abstract public class Addon {
 	 */
 	public DescriptionFile getDescription() {
 		return description;
+	}
+
+	/**
+	 * 이 애드온을 불러올 때 사용된 ClassLoader를 받아옵니다.
+	 */
+	public ClassLoader getClassLoader() {
+		return classLoader;
 	}
 
 }

@@ -15,7 +15,7 @@ import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
-import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
+import Marlang.AbilityWar.Game.Games.Default.DefaultGame;
 
 /**
  * πÊ»≠∫Æ

@@ -89,8 +89,8 @@ abstract public class AbilityBase {
 		
 		this.participant = null;
 	}
-	
-	public void StopAllTimers() {
+
+	private void StopAllTimers() {
 		for(TimerBase timer : getTimers()) {
 			timer.StopTimer(true);
 		}
@@ -168,11 +168,37 @@ abstract public class AbilityBase {
 	 * 능력의 제한 여부를 설정합니다.
 	 */
 	public void setRestricted(boolean restricted) {
-		Restricted = restricted;
+		this.Restricted = restricted;
 		
-		if(!restricted) {
-			onRestrictClear();
+		if(restricted) {
+			this.StopAllTimers();
+		} else {
+			this.onRestrictClear();
 		}
+	}
+	
+	/**
+	 * 일정 시간동안 유지되는 능력의 제한 여부를 설정합니다.
+	 * restricted가 true일 경우 능력을 seconds초간 제한시키고, 후에 제한을 해제합니다.
+	 * false인 경우에는 seconds초간 제한을 해제하고, 후에 능력을 제한합니다.
+	 */
+	public void setRestricted(boolean restricted, int seconds) {
+		new TimerBase(seconds) {
+			
+			@Override
+			protected void onStart() {
+				setRestricted(restricted);
+			}
+			
+			@Override
+			protected void TimerProcess(Integer Seconds) {}
+
+			@Override
+			protected void onEnd() {
+				setRestricted(!restricted);
+			}
+			
+		}.StartTimer();
 	}
 	
 	/**

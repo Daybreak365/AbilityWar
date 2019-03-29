@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Game.Games.Mode;
+package Marlang.AbilityWar.Game.Games;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +7,7 @@ import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
-import Marlang.AbilityWar.Game.Games.AbstractGame;
-import Marlang.AbilityWar.Game.Games.GameManifest;
+import Marlang.AbilityWar.Game.Games.Default.DefaultGame;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Thread.AbilityWarThread;
 

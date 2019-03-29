@@ -31,6 +31,10 @@ public class AddonLoader {
 	
 	private static final ArrayList<Addon> Addons = new ArrayList<Addon>();
 	
+	public static List<Addon> getAddons() {
+		return Addons;
+	}
+
 	/**
 	 * 불러와진 애드온들의 설명 목록을 반환합니다.
 	 */
@@ -97,12 +101,17 @@ public class AddonLoader {
 		
 		if(mainClass.getSuperclass() != null && mainClass.getSuperclass().equals(Addon.class)) {
 			Addon addon = (Addon) mainClass.newInstance();
-			//DescriptionFile Initialize
-			Field field = mainClass.getSuperclass().getDeclaredField("description");
-			field.setAccessible(true);
-			field.set(addon, description);
-			field.setAccessible(false);
-			//DescriptionFile Initialize
+			//Initialize
+			Field descriptionField = mainClass.getSuperclass().getDeclaredField("description");
+			descriptionField.setAccessible(true);
+			descriptionField.set(addon, description);
+			descriptionField.setAccessible(false);
+
+			Field classLoaderField = mainClass.getSuperclass().getDeclaredField("classLoader");
+			classLoaderField.setAccessible(true);
+			classLoaderField.set(addon, loader);
+			classLoaderField.setAccessible(false);
+			//Initialize
 			
 			Enumeration<JarEntry> entries = jar.entries();
 			

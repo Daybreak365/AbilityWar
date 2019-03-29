@@ -13,7 +13,15 @@ public class TitlePacket extends AbstractPacket {
 	private int fadeIn;
 	private int stay;
 	private int fadeOut;
-	
+
+	/**
+	 * 제목 메시지
+	 * @param Title 	제목
+	 * @param SubTitle 	부제목
+	 * @param fadeIn 	FadeIn 시간 (틱 단위)
+	 * @param stay 		Stay 시간 (틱 단위)
+	 * @param fadeOut 	FadeOut 시간 (틱 단위)
+	 */
 	public TitlePacket(String Title, String SubTitle, int fadeIn, int stay, int fadeOut) {
 		this.Title = Title;
 		this.SubTitle = SubTitle;
@@ -75,6 +83,8 @@ public class TitlePacket extends AbstractPacket {
 					sendPacket(p, SubTitlePacket);
 				}
 			} catch(Exception ex) {}
+		} else {
+			p.sendMessage(Title + " " + SubTitle);
 		}
 	}
 	

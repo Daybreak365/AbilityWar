@@ -6,6 +6,8 @@ package Marlang.AbilityWar.Utils;
  */
 public class Validate {
 
+	private Validate() {}
+	
 	/**
 	 * null 체크
 	 * @param objects						null 체크를 할 객체들

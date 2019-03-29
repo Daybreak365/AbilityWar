@@ -15,10 +15,10 @@ public class ActionbarPacket extends AbstractPacket {
 
 	/**
 	 * 액션바 메시지
-	 * @param Message 메시지
-	 * @param fadeIn FadeIn 시간 (틱 단위)
-	 * @param stay Stay 시간 (틱 단위)
-	 * @param fadeOut FadeOut 시간 (틱 단위)
+	 * @param Message 	메시지
+	 * @param fadeIn 	FadeIn 시간 (틱 단위)
+	 * @param stay 		Stay 시간 (틱 단위)
+	 * @param fadeOut 	FadeOut 시간 (틱 단위)
 	 */
 	public ActionbarPacket(String Message, int fadeIn, int stay, int fadeOut) {
 		this.Message = Message;

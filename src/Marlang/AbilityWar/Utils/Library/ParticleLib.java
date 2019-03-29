@@ -39,6 +39,8 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class ParticleLib {
 	
+	private ParticleLib() {}
+	
 	public static Particles BARRIER = new Particles("BARRIER", "BARRIER", "BARRIER", "BARRIER", "BARRIER", "BARRIER", "");
 	public static Particles BLOCK_CRACK = new Particles("BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "");
 	public static Particles BLOCK_DUST = new Particles("BLOCK_DUST", "BLOCK_DUST", "BLOCK_DUST", "BLOCK_DUST", "BLOCK_DUST", "BLOCK_DUST", "");

@@ -11,11 +11,14 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.plugin.EventExecutor;
 
 import Marlang.AbilityWar.AbilityWar;
+import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
+import Marlang.AbilityWar.Game.Games.AbstractGame.Participant;
 import Marlang.AbilityWar.Utils.Messager;
 
 /**
@@ -24,7 +27,7 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class DeathManager implements EventExecutor {
 	
-	private AbstractGame game;
+	private final AbstractGame game;
 	
 	public DeathManager(AbstractGame game) {
 		this.game = game;
@@ -36,11 +39,56 @@ public class DeathManager implements EventExecutor {
 		if(event instanceof PlayerDeathEvent) {
 			PlayerDeathEvent e = (PlayerDeathEvent) event;
 			
-			Player p = e.getEntity();
+			Player Victim = e.getEntity();
+			Player Killer = Victim.getKiller();
+			if(Victim.getLastDamageCause() != null) {
+				DamageCause Cause = Victim.getLastDamageCause().getCause();
+
+				if(Killer != null) {
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + Killer.getName() + "&f´ÔÀÌ &c" + Victim.getName() + "&f´ÔÀ» Á×¿´½À´Ï´Ù."));
+				} else {
+					if(Cause.equals(DamageCause.CONTACT)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ Âñ·Á Á×¾ú½À´Ï´Ù."));
+					} else if(Cause.equals(DamageCause.FALL)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ ¶³¾îÁ® Á×¾ú½À´Ï´Ù."));
+					} else if(Cause.equals(DamageCause.FALLING_BLOCK)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ ¶³¾îÁö´Â ºí·Ï¿¡ ¸Â¾Æ Á×¾ú½À´Ï´Ù."));
+					} else if(Cause.equals(DamageCause.SUFFOCATION)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ ³¢¿© Á×¾ú½À´Ï´Ù."));
+					} else if(Cause.equals(DamageCause.DROWNING)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ ¹°¿¡ ºüÁ® Á×¾ú½À´Ï´Ù."));
+					} else if(Cause.equals(DamageCause.ENTITY_EXPLOSION)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ Æø¹ßÇÏ¿´½À´Ï´Ù."));
+					} else if(Cause.equals(DamageCause.LAVA)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ ¿ë¾Ï¿¡ ºüÁ® Á×¾ú½À´Ï´Ù."));
+					} else if(Cause.equals(DamageCause.FIRE) || Cause.equals(DamageCause.FIRE_TICK)) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ ³ë¸©³ë¸©ÇÏ°Ô ±¸¿öÁ³½À´Ï´Ù."));
+					} else {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ Á×¾ú½À´Ï´Ù."));
+					}
+				}
+			} else {
+				e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f´ÔÀÌ Á×¾ú½À´Ï´Ù."));
+			}
+
+			if(AbilityWarSettings.getAbilityReveal()) {
+				Participant victim = game.getParticipant(Victim);
+				if(victim.hasAbility()) {
+					AbilityBase ability = victim.getAbility();
+					
+					String name = ability.getName();
+					if(name != null) {
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c´É·Â&f] &c" + Victim.getName() + "&f´ÔÀº &e" + name + " &f´É·ÂÀÌ¾ú½À´Ï´Ù!"));
+					}
+				} else {
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c´É·Â&f] &c" + Victim.getName() + "&f´ÔÀº ´É·ÂÀÌ ¾ø½À´Ï´Ù!"));
+				}
+			}
+			
 			if(game.isGameStarted()) {
 				if(AbilityWarSettings.getItemDrop()) {
 					e.setKeepInventory(false);
-					p.getInventory().clear();
+					Victim.getInventory().clear();
 				} else {
 					e.setKeepInventory(true);
 				}
@@ -62,7 +110,7 @@ public class DeathManager implements EventExecutor {
 	public void Eliminate(Player p) {
 		Eliminated.add(p.getUniqueId());
 		p.kickPlayer(
-				ChatColor.translateAlternateColorCodes('&', "&2¡¶&aAbilityWar&2¡·")
+				Messager.getPrefix()
 				+ "\n"
 				+ ChatColor.translateAlternateColorCodes('&', "&fÅ»¶ôÇÏ¼Ì½À´Ï´Ù."));
 		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + p.getName() + "&f´ÔÀÌ Å»¶ôÇÏ¼Ì½À´Ï´Ù."));

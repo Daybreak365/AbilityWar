@@ -18,7 +18,7 @@ import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.Nodes.ConfigNodes;
 import Marlang.AbilityWar.Game.Games.AbstractGame;
 import Marlang.AbilityWar.Game.Games.GameManifest;
-import Marlang.AbilityWar.Game.Games.Mode.GameMode;
+import Marlang.AbilityWar.Game.Games.GameMode;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
 

@@ -14,6 +14,8 @@ import Marlang.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class EnchantLib {
 	
+	private EnchantLib() {}
+	
 	public static Enchants ARROW_DAMAGE = new Enchants("ARROW_DAMAGE", "power", 5);
 	public static Enchants ARROW_FIRE = new Enchants("ARROW_FIRE", "flame", 5);
 	public static Enchants ARROW_INFINITE = new Enchants("ARROW_INFINITE", "infinity", 5);

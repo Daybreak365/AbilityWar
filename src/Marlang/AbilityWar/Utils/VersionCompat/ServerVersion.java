@@ -12,8 +12,10 @@ import org.bukkit.plugin.PluginDescriptionFile;
  */
 public class ServerVersion {
 
+	private ServerVersion() {}
+	
 	private static String VersionString = getVersionString();
-	private static Integer Version = getSimpleVersion();
+	private static int Version = getSimpleVersion();
 	
 	/**
 	 * 서버 버전을 String으로 받아옵니다. Ex. v1_12_R1
@@ -28,10 +30,10 @@ public class ServerVersion {
 	}
 	
 	/**
-	 * 서버 버전을 간단한 Integer로 받아옵니다. Ex. 1.12.2 => 12
+	 * 서버 버전을 간단한 Int로 받아옵니다. Ex. 1.12.2 => 12
 	 */
-	private static Integer getSimpleVersion() {
-		Integer Version = -1;
+	private static int getSimpleVersion() {
+		int Version = -1;
 		String[] versionArray = VersionString.split("_");
 		if (versionArray.length >= 2) {
 			try {
@@ -44,7 +46,7 @@ public class ServerVersion {
 		return Version;
 	}
 	
-	public static Integer getVersion() {
+	public static int getVersion() {
 		return Version;
 	}
 	

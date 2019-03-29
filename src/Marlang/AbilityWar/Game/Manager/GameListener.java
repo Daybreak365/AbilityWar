@@ -86,9 +86,9 @@ public class GameListener implements Listener, EventExecutor {
 	public void execute(Listener listener, Event e) throws EventException {
 		for(Participant participant : game.getParticipants()) {
 			if(participant.hasAbility()) {
-				AbilityBase Ability = participant.getAbility();
-				if(!Ability.isRestricted()) {
-					Ability.PassiveSkill(e);
+				AbilityBase ability = participant.getAbility();
+				if(!ability.isRestricted()) {
+					ability.PassiveSkill(e);
 				}
 			}
 		}

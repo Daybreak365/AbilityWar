@@ -15,6 +15,8 @@ import Marlang.AbilityWar.Utils.Messager;
  */
 public class FileManager {
 	
+	private FileManager() {}
+	
 	private static File getDataFolder() {
 		return new File("plugins/AbilityWar");
 	}

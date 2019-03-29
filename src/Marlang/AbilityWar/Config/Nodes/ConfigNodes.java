@@ -2,7 +2,7 @@ package Marlang.AbilityWar.Config.Nodes;
 
 import org.bukkit.Bukkit;
 
-import Marlang.AbilityWar.Game.Games.Mode.DefaultGame;
+import Marlang.AbilityWar.Game.Games.Default.DefaultGame;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Data.FileManager;
 

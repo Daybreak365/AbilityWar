@@ -1,4 +1,4 @@
-package Marlang.AbilityWar.Game.Games.Mode;
+package Marlang.AbilityWar.Game.Games.Default;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,6 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,14 +35,6 @@ import Marlang.AbilityWar.Utils.Thread.TimerBase;
  */
 @GameManifest(Name = "게임", Description = { "§f능력자 전쟁 플러그인의 기본 게임입니다." })
 public class DefaultGame extends AbstractGame {
-	
-	private final static List<String> messages = new ArrayList<String>();
-	
-	public static void registerMessage(String... msg) {
-		for(String m : msg) {
-			messages.add(m);
-		}
-	}
 	
 	public DefaultGame() {
 		setRestricted(Invincible);
@@ -142,55 +133,13 @@ public class DefaultGame extends AbstractGame {
 	@Override
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player Victim = e.getEntity();
-		Player Killer = Victim.getKiller();
-		if(Victim.getLastDamageCause() != null) {
-			DamageCause Cause = Victim.getLastDamageCause().getCause();
-
-			if(Killer != null) {
-				e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + Killer.getName() + "&f님이 &c" + Victim.getName() + "&f님을 죽였습니다."));
-			} else {
-				if(Cause.equals(DamageCause.CONTACT)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 찔려 죽었습니다."));
-				} else if(Cause.equals(DamageCause.FALL)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 떨어져 죽었습니다."));
-				} else if(Cause.equals(DamageCause.FALLING_BLOCK)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 떨어지는 블록에 맞아 죽었습니다."));
-				} else if(Cause.equals(DamageCause.SUFFOCATION)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 끼여 죽었습니다."));
-				} else if(Cause.equals(DamageCause.DROWNING)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 물에 빠져 죽었습니다."));
-				} else if(Cause.equals(DamageCause.ENTITY_EXPLOSION)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 폭발하였습니다."));
-				} else if(Cause.equals(DamageCause.LAVA)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 용암에 빠져 죽었습니다."));
-				} else if(Cause.equals(DamageCause.FIRE) || Cause.equals(DamageCause.FIRE_TICK)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 노릇노릇하게 구워졌습니다."));
-				} else {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 죽었습니다."));
-				}
-			}
-		} else {
-			e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + Victim.getName() + "&f님이 죽었습니다."));
-		}
-
+		
 		if(this.isGameStarted()) {
-			if(this.isParticipating(Victim)) {
-				if(AbilityWarSettings.getAbilityReveal()) {
-					Participant victim = this.getParticipant(Victim);
-					if(victim.hasAbility()) {
-						AbilityBase Ability = victim.getAbility();
-						
-						String name = Ability.getName();
-						if(name != null) {
-							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + name + " &f능력이었습니다!"));
-						}
-					} else {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
+			if(AbilityWarSettings.getEliminate()) {
+				if(this.isParticipating(Victim)) {
+					if(AbilityWarSettings.getEliminate()) {
+						getDeathManager().Eliminate(Victim);
 					}
-				}
-				
-				if(AbilityWarSettings.getEliminate()) {
-					getDeathManager().Eliminate(Victim);
 				}
 			}
 		}
@@ -219,8 +168,11 @@ public class DefaultGame extends AbstractGame {
 				ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &f_Marlang 말랑"),
 				ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f말랑&7#5908"));
 		
-		for(String m : messages) {
-			msg.add(m);
+		GameCreditEvent event = new GameCreditEvent();
+		Bukkit.getPluginManager().callEvent(event);
+		
+		for(String str : event.getCreditList()) {
+			msg.add(str);
 		}
 		
 		Messager.broadcastStringList(msg);
@@ -299,7 +251,6 @@ public class DefaultGame extends AbstractGame {
 
 		if(AbilityWarSettings.getInventoryClear()) {
 			p.getInventory().clear();
-			p.updateInventory();
 		}
 		
 		for(ItemStack is : DefaultKit) {
