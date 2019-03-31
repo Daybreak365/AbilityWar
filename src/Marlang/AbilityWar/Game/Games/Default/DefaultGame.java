@@ -74,7 +74,7 @@ public class DefaultGame extends AbstractGame {
 			case 1:
 				broadcastPlayerList();
 				if(getParticipants().size() < 1) {
-					AbilityWarThread.stopGame();
+					AbilityWarThread.StopGame();
 					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다."));
 				}
 				break;
@@ -193,7 +193,7 @@ public class DefaultGame extends AbstractGame {
 				ChatColor.translateAlternateColorCodes('&', "&f                                   게임 시작                            "),
 				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
 		
-		GiveDefaultKit();
+		this.GiveDefaultKit();
 		
 		for(Participant p : getParticipants()) {
 			if(AbilityWarSettings.getSpawnEnable()) {
@@ -325,7 +325,7 @@ public class DefaultGame extends AbstractGame {
 					}
 				} else {
 					Messager.broadcastErrorMessage("사용 가능한 능력의 수가 참가자의 수보다 적어 게임을 종료합니다.");
-					AbilityWarThread.stopGame();
+					AbilityWarThread.StopGame();
 					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 				}
 			}
@@ -348,6 +348,7 @@ public class DefaultGame extends AbstractGame {
 							
 							return true;
 						} catch (Exception e) {
+							e.printStackTrace();
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님의 능력을 변경하는 도중 오류가 발생하였습니다."));
 							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}

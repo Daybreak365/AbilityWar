@@ -1,6 +1,7 @@
 package Marlang.AbilityWar.Utils.Thread;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 
@@ -12,16 +13,22 @@ import Marlang.AbilityWar.AbilityWar;
  */
 abstract public class TimerBase {
 
-	private static ArrayList<TimerBase> Tasks = new ArrayList<TimerBase>();
+	private static List<TimerBase> Tasks = new ArrayList<TimerBase>();
 	
-	public static ArrayList<TimerBase> getTasks() {
-		return Tasks;
+	public static List<TimerBase> getTasks() {
+		return new ArrayList<TimerBase>(Tasks);
 	}
 
+	public static void StopTasks(Class<? extends TimerBase> timerClass) {
+		for(TimerBase timer : getTasks()) {
+			if(timerClass.isAssignableFrom(timer.getClass())) {
+				timer.StopTimer(false);
+			}
+		}
+	}
+	
 	public static void ResetTasks() {
-		ArrayList<TimerBase> Reset = new ArrayList<TimerBase>(getTasks());
-		
-		for(TimerBase timer : Reset) {
+		for(TimerBase timer : getTasks()) {
 			timer.StopTimer(true);
 		}
 		
@@ -30,7 +37,7 @@ abstract public class TimerBase {
 
 	/**
 	 * Register TimerBase
-	 * @param timers
+	 * @param timer
 	 */
 	private static void Register(TimerBase timer) {
 		Tasks.add(timer);
@@ -38,22 +45,18 @@ abstract public class TimerBase {
 
 	/**
 	 * Unregister TimerBase
-	 * @param timers
+	 * @param timer
 	 */
 	private static void Unregister(TimerBase timer) {
-		if(Tasks.contains(timer)) {
-			Tasks.remove(timer);
-		}
+		Tasks.remove(timer);
 	}
 
 	private int Task = -1;
 
 	private boolean InfiniteTimer;
-	private boolean ProcessDuringGame = true;
+	
 	private int MaxCount;
-
 	private int Count;
-
 	private int Period = 20;
 
 	abstract protected void onStart();
@@ -73,9 +76,7 @@ abstract public class TimerBase {
 		if(!this.isTimerRunning()) {
 			Count = MaxCount;
 			this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
-			if(ProcessDuringGame) {
-				Register(this);
-			}
+			Register(this);
 			onStart();
 		}
 	}
@@ -102,19 +103,14 @@ abstract public class TimerBase {
 	public int getCount() {
 		return Count;
 	}
+
+	public int getFixedCount() {
+		return (int) (Count / (20 / Period));
+	}
 	
-	public TimerBase setPeriod(Integer Period) {
+	public TimerBase setPeriod(int Period) {
 		this.Period = Period;
 		return this;
-	}
-	
-	public TimerBase setProcessDuringGame(boolean bool) {
-		this.ProcessDuringGame = bool;
-		return this;
-	}
-	
-	public int getFixedTime(Integer Seconds) {
-		return (int) (Seconds / (20 / Period));
 	}
 	
 	/**
@@ -137,38 +133,24 @@ abstract public class TimerBase {
 
 		@Override
 		public void run() {
-			if (ProcessDuringGame) {
-				if (AbilityWarThread.isGameTaskRunning()) {
-					if (InfiniteTimer) {
-						TimerProcess(-1);
-					} else {
-						if (Count > 0) {
-							TimerProcess(Count);
-
-							if (Count <= 0) {
-								StopTimer(false);
-							}
-
-							Count--;
-						} else {
-							StopTimer(false);
-						}
-					}
-				} else {
-					StopTimer(true);
-				}
-			} else {
+			if (AbilityWarThread.isGameTaskRunning()) {
 				if (InfiniteTimer) {
 					TimerProcess(-1);
 				} else {
-					TimerProcess(Count);
+					if (Count > 0) {
+						TimerProcess(Count);
 
-					if (Count <= 0) {
+						if (Count <= 0) {
+							StopTimer(false);
+						}
+
+						Count--;
+					} else {
 						StopTimer(false);
 					}
-
-					Count--;
 				}
+			} else {
+				StopTimer(true);
 			}
 		}
 

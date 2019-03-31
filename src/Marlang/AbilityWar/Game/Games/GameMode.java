@@ -86,11 +86,11 @@ public class GameMode {
 	
 	public static boolean startGame() {
 		try {
-			AbilityWarThread.startGame(AbilityWarSettings.getGameMode().newInstance());
+			AbilityWarThread.StartGame(AbilityWarSettings.getGameMode().newInstance());
 			return true;
 		} catch (InstantiationException | IllegalAccessException e) {
 			AbilityWarSettings.setNewProperty(ConfigNodes.Game_Mode, DefaultGame.class.getName());
-			AbilityWarThread.startGame(new DefaultGame());
+			AbilityWarThread.StartGame(new DefaultGame());
 			return false;
 		}
 	}

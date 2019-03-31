@@ -1,6 +1,6 @@
 name: AbilityWar
 main: Marlang.AbilityWar.AbilityWar
-version: 1.8.2
+version: 1.8.3
 
 commands: 
   abilitywar: 

@@ -114,7 +114,7 @@ public class TheEmpress extends AbilityBase {
 							
 							SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
 							
-							CooldownTimer.CoolReset();
+							CooldownTimer.ResetCool();
 						}
 					}
 					

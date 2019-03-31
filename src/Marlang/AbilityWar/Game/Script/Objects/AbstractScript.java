@@ -56,17 +56,26 @@ abstract public class AbstractScript implements Serializable {
 			
 			@Override
 			public void TimerProcess(Integer Seconds) {
-				if(Seconds == (this.getMaxCount() / 2)) {
-					Messager.broadcastMessage(getPreRunMessage(Seconds));
-				} else if(Seconds <= 5 && Seconds >= 1) {
-					Messager.broadcastMessage(getPreRunMessage(Seconds));
+				String msg = getPreRunMessage(Seconds);
+				
+				if(!msg.equalsIgnoreCase("none")) {
+					if(Seconds == (this.getMaxCount() / 2)) {
+						Messager.broadcastMessage(msg);
+					} else if(Seconds <= 5 && Seconds >= 1) {
+						Messager.broadcastMessage(msg);
+					}
 				}
 			}
 			
 			@Override
 			public void onEnd() {
 				Execute(game);
-				Messager.broadcastMessage(getRunMessage());
+				
+				String msg = getRunMessage();
+				if(!msg.equalsIgnoreCase("none")) {
+					Messager.broadcastMessage(msg);
+				}
+				
 				if(Loop) {
 					if(loopCount > -1) {
 						if(loopCount > 1) {

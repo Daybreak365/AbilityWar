@@ -3,6 +3,7 @@ package Marlang.AbilityWar.Game.Games;
 import java.lang.reflect.Constructor;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -108,14 +109,18 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	 */
 	abstract protected List<Player> setupPlayers();
 	
+	/**
+	 * setupPlayers()에서 얻은 플레이어 목록을 바탕으로 Participant 목록을 만들어 반환합니다.
+	 * 반환된 목록은 Read-Only 목록으로 요소가 변경될 수 없습니다.
+	 */
 	private List<Participant> setupParticipants() {
-		List<Participant> participantList = new ArrayList<Participant>();
+		List<Participant> list = new ArrayList<Participant>();
 		
 		for(Player p : setupPlayers()) {
-			participantList.add(new Participant(this, p));
+			list.add(new Participant(this, p));
 		}
 		
-		return participantList;
+		return Collections.unmodifiableList(list);
 	}
 	
 	/**

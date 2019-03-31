@@ -37,7 +37,7 @@ public class Messager {
 	/**
 	 * 콘솔에 메시지를 전송합니다.
 	 */
-	public static void sendMessage(ArrayList<String> messages) {
+	public static void sendMessage(List<String> messages) {
 		for(String msg : messages) {
 			sendMessage(msg);
 		}
@@ -104,6 +104,12 @@ public class Messager {
 	 */
 	public static void broadcastMessage(String msg) {
 		Bukkit.broadcastMessage(msg);
+	}
+
+	public static void broadcastMessage(List<String> messages) {
+		for(String msg : messages) {
+			broadcastMessage(msg);
+		}
 	}
 	
 	/**
@@ -299,5 +305,5 @@ public class Messager {
 			return newArgs;
 		}
 	}
-	
+
 }

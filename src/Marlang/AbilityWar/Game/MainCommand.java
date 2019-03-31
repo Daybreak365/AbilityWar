@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import Marlang.AbilityWar.AbilityWar;
 import Marlang.AbilityWar.Ability.AbilityBase;
 import Marlang.AbilityWar.Ability.Timer.CooldownTimer;
+import Marlang.AbilityWar.Ability.Timer.DurationTimer;
 import Marlang.AbilityWar.Config.AbilitySettings;
 import Marlang.AbilityWar.Config.AbilityWarSettings;
 import Marlang.AbilityWar.Config.SettingWizard;
@@ -85,7 +86,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					if(AbilityWarThread.isGameTaskRunning()) {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + sender.getName() + "&f님이 게임을 중지시켰습니다."));
 							
-						AbilityWarThread.stopGame();
+						AbilityWarThread.StopGame();
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 					}
@@ -379,8 +380,15 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			gui.openBlackListGUI(1);
 		} else if(args[0].equalsIgnoreCase("resetcool")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
-				CooldownTimer.CoolReset();
+				CooldownTimer.ResetCool();
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 플레이어들의 능력 쿨타임을 초기화하였습니다."));
+			} else {
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
+			}
+		} else if(args[0].equalsIgnoreCase("resetduration")) {
+			if(AbilityWarThread.isGameTaskRunning()) {
+				DurationTimer.ResetDuration();
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 플레이어들의 능력 지속시간을 초기화하였습니다."));
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 			}
@@ -507,6 +515,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				Messager.sendStringList(sender, Messager.getStringList(
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
+						Messager.formatCommand(label + " util", "resetduration", "플레이어들의 능력 지속시간을 초기화시킵니다.", true),
 						Messager.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true),
 						Messager.formatCommand(label + " util", "inv", "무적 상태를 토글합니다.", true)));
 				break;
@@ -546,7 +555,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						}
 					} else if(args[0].equalsIgnoreCase("util")) {
 						ArrayList<String> Util = Messager.getStringList(
-								"abi", "spec", "ablist", "blacklist", "resetcool", "kit", "inv");
+								"abi", "spec", "ablist", "blacklist", "resetcool", "resetduration", "kit", "inv");
 						if(args[1].isEmpty()) {
 							return Util;
 						} else {

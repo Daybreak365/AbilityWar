@@ -12,6 +12,7 @@ import Marlang.AbilityWar.Game.MainCommand;
 import Marlang.AbilityWar.Game.Script.Script;
 import Marlang.AbilityWar.Game.Script.Script.RequiredData;
 import Marlang.AbilityWar.Game.Script.Types.ChangeAbilityScript;
+import Marlang.AbilityWar.Game.Script.Types.LocationNoticeScript;
 import Marlang.AbilityWar.Game.Script.Types.ChangeAbilityScript.ChangeTarget;
 import Marlang.AbilityWar.Game.Script.Types.TeleportScript;
 import Marlang.AbilityWar.Utils.Messager;
@@ -53,6 +54,7 @@ public class AbilityWar extends JavaPlugin {
 
 		Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
 		Script.registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("능력 변경 대상", ChangeTarget.class));
+		Script.registerScript(LocationNoticeScript.class);
 
 		AbilityList.nameValues();
 

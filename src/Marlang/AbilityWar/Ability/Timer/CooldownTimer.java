@@ -1,7 +1,5 @@
 package Marlang.AbilityWar.Ability.Timer;
 
-import java.util.ArrayList;
-
 import org.bukkit.ChatColor;
 
 import Marlang.AbilityWar.Ability.AbilityBase;
@@ -11,28 +9,21 @@ import Marlang.AbilityWar.Utils.Library.Packet.ActionbarPacket;
 import Marlang.AbilityWar.Utils.Math.NumberUtil;
 import Marlang.AbilityWar.Utils.Thread.TimerBase;
 
+/**
+ * Cooldown Timer (ÄðÅ¸ÀÓ Å¸ÀÌ¸Ó)
+ * @author _Marlang ¸»¶û
+ */
 public class CooldownTimer extends TimerBase {
 	
 	/**
 	 * ÄðÅ¸ÀÓ ÃÊ±âÈ­
 	 */
-	public static void CoolReset() {
-		ArrayList<TimerBase> Reset = new ArrayList<TimerBase>();
-		
-		for(TimerBase timer : TimerBase.getTasks()) {
-			if(timer instanceof CooldownTimer) {
-				Reset.add(timer);
-			}
-		}
-		
-		for(TimerBase timer : Reset) {
-			timer.StopTimer(false);
-		}
-		
+	public static void ResetCool() {
+		TimerBase.StopTasks(CooldownTimer.class);
 	}
 	
 	private final AbilityBase Ability;
-	private final Integer Cool;
+	private final int Cool;
 	private String AbilityName = "";
 
 	public CooldownTimer(AbilityBase Ability, Integer Cool) {
@@ -61,14 +52,8 @@ public class CooldownTimer extends TimerBase {
 	}
 	
 	@Override
-	public CooldownTimer setPeriod(Integer Period) {
+	public CooldownTimer setPeriod(int Period) {
 		super.setPeriod(Period);
-		return this;
-	}
-	
-	@Override
-	public CooldownTimer setProcessDuringGame(boolean bool) {
-		super.setProcessDuringGame(bool);
 		return this;
 	}
 	

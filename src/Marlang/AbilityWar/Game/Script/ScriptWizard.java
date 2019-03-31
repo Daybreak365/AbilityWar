@@ -21,9 +21,9 @@ import Marlang.AbilityWar.Game.Script.Script.RequiredData;
 import Marlang.AbilityWar.Game.Script.Script.ScriptRegisteration;
 import Marlang.AbilityWar.Game.Script.Objects.AbstractScript;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Setter;
-import Marlang.AbilityWar.Game.Script.Objects.Setter.StringSetter;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Special.LoopCountSetter;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Special.LoopSetter;
+import Marlang.AbilityWar.Game.Script.Objects.Setter.Special.MessageSetter;
 import Marlang.AbilityWar.Game.Script.Objects.Setter.Special.TimeSetter;
 import Marlang.AbilityWar.Utils.Messager;
 import Marlang.AbilityWar.Utils.Library.Item.MaterialLib;
@@ -72,8 +72,8 @@ public class ScriptWizard implements Listener {
 	public TimeSetter Time = new TimeSetter(this);
 	public LoopSetter Loop = new LoopSetter(this);
 	public LoopCountSetter LoopCount = new LoopCountSetter(this);
-	public StringSetter PreRunMessage = new StringSetter("실행 예고 메시지", "&e%Time%&f초 후에 &e%ScriptName% &f스크립트가 실행됩니다.", this);
-	public StringSetter RunMessage = new StringSetter("실행 메시지", "&e%ScriptName% &f스크립트가 실행되었습니다.", this);
+	public MessageSetter PreRunMessage = new MessageSetter("실행 예고 메시지", "&e%Time%&f초 후에 &e%ScriptName% &f스크립트가 실행됩니다.", this);
+	public MessageSetter RunMessage = new MessageSetter("실행 메시지", "&e%ScriptName% &f스크립트가 실행되었습니다.", this);
 	// Default Setters
 	
 	private ArrayList<Setter<?>> Setters = new ArrayList<Setter<?>>();

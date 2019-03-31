@@ -72,16 +72,18 @@ public class DeathManager implements EventExecutor {
 			}
 
 			if(AbilityWarSettings.getAbilityReveal()) {
-				Participant victim = game.getParticipant(Victim);
-				if(victim.hasAbility()) {
-					AbilityBase ability = victim.getAbility();
-					
-					String name = ability.getName();
-					if(name != null) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + name + " &f능력이었습니다!"));
+				if(game.isParticipating(Victim)) {
+					Participant victim = game.getParticipant(Victim);
+					if(victim.hasAbility()) {
+						AbilityBase ability = victim.getAbility();
+						
+						String name = ability.getName();
+						if(name != null) {
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 &e" + name + " &f능력이었습니다!"));
+						}
+					} else {
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
 					}
-				} else {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + Victim.getName() + "&f님은 능력이 없습니다!"));
 				}
 			}
 			

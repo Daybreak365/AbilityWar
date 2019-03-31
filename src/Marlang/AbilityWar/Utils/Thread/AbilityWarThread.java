@@ -29,11 +29,11 @@ public class AbilityWarThread {
 	 * 진행중인 게임이 있을 경우 아무 작업도 하지 않습니다.
 	 * @param Game 시작시킬 게임
 	 */
-	public static void startGame(AbstractGame Game) {
+	public static void StartGame(final AbstractGame Game) {
 		if(!isGameTaskRunning()) {
 			setGame(Game);
 			while(!isGameTaskRunning()) {
-				GameTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), getGame(), 0, 20);
+				GameTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), Game, 0, 20);
 			}
 		}
 	}
@@ -42,7 +42,7 @@ public class AbilityWarThread {
 	 * 진행중인 게임을 종료합니다.
 	 * 진행중인 게임이 없을 경우 아무 작업도 하지 않습니다.
 	 */
-	public static void stopGame() {
+	public static void StopGame() {
 		if(isGameTaskRunning()) {
 			//Notify
 			try {
@@ -70,6 +70,10 @@ public class AbilityWarThread {
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 		}
 	}
+
+	private static void setGame(AbstractGame game) {
+		Game = game;
+	}
 	
 	/**
 	 * 게임이 진행중일 경우 true, 아닐 경우 false를 반환합니다.
@@ -84,10 +88,6 @@ public class AbilityWarThread {
 	 */
 	public static AbstractGame getGame() {
 		return Game;
-	}
-	
-	private static void setGame(AbstractGame game) {
-		Game = game;
 	}
 	
 }
