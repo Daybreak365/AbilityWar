@@ -1,8 +1,0 @@
-name: AbilityWar
-main: Marlang.AbilityWar.AbilityWar
-version: 1.8.3
-
-commands: 
-  abilitywar: 
-    description: AbilityWar 메인 명령어
-    aliases: [ability, aw, va]
