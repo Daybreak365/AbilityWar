@@ -1,6 +1,6 @@
 ![license](https://user-images.githubusercontent.com/39194432/51786047-5ff7ba80-21a2-11e9-829f-5429e589a89a.png)
 
-                                              Copyright ©️ 2019 Marlang 말랑                                        
+                                             Copyright ©️ 2019 DayBreak 새벽                                      
 ## 권한
 ✔️ 플러그인의 수정을 허용합니다.
 
