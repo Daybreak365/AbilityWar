@@ -25,11 +25,11 @@ import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-@AbilityManifest(Name = "?—¬? œ", Rank = Rank.B)
+@AbilityManifest(Name = "ì—¬ì œ", Rank = Rank.B)
 public class TheEmpress extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheEmpress.class, "Cooldown", 70, 
-			"# ì¿¨í??„") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -39,8 +39,8 @@ public class TheEmpress extends AbilityBase {
 	};
 	
 	public static SettingObject<Boolean> EasterEggConfig = new SettingObject<Boolean>(TheEmpress.class, "EasterEgg", true, 
-			"# ?´?Š¤?„°?—ê·? ?™œ?„±?™” ?—¬ë¶?",
-			"# falseë¡? ?„¤? •?•˜ë©? ?´?Š¤?„°?—ê·¸ê? ë°œë™?˜ì§? ?•Š?Šµ?‹ˆ?‹¤.") {
+			"# ì´ìŠ¤í„°ì—ê·¸ í™œì„±í™” ì—¬ë¶€",
+			"# falseë¡œ ì„¤ì •í•˜ë©´ ì´ìŠ¤í„°ì—ê·¸ê°€ ë°œë™ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Boolean value) {
@@ -51,11 +51,11 @@ public class TheEmpress extends AbilityBase {
 	
 	public TheEmpress(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥? ?š°?´ë¦??•˜ë©? ?˜„?¬ ì¢Œí‘œ?— ?”°?¼ ë²„í”„ ?˜¹?? ?•„?´?…œ?„ ?–»?Šµ?‹ˆ?‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &a+ &f?¡ ?˜   10ì´? | ?‚ ì¹´ë¡œ?? IV ?‹¤?´?•„ ê²?"),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &c- &f?¡ ???•­ 20ì´? | " + ((ServerVersion.getVersion() >= 9) ? "ë°©íŒ¨" : "ê±°ë?¸ì¤„")),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &a+ &f?¡ ?‹ ?† 30ì´? | ë¬´í•œ ?™œ"),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &c- &f?¡ ?¬?ƒ 20ì´? | ?™©ê¸ˆì‚¬ê³?"));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ í˜„ì¬ ì¢Œí‘œì— ë”°ë¼ ë²„í”„ í˜¹ì€ ì•„ì´í…œì„ ì–»ìŠµë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &a+ &fâ¡ í˜   10ì´ˆ | ë‚ ì¹´ë¡œì›€ IV ë‹¤ì´ì•„ ê²€"),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &c- &fâ¡ ì €í•­ 20ì´ˆ | " + ((ServerVersion.getVersion() >= 9) ? "ë°©íŒ¨" : "ê±°ë¯¸ì¤„")),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &a+ &fâ¡ ì‹ ì† 30ì´ˆ | ë¬´í•œ í™œ"),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &c- &fâ¡ ì¬ìƒ 20ì´ˆ | í™©ê¸ˆì‚¬ê³¼"));
 	}
 	
 	boolean EasterEgg = !EasterEggConfig.getValue();
@@ -108,8 +108,8 @@ public class TheEmpress extends AbilityBase {
 					} else if(X.isZero() && Z.isZero()) {
 						if(!EasterEgg) {
 							EasterEgg = true;
-							TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&a?—¬? œ?˜ ê°??˜¸"),
-									"?—¬? œ?˜ ê°??˜¸?— ?˜?•´ ëª¨ë“  ?”Œ? ˆ?´?–´?˜ ?Š¥? ¥ ì¿¨í??„?´ ì´ˆê¸°?™”?˜?—ˆ?Šµ?‹ˆ?‹¤.", 15, 80, 15);
+							TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&aì—¬ì œì˜ ê°€í˜¸"),
+									"ì—¬ì œì˜ ê°€í˜¸ì— ì˜í•´ ëª¨ë“  í”Œë ˆì´ì–´ì˜ ëŠ¥ë ¥ ì¿¨íƒ€ì„ì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤.", 15, 80, 15);
 							title.Broadcast();
 							
 							SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();

@@ -19,11 +19,11 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "? œ?š°?Š¤", Rank = Rank.GOD)
+@AbilityManifest(Name = "Á¦¿ì½º", Rank = Rank.GOD)
 public class Zeus extends AbilityBase {
 	
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
-			"# ì¿¨í??„") {
+			"# ÄğÅ¸ÀÓ") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -34,9 +34,9 @@ public class Zeus extends AbilityBase {
 	
 	public Zeus(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fë²ˆê°œ?˜ ?‹  ? œ?š°?Š¤."),
-				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥? ?š°?´ë¦??•˜ë©? ì£¼ë??— ë²ˆê°œë¥? ?–¨?–´?œ¨ë¦¬ë©° ?­ë°œì„ ?¼?œ¼?‚µ?‹ˆ?‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fë²ˆê°œ ?°ë¯¸ì??? ?­ë°? ?°ë¯¸ì?ë¥? ë°›ì? ?•Š?Šµ?‹ˆ?‹¤."));
+				ChatColor.translateAlternateColorCodes('&', "&f¹ø°³ÀÇ ½Å Á¦¿ì½º."),
+				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ÁÖº¯¿¡ ¹ø°³¸¦ ¶³¾î¶ß¸®¸ç Æø¹ßÀ» ÀÏÀ¸Åµ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&f¹ø°³ µ¥¹ÌÁö¿Í Æø¹ß µ¥¹ÌÁö¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù."));
 	}
 	
 	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
