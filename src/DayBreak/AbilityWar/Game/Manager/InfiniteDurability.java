@@ -8,6 +8,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
+
 public class InfiniteDurability implements Listener {
 
 	/**
@@ -17,7 +19,7 @@ public class InfiniteDurability implements Listener {
 	public void onItemDurability(PlayerInteractEvent e) {
 		if(e.getItem() != null) {
 			if(hasDurability(e.getItem().getType())) {
-				e.getItem().setDurability((short) 0);
+				ItemLib.setDurability(e.getItem(), (short) 0);
 			}
 		}
 	}
@@ -32,25 +34,25 @@ public class InfiniteDurability implements Listener {
 			
 			ItemStack Boots = p.getInventory().getBoots();
 			if(Boots != null && hasDurability(Boots.getType())) {
-				Boots.setDurability((short) 0);
+				ItemLib.setDurability(Boots, (short) 0);
 				p.getInventory().setBoots(Boots);
 			}
 			
 			ItemStack Leggings = p.getInventory().getLeggings();
 			if(Leggings != null && hasDurability(Leggings.getType())) {
-				Leggings.setDurability((short) 0);
+				ItemLib.setDurability(Leggings, (short) 0);
 				p.getInventory().setLeggings(Leggings);
 			}
 			
 			ItemStack Chestplate = p.getInventory().getChestplate();
 			if(Chestplate != null && hasDurability(Chestplate.getType())) {
-				Chestplate.setDurability((short) 0);
+				ItemLib.setDurability(Chestplate, (short) 0);
 				p.getInventory().setChestplate(Chestplate);
 			}
 			
 			ItemStack Helmet = p.getInventory().getHelmet();
 			if(Helmet != null && hasDurability(Helmet.getType())) {
-				Helmet.setDurability((short) 0);
+				ItemLib.setDurability(Helmet, (short) 0);
 				p.getInventory().setHelmet(Helmet);
 			}
 		}

@@ -1,5 +1,6 @@
 package DayBreak.AbilityWar.Utils.Library.Item;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
 
@@ -7,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
@@ -239,6 +241,26 @@ public class ItemLib {
 		item.setItemMeta(setOwner(meta, owner));
 		
 		return item;
+	}
+	
+	public static ItemStack setDurability(ItemStack is, short durability) {
+		if(ServerVersion.getVersion() >= 13) {
+			try {
+				Class<?> DamageableClass = Class.forName("org.bukkit.inventory.meta.Damageable");
+				if(is.hasItemMeta()) {
+					if(DamageableClass.isAssignableFrom(is.getItemMeta().getClass())) {
+						Object meta = DamageableClass.cast(is.getItemMeta());
+						Method SetDamage = DamageableClass.getMethod("setDamage", int.class);
+						SetDamage.invoke(meta, (int) durability);
+						is.setItemMeta((ItemMeta) meta);
+					}
+				}
+			} catch (Exception e) {}
+		} else {
+			is.setDurability(durability);
+		}
+
+		return is;
 	}
 	
 	public static class PotionBuilder {

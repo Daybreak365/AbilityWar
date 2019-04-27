@@ -227,7 +227,7 @@ public class AutoUpdate {
 	
 	public enum Branch {
 		
-		Master("master", "1.8 ~ 1.13.2");
+		Master("master", "1.8 ~ 1.14");
 		
 		String Name;
 		String Version;
@@ -248,7 +248,8 @@ public class AutoUpdate {
 		public static Branch getBranch(Integer Version) {
 			switch(Version) {
 				case 8: case 9: case 10:
-				case 11: case 12: case 13: {
+				case 11: case 12: case 13:
+				case 14: {
 					return Branch.Master;
 				}
 				default: {

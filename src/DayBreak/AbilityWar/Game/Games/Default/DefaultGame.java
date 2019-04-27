@@ -229,12 +229,6 @@ public class DefaultGame extends AbstractGame {
 			if(AbilityWarSettings.getClearWeather()) {
 				w.setStorm(false);
 			}
-			
-			if(AbilityWarSettings.getItemDrop()) {
-				w.setGameRuleValue("keepInventory", "false");
-			} else {
-				w.setGameRuleValue("keepInventory", "true");
-			}
 		}
 		
 		Script.RunAll(this);

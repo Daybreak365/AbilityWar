@@ -30,6 +30,8 @@ import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
+//TODO: MaterialLib 1.14버전 지원 업데이트 필요
+
 /**
  * Material 라이브러리
  * @author DayBreak 새벽
