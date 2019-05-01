@@ -10,7 +10,7 @@ public enum Placeholders {
 	/**
 	 * 게임 진행 여부
 	 */
-	GameStatus("gamestatus", false) {
+	GameCondition("gamecondition", false) {
 		@Override
 		public String onRequest(Player p) {
 			return AbilityWarThread.isGameTaskRunning() ? "true" : "false";
