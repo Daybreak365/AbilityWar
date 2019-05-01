@@ -9,8 +9,9 @@ import org.bukkit.inventory.ItemStack;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * Enchant 라이브러리
+ * 인첸트 라이브러리
  * @author DayBreak 새벽
+ * @version 1.2 (Minecraft 1.14)
  */
 public class EnchantLib {
 	
@@ -38,12 +39,15 @@ public class EnchantLib {
 	public static Enchants LUCK = new Enchants("LUCK", "luck_of_the_sea", 7);
 	public static Enchants LURE = new Enchants("LURE", "lure", 7);
 	public static Enchants MENDING = new Enchants("MENDING", "mending", 9);
+	public static Enchants MULTSHOT = new Enchants("MULTSHOT", "multishot", 14);
 	public static Enchants OXYGEN = new Enchants("OXYGEN", "respiration", 5);
+	public static Enchants PIERCING = new Enchants("PIERCING", "piercing", 14);
 	public static Enchants PROTECTION_ENVIRONMENTAL = new Enchants("PROTECTION_ENVIRONMENTAL", "protection", 5);
 	public static Enchants PROTECTION_EXPLOSIONS = new Enchants("PROTECTION_EXPLOSIONS", "blast_protection", 5);
 	public static Enchants PROTECTION_FALL = new Enchants("PROTECTION_FALL", "feather_falling", 5);
 	public static Enchants PROTECTION_FIRE = new Enchants("PROTECTION_FIRE", "fire_protection", 5);
 	public static Enchants PROTECTION_PROJECTILE = new Enchants("PROTECTION_PROJECTILE", "projectile_protection", 5);
+	public static Enchants QUICK_CHARGE = new Enchants("QUICK_CHARGE", "quick_charge", 14);
 	public static Enchants RIPTIDE = new Enchants("RIPTIDE", "riptide", 13);
 	public static Enchants SILK_TOUCH = new Enchants("SILK_TOUCH", "silk_touch", 5);
 	public static Enchants SWEEPING_EDGE = new Enchants("SWEEPING_EDGE", "sweeping", 12);

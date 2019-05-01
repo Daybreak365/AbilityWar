@@ -29,11 +29,12 @@ import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
  */
 public class AbilityGUI implements Listener {
 
-	private Player p;
-	private Participant target;
+	private final Player p;
+	private final Participant target;
 
 	public AbilityGUI(Player p, Plugin Plugin) {
 		this.p = p;
+		this.target = null;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 		
 		Values = new ArrayList<String>(AbilityList.nameValues());

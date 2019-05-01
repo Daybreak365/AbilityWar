@@ -1,7 +1,7 @@
 package DayBreak.AbilityWar.Utils;
 
-import DayBreak.AbilityWar.Addon.Addon;
-import DayBreak.AbilityWar.Addon.AddonLoader;
+import DayBreak.AbilityWar.Development.Addon.Addon;
+import DayBreak.AbilityWar.Development.Addon.AddonLoader;
 
 /**
  * Reflection Util

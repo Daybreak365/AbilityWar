@@ -24,7 +24,7 @@ import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 
 public class GameModeGUI implements Listener {
 
-	private Player p;
+	private final Player p;
 	
 	public GameModeGUI(Player p, Plugin Plugin) {
 		this.p = p;

@@ -21,7 +21,7 @@ public class GameCreditEvent extends Event {
 		return handlers;
 	}
 
-	private List<String> creditList = new ArrayList<String>();
+	private final List<String> creditList = new ArrayList<String>();
 	
 	public List<String> getCreditList() {
 		return new ArrayList<String>(creditList);

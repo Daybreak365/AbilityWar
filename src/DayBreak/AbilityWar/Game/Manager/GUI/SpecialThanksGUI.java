@@ -61,7 +61,7 @@ public class SpecialThanksGUI implements Listener {
 		
 	}
 	
-	Player p;
+	private final Player p;
 	
 	public SpecialThanksGUI(Player p, Plugin plugin) {
 		this.p = p;

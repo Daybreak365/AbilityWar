@@ -1,6 +1,7 @@
 package DayBreak.AbilityWar.Ability.List;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
@@ -17,6 +18,7 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
+import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
 @AbilityManifest(Name = "¾Æ·¹½º", Rank = Rank.GOD)
@@ -70,6 +72,8 @@ public class Ares extends AbilityBase {
 		@Override
 		protected void onDurationStart() {
 			Attacked = new ArrayList<Damageable>();
+			List<Player> nearby = LocationUtil.getNearbyPlayers(getPlayer().getLocation(), 10, 10);
+			SoundLib.BLOCK_BELL_USE.playSound(nearby);
 		}
 		
 		@Override
@@ -88,11 +92,12 @@ public class Ares extends AbilityBase {
 				if(!Attacked.contains(d)) {
 					d.damage(Damage, p);
 					Attacked.add(d);
+					SoundLib.BLOCK_ANVIL_LAND.playSound(p, 0.5f, 1);
+				} else {
+					d.damage(Damage / 5, p);
 				}
-			}
-			
-			for(Damageable d : Attacked) {
-				d.teleport(p);
+
+				d.setVelocity(p.getLocation().toVector().subtract(d.getLocation().toVector()).multiply(-1));
 			}
 		}
 		

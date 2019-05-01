@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 
 public class PlayerPreDeathEvent extends Event implements Cancellable {
 
-	private Player player;
+	private final Player player;
 
 	protected PlayerPreDeathEvent(Player player) {
 		this.player = player;

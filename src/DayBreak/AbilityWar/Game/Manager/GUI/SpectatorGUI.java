@@ -29,7 +29,7 @@ import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
  */
 public class SpectatorGUI implements Listener {
 	
-	private Player p;
+	private final Player p;
 	
 	public SpectatorGUI(Player p, Plugin Plugin) {
 		this.p = p;

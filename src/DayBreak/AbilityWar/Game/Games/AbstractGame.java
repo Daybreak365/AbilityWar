@@ -387,7 +387,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		
 		public void removeAbility() {
 			if(getAbility() != null) {
-				getAbility().Delete();
+				getAbility().Remove();
 				ability = null;
 			}
 		}

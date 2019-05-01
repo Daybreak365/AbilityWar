@@ -5,16 +5,17 @@ import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import DayBreak.AbilityWar.Ability.AbilityList;
-import DayBreak.AbilityWar.Addon.AddonLoader;
 import DayBreak.AbilityWar.Config.AbilitySettings;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Development.Addon.AddonLoader;
+import DayBreak.AbilityWar.Development.PlaceholderAPI.PAPIExpansion;
 import DayBreak.AbilityWar.Game.MainCommand;
 import DayBreak.AbilityWar.Game.Script.Script;
 import DayBreak.AbilityWar.Game.Script.Script.RequiredData;
 import DayBreak.AbilityWar.Game.Script.Types.ChangeAbilityScript;
+import DayBreak.AbilityWar.Game.Script.Types.ChangeAbilityScript.ChangeTarget;
 import DayBreak.AbilityWar.Game.Script.Types.LocationNoticeScript;
 import DayBreak.AbilityWar.Game.Script.Types.TeleportScript;
-import DayBreak.AbilityWar.Game.Script.Types.ChangeAbilityScript.ChangeTarget;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate;
 import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate.Branch;
@@ -70,6 +71,10 @@ public class AbilityWar extends JavaPlugin {
 				AbilityWarSettings.Setup();
 				AbilitySettings.Setup();
 				Script.LoadAll();
+				
+				if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+					new PAPIExpansion().register();
+				}
 			}
 		});
 		

@@ -58,19 +58,20 @@ public class InfiniteDurability implements Listener {
 		}
 	}
 	
+	private final String[] MaterialBased = {"AXE", "HOE", "PICKAXE", "SPADE", "SWORD", "BOOTS", "LEGGINGS", "CHESTPLATE", "HELMET"};
+	private final String[] Item = {"BOW", "SHEARS", "FISHING_ROD", "FLINT_AND_STEEL"};
+	
 	private boolean hasDurability(Material m) {
 		String materialName = m.toString();
 		
 		String[] split = materialName.split("_");
 		if(split.length > 1) {
-			String[] Item = {"AXE", "HOE", "PICKAXE", "SPADE", "SWORD", "BOOTS", "LEGGINGS", "CHESTPLATE", "HELMET"};
-			for(String compare : Item) {
+			for(String compare : MaterialBased) {
 				if(split[1].equalsIgnoreCase(compare)) {
 					return true;
 				}
 			}
 		} else {
-			String[] Item = {"BOW", "SHEARS", "FISHING_ROD", "FLINT_AND_STEEL"};
 			for(String compare : Item) {
 				if(materialName.equalsIgnoreCase(compare)) {
 					return true;

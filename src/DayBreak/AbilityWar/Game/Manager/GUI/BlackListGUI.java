@@ -37,7 +37,7 @@ import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class BlackListGUI implements Listener {
 	
-	private Player p;
+	private final Player p;
 	
 	public BlackListGUI(Player p, Plugin Plugin) {
 		this.p = p;

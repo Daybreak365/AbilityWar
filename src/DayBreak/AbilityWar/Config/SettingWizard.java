@@ -32,7 +32,7 @@ import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class SettingWizard implements Listener {
 	
-	private Player p;
+	private final Player p;
 	
 	public SettingWizard(Player p, Plugin Plugin) {
 		this.p = p;
@@ -508,7 +508,7 @@ public class SettingWizard implements Listener {
 		}
 	}
 	
-	public ArrayList<ItemStack> getItemUntil(Inventory inv, Integer Count) {
+	public ArrayList<ItemStack> getItemUntil(Inventory inv, int Count) {
 		ArrayList<ItemStack> List = new ArrayList<ItemStack>();
 		
 		for(int i = 0; i <= Count; i++) {
