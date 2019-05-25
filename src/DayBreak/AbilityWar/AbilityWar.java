@@ -8,7 +8,6 @@ import DayBreak.AbilityWar.Ability.AbilityList;
 import DayBreak.AbilityWar.Config.AbilitySettings;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Development.Addon.AddonLoader;
-import DayBreak.AbilityWar.Development.PlaceholderAPI.PAPIExpansion;
 import DayBreak.AbilityWar.Game.MainCommand;
 import DayBreak.AbilityWar.Game.Script.Script;
 import DayBreak.AbilityWar.Game.Script.Script.RequiredData;
@@ -71,10 +70,6 @@ public class AbilityWar extends JavaPlugin {
 				AbilityWarSettings.Setup();
 				AbilitySettings.Setup();
 				Script.LoadAll();
-				
-				if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-					new PAPIExpansion().register();
-				}
 			}
 		});
 		

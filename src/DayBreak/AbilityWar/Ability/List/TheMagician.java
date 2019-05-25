@@ -2,7 +2,10 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attributable;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -22,7 +25,7 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 @AbilityManifest(Name = "마술사", Rank = Rank.A)
 public class TheMagician extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 5, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 3, 
 			"# 쿨타임") {
 		
 		@Override
@@ -32,20 +35,10 @@ public class TheMagician extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(TheMagician.class, "Damage", 3, 
-			"# 데미지") {
-		
-		@Override
-		public boolean Condition(Integer value) {
-			return value >= 1;
-		}
-		
-	};
-
 	public TheMagician(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 플레이어들에게"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + DamageConfig.getValue() + "만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 엔티티들에게"),
+				ChatColor.translateAlternateColorCodes('&', "&f최대체력의 1/5 만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	@Override
@@ -62,19 +55,25 @@ public class TheMagician extends AbilityBase {
 			if(e.getEntity() instanceof Arrow) {
 				if(e.getEntity().getShooter().equals(getPlayer())) {
 					if(!Cool.isCooldown()) {
+						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 						Location center = e.getEntity().getLocation();
-						for(Player p : LocationUtil.getNearbyPlayers(center, 5, 5)) {
-							if(!p.equals(getPlayer())) {
-								if(LocationUtil.isInCircle(center, p.getLocation(), 5.0)) {
-									p.damage(3, p);
-									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(p);
+						for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+							if(!d.equals(getPlayer())) {
+								if(LocationUtil.isInCircle(center, d.getLocation(), 5.0)) {
+									if(d instanceof Attributable) {
+										d.damage(((Attributable) d).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 5, getPlayer());
+										if(d instanceof Player) {
+											SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
+										}
+									}
 								}
 							}
 						}
 						
-						for(Location l : LocationUtil.getCircle(center, 5, 10, true)) {
+						for(Location l : LocationUtil.getCircle(center, 5, 30, true)) {
 							ParticleLib.SPELL_WITCH.spawnParticle(l, 1, 0, 0, 0);
 						}
+						ParticleLib.CLOUD.spawnParticle(center, 50, 5, 5, 5);
 						
 						Cool.StartTimer();
 					}

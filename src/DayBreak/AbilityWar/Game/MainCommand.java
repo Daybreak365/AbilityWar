@@ -102,7 +102,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					AbilityWarSettings.Refresh();
 					AbilitySettings.Refresh();
 					Script.LoadAll();
-					Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&2능력자 전쟁&a이 리로드되었습니다."));
+					Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f능력자 전쟁 &b콘피그가 리로드되었습니다!"));
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 				}
@@ -536,7 +536,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	
 	private List<String> parseTabComplete(CommandSender sender, String label, String[] args) {
 		if(label.equalsIgnoreCase("abilitywar") || label.equalsIgnoreCase("ability")
-		|| label.equalsIgnoreCase("aw") || label.equalsIgnoreCase("va")) {
+		|| label.equalsIgnoreCase("aw") || label.equalsIgnoreCase("va")
+		|| label.equalsIgnoreCase("능력자")) {
 			switch(args.length) {
 				case 1:
 					ArrayList<String> Complete = Messager.getStringList(

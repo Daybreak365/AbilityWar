@@ -89,10 +89,13 @@ public class Pumpkin extends AbilityBase {
 				SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
 			} else if(Count.equals(10)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(1, Tone.G));
+				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.G));
 			} else if(Count.equals(12)) {
 				SoundLib.BELL.playInstrument(Players, Note.sharp(1, Tone.F));
+				SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
 			} else if(Count.equals(13)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.E));
+				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.E));
 			}
 			
 			Count++;

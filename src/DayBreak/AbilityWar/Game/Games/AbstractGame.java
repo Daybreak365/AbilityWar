@@ -393,21 +393,6 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		}
 		
 		/**
-		 * 이 플레이어의 능력을 to에게 옮깁니다.
-		 * to가 게임에 참여하고 있지 않거나 이 플레이어에게 능력이 없을 경우 아무 작업도 하지 않습니다.
-		 */
-		public void transferAbility(Participant target) {
-			if(hasAbility()) {
-				AbilityBase Ability = getAbility();
-				removeAbility();
-				
-				Ability.updateParticipant(target);
-				
-				target.setAbility(Ability);
-			}
-		}
-		
-		/**
 		 * one.getPlayer()와 two.getPlayer()의 능력을 서로 뒤바꿉니다.
 		 * @param one	첫번째 플레이어
 		 * @param two	두번째 플레이어

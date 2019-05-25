@@ -17,7 +17,7 @@ public class Virus extends AbilityBase {
 
 	public Virus(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f이 능력은 당신을 죽인 사람에게 옮겨갑니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f이 능력은 당신을 죽인 사람에게 감염됩니다."));
 	}
 
 	@Override
@@ -33,8 +33,10 @@ public class Virus extends AbilityBase {
 				if(AbilityWarThread.isGameTaskRunning()) {
 					Player Killer = getPlayer().getKiller();
 					if(Killer != null && AbilityWarThread.getGame().isParticipating(Killer)) {
-						Participant target = AbilityWarThread.getGame().getParticipant(Killer);
-						this.getParticipant().transferAbility(target);
+						try {
+							Participant target = AbilityWarThread.getGame().getParticipant(Killer);
+							target.setAbility(Virus.class);
+						} catch (Exception ex) {}
 					}
 				}
 			}

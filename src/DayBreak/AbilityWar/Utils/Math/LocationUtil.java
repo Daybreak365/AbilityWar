@@ -1,10 +1,10 @@
 package DayBreak.AbilityWar.Utils.Math;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,7 +13,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Game.Games.AbstractGame;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
@@ -123,44 +122,23 @@ public class LocationUtil {
 		return blocks;
 	}
 
-	/**
-	 * 기준에서 가장 가까운 플레이어를 받아옵니다.
-	 * 
-	 * @param Base 기준이 되는 플레이어.
-	 */
-	public static Player getNearestPlayer(Player Base) {
-		List<Player> Players;
+	public static ArrayList<Location> getRandomLocations(Location center, double radius, int amount) {
+		Random r = new Random();
 
-		if (AbilityWarThread.isGameTaskRunning()) {
-			AbstractGame game = AbilityWarThread.getGame();
-			
-			Players = new ArrayList<Player>();
-			for(Participant participant : game.getParticipants()) {
-				Player p = participant.getPlayer();
-				if(!game.getDeathManager().isEliminated(p)) {
-					Players.add(p);
-				}
-			}
-		} else {
-			Players = new ArrayList<Player>(Bukkit.getOnlinePlayers());
+		ArrayList<Location> locations = new ArrayList<Location>();
+		for (int i = 0; i < amount; i++) {
+			double Angle = r.nextDouble() * 360;
+			double x = center.getX() + (r.nextDouble() * radius * Math.cos(Math.toRadians(Angle)));
+			double z = center.getZ() + (r.nextDouble() * radius * Math.sin(Math.toRadians(Angle)));
+			double y = center.getWorld().getHighestBlockYAt((int) x, (int) z) + 1;
+
+			Location l = new Location(center.getWorld(), x, y, z);
+
+			locations.add(l);
 		}
-
-		Location l = Base.getLocation();
-		Double Distance = Double.MAX_VALUE;
-		Player player = null;
-		for (Player p : Players) {
-			if (!p.equals(Base)) {
-				Double d = l.distance(p.getLocation());
-				if (d < Distance) {
-					Distance = d;
-					player = p;
-				}
-			}
-		}
-
-		return player;
+		return locations;
 	}
-	
+
 	public static List<Location> getSphere(Location center, double r, int Amount) {
 		List<Location> locations = new ArrayList<Location>();
 		
@@ -201,180 +179,102 @@ public class LocationUtil {
 		return locations;
 	}
 
-	public static ArrayList<Location> getRandomLocations(Location center, double radius, int amount) {
-		Random r = new Random();
-
-		ArrayList<Location> locations = new ArrayList<Location>();
-		for (int i = 0; i < amount; i++) {
-			double Angle = r.nextDouble() * 360;
-			double x = center.getX() + (r.nextDouble() * radius * Math.cos(Math.toRadians(Angle)));
-			double z = center.getZ() + (r.nextDouble() * radius * Math.sin(Math.toRadians(Angle)));
-			double y = center.getWorld().getHighestBlockYAt((int) x, (int) z) + 1;
-
-			Location l = new Location(center.getWorld(), x, y, z);
-
-			locations.add(l);
-		}
-		return locations;
-	}
-
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Player p, Integer HorizontalDis, Integer VerticalDis) {
-		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-		for (Entity e : p.getNearbyEntities(HorizontalDis, VerticalDis, HorizontalDis)) {
-			if (e instanceof Damageable) {
-				if (e instanceof Player) {
-					if (AbilityWarThread.isGameTaskRunning()) {
+	public static <E> E getNearestEntity(Class<E> clazz, Location center, List<Entity> exceptions) {
+		double distance = Double.MAX_VALUE;
+		E entity = null;
+		
+		for(Entity e : center.getWorld().getEntities()) {
+			if(clazz.isAssignableFrom(e.getClass())) {
+				if(!exceptions.contains(e)) {
+					if (e instanceof Player && AbilityWarThread.isGameTaskRunning()) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player player = (Player) e;
 						if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
 							continue;
 						}
 					}
+					double compare = center.distance(e.getLocation());
+					if(compare < distance) {
+						distance = compare;
+						entity = clazz.cast(e);
+					}
 				}
-				Entities.add((Damageable) e);
 			}
 		}
-
-		return Entities;
+		
+		return entity;
 	}
 
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Location l, Integer HorizontalDis, Integer VerticalDis) {
+	public static Player getNearestPlayer(Player base) {
+		return getNearestEntity(Player.class, base.getLocation(), Arrays.asList(base));
+	}
+	
+	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis, List<Entity> exceptions) {
+		List<E> entities = new ArrayList<E>();
+		
 		if(ServerVersion.getVersion() >= 9) {
-			ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-			for (Entity e : l.getWorld().getNearbyEntities(l, HorizontalDis, VerticalDis, HorizontalDis)) {
-				if (e instanceof Damageable) {
-					if (e instanceof Player) {
-						if (AbilityWarThread.isGameTaskRunning()) {
+			for (Entity e : center.getWorld().getNearbyEntities(center, HorizontalDis, VerticalDis, HorizontalDis)) {
+				if (clazz.isAssignableFrom(e.getClass())) {
+					if(!exceptions.contains(e)) {
+						if (e instanceof Player && AbilityWarThread.isGameTaskRunning()) {
 							AbstractGame game = AbilityWarThread.getGame();
 							Player player = (Player) e;
 							if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
 								continue;
 							}
 						}
+						entities.add(clazz.cast(e));
 					}
-					Entities.add((Damageable) e);
 				}
 			}
-
-			return Entities;
 		} else {
-			ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-			for (Entity e : l.getWorld().getEntities()) {
-				Location targetLocation = e.getLocation();
-				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= VerticalDis) {
-					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= HorizontalDis
-					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= HorizontalDis) {
-						if (e instanceof Damageable) {
-							if (e instanceof Player) {
-								if (AbilityWarThread.isGameTaskRunning()) {
+			for (Entity e : center.getWorld().getEntities()) {
+				Location entityLoc = e.getLocation();
+				if(NumberUtil.Subtract(Math.abs(entityLoc.getY()), Math.abs(center.getY())) <= VerticalDis) {
+					if(NumberUtil.Subtract(Math.abs(entityLoc.getX()), Math.abs(center.getX())) <= HorizontalDis
+					|| NumberUtil.Subtract(Math.abs(entityLoc.getZ()), Math.abs(center.getZ())) <= HorizontalDis) {
+						if (clazz.isAssignableFrom(e.getClass())) {
+							if(!exceptions.contains(e)) {
+								if (e instanceof Player && AbilityWarThread.isGameTaskRunning()) {
 									AbstractGame game = AbilityWarThread.getGame();
 									Player player = (Player) e;
 									if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
 										continue;
 									}
 								}
+								entities.add(clazz.cast(e));
 							}
-							Entities.add((Damageable) e);
 						}
 					}
 				}
 			}
-			
-			return Entities;
 		}
+
+		return entities;
 	}
 
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Entity p, Integer HorizontalDis, Integer VerticalDis) {
-		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
-		for (Entity e : p.getNearbyEntities(HorizontalDis, VerticalDis, HorizontalDis)) {
-			if (e instanceof Damageable) {
-				if (e instanceof Player) {
-					if (AbilityWarThread.isGameTaskRunning()) {
-						AbstractGame game = AbilityWarThread.getGame();
-						Player player = (Player) e;
-						if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
-							continue;
-						}
-					}
-				}
-				Entities.add((Damageable) e);
-			}
-		}
-
-		return Entities;
+	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis) {
+		return getNearbyEntities(clazz, center, HorizontalDis, VerticalDis, Arrays.asList());
 	}
 	
-	/**
-	 * 가까이에 있는 플레이어 목록을 받아옵니다.
-	 * @param p 기준이 되는 플레이어입니다. 가까이에 있는 플레이어 목록에서 제외됩니다.
-	 * @param HorizontalDis 수평 거리입니다.
-	 * @param VerticalDis 수직 거리입니다.
-	 * @return List<Player> 플레이어 목록
-	 */
-	public static List<Player> getNearbyPlayers(Player p, Integer HorizontalDis, Integer VerticalDis) {
-		ArrayList<Player> Players = new ArrayList<Player>();
-		for (Entity e : p.getNearbyEntities(HorizontalDis, VerticalDis, HorizontalDis)) {
-			if (e instanceof Player) {
-				Player player = (Player) e;
-
-				if (AbilityWarThread.isGameTaskRunning()) {
-					AbstractGame game = AbilityWarThread.getGame();
-					if (game.isParticipating(player) && !game.getDeathManager().isEliminated(player)) {
-						Players.add(player);
-					}
-				} else {
-					Players.add(player);
-				}
-			}
-		}
-
-		return Players;
+	public static List<Damageable> getNearbyDamageableEntities(Player p, int HorizontalDis, int VerticalDis) {
+		return getNearbyEntities(Damageable.class, p.getLocation(), HorizontalDis, VerticalDis, Arrays.asList(p));
 	}
 
-	public static ArrayList<Player> getNearbyPlayers(Location l, Integer HorizontalDis, Integer VerticalDis) {
-		if(ServerVersion.getVersion() >= 9) {
-			ArrayList<Player> Players = new ArrayList<Player>();
-			for (Entity e : l.getWorld().getNearbyEntities(l, HorizontalDis, VerticalDis, HorizontalDis)) {
-				if (e instanceof Player) {
-					Player player = (Player) e;
+	public static List<Damageable> getNearbyDamageableEntities(Location l, int HorizontalDis, int VerticalDis) {
+		return getNearbyEntities(Damageable.class, l, HorizontalDis, VerticalDis);
+	}
 
-					if (AbilityWarThread.isGameTaskRunning()) {
-						AbstractGame game = AbilityWarThread.getGame();
-						if (game.isParticipating(player) && !game.getDeathManager().isEliminated(player)) {
-							Players.add(player);
-						}
-					} else {
-						Players.add(player);
-					}
-				}
-			}
+	public static List<Damageable> getNearbyDamageableEntities(Entity e, int HorizontalDis, int VerticalDis) {
+		return getNearbyEntities(Damageable.class, e.getLocation(), HorizontalDis, VerticalDis, Arrays.asList(e));
+	}
+	
+	public static List<Player> getNearbyPlayers(Player p, int HorizontalDis, int VerticalDis) {
+		return getNearbyEntities(Player.class, p.getLocation(), HorizontalDis, VerticalDis, Arrays.asList(p));
+	}
 
-			return Players;
-		} else {
-			ArrayList<Player> Players = new ArrayList<Player>();
-			for (Entity e : l.getWorld().getEntities()) {
-				Location targetLocation = e.getLocation();
-				if(NumberUtil.Subtract(Math.abs(targetLocation.getY()), Math.abs(l.getY())) <= VerticalDis) {
-					if(NumberUtil.Subtract(Math.abs(targetLocation.getX()), Math.abs(l.getX())) <= HorizontalDis
-					|| NumberUtil.Subtract(Math.abs(targetLocation.getZ()), Math.abs(l.getZ())) <= HorizontalDis) {
-						if (e instanceof Player) {
-							Player player = (Player) e;
-
-							if (AbilityWarThread.isGameTaskRunning()) {
-								AbstractGame game = AbilityWarThread.getGame();
-								if (game.isParticipating(player) && !game.getDeathManager().isEliminated(player)) {
-									Players.add(player);
-								}
-							} else {
-								Players.add(player);
-							}
-						}
-					}
-				}
-			}
-			
-			return Players;
-		}
+	public static List<Player> getNearbyPlayers(Location l, int HorizontalDis, int VerticalDis) {
+		return getNearbyEntities(Player.class, l, HorizontalDis, VerticalDis);
 	}
 
 }
