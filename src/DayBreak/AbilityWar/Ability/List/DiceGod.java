@@ -16,7 +16,7 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
-import DayBreak.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 @AbilityManifest(Name = "´ÙÀÌ½º °«", Rank = Rank.GOD)
 public class DiceGod extends AbilityBase {
@@ -92,7 +92,7 @@ public class DiceGod extends AbilityBase {
 					
 					Double health = getPlayer().getHealth() + damage;
 					
-					if(health > PlayerCompat.getMaxHealth(getPlayer())) health = PlayerCompat.getMaxHealth(getPlayer());
+					if(health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
 					
 					if(!getPlayer().isDead()) {
 						getPlayer().setHealth(health);

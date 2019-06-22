@@ -33,7 +33,7 @@ import DayBreak.AbilityWar.Game.Manager.GameListener;
 import DayBreak.AbilityWar.Game.Manager.Invincibility;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
-import DayBreak.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 abstract public class AbstractGame extends Thread implements Listener, EventExecutor {
 	
@@ -268,7 +268,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 
 				Player p = e.getPlayer();
 				if (p.equals(getPlayer())) {
-					MaterialType mt = parseMaterialType(PlayerCompat.getItemInHand(p).getType());
+					MaterialType mt = parseMaterialType(VersionUtil.getItemInHand(p).getType());
 					ClickType ct = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RightClick : ClickType.LeftClick;
 					if (mt != null) {
 						if (hasAbility()) {
@@ -293,7 +293,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 				if(e.getDamager() instanceof Player) {
 					Player p = (Player) e.getDamager();
 					if (p.equals(getPlayer())) {
-						MaterialType mt = parseMaterialType(PlayerCompat.getItemInHand(p).getType());
+						MaterialType mt = parseMaterialType(VersionUtil.getItemInHand(p).getType());
 						if(mt != null) {
 							if(!e.isCancelled()) {
 								if(this.hasAbility()) {

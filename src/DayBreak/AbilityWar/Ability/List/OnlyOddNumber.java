@@ -10,7 +10,7 @@ import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
-import DayBreak.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 @AbilityManifest(Name = "È¦¼ö°­¹ÚÁõ", Rank = Rank.S)
 public class OnlyOddNumber extends AbilityBase {
@@ -69,7 +69,7 @@ public class OnlyOddNumber extends AbilityBase {
 		if(event instanceof EntityDamageEvent) {
 			EntityDamageEvent e = (EntityDamageEvent) event;
 			if(e.getEntity().equals(getPlayer())) {
-				Double doubleMaxHealth = PlayerCompat.getMaxHealth(getPlayer());
+				Double doubleMaxHealth = VersionUtil.getMaxHealth(getPlayer());
 				Double doubleHealth = getPlayer().getHealth();
 				
 				Integer Health = (int) getPlayer().getHealth();

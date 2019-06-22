@@ -82,9 +82,13 @@ public class AbilityWarSettings {
 	public static boolean getItemDrop() {
 		return getBoolean(ConfigNodes.Game_Deaeth_ItemDrop);
 	}
-	
+
 	public static boolean getAbilityReveal() {
 		return getBoolean(ConfigNodes.Game_Deaeth_AbilityReveal);
+	}
+
+	public static boolean getAbilityRemoval() {
+		return getBoolean(ConfigNodes.Game_Deaeth_AbilityRemoval);
 	}
 	
 	public static boolean getClearWeather() {

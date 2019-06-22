@@ -13,7 +13,7 @@ import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
-import DayBreak.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 @AbilityManifest(Name = "이열치열", Rank = Rank.B)
 public class FireFightWithFire extends AbilityBase {
@@ -52,7 +52,7 @@ public class FireFightWithFire extends AbilityBase {
 						
 						Double health = getPlayer().getHealth() + damage;
 						
-						if(health > PlayerCompat.getMaxHealth(getPlayer())) health = PlayerCompat.getMaxHealth(getPlayer());
+						if(health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
 						
 						if(!getPlayer().isDead()) {
 							getPlayer().setHealth(health);

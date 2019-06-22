@@ -11,7 +11,7 @@ import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
-import DayBreak.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 @AbilityManifest(Name = "빠른 회복", Rank = Rank.A)
 public class FastRegeneration extends AbilityBase {
@@ -42,7 +42,7 @@ public class FastRegeneration extends AbilityBase {
 			if(!isRestricted()) {
 				Player p = getPlayer();
 				if(!p.isDead()) {
-					double MaxHealth = PlayerCompat.getMaxHealth(p);
+					double MaxHealth = VersionUtil.getMaxHealth(p);
 					
 					if(p.getHealth() < MaxHealth) {
 						p.setHealth((int) p.getHealth() + 1);

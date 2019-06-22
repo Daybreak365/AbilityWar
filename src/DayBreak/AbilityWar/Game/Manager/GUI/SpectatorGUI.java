@@ -36,7 +36,7 @@ public class SpectatorGUI implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 	
-	private Integer PlayerPage = 1;
+	private int PlayerPage = 1;
 	
 	private Inventory SpectateGUI;
 	

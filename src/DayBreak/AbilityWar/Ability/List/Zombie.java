@@ -33,7 +33,7 @@ public class Zombie extends AbilityBase {
 			Random r = new Random();
 			Integer random = r.nextInt(100) + 1;
 			
-			if(random <= 3) {
+			if(random <= 10) {
 				Location l = getPlayer().getLocation();
 				l.setPitch(r.nextInt(360) - 179);
 				l.setYaw(r.nextInt(180) - 89);

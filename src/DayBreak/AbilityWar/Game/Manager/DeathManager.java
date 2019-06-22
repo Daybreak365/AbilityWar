@@ -20,6 +20,7 @@ import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
+import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * Death Manager
@@ -87,7 +88,7 @@ public class DeathManager implements EventExecutor {
 				}
 			}
 			
-			if(game.isGameStarted()) {
+			if(ServerVersion.getVersion() >= 8 && game.isGameStarted()) {
 				if(AbilityWarSettings.getItemDrop()) {
 					e.setKeepInventory(false);
 					Victim.getInventory().clear();

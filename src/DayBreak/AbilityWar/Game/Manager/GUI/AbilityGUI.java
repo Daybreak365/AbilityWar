@@ -64,7 +64,7 @@ public class AbilityGUI implements Listener {
 	
 	private ArrayList<String> Values;
 	
-	private Integer PlayerPage = 1;
+	private int PlayerPage = 1;
 	
 	private Inventory AbilityGUI;
 	

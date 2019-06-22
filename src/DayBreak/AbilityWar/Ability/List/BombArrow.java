@@ -31,6 +31,16 @@ public class BombArrow extends AbilityBase {
 		}
 		
 	};
+
+	public static SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 2,
+			"# 화살을 맞췄을 때 얼마나 큰 폭발을 일으킬지 설정합니다.") {
+		
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 1;
+		}
+		
+	};
 	
 	public BombArrow(Participant participant) {
 		super(participant,
@@ -42,7 +52,8 @@ public class BombArrow extends AbilityBase {
 		return false;
 	}
 	
-	private Integer Chance = ChanceConfig.getValue();
+	private final Integer Chance = ChanceConfig.getValue();
+	private final Integer Size = SizeConfig.getValue();
 	
 	private ArrayList<Arrow> ArrowList = new ArrayList<>();
 	
@@ -68,7 +79,7 @@ public class BombArrow extends AbilityBase {
 						if((r.nextInt(100) + 1) <= Chance) {
 							SoundLib.BLOCK_NOTE_BLOCK_BELL.playSound(getPlayer());
 							Location l = arrow.getLocation();
-							l.getWorld().createExplosion(l, 2, false);
+							l.getWorld().createExplosion(l, Size, false);
 						}
 					}
 				}

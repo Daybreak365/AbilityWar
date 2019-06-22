@@ -2,8 +2,6 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attributable;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -21,6 +19,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 @AbilityManifest(Name = "¸¶¼ú»ç", Rank = Rank.A)
 public class TheMagician extends AbilityBase {
@@ -60,11 +59,9 @@ public class TheMagician extends AbilityBase {
 						for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
 							if(!d.equals(getPlayer())) {
 								if(LocationUtil.isInCircle(center, d.getLocation(), 5.0)) {
-									if(d instanceof Attributable) {
-										d.damage(((Attributable) d).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 5, getPlayer());
-										if(d instanceof Player) {
-											SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
-										}
+									d.damage(VersionUtil.getMaxHealth(d) / 5, getPlayer());
+									if(d instanceof Player) {
+										SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
 									}
 								}
 							}

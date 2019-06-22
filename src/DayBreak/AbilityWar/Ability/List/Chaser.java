@@ -14,7 +14,7 @@ import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.VersionCompat.PlayerCompat;
+import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 @AbilityManifest(Name = "ÃßÀûÀÚ", Rank = Rank.B)
 public class Chaser extends AbilityBase {
@@ -68,7 +68,7 @@ public class Chaser extends AbilityBase {
 			if(e.getDamager().equals(getPlayer())) {
 				if(e.getEntity() instanceof Player) {
 					if(!e.isCancelled()) {
-						if(PlayerCompat.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
+						if(VersionUtil.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
 							if(!Cool.isCooldown()) {
 								Player p = (Player) e.getEntity();
 								this.target = p;

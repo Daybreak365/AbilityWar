@@ -64,7 +64,7 @@ public class EnumSetter extends Setter<Object> {
 	
 	@Override
 	public ItemStack getItem() {
-		ItemStack enumItem = new ItemStack(Material.KNOWLEDGE_BOOK);
+		ItemStack enumItem = new ItemStack(Material.ENCHANTED_BOOK);
 		ItemMeta enumItemMeta = enumItem.getItemMeta();
 		enumItemMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 

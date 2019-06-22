@@ -135,11 +135,13 @@ public class DefaultGame extends AbstractGame {
 		Player Victim = e.getEntity();
 		
 		if(this.isGameStarted()) {
-			if(AbilityWarSettings.getEliminate()) {
-				if(this.isParticipating(Victim)) {
-					if(AbilityWarSettings.getEliminate()) {
-						getDeathManager().Eliminate(Victim);
-					}
+			if(this.isParticipating(Victim)) {
+				if(AbilityWarSettings.getEliminate()) {
+					getDeathManager().Eliminate(Victim);
+				}
+				
+				if(AbilityWarSettings.getAbilityRemoval()) {
+					this.getParticipant(Victim).removeAbility();
 				}
 			}
 		}
