@@ -55,7 +55,7 @@ public class AbilityWar extends JavaPlugin {
 		Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
 		Script.registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("능력 변경 대상", ChangeTarget.class));
 		Script.registerScript(LocationNoticeScript.class);
-
+		
 		AbilityList.nameValues();
 
 		AddonLoader.loadAddons();

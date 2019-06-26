@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Script.Objects.AbstractScript;
 import DayBreak.AbilityWar.Game.Script.Objects.Setter.Setter;
 import DayBreak.AbilityWar.Game.Script.ScriptException.State;

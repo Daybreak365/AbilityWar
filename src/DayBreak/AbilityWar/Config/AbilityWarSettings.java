@@ -8,8 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.ReflectionUtil;
 import DayBreak.AbilityWar.Utils.Data.FileManager;
@@ -135,16 +135,20 @@ public class AbilityWarSettings {
 		}
 	}
 
+	public static int ChangeAbilityWar_getPeriod() {
+		return getInt(ConfigNodes.AbilityChangeGame_Period);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static Class<? extends AbstractGame> getGameMode() {
 		try {
-			Class<?> clazz = ReflectionUtil.ClassUtil.forName(getString(ConfigNodes.Game_Mode));
-			if(clazz.getSuperclass().equals(AbstractGame.class)) {
+			Class<?> clazz = ReflectionUtil.ClassUtil.forName(getString(ConfigNodes.GameMode));
+			if(AbstractGame.class.isAssignableFrom(clazz)) {
 				return (Class<? extends AbstractGame>) clazz;
 			}
 		} catch (ClassNotFoundException e) {e.printStackTrace();}
 		
-		setNewProperty(ConfigNodes.Game_Mode, DefaultGame.class.getName());
+		setNewProperty(ConfigNodes.GameMode, DefaultGame.class.getName());
 		return DefaultGame.class;
 	}
 

@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Game.Games;
+package DayBreak.AbilityWar.Game.Games.Mode;
 
 import java.lang.reflect.Constructor;
 import java.time.Instant;

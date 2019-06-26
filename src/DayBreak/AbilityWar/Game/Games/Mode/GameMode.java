@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Game.Games;
+package DayBreak.AbilityWar.Game.Games.Mode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
+import DayBreak.AbilityWar.Game.Games.ChangeAbility.ChangeAbilityWar;
 import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
@@ -21,6 +22,7 @@ public class GameMode {
 
 	static {
 		registerGameMode(DefaultGame.class);
+		registerGameMode(ChangeAbilityWar.class);
 	}
 
 	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {
@@ -89,7 +91,7 @@ public class GameMode {
 			AbilityWarThread.StartGame(AbilityWarSettings.getGameMode().newInstance());
 			return true;
 		} catch (InstantiationException | IllegalAccessException e) {
-			AbilityWarSettings.setNewProperty(ConfigNodes.Game_Mode, DefaultGame.class.getName());
+			AbilityWarSettings.setNewProperty(ConfigNodes.GameMode, DefaultGame.class.getName());
 			AbilityWarThread.StartGame(new DefaultGame());
 			return false;
 		}

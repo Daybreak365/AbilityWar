@@ -23,8 +23,8 @@ import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Events.EventCaller;
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 
 public class GameListener implements Listener, EventExecutor {
 	

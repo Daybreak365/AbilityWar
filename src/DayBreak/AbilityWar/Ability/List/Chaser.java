@@ -12,7 +12,7 @@ import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
@@ -53,7 +53,7 @@ public class Chaser extends AbilityBase {
 					
 					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
 				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f아무에게도 추적 장치를 부척하지 않았습니다. &8( &7추적 불가능 &8)"));
+					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f아무에게도 추적 장치를 부착하지 않았습니다. &8( &7추적 불가능 &8)"));
 				}
 			}
 		}

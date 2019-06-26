@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.bukkit.ChatColor;
 
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 

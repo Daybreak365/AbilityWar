@@ -4,8 +4,8 @@ import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;
@@ -34,6 +34,7 @@ public class Invincibility {
 
 					@Override
 					protected void onStart() {
+						game.setRestricted(true);
 						for(Participant participant : game.getParticipants()) {
 							if(participant.hasAbility()) {
 								AbilityBase ability = participant.getAbility();
@@ -78,6 +79,7 @@ public class Invincibility {
 
 					@Override
 					protected void onStart() {
+						game.setRestricted(true);
 						for(Participant participant : game.getParticipants()) {
 							if(participant.hasAbility()) {
 								AbilityBase ability = participant.getAbility();

@@ -16,9 +16,9 @@ import org.bukkit.plugin.Plugin;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
-import DayBreak.AbilityWar.Game.Games.GameManifest;
-import DayBreak.AbilityWar.Game.Games.GameMode;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
+import DayBreak.AbilityWar.Game.Games.Mode.GameMode;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 
@@ -132,7 +132,7 @@ public class GameModeGUI implements Listener {
 						
 						Class<? extends AbstractGame> abilityClass = GameMode.getByString(modeName);
 						if(abilityClass != null) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Mode, abilityClass.getName());
+							AbilityWarSettings.setNewProperty(ConfigNodes.GameMode, abilityClass.getName());
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + modeName + " &f클래스는 등록되지 않았습니다."));
 						}

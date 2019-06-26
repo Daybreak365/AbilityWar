@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Game.Games.Default;
+package DayBreak.AbilityWar.Game.Games;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,6 @@ import org.bukkit.event.HandlerList;
 
 public class GameCreditEvent extends Event {
 
-	protected GameCreditEvent() {}
-	
 	private static final HandlerList handlers = new HandlerList();
 
 	@Override

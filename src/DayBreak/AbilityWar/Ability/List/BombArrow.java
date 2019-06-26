@@ -15,7 +15,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
 @AbilityManifest(Name = "Æø¹ßÈ­»ì", Rank = Rank.S)

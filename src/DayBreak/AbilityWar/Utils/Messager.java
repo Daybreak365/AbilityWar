@@ -111,6 +111,20 @@ public class Messager {
 			broadcastMessage(msg);
 		}
 	}
+
+	/**
+	 * 채팅창을 청소합니다.
+	 */
+	public static void clearChat() {
+		for(int i = 0; i < 100; i++) for(Player p : Bukkit.getOnlinePlayers()) Messager.sendMessage(p, "");
+	}
+
+	/**
+	 * 플레이어의 채팅창을 청소합니다.
+	 */
+	public static void clearChat(Player target) {
+		for(int i = 0; i < 100; i++) Messager.sendMessage(target, "");
+	}
 	
 	/**
 	 * 제목을 구성합니다.

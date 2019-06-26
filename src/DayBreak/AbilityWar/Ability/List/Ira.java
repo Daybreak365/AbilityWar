@@ -11,7 +11,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 
 @AbilityManifest(Name = "ÀÌ¶ף", Rank = Rank.S)
 public class Ira extends AbilityBase {

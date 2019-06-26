@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Script.Objects.AbstractScript;
 import DayBreak.AbilityWar.Game.Script.Objects.SerializableLocation;
 

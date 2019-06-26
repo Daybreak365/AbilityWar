@@ -9,7 +9,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
@@ -41,7 +41,7 @@ public class DarkVision extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			EffectLib.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
-			EffectLib.SPEED.addPotionEffect(getPlayer(), 40, 3, true);
+			EffectLib.SPEED.addPotionEffect(getPlayer(), 40, 5, true);
 		}
 		
 		@Override

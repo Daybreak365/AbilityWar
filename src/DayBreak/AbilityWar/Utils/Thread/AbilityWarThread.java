@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import DayBreak.AbilityWar.AbilityWar;
-import DayBreak.AbilityWar.Game.Games.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
 
 /**
@@ -67,7 +67,7 @@ public class AbilityWarThread {
 			setGame(null);
 			GameTask = -1;
 			
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 중지되었습니다."));
 		}
 	}
 

@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
-import DayBreak.AbilityWar.Game.Games.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 
 @AbilityManifest(Name = "¾Ç¸¶ÀÇ ºÎÃ÷", Rank = Rank.B)
 public class DevilBoots extends AbilityBase {

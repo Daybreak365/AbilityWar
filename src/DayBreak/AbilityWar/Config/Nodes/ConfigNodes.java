@@ -56,7 +56,9 @@ public enum ConfigNodes {
 			"# 파티클 활성화 여부"),
 	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
 			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
-	Game_Mode("게임.모드", DefaultGame.class.getName(),
+	AbilityChangeGame_Period("체인지능력전쟁.주기", 20,
+			"# 능력 변경 주기 (단위: 초)"),
+	GameMode("게임모드", DefaultGame.class.getName(),
 			"# 게임 모드 클래스");
 	
 	private String Path;

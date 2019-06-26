@@ -1,6 +1,6 @@
 name: AbilityWar
 main: DayBreak.AbilityWar.AbilityWar
-version: 1.8.8
+version: 1.8.9
 
 commands:
   abilitywar:
