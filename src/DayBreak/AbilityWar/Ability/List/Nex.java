@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -31,7 +32,7 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-@AbilityManifest(Name = "³Ø½º", Rank = Rank.B)
+@AbilityManifest(Name = "³Ø½º", Rank = Rank.B, Species = Species.GOD)
 public class Nex extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# ÄðÅ¸ÀÓ") {

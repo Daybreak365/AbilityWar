@@ -24,14 +24,6 @@ public @interface AbilityManifest {
 	public enum Rank {
 		
 		/**
-		 * Special 등급
-		 */
-		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&5Special 등급")),
-		/**
-		 * 신 등급
-		 */
-		GOD(ChatColor.translateAlternateColorCodes('&', "&c신 등급")),
-		/**
 		 * S 등급
 		 */
 		S(ChatColor.translateAlternateColorCodes('&', "&dS 등급")),
@@ -60,6 +52,28 @@ public @interface AbilityManifest {
 		
 		public String getRankName() {
 			return RankName;
+		}
+		
+	}
+
+	public Species Species();
+	
+	public enum Species {
+		
+		HUMAN(ChatColor.translateAlternateColorCodes('&', "&f인간")),
+		GOD(ChatColor.translateAlternateColorCodes('&', "&c신")),
+		DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7데미&c갓")),
+		ANIMAL(ChatColor.translateAlternateColorCodes('&', "&2동물")),
+		OTHERS(ChatColor.translateAlternateColorCodes('&', "&8기타"));
+		
+		private String name;
+		
+		private Species(String name) {
+			this.name = name;
+		}
+		
+		public String getName() {
+			return name;
 		}
 		
 	}

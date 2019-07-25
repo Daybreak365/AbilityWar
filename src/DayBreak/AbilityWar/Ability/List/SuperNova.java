@@ -9,13 +9,14 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "段重失", Rank = Rank.B)
+@AbilityManifest(Name = "段重失", Rank = Rank.B, Species = Species.OTHERS)
 public class SuperNova extends AbilityBase {
 
 	public static SettingObject<Integer> SizeConfig = new SettingObject<Integer>(SuperNova.class, "Size", 10,
@@ -53,7 +54,7 @@ public class SuperNova extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			double Count = ((Size + 1) - Seconds) / 1.2;
 			for(Location l : LocationUtil.getSphere(center, Count, 5)) {
-				l.getWorld().createExplosion(l, 1);
+				l.getWorld().createExplosion(l, 2);
 				ParticleLib.SPELL.spawnParticle(l, 1, 0, 0, 0);
 			}
 		}

@@ -8,6 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -16,10 +17,10 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "베르투스", Rank = Rank.A)
+@AbilityManifest(Name = "베르투스", Rank = Rank.A, Species = Species.HUMAN)
 public class Virtus extends AbilityBase {
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 3,
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 5,
 			"# 능력 지속시간") {
 		
 		@Override

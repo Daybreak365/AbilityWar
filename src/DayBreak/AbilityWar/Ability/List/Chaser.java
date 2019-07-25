@@ -10,13 +10,14 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "추적자", Rank = Rank.B)
+@AbilityManifest(Name = "추적자", Rank = Rank.B, Species = Species.HUMAN)
 public class Chaser extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaser.class, "Cooldown", 120,

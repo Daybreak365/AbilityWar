@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -25,7 +26,7 @@ import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-@AbilityManifest(Name = "여제", Rank = Rank.B)
+@AbilityManifest(Name = "여제", Rank = Rank.B, Species = Species.HUMAN)
 public class TheEmpress extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheEmpress.class, "Cooldown", 70, 
@@ -52,10 +53,10 @@ public class TheEmpress extends AbilityBase {
 	public TheEmpress(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 현재 좌표에 따라 버프 혹은 아이템을 얻습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &a+ &f➡ 힘   10초 | 날카로움 IV 다이아 검"),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Y &7: &c- &f➡ 저항 20초 | " + ((ServerVersion.getVersion() >= 9) ? "방패" : "거미줄")),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &a+ &f➡ 신속 30초 | 무한 활"),
-				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Y &7: &c- &f➡ 재생 20초 | 황금사과"));
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Z &7: &a+ &f➡ 힘   10초 | 날카로움 II 다이아 검"),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &a+&f, Z &7: &c- &f➡ 저항 20초 | " + ((ServerVersion.getVersion() >= 9) ? "방패" : "거미줄")),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Z &7: &a+ &f➡ 신속 30초 | 무한 활"),
+				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Z &7: &c- &f➡ 재생 20초 | 황금사과"));
 	}
 	
 	boolean EasterEgg = !EasterEggConfig.getValue();
@@ -80,7 +81,7 @@ public class TheEmpress extends AbilityBase {
 							EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 200, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.DIAMOND_SWORD);
-							getPlayer().getInventory().addItem(EnchantLib.DAMAGE_ALL.addEnchantment(is, 4));
+							getPlayer().getInventory().addItem(EnchantLib.DAMAGE_ALL.addEnchantment(is, 2));
 						}
 					} else if(X.isPlus() && Z.isMinus()) {
 						if(bool) {

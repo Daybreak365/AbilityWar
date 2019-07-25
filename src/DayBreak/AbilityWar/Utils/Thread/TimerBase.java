@@ -58,6 +58,7 @@ abstract public class TimerBase {
 	private int MaxCount;
 	private int Count;
 	private int Period = 20;
+	private boolean ForcedStopNotice = false;
 
 	abstract protected void onStart();
 
@@ -90,7 +91,7 @@ abstract public class TimerBase {
 			Unregister(this);
 			Count = MaxCount;
 			this.Task = -1;
-			if(!Silent) {
+			if(!Silent || ForcedStopNotice) {
 				onEnd();
 			}
 		}
@@ -113,6 +114,15 @@ abstract public class TimerBase {
 		return this;
 	}
 	
+	protected boolean isForcedStopNotice() {
+		return ForcedStopNotice;
+	}
+
+	public TimerBase setForcedStopNotice(boolean forcedStopNotice) {
+		ForcedStopNotice = forcedStopNotice;
+		return this;
+	}
+
 	/**
 	 * 일반 타이머
 	 */

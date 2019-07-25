@@ -11,16 +11,17 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "좀비", Rank = Rank.C)
+@AbilityManifest(Name = "좀비", Rank = Rank.B, Species = Species.OTHERS)
 public class Zombie extends AbilityBase {
 
 	public Zombie(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f받는 데미지가 50% 감소합니다. 지능이 떨어져서"),
-				ChatColor.translateAlternateColorCodes('&', "&f가끔 에임이 튑니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f받는 데미지가 50% 감소합니다. 근육 경련으로 인해"),
+				ChatColor.translateAlternateColorCodes('&', "&f에임이 종종 튑니다."));
 	}
 
 	TimerBase Aim = new TimerBase() {

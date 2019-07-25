@@ -10,15 +10,16 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "검은 양초", Rank = Rank.B)
+@AbilityManifest(Name = "검은 양초", Rank = Rank.A, Species = Species.OTHERS)
 public class BlackCandle extends AbilityBase {
 
-	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 10,
+	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 35,
 			"# 데미지를 받았을 시 체력을 회복할 확률") {
 		
 		@Override

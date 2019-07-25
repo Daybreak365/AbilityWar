@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 
+import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.List.Ares;
 import DayBreak.AbilityWar.Ability.List.Assassin;
 import DayBreak.AbilityWar.Ability.List.Berserker;
@@ -34,11 +36,14 @@ import DayBreak.AbilityWar.Ability.List.Hermit;
 import DayBreak.AbilityWar.Ability.List.HigherBeing;
 import DayBreak.AbilityWar.Ability.List.Imprison;
 import DayBreak.AbilityWar.Ability.List.Ira;
+import DayBreak.AbilityWar.Ability.List.JellyFish;
+import DayBreak.AbilityWar.Ability.List.Khazhad;
 import DayBreak.AbilityWar.Ability.List.Muse;
 import DayBreak.AbilityWar.Ability.List.Nex;
 import DayBreak.AbilityWar.Ability.List.OnlyOddNumber;
 import DayBreak.AbilityWar.Ability.List.Pumpkin;
 import DayBreak.AbilityWar.Ability.List.ShowmanShip;
+import DayBreak.AbilityWar.Ability.List.Sniper;
 import DayBreak.AbilityWar.Ability.List.SuperNova;
 import DayBreak.AbilityWar.Ability.List.Terrorist;
 import DayBreak.AbilityWar.Ability.List.TheEmperor;
@@ -120,6 +125,7 @@ public class AbilityList {
 	 * 플러그인 기본 능력 등록
 	 */
 	static {
+		//초창기 능력자
 		registerAbility(Assassin.class);
 		registerAbility(Feather.class);
 		registerAbility(Demigod.class);
@@ -165,6 +171,11 @@ public class AbilityList {
 		registerAbility(ExpertOfFall.class);
 		registerAbility(Curse.class);
 		registerAbility(TimeRewind.class);
+		
+		//2019 여름 업데이트
+		registerAbility(Khazhad.class);
+		registerAbility(Sniper.class);
+		registerAbility(JellyFish.class);
 	}
 	
 	/**
@@ -201,6 +212,38 @@ public class AbilityList {
 		}
 		
 		return null;
+	}
+
+	public static List<String> getAbilityNames(Rank r) {
+		List<String> list = new ArrayList<String>();
+		
+		for(String name : AbilityList.nameValues()) {
+			Class<? extends AbilityBase> clazz = AbilityList.getByString(name);
+			AbilityManifest manifest = clazz.getAnnotation(AbilityManifest.class);
+			if(manifest != null) {
+				if(manifest.Rank().equals(r)) {
+					list.add(name);
+				}
+			}
+		}
+		
+		return list;
+	}
+
+	public static List<String> getAbilityNames(Species s) {
+		List<String> list = new ArrayList<String>();
+		
+		for(String name : AbilityList.nameValues()) {
+			Class<? extends AbilityBase> clazz = AbilityList.getByString(name);
+			AbilityManifest manifest = clazz.getAnnotation(AbilityManifest.class);
+			if(manifest != null) {
+				if(manifest.Species().equals(s)) {
+					list.add(name);
+				}
+			}
+		}
+		
+		return list;
 	}
 	
 }

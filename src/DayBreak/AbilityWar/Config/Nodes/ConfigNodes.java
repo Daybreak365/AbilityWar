@@ -58,6 +58,12 @@ public enum ConfigNodes {
 			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
 	AbilityChangeGame_Period("체인지능력전쟁.주기", 20,
 			"# 능력 변경 주기 (단위: 초)"),
+	AbilityChangeGame_Life("체인지능력전쟁.생명", 3,
+			"# 죽었을 때 다시 태어날 수 있는 횟수"),
+	AbilityChangeGame_Eliminate("체인지능력전쟁.탈락", true,
+			"# 생명이 다했을 경우 탈락 여부",
+			"# 탈락한 유저는 게임이 끝날 때까지 서버에 접속할 수 없습니다.",
+			"# 관리자 권한을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
 	GameMode("게임모드", DefaultGame.class.getName(),
 			"# 게임 모드 클래스");
 	

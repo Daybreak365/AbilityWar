@@ -46,14 +46,14 @@ public class AddonLoader {
 		
 		return desc;
 	}
-	
+
 	/**
 	 * 애드온 폴더에 있는 모든 애드온을 불러옵니다.
 	 */
 	public static void loadAddons() {
 		for(File file : FileManager.getFolder("Addon").listFiles()) {
 			try {
-				Addons.add(loadAddon(file));
+				Addons.add(load(file));
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				Messager.sendDebugMessage(file.getName() + " 파일이 올바른 애드온이 아닙니다.");
 			} catch (IOException e) {
@@ -62,6 +62,22 @@ public class AddonLoader {
 				e.printStackTrace();
 				Messager.sendDebugMessage(file.getName() + " 애드온을 불러오는 도중 예상치 못한 오류가 발생하였습니다.");
 			}
+		}
+	}
+
+	/**
+	 * 애드온 폴더에 있는 모든 애드온을 불러옵니다.
+	 */
+	public static void loadAddon(File file) {
+		try {
+			Addons.add(load(file));
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			Messager.sendDebugMessage(file.getName() + " 파일이 올바른 애드온이 아닙니다.");
+		} catch (IOException e) {
+			Messager.sendDebugMessage(file.getName() + " 파일을 불러올 수 없습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			Messager.sendDebugMessage(file.getName() + " 애드온을 불러오는 도중 예상치 못한 오류가 발생하였습니다.");
 		}
 	}
 	
@@ -91,45 +107,58 @@ public class AddonLoader {
 	 * @return				불러온 애드온
 	 * @throws Exception	애드온을 불러오는 도중 오류가 발생하였을 경우
 	 */
-	private static Addon loadAddon(File file) throws Exception {
+	private static Addon load(File file) throws Exception {
 		JarFile jar = new JarFile(file);
 		URL[] url = { file.toURI().toURL() };
 		URLClassLoader loader = new URLClassLoader(url, AbilityWar.class.getClassLoader());
 		
 		DescriptionFile description = new DescriptionFile(jar);
-		Class<?> mainClass = loader.loadClass(description.getMain());
-		
-		if(mainClass.getSuperclass() != null && mainClass.getSuperclass().equals(Addon.class)) {
-			Addon addon = (Addon) mainClass.newInstance();
-			//Initialize
-			Field descriptionField = mainClass.getSuperclass().getDeclaredField("description");
-			descriptionField.setAccessible(true);
-			descriptionField.set(addon, description);
-			descriptionField.setAccessible(false);
+		if(!nameExists(description.getName())) {
+			Class<?> mainClass = loader.loadClass(description.getMain());
+			
+			if(mainClass.getSuperclass() != null && mainClass.getSuperclass().equals(Addon.class)) {
+				Addon addon = (Addon) mainClass.newInstance();
+				//Initialize
+				Field descriptionField = mainClass.getSuperclass().getDeclaredField("description");
+				descriptionField.setAccessible(true);
+				descriptionField.set(addon, description);
+				descriptionField.setAccessible(false);
 
-			Field classLoaderField = mainClass.getSuperclass().getDeclaredField("classLoader");
-			classLoaderField.setAccessible(true);
-			classLoaderField.set(addon, loader);
-			classLoaderField.setAccessible(false);
-			//Initialize
-			
-			Enumeration<JarEntry> entries = jar.entries();
-			
-			while(entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
-					String className = entry.getName().replaceAll("/", ".").replace(".class", "");
-					loader.loadClass(className);
+				Field classLoaderField = mainClass.getSuperclass().getDeclaredField("classLoader");
+				classLoaderField.setAccessible(true);
+				classLoaderField.set(addon, loader);
+				classLoaderField.setAccessible(false);
+				//Initialize
+				
+				Enumeration<JarEntry> entries = jar.entries();
+				
+				while(entries.hasMoreElements()) {
+					JarEntry entry = entries.nextElement();
+					if(!entry.isDirectory() && entry.getName().endsWith(".class")) {
+						String className = entry.getName().replaceAll("/", ".").replace(".class", "");
+						loader.loadClass(className);
+					}
 				}
+				loader.close();
+				
+				return addon;
+			} else {
+				loader.close();
+				
+				throw new InstantiationException();
 			}
-			loader.close();
-			
-			return addon;
 		} else {
 			loader.close();
-			
-			throw new InstantiationException();
+			throw new Exception(description.getName() + " 애드온은 중복되는 이름의 애드온이 있거나 이미 등록된 애드온입니다.");
 		}
+	}
+	
+	private static boolean nameExists(String name) {
+		for(Addon addon : getAddons()) {
+			if(addon.getDescription().getName().equalsIgnoreCase(name)) return true;
+		}
+		
+		return false;
 	}
 	
 	public static class DescriptionFile {

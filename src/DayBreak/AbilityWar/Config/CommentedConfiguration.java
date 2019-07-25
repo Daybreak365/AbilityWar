@@ -112,8 +112,10 @@ public class CommentedConfiguration extends YamlConfiguration {
 							// and subtract that many levels from the currentPath
 							int newDepth = whiteSpace / 2;
 							for (int i = 0; i < depth - newDepth; i++) {
-								currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")),
-										"");
+								int lastIndex = currentPath.lastIndexOf(".");
+								if(lastIndex > -1) {
+									currentPath = currentPath.replace(currentPath.substring(lastIndex), "");
+								}
 							}
 							// Grab the index of the final period
 							int lastIndex = currentPath.lastIndexOf(".");

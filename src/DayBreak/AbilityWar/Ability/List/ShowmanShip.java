@@ -7,12 +7,13 @@ import org.bukkit.event.Event;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "¼î¸Ç½±", Rank = Rank.A)
+@AbilityManifest(Name = "¼î¸Ç½±", Rank = Rank.A, Species = Species.HUMAN)
 public class ShowmanShip extends AbilityBase {
 
 	public ShowmanShip(Participant participant) {

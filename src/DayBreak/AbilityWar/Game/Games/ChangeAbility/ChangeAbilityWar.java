@@ -15,6 +15,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Ability.AbilityList;
@@ -35,8 +39,8 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
  * 체인지 능력 전쟁
  * @author DayBreak 새벽
  */
-@GameManifest(Name = "체인지 능력 전쟁 (Beta)", Description = { "§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§e● §f베타 버전이므로 불안정할 수 있습니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
-														"§a● §f일부 콘피그가 임의로 변경될 수 있습니다."})
+@GameManifest(Name = "체인지 능력 전쟁 (Beta)", Description = { "§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.", "§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.", "§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
+														"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f체인지 능력전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
 public class ChangeAbilityWar extends WinnableGame {
 	
 	public ChangeAbilityWar() {
@@ -44,9 +48,12 @@ public class ChangeAbilityWar extends WinnableGame {
 		registerEvent(EntityDamageEvent.class);
 	}
 	
-	private AbilityChanger changer = new AbilityChanger(this);
+	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+	private final Objective lifeObjective = scoreboard.registerNewObjective("생명", "dummy");
 	
-	private boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
+	private final AbilityChanger changer = new AbilityChanger(this);
+	
+	private final boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
 	
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 	
@@ -78,9 +85,9 @@ public class ChangeAbilityWar extends WinnableGame {
 		switch(Seconds) {
 			case 1:
 				broadcastPlayerList();
-				if(getParticipants().size() < 1) {
+				if(getParticipants().size() < 2) {
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&72명&8)"));
 				}
 				break;
 			case 5:
@@ -90,6 +97,7 @@ public class ChangeAbilityWar extends WinnableGame {
 				broadcastAbilityReady();
 				break;
 			case 13:
+				scoreboardSetup();
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f잠시 후 게임이 시작됩니다."));
 				break;
 			case 16:
@@ -118,12 +126,53 @@ public class ChangeAbilityWar extends WinnableGame {
 		}
 	}
 	
+	public void scoreboardSetup() {
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			p.setScoreboard(scoreboard);
+		}
+		lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c생명"));
+		final int maxLife = AbilityWarSettings.ChangeAbilityWar_getLife();
+		for(Participant p : getParticipants()) {
+			Score score = lifeObjective.getScore(p.getPlayer().getName());
+			score.setScore(maxLife);
+		}
+	}
+	
+	private final boolean Eliminate = AbilityWarSettings.ChangeAbilityWar_getEliminate();
+	
+	private final List<Participant> NoLife = new ArrayList<Participant>();
+	
 	@Override
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		Player Victim = e.getEntity();
-		
-		if(Victim.getKiller() != null) {
-			SoundLib.ITEM_SHIELD_BREAK.playSound(Victim.getKiller());
+		Participant VictimPart = getParticipant(Victim);
+		if(VictimPart != null) {
+			Score score = lifeObjective.getScore(Victim.getName());
+			if(score.isScoreSet()) {
+				if(score.getScore() >= 1) score.setScore(score.getScore() - 1);
+				if(score.getScore() <= 0) {
+					NoLife.add(VictimPart);
+					if(Eliminate) getDeathManager().Eliminate(Victim);
+
+					Participant hasLife = null;
+					int count = 0;
+					for(Participant p : getParticipants()) {
+						if(!NoLife.contains(p)) {
+							hasLife = p;
+							count++;
+						}
+					}
+					
+					if(count == 1 && hasLife != null) {
+						this.Victory(hasLife);
+					}
+				}
+			}
+			
+			if(Victim.getKiller() != null) {
+				SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(Victim.getKiller());
+			}
 		}
 	}
 	

@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -17,7 +18,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "±Í≈–", Rank = Rank.A)
+@AbilityManifest(Name = "±Í≈–", Rank = Rank.A, Species = Species.HUMAN)
 public class Feather extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80, 
@@ -30,7 +31,7 @@ public class Feather extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Feather.class, "Duration", 15, 
+	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Feather.class, "Duration", 10, 
 			"# ¡ˆº”Ω√∞£") {
 		
 		@Override
@@ -64,7 +65,7 @@ public class Feather extends AbilityBase {
 			getPlayer().setAllowFlight(false);
 		}
 		
-	};
+	}.setForcedStopNotice(true);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {

@@ -20,17 +20,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityList;
-import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
 import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
-import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * 능력 금지 GUI
@@ -113,7 +111,7 @@ public class BlackListGUI implements Listener {
 			Count++;
 		}
 		
-		Integer RankCount = 37;
+		Integer RankCount = 38;
 		Rank[] forEach = Rank.values();
 		ArrayUtils.reverse(forEach);
 		for(Rank r : forEach) {
@@ -134,15 +132,8 @@ public class BlackListGUI implements Listener {
 				case S:
 					RankItem = new ItemStack(Material.EMERALD_BLOCK);
 					break;
-				case GOD:
-					if(ServerVersion.getVersion() >= 8) {
-						RankItem = new ItemStack(Material.SEA_LANTERN);
-					} else {
-						RankItem = new ItemStack(Material.PACKED_ICE);
-					}
-					break;
 				default:
-					RankItem = new ItemStack(Material.BEACON);
+					RankItem = new ItemStack(Material.BARRIER);
 					break;
 			}
 			ItemMeta RankMeta = RankItem.getItemMeta();
@@ -229,36 +220,46 @@ public class BlackListGUI implements Listener {
 								}
 							}
 						}
+						
+						for(Species s : Species.values()) {
+							if(ItemName.equals(s.getName())) {
+								if(e.getClick().equals(ClickType.LEFT)) {
+									addBlacklistAll(s);
+									SoundLib.BLOCK_ANVIL_LAND.playSound(p);
+									openBlackListGUI(PlayerPage);
+								} else if(e.getClick().equals(ClickType.RIGHT)) {
+									removeBlacklistAll(s);
+									SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+									openBlackListGUI(PlayerPage);
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 	}
-	
-	private List<String> getAbilities(Rank r) {
-		List<String> list = new ArrayList<String>();
-		
-		for(String name : AbilityList.nameValues()) {
-			Class<? extends AbilityBase> clazz = AbilityList.getByString(name);
-			AbilityManifest manifest = clazz.getAnnotation(AbilityManifest.class);
-			if(manifest != null) {
-				if(manifest.Rank().equals(r)) {
-					list.add(name);
-				}
-			}
-		}
-		
-		return list;
-	}
-	
+
 	private void addBlacklistAll(Rank r) {
-		for(String name : getAbilities(r)) {
+		for(String name : AbilityList.getAbilityNames(r)) {
 			AbilityWarSettings.addBlackList(name);
 		}
 	}
-	
+
+	private void addBlacklistAll(Species s) {
+		for(String name : AbilityList.getAbilityNames(s)) {
+			AbilityWarSettings.addBlackList(name);
+		}
+	}
+
 	private void removeBlacklistAll(Rank r) {
-		for(String name : getAbilities(r)) {
+		for(String name : AbilityList.getAbilityNames(r)) {
+			AbilityWarSettings.removeBlackList(name);
+		}
+	}
+
+	private void removeBlacklistAll(Species s) {
+		for(String name : AbilityList.getAbilityNames(s)) {
 			AbilityWarSettings.removeBlackList(name);
 		}
 	}

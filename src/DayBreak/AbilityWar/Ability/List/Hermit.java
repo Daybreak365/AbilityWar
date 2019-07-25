@@ -9,13 +9,14 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
-@AbilityManifest(Name = "Çì¸£¹Ô", Rank = Rank.C)
+@AbilityManifest(Name = "Çì¸£¹Ô", Rank = Rank.D, Species = Species.HUMAN)
 public class Hermit extends AbilityBase {
 
 	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Hermit.class, "Distance", 15, 

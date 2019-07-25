@@ -12,8 +12,6 @@ import DayBreak.AbilityWar.Utils.Data.FileManager;
  */
 public class AbilitySettings {
 	
-	//TODO: 능력 세부 설정 편집기 만들기
-	
 	private static ArrayList<SettingObject<?>> Settings = new ArrayList<SettingObject<?>>();
 	
 	private static void registerSetting(SettingObject<?> object) {

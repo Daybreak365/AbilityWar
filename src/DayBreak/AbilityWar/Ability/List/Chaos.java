@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -18,7 +19,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "카오스", Rank = Rank.GOD)
+@AbilityManifest(Name = "카오스", Rank = Rank.S, Species = Species.GOD)
 public class Chaos extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
@@ -30,7 +31,7 @@ public class Chaos extends AbilityBase {
 		}
 		
 	};
-
+	
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Chaos.class, "Duration", 5,
 			"# 능력 지속 시간") {
 		

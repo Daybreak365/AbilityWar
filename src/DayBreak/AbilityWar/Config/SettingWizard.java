@@ -24,7 +24,6 @@ import DayBreak.AbilityWar.Utils.Data.FileManager;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
 import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
-import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * 콘피그 설정 마법사
@@ -171,12 +170,7 @@ public class SettingWizard implements Listener {
 				
 				GameGUI.setItem(i, Dur);
 			} else if(i.equals(22)) {
-				ItemStack Firewall;
-				if(ServerVersion.getVersion() >= 8) {
-					Firewall = new ItemStack(Material.BARRIER);
-				} else {
-					Firewall = new ItemStack(Material.BEDROCK);
-				}
+				ItemStack Firewall = new ItemStack(Material.BARRIER);
 				ItemMeta FirewallMeta = Firewall.getItemMeta();
 				FirewallMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b방화벽"));
 				FirewallMeta.setLore(Messager.getStringList(

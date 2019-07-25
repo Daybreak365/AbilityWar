@@ -24,6 +24,7 @@ import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 public abstract class FallBlock implements Listener {
 
 	private Object Data = null;
+	private Byte dat = null;
 	private Location location;
 	private World world;
 	private Vector vector = new Vector(0, 0, 0);
@@ -52,18 +53,31 @@ public abstract class FallBlock implements Listener {
 	 * @param location	생성할 위치
 	 * @param vector	생성할 때 적용할 벡터
 	 */
+	public FallBlock(Material Data, Location location, byte dat) {
+		this(Data, location);
+		this.dat = dat;
+	}
+
+	/**
+	 * Fallblock의 기본 생성자입니다.
+	 * @param Data		생성할 FallingBlock의 종류
+	 * @param location	생성할 위치
+	 * @param vector	생성할 때 적용할 벡터
+	 */
 	public FallBlock(Material Data, Location location, Vector vector) {
-		if(ServerVersion.getVersion() >= 13) {
-			try {
-				Method method = Material.class.getDeclaredMethod("createBlockData");
-				this.Data = method.invoke(Data);
-			} catch(Exception ex) {}
-		} else {
-			this.Data = new MaterialData(Data);
-		}
-		this.location = location;
-		this.world = location.getWorld();
+		this(Data, location);
 		this.vector = vector;
+	}
+
+	/**
+	 * Fallblock의 기본 생성자입니다.
+	 * @param Data		생성할 FallingBlock의 종류
+	 * @param location	생성할 위치
+	 * @param vector	생성할 때 적용할 벡터
+	 */
+	public FallBlock(Material Data, Location location, Vector vector, byte dat) {
+		this(Data, location, vector);
+		this.dat = dat;
 	}
 	
 	/**
@@ -81,9 +95,17 @@ public abstract class FallBlock implements Listener {
 				fb = (FallingBlock) spawnFallingBlock.invoke(world, location, blockDataClass.cast(Data));
 			} catch(Exception ex) {}
 		} else if(ServerVersion.getVersion() >= 11) {
-			fb = world.spawnFallingBlock(location, (MaterialData) Data);
+			if(dat != null) {
+				fb = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), dat);
+			} else {
+				fb = world.spawnFallingBlock(location, (MaterialData) Data);
+			}
 		} else {
-			fb = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), ((MaterialData) Data).getData());
+			if(dat != null) {
+				fb = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), dat);
+			} else {
+				fb = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), ((MaterialData) Data).getData());
+			}
 		}
 		
 		this.setBlock = setBlock;

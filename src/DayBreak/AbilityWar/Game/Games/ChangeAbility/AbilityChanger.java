@@ -87,7 +87,7 @@ public class AbilityChanger {
 					SoundLib.PIANO.playInstrument(p, Note.natural(1, Tone.A));
 				}
 			}
-		}.setPeriod(2).StartTimer();;
+		}.setPeriod(2).StartTimer();
 		
 		new TimerBase(11) {
 			
@@ -95,7 +95,10 @@ public class AbilityChanger {
 			protected void onStart() {}
 			
 			@Override
-			protected void onEnd() {}
+			protected void onEnd() {
+				TitlePacket packet = new TitlePacket("", "", 0, 1, 0);
+				packet.Send(p);
+			}
 			
 			@Override
 			protected void TimerProcess(Integer Seconds) {
@@ -114,7 +117,10 @@ public class AbilityChanger {
 				TitlePacket packet = new TitlePacket(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
 				packet.Send(p);
 			}
-		}.setPeriod(2).StartTimer();
+		}.setPeriod(3).StartTimer();
+		
+		Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
+		Messager.sendStringList(p, Messager.formatAbility(participant.getAbility()));
 	}
 	
 	/**
@@ -133,7 +139,6 @@ public class AbilityChanger {
 				abilities.remove(abilityClass);
 				
 				Notice(participant);
-				Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지! &e/aw check&f로 바뀐 능력을 확인 할 수 있습니다."));
 			} catch (Exception e) {
 				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
 				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));

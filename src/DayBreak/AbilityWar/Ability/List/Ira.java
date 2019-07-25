@@ -10,10 +10,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 
-@AbilityManifest(Name = "이라", Rank = Rank.S)
+@AbilityManifest(Name = "이라", Rank = Rank.S, Species = Species.HUMAN)
 public class Ira extends AbilityBase {
 
 	public static SettingObject<Integer> AttackConfig = new SettingObject<Integer>(Ira.class, "AttackTime", 4,
@@ -54,13 +55,13 @@ public class Ira extends AbilityBase {
 						if(Damager instanceof Projectile) {
 							if(((Projectile) Damager).getShooter() instanceof LivingEntity) {
 								LivingEntity entity = (LivingEntity) ((Projectile) Damager).getShooter();
-								getPlayer().getWorld().createExplosion(entity.getLocation(), 1, false);
+								getPlayer().getWorld().createExplosion(entity.getLocation(), 2, false);
 								if(entity.getVelocity().getY() > 0) {
 									entity.setVelocity(entity.getVelocity().setY(0));
 								}
 							}
 						} else {
-							getPlayer().getWorld().createExplosion(Damager.getLocation(), 1, false);
+							getPlayer().getWorld().createExplosion(Damager.getLocation(), 2, false);
 							if(Damager.getVelocity().getY() > 0) {
 								Damager.setVelocity(Damager.getVelocity().setY(0));
 							}

@@ -76,7 +76,7 @@ public class DefaultGame extends AbstractGame {
 				broadcastPlayerList();
 				if(getParticipants().size() < 1) {
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
 				}
 				break;
 			case 5:

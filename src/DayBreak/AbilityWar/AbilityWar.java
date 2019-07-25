@@ -34,19 +34,23 @@ public class AbilityWar extends JavaPlugin {
 	
 	private final AutoUpdate au = new AutoUpdate("DayBreak365", "AbilityWar", this, Branch.Master);
 
+	public AutoUpdate getAutoUpdate() {
+		return au;
+	}
+	
 	@Override
 	public void onEnable() {
 		AbilityWar.Plugin = this;
 		
 		ServerVersion.VersionCompat(this);
+
+		au.Check();
 		
-		if(au.Check()) {
-			Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
-			
-			Load();
-			
-			Messager.sendMessage("플러그인이 활성화되었습니다.");
-		}
+		Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
+		
+		Load();
+		
+		Messager.sendMessage("플러그인이 활성화되었습니다.");
 	}
 	
 	private void Load() {
@@ -83,5 +87,5 @@ public class AbilityWar extends JavaPlugin {
 		
 		Messager.sendMessage("플러그인이 비활성화되었습니다.");
 	}
-	
+
 }

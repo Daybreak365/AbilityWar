@@ -8,12 +8,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "상위존재", Rank = Rank.B)
+@AbilityManifest(Name = "상위존재", Rank = Rank.B, Species = Species.OTHERS)
 public class HigherBeing extends AbilityBase {
 
 	public static SettingObject<Double> DamageConfig = new SettingObject<Double>(HigherBeing.class, "DamageMultiple", 2.0,

@@ -8,12 +8,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "황제", Rank = Rank.A)
+@AbilityManifest(Name = "황제", Rank = Rank.A, Species = Species.HUMAN)
 public class TheEmperor extends AbilityBase {
 
 	public static SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>(TheEmperor.class, "DamageDecrease", 20, 
@@ -30,7 +31,7 @@ public class TheEmperor extends AbilityBase {
 	public TheEmperor(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f느리고 품위있게 걸어가며 공격 피해가 일정량 감소합니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 이하일 때 공격 피해를 받지 않습니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 반 이하일 때 공격 피해를 받지 않습니다."));
 	}
 	
 	TimerBase Passive = new TimerBase() {

@@ -16,6 +16,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -25,7 +26,7 @@ import DayBreak.AbilityWar.Utils.Data.AdvancedArray;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "矫埃 开青", Rank = Rank.S)
+@AbilityManifest(Name = "矫埃 开青", Rank = Rank.S, Species = Species.HUMAN)
 public class TimeRewind extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100, 
@@ -98,7 +99,7 @@ public class TimeRewind extends AbilityBase {
 	
 	AdvancedArray<PlayerData> array = new AdvancedArray<>(PlayerData.class, Time * 20);
 	
-	DurationTimer Skill = new DurationTimer(this, Time * 20, Cool) {
+	DurationTimer Skill = new DurationTimer(this, Time * 10, Cool) {
 		
 		List<PlayerData> list;
 		
@@ -110,7 +111,7 @@ public class TimeRewind extends AbilityBase {
 		
 		@Override
 		public void DurationProcess(Integer Seconds) {
-			PlayerData data = list.get((Time * 20) - Seconds);
+			PlayerData data = list.get((Time * 10 - Seconds));
 			if(data != null && data.getHealth() > 0) {
 				getPlayer().teleport(data.getLocation());
 				getPlayer().setHealth(data.getHealth());
@@ -140,7 +141,7 @@ public class TimeRewind extends AbilityBase {
 		@Override
 		public void onEnd() {}
 		
-	}.setPeriod(1);
+	}.setPeriod(2);
 	
 	@Override
 	public void onRestrictClear() {

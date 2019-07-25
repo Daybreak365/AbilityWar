@@ -8,13 +8,14 @@ import org.bukkit.event.Event;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "심안", Rank = Rank.D)
+@AbilityManifest(Name = "심안", Rank = Rank.C, Species = Species.HUMAN)
 public class DarkVision extends AbilityBase {
 	
 	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
@@ -30,7 +31,7 @@ public class DarkVision extends AbilityBase {
 	public DarkVision(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f앞이 보이지 않는 대신, 플레이어의 " + DistanceConfig.getValue() + "칸 안에 있는 플레이어들은"),
-				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다. 또한, 빠르게 달리고 높게 점프할 수 있습니다."));
 	}
 
 	TimerBase Dark = new TimerBase() {
@@ -42,6 +43,7 @@ public class DarkVision extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			EffectLib.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
 			EffectLib.SPEED.addPotionEffect(getPlayer(), 40, 5, true);
+			EffectLib.JUMP.addPotionEffect(getPlayer(), 40, 1, true);
 		}
 		
 		@Override

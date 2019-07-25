@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate.UpdateObject;
 
 /**
@@ -130,7 +131,7 @@ public class Messager {
 	 * 제목을 구성합니다.
 	 */
 	public static String formatTitle(String title) {
-		String Base = "___________________________________________________________________";
+		String Base = "_________________________________________________________";
 		int Pivot = Base.length() / 2;
 		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + "&e" + title + "&6" + " ]&m&l");
 		String Return = ChatColor.translateAlternateColorCodes('&', "&6&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r&6");
@@ -142,7 +143,7 @@ public class Messager {
 	 * 짧은 제목을 구성합니다.
 	 */
 	public static String formatShortTitle(String title) {
-		String Base = "_____________________________________";
+		String Base = "________________________________";
 		int Pivot = Base.length() / 2;
 		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + "&e" + title + "&6" + " ]&m&l");
 		String Return = ChatColor.translateAlternateColorCodes('&', "&6&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r&6");
@@ -154,7 +155,7 @@ public class Messager {
 	 * 제목을 구성합니다.
 	 */
 	public static String formatTitle(ChatColor First, ChatColor Second, String title) {
-		String Base = "___________________________________________________________________";
+		String Base = "_________________________________________________________";
 		int Pivot = Base.length() / 2;
 		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + Second + title + First + " ]&m&l");
 		String Return = ChatColor.translateAlternateColorCodes('&', First + "&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r" + First);
@@ -166,7 +167,7 @@ public class Messager {
 	 * 짧은 제목을 구성합니다.
 	 */
 	public static String formatShortTitle(ChatColor First, ChatColor Second, String title) {
-		String Base = "_____________________________________";
+		String Base = "________________________________";
 		int Pivot = Base.length() / 2;
 		String Center = ChatColor.translateAlternateColorCodes('&', "[ " + Second + title + First + " ]&m&l");
 		String Return = ChatColor.translateAlternateColorCodes('&', First + "&m&l" + Base.substring(0, Math.max(0, (Pivot - Center.length() / 2))) + "&r" + First);
@@ -186,7 +187,22 @@ public class Messager {
 		for(String s : update.getPatchNote()) {
 			UpdateInfo.add(s);
 		}
-		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&2---------------------------------------------------------------"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&2-----------------------------------------------------"));
+		
+		return UpdateInfo;
+	}
+
+	/**
+	 * 업데이트 공지를 구성합니다.
+	 * @throws IOException 
+	 */
+	public static ArrayList<String> formatUpdateNotice(UpdateObject update) throws IOException {
+		ArrayList<String> UpdateInfo = new ArrayList<String>();
+		UpdateInfo.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "업데이트"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&f적용 가능한 &3업데이트&f가 있습니다: &b" + update.getTag() + " &f업데이트 &f(&7v" + update.getVersion() + "&f) "
+				+ "(&7" + (update.getFileSize() / 1024) + "KB&f)"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3업데이트&f를 진행하려면 &e/aw update &f명령어를 사용하세요."));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3---------------------------------------------------------------"));
 		
 		return UpdateInfo;
 	}
@@ -200,10 +216,11 @@ public class Messager {
 		
 		String name = Ability.getName();
 		Rank rank = Ability.getRank();
+		Species species = Ability.getSpecies();
 		
 		if(name != null && rank != null) {
 			String Restricted = Ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]";
-			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + Restricted + " " + rank.getRankName()));
+			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + Restricted + " " + rank.getRankName() + " " + species.getName()));
 			
 			for(String s : Ability.getExplain()) {
 				AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&f" + s));
@@ -213,7 +230,7 @@ public class Messager {
 			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
 		}
 		
-		AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&a---------------------------------------"));
+		AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&a---------------------------------"));
 		
 		return AbilityInfo;
 	}

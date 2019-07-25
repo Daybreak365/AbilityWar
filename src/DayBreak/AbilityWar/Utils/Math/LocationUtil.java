@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
@@ -31,6 +32,11 @@ public class LocationUtil {
 		} else {
 			return false;
 		}
+	}
+	
+	public static Vector getRandomVector(int Max, int Y) {
+		Random r = new Random();
+		return new Vector(r.nextInt(Max), Y, r.nextInt(Max));
 	}
 	
 	/**

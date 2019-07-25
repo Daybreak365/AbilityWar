@@ -10,6 +10,7 @@ import org.bukkit.event.Event;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -19,7 +20,7 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "설인", Rank = Rank.S)
+@AbilityManifest(Name = "설인", Rank = Rank.S, Species = Species.HUMAN)
 public class Yeti extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
@@ -57,9 +58,10 @@ public class Yeti extends AbilityBase {
 		public void TimerProcess(Integer Seconds) {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
-			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK)) {
-				EffectLib.SPEED.addPotionEffect(getPlayer(), 5, 1, true);
-				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 0, true);
+			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
+				EffectLib.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
+				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
+				EffectLib.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
 			}
 		}
 
@@ -87,23 +89,20 @@ public class Yeti extends AbilityBase {
 			for (Location l : LocationUtil.getCircle(center, Count, Count * 20, true)) {
 				ParticleLib.SNOWBALL.spawnParticle(l, 1, 0, 0, 0);
 
-				l.subtract(0, 1, 0).getBlock().setType(Material.SNOW);
-
-				Block db = l.subtract(0, 1, 0).getBlock();
+				Block db = l.subtract(0, 2, 0).getBlock();
 
 				if (db.getType().equals(Material.WATER)) {
 					db.setType(Material.PACKED_ICE);
-				} else if(db.getType().equals(Material.LAVA)) {
-					db.setType(Material.OBSIDIAN);
 				}
+
+				l.add(0, 1, 0).getBlock().setType(Material.SNOW);
 			}
 
 			Count++;
 		}
 
 		@Override
-		public void onEnd() {
-		}
+		public void onEnd() {}
 
 	}.setPeriod(3);
 

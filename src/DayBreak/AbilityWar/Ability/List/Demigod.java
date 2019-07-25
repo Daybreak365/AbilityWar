@@ -11,11 +11,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 
-@AbilityManifest(Name = "µ¥¹Ì°«", Rank = Rank.GOD)
+@AbilityManifest(Name = "µ¥¹Ì°«", Rank = Rank.S, Species = Species.DEMIGOD)
 public class Demigod extends AbilityBase {
 	
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(Demigod.class, "Chance", 40,
@@ -55,7 +56,7 @@ public class Demigod extends AbilityBase {
 						if((r.nextInt(100) + 1) <= Chance) {
 							Integer Buff = r.nextInt(3);
 							if(Buff.equals(0)) {
-								EffectLib.ABSORPTION.addPotionEffect(p, 100, 0, true);
+								EffectLib.ABSORPTION.addPotionEffect(p, 100, 1, true);
 							} else if(Buff.equals(1)) {
 								EffectLib.REGENERATION.addPotionEffect(p, 100, 0, true);
 							} else if(Buff.equals(2)) {

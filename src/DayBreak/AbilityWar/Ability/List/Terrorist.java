@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -18,7 +19,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "테러리스트", Rank = Rank.A)
+@AbilityManifest(Name = "테러리스트", Rank = Rank.A, Species = Species.HUMAN)
 public class Terrorist extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
@@ -50,7 +51,7 @@ public class Terrorist extends AbilityBase {
 						}
 					}
 					
-					for(Location l : LocationUtil.getRandomLocations(getPlayer().getLocation(), 10, 10)) {
+					for(Location l : LocationUtil.getRandomLocations(getPlayer().getLocation(), 10, 15)) {
 						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 					}
 					

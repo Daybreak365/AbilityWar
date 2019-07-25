@@ -11,6 +11,7 @@ import org.bukkit.potion.PotionType;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -20,10 +21,10 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.PotionBuilder;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.PotionBuilder.PotionShape;
 
-@AbilityManifest(Name = "양조사", Rank = Rank.B)
+@AbilityManifest(Name = "양조사", Rank = Rank.B, Species = Species.HUMAN)
 public class Brewer extends AbilityBase {
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Brewer.class, "Cooldown", 45, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Brewer.class, "Cooldown", 7, 
 			"# 쿨타임") {
 		
 		@Override

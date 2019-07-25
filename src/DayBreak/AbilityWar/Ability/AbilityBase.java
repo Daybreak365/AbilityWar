@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Validate;
@@ -24,6 +25,7 @@ abstract public class AbilityBase {
 	private final String[] explain;
 	private final String name;
 	private final Rank rank;
+	private final Species species;
 	
 	private boolean Restricted = true;
 	
@@ -43,9 +45,11 @@ abstract public class AbilityBase {
 		if(manifest != null) {
 			this.name = manifest.Name();
 			this.rank = manifest.Rank();
+			this.species = manifest.Species();
 		} else {
 			this.name = null;
 			this.rank = null;
+			this.species = null;
 		}
 	}
 	
@@ -155,6 +159,14 @@ abstract public class AbilityBase {
 	 */
 	public Rank getRank() {
 		return rank;
+	}
+
+	/**
+	 * 능력의 종족을 반환합니다.
+	 * 능력 클래스에 AbilityManifest 어노테이션이 존재하지 않을 경우 null을 반환할 수 있습니다.
+	 */
+	public Species getSpecies() {
+		return species;
 	}
 
 	/**

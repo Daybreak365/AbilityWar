@@ -8,11 +8,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "홀수강박증", Rank = Rank.S)
+@AbilityManifest(Name = "홀수강박증", Rank = Rank.S, Species = Species.HUMAN)
 public class OnlyOddNumber extends AbilityBase {
 
 	public static SettingObject<Integer> PercentageConfig = new SettingObject<Integer>(OnlyOddNumber.class, "Percentage", 79, 

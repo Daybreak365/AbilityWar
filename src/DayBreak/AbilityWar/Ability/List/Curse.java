@@ -9,16 +9,17 @@ import org.bukkit.inventory.ItemStack;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.EnchantLib;
 
-@AbilityManifest(Name = "컬스", Rank = Rank.B)
+@AbilityManifest(Name = "컬스", Rank = Rank.B, Species = Species.HUMAN)
 public class Curse extends AbilityBase {
 
-	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 1,
+	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 3,
 			"# 능력 사용횟수") {
 		
 		@Override

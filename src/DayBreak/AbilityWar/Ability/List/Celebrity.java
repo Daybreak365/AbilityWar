@@ -9,16 +9,17 @@ import org.bukkit.util.Vector;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
-@AbilityManifest(Name = "유명 인사", Rank = Rank.D)
+@AbilityManifest(Name = "유명 인사", Rank = Rank.D, Species = Species.HUMAN)
 public class Celebrity extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 60,
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 25,
 			"# 쿨타임") {
 		
 		@Override
@@ -42,7 +43,7 @@ public class Celebrity extends AbilityBase {
 				if(!Cool.isCooldown()) {
 					
 					if(AbilityWarThread.isGameTaskRunning()) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f안녕하세요~ &e" + getPlayer().getName() + "&f이에요!"));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f안녕하세요, 여러분! 전 세계적으로 &c선풍적인 &f인기를 끌고있는 &e" + getPlayer().getName() + "&f입니다! (/'^O^)/'"));
 						for(Participant participant : AbilityWarThread.getGame().getParticipants()) {
 							Player p = participant.getPlayer();
 							if(!p.equals(getPlayer())) {

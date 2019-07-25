@@ -138,6 +138,14 @@ public class AbilityWarSettings {
 	public static int ChangeAbilityWar_getPeriod() {
 		return getInt(ConfigNodes.AbilityChangeGame_Period);
 	}
+
+	public static int ChangeAbilityWar_getLife() {
+		return getInt(ConfigNodes.AbilityChangeGame_Life);
+	}
+
+	public static boolean ChangeAbilityWar_getEliminate() {
+		return getBoolean(ConfigNodes.AbilityChangeGame_Eliminate);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static Class<? extends AbstractGame> getGameMode() {

@@ -20,8 +20,10 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
@@ -35,7 +37,8 @@ import org.json.simple.parser.JSONParser;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
+import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
+import DayBreak.AbilityWar.Utils.Thread.OverallTimer;
 
 /**
  * 깃헙 자동 업데이트
@@ -47,77 +50,98 @@ public class AutoUpdate {
 	private final String Repository;
 	private final Plugin Plugin;
 	private final Branch PluginBranch;
-	private final Branch ServerBranch;
 	
 	public AutoUpdate(String Author, String Repository, Plugin Plugin, Branch PluginBranch) {
 		this.Author = Author;
 		this.Repository = Repository;
 		this.Plugin = Plugin;
 		this.PluginBranch = PluginBranch;
-		this.ServerBranch = Branch.getBranch(ServerVersion.getVersion());
 	}
 
+	private UpdateObject queuedUpdate = null;
+	
 	/**
 	 * 업데이트 확인
 	 * @return 최신버전 여부 (업데이트를 확인할 수 없을 경우에도 True 반환)
 	 */
 	public final boolean Check() {
 		try {
-			if(ServerBranch != null) {
-				if(PluginBranch.equals(ServerBranch)) { //동일 버전일 경우
-					UpdateObject Update = getLatestUpdate(PluginBranch.getName());
-					if (!isPluginLatest(Update)) {
-						Messager.sendMessage(Messager.formatUpdate(Update));
-						
-						unload(Plugin);
-						
-						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
-						
-						Download(Update);
-						
-						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
-						load(Plugin);
-					} else {
-						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 최신 버전입니다."));
-						return true;
+			UpdateObject Update = getLatestUpdate(PluginBranch.getName());
+			if (!isPluginLatest(Update)) {
+				this.queuedUpdate = Update;
+				new OverallTimer() {
+					
+					@Override
+					protected void onStart() {}
+					
+					@Override
+					protected void onEnd() {}
+					
+					@Override
+					protected void TimerProcess(Integer Seconds) {
+						if(!AbilityWarThread.isGameTaskRunning()) {
+							try {
+								for(Player p : Bukkit.getOnlinePlayers()) {
+									if(p.isOp()) Messager.sendStringList(p, Messager.formatUpdateNotice(queuedUpdate));
+								}
+							} catch(Exception ex) {}
+						}
 					}
-				} else { //버전이 다를 경우
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인 버전과 서버 버전이 다릅니다. &b" + PluginBranch.getVersion() + " &7<=> &b" + ServerBranch.getVersion()));
-
-					UpdateObject Update = getLatestUpdate(ServerBranch.getName());
-
-					unload(Plugin);
-					
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인 호환 및 업데이트 작업을 시작합니다."));
-					
-					Download(Update);
-					
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f호환 및 업데이트 작업을 완료하였습니다."));
-					load(Plugin);
-				}
+				}.setPeriod(3600).StartTimer();
 			} else {
-				UpdateObject Update = getLatestUpdate(PluginBranch.getName());
-				if (!isPluginLatest(Update)) {
-					Messager.sendMessage(Messager.formatUpdate(Update));
-
-					unload(Plugin);
-					
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
-					
-					Download(Update);
-					
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
-					load(Plugin);
-				} else {
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 지원하지 않는 버전을 이용하고 있습니다."));
-					unload(Plugin);
-				}
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 최신 버전입니다."));
+				return true;
 			}
 		} catch (Exception ex) {
 			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인 최신 업데이트를 확인할 수 없습니다."));
 			return true;
 		}
 		
+		return false;
+	}
+
+	public final boolean Update() {
+		if(queuedUpdate != null) {
+			try {
+				Messager.sendMessage(Messager.formatUpdate(queuedUpdate));
+				
+				unload(Plugin);
+				
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
+				
+				Download(queuedUpdate);
+				
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
+				load(Plugin);
+			} catch(Exception ex) {
+				Messager.sendErrorMessage("업데이트 도중 오류가 발생하였습니다.");
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public final boolean Update(CommandSender sender) {
+		if(queuedUpdate != null) {
+			try {
+				Messager.sendMessage(Messager.formatUpdate(queuedUpdate));
+				
+				unload(Plugin);
+
+				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
+				
+				Download(queuedUpdate);
+
+				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
+				load(Plugin);
+			} catch(Exception ex) {
+				Messager.sendErrorMessage(sender, "업데이트 도중 오류가 발생하였습니다.");
+				Messager.sendErrorMessage("업데이트 도중 오류가 발생하였습니다.");
+			}
+			return true;
+		}
 		return false;
 	}
 	
@@ -227,28 +251,21 @@ public class AutoUpdate {
 	
 	public enum Branch {
 		
-		Master("master", "1.8 ~ 1.14");
+		Master("master");
 		
 		String Name;
-		String Version;
 		
-		private Branch(String Name, String Version) {
+		private Branch(String Name) {
 			this.Name = Name;
-			this.Version = Version;
 		}
 
 		public String getName() {
 			return Name;
 		}
 		
-		public String getVersion() {
-			return Version;
-		}
-		
 		public static Branch getBranch(Integer Version) {
 			switch(Version) {
-				case 8: case 9: case 10:
-				case 11: case 12: case 13:
+				case 12: case 13:
 				case 14: {
 					return Branch.Master;
 				}

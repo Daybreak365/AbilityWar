@@ -8,12 +8,13 @@ import org.bukkit.event.Event;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "빠른 회복", Rank = Rank.A)
+@AbilityManifest(Name = "빠른 회복", Rank = Rank.A, Species = Species.HUMAN)
 public class FastRegeneration extends AbilityBase {
 	
 	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>(FastRegeneration.class, "RegenSpeed", 20,

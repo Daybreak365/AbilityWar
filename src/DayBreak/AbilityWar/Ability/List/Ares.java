@@ -12,6 +12,7 @@ import org.bukkit.event.Event;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -21,10 +22,10 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "아레스", Rank = Rank.GOD)
+@AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase {
 	
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "Damage", 8, 
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 55, 
 			"# 스킬 데미지") {
 		
 		@Override
@@ -66,7 +67,7 @@ public class Ares extends AbilityBase {
 	DurationTimer Duration = new DurationTimer(this, 14, Cool) {
 		
 		private boolean DashIntoTheAir = DashConfig.getValue();
-		private int Damage = DamageConfig.getValue();
+		private int DamagePercent = DamageConfig.getValue();
 		private ArrayList<Damageable> Attacked;
 		
 		@Override
@@ -89,6 +90,7 @@ public class Ares extends AbilityBase {
 			}
 			
 			for(Damageable d : LocationUtil.getNearbyDamageableEntities(p, 4, 4)) {
+				double Damage = (d.getHealth() / 100) * DamagePercent;
 				if(!Attacked.contains(d)) {
 					d.damage(Damage, p);
 					Attacked.add(d);

@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -23,7 +24,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "力快胶", Rank = Rank.GOD)
+@AbilityManifest(Name = "力快胶", Rank = Rank.S, Species = Species.GOD)
 public class Zeus extends AbilityBase {
 	
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
@@ -128,7 +129,7 @@ public class Zeus extends AbilityBase {
 		} else if(event instanceof PlayerMoveEvent) {
 			PlayerMoveEvent e = (PlayerMoveEvent) event;
 			if(MoveRestrict.contains(e.getPlayer())) {
-				e.setTo(e.getFrom());
+				e.setCancelled(true);
 			}
 		}
 	}

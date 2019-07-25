@@ -10,10 +10,11 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "낙법의 달인", Rank = Rank.C)
+@AbilityManifest(Name = "낙법의 달인", Rank = Rank.C, Species = Species.HUMAN)
 public class ExpertOfFall extends AbilityBase {
 
 	public ExpertOfFall(Participant participant) {

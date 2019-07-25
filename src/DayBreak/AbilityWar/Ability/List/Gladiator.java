@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -23,7 +24,7 @@ import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "글래디에이터", Rank = Rank.S)
+@AbilityManifest(Name = "글래디에이터", Rank = Rank.S, Species = Species.HUMAN)
 public class Gladiator extends AbilityBase {
 	
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
@@ -67,7 +68,7 @@ public class Gladiator extends AbilityBase {
 			Saves.clear();
 		}
 		
-	};
+	}.setForcedStopNotice(true);
 	
 	Player target = null;
 	

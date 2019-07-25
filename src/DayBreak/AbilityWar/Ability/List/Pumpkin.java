@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
+import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -28,7 +29,7 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-@AbilityManifest(Name = "호박", Rank = Rank.C)
+@AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.HUMAN)
 public class Pumpkin extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80, 
@@ -145,7 +146,7 @@ public class Pumpkin extends AbilityBase {
 			return Pumpkin;
 		}
 		
-	};
+	}.setForcedStopNotice(true);
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
