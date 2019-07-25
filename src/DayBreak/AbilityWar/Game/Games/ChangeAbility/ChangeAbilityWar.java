@@ -224,10 +224,10 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	public void GameStart() {
 		Messager.broadcastStringList(Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-				ChatColor.translateAlternateColorCodes('&', "&f                              &5&l체인지! &d&l능력 &f&l전쟁             "),
-				ChatColor.translateAlternateColorCodes('&', "&f                                  게임 시작                             "),
-				ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
+				ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
+				ChatColor.translateAlternateColorCodes('&', "&f                &5&l체인지! &d&l능력 &f&l전쟁"),
+				ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
+				ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
 		SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
 		
 		this.GiveDefaultKit();

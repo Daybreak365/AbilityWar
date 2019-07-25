@@ -228,11 +228,11 @@ public class SummerVacation extends WinnableGame {
 	
 	public void GameStart() {
 		Messager.broadcastStringList(Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-				ChatColor.translateAlternateColorCodes('&', "&f                          &eSummer Vacation &f- &c여름 휴가         "),
-				ChatColor.translateAlternateColorCodes('&', "&f                                  게임 시작                             "),
-				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
-		SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
+				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
+				ChatColor.translateAlternateColorCodes('&', "&f           &eSummer Vacation &f- &c여름 휴가 "),
+				ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
+				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
+		SoundLib.ENTITY_PLAYER_SPLASH.broadcastSound();
 		
 		this.GiveDefaultKit();
 		
