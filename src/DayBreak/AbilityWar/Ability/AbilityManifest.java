@@ -22,7 +22,11 @@ public @interface AbilityManifest {
 	public Rank Rank();
 
 	public enum Rank {
-		
+
+		/**
+		 * SPECIAL 등급
+		 */
+		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&cSPECIAL 등급")),
 		/**
 		 * S 등급
 		 */
@@ -59,7 +63,8 @@ public @interface AbilityManifest {
 	public Species Species();
 	
 	public enum Species {
-		
+
+		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&e특별 능력")),
 		HUMAN(ChatColor.translateAlternateColorCodes('&', "&f인간")),
 		GOD(ChatColor.translateAlternateColorCodes('&', "&c신")),
 		DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7데미&c갓")),

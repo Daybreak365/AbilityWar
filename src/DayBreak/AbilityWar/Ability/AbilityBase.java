@@ -90,8 +90,6 @@ abstract public class AbilityBase {
 	 */
 	public void Remove() {
 		this.StopAllTimers();
-		
-		this.participant = null;
 	}
 
 	private void StopAllTimers() {

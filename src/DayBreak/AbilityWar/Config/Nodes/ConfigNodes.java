@@ -64,6 +64,8 @@ public enum ConfigNodes {
 			"# 생명이 다했을 경우 탈락 여부",
 			"# 탈락한 유저는 게임이 끝날 때까지 서버에 접속할 수 없습니다.",
 			"# 관리자 권한을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
+	SummerVacation_Kill("신나는여름휴가.킬횟수", 10,
+			"# 우승하기 위해 필요한 킬 횟수"),
 	GameMode("게임모드", DefaultGame.class.getName(),
 			"# 게임 모드 클래스");
 	

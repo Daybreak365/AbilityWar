@@ -73,7 +73,7 @@ public class Khazhad extends AbilityBase {
 					};
 					
 					FallingBlock block = fall.Spawn(false);
-					if(ServerVersion.getVersion() >= 9) block.setGlowing(true);
+					block.setGlowing(true);
 					
 					LeftCool.StartTimer();
 					return true;

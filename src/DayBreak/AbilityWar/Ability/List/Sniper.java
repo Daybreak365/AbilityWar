@@ -20,7 +20,6 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
-import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 @AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
@@ -54,11 +53,11 @@ public class Sniper extends AbilityBase {
 		protected void TimerProcess(Integer Seconds) {
 			if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BOW)
 			|| getPlayer().getInventory().getItemInOffHand().getType().equals(Material.BOW)) {
-				EffectLib.SLOW.addPotionEffect(getPlayer(), 7, 8, true);
-				EffectLib.JUMP.addPotionEffect(getPlayer(), 7, 200, true);
+				EffectLib.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
+				EffectLib.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
 			}
 		}
-	}.setPeriod(5);
+	}.setPeriod(3);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -79,14 +78,14 @@ public class Sniper extends AbilityBase {
 						@Override
 						protected void onStart() {
 							a.setVelocity(a.getVelocity().multiply(1.5));
-							if(ServerVersion.getVersion() >= 9) a.setGlowing(true);
+							a.setGlowing(true);
 							a.setGravity(false);
 							arrows.add(a);
 						}
 						
 						@Override
 						protected void onEnd() {
-							if(ServerVersion.getVersion() >= 9) a.setGlowing(false);
+							a.setGlowing(false);
 							a.setGravity(true);
 							arrows.remove(a);
 						}

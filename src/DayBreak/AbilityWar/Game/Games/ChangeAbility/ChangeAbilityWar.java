@@ -14,6 +14,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -46,6 +47,8 @@ public class ChangeAbilityWar extends WinnableGame {
 	public ChangeAbilityWar() {
 		setRestricted(Invincible);
 		registerEvent(EntityDamageEvent.class);
+		registerEvent(PlayerJoinEvent.class);
+		this.maxLife = AbilityWarSettings.ChangeAbilityWar_getLife();
 	}
 	
 	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
@@ -98,7 +101,8 @@ public class ChangeAbilityWar extends WinnableGame {
 				break;
 			case 13:
 				scoreboardSetup();
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f잠시 후 게임이 시작됩니다."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7스코어보드 &f설정중..."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&d잠시 후 &f게임이 시작됩니다."));
 				break;
 			case 16:
 				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &55&f초 후에 시작됩니다."));
@@ -126,13 +130,14 @@ public class ChangeAbilityWar extends WinnableGame {
 		}
 	}
 	
-	public void scoreboardSetup() {
+	final int maxLife;
+	
+	private void scoreboardSetup() {
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			p.setScoreboard(scoreboard);
 		}
 		lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c생명"));
-		final int maxLife = AbilityWarSettings.ChangeAbilityWar_getLife();
 		for(Participant p : getParticipants()) {
 			Score score = lifeObjective.getScore(p.getPlayer().getName());
 			score.setScore(maxLife);
@@ -348,11 +353,16 @@ public class ChangeAbilityWar extends WinnableGame {
 					e.setCancelled(true);
 				}
 			}
+		} else if(event instanceof PlayerJoinEvent) {
+			PlayerJoinEvent e = (PlayerJoinEvent) event;
+			Player p = e.getPlayer();
+			p.setScoreboard(scoreboard);
 		}
 	}
 
 	@Override
 	protected void onEnd() {
+		lifeObjective.unregister();
 		HandlerList.unregisterAll(infiniteDurability);
 	}
 

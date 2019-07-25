@@ -146,6 +146,10 @@ public class AbilityWarSettings {
 	public static boolean ChangeAbilityWar_getEliminate() {
 		return getBoolean(ConfigNodes.AbilityChangeGame_Eliminate);
 	}
+
+	public static int SummerVacation_getKill() {
+		return getInt(ConfigNodes.SummerVacation_Kill);
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static Class<? extends AbstractGame> getGameMode() {

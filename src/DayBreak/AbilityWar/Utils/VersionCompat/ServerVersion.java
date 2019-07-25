@@ -76,7 +76,7 @@ public class ServerVersion {
 	 * 버전 호환 작업
 	 */
 	public static void VersionCompat(Plugin plugin) {
-		if(getVersion() >= 8) {
+		if(getVersion() >= 12) {
 			if(getVersion() >= 13) {
 				setAPIVersion(plugin, "1.13");
 			}

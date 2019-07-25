@@ -34,7 +34,7 @@ public class Terrorist extends AbilityBase {
 	
 	public Terrorist(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신의 주위에 TNT 10개를 떨어뜨립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신의 주위에 TNT 15개를 떨어뜨립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f폭발 데미지를 입지 않습니다."));
 	}
 
@@ -45,15 +45,15 @@ public class Terrorist extends AbilityBase {
 		if(mt.equals(MaterialType.Iron_Ingot)) {
 			if(ct.equals(ClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
+					Location center = getPlayer().getLocation();
 					for(int i = 0; i < 10; i++) {
-						for(Location l : LocationUtil.getCircle(getPlayer().getLocation(), i, 20, true)) {
+						for(Location l : LocationUtil.getCircle(center, i, 20, true)) {
 							ParticleLib.LAVA.spawnParticle(l, 1, 0, 0, 0);
 						}
 					}
 					
-					for(Location l : LocationUtil.getRandomLocations(getPlayer().getLocation(), 10, 15)) {
-						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
-					}
+					for(Location l : LocationUtil.getRandomLocations(center, 9, 10)) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
+					for(Location l : LocationUtil.getCircle(center, 10, 15, true)) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 					
 					Cool.StartTimer();
 					

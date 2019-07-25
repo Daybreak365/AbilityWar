@@ -16,7 +16,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.EnchantLib;
 
-@AbilityManifest(Name = "컬스", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "컬스", Rank = Rank.C, Species = Species.HUMAN)
 public class Curse extends AbilityBase {
 
 	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 3,

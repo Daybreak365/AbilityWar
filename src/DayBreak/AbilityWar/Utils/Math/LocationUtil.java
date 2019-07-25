@@ -136,7 +136,7 @@ public class LocationUtil {
 			double Angle = r.nextDouble() * 360;
 			double x = center.getX() + (r.nextDouble() * radius * Math.cos(Math.toRadians(Angle)));
 			double z = center.getZ() + (r.nextDouble() * radius * Math.sin(Math.toRadians(Angle)));
-			double y = center.getWorld().getHighestBlockYAt((int) x, (int) z) + 1;
+			double y = center.getWorld().getHighestBlockYAt((int) x, (int) z);
 
 			Location l = new Location(center.getWorld(), x, y, z);
 
