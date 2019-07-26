@@ -66,6 +66,8 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 
 	private final Invincibility invincibility = new Invincibility(this);
 	
+	private final WRECK wreck = new WRECK(this);
+	
 	@SuppressWarnings("unused")
 	private final Firewall fireWall = new Firewall(this);
 	
@@ -200,6 +202,10 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		return deathManager;
 	}
 	
+	public WRECK getWRECK() {
+		return wreck;
+	}
+	
 	public boolean isRestricted() {
 		return Restricted;
 	}
@@ -238,6 +244,14 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	protected void setGameStarted(boolean gameStarted) {
 		GameStarted = gameStarted;
+		if(gameStarted) onGameStart();
+	}
+	
+	/**
+	 * 게임 시작시 실행
+	 */
+	private void onGameStart() {
+		wreck.noticeIfEnabled();
 	}
 	
 	abstract protected void onEnd();

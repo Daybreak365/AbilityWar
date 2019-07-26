@@ -77,7 +77,7 @@ public class Sniper extends AbilityBase {
 						
 						@Override
 						protected void onStart() {
-							a.setVelocity(a.getVelocity().multiply(1.5));
+							a.setVelocity(a.getVelocity().multiply(2.5));
 							a.setGlowing(true);
 							a.setGravity(false);
 							arrows.add(a);

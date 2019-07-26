@@ -177,7 +177,7 @@ public class AbilityList {
 		registerAbility(Sniper.class);
 		registerAbility(JellyFish.class);
 	}
-	
+
 	/**
 	 * 등록된 능력들의 이름을 String List로 반환합니다.
 	 * AbilityManifest가 존재하지 않는 능력은 포함되지 않습니다.

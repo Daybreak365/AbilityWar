@@ -164,6 +164,10 @@ public class AbilityWarSettings {
 		return DefaultGame.class;
 	}
 
+	public static boolean getWRECKEnable() {
+		return getBoolean(ConfigNodes.Game_WRECK);
+	}
+	
 	/**
 	 * String Config
 	 */

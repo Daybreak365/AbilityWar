@@ -7,7 +7,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Data.FileManager;
 
 public enum ConfigNodes {
-	
+
 	Game_NoHunger("게임.배고픔", true,
 			"# 배고픔 무제한 활성화 여부"),
 	Game_StartLevel("게임.레벨", 180,
@@ -56,6 +56,15 @@ public enum ConfigNodes {
 			"# 파티클 활성화 여부"),
 	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
 			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
+	Game_WRECK("게임.WRECK", false,
+			"# true로 설정하면",
+			"# W onderful",
+			"# R ollicking",
+			"# E xciting",
+			"# C hizzy",
+			"# K icking",
+			"# 모드를 활성화합니다.",
+			"# 모든 능력의 쿨타임 90% 감소"),
 	AbilityChangeGame_Period("체인지능력전쟁.주기", 20,
 			"# 능력 변경 주기 (단위: 초)"),
 	AbilityChangeGame_Life("체인지능력전쟁.생명", 3,
