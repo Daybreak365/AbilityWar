@@ -3,7 +3,6 @@ package DayBreak.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -33,7 +32,7 @@ public class FastRegeneration extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다."));
 	}
 	
-	TimerBase Passive = new TimerBase() {
+	private TimerBase Passive = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -62,9 +61,6 @@ public class FastRegeneration extends AbilityBase {
 		return false;
 	}
 	
-	@Override
-	public void PassiveSkill(Event event) {}
-
 	@Override
 	public void onRestrictClear() {
 		Passive.StartTimer();

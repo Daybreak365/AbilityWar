@@ -8,7 +8,6 @@ import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -17,12 +16,13 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.Data.AdvancedArray;
+import DayBreak.AbilityWar.Utils.Data.PushingArray;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
@@ -54,9 +54,9 @@ public class TimeRewind extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 시간을 역행해 " + TimeConfig.getValue() + "초 전으로 돌아갑니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	Integer Time = TimeConfig.getValue();
+	private int Time = TimeConfig.getValue();
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -73,35 +73,34 @@ public class TimeRewind extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof PlayerDeathEvent) {
-			PlayerDeathEvent e = (PlayerDeathEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				array = new AdvancedArray<>(PlayerData.class, Time * 20);
-			}
-		} else if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer()) && Rewinding) {
-				e.setCancelled(true);
-			}
-			
-			if(e instanceof EntityDamageByEntityEvent) {
-				EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) e;
-				if(damageEvent.getDamager().equals(getPlayer()) && Rewinding) {
-					e.setCancelled(true);
-				}
-			}
+	@SubscribeEvent
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			array = new PushingArray<>(PlayerData.class, Time * 20);
 		}
 	}
 	
-	boolean Rewinding = false;
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer()) && Rewinding) {
+			e.setCancelled(true);
+		}
+	}
 	
-	AdvancedArray<PlayerData> array = new AdvancedArray<>(PlayerData.class, Time * 20);
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if(e.getDamager().equals(getPlayer()) && Rewinding) {
+			e.setCancelled(true);
+		}
+	}
 	
-	DurationTimer Skill = new DurationTimer(this, Time * 10, Cool) {
+	private boolean Rewinding = false;
+	
+	private PushingArray<PlayerData> array = new PushingArray<>(PlayerData.class, Time * 20);
+	
+	private DurationTimer Skill = new DurationTimer(this, Time * 10, Cool) {
 		
-		List<PlayerData> list;
+		private List<PlayerData> list;
 		
 		@Override
 		public void onDurationStart() {
@@ -128,7 +127,7 @@ public class TimeRewind extends AbilityBase {
 		
 	}.setPeriod(1);
 	
-	TimerBase Save = new TimerBase() {
+	private TimerBase Save = new TimerBase() {
 		
 		@Override
 		public void onStart() {}

@@ -1,31 +1,35 @@
 package DayBreak.AbilityWar.Ability;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
+import DayBreak.AbilityWar.Ability.AbilityFactory.AbilityRegisteration;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
-import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.Validate;
+import DayBreak.AbilityWar.Game.Manager.EventExecutor.Executor;
+import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
  * 능력의 기반이 되는 클래스입니다.
  */
-abstract public class AbilityBase {
+public abstract class AbilityBase implements Executor {
 	
-	private Participant participant;
+	private final Participant participant;
 	private final String[] explain;
-	private final String name;
-	private final Rank rank;
-	private final Species species;
+	private final AbilityManifest manifest;
+	private final AbilityRegisteration<?> registeration;
+	private final AbstractGame game;
 	
 	private boolean Restricted = true;
 	
@@ -39,17 +43,24 @@ abstract public class AbilityBase {
 	public AbilityBase(Participant participant, String... explain) {
 		this.participant = participant;
 		this.explain = explain;
-		
-		AbilityManifest manifest = this.getClass().getAnnotation(AbilityManifest.class);
-		
-		if(manifest != null) {
-			this.name = manifest.Name();
-			this.rank = manifest.Rank();
-			this.species = manifest.Species();
+
+		if(AbilityWarThread.isGameTaskRunning()) {
+			this.game = AbilityWarThread.getGame();
 		} else {
-			this.name = null;
-			this.rank = null;
-			this.species = null;
+			throw new NullPointerException("게임이 진행중일 때 AbilityBase 클래스가 객체화되어야 합니다.");
+		}
+		
+		if(AbilityFactory.isRegistered(this.getClass())) {
+			AbilityRegisteration<?> ar = AbilityFactory.getRegisteration(this.getClass());
+			this.registeration = ar;
+			this.manifest = ar.getManifest();
+			this.eventhandlers = ar.getEventhandlers();
+			
+			for(Class<? extends Event> eventClass : eventhandlers.keySet()) {
+				game.getPassiveManager().registerExecutor(eventClass, this);
+			}
+		} else {
+			throw new NullPointerException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
 	}
 	
@@ -60,15 +71,25 @@ abstract public class AbilityBase {
 	 * @param ct	클릭의 종류
 	 * @return		능력 발동 여부
 	 */
-	abstract public boolean ActiveSkill(MaterialType mt, ClickType ct);
+	public abstract boolean ActiveSkill(MaterialType mt, ClickType ct);
 	
-	/**
-	 * 패시브 스킬 발동을 위해 사용됩니다.
-	 * GameListener에서 호출합니다.
-	 * 패시브 이벤트는 GameListener.registerPassive(Class<? extends Event> clazz)로 등록할 수 있습니다.
-	 * @param event		패시브 이벤트
-	 */
-	abstract public void PassiveSkill(Event event);
+	private final Map<Class<? extends Event>, List<Method>> eventhandlers;
+	
+	@Override
+	public void execute(Event event) {
+		if(!Restricted) {
+			Class<? extends Event> eventClass = event.getClass();
+			if(eventhandlers.containsKey(eventClass)) {
+				for(Method m : eventhandlers.get(eventClass)) {
+					try {
+						m.invoke(this, event);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 	
 	/**
 	 * 타겟팅 스킬 발동을 위해 사용됩니다.
@@ -77,18 +98,19 @@ abstract public class AbilityBase {
 	 * @param entity	타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 들어올 수 있습니다.
 	 * 					null 체크가 필요합니다.
 	 */
-	abstract public void TargetSkill(MaterialType mt, Entity entity);
+	public abstract void TargetSkill(MaterialType mt, Entity entity);
 	
 	/**
 	 * 능력 제한이 해제될 경우 호출됩니다.
 	 */
-	abstract protected void onRestrictClear();
+	protected abstract void onRestrictClear();
 	
 	/**
 	 * 플레이어 능력 삭제시 사용됩니다.
 	 * 플레이어의 능력이 변경될 때 자동으로 호출됩니다.
 	 */
 	public void Remove() {
+		game.getPassiveManager().unregisterExecutor(this);
 		this.StopAllTimers();
 	}
 
@@ -99,27 +121,19 @@ abstract public class AbilityBase {
 	}
 	
 	/**
-	 * Reflection으로 능력에 사용되는 TimerBase 또는 TimerBase를 부모 클래스로 하는 모든 타이머를 반환합니다.
-	 * @return 능력에 사용되는 TimerBase 목록
+	 * 능력에 사용되는 모든 타이머를 반환합니다.
 	 */
 	private List<TimerBase> getTimers() {
-		ArrayList<TimerBase> Timers = new ArrayList<TimerBase>();
-		
-		for(Field field : this.getClass().getDeclaredFields()) {
+		List<TimerBase> timers = new ArrayList<>();
+		for(Field f : registeration.getTimers()) {
 			try {
-				field.setAccessible(true);
-				Class<?> type = field.getType();
-				Class<?> superClass = type.getSuperclass();
-				if(type.equals(TimerBase.class) ||(superClass != null && superClass.equals(TimerBase.class))) {
-					Timers.add((TimerBase) field.get(this));
-				}
-				field.setAccessible(false);
-			} catch (IllegalArgumentException | IllegalAccessException | NullPointerException exception) {
-				Messager.sendErrorMessage("Reflection Error");
-			}
+				f.setAccessible(true);
+				timers.add((TimerBase) f.get(this));
+				f.setAccessible(false);
+			} catch(Exception ex) {}
 		}
 		
-		return Timers;
+		return timers;
 	}
 	
 	/**
@@ -145,26 +159,30 @@ abstract public class AbilityBase {
 
 	/**
 	 * 능력의 이름을 반환합니다.
-	 * 능력 클래스에 AbilityManifest 어노테이션이 존재하지 않을 경우 null을 반환할 수 있습니다.
 	 */
 	public String getName() {
-		return name;
+		return manifest.Name();
 	}
 
 	/**
 	 * 능력의 등급을 반환합니다.
-	 * 능력 클래스에 AbilityManifest 어노테이션이 존재하지 않을 경우 null을 반환할 수 있습니다.
 	 */
 	public Rank getRank() {
-		return rank;
+		return manifest.Rank();
 	}
 
 	/**
 	 * 능력의 종족을 반환합니다.
-	 * 능력 클래스에 AbilityManifest 어노테이션이 존재하지 않을 경우 null을 반환할 수 있습니다.
 	 */
 	public Species getSpecies() {
-		return species;
+		return manifest.Species();
+	}
+
+	/**
+	 * 이 능력이 사용되는 게임을 반환합니다.
+	 */
+	protected AbstractGame getGame() {
+		return game;
 	}
 
 	/**
@@ -211,17 +229,6 @@ abstract public class AbilityBase {
 		}.StartTimer();
 	}
 	
-	/**
-	 * 능력을 소유하는 플레이어를 변경합니다.
-	 * @param player						능력을 소유할 플레이어
-	 * @throws IllegalArgumentException		플레이어가 null일 경우 발생
-	 */
-	public void updateParticipant(Participant participant) throws IllegalArgumentException {
-		Validate.NotNull(participant);
-		
-		this.participant = participant;
-	}
-	
 	public enum ClickType {
 		/**
 		 * 우클릭
@@ -255,5 +262,5 @@ abstract public class AbilityBase {
 		}
 		
 	}
-	
+
 }

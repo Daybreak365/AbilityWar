@@ -2,13 +2,13 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -45,11 +45,11 @@ public class Virtus extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 데미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	boolean Activated = false;
+	private boolean Activated = false;
 	
-	TimerBase Activate = new TimerBase(DurationConfig.getValue()) {
+	private TimerBase Activate = new TimerBase(DurationConfig.getValue()) {
 		
 		@Override
 		public void onStart() {
@@ -86,14 +86,11 @@ public class Virtus extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				if(Activated) {
-					e.setDamage(e.getDamage() / 4);
-				}
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(Activated) {
+				e.setDamage(e.getDamage() / 4);
 			}
 		}
 	}

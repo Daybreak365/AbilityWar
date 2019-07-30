@@ -10,6 +10,7 @@ import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
 import DayBreak.AbilityWar.Game.Games.ChangeAbility.ChangeAbilityWar;
 import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
 import DayBreak.AbilityWar.Game.Games.SquirtGunFight.SummerVacation;
+import DayBreak.AbilityWar.Game.Games.TeamGame.TeamFight;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
@@ -25,6 +26,7 @@ public class GameMode {
 		registerGameMode(DefaultGame.class);
 		registerGameMode(ChangeAbilityWar.class);
 		registerGameMode(SummerVacation.class);
+		registerGameMode(TeamFight.class);
 	}
 
 	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {

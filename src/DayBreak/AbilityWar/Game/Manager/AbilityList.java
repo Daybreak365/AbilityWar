@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Ability;
+package DayBreak.AbilityWar.Game.Manager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 
+import DayBreak.AbilityWar.Ability.AbilityBase;
+import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.List.Ares;
@@ -76,34 +78,32 @@ public class AbilityList {
 	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
 	 * @param Ability		능력 클래스
 	 */
-	public static void registerAbility(Class<? extends AbilityBase> Ability) {
-		if(!Abilities.contains(Ability)) {
-			AbilityManifest manifest = Ability.getAnnotation(AbilityManifest.class);
+	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
+		if(!Abilities.contains(abilityClass)) {
+			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
 			
 			if(manifest != null) {
 				if(!containsName(manifest.Name())) {
-					Abilities.add(Ability);
+					Abilities.add(abilityClass);
 					
 					try {
-						for(Field field : Ability.getFields()) {
+						for(Field field : abilityClass.getFields()) {
 							if(field.getType().equals(SettingObject.class) && Modifier.isStatic(field.getModifiers())) {
 								field.get(null);
 							}
 						}
-					} catch (IllegalAccessException | IllegalArgumentException e) {
-						Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
 					} catch (Exception ex) {
 						if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 							Messager.sendErrorMessage(ex.getMessage());
 						} else {
-							Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+							Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록중 오류가 발생하였습니다."));
 						}
 					}
 				} else {
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
 			} else {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Ability.getName() + " &f능력은 AbilityManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
 			}
 		}
 	}

@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -12,6 +11,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -38,7 +38,7 @@ public class Terrorist extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f폭발 데미지를 입지 않습니다."));
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -65,18 +65,15 @@ public class Terrorist extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-					e.setCancelled(true);
-				}
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+				e.setCancelled(true);
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

@@ -5,13 +5,13 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
@@ -24,7 +24,7 @@ public class Zombie extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f에임이 종종 튑니다."));
 	}
 
-	TimerBase Aim = new TimerBase() {
+	private TimerBase Aim = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -52,16 +52,13 @@ public class Zombie extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				e.setDamage(e.getDamage() / 2);
-			}
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			e.setDamage(e.getDamage() / 2);
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {
 		Aim.StartTimer();

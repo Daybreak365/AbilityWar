@@ -4,11 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import DayBreak.AbilityWar.Ability.AbilityList;
 import DayBreak.AbilityWar.Config.AbilitySettings;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Development.Addon.AddonLoader;
 import DayBreak.AbilityWar.Game.MainCommand;
+import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Game.Script.Script;
 import DayBreak.AbilityWar.Game.Script.Script.RequiredData;
 import DayBreak.AbilityWar.Game.Script.Types.ChangeAbilityScript;
@@ -18,6 +18,7 @@ import DayBreak.AbilityWar.Game.Script.Types.TeleportScript;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate;
 import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate.Branch;
+import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
@@ -81,6 +82,8 @@ public class AbilityWar extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		if(AbilityWarThread.isGameTaskRunning()) AbilityWarThread.StopGame();
+		
 		AbilityWarSettings.Refresh();
 		AbilitySettings.Refresh();
 		AddonLoader.onDisable();

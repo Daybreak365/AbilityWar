@@ -10,10 +10,10 @@ import org.bukkit.Note.Tone;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
-import DayBreak.AbilityWar.Ability.AbilityList;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;

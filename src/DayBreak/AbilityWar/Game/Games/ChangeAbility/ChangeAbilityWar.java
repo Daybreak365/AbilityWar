@@ -8,32 +8,26 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
 
 import DayBreak.AbilityWar.AbilityWar;
-import DayBreak.AbilityWar.Ability.AbilityList;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.GameCreditEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.WinnableGame;
+import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
 import DayBreak.AbilityWar.Utils.FireworkUtil;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
-import DayBreak.AbilityWar.Utils.Thread.OverallTimer;
+import DayBreak.AbilityWar.Utils.Thread.Timer;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
@@ -46,13 +40,10 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	public ChangeAbilityWar() {
 		setRestricted(Invincible);
-		registerEvent(EntityDamageEvent.class);
-		registerEvent(PlayerJoinEvent.class);
 		this.maxLife = AbilityWarSettings.ChangeAbilityWar_getLife();
 	}
 	
-	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-	private final Objective lifeObjective = scoreboard.registerNewObjective("생명", "dummy");
+	private final Objective lifeObjective = getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
 	
 	private final AbilityChanger changer = new AbilityChanger(this);
 	
@@ -133,9 +124,6 @@ public class ChangeAbilityWar extends WinnableGame {
 	final int maxLife;
 	
 	private void scoreboardSetup() {
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			p.setScoreboard(scoreboard);
-		}
 		lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c생명"));
 		for(Participant p : getParticipants()) {
@@ -270,7 +258,7 @@ public class ChangeAbilityWar extends WinnableGame {
 		
 		changer.StartTimer();
 		
-		setGameStarted(true);
+		startGame();
 	}
 	
 	/**
@@ -306,7 +294,7 @@ public class ChangeAbilityWar extends WinnableGame {
 			Player p = participant.getPlayer();
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
 			joiner.add(p.getName());
-			new OverallTimer(5) {
+			new Timer(5) {
 				
 				@Override
 				protected void onStart() {}
@@ -344,24 +332,7 @@ public class ChangeAbilityWar extends WinnableGame {
 	}
 	
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			
-			if(e.getEntity() instanceof Player) {
-				if(this.getInvincibility().isInvincible()) {
-					e.setCancelled(true);
-				}
-			}
-		} else if(event instanceof PlayerJoinEvent) {
-			PlayerJoinEvent e = (PlayerJoinEvent) event;
-			Player p = e.getPlayer();
-			p.setScoreboard(scoreboard);
-		}
-	}
-
-	@Override
-	protected void onEnd() {
+	protected void onGameEnd() {
 		lifeObjective.unregister();
 		HandlerList.unregisterAll(infiniteDurability);
 	}

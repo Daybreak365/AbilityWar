@@ -3,13 +3,13 @@ package DayBreak.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
@@ -39,9 +39,9 @@ public class SuperNova extends AbilityBase {
 		return false;
 	}
 	
-	Integer Size = SizeConfig.getValue();
+	private int Size = SizeConfig.getValue();
 	
-	TimerBase Explosion = new TimerBase(Size) {
+	private TimerBase Explosion = new TimerBase(Size) {
 		
 		Location center;
 		
@@ -64,13 +64,10 @@ public class SuperNova extends AbilityBase {
 		
 	}.setPeriod(1);
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof PlayerDeathEvent) {
-			PlayerDeathEvent e = (PlayerDeathEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				Explosion.StartTimer();
-			}
+	@SubscribeEvent
+	public void onPlayerDeath(PlayerDeathEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			Explosion.StartTimer();
 		}
 	}
 	

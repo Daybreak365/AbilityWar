@@ -2,13 +2,13 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -57,11 +57,11 @@ public class Berserker extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "초간 데미지를 입힐 수 없습니다."));
 	}
 
-	Integer Strength = StrengthConfig.getValue();
+	private final int Strength = StrengthConfig.getValue();
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	DurationTimer Duration = new DurationTimer(this, 5, Cool) {
+	private DurationTimer Duration = new DurationTimer(this, 5, Cool) {
 		
 		@Override
 		public void onDurationStart() {
@@ -78,7 +78,7 @@ public class Berserker extends AbilityBase {
 		
 	};
 	
-	boolean Strengthen = false;
+	private boolean Strengthen = false;
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -95,22 +95,19 @@ public class Berserker extends AbilityBase {
 		return false;
 	}
 
-	Integer DebuffTime = DebuffConfig.getValue();
+	private int DebuffTime = DebuffConfig.getValue();
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getDamager().equals(getPlayer())) {
-				if(Strengthen) {
-					if(Duration.isDuration()) Duration.StopTimer(false);
-					e.setDamage(e.getDamage() * Strength);
-					EffectLib.WEAKNESS.addPotionEffect(getPlayer(), DebuffTime * 20, 1, true);
-				}
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if(e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
+			if(Strengthen) {
+				if(Duration.isDuration()) Duration.StopTimer(false);
+				e.setDamage(e.getDamage() * Strength);
+				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), DebuffTime * 20, 1, true);
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

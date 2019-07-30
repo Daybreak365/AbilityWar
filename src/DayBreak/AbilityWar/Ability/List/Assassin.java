@@ -1,11 +1,10 @@
 package DayBreak.AbilityWar.Ability.List;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -21,6 +20,16 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 @AbilityManifest(Name = "암살자", Rank = Rank.A, Species = Species.HUMAN)
 public class Assassin extends AbilityBase {
+
+	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 6, 
+			"# 스킬 데미지") {
+		
+		@Override
+		public boolean Condition(Integer value) {
+			return value > 0;
+		}
+		
+	};
 	
 	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 12, 
 			"# 스킬 데미지") {
@@ -54,52 +63,57 @@ public class Assassin extends AbilityBase {
 	
 	public Assassin(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 있는 적 " + TeleportCountConfig.getValue() + "명에게 텔레포트하며"),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 6칸 이내에 있는 적 " + TeleportCountConfig.getValue() + "명에게 이동하며"),
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+
+	private List<Damageable> Entities = null;
 	
-	TimerBase Duration = new TimerBase(TeleportCountConfig.getValue()) {
-		
-		ArrayList<Damageable> Entities = new ArrayList<Damageable>();
+	private final int Distance = DistanceConfig.getValue();
+	
+	private TimerBase Duration = new TimerBase(TeleportCountConfig.getValue()) {
 		
 		Integer Damage = DamageConfig.getValue();
 		
 		@Override
-		public void onStart() {
-			Entities.addAll(LocationUtil.getNearbyDamageableEntities(getPlayer(), 6, 3));
-		}
+		public void onStart() {}
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			if(Entities.size() >= 1) {
-				Damageable e = Entities.get(0);
-				Entities.remove(e);
-				getPlayer().teleport(e);
-				e.damage(Damage, getPlayer());
-				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
-				SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
-			} else {
-				this.StopTimer(false);
+			if(Entities != null) {
+				if(Entities.size() >= 1) {
+					Damageable e = Entities.get(0);
+					Entities.remove(e);
+					getPlayer().teleport(e);
+					e.damage(Damage, getPlayer());
+					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
+					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
+				} else {
+					this.StopTimer(false);
+				}
 			}
 		}
 		
 		@Override
 		public void onEnd() {}
 		
-	}.setPeriod(5);
+	}.setPeriod(3);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		if(mt.equals(MaterialType.Iron_Ingot)) {
 			if(ct.equals(ClickType.RightClick)) {
 				if(!Cool.isCooldown()) {
-					Duration.StartTimer();
-					
-					Cool.StartTimer();
-					
-					return true;
+					this.Entities = LocationUtil.getNearbyDamageableEntities(getPlayer(), Distance, 5);
+					if(Entities.size() > 0) {
+						Duration.StartTimer();
+						Cool.StartTimer();
+						return true;
+					} else {
+						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f" + Distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
+					}
 				}
 			}
 		}
@@ -107,9 +121,6 @@ public class Assassin extends AbilityBase {
 		return false;
 	}
 	
-	@Override
-	public void PassiveSkill(Event event) {}
-
 	@Override
 	public void onRestrictClear() {}
 

@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.util.Vector;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -59,13 +58,13 @@ public class Chaos extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f¸ðµÎ ²ø¾î´ç±é´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
-	
-	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
-		Integer Distance = DistanceConfig.getValue();
-		
-		Location center;
+	private final int Distance = DistanceConfig.getValue();
+	
+	private DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
+
+		private Location center;
 		
 		@Override
 		public void onDurationStart() {
@@ -74,13 +73,11 @@ public class Chaos extends AbilityBase {
 		
 		@Override
 		public void DurationProcess(Integer Seconds) {
-			ParticleLib.SMOKE_NORMAL.spawnParticle(center, 100, 2, 2, 2);
-			for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, Distance, Distance)) {
-				if(!d.equals(getPlayer())) {
-					d.damage(0.7);
-					Vector vector = center.toVector().subtract(d.getLocation().toVector());
-					d.setVelocity(vector);
-				}
+			ParticleLib.SMOKE_LARGE.spawnParticle(center, 100, 0, 0, 0);
+			for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, center, Distance, Distance, getPlayer())) {
+				d.damage(1);
+				Vector vector = center.toVector().subtract(d.getLocation().toVector()).multiply(0.7);
+				d.setVelocity(vector);
 			}
 		}
 
@@ -103,9 +100,6 @@ public class Chaos extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}

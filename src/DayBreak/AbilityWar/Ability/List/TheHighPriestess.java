@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -59,12 +58,12 @@ public class TheHighPriestess extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f영지 안에서 자신은 재생 효과를, 상대방은 위더 효과를 받습니다."));
 	}
 
-	final Integer Duration = DurationConfig.getValue();
-	final Integer Range = RangeConfig.getValue();
+	private final Integer Duration = DurationConfig.getValue();
+	private final Integer Range = RangeConfig.getValue();
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	DurationTimer Skill = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
+	private DurationTimer Skill = new DurationTimer(this, Duration * 20, Cool) {
 		
 		private Location center;
 		
@@ -85,12 +84,12 @@ public class TheHighPriestess extends AbilityBase {
 				ParticleLib.SPELL_INSTANT.spawnParticle(l, 1, 0, 0, 0);
 			}
 			
-			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
+			for(Player p : LocationUtil.getNearbyEntities(Player.class, center, Range, Range)) {
 				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range))) {
 					if(p.equals(getPlayer())) {
-						EffectLib.REGENERATION.addPotionEffect(p, 100, 1, true);
+						EffectLib.REGENERATION.addPotionEffect(p, 100, 0, false);
 					} else {
-						EffectLib.WITHER.addPotionEffect(p, 100, 1, true);
+						EffectLib.WITHER.addPotionEffect(p, 100, 0, false);
 					}
 				}
 			}
@@ -116,9 +115,6 @@ public class TheHighPriestess extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}

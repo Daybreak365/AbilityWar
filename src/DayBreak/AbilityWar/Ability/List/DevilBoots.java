@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -13,6 +12,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
@@ -30,7 +30,7 @@ public class DevilBoots extends AbilityBase {
 		return false;
 	}
 	
-	TimerBase speed = new TimerBase() {
+	private TimerBase speed = new TimerBase() {
 		
 		@Override
 		protected void onStart() {}
@@ -44,23 +44,22 @@ public class DevilBoots extends AbilityBase {
 		}
 	};
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof PlayerMoveEvent) {
-			PlayerMoveEvent e = (PlayerMoveEvent) event;
-			if(e.getPlayer().equals(getPlayer())) {
-				Location To = e.getTo();
-				if(To.getBlock().getType().equals(Material.AIR)) {
-					To.getBlock().setType(Material.FIRE);
-				}
+	@SubscribeEvent
+	public void onPlayerMove(PlayerMoveEvent e) {
+		if(e.getPlayer().equals(getPlayer())) {
+			Location To = e.getTo();
+			if(To.getBlock().getType().equals(Material.AIR)) {
+				To.getBlock().setType(Material.FIRE);
 			}
-		} else if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				DamageCause cause = e.getCause();
-				if(cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK) || cause.equals(DamageCause.LAVA)) {
-					e.setCancelled(true);
-				}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			DamageCause cause = e.getCause();
+			if(cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK) || cause.equals(DamageCause.LAVA)) {
+				e.setCancelled(true);
 			}
 		}
 	}

@@ -7,7 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
@@ -15,6 +14,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
@@ -53,41 +53,40 @@ public class BombArrow extends AbilityBase {
 		return false;
 	}
 	
-	private final Integer Chance = ChanceConfig.getValue();
-	private final Integer Size = SizeConfig.getValue();
+	private final int Chance = ChanceConfig.getValue();
+	private final int Size = SizeConfig.getValue();
 	
 	private ArrayList<Arrow> ArrowList = new ArrayList<>();
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof ProjectileLaunchEvent) {
-			ProjectileLaunchEvent e = (ProjectileLaunchEvent) event;
-			if(e.getEntity().getShooter().equals(getPlayer())) {
-				if(e.getEntity() instanceof Arrow) {
-					ArrowList.add((Arrow) e.getEntity());
-				}
+	@SubscribeEvent
+	public void onProjectileLaunch(ProjectileLaunchEvent e) {
+		if(e.getEntity().getShooter().equals(getPlayer())) {
+			if(e.getEntity() instanceof Arrow) {
+				ArrowList.add((Arrow) e.getEntity());
 			}
-		} else if(event instanceof ProjectileHitEvent) {
-			ProjectileHitEvent e = (ProjectileHitEvent) event;
-			if(e.getEntity().getShooter().equals(getPlayer())) {
-				if(e.getEntity() instanceof Arrow) {
-					Arrow arrow = (Arrow) e.getEntity();
+		}
+	}
+	
+	@SubscribeEvent
+	public void onProjectileHit(ProjectileHitEvent e) {
+		if(e.getEntity().getShooter().equals(getPlayer())) {
+			if(e.getEntity() instanceof Arrow) {
+				Arrow arrow = (Arrow) e.getEntity();
 
-					if(ArrowList.contains(arrow)) {
-						ArrowList.remove(arrow);
-						Random r = new Random();
-						
-						if((r.nextInt(100) + 1) <= Chance) {
-							SoundLib.BLOCK_NOTE_BLOCK_BELL.playSound(getPlayer());
-							Location l = arrow.getLocation();
-							l.getWorld().createExplosion(l, Size, false);
-						}
+				if(ArrowList.contains(arrow)) {
+					ArrowList.remove(arrow);
+					Random r = new Random();
+					
+					if((r.nextInt(100) + 1) <= Chance) {
+						SoundLib.BLOCK_NOTE_BLOCK_BELL.playSound(getPlayer());
+						Location l = arrow.getLocation();
+						l.getWorld().createExplosion(l, Size, false);
 					}
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

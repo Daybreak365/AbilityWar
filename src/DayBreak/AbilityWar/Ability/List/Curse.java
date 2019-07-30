@@ -3,7 +3,6 @@ package DayBreak.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -35,15 +34,12 @@ public class Curse extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f" + CountConfig.getValue() + "번만 사용할 수 있습니다."));
 	}
 	
-	private Integer Count = CountConfig.getValue();
+	private int Count = CountConfig.getValue();
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}

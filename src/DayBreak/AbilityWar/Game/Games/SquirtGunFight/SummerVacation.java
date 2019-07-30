@@ -11,18 +11,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
@@ -35,7 +30,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
-import DayBreak.AbilityWar.Utils.Thread.OverallTimer;
+import DayBreak.AbilityWar.Utils.Thread.Timer;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
@@ -48,14 +43,12 @@ public class SummerVacation extends WinnableGame {
 	
 	public SummerVacation() {
 		setRestricted(Invincible);
-		registerEvent(EntityDamageEvent.class);
 		this.MaxKill = AbilityWarSettings.SummerVacation_getKill();
 	}
 	
 	private final boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
 
-	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-	private final Objective killObjective = scoreboard.registerNewObjective("킬 횟수", "dummy");
+	private final Objective killObjective = getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy");
 	
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 	
@@ -135,9 +128,6 @@ public class SummerVacation extends WinnableGame {
 	}
 
 	private void scoreboardSetup() {
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			p.setScoreboard(scoreboard);
-		}
 		killObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		killObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c킬 횟수"));
 		for(Participant p : getParticipants()) {
@@ -262,7 +252,7 @@ public class SummerVacation extends WinnableGame {
 			}
 		}
 		
-		setGameStarted(true);
+		startGame();
 	}
 	
 	/**
@@ -315,7 +305,7 @@ public class SummerVacation extends WinnableGame {
 			Player p = participant.getPlayer();
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
 			joiner.add(p.getName());
-			new OverallTimer(5) {
+			new Timer(5) {
 				
 				@Override
 				protected void onStart() {}
@@ -353,20 +343,7 @@ public class SummerVacation extends WinnableGame {
 	}
 	
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			
-			if(e.getEntity() instanceof Player) {
-				if(this.getInvincibility().isInvincible()) {
-					e.setCancelled(true);
-				}
-			}
-		}
-	}
-
-	@Override
-	protected void onEnd() {
+	protected void onGameEnd() {
 		killObjective.unregister();
 		HandlerList.unregisterAll(infiniteDurability);
 	}

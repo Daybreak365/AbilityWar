@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -28,14 +29,19 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityBase.ClickType;
 import DayBreak.AbilityWar.Ability.AbilityBase.MaterialType;
 import DayBreak.AbilityWar.Game.Manager.DeathManager;
+import DayBreak.AbilityWar.Game.Manager.EffectManager;
 import DayBreak.AbilityWar.Game.Manager.Firewall;
 import DayBreak.AbilityWar.Game.Manager.GameListener;
 import DayBreak.AbilityWar.Game.Manager.Invincibility;
+import DayBreak.AbilityWar.Game.Manager.ScoreboardManager;
+import DayBreak.AbilityWar.Game.Manager.WRECK;
+import DayBreak.AbilityWar.Game.Manager.EventExecutor.PassiveManager;
 import DayBreak.AbilityWar.Utils.Messager;
+import DayBreak.AbilityWar.Utils.Thread.Timer;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-abstract public class AbstractGame extends Thread implements Listener, EventExecutor {
+public abstract class AbstractGame extends Timer implements Listener {
 	
 	private static List<String> Spectators = new ArrayList<String>();
 	
@@ -54,19 +60,25 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	}
 	
 	public static List<String> getSpectators() {
-		return Spectators;
+		return new ArrayList<>(Spectators);
 	}
+	
 	
 	private final List<Participant> Participants = setupParticipants();
 	
-	@SuppressWarnings("unused")
 	private final GameListener gameListener = new GameListener(this);
 	
 	private final DeathManager deathManager = new DeathManager(this);
 
 	private final Invincibility invincibility = new Invincibility(this);
 	
+	private final EffectManager effectManager = new EffectManager(this);
+	
 	private final WRECK wreck = new WRECK(this);
+	
+	private final ScoreboardManager scoreboardManager = new ScoreboardManager(this);
+	
+	private final PassiveManager passiveManager = new PassiveManager(this);
 	
 	@SuppressWarnings("unused")
 	private final Firewall fireWall = new Firewall(this);
@@ -77,10 +89,15 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	
 	private boolean GameStarted = false;
 	
-	private Integer Seconds = 0;
+	private int Seconds = 0;
+
+	@Override
+	protected void onStart() {
+		
+	}
 	
 	@Override
-	public void run() {
+	protected void TimerProcess(Integer i) {
 		if(gameCondition()) {
 			if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
 				Seconds++;
@@ -88,13 +105,17 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 			}
 		}
 	}
-	
-	/**
-	 * Register Event Handler
-	 */
-	protected void registerEvent(Class<? extends Event> event) {
-		Bukkit.getPluginManager().registerEvent(event, this, EventPriority.HIGHEST, this, AbilityWar.getPlugin());
+
+	@Override
+	protected void onEnd() {
+		TimerBase.ResetTasks();
+		HandlerList.unregisterAll(this);
+		HandlerList.unregisterAll(gameListener);
+		this.getScoreboardManager().Clear();
+		this.onGameEnd();
 	}
+	
+	protected abstract void onGameEnd();
 	
 	/**
 	 * 게임 진행
@@ -156,9 +177,13 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	 * @return	참여자 목록
 	 */
 	public List<Participant> getParticipants() {
-		return Participants;
+		return new ArrayList<>(Participants);
 	}
 
+	protected ScoreboardManager getScoreboardManager() {
+		return scoreboardManager;
+	}
+	
 	private HashMap<String, Participant> participantCache = new HashMap<String, Participant>();
 	
 	/**
@@ -201,11 +226,31 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 	public DeathManager getDeathManager() {
 		return deathManager;
 	}
-	
+
+	/**
+	 * EffectManager를 반환합니다.
+	 * @return	EffectManager
+	 */
+	public EffectManager getEffectManager() {
+		return effectManager;
+	}
+
+	/**
+	 * WRECK을 반환합니다.
+	 * @return	WRECK
+	 */
 	public WRECK getWRECK() {
 		return wreck;
 	}
-	
+
+	/**
+	 * PassiveManager을 반환합니다.
+	 * @return	PassiveManager
+	 */
+	public PassiveManager getPassiveManager() {
+		return passiveManager;
+	}
+
 	public boolean isRestricted() {
 		return Restricted;
 	}
@@ -242,19 +287,11 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		this.abilitySelect = setupAbilitySelect();
 	}
 	
-	protected void setGameStarted(boolean gameStarted) {
-		GameStarted = gameStarted;
-		if(gameStarted) onGameStart();
-	}
-	
-	/**
-	 * 게임 시작시 실행
-	 */
-	private void onGameStart() {
+	protected void startGame() {
+		GameStarted = true;
 		wreck.noticeIfEnabled();
+		this.getScoreboardManager().Initialize();
 	}
-	
-	abstract protected void onEnd();
 	
 	public class Participant implements EventExecutor {
 	
@@ -406,27 +443,6 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 			}
 		}
 		
-		/**
-		 * one.getPlayer()와 two.getPlayer()의 능력을 서로 뒤바꿉니다.
-		 * @param one	첫번째 플레이어
-		 * @param two	두번째 플레이어
-		 */
-		public void swapAbility(Participant target) {
-			if(hasAbility() && target.hasAbility()) {
-				AbilityBase first = getAbility();
-				AbilityBase second = target.getAbility();
-				
-				removeAbility();
-				target.removeAbility();
-				
-				first.updateParticipant(target);
-				second.updateParticipant(this);
-				
-				this.setAbility(second);
-				target.setAbility(first);
-			}
-		}
-		
 		public Player getPlayer() {
 			return player;
 		}
@@ -437,7 +453,7 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 
 	}
 	
-	abstract public class AbilitySelect extends TimerBase {
+	public abstract class AbilitySelect extends TimerBase {
 		
 		private HashMap<Participant, Integer> Selectors = new HashMap<Participant, Integer>();
 		
@@ -589,5 +605,5 @@ abstract public class AbstractGame extends Thread implements Listener, EventExec
 		}
 		
 	}
-	
+
 }

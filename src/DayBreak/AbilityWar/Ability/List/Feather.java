@@ -3,7 +3,6 @@ package DayBreak.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -11,6 +10,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -43,13 +43,13 @@ public class Feather extends AbilityBase {
 	
 	public Feather(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 15초간 비행할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 비행할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f낙하 데미지를 무시합니다."));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
+	private DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
 		@Override
 		public void onDurationStart() {}
@@ -82,25 +82,22 @@ public class Feather extends AbilityBase {
 		return false;
 	}
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(!e.isCancelled()) {
-				if(e.getEntity() instanceof Player) {
-					Player p = (Player) e.getEntity();
-					if(p.equals(this.getPlayer())) {
-						if(e.getCause().equals(DamageCause.FALL)) {
-							e.setCancelled(true);
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a낙하 데미지를 받지 않습니다."));
-							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
-						}
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(!e.isCancelled()) {
+			if(e.getEntity() instanceof Player) {
+				Player p = (Player) e.getEntity();
+				if(p.equals(this.getPlayer())) {
+					if(e.getCause().equals(DamageCause.FALL)) {
+						e.setCancelled(true);
+						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a낙하 데미지를 받지 않습니다."));
+						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 					}
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

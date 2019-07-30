@@ -9,12 +9,12 @@ import java.util.List;
  * Advanced Array
  * @author DayBreak »õº®
  */
-public class AdvancedArray<T> {
+public class PushingArray<T> {
 	
 	private T[] array;
 	
 	@SuppressWarnings("unchecked")
-	public AdvancedArray(Class<T> clazz, int Size) {
+	public PushingArray(Class<T> clazz, int Size) {
 		this.array = (T[]) Array.newInstance(clazz, Size);
 	}
 	

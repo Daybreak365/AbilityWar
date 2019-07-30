@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -22,7 +21,7 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 @AbilityManifest(Name = "플로라", Rank = Rank.C, Species = Species.GOD)
 public class Flora extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 10, 
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 3, 
 			"# 쿨타임") {
 		
 		@Override
@@ -39,11 +38,11 @@ public class Flora extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 효과를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	EffectType type = EffectType.Speed;
+	private EffectType type = EffectType.Speed;
 	
-	TimerBase Passive = new TimerBase() {
+	private TimerBase Passive = new TimerBase() {
 		
-		Location center;
+		private Location center;
 		
 		@Override
 		public void onStart() {}
@@ -60,7 +59,7 @@ public class Flora extends AbilityBase {
 					if(type.equals(EffectType.Speed)) {
 						EffectLib.SPEED.addPotionEffect(p, 40, 1, true);
 					} else if(type.equals(EffectType.Regeneration)) {
-						EffectLib.REGENERATION.addPotionEffect(p, 100, 2, true);
+						EffectLib.REGENERATION.addPotionEffect(p, 100, 0, false);
 					}
 				}
 			}
@@ -71,7 +70,7 @@ public class Flora extends AbilityBase {
 		
 	}.setPeriod(1);
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -96,9 +95,6 @@ public class Flora extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {

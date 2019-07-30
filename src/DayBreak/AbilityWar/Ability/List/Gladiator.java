@@ -8,13 +8,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -43,11 +43,11 @@ public class Gladiator extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
+	private HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
 	
-	TimerBase FieldClear = new TimerBase(20) {
+	private TimerBase FieldClear = new TimerBase(20) {
 		
 		@Override
 		public void onStart() {}
@@ -70,9 +70,9 @@ public class Gladiator extends AbilityBase {
 		
 	}.setForcedStopNotice(true);
 	
-	Player target = null;
+	private Player target = null;
 	
-	TimerBase Field = new TimerBase(26) {
+	private TimerBase Field = new TimerBase(26) {
 		
 		Integer Count;
 		Integer TotalCount;
@@ -147,20 +147,17 @@ public class Gladiator extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof BlockBreakEvent) {
-			BlockBreakEvent e = (BlockBreakEvent) event;
-			if(Saves.keySet().contains(e.getBlock())) {
-				if(!e.isCancelled()) {
-					e.setCancelled(true);
-					Player p = e.getPlayer();
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c투기장&f은 부술 수 없습니다!"));
-				}
+	@SubscribeEvent
+	public void onBlockBreak(BlockBreakEvent e) {
+		if(Saves.keySet().contains(e.getBlock())) {
+			if(!e.isCancelled()) {
+				e.setCancelled(true);
+				Player p = e.getPlayer();
+				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c투기장&f은 부술 수 없습니다!"));
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

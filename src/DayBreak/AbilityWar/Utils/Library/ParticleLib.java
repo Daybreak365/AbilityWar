@@ -71,7 +71,7 @@ public class ParticleLib {
 	public static Particles HEART = new Particles("HEART", "HEART", "HEART", "HEART", "HEART", "HEART", "HEART", "");
 	public static Particles ITEM_CRACK = new Particles("ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "ITEM_CRACK", "");
 	public static Particles LANDING_LAVA = new Particles("LANDING_LAVA", "", "", "", "", "", "", "");
-	public static Particles LAVA = new Particles("LAVA", "LAVA", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "");
+	public static Particles LAVA = new Particles("LAVA", "LAVA", "LAVA", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "ITEM_TAKE", "");
 	public static Particles MOB_APPEARANCE = new Particles("MOB_APPEARANCE", "MOB_APPEARANCE", "LAVA", "LAVA", "LAVA", "LAVA", "LAVA", "");
 	public static Particles NAUTILUS = new Particles("NAUTILUS", "NAUTILUS", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "MOB_APPEARANCE", "");
 	public static Particles NOTE = new Particles("NOTE", "NOTE", "NOTE", "NOTE", "NOTE", "NOTE", "NOTE", "");

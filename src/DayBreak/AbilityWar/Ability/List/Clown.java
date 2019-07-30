@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -45,15 +44,15 @@ public class Clown extends AbilityBase {
 	public Clown(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 스폰으로 이동합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f스폰으로 이동한 후 10초 안에 철괴를 좌클릭하면 다시 원래 위치로 돌아가"),
+				ChatColor.translateAlternateColorCodes('&', "&f스폰으로 이동한 후 10초 안에 철괴를 다시 우클릭하면 원래 위치로 돌아가"),
 				ChatColor.translateAlternateColorCodes('&', "&f주변 " + RangeConfig.getValue() + "칸 이내의 플레이어들을 실명시킵니다."));
 	}
 
-	Location OriginalPoint = null;
+	private Location OriginalPoint = null;
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
-	DurationTimer Duration = new  DurationTimer(this, 10, Cool) {
+	private DurationTimer Duration = new  DurationTimer(this, 10, Cool) {
 
 		@Override
 		protected void onDurationStart() {
@@ -96,9 +95,6 @@ public class Clown extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}

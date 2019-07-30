@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -48,8 +47,8 @@ public class Khazhad extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(RightCooldownConfig.getValue())));
 	}
 
-	CooldownTimer LeftCool = new CooldownTimer(this, LeftCooldownConfig.getValue(), "좌클릭");
-	CooldownTimer RightCool = new CooldownTimer(this, RightCooldownConfig.getValue(), "우클릭").setActionbarNotice(false);
+	private CooldownTimer LeftCool = new CooldownTimer(this, LeftCooldownConfig.getValue(), "좌클릭");
+	private CooldownTimer RightCool = new CooldownTimer(this, RightCooldownConfig.getValue(), "우클릭").setActionbarNotice(false);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -93,9 +92,6 @@ public class Khazhad extends AbilityBase {
 		}
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event arg0) {}
 
 	@Override
 	public void TargetSkill(MaterialType arg0, Entity arg1) {}

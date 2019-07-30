@@ -1,7 +1,16 @@
 package DayBreak.AbilityWar.Game.Manager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.plugin.EventExecutor;
 
+import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
@@ -16,13 +25,14 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
  * 무적
  * @author DayBreak 새벽
  */
-public class Invincibility {
+public class Invincibility implements EventExecutor {
 	
 	private final Integer Duration = AbilityWarSettings.getInvincibilityDuration();
 	private final AbstractGame game;
 	
 	public Invincibility(AbstractGame game) {
 		this.game = game;
+		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
 	}
 	
 	private TimerBase InvincibilityTimer;
@@ -128,6 +138,21 @@ public class Invincibility {
 	
 	public boolean isInvincible() {
 		return this.InvincibilityTimer != null && this.InvincibilityTimer.isTimerRunning();
+	}
+
+	@Override
+	public void execute(Listener listener, Event event) throws EventException {
+		if(event instanceof EntityDamageEvent) {
+			if(this.isInvincible()) {
+				EntityDamageEvent e = (EntityDamageEvent) event;
+				if(e.getEntity() instanceof Player) {
+					Player p = (Player) e.getEntity();
+					if(game.isParticipating(p)) {
+						e.setCancelled(true);
+					}
+				}
+			}
+		}
 	}
 	
 }

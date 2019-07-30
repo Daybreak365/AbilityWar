@@ -2,7 +2,6 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -22,7 +21,7 @@ public class ShowmanShip extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&a1명 이하 &7: &f나약함  &a2명 이상 &7: &f힘 II  &a3명 이상 &7: &f힘 III"));
 	}
 
-	TimerBase Passive = new TimerBase() {
+	private TimerBase Passive = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -49,9 +48,6 @@ public class ShowmanShip extends AbilityBase {
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {

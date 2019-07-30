@@ -2,13 +2,13 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
@@ -61,31 +61,28 @@ public class OnlyOddNumber extends AbilityBase {
 		return false;
 	}
 	
-	Integer Percentage = PercentageConfig.getValue();
-	Integer Odd = OddNumberConfig.getValue();
-	Integer Even = EvenNumberConfig.getValue();
+	private int Percentage = PercentageConfig.getValue();
+	private int Odd = OddNumberConfig.getValue();
+	private int Even = EvenNumberConfig.getValue();
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				Double doubleMaxHealth = VersionUtil.getMaxHealth(getPlayer());
-				Double doubleHealth = getPlayer().getHealth();
-				
-				Integer Health = (int) getPlayer().getHealth();
-				
-				if(doubleHealth <= (doubleMaxHealth / 100) * Percentage) {
-					if(Health % 2 == 0) { //Â¦¼ö
-						e.setDamage(e.getDamage() + ((e.getDamage() / 100) * Even));
-					} else { //È¦¼ö
-						e.setDamage(e.getDamage() - ((e.getDamage() / 100) * Odd));
-					}
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			Double doubleMaxHealth = VersionUtil.getMaxHealth(getPlayer());
+			Double doubleHealth = getPlayer().getHealth();
+			
+			Integer Health = (int) getPlayer().getHealth();
+			
+			if(doubleHealth <= (doubleMaxHealth / 100) * Percentage) {
+				if(Health % 2 == 0) { //Â¦¼ö
+					e.setDamage(e.getDamage() + ((e.getDamage() / 100) * Even));
+				} else { //È¦¼ö
+					e.setDamage(e.getDamage() - ((e.getDamage() / 100) * Odd));
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

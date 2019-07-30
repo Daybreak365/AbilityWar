@@ -5,7 +5,6 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.potion.PotionType;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -39,7 +38,7 @@ public class Brewer extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 랜덤한 포션 하나를 얻습니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -68,9 +67,6 @@ public class Brewer extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}

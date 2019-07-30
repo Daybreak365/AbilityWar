@@ -1,7 +1,6 @@
 package DayBreak.AbilityWar.Utils.Math;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -14,8 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.TeamGame;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
-import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * Location Util
@@ -185,17 +185,29 @@ public class LocationUtil {
 		return locations;
 	}
 
-	public static <E> E getNearestEntity(Class<E> clazz, Location center, List<Entity> exceptions) {
+	public static <E> E getNearestEntity(Class<E> clazz, Location center, Entity exception) {
 		double distance = Double.MAX_VALUE;
 		E entity = null;
 		
 		for(Entity e : center.getWorld().getEntities()) {
 			if(clazz.isAssignableFrom(e.getClass())) {
-				if(!exceptions.contains(e)) {
-					if (e instanceof Player && AbilityWarThread.isGameTaskRunning()) {
+				if(!e.equals(exception)) {
+					if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 						AbstractGame game = AbilityWarThread.getGame();
-						Player player = (Player) e;
-						if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
+						Player p = (Player) e;
+						if(game.isParticipating(p)) {
+							if(game.getDeathManager().isEliminated(p)) continue;
+							Participant part = game.getParticipant(p);
+
+							if (game instanceof TeamGame && exception instanceof Player) {
+								TeamGame tgame = (TeamGame) game;
+								Player ex = (Player) exception;
+								if(game.isParticipating(ex)) {
+									Participant expart = game.getParticipant(ex);
+									if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
+								}
+							}
+						} else {
 							continue;
 						}
 					}
@@ -211,21 +223,33 @@ public class LocationUtil {
 		return entity;
 	}
 
-	public static Player getNearestPlayer(Player base) {
-		return getNearestEntity(Player.class, base.getLocation(), Arrays.asList(base));
+	public static Player getNearestPlayer(Player p) {
+		return getNearestEntity(Player.class, p.getLocation(), p);
 	}
 	
-	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis, List<Entity> exceptions) {
+	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis, Entity exception) {
 		List<E> entities = new ArrayList<E>();
 		
-		if(ServerVersion.getVersion() >= 9) {
+		//if(ServerVersion.getVersion() >= 9) {
 			for (Entity e : center.getWorld().getNearbyEntities(center, HorizontalDis, VerticalDis, HorizontalDis)) {
 				if (clazz.isAssignableFrom(e.getClass())) {
-					if(!exceptions.contains(e)) {
-						if (e instanceof Player && AbilityWarThread.isGameTaskRunning()) {
+					if(!e.equals(exception)) {
+						if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 							AbstractGame game = AbilityWarThread.getGame();
-							Player player = (Player) e;
-							if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
+							Player p = (Player) e;
+							if(game.isParticipating(p)) {
+								if(game.getDeathManager().isEliminated(p)) continue;
+								Participant part = game.getParticipant(p);
+
+								if (game instanceof TeamGame && exception instanceof Player) {
+									TeamGame tgame = (TeamGame) game;
+									Player ex = (Player) exception;
+									if(game.isParticipating(ex)) {
+										Participant expart = game.getParticipant(ex);
+										if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
+									}
+								}
+							} else {
 								continue;
 							}
 						}
@@ -233,6 +257,7 @@ public class LocationUtil {
 					}
 				}
 			}
+		/*
 		} else {
 			for (Entity e : center.getWorld().getEntities()) {
 				Location entityLoc = e.getLocation();
@@ -255,28 +280,25 @@ public class LocationUtil {
 				}
 			}
 		}
+		*/
 
 		return entities;
 	}
 
 	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis) {
-		return getNearbyEntities(clazz, center, HorizontalDis, VerticalDis, Arrays.asList());
+		return getNearbyEntities(clazz, center, HorizontalDis, VerticalDis, null);
 	}
 	
 	public static List<Damageable> getNearbyDamageableEntities(Player p, int HorizontalDis, int VerticalDis) {
-		return getNearbyEntities(Damageable.class, p.getLocation(), HorizontalDis, VerticalDis, Arrays.asList(p));
+		return getNearbyEntities(Damageable.class, p.getLocation(), HorizontalDis, VerticalDis, p);
 	}
 
 	public static List<Damageable> getNearbyDamageableEntities(Location l, int HorizontalDis, int VerticalDis) {
 		return getNearbyEntities(Damageable.class, l, HorizontalDis, VerticalDis);
 	}
-
-	public static List<Damageable> getNearbyDamageableEntities(Entity e, int HorizontalDis, int VerticalDis) {
-		return getNearbyEntities(Damageable.class, e.getLocation(), HorizontalDis, VerticalDis, Arrays.asList(e));
-	}
 	
 	public static List<Player> getNearbyPlayers(Player p, int HorizontalDis, int VerticalDis) {
-		return getNearbyEntities(Player.class, p.getLocation(), HorizontalDis, VerticalDis, Arrays.asList(p));
+		return getNearbyEntities(Player.class, p.getLocation(), HorizontalDis, VerticalDis, p);
 	}
 
 	public static List<Player> getNearbyPlayers(Location l, int HorizontalDis, int VerticalDis) {

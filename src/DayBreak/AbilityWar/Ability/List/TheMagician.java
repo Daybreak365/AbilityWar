@@ -6,13 +6,13 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -46,40 +46,37 @@ public class TheMagician extends AbilityBase {
 		return false;
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof ProjectileHitEvent) {
-			ProjectileHitEvent e = (ProjectileHitEvent) event;
-			if(e.getEntity() instanceof Arrow) {
-				if(e.getEntity().getShooter().equals(getPlayer())) {
-					if(!Cool.isCooldown()) {
-						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
-						Location center = e.getEntity().getLocation();
-						for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
-							if(!d.equals(getPlayer())) {
-								if(LocationUtil.isInCircle(center, d.getLocation(), 5.0)) {
-									d.damage(VersionUtil.getMaxHealth(d) / 5, getPlayer());
-									if(d instanceof Player) {
-										SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
-									}
+	@SubscribeEvent
+	public void onProjectileHit(ProjectileHitEvent e) {
+		if(e.getEntity() instanceof Arrow) {
+			if(e.getEntity().getShooter().equals(getPlayer())) {
+				if(!Cool.isCooldown()) {
+					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
+					Location center = e.getEntity().getLocation();
+					for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+						if(!d.equals(getPlayer())) {
+							if(LocationUtil.isInCircle(center, d.getLocation(), 5.0)) {
+								d.damage(VersionUtil.getMaxHealth(d) / 5, getPlayer());
+								if(d instanceof Player) {
+									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
 								}
 							}
 						}
-						
-						for(Location l : LocationUtil.getCircle(center, 5, 30, true)) {
-							ParticleLib.SPELL_WITCH.spawnParticle(l, 1, 0, 0, 0);
-						}
-						ParticleLib.CLOUD.spawnParticle(center, 50, 5, 5, 5);
-						
-						Cool.StartTimer();
 					}
+					
+					for(Location l : LocationUtil.getCircle(center, 5, 30, true)) {
+						ParticleLib.SPELL_WITCH.spawnParticle(l, 1, 0, 0, 0);
+					}
+					ParticleLib.CLOUD.spawnParticle(center, 50, 5, 5, 5);
+					
+					Cool.StartTimer();
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

@@ -7,12 +7,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -59,12 +61,12 @@ public class Ares extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f전쟁의 신 아레스."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 데미지를 주며,"),
-				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 끌고 갑니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
+				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 밀쳐냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	DurationTimer Duration = new DurationTimer(this, 14, Cool) {
+	private DurationTimer Duration = new DurationTimer(this, 20, Cool) {
 		
 		private boolean DashIntoTheAir = DashConfig.getValue();
 		private int DamagePercent = DamageConfig.getValue();
@@ -84,9 +86,9 @@ public class Ares extends AbilityBase {
 			ParticleLib.LAVA.spawnParticle(p.getLocation(), 40, 4, 4, 4);
 			
 			if(DashIntoTheAir) {
-				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection()));
+				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7)));
 			} else {
-				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().setY(0)));
+				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7).setY(0)));
 			}
 			
 			for(Damageable d : LocationUtil.getNearbyDamageableEntities(p, 4, 4)) {
@@ -99,7 +101,7 @@ public class Ares extends AbilityBase {
 					d.damage(Damage / 5, p);
 				}
 
-				d.setVelocity(p.getLocation().toVector().subtract(d.getLocation().toVector()).multiply(-1));
+				d.setVelocity(p.getLocation().toVector().subtract(d.getLocation().toVector()).multiply(-1).setY(1));
 			}
 		}
 		
@@ -123,9 +125,13 @@ public class Ares extends AbilityBase {
 		return false;
 	}
 	
-	@Override
-	public void PassiveSkill(Event event) {}
-
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL) && Duration.isDuration()) {
+			e.setCancelled(true);
+		}
+	}
+	
 	@Override
 	public void onRestrictClear() {}
 

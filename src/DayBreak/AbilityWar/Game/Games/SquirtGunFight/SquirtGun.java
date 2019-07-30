@@ -10,7 +10,6 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -21,6 +20,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
@@ -107,46 +107,49 @@ public class SquirtGun extends AbilityBase {
 		}
 	}.setPeriod(3);
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof ProjectileLaunchEvent) {
-			ProjectileLaunchEvent e = (ProjectileLaunchEvent) event;
-			if(e.getEntity().getShooter().equals(getPlayer()) && e.getEntity() instanceof Arrow) {
-				Arrow a = (Arrow) e.getEntity();
-				arrows.add(a);
-			}
-		} else if(event instanceof ProjectileHitEvent) {
-			ProjectileHitEvent e = (ProjectileHitEvent) event;
-			if(e.getEntity() instanceof Arrow) {
-				arrows.remove(e.getEntity());
-				if(e.getEntity().getShooter().equals(getPlayer())) {
-					if(!gunCool.isCooldown()) {
-						if(e.getHitEntity() != null && e.getHitEntity() instanceof Damageable) {
-							((Damageable) e.getHitEntity()).damage(200, getPlayer());
-						}
-						SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
-						Location center = e.getHitEntity() != null ? e.getHitEntity().getLocation() : e.getHitBlock().getLocation();
-						for(Location l : LocationUtil.getRandomLocations(center, 10, 20)) {
-							l.getBlock().setType(Material.WATER);
-						}
-						
-						gunCool.StartTimer();
+	@SubscribeEvent
+	public void onProjectileLaunch(ProjectileLaunchEvent e) {
+		if(e.getEntity().getShooter().equals(getPlayer()) && e.getEntity() instanceof Arrow) {
+			Arrow a = (Arrow) e.getEntity();
+			arrows.add(a);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onProjectileHit(ProjectileHitEvent e) {
+		if(e.getEntity() instanceof Arrow) {
+			arrows.remove(e.getEntity());
+			if(e.getEntity().getShooter().equals(getPlayer())) {
+				if(!gunCool.isCooldown()) {
+					if(e.getHitEntity() != null && e.getHitEntity() instanceof Damageable) {
+						((Damageable) e.getHitEntity()).damage(200, getPlayer());
 					}
+					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
+					Location center = e.getHitEntity() != null ? e.getHitEntity().getLocation() : e.getHitBlock().getLocation();
+					for(Location l : LocationUtil.getRandomLocations(center, 10, 20)) {
+						l.getBlock().setType(Material.WATER);
+					}
+					
+					gunCool.StartTimer();
 				}
-			}
-		} else if(event instanceof PlayerMoveEvent) {
-			PlayerMoveEvent e = (PlayerMoveEvent) event;
-			if(e.getPlayer().equals(getPlayer()) && (e.getTo().getBlock().getType().equals(Material.WATER) || e.getTo().getBlock().getType().equals(Material.STATIONARY_WATER)) && getPlayer().isSneaking()) {
-				getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.3));
-			}
-		} else if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL)) {
-				e.setDamage(e.getDamage() / 5);
 			}
 		}
 	}
-
+	
+	@SubscribeEvent
+	public void onPlayerMove(PlayerMoveEvent e) {
+		if(e.getPlayer().equals(getPlayer()) && (e.getTo().getBlock().getType().equals(Material.WATER) || e.getTo().getBlock().getType().equals(Material.STATIONARY_WATER)) && getPlayer().isSneaking()) {
+			getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.3));
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL)) {
+			e.setDamage(e.getDamage() / 5);
+		}
+	}
+	
 	@Override
 	public void TargetSkill(MaterialType mt, Entity entity) {}
 

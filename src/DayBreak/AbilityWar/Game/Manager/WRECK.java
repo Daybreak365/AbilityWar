@@ -1,8 +1,9 @@
-package DayBreak.AbilityWar.Game.Games.Mode;
+package DayBreak.AbilityWar.Game.Manager;
 
 import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
 
 public class WRECK {

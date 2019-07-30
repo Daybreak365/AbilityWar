@@ -3,7 +3,6 @@ package DayBreak.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -34,7 +33,7 @@ public class DarkVision extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다. 또한, 빠르게 달리고 높게 점프할 수 있습니다."));
 	}
 
-	TimerBase Dark = new TimerBase() {
+	private TimerBase Dark = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -51,7 +50,7 @@ public class DarkVision extends AbilityBase {
 		
 	}.setPeriod(2);
 	
-	TimerBase Vision = new TimerBase() {
+	private TimerBase Vision = new TimerBase() {
 		
 		Integer Distance = DistanceConfig.getValue();
 		
@@ -74,9 +73,6 @@ public class DarkVision extends AbilityBase {
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {

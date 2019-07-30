@@ -4,13 +4,13 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
@@ -34,7 +34,7 @@ public class BlackCandle extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f디버프를 받지 않으며, 데미지를 받으면 " + ChanceConfig.getValue() + "% 확률로 체력 1.5칸을 회복합니다."));
 	}
 
-	TimerBase NoDebuff = new TimerBase() {
+	private TimerBase NoDebuff = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -57,31 +57,28 @@ public class BlackCandle extends AbilityBase {
 		@Override
 		public void onEnd() {}
 		
-	}.setPeriod(5);
+	}.setPeriod(1);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				Random r = new Random();
-				if(r.nextInt(10) == 0) {
-					Double Health = getPlayer().getHealth() + 1.5;
-					if(Health > 20) Health = 20.0;
-					
-					if(!getPlayer().isDead()) {
-						getPlayer().setHealth(Health);
-					}
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			Random r = new Random();
+			if(r.nextInt(10) == 0) {
+				Double Health = getPlayer().getHealth() + 1.5;
+				if(Health > 20) Health = 20.0;
+				
+				if(!getPlayer().isDead()) {
+					getPlayer().setHealth(Health);
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {
 		NoDebuff.StartTimer();

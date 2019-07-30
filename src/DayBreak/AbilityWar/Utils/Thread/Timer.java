@@ -8,7 +8,7 @@ import DayBreak.AbilityWar.AbilityWar;
  * 일반 타이머
  * @author DayBreak 새벽
  */
-abstract public class OverallTimer {
+abstract public class Timer {
 
 	private int Task = -1;
 
@@ -65,7 +65,7 @@ abstract public class OverallTimer {
 		return (int) (Count / (20 / Period));
 	}
 	
-	public OverallTimer setPeriod(int Period) {
+	public Timer setPeriod(int Period) {
 		this.Period = Period;
 		return this;
 	}
@@ -73,7 +73,7 @@ abstract public class OverallTimer {
 	/**
 	 * 일반 타이머
 	 */
-	public OverallTimer(int Count) {
+	public Timer(int Count) {
 		InfiniteTimer = false;
 		this.MaxCount = Count;
 	}
@@ -81,9 +81,9 @@ abstract public class OverallTimer {
 	/**
 	 * 무한 타이머
 	 */
-	public OverallTimer() {
+	public Timer() {
 		InfiniteTimer = true;
-		this.MaxCount = -1;
+		this.MaxCount = 0;
 	}
 	
 	private final class TimerTask extends Thread {
@@ -91,7 +91,8 @@ abstract public class OverallTimer {
 		@Override
 		public void run() {
 			if (InfiniteTimer) {
-				TimerProcess(-1);
+				TimerProcess(Count);
+				Count++;
 			} else {
 				if (Count > 0) {
 					TimerProcess(Count);

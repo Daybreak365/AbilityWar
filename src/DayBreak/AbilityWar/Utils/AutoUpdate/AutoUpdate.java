@@ -38,7 +38,7 @@ import org.json.simple.parser.JSONParser;
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
-import DayBreak.AbilityWar.Utils.Thread.OverallTimer;
+import DayBreak.AbilityWar.Utils.Thread.Timer;
 
 /**
  * ±êÇé ÀÚµ¿ ¾÷µ¥ÀÌÆ®
@@ -69,7 +69,8 @@ public class AutoUpdate {
 			UpdateObject Update = getLatestUpdate(PluginBranch.getName());
 			if (!isPluginLatest(Update)) {
 				this.queuedUpdate = Update;
-				new OverallTimer() {
+				List<String> updateNotice = Messager.formatUpdateNotice(queuedUpdate);
+				new Timer() {
 					
 					@Override
 					protected void onStart() {}
@@ -82,7 +83,7 @@ public class AutoUpdate {
 						if(!AbilityWarThread.isGameTaskRunning()) {
 							try {
 								for(Player p : Bukkit.getOnlinePlayers()) {
-									if(p.isOp()) Messager.sendStringList(p, Messager.formatUpdateNotice(queuedUpdate));
+									if(p.isOp()) Messager.sendStringList(p, updateNotice);
 								}
 							} catch(Exception ex) {}
 						}

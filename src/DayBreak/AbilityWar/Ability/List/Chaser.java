@@ -1,23 +1,23 @@
-	package DayBreak.AbilityWar.Ability.List;
+package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "추적자", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "추적자", Rank = Rank.D, Species = Species.HUMAN)
 public class Chaser extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaser.class, "Cooldown", 120,
@@ -37,9 +37,9 @@ public class Chaser extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f추적 장치는 한명에게만 부착할 수 있습니다."));
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	Player target = null;
+	private Player target = null;
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -62,28 +62,25 @@ public class Chaser extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getDamager().equals(getPlayer())) {
-				if(e.getEntity() instanceof Player) {
-					if(!e.isCancelled()) {
-						if(VersionUtil.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
-							if(!Cool.isCooldown()) {
-								Player p = (Player) e.getEntity();
-								this.target = p;
-								Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 추적 장치를 부착하였습니다."));
-								
-								Cool.StartTimer();
-							}
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if(e.getDamager().equals(getPlayer())) {
+			if(e.getEntity() instanceof Player) {
+				if(!e.isCancelled()) {
+					if(VersionUtil.getItemInHand(getPlayer()).getType().equals(Material.IRON_INGOT)) {
+						if(!Cool.isCooldown()) {
+							Player p = (Player) e.getEntity();
+							this.target = p;
+							Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 추적 장치를 부착하였습니다."));
+							
+							Cool.StartTimer();
 						}
 					}
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

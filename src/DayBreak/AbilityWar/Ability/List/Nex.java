@@ -10,7 +10,6 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -21,6 +20,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -44,7 +44,7 @@ public class Nex extends AbilityBase {
 
 	};
 
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 8, "# 데미지") {
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# 데미지") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -59,7 +59,7 @@ public class Nex extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -82,10 +82,10 @@ public class Nex extends AbilityBase {
 		return false;
 	}
 
-	boolean NoFall = false;
-	boolean RunSkill = false;
+	private boolean NoFall = false;
+	private boolean RunSkill = false;
 
-	TimerBase Skill = new TimerBase(4) {
+	private TimerBase Skill = new TimerBase(4) {
 
 		@Override
 		public void onStart() {
@@ -109,67 +109,66 @@ public class Nex extends AbilityBase {
 
 	}.setPeriod(10);
 	
-	Integer Damage = DamageConfig.getValue();
+	private int Damage = DamageConfig.getValue();
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if (event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if (e.getEntity() instanceof Player) {
-				if(e.getEntity().equals(getPlayer())) {
-					if (NoFall) {
-						if (e.getCause().equals(DamageCause.FALL)) {
-							e.setCancelled(true);
-							NoFall = false;
-						}
-					}
-				}
-			}
-		} else if(event instanceof PlayerMoveEvent) {
-			PlayerMoveEvent e = (PlayerMoveEvent) event;
-			if(e.getPlayer().equals(getPlayer())) {
-				if(RunSkill) {
-					Block b = getPlayer().getLocation().getBlock();
-					Block db = getPlayer().getLocation().subtract(0, 1, 0).getBlock();
-					
-					if(!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
-						RunSkill = false;
-						for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
-							SoundLib.ENTITY_GENERIC_EXPLODE.playSound(player);
-							player.damage(Damage, getPlayer());
-						}
-						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
-						
-						if(!db.getType().equals(Material.AIR)) {
-							if(ServerVersion.getVersion() >= 13) {
-								try {
-									Method method = Material.class.getDeclaredMethod("createBlockData");
-									Object BlockData = method.invoke(db.getType());
-									ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
-								} catch(Exception ex) {}
-							} else {
-								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(db.getType()));
-							}
-						} else {
-							if(ServerVersion.getVersion() >= 13) {
-								try {
-									Method method = Material.class.getDeclaredMethod("createBlockData");
-									Object BlockData = method.invoke(b.getType());
-									ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
-								} catch(Exception ex) {}
-							} else {
-								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));
-							}
-						}
-						
-						FallBlock.StartTimer();
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity() instanceof Player) {
+			if(e.getEntity().equals(getPlayer())) {
+				if (NoFall) {
+					if (e.getCause().equals(DamageCause.FALL)) {
+						e.setCancelled(true);
+						NoFall = false;
 					}
 				}
 			}
 		}
 	}
 	
-	TimerBase FallBlock = new TimerBase(5) {
+	@SubscribeEvent
+	public void onPlayerMove(PlayerMoveEvent e) {
+		if(e.getPlayer().equals(getPlayer())) {
+			if(RunSkill) {
+				Block b = getPlayer().getLocation().getBlock();
+				Block db = getPlayer().getLocation().subtract(0, 1, 0).getBlock();
+				
+				if(!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
+					RunSkill = false;
+					for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, getPlayer())) {
+						if(d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
+						d.damage(Damage, getPlayer());
+					}
+					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
+					
+					if(!db.getType().equals(Material.AIR)) {
+						if(ServerVersion.getVersion() >= 13) {
+							try {
+								Method method = Material.class.getDeclaredMethod("createBlockData");
+								Object BlockData = method.invoke(db.getType());
+								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
+							} catch(Exception ex) {}
+						} else {
+							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(db.getType()));
+						}
+					} else {
+						if(ServerVersion.getVersion() >= 13) {
+							try {
+								Method method = Material.class.getDeclaredMethod("createBlockData");
+								Object BlockData = method.invoke(b.getType());
+								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
+							} catch(Exception ex) {}
+						} else {
+							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));
+						}
+					}
+					
+					FallBlock.StartTimer();
+				}
+			}
+		}
+	}
+	
+	private TimerBase FallBlock = new TimerBase(5) {
 		
 		Location center;
 		

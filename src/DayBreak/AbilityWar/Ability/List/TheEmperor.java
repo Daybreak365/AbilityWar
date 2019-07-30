@@ -2,13 +2,13 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
@@ -34,7 +34,7 @@ public class TheEmperor extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 반 이하일 때 공격 피해를 받지 않습니다."));
 	}
 	
-	TimerBase Passive = new TimerBase() {
+	private TimerBase Passive = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -54,24 +54,21 @@ public class TheEmperor extends AbilityBase {
 		return false;
 	}
 	
-	Integer DamageDecrease = DamageDecreaseConfig.getValue();
+	private int DamageDecrease = DamageDecreaseConfig.getValue();
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				Double damage = (e.getDamage() / 100) * (100 - DamageDecrease);
-				e.setDamage(damage);
-				
-				Integer Health = (int) getPlayer().getHealth();
-				if(Health <= 2) {
-					e.setCancelled(true);
-				}
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			Double damage = (e.getDamage() / 100) * (100 - DamageDecrease);
+			e.setDamage(damage);
+			
+			Integer Health = (int) getPlayer().getHealth();
+			if(Health <= 2) {
+				e.setCancelled(true);
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {
 		Passive.StartTimer();

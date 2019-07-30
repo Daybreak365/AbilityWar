@@ -9,8 +9,6 @@ import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -27,7 +25,6 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.EnchantLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
-import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 @AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.HUMAN)
 public class Pumpkin extends AbilityBase {
@@ -59,13 +56,13 @@ public class Pumpkin extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	TimerBase Song = new TimerBase(13) {
+	private TimerBase Song = new TimerBase(13) {
 		
-		ArrayList<Player> Players;
+		private ArrayList<Player> Players;
 		
-		Integer Count;
+		private Integer Count;
 		
 		@Override
 		public void onStart() {
@@ -107,15 +104,12 @@ public class Pumpkin extends AbilityBase {
 		
 	}.setPeriod(3);
 
-	HashMap<Player, ItemStack> Players;
+	private HashMap<Player, ItemStack> Players;
 	
-	boolean Binding = false;
-	
-	DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
+	private DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
 		@Override
 		public void onDurationStart() {
-			Binding = true;
 			Players = new HashMap<Player, ItemStack>();
 			LocationUtil.getNearbyPlayers(getPlayer(), 30, 30).stream().forEach(p -> Players.put(p, p.getInventory().getHelmet()));
 			Song.StartTimer();
@@ -130,7 +124,6 @@ public class Pumpkin extends AbilityBase {
 		@Override
 		public void onDurationEnd() {
 			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
-			Binding = false;
 		}
 		
 		private ItemStack getPumpkin(Integer Time) {
@@ -161,22 +154,6 @@ public class Pumpkin extends AbilityBase {
 		}
 		
 		return false;
-	}
-
-	@Override
-	public void PassiveSkill(Event event) {
-		if(ServerVersion.getVersion() < 11) {
-			if(event instanceof InventoryClickEvent) {
-				if(Binding) {
-					InventoryClickEvent e = (InventoryClickEvent) event;
-					if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasLore()) {
-						if(e.getCurrentItem().getItemMeta().getLore().contains(ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"))) {
-							e.setCancelled(true);
-						}
-					}
-				}
-			}
-		}
 	}
 
 	@Override

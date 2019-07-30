@@ -3,8 +3,6 @@ package DayBreak.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.player.PlayerMoveEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -48,11 +46,13 @@ public class Hacker extends AbilityBase {
 				Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
-	Player CantMove = null;
+	private Player CantMove = null;
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	TimerBase Move = new TimerBase(DurationConfig.getValue() * 20) {
+	private final int DurationTick = DurationConfig.getValue() * 20;
+	
+	private TimerBase Particle = new TimerBase(DurationTick) {
 		
 		@Override
 		public void onStart() {}
@@ -86,7 +86,8 @@ public class Hacker extends AbilityBase {
 						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
 						
 						CantMove = target;
-						Move.StartTimer();
+						Hacker.this.getGame().getEffectManager().Stun(CantMove, DurationTick);
+						Particle.StartTimer();
 						
 						Cool.StartTimer();
 						
@@ -99,18 +100,6 @@ public class Hacker extends AbilityBase {
 		}
 		
 		return false;
-	}
-
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof PlayerMoveEvent) {
-			PlayerMoveEvent e = (PlayerMoveEvent) event;
-			if(CantMove != null) {
-				if(e.getPlayer().equals(CantMove)) {
-					e.setCancelled(true);
-				}
-			}
-		}
 	}
 
 	@Override

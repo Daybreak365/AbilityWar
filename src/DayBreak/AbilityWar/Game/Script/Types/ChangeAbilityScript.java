@@ -10,10 +10,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
-import DayBreak.AbilityWar.Ability.AbilityList;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Game.Script.Objects.AbstractScript;
 import DayBreak.AbilityWar.Utils.Messager;
 

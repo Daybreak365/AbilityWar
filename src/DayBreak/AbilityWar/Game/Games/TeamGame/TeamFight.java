@@ -1,6 +1,8 @@
-package DayBreak.AbilityWar.Game.Games.Default;
+package DayBreak.AbilityWar.Game.Games.TeamGame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -16,8 +18,8 @@ import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.GameCreditEvent;
-import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
+import DayBreak.AbilityWar.Game.Games.Mode.TeamGame;
 import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
 import DayBreak.AbilityWar.Game.Script.Script;
@@ -26,14 +28,10 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-/**
- * 게임 관리 클래스
- * @author DayBreak 새벽
- */
-@GameManifest(Name = "게임", Description = { "§f능력자 전쟁 플러그인의 기본 게임입니다." })
-public class DefaultGame extends AbstractGame {
-	
-	public DefaultGame() {
+@GameManifest(Name = "팀 전투", Description = {"§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다."})
+public class TeamFight extends TeamGame {
+
+	public TeamFight() {
 		setRestricted(Invincible);
 	}
 	
@@ -69,13 +67,16 @@ public class DefaultGame extends AbstractGame {
 		switch(Seconds) {
 			case 1:
 				broadcastPlayerList();
-				if(getParticipants().size() < 1) {
+				if(getParticipants().size() > 0 && getParticipants().size() % 2 != 0) {
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c팀 전투는 2명 이상의 짝수 인원에서만 플레이할 수 있습니다."));
 				}
 				break;
 			case 5:
 				broadcastPluginDescription();
+				break;
+			case 8:
+				this.initializeTeam();
 				break;
 			case 10:
 				if(AbilityWarSettings.getDrawAbility()) {
@@ -275,7 +276,7 @@ public class DefaultGame extends AbstractGame {
 			
 			@Override
 			protected List<Participant> setupPlayers() {
-				return DefaultGame.this.getParticipants();
+				return TeamFight.this.getParticipants();
 			}
 			
 			private List<Class<? extends AbilityBase>> setupAbilities() {
@@ -366,6 +367,21 @@ public class DefaultGame extends AbstractGame {
 	@Override
 	protected void onGameEnd() {
 		HandlerList.unregisterAll(infiniteDurability);
+	}
+
+	@Override
+	protected List<Team> setupTeams() {
+		List<Participant> participants = getParticipants();
+		int size = participants.size();
+		
+		Collections.shuffle(participants, new Random());
+		
+		List<Participant> blueMembers = new ArrayList<>(participants.subList(0, (size + 1) / 2));
+		Team blueTeam = this.newTeam("§b파란팀", blueMembers);
+		List<Participant> redMembers = new ArrayList<>(participants.subList((size + 1) / 2, size));
+		Team redTeam = this.newTeam("§c빨간팀", redMembers);
+		
+		return Arrays.asList(blueTeam, redTeam);
 	}
 	
 }

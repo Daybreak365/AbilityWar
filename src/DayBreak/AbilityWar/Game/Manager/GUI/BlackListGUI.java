@@ -20,10 +20,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import DayBreak.AbilityWar.Ability.AbilityList;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;

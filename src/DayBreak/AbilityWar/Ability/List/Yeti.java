@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -48,7 +47,7 @@ public class Yeti extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	TimerBase Buff = new TimerBase() {
+	private TimerBase Buff = new TimerBase() {
 
 		@Override
 		public void onStart() {
@@ -71,7 +70,7 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(1);
 
-	TimerBase Ice = new TimerBase(RangeConfig.getValue()) {
+	private TimerBase Ice = new TimerBase(RangeConfig.getValue()) {
 
 		Integer Count;
 		Location center;
@@ -106,7 +105,7 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(3);
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -123,10 +122,6 @@ public class Yeti extends AbilityBase {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void PassiveSkill(Event event) {
 	}
 
 	@Override

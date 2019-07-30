@@ -300,7 +300,7 @@ public class Messager {
 	/**
 	 * 명령어를 실행한 객체에게 메시지 목록을 전송합니다.
 	 */
-	public static void sendStringList(CommandSender sender, ArrayList<String> msg) {
+	public static void sendStringList(CommandSender sender, List<String> msg) {
 		for(String s : msg) {
 			sender.sendMessage(s);
 		}

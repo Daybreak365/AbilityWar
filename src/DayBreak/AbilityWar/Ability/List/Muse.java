@@ -6,13 +6,15 @@ import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
@@ -42,14 +44,14 @@ public class Muse extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f모두가 데미지를 받지 않는 지역을 만들어냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
-	Location center = null;
+	private Location center = null;
 	
-	DurationTimer Skill = new DurationTimer(this, 90, Cool) {
+	private DurationTimer Skill = new DurationTimer(this, 90, Cool) {
 		
-		Integer Count;
-		Integer SoundCount;
+		private Integer Count;
+		private int SoundCount;
 		
 		@Override
 		public void onDurationStart() {
@@ -151,21 +153,42 @@ public class Muse extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(center != null) {
-				if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
-					if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
-						ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
-						e.setCancelled(true);
-					}
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(center != null) {
+			if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
+				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
+					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
+					e.setCancelled(true);
 				}
 			}
 		}
 	}
 
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByEntityEvent e) {
+		if(center != null) {
+			if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
+				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
+					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByBlockEvent e) {
+		if(center != null) {
+			if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
+				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
+					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void onRestrictClear() {}
 

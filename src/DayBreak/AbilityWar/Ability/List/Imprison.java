@@ -6,8 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -37,15 +35,12 @@ public class Imprison extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 대상을 유리막 속에 가둡니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}
@@ -54,15 +49,13 @@ public class Imprison extends AbilityBase {
 	public void TargetSkill(MaterialType mt, Entity entity) {
 		if(mt.equals(MaterialType.Iron_Ingot)) {
 			if(entity != null) {
-				if(entity instanceof Player) {
-					if(!Cool.isCooldown()) {
-						List<Block> blocks = LocationUtil.getBlocks(entity.getLocation(), 3, true, false, true);
-						for(Block b : blocks) {
-							b.setType(Material.GLASS);
-						}
-						
-						Cool.StartTimer();
+				if(!Cool.isCooldown()) {
+					List<Block> blocks = LocationUtil.getBlocks(entity.getLocation(), 3, true, false, true);
+					for(Block b : blocks) {
+						b.setType(Material.GLASS);
 					}
+					
+					Cool.StartTimer();
 				}
 			} else {
 				Cool.isCooldown();

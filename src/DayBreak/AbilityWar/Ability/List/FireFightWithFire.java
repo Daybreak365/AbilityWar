@@ -4,7 +4,6 @@ import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -12,6 +11,7 @@ import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
@@ -40,30 +40,27 @@ public class FireFightWithFire extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageEvent) {
-			EntityDamageEvent e = (EntityDamageEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				if(e.getCause().equals(DamageCause.FIRE) || e.getCause().equals(DamageCause.FIRE_TICK) || e.getCause().equals(DamageCause.LAVA)) {
-					Random r = new Random();
-					if(r.nextInt(100) <= ChanceConfig.getValue() - 1) {
-						Double damage = e.getDamage();
-						e.setDamage(0);
-						
-						Double health = getPlayer().getHealth() + damage;
-						
-						if(health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
-						
-						if(!getPlayer().isDead()) {
-							getPlayer().setHealth(health);
-						}
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(e.getCause().equals(DamageCause.FIRE) || e.getCause().equals(DamageCause.FIRE_TICK) || e.getCause().equals(DamageCause.LAVA)) {
+				Random r = new Random();
+				if(r.nextInt(100) <= ChanceConfig.getValue() - 1) {
+					Double damage = e.getDamage();
+					e.setDamage(0);
+					
+					Double health = getPlayer().getHealth() + damage;
+					
+					if(health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
+					
+					if(!getPlayer().isDead()) {
+						getPlayer().setHealth(health);
 					}
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

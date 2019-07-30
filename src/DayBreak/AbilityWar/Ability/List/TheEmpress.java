@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -59,9 +58,9 @@ public class TheEmpress extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&fX &7: &c-&f, Z &7: &c- &f➡ 재생 20초 | 황금사과"));
 	}
 	
-	boolean EasterEgg = !EasterEggConfig.getValue();
+	private boolean EasterEgg = !EasterEggConfig.getValue();
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -128,9 +127,6 @@ public class TheEmpress extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void PassiveSkill(Event event) {}
 
 	@Override
 	public void onRestrictClear() {}

@@ -5,13 +5,13 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
+import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
@@ -39,7 +39,7 @@ public class DiceGod extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f공격을 받았을 때 1/6 확률로 데미지를 받는 대신 데미지만큼 체력을 회복합니다."));
 	}
 	
-	CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -81,28 +81,25 @@ public class DiceGod extends AbilityBase {
 		return false;
 	}
 	
-	@Override
-	public void PassiveSkill(Event event) {
-		if(event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-			if(e.getEntity().equals(getPlayer())) {
-				Random r = new Random();
-				if(r.nextInt(6) == 0) {
-					Double damage = e.getDamage();
-					e.setDamage(0);
-					
-					Double health = getPlayer().getHealth() + damage;
-					
-					if(health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
-					
-					if(!getPlayer().isDead()) {
-						getPlayer().setHealth(health);
-					}
+	@SubscribeEvent
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			Random r = new Random();
+			if(r.nextInt(6) == 0) {
+				Double damage = e.getDamage();
+				e.setDamage(0);
+				
+				Double health = getPlayer().getHealth() + damage;
+				
+				if(health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
+				
+				if(!getPlayer().isDead()) {
+					getPlayer().setHealth(health);
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onRestrictClear() {}
 

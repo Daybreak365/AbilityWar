@@ -18,9 +18,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
-import DayBreak.AbilityWar.Ability.AbilityList;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
