@@ -3,7 +3,11 @@ package DayBreak.AbilityWar.Ability.List;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -14,6 +18,7 @@ import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
+import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 @AbilityManifest(Name = "검은 양초", Rank = Rank.A, Species = Species.OTHERS)
@@ -31,7 +36,8 @@ public class BlackCandle extends AbilityBase {
 
 	public BlackCandle(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f디버프를 받지 않으며, 데미지를 받으면 " + ChanceConfig.getValue() + "% 확률로 체력 1.5칸을 회복합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f디버프를 받지 않으며, 스턴 공격을 받지 않습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f또한, 데미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
 	}
 
 	private TimerBase NoDebuff = new TimerBase() {
@@ -41,6 +47,7 @@ public class BlackCandle extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
+			EffectLib.BAD_OMEN.removePotionEffect(getPlayer());
 			EffectLib.BLINDNESS.removePotionEffect(getPlayer());
 			EffectLib.CONFUSION.removePotionEffect(getPlayer());
 			EffectLib.GLOWING.removePotionEffect(getPlayer());
@@ -64,16 +71,51 @@ public class BlackCandle extends AbilityBase {
 		return false;
 	}
 
+	private final int Chance = ChanceConfig.getValue();
+
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
 			Random r = new Random();
-			if(r.nextInt(10) == 0) {
-				Double Health = getPlayer().getHealth() + 1.5;
-				if(Health > 20) Health = 20.0;
+			if(r.nextInt(100) + 1 <= Chance) {
+				double Health = getPlayer().getHealth() + 1.5;
+				if(Health > 20.0) Health = 20.0;
 				
 				if(!getPlayer().isDead()) {
 					getPlayer().setHealth(Health);
+					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Tone.F));
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByEntityEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			Random r = new Random();
+			if(r.nextInt(100) + 1 <= Chance) {
+				double Health = getPlayer().getHealth() + 1.5;
+				if(Health > 20.0) Health = 20.0;
+				
+				if(!getPlayer().isDead()) {
+					getPlayer().setHealth(Health);
+					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Tone.F));
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByBlockEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			Random r = new Random();
+			if(r.nextInt(100) + 1 <= Chance) {
+				double Health = getPlayer().getHealth() + 1.5;
+				if(Health > 20.0) Health = 20.0;
+				
+				if(!getPlayer().isDead()) {
+					getPlayer().setHealth(Health);
+					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Tone.F));
 				}
 			}
 		}

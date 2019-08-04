@@ -254,7 +254,7 @@ public class AbilityFactory {
 		private final Class<T> clazz;
 		private final AbilityManifest manifest;
 		private final List<Field> timers;
-		private final Map<Class<? extends Event>, List<Method>> eventhandlers;
+		private final Map<Class<? extends Event>, Method> eventhandlers;
 		
 		@SuppressWarnings("unchecked")
 		private AbilityRegisteration(Class<T> clazz) {
@@ -273,15 +273,13 @@ public class AbilityFactory {
 			}
 			this.timers = Collections.unmodifiableList(timers);
 			
-			Map<Class<? extends Event>, List<Method>> eventhandlers = new HashMap<>();
+			Map<Class<? extends Event>, Method> eventhandlers = new HashMap<>();
 			for(Method method : clazz.getDeclaredMethods()) {
 				if(method.isAnnotationPresent(SubscribeEvent.class)) {
 					Class<?>[] parameters = method.getParameterTypes();
 					if(parameters.length == 1 && Event.class.isAssignableFrom(parameters[0])) {
 						Class<? extends Event> eventClass = (Class<? extends Event>) parameters[0];
-						if(!eventhandlers.containsKey(eventClass)) eventhandlers.put(eventClass, new ArrayList<Method>());
-						
-						eventhandlers.get(eventClass).add(method);
+						eventhandlers.put(eventClass, method);
 					}
 				}
 			}
@@ -300,7 +298,7 @@ public class AbilityFactory {
 			return timers;
 		}
 
-		public Map<Class<? extends Event>, List<Method>> getEventhandlers() {
+		public Map<Class<? extends Event>, Method> getEventhandlers() {
 			return eventhandlers;
 		}
 		

@@ -73,7 +73,7 @@ public class Chaos extends AbilityBase {
 		
 		@Override
 		public void DurationProcess(Integer Seconds) {
-			ParticleLib.SMOKE_LARGE.spawnParticle(center, 100, 0, 0, 0);
+			ParticleLib.SMOKE_LARGE.spawnParticle(center, 0, 0, 0, 100);
 			for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, center, Distance, Distance, getPlayer())) {
 				d.damage(1);
 				Vector vector = center.toVector().subtract(d.getLocation().toVector()).multiply(0.7);

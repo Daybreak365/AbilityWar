@@ -47,8 +47,8 @@ public class Hermit extends AbilityBase {
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Player p = e.getPlayer();
 		if(p.getWorld().equals(getPlayer().getWorld())) {
-			if(!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), Double.valueOf(Distance)) && 
-					LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), Double.valueOf(Distance))) {
+			if(!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), Double.valueOf(Distance), true) && 
+					LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), Double.valueOf(Distance), true)) {
 				if(AbilityWarThread.isGameTaskRunning() && AbilityWarThread.getGame().isParticipating(p)) {
 					TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&8헤르밋"),
 							ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + " &f접근중"), 5, 30, 5);

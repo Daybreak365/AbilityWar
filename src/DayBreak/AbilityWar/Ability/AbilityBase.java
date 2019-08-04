@@ -16,14 +16,14 @@ import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
-import DayBreak.AbilityWar.Game.Manager.EventExecutor.Executor;
+import DayBreak.AbilityWar.Game.Manager.PassiveManager.PassiveExecutor;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
  * 능력의 기반이 되는 클래스입니다.
  */
-public abstract class AbilityBase implements Executor {
+public abstract class AbilityBase implements PassiveExecutor {
 	
 	private final Participant participant;
 	private final String[] explain;
@@ -56,9 +56,7 @@ public abstract class AbilityBase implements Executor {
 			this.manifest = ar.getManifest();
 			this.eventhandlers = ar.getEventhandlers();
 			
-			for(Class<? extends Event> eventClass : eventhandlers.keySet()) {
-				game.getPassiveManager().registerExecutor(eventClass, this);
-			}
+			for(Class<? extends Event> eventClass : eventhandlers.keySet()) game.getPassiveManager().register(eventClass, this);
 		} else {
 			throw new NullPointerException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
@@ -73,19 +71,17 @@ public abstract class AbilityBase implements Executor {
 	 */
 	public abstract boolean ActiveSkill(MaterialType mt, ClickType ct);
 	
-	private final Map<Class<? extends Event>, List<Method>> eventhandlers;
+	private final Map<Class<? extends Event>, Method> eventhandlers;
 	
 	@Override
 	public void execute(Event event) {
 		if(!Restricted) {
 			Class<? extends Event> eventClass = event.getClass();
 			if(eventhandlers.containsKey(eventClass)) {
-				for(Method m : eventhandlers.get(eventClass)) {
-					try {
-						m.invoke(this, event);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				try {
+					eventhandlers.get(eventClass).invoke(this, event);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		}
@@ -110,7 +106,7 @@ public abstract class AbilityBase implements Executor {
 	 * 플레이어의 능력이 변경될 때 자동으로 호출됩니다.
 	 */
 	public void Remove() {
-		game.getPassiveManager().unregisterExecutor(this);
+		game.getPassiveManager().unregisterAll(this);
 		this.StopAllTimers();
 	}
 

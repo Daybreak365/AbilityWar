@@ -56,7 +56,7 @@ public class Brewer extends AbilityBase {
 					} catch (Exception e) {}
 					Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&5오늘은 어떤 포션을 마실까..."));
 					SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(p);
-					ParticleLib.SPELL_WITCH.spawnParticle(p.getLocation(), 10, 2, 2, 2);
+					ParticleLib.SPELL_WITCH.spawnParticle(p.getLocation(), 2, 2, 2, 10);
 					
 					Cool.StartTimer();
 					

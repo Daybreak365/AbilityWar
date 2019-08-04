@@ -145,7 +145,7 @@ public class Nex extends AbilityBase {
 							try {
 								Method method = Material.class.getDeclaredMethod("createBlockData");
 								Object BlockData = method.invoke(db.getType());
-								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
+								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 2, 2, 2, 30, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
 							} catch(Exception ex) {}
 						} else {
 							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(db.getType()));
@@ -155,7 +155,7 @@ public class Nex extends AbilityBase {
 							try {
 								Method method = Material.class.getDeclaredMethod("createBlockData");
 								Object BlockData = method.invoke(b.getType());
-								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
+								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 2, 2, 2, 30, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
 							} catch(Exception ex) {}
 						} else {
 							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));

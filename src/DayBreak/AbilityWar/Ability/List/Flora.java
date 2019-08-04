@@ -16,6 +16,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 @AbilityManifest(Name = "ÇÃ·Î¶ó", Rank = Rank.C, Species = Species.GOD)
@@ -47,15 +48,17 @@ public class Flora extends AbilityBase {
 		@Override
 		public void onStart() {}
 		
+		private final Circle circle = new Circle(getPlayer().getLocation(), 6).setAmount(20).setHighestLocation(true);
+		
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			center = getPlayer().getLocation();
-			for(Location l : LocationUtil.getCircle(center, 6, 20, true)) {
-				ParticleLib.SPELL.spawnParticle(l.subtract(0, 1, 0), 1, 0, 0, 0);
+			for(Location l : circle.setCenter(center).getLocations()) {
+				ParticleLib.SPELL.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
 			}
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, 6, 200)) {
-				if(LocationUtil.isInCircle(center, p.getLocation(), 6.0)) {
+				if(LocationUtil.isInCircle(center, p.getLocation(), 6.0, true)) {
 					if(type.equals(EffectType.Speed)) {
 						EffectLib.SPEED.addPotionEffect(p, 40, 1, true);
 					} else if(type.equals(EffectType.Regeneration)) {

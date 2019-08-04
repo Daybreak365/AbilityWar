@@ -15,7 +15,6 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
-import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
@@ -72,8 +71,8 @@ public class Yeti extends AbilityBase {
 
 	private TimerBase Ice = new TimerBase(RangeConfig.getValue()) {
 
-		Integer Count;
-		Location center;
+		private int Count;
+		private Location center;
 
 		@Override
 		public void onStart() {
@@ -85,8 +84,15 @@ public class Yeti extends AbilityBase {
 
 		@Override
 		public void TimerProcess(Integer Seconds) {
+			for(Block b : LocationUtil.getBlocks(center, Count, true, true, true)) {
+				if (b.getType().equals(Material.WATER)) {
+					b.setType(Material.PACKED_ICE);
+				}
+
+				b.getLocation().add(0, 1, 0).getBlock().setType(Material.SNOW);
+			}/*
 			for (Location l : LocationUtil.getCircle(center, Count, Count * 20, true)) {
-				ParticleLib.SNOWBALL.spawnParticle(l, 1, 0, 0, 0);
+				ParticleLib.SNOWBALL.spawnParticle(l, 0, 0, 0, 1);
 
 				Block db = l.subtract(0, 2, 0).getBlock();
 
@@ -95,8 +101,7 @@ public class Yeti extends AbilityBase {
 				}
 
 				l.add(0, 1, 0).getBlock().setType(Material.SNOW);
-			}
-
+			}*/
 			Count++;
 		}
 

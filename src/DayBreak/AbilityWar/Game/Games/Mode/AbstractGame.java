@@ -35,7 +35,7 @@ import DayBreak.AbilityWar.Game.Manager.GameListener;
 import DayBreak.AbilityWar.Game.Manager.Invincibility;
 import DayBreak.AbilityWar.Game.Manager.ScoreboardManager;
 import DayBreak.AbilityWar.Game.Manager.WRECK;
-import DayBreak.AbilityWar.Game.Manager.EventExecutor.PassiveManager;
+import DayBreak.AbilityWar.Game.Manager.PassiveManager.PassiveManager;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.Timer;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
@@ -92,9 +92,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 	private int Seconds = 0;
 
 	@Override
-	protected void onStart() {
-		
-	}
+	protected void onStart() {}
 	
 	@Override
 	protected void TimerProcess(Integer i) {

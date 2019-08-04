@@ -26,8 +26,7 @@ public class EffectManager implements EventExecutor {
 		this.game = game;
 		Bukkit.getPluginManager().registerEvent(PlayerMoveEvent.class, game, EventPriority.HIGHEST, this, AbilityWar.getPlugin());
 		
-		//Default
-		conditions.add(new EffectCondition() {
+		registerCondition(new EffectCondition() {
 			@Override
 			protected boolean checkCondition(Participant p, EffectType type) {
 				if(type.equals(EffectType.STUN) && p.hasAbility() && p.getAbility().getClass().equals(BlackCandle.class)) return false;
@@ -61,6 +60,24 @@ public class EffectManager implements EventExecutor {
 		}
 	}
 
+	private final List<EffectCondition> conditions = new ArrayList<EffectCondition>();
+	
+	public void registerCondition(EffectCondition condition) {
+		if(!conditions.contains(condition)) conditions.add(condition);
+	}
+
+	public abstract class EffectCondition {
+		
+		protected abstract boolean checkCondition(Participant p, EffectType type);
+		
+	}
+
+	private enum EffectType {
+		
+		STUN;
+		
+	}
+	
 	@Override
 	public void execute(Listener listener, Event event) throws EventException {
 		if(event instanceof PlayerMoveEvent) {
@@ -73,20 +90,6 @@ public class EffectManager implements EventExecutor {
 				}
 			}
 		}
-	}
-	
-	private final List<EffectCondition> conditions = new ArrayList<EffectCondition>();
-	
-	private enum EffectType {
-		
-		STUN;
-		
-	}
-	
-	public abstract class EffectCondition {
-		
-		protected abstract boolean checkCondition(Participant p, EffectType type);
-		
 	}
 	
 }

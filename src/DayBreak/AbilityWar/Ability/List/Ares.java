@@ -83,7 +83,7 @@ public class Ares extends AbilityBase {
 		public void DurationProcess(Integer Seconds) {
 			Player p = getPlayer();
 			
-			ParticleLib.LAVA.spawnParticle(p.getLocation(), 40, 4, 4, 4);
+			ParticleLib.LAVA.spawnParticle(p.getLocation(), 4, 4, 4, 40);
 			
 			if(DashIntoTheAir) {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7)));

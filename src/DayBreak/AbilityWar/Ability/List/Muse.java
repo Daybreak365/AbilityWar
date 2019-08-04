@@ -24,6 +24,7 @@ import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 
 @AbilityManifest(Name = "¹ÂÁî", Rank = Rank.S, Species = Species.OTHERS)
 public class Muse extends AbilityBase {
@@ -62,9 +63,10 @@ public class Muse extends AbilityBase {
 		
 		@Override
 		public void DurationProcess(Integer Seconds) {
+			Circle circle = new Circle(center, Count).setAmount(Count * 6).setHighestLocation(true);
 			if(Count <= 10) {
-				for(Location l : LocationUtil.getCircle(center, Count, Count * 6, true)) {
-					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 1, 0, 0, 0);
+				for(Location l : circle.getLocations()) {
+					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
 				}
 				
 				if(Count.equals(1)) {
@@ -111,12 +113,12 @@ public class Muse extends AbilityBase {
 				
 				Count++;
 			} else {
-				for(Location l : LocationUtil.getCircle(center, Count, Count * 6, true)) {
-					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 1, 0, 0, 0);
+				for(Location l : circle.getLocations()) {
+					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
 				}
 				
 				for(Player p : LocationUtil.getNearbyPlayers(center, 10, 200)) {
-					if(LocationUtil.isInCircle(center, p.getLocation(), 10.0)) {
+					if(LocationUtil.isInCircle(center, p.getLocation(), 10.0, true)) {
 						EffectLib.GLOWING.addPotionEffect(p, 4, 0, true);
 						
 						if(SoundCount % 5 == 0) {
@@ -157,8 +159,8 @@ public class Muse extends AbilityBase {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if(center != null) {
 			if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
-				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
-					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
+				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0, true)) {
+					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 					e.setCancelled(true);
 				}
 			}
@@ -169,8 +171,8 @@ public class Muse extends AbilityBase {
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
 		if(center != null) {
 			if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
-				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
-					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
+				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0, true)) {
+					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 					e.setCancelled(true);
 				}
 			}
@@ -181,8 +183,8 @@ public class Muse extends AbilityBase {
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
 		if(center != null) {
 			if(LocationUtil.getNearbyDamageableEntities(center, 10, 200).contains(e.getEntity())) {
-				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0)) {
-					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 5, 2, 2, 2);
+				if(LocationUtil.isInCircle(center, e.getEntity().getLocation(), 10.0, true)) {
+					ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 					e.setCancelled(true);
 				}
 			}

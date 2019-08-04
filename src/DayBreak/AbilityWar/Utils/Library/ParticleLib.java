@@ -23,12 +23,11 @@
 
 package DayBreak.AbilityWar.Utils.Library;
 
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
-import DayBreak.AbilityWar.Utils.Library.Packet.ParticlePacket;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
@@ -108,7 +107,6 @@ public class ParticleLib {
 
 		private String particleName = "";
 		private Particle particle = null;
-		private Effect effect = null;
 
 		private Particles(String Name14, String Name13, String Name12, String Name11, String Name10, String Name9,
 				String Name8, String Name7) {
@@ -124,25 +122,6 @@ public class ParticleLib {
 			case 12:
 				particleName = Name12;
 				particle = getParticle();
-				break;
-			case 11:
-				particleName = Name11;
-				particle = getParticle();
-				break;
-			case 10:
-				particleName = Name10;
-				particle = getParticle();
-				break;
-			case 9:
-				particleName = Name9;
-				particle = getParticle();
-				break;
-			case 8:
-				particleName = Name8;
-				break;
-			case 7:
-				effect = getEffect();
-				particleName = Name7;
 				break;
 			}
 		}
@@ -162,81 +141,64 @@ public class ParticleLib {
 			return particle;
 		}
 
-		/**
-		 * 1.7.10버전 이하
-		 */
-		private Effect getEffect() {
-			Effect effect = null;
-
-			for (Effect e : Effect.values()) {
-				if (e.toString().equalsIgnoreCase(particleName)) {
-					effect = e;
-				}
-			}
-
-			return effect;
-		}
-
-		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ) {
+		public void spawnParticle(Player p, Location l, RGB rgb, int Count) {
 			if (AbilityWarSettings.getVisualEffect()) {
-				if (ServerVersion.getVersion() >= 9) {
-					Particle p = particle;
-					if (p != null) {
-						l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ);
-					}
-				} else if (ServerVersion.getVersion() == 8) {
-					ParticlePacket packet = new ParticlePacket(particleName, l, (float) offsetX, (float) offsetY,
-							(float) offsetZ, Count);
-					packet.Broadcast();
-				} else if (ServerVersion.getVersion() <= 7) {
-					Effect e = effect;
-					if (e != null) {
-						l.getWorld().playEffect(l, e, Count);
-					}
+				if (particle != null) {
+					p.spawnParticle(particle, l, Count, rgb.getRed(), rgb.getGreen(), rgb.getBlue());
 				}
 			}
 		}
 
-		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, double extra) {
+		public void spawnParticle(Location l, RGB rgb, int Count) {
 			if (AbilityWarSettings.getVisualEffect()) {
-				if (ServerVersion.getVersion() >= 9) {
-					Particle p = particle;
-					if (p != null) {
-						l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, extra);
-					}
-				} else if (ServerVersion.getVersion() == 8) {
-					ParticlePacket packet = new ParticlePacket(particleName, l, (float) offsetX, (float) offsetY,
-							(float) offsetZ, (float) extra, Count);
-					packet.Broadcast();
-				} else if (ServerVersion.getVersion() <= 7) {
-					Effect e = effect;
-					if (e != null) {
-						l.getWorld().playEffect(l, e, Count);
-					}
+				if (particle != null) {
+					l.getWorld().spawnParticle(particle, l, Count, rgb.getRed(), rgb.getGreen(), rgb.getBlue());
 				}
 			}
 		}
 
-		public void spawnParticle(Location l, int Count, double offsetX, double offsetY, double offsetZ, Object arg) {
+		public void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count) {
 			if (AbilityWarSettings.getVisualEffect()) {
-				if (ServerVersion.getVersion() >= 9) {
-					Particle p = particle;
-					if (p != null) {
-						l.getWorld().spawnParticle(p, l, Count, offsetX, offsetY, offsetZ, arg);
-					}
-				} else if (ServerVersion.getVersion() == 8) {
-					ParticlePacket packet = new ParticlePacket(particleName, l, (float) offsetX, (float) offsetY,
-							(float) offsetZ, Count);
-					packet.Broadcast();
-				} else if (ServerVersion.getVersion() <= 7) {
-					Effect e = effect;
-					if (e != null) {
-						l.getWorld().playEffect(l, e, Count);
-					}
+				if (particle != null) {
+					l.getWorld().spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ);
 				}
 			}
 		}
 
+		public void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count, Object arg) {
+			if (AbilityWarSettings.getVisualEffect()) {
+				if (particle != null) {
+					l.getWorld().spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ, arg);
+				}
+			}
+		}
+		
+	}
+	
+	public static class RGB {
+		
+		private final int Red;
+		private final int Green;
+		private final int Blue;
+		
+		public RGB(int Red, int Green, int Blue) {
+			this.Red = Red;
+			this.Green = Green;
+			this.Blue = Blue;
+		}
+
+		public float getRed() {
+			return (float) Red / 255;
+		}
+
+		public float getGreen() {
+			return (float) Green / 255;
+		}
+
+		public float getBlue() {
+			return (float) Blue / 255;
+		}
+		
 	}
 
 }

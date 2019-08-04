@@ -3,6 +3,8 @@ package DayBreak.AbilityWar.Ability.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -69,7 +71,7 @@ public class Void extends AbilityBase {
 					if(target != null) {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님에게 텔레포트합니다."));
 						getPlayer().teleport(target);
-						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 20,1, 1, 1);
+						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 						
 						Invincibility.StartTimer();
 						
@@ -89,7 +91,27 @@ public class Void extends AbilityBase {
 		if(e.getEntity().equals(getPlayer())) {
 			if(this.Inv) {
 				e.setCancelled(true);
-				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 20, 1, 1, 1);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByEntityEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(this.Inv) {
+				e.setCancelled(true);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByBlockEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(this.Inv) {
+				e.setCancelled(true);
+				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 			}
 		}
 	}

@@ -25,7 +25,8 @@ public class LocationUtil {
 
 	private LocationUtil() {}
 	
-	public static boolean isInCircle(Location center, Location location, double radius) {
+	public static boolean isInCircle(final Location center, final Location location, final double radius, final boolean flatsurface) {
+		if(flatsurface) {center.setY(0); location.setY(0);}
 		if(center.getWorld().equals(location.getWorld())) {
 			double distance = center.distance(location);
 			return (distance <= radius);
@@ -162,29 +163,7 @@ public class LocationUtil {
 		
 		return locations;
 	}
-
-	public static ArrayList<Location> getCircle(Location center, int radius, int amount, boolean HighestY) {
-		return getCircle(center, Double.valueOf(radius), amount, HighestY);
-	}
-
-	public static ArrayList<Location> getCircle(Location center, double radius, int amount, boolean HighestY) {
-		ArrayList<Location> locations = new ArrayList<Location>();
-		
-		if(amount > 0) {
-			for(double degree = 0; degree < 360; degree += (360 / amount)) {
-				double radians = Math.toRadians(degree);
-				double X = Math.cos(radians) * radius;
-				double Z = Math.sin(radians) * radius;
-				
-				Location location = center.clone().add(X, 0, Z);
-				if(HighestY) location.setY(location.getWorld().getHighestBlockYAt(location) + 1);
-				locations.add(location);
-			}
-		}
-		
-		return locations;
-	}
-
+	
 	public static <E> E getNearestEntity(Class<E> clazz, Location center, Entity exception) {
 		double distance = Double.MAX_VALUE;
 		E entity = null;

@@ -2,6 +2,8 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -59,7 +61,7 @@ public class Virtus extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
-			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 10, 3, 3, 3);
+			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 3, 3, 3, 10);
 		}
 		
 		@Override
@@ -88,6 +90,24 @@ public class Virtus extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(Activated) {
+				e.setDamage(e.getDamage() / 4);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByEntityEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(Activated) {
+				e.setDamage(e.getDamage() / 4);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByBlockEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
 			if(Activated) {
 				e.setDamage(e.getDamage() / 4);

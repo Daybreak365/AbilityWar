@@ -47,7 +47,7 @@ public class HigherBeing extends AbilityBase {
 			if(e.getEntity().getLocation().getY() < getPlayer().getLocation().getY()) {
 				e.setDamage(e.getDamage() * Multiple);
 				SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
-				ParticleLib.LAVA.spawnParticle(e.getEntity().getLocation(), 5, 1, 1, 1);
+				ParticleLib.LAVA.spawnParticle(e.getEntity().getLocation(), 1, 1, 1, 5);
 			} else if(e.getEntity().getLocation().getY() != getPlayer().getLocation().getY()) {
 				e.setCancelled(true);
 				SoundLib.BLOCK_ANVIL_BREAK.playSound(getPlayer());

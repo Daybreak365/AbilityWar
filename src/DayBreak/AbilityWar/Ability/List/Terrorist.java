@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -18,6 +18,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 
 @AbilityManifest(Name = "테러리스트", Rank = Rank.A, Species = Species.HUMAN)
 public class Terrorist extends AbilityBase {
@@ -47,13 +48,13 @@ public class Terrorist extends AbilityBase {
 				if(!Cool.isCooldown()) {
 					Location center = getPlayer().getLocation();
 					for(int i = 0; i < 10; i++) {
-						for(Location l : LocationUtil.getCircle(center, i, 20, true)) {
-							ParticleLib.LAVA.spawnParticle(l, 1, 0, 0, 0);
+						for(Location l : new Circle(center, i).setAmount(20).setHighestLocation(true).getLocations()) {
+							ParticleLib.LAVA.spawnParticle(l, 0, 0, 0, 1);
 						}
 					}
 					
 					for(Location l : LocationUtil.getRandomLocations(center, 9, 10)) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
-					for(Location l : LocationUtil.getCircle(center, 10, 15, true)) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
+					for(Location l : new Circle(center, 10).setAmount(15).setHighestLocation(true).getLocations()) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 					
 					Cool.StartTimer();
 					
@@ -66,7 +67,7 @@ public class Terrorist extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	public void onEntityDamage(EntityDamageEvent e) {
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
 			if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 				e.setCancelled(true);

@@ -77,7 +77,7 @@ public class ParticlePacket extends AbstractPacket {
 						(float) location.getX(), 
 						(float) location.getY(),
 						(float) location.getZ(),
-						offsetX, offsetY, offsetZ, speed, count, args);
+						(float) offsetX, (float) offsetY, (float) offsetZ, (float) speed, count, args);
 				sendPacket(p, ParticlePacket);
 			}
 		} catch(Exception ex) {}

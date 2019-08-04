@@ -1,6 +1,10 @@
 package DayBreak.AbilityWar.Ability.List;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -13,7 +17,10 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
+import DayBreak.AbilityWar.Utils.Library.ParticleLib.RGB;
+import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 @AbilityManifest(Name = "해커", Rank = Rank.A, Species = Species.HUMAN)
@@ -41,32 +48,102 @@ public class Hacker extends AbilityBase {
 	
 	public Hacker(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신에게 제일 가까운 플레이어의 좌표를 알리고"),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신에게 제일 가까운 플레이어를 해킹해 좌표를 알아내고"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DurationConfig.getValue() + "초간 해당 플레이어가 움직이지 못하게 합니다."),
 				Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
-	private Player CantMove = null;
+	private Player Target = null;
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	private final int DurationTick = DurationConfig.getValue() * 20;
 	
-	private TimerBase Particle = new TimerBase(DurationTick) {
+	private TimerBase Skill = new TimerBase(100) {
+
+		private int Count;
 		
 		@Override
-		public void onStart() {}
+		protected void onStart() {
+			this.Count = 1;
+		}
+		
+		@Override
+		protected void onEnd() {
+			if(Target != null) {
+				new TitlePacket("", "", 0, 1, 0).Send(getPlayer());
+
+				int X = (int) Target.getLocation().getX();
+				int Y = (int) Target.getLocation().getY();
+				int Z = (int) Target.getLocation().getZ();
+				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ "+ Z + "&f에 있습니다."));
+
+				new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0).Send(Target);
+				Hacker.this.getGame().getEffectManager().Stun(Target, DurationTick);
+				Particle.StartTimer();
+			}
+		}
+		
+		@Override
+		protected void TimerProcess(Integer Seconds) {
+			if(Target != null) {
+				StringBuilder sb = new StringBuilder();
+				int all = 20;
+				int green = (int)(((double) Count / 100) * all);
+				for(int i = 0; i < green; i++) sb.append(ChatColor.GREEN + "|");
+				int gray = all - green;
+				for(int i = 0; i < gray; i++) sb.append(ChatColor.GRAY + "|");
+				
+				TitlePacket packet = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + " &f해킹중..."),
+						ChatColor.translateAlternateColorCodes('&', sb.toString() + " &f" + Count + "%"), 0, 5, 0);
+				packet.Send(getPlayer());
+				
+				Count++;
+			}
+		}
+	}.setPeriod(1);
+	
+	private TimerBase Particle = new TimerBase(DurationTick) {
+
+		private double y;
+		private boolean add;
+		
+		@Override
+		public void onStart() {
+			y = 0.0;
+			add = true;
+		}
+
+		private final int amount = 25;
+		private final Circle top = new Circle(getPlayer().getLocation(), 1).setAmount(amount);
+		private final Circle bottom = new Circle(getPlayer().getLocation(), 1).setAmount(amount);
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			if(CantMove != null) {
-				ParticleLib.SPELL.spawnParticle(CantMove.getLocation(), 2, 3, 3, 3);
+			if(Target != null) {
+				if(add && y >= 2.0) {
+					add = false;
+				} else if(!add && y <= 0) {
+					add = true;
+				}
+				
+				if(add) {
+					y += 0.1;
+				} else {
+					y -= 0.1;
+				}
+				
+				List<Location> locations = new ArrayList<>();
+				locations.addAll(top.setCenter(Target.getLocation().add(0, y, 0)).getLocations());
+				locations.addAll(bottom.setCenter(Target.getLocation().add(0, 2.0 - y, 0)).getLocations());
+				
+				for(Location l : locations) ParticleLib.REDSTONE.spawnParticle(l, new RGB(168, 121, 171), 0);
 			}
 		}
 		
 		@Override
 		public void onEnd() {
-			CantMove = null;
+			Target = null;
 		}
 		
 	}.setPeriod(1);
@@ -79,15 +156,8 @@ public class Hacker extends AbilityBase {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 					
 					if(target != null) {
-						int X = (int) target.getLocation().getX();
-						int Y = (int) target.getLocation().getY();
-						int Z = (int) target.getLocation().getZ();
-						
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
-						
-						CantMove = target;
-						Hacker.this.getGame().getEffectManager().Stun(CantMove, DurationTick);
-						Particle.StartTimer();
+						Target = target;
+						Skill.StartTimer();
 						
 						Cool.StartTimer();
 						

@@ -20,6 +20,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 @AbilityManifest(Name = "¸¶¼ú»ç", Rank = Rank.A, Species = Species.HUMAN)
@@ -57,7 +58,7 @@ public class TheMagician extends AbilityBase {
 					Location center = e.getEntity().getLocation();
 					for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
 						if(!d.equals(getPlayer())) {
-							if(LocationUtil.isInCircle(center, d.getLocation(), 5.0)) {
+							if(LocationUtil.isInCircle(center, d.getLocation(), 5.0, false)) {
 								d.damage(VersionUtil.getMaxHealth(d) / 5, getPlayer());
 								if(d instanceof Player) {
 									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
@@ -66,10 +67,10 @@ public class TheMagician extends AbilityBase {
 						}
 					}
 					
-					for(Location l : LocationUtil.getCircle(center, 5, 30, true)) {
-						ParticleLib.SPELL_WITCH.spawnParticle(l, 1, 0, 0, 0);
+					for(Location l : new Circle(center, 5).setAmount(30).setHighestLocation(true).getLocations()) {
+						ParticleLib.SPELL_WITCH.spawnParticle(l, 0, 0, 0, 1);
 					}
-					ParticleLib.CLOUD.spawnParticle(center, 50, 5, 5, 5);
+					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);
 					
 					Cool.StartTimer();
 				}

@@ -18,6 +18,7 @@ import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 
 @AbilityManifest(Name = "±³È²", Rank = Rank.A, Species = Species.HUMAN)
 public class TheHighPriestess extends AbilityBase {
@@ -72,7 +73,7 @@ public class TheHighPriestess extends AbilityBase {
 			center = getPlayer().getLocation();
 			
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
-				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range))) {
+				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range), true)) {
 					SoundLib.ENTITY_EVOKER_CAST_SPELL.playSound(p);
 				}
 			}
@@ -80,12 +81,12 @@ public class TheHighPriestess extends AbilityBase {
 
 		@Override
 		public void DurationProcess(Integer Seconds) {
-			for(Location l : LocationUtil.getCircle(center, Range, Range * Range, true)) {
-				ParticleLib.SPELL_INSTANT.spawnParticle(l, 1, 0, 0, 0);
+			for(Location l : new Circle(center, Range).setAmount(Range * 8).setHighestLocation(true).getLocations()) {
+				ParticleLib.SPELL_INSTANT.spawnParticle(l, 0, 0, 0, 1);
 			}
 			
 			for(Player p : LocationUtil.getNearbyEntities(Player.class, center, Range, Range)) {
-				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range))) {
+				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range), true)) {
 					if(p.equals(getPlayer())) {
 						EffectLib.REGENERATION.addPotionEffect(p, 100, 0, false);
 					} else {

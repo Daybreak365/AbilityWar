@@ -1,12 +1,12 @@
 package DayBreak.AbilityWar.Ability.List;
 
-import java.util.ArrayList;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -20,6 +20,7 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
+import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 @AbilityManifest(Name = "Á¦¿ì½º", Rank = Rank.S, Species = Species.GOD)
@@ -48,7 +49,6 @@ public class Zeus extends AbilityBase {
 	private TimerBase Skill = new TimerBase(5) {
 
 		Location center;
-		ArrayList<Location> Circle;
 		
 		@Override
 		public void onStart() {
@@ -57,20 +57,8 @@ public class Zeus extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			if(Seconds.equals(5)) {
-				Circle = LocationUtil.getCircle(center, 3, 7, true);
-			} else if(Seconds.equals(4)) {
-				Circle = LocationUtil.getCircle(center, 5, 7, true);
-			} else if(Seconds.equals(3)) {
-				Circle = LocationUtil.getCircle(center, 7, 7, true);
-			} else if(Seconds.equals(2)) {
-				Circle = LocationUtil.getCircle(center, 9, 7, true);
-			} else if(Seconds.equals(1)) {
-				Circle = LocationUtil.getCircle(center, 11, 7, true);
-			}
-			
-			
-			for(Location l : Circle) {
+			Circle circle = new Circle(center, 3 + (2 * (5 - getCount()))).setAmount(7).setHighestLocation(true);
+			for(Location l : circle.getLocations()) {
 				l.getWorld().strikeLightningEffect(l);
 				for(Damageable d : LocationUtil.getNearbyDamageableEntities(l, 2, 2)) {
 					if(!d.equals(getPlayer())) {
@@ -105,9 +93,27 @@ public class Zeus extends AbilityBase {
 		
 		return false;
 	}
-	
+
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+				e.setCancelled(true);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByEntityEvent e) {
+		if(e.getEntity().equals(getPlayer())) {
+			if(e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+				e.setCancelled(true);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByBlockEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
 			if(e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 				e.setCancelled(true);
