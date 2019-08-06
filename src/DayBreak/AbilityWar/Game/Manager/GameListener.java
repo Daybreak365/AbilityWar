@@ -19,21 +19,17 @@ public class GameListener implements Listener {
 	private AbstractGame game;
 	private EventCaller eventCaller = new EventCaller();
 	
-	public GameListener(AbstractGame abstractGame) {
-		this.game = abstractGame;
+	public GameListener(AbstractGame game) {
+		this.game = game;
 		
-		abstractGame.registerListener(this);
+		game.registerListener(this);
 		
 		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, this, EventPriority.HIGHEST, eventCaller, AbilityWar.getPlugin());
 	}
 	
 	@EventHandler
 	public void onWeatherChange(WeatherChangeEvent e) {
-		if(game.isGameStarted()) {
-			if(AbilityWarSettings.getClearWeather()) {
-				e.setCancelled(true);
-			}
-		}
+		if(game.isGameStarted() && AbilityWarSettings.getClearWeather()) e.setCancelled(true);
 	}
 	
 	@EventHandler

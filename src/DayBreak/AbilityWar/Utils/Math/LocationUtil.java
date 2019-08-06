@@ -26,7 +26,19 @@ public class LocationUtil {
 
 	private LocationUtil() {}
 	
-	public static boolean isInCircle(final Location center, final Location location, final double radius, final boolean flatsurface) {
+	/**
+	 * Location이 원 안에 위치하는지 확인합니다.
+	 * @param c 원의 중심
+	 * @param l Location
+	 * @param radius 원의 반지름
+	 * @param flatsurface
+	 *        true:  Y 좌표를 따로 계산하지 않습니다.
+	 *        false: Y 좌표 또한 포함하여 계산합니다.
+	 */
+	public static boolean isInCircle(final Location c, final Location l, final double radius, final boolean flatsurface) {
+		final Location center = c.clone();
+		final Location location = l.clone();
+		
 		if(flatsurface) {center.setY(0); location.setY(0);}
 		if(center.getWorld().equals(location.getWorld())) {
 			double distance = center.distance(location);
@@ -214,8 +226,40 @@ public class LocationUtil {
 	
 	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis, Entity exception) {
 		List<E> entities = new ArrayList<E>();
+		for (Entity e : center.getWorld().getEntities()) {
+			Location entityLoc = e.getLocation();
+			if(NumberUtil.Subtract(Math.abs(entityLoc.getY()), Math.abs(center.getY())) <= VerticalDis) {
+				if(NumberUtil.Subtract(Math.abs(entityLoc.getX()), Math.abs(center.getX())) <= HorizontalDis
+				|| NumberUtil.Subtract(Math.abs(entityLoc.getZ()), Math.abs(center.getZ())) <= HorizontalDis) {
+					if (clazz.isAssignableFrom(e.getClass())) {
+						if(!e.equals(exception)) {
+							if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
+								AbstractGame game = AbilityWarThread.getGame();
+								Player p = (Player) e;
+								if(game.isParticipating(p)) {
+									if(game.getDeathManager().isEliminated(p)) continue;
+									Participant part = game.getParticipant(p);
+
+									if (game instanceof TeamGame && exception instanceof Player) {
+										TeamGame tgame = (TeamGame) game;
+										Player ex = (Player) exception;
+										if(game.isParticipating(ex)) {
+											Participant expart = game.getParticipant(ex);
+											if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
+										}
+									}
+								} else {
+									continue;
+								}
+							}
+							entities.add(clazz.cast(e));
+						}
+					}
+				}
+			}
+		}
 		
-		//if(ServerVersion.getVersion() >= 9) {
+		/*if(ServerVersion.getVersion() >= 9) {
 			for (Entity e : center.getWorld().getNearbyEntities(center, HorizontalDis, VerticalDis, HorizontalDis)) {
 				if (clazz.isAssignableFrom(e.getClass())) {
 					if(!e.equals(exception)) {
@@ -242,28 +286,7 @@ public class LocationUtil {
 					}
 				}
 			}
-		/*
 		} else {
-			for (Entity e : center.getWorld().getEntities()) {
-				Location entityLoc = e.getLocation();
-				if(NumberUtil.Subtract(Math.abs(entityLoc.getY()), Math.abs(center.getY())) <= VerticalDis) {
-					if(NumberUtil.Subtract(Math.abs(entityLoc.getX()), Math.abs(center.getX())) <= HorizontalDis
-					|| NumberUtil.Subtract(Math.abs(entityLoc.getZ()), Math.abs(center.getZ())) <= HorizontalDis) {
-						if (clazz.isAssignableFrom(e.getClass())) {
-							if(!exceptions.contains(e)) {
-								if (e instanceof Player && AbilityWarThread.isGameTaskRunning()) {
-									AbstractGame game = AbilityWarThread.getGame();
-									Player player = (Player) e;
-									if (!game.isParticipating(player) || game.getDeathManager().isEliminated(player)) {
-										continue;
-									}
-								}
-								entities.add(clazz.cast(e));
-							}
-						}
-					}
-				}
-			}
 		}
 		*/
 

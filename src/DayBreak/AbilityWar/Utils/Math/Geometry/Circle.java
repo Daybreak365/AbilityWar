@@ -16,7 +16,7 @@ public class Circle {
 	
 	public Circle(final Location center, final double radius) {
 		Validate.NotNull(center);
-		this.center = center;
+		this.center = center.clone();
 		this.radius = radius;
 	}
 	

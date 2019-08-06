@@ -84,13 +84,13 @@ public class TheHighPriestess extends AbilityBase {
 			for(Location l : new Circle(center, Range).setAmount(Range * 8).setHighestLocation(true).getLocations()) {
 				ParticleLib.SPELL_INSTANT.spawnParticle(l, 0, 0, 0, 1);
 			}
-			
-			for(Player p : LocationUtil.getNearbyEntities(Player.class, center, Range, Range)) {
+
+			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
 				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range), true)) {
 					if(p.equals(getPlayer())) {
-						EffectLib.REGENERATION.addPotionEffect(p, 100, 0, false);
+						EffectLib.REGENERATION.addPotionEffect(p, 100, 1, false);
 					} else {
-						EffectLib.WITHER.addPotionEffect(p, 100, 0, false);
+						EffectLib.WITHER.addPotionEffect(p, 100, 0, true);
 					}
 				}
 			}

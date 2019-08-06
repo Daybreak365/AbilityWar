@@ -91,7 +91,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 	@SuppressWarnings("unused")
 	private final Firewall fireWall = new Firewall(this);
 	
-	private AbilitySelect abilitySelect;
+	private AbilitySelect abilitySelect = null;
 	
 	private boolean Restricted = true;
 	
