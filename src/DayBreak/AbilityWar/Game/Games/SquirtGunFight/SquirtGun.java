@@ -29,6 +29,7 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
+import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 @AbilityManifest(Name = "¹°ÃÑ", Rank = Rank.SPECIAL, Species = Species.SPECIAL)
 public class SquirtGun extends AbilityBase {
@@ -43,9 +44,9 @@ public class SquirtGun extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f½Ã¿øÇÑ &e¿©¸§ &fº¸³»¼¼¿ä!"));
 	}
 
-	CooldownTimer bombCool = new CooldownTimer(this, 30, "¹°ÆøÅº").setActionbarNotice(false);
+	private CooldownTimer bombCool = new CooldownTimer(this, 30, "¹°ÆøÅº").setActionbarNotice(false);
 
-	CooldownTimer spongeCool = new CooldownTimer(this, 15, "½ºÆÝÁö").setActionbarNotice(false);
+	private CooldownTimer spongeCool = new CooldownTimer(this, 15, "½ºÆÝÁö").setActionbarNotice(false);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -72,7 +73,7 @@ public class SquirtGun extends AbilityBase {
 					Location center = getPlayer().getLocation();
 					for(int i = 10; i > 0; i--)
 					for(Location l : LocationUtil.getSphere(center, i, 40)) {
-						if(l.getBlock().getType().equals(Material.WATER) || l.getBlock().getType().equals(Material.STATIONARY_WATER)) {
+						if(l.getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && l.getBlock().getType().equals(Material.valueOf("STATIONARY_WATER")))) {
 							l.getBlock().setType(Material.AIR);
 						}
 					}
@@ -138,7 +139,9 @@ public class SquirtGun extends AbilityBase {
 	
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if(e.getPlayer().equals(getPlayer()) && (e.getTo().getBlock().getType().equals(Material.WATER) || e.getTo().getBlock().getType().equals(Material.STATIONARY_WATER)) && getPlayer().isSneaking()) {
+		if(e.getPlayer().equals(getPlayer())
+				&& (e.getTo().getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && e.getTo().getBlock().getType().equals(Material.valueOf("STATIONARY_WATER"))) 
+						& getPlayer().isSneaking())) {
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.3));
 		}
 	}

@@ -15,6 +15,7 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
+import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
@@ -30,7 +31,7 @@ public class Yeti extends AbilityBase {
 
 	};
 
-	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Yeti.class, "Range", 10,
+	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Yeti.class, "Range", 15,
 			"# 스킬 사용 시 눈 지형으로 바꿀 범위") {
 
 		@Override
@@ -42,7 +43,7 @@ public class Yeti extends AbilityBase {
 
 	public Yeti(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f눈 위에 서 있으면 다양한 버프를 받습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f눈과 얼음 위에 서있으면 다양한 버프를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
@@ -84,19 +85,28 @@ public class Yeti extends AbilityBase {
 
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			for(Block b : LocationUtil.getBlocks(center, Count, true, true, true)) {
-				if (b.getType().equals(Material.WATER)) {
-					b.setType(Material.PACKED_ICE);
+			for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true, true)) {
+				Block db = b.getLocation().subtract(0, 1, 0).getBlock();
+				Material type = db.getType();
+				if (type.equals(Material.WATER)) {
+					db.setType(Material.PACKED_ICE);
+				} else if(type.equals(Material.LAVA)) {
+					db.setType(Material.OBSIDIAN);
+				} else if(type.equals(MaterialLib.ACACIA_LEAVES.getMaterial()) || type.equals(MaterialLib.BIRCH_LEAVES.getMaterial()) || type.equals(MaterialLib.DARK_OAK_LEAVES.getMaterial())
+						||type.equals(MaterialLib.JUNGLE_LEAVES.getMaterial()) || type.equals(MaterialLib.OAK_LEAVES.getMaterial()) || type.equals(MaterialLib.SPRUCE_LEAVES.getMaterial())) {
+					MaterialLib.GREEN_WOOL.setType(db);
+				} else {
+					db.setType(Material.SNOW_BLOCK);
 				}
 
-				b.getLocation().add(0, 1, 0).getBlock().setType(Material.SNOW);
+				b.setType(Material.SNOW);
 			}/*
 			for (Location l : LocationUtil.getCircle(center, Count, Count * 20, true)) {
 				ParticleLib.SNOWBALL.spawnParticle(l, 0, 0, 0, 1);
 
 				Block db = l.subtract(0, 2, 0).getBlock();
 
-				if (db.getType().equals(Material.WATER)) {
+				if (type.equals(Material.WATER)) {
 					db.setType(Material.PACKED_ICE);
 				}
 

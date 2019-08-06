@@ -29,6 +29,7 @@ import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.Timer;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
+import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * 체인지 능력 전쟁
@@ -43,7 +44,10 @@ public class ChangeAbilityWar extends WinnableGame {
 		this.maxLife = AbilityWarSettings.ChangeAbilityWar_getLife();
 	}
 	
-	private final Objective lifeObjective = getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
+	@SuppressWarnings("deprecation")
+	private final Objective lifeObjective = ServerVersion.getVersion() >= 13 ?
+			getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy", ChatColor.translateAlternateColorCodes('&', "&c생명"))
+			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
 	
 	private final AbilityChanger changer = new AbilityChanger(this);
 	
@@ -121,11 +125,11 @@ public class ChangeAbilityWar extends WinnableGame {
 		}
 	}
 	
-	final int maxLife;
+	private final int maxLife;
 	
 	private void scoreboardSetup() {
 		lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c생명"));
+		if(ServerVersion.getVersion() < 13) lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c생명"));
 		for(Participant p : getParticipants()) {
 			Score score = lifeObjective.getScore(p.getPlayer().getName());
 			score.setScore(maxLife);

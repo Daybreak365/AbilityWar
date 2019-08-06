@@ -1,7 +1,5 @@
 package DayBreak.AbilityWar.Utils.Library.Item;
 
-import java.lang.reflect.Method;
-
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -59,14 +57,11 @@ public class EnchantLib {
 
 		private Enchantment enchantment = null;
 		
+		@SuppressWarnings("deprecation")
 		private Enchants(String enchantName, String key, Integer version) {
 			if(ServerVersion.getVersion() >= version) {
 				if (ServerVersion.getVersion() >= 13) {
-					try {
-						Method getByKey = Enchantment.class.getDeclaredMethod("getByKey", NamespacedKey.class);
-						Method minecraft = NamespacedKey.class.getDeclaredMethod("minecraft", String.class);
-						enchantment = (Enchantment) getByKey.invoke(null, minecraft.invoke(null, key));
-					} catch (Exception ex) {}
+					enchantment = Enchantment.getByKey(NamespacedKey.minecraft(key));
 				} else {
 					enchantment = Enchantment.getByName(enchantName);
 				}

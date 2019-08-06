@@ -1,18 +1,21 @@
 package DayBreak.AbilityWar.Game.Manager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Events.EventCaller;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
+import DayBreak.AbilityWar.Utils.Messager;
 
 public class GameListener implements Listener {
 	
@@ -22,14 +25,11 @@ public class GameListener implements Listener {
 	public GameListener(AbstractGame abstractGame) {
 		this.game = abstractGame;
 		
-		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+		abstractGame.registerListener(this);
 		
 		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, this, EventPriority.HIGHEST, eventCaller, AbilityWar.getPlugin());
 	}
 	
-	/**
-	 * ³¯¾¾ Listener
-	 */
 	@EventHandler
 	public void onWeatherChange(WeatherChangeEvent e) {
 		if(game.isGameStarted()) {
@@ -46,6 +46,14 @@ public class GameListener implements Listener {
 			
 			Player p = (Player) e.getEntity();
 			p.setFoodLevel(19);
+		}
+	}
+	
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent e) {
+		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&b" + e.getPlayer().getName() + "&f´ÔÀÌ &e" + e.getTo().toString() + "&f(À¸)·Î ÅÚ·¹Æ÷Æ®!"));
+		for(StackTraceElement ele : Thread.currentThread().getStackTrace()) {
+			Messager.sendMessage(ele.getClassName() + ":" + ele.getMethodName() + "[" + ele.getLineNumber() + "]");
 		}
 	}
 	

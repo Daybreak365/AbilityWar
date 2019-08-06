@@ -32,6 +32,7 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.Timer;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
+import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
  * 체인지 능력 전쟁
@@ -48,7 +49,10 @@ public class SummerVacation extends WinnableGame {
 	
 	private final boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
 
-	private final Objective killObjective = getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy");
+	@SuppressWarnings("deprecation")
+	private final Objective killObjective = ServerVersion.getVersion() >= 13 ?
+			getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy", ChatColor.translateAlternateColorCodes('&', "&c킬 횟수"))
+			: getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy");
 	
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 	
@@ -129,7 +133,7 @@ public class SummerVacation extends WinnableGame {
 
 	private void scoreboardSetup() {
 		killObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		killObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c킬 횟수"));
+		if(ServerVersion.getVersion() >= 13) killObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c킬 횟수"));
 		for(Participant p : getParticipants()) {
 			Score score = killObjective.getScore(p.getPlayer().getName());
 			score.setScore(0);

@@ -202,7 +202,7 @@ public class Messager {
 		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&f적용 가능한 &3업데이트&f가 있습니다: &b" + update.getTag() + " &f업데이트 &f(&7v" + update.getVersion() + "&f) "
 				+ "(&7" + (update.getFileSize() / 1024) + "KB&f)"));
 		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3업데이트&f를 진행하려면 &e/aw update &f명령어를 사용하세요."));
-		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3---------------------------------------------------------------"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3---------------------------------------------------------"));
 		
 		return UpdateInfo;
 	}
@@ -210,7 +210,7 @@ public class Messager {
 	/**
 	 * 능력 설명을 구성합니다.
 	 */
-	public static ArrayList<String> formatAbility(AbilityBase Ability) {
+	public static ArrayList<String> formatAbilityInfo(AbilityBase Ability) {
 		ArrayList<String> AbilityInfo = new ArrayList<String>();
 		AbilityInfo.add(formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"));
 		
@@ -230,7 +230,7 @@ public class Messager {
 			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
 		}
 		
-		AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&a---------------------------------"));
+		AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&a------------------------------"));
 		
 		return AbilityInfo;
 	}

@@ -23,9 +23,11 @@
 
 package DayBreak.AbilityWar.Utils.Library.Item;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
@@ -892,6 +894,11 @@ public enum MaterialLib {
 	private String[] m;
 	private int data;
 	
+	private static Method setData = null;
+	static {
+		if(!isNewVersion()) try { setData = Block.class.getDeclaredMethod("setData", byte.class); } catch (Exception e) {}
+	}
+	
 	private MaterialLib(int data, String... m){
 		this.m = m;
 		this.data = data;
@@ -900,6 +907,7 @@ public enum MaterialLib {
 	/**
 	 * Material을 기반으로 하는 ItemStack을 반환합니다.
 	 */
+	@SuppressWarnings("deprecation")
 	public ItemStack getItem(){
 		Material mat = getMaterial();
 		if(isNewVersion()){
@@ -908,7 +916,7 @@ public enum MaterialLib {
 		
 		return new ItemStack(mat, 1, (short) data);
 	}
-	
+
 	/**
 	 * Material을 반환합니다.
 	 */
@@ -919,10 +927,30 @@ public enum MaterialLib {
         }
         return Material.matchMaterial(m[0]);
     }
+
+	/**
+	 * Material을 반환합니다.
+	 */
+	public Material getMaterialForBlock(){
+        Material mat = Material.matchMaterial(this.toString());
+        if(mat != null)  return mat;
+        if(m.length >= 2) return Material.matchMaterial(m[1]);
+        return Material.matchMaterial(m[0]);
+    }
+
+	public void setType(Block block) {
+		block.setType(getMaterialForBlock());
+		if(!isNewVersion()) {
+			try {
+				setData.invoke(block, (byte) data);
+			} catch(Exception ex) {}
+		}
+	}
 	
 	/**
 	 * Material을 비교합니다.
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean compareMaterial(ItemStack comp){
 		if(isNewVersion()){
 			return comp.getType() == this.getMaterial();

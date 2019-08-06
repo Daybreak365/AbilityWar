@@ -65,7 +65,15 @@ public abstract class AbstractGame extends Timer implements Listener {
 	
 	
 	private final List<Participant> Participants = setupParticipants();
+
+	private final List<Listener> registeredListeners = new ArrayList<>();
 	
+	public void registerListener(Listener lis) {
+		Bukkit.getPluginManager().registerEvents(lis, AbilityWar.getPlugin());
+		registeredListeners.add(lis);
+	}
+	
+	@SuppressWarnings("unused")
 	private final GameListener gameListener = new GameListener(this);
 	
 	private final DeathManager deathManager = new DeathManager(this);
@@ -108,7 +116,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 	protected void onEnd() {
 		TimerBase.ResetTasks();
 		HandlerList.unregisterAll(this);
-		HandlerList.unregisterAll(gameListener);
+		for(Listener lis : registeredListeners) HandlerList.unregisterAll(lis);
 		this.getScoreboardManager().Clear();
 		this.onGameEnd();
 	}
@@ -400,9 +408,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 		 * @throws Exception 	능력을 부여하는 도중 오류가 발생하였을 경우
 		 */
 		public void setAbility(Class<? extends AbilityBase> abilityClass) throws Exception {
-			if(hasAbility()) {
-				removeAbility();
-			}
+			if(hasAbility()) removeAbility();
 			
 			Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Participant.class);
 			AbilityBase ability = constructor.newInstance(this);

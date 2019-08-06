@@ -1,7 +1,5 @@
 package DayBreak.AbilityWar.Ability.List;
 
-import java.lang.reflect.Method;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,6 +30,7 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
+@SuppressWarnings("deprecation")
 @AbilityManifest(Name = "³Ø½º", Rank = Rank.B, Species = Species.GOD)
 public class Nex extends AbilityBase {
 
@@ -140,26 +139,17 @@ public class Nex extends AbilityBase {
 					}
 					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
 					
+					Material particleMat;
 					if(!db.getType().equals(Material.AIR)) {
-						if(ServerVersion.getVersion() >= 13) {
-							try {
-								Method method = Material.class.getDeclaredMethod("createBlockData");
-								Object BlockData = method.invoke(db.getType());
-								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 2, 2, 2, 30, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
-							} catch(Exception ex) {}
-						} else {
-							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(db.getType()));
-						}
+						particleMat = db.getType();
 					} else {
-						if(ServerVersion.getVersion() >= 13) {
-							try {
-								Method method = Material.class.getDeclaredMethod("createBlockData");
-								Object BlockData = method.invoke(b.getType());
-								ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 2, 2, 2, 30, Class.forName("org.bukkit.block.data.BlockData").cast(BlockData));
-							} catch(Exception ex) {}
-						} else {
-							ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(b.getType()));
-						}
+						particleMat = b.getType();
+					}
+
+					if(ServerVersion.getVersion() >= 13) {
+						ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 2, 2, 2, 30, particleMat.createBlockData());
+					} else {
+						ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(particleMat));
 					}
 					
 					FallBlock.StartTimer();
@@ -189,7 +179,7 @@ public class Nex extends AbilityBase {
 					
 				};
 				
-				fb.Spawn(false);
+				fb.Spawn();
 			}
 			
 			for(Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {

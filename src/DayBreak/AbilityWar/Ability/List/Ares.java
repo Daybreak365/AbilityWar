@@ -76,7 +76,7 @@ public class Ares extends AbilityBase {
 		protected void onDurationStart() {
 			Attacked = new ArrayList<Damageable>();
 			List<Player> nearby = LocationUtil.getNearbyPlayers(getPlayer().getLocation(), 10, 10);
-			SoundLib.BLOCK_BELL_USE.playSound(nearby);
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(nearby);
 		}
 		
 		@Override

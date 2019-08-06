@@ -23,8 +23,10 @@
 
 package DayBreak.AbilityWar.Utils.Library;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
@@ -141,38 +143,54 @@ public class ParticleLib {
 			return particle;
 		}
 
-		public void spawnParticle(Player p, Location l, RGB rgb, int Count) {
+		public <T> void spawnParticle(Player p, Location l, float offsetX, float offsetY, float offsetZ, int Count, T t) {
 			if (AbilityWarSettings.getVisualEffect()) {
 				if (particle != null) {
-					p.spawnParticle(particle, l, Count, rgb.getRed(), rgb.getGreen(), rgb.getBlue());
+					if(p != null) {
+						p.spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ, t);
+					} else {
+						l.getWorld().spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ, t);
+					}
 				}
+			}
+		}
+
+		public <T> void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count, T t) {
+			this.spawnParticle(null, l, offsetX, offsetY, offsetZ, Count, t);
+		}
+
+		public void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count) {
+			this.spawnParticle(l, offsetX, offsetY, offsetZ, Count, null);
+		}
+
+		public void spawnParticle(Player p, Location l, float offsetX, float offsetY, float offsetZ, int Count) {
+			this.spawnParticle(p, l, offsetX, offsetY, offsetZ, Count, null);
+		}
+
+		public void spawnParticle(Player p, Location l, RGB rgb, int Count) {
+			if(ServerVersion.getVersion() >= 13) {
+				if(particle.getDataType() != null && particle.getDataType().equals(DustOptions.class)) {
+					this.spawnParticle(p, l, 0, 0, 0, Count, new DustOptions(Color.fromRGB(rgb.getRedInt(), rgb.getGreenInt(), rgb.getBlueInt()), 1));
+				} else {
+					this.spawnParticle(p, l, 0, 0, 0, Count, null);
+				}
+			} else {
+				this.spawnParticle(p, l, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), Count);
 			}
 		}
 
 		public void spawnParticle(Location l, RGB rgb, int Count) {
-			if (AbilityWarSettings.getVisualEffect()) {
-				if (particle != null) {
-					l.getWorld().spawnParticle(particle, l, Count, rgb.getRed(), rgb.getGreen(), rgb.getBlue());
+			if(ServerVersion.getVersion() >= 13) {
+				if(particle.getDataType() != null && particle.getDataType().equals(DustOptions.class)) {
+					this.spawnParticle(l, 0, 0, 0, Count, new DustOptions(Color.fromRGB(rgb.getRedInt(), rgb.getGreenInt(), rgb.getBlueInt()), 1));
+				} else {
+					this.spawnParticle(l, 0, 0, 0, Count, null);
 				}
+			} else {
+				this.spawnParticle(l, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), Count);
 			}
 		}
 
-		public void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count) {
-			if (AbilityWarSettings.getVisualEffect()) {
-				if (particle != null) {
-					l.getWorld().spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ);
-				}
-			}
-		}
-
-		public void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count, Object arg) {
-			if (AbilityWarSettings.getVisualEffect()) {
-				if (particle != null) {
-					l.getWorld().spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ, arg);
-				}
-			}
-		}
-		
 	}
 	
 	public static class RGB {
@@ -197,6 +215,18 @@ public class ParticleLib {
 
 		public float getBlue() {
 			return (float) Blue / 255;
+		}
+
+		public int getRedInt() {
+			return Red;
+		}
+
+		public int getGreenInt() {
+			return Green;
+		}
+
+		public int getBlueInt() {
+			return Blue;
 		}
 		
 	}

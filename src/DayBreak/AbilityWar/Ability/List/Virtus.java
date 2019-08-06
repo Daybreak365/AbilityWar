@@ -90,28 +90,22 @@ public class Virtus extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(Activated) {
-				e.setDamage(e.getDamage() / 4);
-			}
+		if(e.getEntity().equals(getPlayer()) && Activated) {
+			e.setDamage(e.getDamage() / 4);
 		}
 	}
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(Activated) {
-				e.setDamage(e.getDamage() / 4);
-			}
+		if(e.getEntity().equals(getPlayer()) && Activated) {
+			e.setDamage(e.getDamage() / 4);
 		}
 	}
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(Activated) {
-				e.setDamage(e.getDamage() / 4);
-			}
+		if(e.getEntity().equals(getPlayer()) && Activated) {
+			e.setDamage(e.getDamage() / 4);
 		}
 	}
 

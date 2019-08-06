@@ -3,6 +3,7 @@ package DayBreak.AbilityWar.Utils.Math;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -101,7 +102,7 @@ public class LocationUtil {
 			}
 		}
 
-		return Blocks;
+		return Blocks.stream().distinct().collect(Collectors.toList());
 	}
 	
 	/**
@@ -109,7 +110,7 @@ public class LocationUtil {
 	 * @param center 중심
 	 * @param radius 반지름
 	 */
-	public static List<Block> getBlocksAtSameY(Location center, Integer radius, boolean hollow) {
+	public static List<Block> getBlocksAtSameY(Location center, Integer radius, boolean hollow, boolean top) {
 		List<Block> blocks = new ArrayList<Block>();
 
 		Integer X = center.getBlockX();
@@ -121,7 +122,12 @@ public class LocationUtil {
 				Location l = new Location(center.getWorld(), x, Y, z);
 				double distance = center.distance(l);
 				if (distance <= radius && !(hollow && distance < (radius - 1))) {
-					blocks.add(l.getBlock());
+					if (top) {
+						Location highest = l.getWorld().getHighestBlockAt(l).getLocation();
+						blocks.add(highest.getBlock());
+					} else {
+						blocks.add(l.getBlock());
+					}
 				}
 			}
 		}

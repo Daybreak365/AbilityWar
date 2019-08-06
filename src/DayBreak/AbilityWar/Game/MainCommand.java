@@ -130,7 +130,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(game.isParticipating(p)) {
 							Participant participant = game.getParticipant(p);
 							if(participant.hasAbility()) {
-								Messager.sendStringList(p, Messager.formatAbility(participant.getAbility()));
+								Messager.sendStringList(p, Messager.formatAbilityInfo(participant.getAbility()));
 							} else {
 								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
 							}
@@ -432,13 +432,17 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			}
 		} else if(args[0].equalsIgnoreCase("inv")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
-				Invincibility invincibility = AbilityWarThread.getGame().getInvincibility();
-				if(invincibility.isInvincible()) {
-					invincibility.Stop();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 무적 상태를 &f비활성화&a하셨습니다."));
+				if(AbilityWarThread.getGame().isGameStarted()) {
+					Invincibility invincibility = AbilityWarThread.getGame().getInvincibility();
+					if(invincibility.isInvincible()) {
+						invincibility.Stop();
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 무적 상태를 &f비활성화&a하셨습니다."));
+					} else {
+						invincibility.Start(true);
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 무적 상태를 &f활성화&a하셨습니다."));
+					}
 				} else {
-					invincibility.Start(true);
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 무적 상태를 &f활성화&a하셨습니다."));
+					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 시작되지 않았습니다."));
 				}
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));

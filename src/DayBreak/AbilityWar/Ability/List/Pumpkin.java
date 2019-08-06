@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.Entity;
@@ -23,6 +22,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.EnchantLib;
+import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
@@ -127,7 +127,7 @@ public class Pumpkin extends AbilityBase {
 		}
 		
 		private ItemStack getPumpkin(Integer Time) {
-			ItemStack Pumpkin = new ItemStack(Material.PUMPKIN);
+			ItemStack Pumpkin = new ItemStack(MaterialLib.CARVED_PUMPKIN.getMaterial());
 			ItemMeta PumpkinMeta = Pumpkin.getItemMeta();
 			PumpkinMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6호박"));
 			PumpkinMeta.setLore(Messager.getStringList(
@@ -135,7 +135,7 @@ public class Pumpkin extends AbilityBase {
 					ChatColor.translateAlternateColorCodes('&', "&f남은 시간&7: &a" + Time + "초")
 					));
 			Pumpkin.setItemMeta(PumpkinMeta);
-			EnchantLib.BINDING_CURSE.addEnchantment(Pumpkin, 1);
+			EnchantLib.BINDING_CURSE.addUnsafeEnchantment(Pumpkin, 1);
 			return Pumpkin;
 		}
 		

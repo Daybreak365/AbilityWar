@@ -90,26 +90,26 @@ public class Gladiator extends AbilityBase {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			if(TotalCount <= 10) {
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, false)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, false, false)) {
 					Saves.putIfAbsent(b, b.getState());
 					b.setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
 				
 				Count++;
 			} else if(TotalCount > 10 && TotalCount <= 15) {
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 2, true)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 2, true, false)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 				
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 1, true)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 1, true, false)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 			} else if(TotalCount > 15 && TotalCount <= 26) {
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true)) {
+				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true, false)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
 					l.add(0, 6, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());

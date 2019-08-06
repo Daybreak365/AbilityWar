@@ -120,7 +120,7 @@ public class AbilityChanger {
 		}.setPeriod(3).StartTimer();
 		
 		Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
-		Messager.sendStringList(p, Messager.formatAbility(participant.getAbility()));
+		Messager.sendStringList(p, Messager.formatAbilityInfo(participant.getAbility()));
 	}
 	
 	/**

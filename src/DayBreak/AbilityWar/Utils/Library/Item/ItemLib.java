@@ -1,6 +1,5 @@
 package DayBreak.AbilityWar.Utils.Library.Item;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
 
@@ -8,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -34,6 +34,7 @@ public class ItemLib {
 			this.materialName = materialName;
 		}
 		
+		@SuppressWarnings("deprecation")
 		public ItemStack getItemStack(ItemColor color) {
 			if(ServerVersion.getVersion() >= 13) {
 				Material material = Material.valueOf(color.toString() + "_" + this.materialName);
@@ -243,19 +244,14 @@ public class ItemLib {
 		return item;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static ItemStack setDurability(ItemStack is, short durability) {
 		if(ServerVersion.getVersion() >= 13) {
-			try {
-				Class<?> DamageableClass = Class.forName("org.bukkit.inventory.meta.Damageable");
-				if(is.hasItemMeta()) {
-					if(DamageableClass.isAssignableFrom(is.getItemMeta().getClass())) {
-						Object meta = DamageableClass.cast(is.getItemMeta());
-						Method SetDamage = DamageableClass.getMethod("setDamage", int.class);
-						SetDamage.invoke(meta, (int) durability);
-						is.setItemMeta((ItemMeta) meta);
-					}
-				}
-			} catch (Exception e) {}
+			if(is.hasItemMeta() && is.getItemMeta() instanceof Damageable) {
+				Damageable dmg = (Damageable) is.getItemMeta();
+				dmg.setDamage(durability);
+				is.setItemMeta((ItemMeta) dmg);
+			}
 		} else {
 			is.setDurability(durability);
 		}

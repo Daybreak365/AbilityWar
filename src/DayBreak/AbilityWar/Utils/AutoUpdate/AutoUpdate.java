@@ -81,14 +81,12 @@ public class AutoUpdate {
 					@Override
 					protected void TimerProcess(Integer Seconds) {
 						if(!AbilityWarThread.isGameTaskRunning()) {
-							try {
-								for(Player p : Bukkit.getOnlinePlayers()) {
-									if(p.isOp()) Messager.sendStringList(p, updateNotice);
-								}
-							} catch(Exception ex) {}
+							for(Player p : Bukkit.getOnlinePlayers()) {
+								if(p.isOp()) Messager.sendStringList(p, updateNotice);
+							}
 						}
 					}
-				}.setPeriod(3600).StartTimer();
+				}.setPeriod(6000).StartTimer();
 			} else {
 				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 최신 버전입니다."));
 				return true;

@@ -71,8 +71,7 @@ public class Khazhad extends AbilityBase {
 						
 					};
 					
-					FallingBlock block = fall.Spawn(false);
-					block.setGlowing(true);
+					fall.toggleGlowing(true).toggleSetBlock(true).Spawn();
 					
 					LeftCool.StartTimer();
 					return true;
@@ -80,7 +79,7 @@ public class Khazhad extends AbilityBase {
 			} else if(ct.equals(ClickType.RightClick)) {
 				if(!RightCool.isCooldown()) {
 					for(Block b : LocationUtil.getBlocks(getPlayer().getTargetBlock(null, 30).getLocation(), 5, false, false, false)) {
-						if(b.getType().equals(Material.WATER) || (ServerVersion.getVersion() <= 12 && b.getType().equals(Material.STATIONARY_WATER))) {
+						if(b.getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && b.getType().equals(Material.valueOf("STATIONARY_WATER")))) {
 							b.setType(Material.PACKED_ICE);
 						}
 					}

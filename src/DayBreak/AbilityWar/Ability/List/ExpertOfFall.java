@@ -19,6 +19,7 @@ public class ExpertOfFall extends AbilityBase {
 
 	public ExpertOfFall(Participant participant) {
 		super(participant,
+				ChatColor.translateAlternateColorCodes('&', "&f30년간의 고된 수련으로 낙법과 일심동체가 된 낙법의 달인."),
 				ChatColor.translateAlternateColorCodes('&', "&f낙하해 땅에 닿았을 때 자동으로 물낙법을 합니다."));
 	}
 

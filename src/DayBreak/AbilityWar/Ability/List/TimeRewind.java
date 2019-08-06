@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -113,7 +114,7 @@ public class TimeRewind extends AbilityBase {
 			PlayerData data = list.get((Time * 10 - Seconds));
 			if(data != null && data.getHealth() > 0) {
 				getPlayer().teleport(data.getLocation());
-				getPlayer().setHealth(data.getHealth());
+				if(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() >= data.getHealth()) getPlayer().setHealth(data.getHealth());
 			}
 		}
 		

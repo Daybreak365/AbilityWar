@@ -20,6 +20,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
+import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 @AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
@@ -41,7 +42,8 @@ public class Sniper extends AbilityBase {
 
 	private final int Duration = DurationConfig.getValue();
 	
-	private TimerBase Snipe = new TimerBase() {
+	private TimerBase Snipe = ServerVersion.getVersion() < 14 ?
+	new TimerBase() {
 		
 		@Override
 		protected void onStart() {}
@@ -51,13 +53,34 @@ public class Sniper extends AbilityBase {
 		
 		@Override
 		protected void TimerProcess(Integer Seconds) {
-			if(getPlayer().getInventory().getItemInMainHand().getType().equals(Material.BOW)
-			|| getPlayer().getInventory().getItemInOffHand().getType().equals(Material.BOW)) {
+			Material main = getPlayer().getInventory().getItemInMainHand().getType();
+			Material off = getPlayer().getInventory().getItemInMainHand().getType();
+			if(main.equals(Material.BOW) || off.equals(Material.BOW)) {
+				EffectLib.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
+				EffectLib.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
+			}
+		}
+	}.setPeriod(3)
+	:
+	new TimerBase() {
+		
+		@Override
+		protected void onStart() {}
+		
+		@Override
+		protected void onEnd() {}
+		
+		@Override
+		protected void TimerProcess(Integer Seconds) {
+			Material main = getPlayer().getInventory().getItemInMainHand().getType();
+			Material off = getPlayer().getInventory().getItemInMainHand().getType();
+			if(main.equals(Material.BOW) || off.equals(Material.BOW) || main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)) {
 				EffectLib.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
 				EffectLib.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
 			}
 		}
 	}.setPeriod(3);
+	
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {

@@ -29,8 +29,9 @@ public class SpecialThanksGUI implements Listener {
 	private static final SpecialThank[] SpecialThanks = {
 				new SpecialThank("f6cef0829b7e48c1a973532389b6e3e1", "다량의 능력 아이디어를 제공해주셨습니다."),
 				new SpecialThank("ecb53e2ffdf34089ae3486cff3fc5f34", "능력 아이디어 제공 및 코드 개선에 도움을 주셨습니다."),
-				new SpecialThank("2dcb3299e24049adb8bb554d862bd7be", "테스팅에 도움을 주셨습니다."),
-				new SpecialThank("507fc49666fb43489200251f48bf4719", "능력자 플러그인의 많은 업데이트에 기여하셨습니다.")
+				new SpecialThank("48b5f9e0ba544368ab4dc6f2be56d9f4", "테스팅에 도움을 주셨습니다."),
+				new SpecialThank("101ceb32a2bc4dbd9d32291c86b66eca", "테스팅에 도움을 주셨습니다."),
+				new SpecialThank("507fc49666fb43489200251f48bf4719", "일부 업데이트에 기여하셨습니다.")
 			};
 	
 	public static class SpecialThank {
