@@ -1,21 +1,18 @@
 package DayBreak.AbilityWar.Game.Manager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Events.EventCaller;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
-import DayBreak.AbilityWar.Utils.Messager;
 
 public class GameListener implements Listener {
 	
@@ -46,14 +43,6 @@ public class GameListener implements Listener {
 			
 			Player p = (Player) e.getEntity();
 			p.setFoodLevel(19);
-		}
-	}
-	
-	@EventHandler
-	public void onTeleport(PlayerTeleportEvent e) {
-		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&b" + e.getPlayer().getName() + "&f님이 &e" + e.getTo().toString() + "&f(으)로 텔레포트!"));
-		for(StackTraceElement ele : Thread.currentThread().getStackTrace()) {
-			Messager.sendMessage(ele.getClassName() + ":" + ele.getMethodName() + "[" + ele.getLineNumber() + "]");
 		}
 	}
 	
