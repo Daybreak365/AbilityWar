@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -136,6 +136,6 @@ public class Ares extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

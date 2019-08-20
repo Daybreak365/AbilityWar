@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
-import DayBreak.AbilityWar.Utils.Library.Packet.ActionbarPacket;
+import DayBreak.AbilityWar.Utils.Library.TItle.Actionbar;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
@@ -65,9 +65,9 @@ public class CooldownTimer extends TimerBase {
 	public void TimerProcess(Integer Seconds) {
 		Player target = Ability.getPlayer();
 		if(target != null) {
-			ActionbarPacket actionbar;
+			Actionbar actionbar;
 			if(!AbilityName.isEmpty()) {
-				actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
+				actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 				
 				if(Seconds == (getMaxCount() / 2)) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
@@ -77,7 +77,7 @@ public class CooldownTimer extends TimerBase {
 					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
 				}
 			} else {
-				actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
+				actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 				
 				if(Seconds == (getMaxCount() / 2)) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
@@ -88,7 +88,7 @@ public class CooldownTimer extends TimerBase {
 				}
 			}
 
-			if(actionbarNotice) actionbar.Send(target);
+			if(actionbarNotice) actionbar.sendTo(target);
 		}
 	}
 	
@@ -96,8 +96,8 @@ public class CooldownTimer extends TimerBase {
 	public void onEnd() {
 		Player target = Ability.getPlayer();
 		if(target != null) {
-			ActionbarPacket actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."), 0, 50, 0);
-			if(actionbarNotice) actionbar.Send(target);
+			Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."), 0, 50, 0);
+			if(actionbarNotice) actionbar.sendTo(target);
 			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."));
 		}
 	}

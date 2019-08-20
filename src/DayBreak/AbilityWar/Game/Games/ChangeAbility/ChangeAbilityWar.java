@@ -17,11 +17,14 @@ import org.bukkit.scoreboard.Score;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Config.AbilityWarSettings.ChangeAbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.GameCreditEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.WinnableGame;
 import DayBreak.AbilityWar.Game.Manager.AbilityList;
+import DayBreak.AbilityWar.Game.Manager.DeathManager;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
+import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Utils.FireworkUtil;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
@@ -41,7 +44,7 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	public ChangeAbilityWar() {
 		setRestricted(Invincible);
-		this.maxLife = AbilityWarSettings.ChangeAbilityWar_getLife();
+		this.maxLife = ChangeAbilityWarSettings.getLife();
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -72,11 +75,6 @@ public class ChangeAbilityWar extends WinnableGame {
 		@Override
 		public void onEnd() {}
 	};
-	
-	@Override
-	protected boolean gameCondition() {
-		return true;
-	}
 	
 	@Override
 	protected void progressGame(Integer Seconds) {
@@ -136,41 +134,42 @@ public class ChangeAbilityWar extends WinnableGame {
 		}
 	}
 	
-	private final boolean Eliminate = AbilityWarSettings.ChangeAbilityWar_getEliminate();
+	private final boolean Eliminate = ChangeAbilityWarSettings.getEliminate();
 	
 	private final List<Participant> NoLife = new ArrayList<Participant>();
-	
-	@Override
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		Player Victim = e.getEntity();
-		Participant VictimPart = getParticipant(Victim);
-		if(VictimPart != null) {
-			Score score = lifeObjective.getScore(Victim.getName());
-			if(score.isScoreSet()) {
-				if(score.getScore() >= 1) score.setScore(score.getScore() - 1);
-				if(score.getScore() <= 0) {
-					NoLife.add(VictimPart);
-					if(Eliminate) getDeathManager().Eliminate(Victim);
 
-					Participant hasLife = null;
-					int count = 0;
-					for(Participant p : getParticipants()) {
-						if(!NoLife.contains(p)) {
-							hasLife = p;
-							count++;
+	@Override
+	protected DeathManager setupDeathManager() {
+		return new DeathManager(this) {
+			@Override
+			protected void onPlayerDeath(PlayerDeathEvent e) {
+				Player Victim = e.getEntity();
+				Participant VictimPart = getParticipant(Victim);
+				if(VictimPart != null) {
+					Score score = lifeObjective.getScore(Victim.getName());
+					if(score.isScoreSet()) {
+						if(score.getScore() >= 1) score.setScore(score.getScore() - 1);
+						if(score.getScore() <= 0) {
+							NoLife.add(VictimPart);
+							if(Eliminate) getDeathManager().Eliminate(Victim);
+
+							Participant hasLife = null;
+							int count = 0;
+							for(Participant p : getParticipants()) {
+								if(!NoLife.contains(p)) {
+									hasLife = p;
+									count++;
+								}
+							}
+							
+							if(count == 1 && hasLife != null) {
+								Victory(hasLife);
+							}
 						}
-					}
-					
-					if(count == 1 && hasLife != null) {
-						this.Victory(hasLife);
 					}
 				}
 			}
-			
-			if(Victim.getKiller() != null) {
-				SoundLib.ENTITY_ARROW_HIT_PLAYER.playSound(Victim.getKiller());
-			}
-		}
+		};
 	}
 	
 	public void broadcastPlayerList() {
@@ -184,7 +183,7 @@ public class ChangeAbilityWar extends WinnableGame {
 			msg.add(ChatColor.translateAlternateColorCodes('&', "&5" + Count + ". &f" + p.getPlayer().getName()));
 		}
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&fÃÑ ÀÎ¿ø¼ö &5: &d" + Count + "¸í"));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&d==========================="));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&d=========================="));
 		
 		Messager.broadcastStringList(msg);
 	}
@@ -318,11 +317,11 @@ public class ChangeAbilityWar extends WinnableGame {
 	}
 
 	@Override
-	protected List<Player> setupPlayers() {
+	protected List<Player> initPlayers() {
 		List<Player> Players = new ArrayList<Player>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!isSpectator(p.getName())) {
+			if(!SpectatorManager.isSpectator(p.getName())) {
 				Players.add(p);
 			}
 		}

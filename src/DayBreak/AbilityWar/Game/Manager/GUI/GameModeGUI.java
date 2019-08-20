@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
-import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
+import DayBreak.AbilityWar.Config.Enums.ConfigNodes;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.GameMode;

@@ -4,8 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -93,7 +93,7 @@ public class Khazhad extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType arg0, Entity arg1) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
 	@Override
 	protected void onRestrictClear() {}

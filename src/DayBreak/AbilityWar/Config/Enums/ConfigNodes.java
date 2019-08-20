@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Config.Nodes;
+package DayBreak.AbilityWar.Config.Enums;
 
 import org.bukkit.Bukkit;
 
@@ -31,18 +31,18 @@ public enum ConfigNodes {
 			"# 관리자 권한을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
 	Game_Death_Header("게임.사망", "",
 			"# 플레이어 사망 콘피그"),
-	Game_Deaeth_Eliminate("게임.사망.탈락", true,
-			"# 게임 진행 중 사망 시 탈락 여부",
-			"# true로 설정하면 게임이 시작되고 난 후 사망할 경우 탈락합니다.",
-			"# 탈락한 유저는 게임이 끝날 때까지 서버에 접속할 수 없습니다.",
-			"# 관리자 권한을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
-	Game_Deaeth_AbilityReveal("게임.사망.능력공개", true,
+	Game_Death_Operation("게임.사망.작업", "탈락",
+			"# 게임 진행 중 플레이어 사망 시 수행할 작업을 설정합니다.",
+			"# 탈락		: 플레이어를 탈락시킵니다.",
+			"# 관전모드	: 플레이어를 관전 모드로 전환합니다.",
+			"# 없음		: 아무 작업도 하지 않습니다."),
+	Game_Death_AbilityReveal("게임.사망.능력공개", true,
 			"# 게임 진행 중 사망 시 능력 공개 여부",
 			"# true로 설정하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다."),
-	Game_Deaeth_AbilityRemoval("게임.사망.능력삭제", false,
+	Game_Death_AbilityRemoval("게임.사망.능력삭제", false,
 			"# 게임 진행 중 사망 시 능력 삭제 여부",
 			"# true로 설정하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 삭제합니다."),
-	Game_Deaeth_ItemDrop("게임.사망.아이템드롭", true,
+	Game_Death_ItemDrop("게임.사망.아이템드롭", true,
 			"# 게임 진행 중 사망 시 아이템 드롭 여부",
 			"# true로 설정하면 게임이 시작되고 난 후 사망할 경우 아이템을 드롭합니다."),
 	Game_ClearWeather("게임.맑은날씨", false,
@@ -78,12 +78,11 @@ public enum ConfigNodes {
 	GameMode("게임모드", DefaultGame.class.getName(),
 			"# 게임 모드 클래스");
 	
-	private String Path;
-	private Object Default;
-	private String[] Comments;
+	private final String Path;
+	private final Object Default;
+	private final String[] Comments;
 	
-	private ConfigNodes(String Path, Object Default, String... Comments) {
-		
+	private ConfigNodes(final String Path, final Object Default, final String... Comments) {
 		this.Path = Path;
 		this.Default = Default;
 		this.Comments = Comments;

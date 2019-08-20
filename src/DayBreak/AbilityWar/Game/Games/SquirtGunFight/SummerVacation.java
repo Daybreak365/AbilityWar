@@ -21,10 +21,13 @@ import org.bukkit.scoreboard.Score;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Config.AbilityWarSettings.SummerVacationSettings;
 import DayBreak.AbilityWar.Game.Games.GameCreditEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.WinnableGame;
+import DayBreak.AbilityWar.Game.Manager.DeathManager;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
+import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Utils.FireworkUtil;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
@@ -44,7 +47,7 @@ public class SummerVacation extends WinnableGame {
 	
 	public SummerVacation() {
 		setRestricted(Invincible);
-		this.MaxKill = AbilityWarSettings.SummerVacation_getKill();
+		this.MaxKill = SummerVacationSettings.getMaxKill();
 	}
 	
 	private final boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
@@ -73,11 +76,6 @@ public class SummerVacation extends WinnableGame {
 		@Override
 		public void onEnd() {}
 	};
-	
-	@Override
-	protected boolean gameCondition() {
-		return true;
-	}
 	
 	@Override
 	protected void progressGame(Integer Seconds) {
@@ -140,9 +138,9 @@ public class SummerVacation extends WinnableGame {
 		}
 	}
 	
-	List<Participant> Killers = new ArrayList<Participant>();
+	private final List<Participant> Killers = new ArrayList<Participant>();
 	
-	TimerBase Glow = new TimerBase() {
+	private final TimerBase Glow = new TimerBase() {
 		
 		@Override
 		protected void onStart() {}
@@ -159,25 +157,30 @@ public class SummerVacation extends WinnableGame {
 	}.setPeriod(10);
 	
 	private final int MaxKill;
-	
+
 	@Override
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		Player Victim = e.getEntity();
-		if(Victim.getKiller() != null) {
-			Participant VictimPart = getParticipant(Victim);
-			if(VictimPart != null && Killers.contains(VictimPart)) Killers.remove(VictimPart);
-			Participant Killer = getParticipant(Victim.getKiller());
-			if(Killer != null && !Killer.getPlayer().equals(Victim)) {
-				if(!Killers.contains(Killer)) Killers.add(Killer);
-				Score score = killObjective.getScore(Killer.getPlayer().getName());
-				if(score.isScoreSet()) {
-					score.setScore(score.getScore() + 1);
-					if(score.getScore() >= MaxKill) {
-						this.Victory(Killer);
+	protected DeathManager setupDeathManager() {
+		return new DeathManager(this) {
+			@Override
+			protected void onPlayerDeath(PlayerDeathEvent e) {
+				Player Victim = e.getEntity();
+				if(Victim.getKiller() != null) {
+					Participant VictimPart = getParticipant(Victim);
+					if(VictimPart != null && Killers.contains(VictimPart)) Killers.remove(VictimPart);
+					Participant Killer = getParticipant(Victim.getKiller());
+					if(Killer != null && !Killer.getPlayer().equals(Victim)) {
+						if(!Killers.contains(Killer)) Killers.add(Killer);
+						Score score = killObjective.getScore(Killer.getPlayer().getName());
+						if(score.isScoreSet()) {
+							score.setScore(score.getScore() + 1);
+							if(score.getScore() >= MaxKill) {
+								Victory(Killer);
+							}
+						}
 					}
 				}
 			}
-		}
+		};
 	}
 	
 	public void broadcastPlayerList() {
@@ -191,7 +194,7 @@ public class SummerVacation extends WinnableGame {
 			msg.add(ChatColor.translateAlternateColorCodes('&', "&c" + Count + ". &f" + p.getPlayer().getName()));
 		}
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &c: &e" + Count + "명"));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==========================="));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
 		
 		Messager.broadcastStringList(msg);
 	}
@@ -329,11 +332,11 @@ public class SummerVacation extends WinnableGame {
 	}
 
 	@Override
-	protected List<Player> setupPlayers() {
+	protected List<Player> initPlayers() {
 		List<Player> Players = new ArrayList<Player>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!isSpectator(p.getName())) {
+			if(!SpectatorManager.isSpectator(p.getName())) {
 				Players.add(p);
 			}
 		}

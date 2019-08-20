@@ -116,7 +116,7 @@ public class LocationUtil {
 
 		return Blocks.stream().distinct().collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * 범위 안에서 같은 Y 좌표에 있는 블록들을 List로 반환합니다.
 	 * @param center 중심
@@ -182,7 +182,7 @@ public class LocationUtil {
 		return locations;
 	}
 	
-	public static <E> E getNearestEntity(Class<E> clazz, Location center, Entity exception) {
+	public static <E extends Entity> E getNearestEntity(Class<E> clazz, Location center, Entity exception) {
 		double distance = Double.MAX_VALUE;
 		E entity = null;
 		
@@ -224,76 +224,39 @@ public class LocationUtil {
 		return getNearestEntity(Player.class, p.getLocation(), p);
 	}
 	
-	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis, Entity exception) {
+	public static <E extends Entity> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis, Entity exception) {
 		List<E> entities = new ArrayList<E>();
-		for (Entity e : center.getWorld().getEntities()) {
-			Location entityLoc = e.getLocation();
-			if(NumberUtil.Subtract(Math.abs(entityLoc.getY()), Math.abs(center.getY())) <= VerticalDis) {
-				if(NumberUtil.Subtract(Math.abs(entityLoc.getX()), Math.abs(center.getX())) <= HorizontalDis
-				|| NumberUtil.Subtract(Math.abs(entityLoc.getZ()), Math.abs(center.getZ())) <= HorizontalDis) {
-					if (clazz.isAssignableFrom(e.getClass())) {
-						if(!e.equals(exception)) {
-							if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
-								AbstractGame game = AbilityWarThread.getGame();
-								Player p = (Player) e;
-								if(game.isParticipating(p)) {
-									if(game.getDeathManager().isEliminated(p)) continue;
-									Participant part = game.getParticipant(p);
+		for (Entity e : center.getWorld().getNearbyEntities(center, HorizontalDis, VerticalDis, HorizontalDis)) {
+			if (clazz.isAssignableFrom(e.getClass())) {
+				if(!e.equals(exception)) {
+					if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
+						AbstractGame game = AbilityWarThread.getGame();
+						Player p = (Player) e;
+						if(game.isParticipating(p)) {
+							if(game.getDeathManager().isEliminated(p)) continue;
+							Participant part = game.getParticipant(p);
 
-									if (game instanceof TeamGame && exception instanceof Player) {
-										TeamGame tgame = (TeamGame) game;
-										Player ex = (Player) exception;
-										if(game.isParticipating(ex)) {
-											Participant expart = game.getParticipant(ex);
-											if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
-										}
-									}
-								} else {
-									continue;
+							if (game instanceof TeamGame && exception instanceof Player) {
+								TeamGame tgame = (TeamGame) game;
+								Player ex = (Player) exception;
+								if(game.isParticipating(ex)) {
+									Participant expart = game.getParticipant(ex);
+									if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
 								}
 							}
-							entities.add(clazz.cast(e));
+						} else {
+							continue;
 						}
 					}
+					entities.add(clazz.cast(e));
 				}
 			}
 		}
 		
-		/*if(ServerVersion.getVersion() >= 9) {
-			for (Entity e : center.getWorld().getNearbyEntities(center, HorizontalDis, VerticalDis, HorizontalDis)) {
-				if (clazz.isAssignableFrom(e.getClass())) {
-					if(!e.equals(exception)) {
-						if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
-							AbstractGame game = AbilityWarThread.getGame();
-							Player p = (Player) e;
-							if(game.isParticipating(p)) {
-								if(game.getDeathManager().isEliminated(p)) continue;
-								Participant part = game.getParticipant(p);
-
-								if (game instanceof TeamGame && exception instanceof Player) {
-									TeamGame tgame = (TeamGame) game;
-									Player ex = (Player) exception;
-									if(game.isParticipating(ex)) {
-										Participant expart = game.getParticipant(ex);
-										if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
-									}
-								}
-							} else {
-								continue;
-							}
-						}
-						entities.add(clazz.cast(e));
-					}
-				}
-			}
-		} else {
-		}
-		*/
-
 		return entities;
 	}
 
-	public static <E> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis) {
+	public static <E extends Entity> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis) {
 		return getNearbyEntities(clazz, center, HorizontalDis, VerticalDis, null);
 	}
 	

@@ -3,6 +3,7 @@ package DayBreak.AbilityWar.Game.Script.Types;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -32,20 +33,20 @@ public class ChangeAbilityScript extends AbstractScript {
 		
 		모든_플레이어 {
 			@Override
-			public List<Participant> getParticipant(AbstractGame game) {
+			public Collection<Participant> getParticipant(AbstractGame game) {
 				return game.getParticipants();
 			}
 		},
 		랜덤_플레이어 {
 			@Override
-			public List<Participant> getParticipant(AbstractGame game) {
+			public Collection<Participant> getParticipant(AbstractGame game) {
 				Random random = new Random();
-				List<Participant> participants = game.getParticipants();
+				List<Participant> participants = new ArrayList<>(game.getParticipants());
 				return Arrays.asList(participants.get(random.nextInt(participants.size())));
 			}
 		};
 		
-		public abstract List<Participant> getParticipant(AbstractGame game);
+		public abstract Collection<Participant> getParticipant(AbstractGame game);
 		
 	}
 

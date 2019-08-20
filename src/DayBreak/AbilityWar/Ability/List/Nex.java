@@ -5,8 +5,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -198,6 +198,6 @@ public class Nex extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

@@ -5,7 +5,7 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -20,7 +20,7 @@ import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.EnchantLib;
 import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
-import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;
+import DayBreak.AbilityWar.Utils.Library.TItle.Title;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil.NumberStatus;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
@@ -108,7 +108,7 @@ public class TheEmpress extends AbilityBase {
 					} else if(X.isZero() && Z.isZero()) {
 						if(!EasterEgg) {
 							EasterEgg = true;
-							TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&a여제의 가호"),
+							Title title = new Title(ChatColor.translateAlternateColorCodes('&', "&a여제의 가호"),
 									"여제의 가호에 의해 모든 플레이어의 능력 쿨타임이 초기화되었습니다.", 15, 80, 15);
 							title.Broadcast();
 							
@@ -132,6 +132,6 @@ public class TheEmpress extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

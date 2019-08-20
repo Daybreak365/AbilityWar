@@ -2,6 +2,7 @@ package DayBreak.AbilityWar.Game.Games.TeamGame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -11,7 +12,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.AbilityWar;
@@ -22,6 +22,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.TeamGame;
 import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
+import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Game.Script.Script;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
@@ -56,11 +57,6 @@ public class TeamFight extends TeamGame {
 		@Override
 		public void onEnd() {}
 	};
-	
-	@Override
-	protected boolean gameCondition() {
-		return true;
-	}
 	
 	@Override
 	protected void progressGame(Integer Seconds) {
@@ -126,24 +122,7 @@ public class TeamFight extends TeamGame {
 				break;
 		}
 	}
-	
-	@Override
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		Player Victim = e.getEntity();
-		
-		if(this.isGameStarted()) {
-			if(this.isParticipating(Victim)) {
-				if(AbilityWarSettings.getEliminate()) {
-					getDeathManager().Eliminate(Victim);
-				}
-				
-				if(AbilityWarSettings.getAbilityRemoval()) {
-					this.getParticipant(Victim).removeAbility();
-				}
-			}
-		}
-	}
-	
+
 	public void broadcastPlayerList() {
 		int Count = 0;
 		
@@ -155,7 +134,7 @@ public class TeamFight extends TeamGame {
 			msg.add(ChatColor.translateAlternateColorCodes('&', "&a" + Count + ". &f" + p.getPlayer().getName()));
 		}
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&eÃÑ ÀÎ¿ø¼ö : " + Count + "¸í"));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==========================="));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
 		
 		Messager.broadcastStringList(msg);
 	}
@@ -258,11 +237,11 @@ public class TeamFight extends TeamGame {
 	}
 	
 	@Override
-	protected List<Player> setupPlayers() {
+	protected List<Player> initPlayers() {
 		List<Player> Players = new ArrayList<Player>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!isSpectator(p.getName())) {
+			if(!SpectatorManager.isSpectator(p.getName())) {
 				Players.add(p);
 			}
 		}
@@ -275,7 +254,7 @@ public class TeamFight extends TeamGame {
 		return new AbilitySelect() {
 			
 			@Override
-			protected List<Participant> setupPlayers() {
+			protected Collection<Participant> initSelectors() {
 				return TeamFight.this.getParticipants();
 			}
 			
@@ -293,13 +272,13 @@ public class TeamFight extends TeamGame {
 			private List<Class<? extends AbilityBase>> abilities;
 			
 			@Override
-			protected void drawAbility() {
+			protected void drawAbility(Collection<Participant> selectors) {
 				abilities = setupAbilities();
 				
 				if(getSelectors().size() <= abilities.size()) {
 					Random random = new Random();
 					
-					for(Participant participant : getSelectors()) {
+					for(Participant participant : selectors) {
 						Player p = participant.getPlayer();
 						
 						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
@@ -357,7 +336,7 @@ public class TeamFight extends TeamGame {
 			protected void onSelectEnd() {}
 
 			@Override
-			protected int getChangeCount() {
+			protected int initChangeCount() {
 				return 1;
 			}
 
@@ -371,7 +350,7 @@ public class TeamFight extends TeamGame {
 
 	@Override
 	protected List<Team> setupTeams() {
-		List<Participant> participants = getParticipants();
+		List<Participant> participants = new ArrayList<>(getParticipants());
 		int size = participants.size();
 		
 		Collections.shuffle(participants, new Random());

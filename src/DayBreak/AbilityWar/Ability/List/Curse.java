@@ -1,7 +1,7 @@
 package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -30,7 +30,7 @@ public class Curse extends AbilityBase {
 
 	public Curse(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 상대방이 착용하고 있는 모든 갑옷에 귀속저주를 겁니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 우클릭하면 상대방이 착용하고 있는 모든 갑옷에 귀속저주를 겁니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f" + CountConfig.getValue() + "번만 사용할 수 있습니다."));
 	}
 	
@@ -45,7 +45,7 @@ public class Curse extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {
 		if(mt.equals(MaterialType.Iron_Ingot)) {
 			if(entity != null) {
 				if(entity instanceof Player) {

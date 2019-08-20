@@ -6,7 +6,7 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
@@ -91,6 +91,6 @@ public class BombArrow extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

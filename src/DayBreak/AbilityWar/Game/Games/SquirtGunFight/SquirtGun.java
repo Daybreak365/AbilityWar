@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -154,7 +154,7 @@ public class SquirtGun extends AbilityBase {
 	}
 	
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
 	@Override
 	protected void onRestrictClear() {

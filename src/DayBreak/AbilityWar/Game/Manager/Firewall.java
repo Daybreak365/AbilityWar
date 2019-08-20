@@ -13,7 +13,8 @@ import org.bukkit.plugin.EventExecutor;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
-import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
+import DayBreak.AbilityWar.Config.AbilityWarSettings.DeathSettings;
+import DayBreak.AbilityWar.Config.Enums.OnDeath;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 
@@ -51,7 +52,7 @@ public class Firewall implements EventExecutor {
 					}
 				}
 				
-				for(String playerName : DefaultGame.getSpectators()) {
+				for(String playerName : SpectatorManager.getSpectators()) {
 					if(p.getName().equals(playerName)) {
 						canLogin = true;
 					}
@@ -65,7 +66,7 @@ public class Firewall implements EventExecutor {
 				}
 			}
 			
-			if(AbilityWarSettings.getEliminate()) {
+			if(DeathSettings.getOperation().equals(OnDeath.Å»¶ô)) {
 				if(game.getDeathManager().isEliminated(p) && !p.isOp()) {
 					e.disallow(Result.KICK_OTHER,
 							ChatColor.translateAlternateColorCodes('&', "&2¡¶&aAbilityWar&2¡·")

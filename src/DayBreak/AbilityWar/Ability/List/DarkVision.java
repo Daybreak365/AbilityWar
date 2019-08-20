@@ -1,7 +1,7 @@
 package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -81,6 +81,6 @@ public class DarkVision extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
 }

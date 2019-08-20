@@ -1,24 +1,35 @@
 package DayBreak.AbilityWar.Utils.Thread;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 
 import DayBreak.AbilityWar.AbilityWar;
+import DayBreak.AbilityWar.Ability.List.Feather;
+import DayBreak.AbilityWar.Ability.List.Gladiator;
+import DayBreak.AbilityWar.Ability.List.Pumpkin;
 
 /**
- * 게임 중 실행되는 타이머
+ * 게임 진행 중 실행되는 타이머
  * @author DayBreak 새벽
  */
 abstract public class TimerBase {
 
-	private static List<TimerBase> Tasks = new ArrayList<TimerBase>();
+	private static List<TimerBase> Tasks = new ArrayList<>();
 	
-	public static List<TimerBase> getTasks() {
+	/**
+	 * 현재 실행중인 모든 {@link TimerBase}를 반환합니다.
+	 */
+	public static Collection<TimerBase> getTasks() {
 		return new ArrayList<TimerBase>(Tasks);
 	}
 
+	/**
+	 * 해당 타입의 {@link TimerBase}를 모두 종료합니다.
+	 * @param timerClass
+	 */
 	public static void StopTasks(Class<? extends TimerBase> timerClass) {
 		for(TimerBase timer : getTasks()) {
 			if(timerClass.isAssignableFrom(timer.getClass())) {
@@ -26,29 +37,13 @@ abstract public class TimerBase {
 			}
 		}
 	}
-	
+
+	/**
+	 * 현재 실행중인 {@link TimerBase}를 모두 종료합니다.
+	 */
 	public static void ResetTasks() {
-		for(TimerBase timer : getTasks()) {
-			timer.StopTimer(true);
-		}
-		
+		for(TimerBase timer : getTasks()) timer.StopTimer(true);
 		Tasks = new ArrayList<TimerBase>();
-	}
-
-	/**
-	 * Register TimerBase
-	 * @param timer
-	 */
-	private static void Register(TimerBase timer) {
-		Tasks.add(timer);
-	}
-
-	/**
-	 * Unregister TimerBase
-	 * @param timer
-	 */
-	private static void Unregister(TimerBase timer) {
-		Tasks.remove(timer);
 	}
 
 	private int Task = -1;
@@ -58,54 +53,86 @@ abstract public class TimerBase {
 	private int MaxCount;
 	private int Count;
 	private int Period = 20;
-	private boolean ForcedStopNotice = false;
+	
+	/**
+	 * 타이머를 Silent 모드로 종료시키더도 {@link #onEnd()}를 호출할지의 여부입니다.<p>
+	 * {@link Pumpkin}, {@link Feather}, {@link Gladiator}와 같은 능력들에서
+	 * {@link TimerBase}의 {@link #onEnd()}가 호출되지 않게 되면 상태 초기화가 이루어지지 않아
+	 * 능력 발동 중의 상태가 계속 유지되는 문제가 있어 추가된 설정입니다.
+	 * 
+	 * 능력이 강제로 변경된 이후에 초기화가 필요한 능력에서만 사용할 것을 권장합니다.
+	 */
+	private boolean SilentNotice = false;
 
+	/**
+	 * {@link TimerBase}가 실행될 때 호출됩니다.
+	 */
 	abstract protected void onStart();
 
-	abstract protected void TimerProcess(Integer Seconds);
+	/**
+	 * {@link TimerBase} 실행 이후 {@link #Period}틱마다 호출됩니다.
+	 * <pre>
+	 * 일반 타이머
+	 * <pre>
+	 * 카운트 값이 {@link #MaxCount}에서 시작하여 1까지 감소합니다.</pre>
+	 * 무한 타이머
+	 * <pre>
+	 * 카운트 값이 1에서 시작하여 {@link Integer#MAX_VALUE}까지 증가합니다.</pre>
+	 * </pre>
+	 * 
+	 */
+	protected abstract void TimerProcess(Integer Count);
 
-	abstract protected void onEnd();
+	/**
+	 * {@link TimerBase}가 종료될 때 호출됩니다.
+	 */
+	protected abstract void onEnd();
 
-	public boolean isTimerRunning() {
+	/**
+	 * {@link TimerBase}의 실행 여부를 반환합니다.
+	 */
+	public final boolean isTimerRunning() {
 		return Task != -1;
 	}
 
 	/**
-	 * 타이머를 시작합니다.
+	 * {@link TimerBase}를 실행합니다.
 	 */
-	public void StartTimer() {
+	public final void StartTimer() {
 		if(!this.isTimerRunning()) {
 			Count = MaxCount;
 			this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
-			Register(this);
+			Tasks.add(this);
 			onStart();
 		}
 	}
 
 	/**
-	 * 타이머를 종료합니다.
+	 * {@link TimerBase}를 종료합니다.<p>
+	 * @param Silent 	true인 경우에 타이머를 Silent 모드로 종료합니다.
+	 * 					Silent 모드에서는 {@link #onEnd()}가 호출되지 않습니다.
 	 */
-	public void StopTimer(boolean Silent) {
+	public final void StopTimer(boolean Silent) {
 		if(this.isTimerRunning()) {
 			Bukkit.getScheduler().cancelTask(Task);
-			Unregister(this);
+			Tasks.remove(this);
 			Count = MaxCount;
 			this.Task = -1;
-			if(!Silent || ForcedStopNotice) {
+			if(!Silent || SilentNotice) {
 				onEnd();
 			}
 		}
 	}
 	
-	public int getMaxCount() {
+	public final int getMaxCount() {
 		return MaxCount;
 	}
 	
-	public int getCount() {
+	public final int getCount() {
 		return Count;
 	}
 
-	public int getFixedCount() {
+	public final int getFixedCount() {
 		return (int) (Count / (20 / Period));
 	}
 	
@@ -113,18 +140,18 @@ abstract public class TimerBase {
 		this.Period = Period;
 		return this;
 	}
-	
-	protected boolean isForcedStopNotice() {
-		return ForcedStopNotice;
-	}
 
-	public TimerBase setForcedStopNotice(boolean forcedStopNotice) {
-		ForcedStopNotice = forcedStopNotice;
+	public TimerBase setSilentNotice(boolean silentNotice) {
+		SilentNotice = silentNotice;
 		return this;
 	}
 
+	protected final boolean isSilentNotice() {
+		return SilentNotice;
+	}
+
 	/**
-	 * 일반 타이머
+	 * 일반 {@link TimerBase}
 	 */
 	public TimerBase(int Count) {
 		InfiniteTimer = false;
@@ -132,11 +159,11 @@ abstract public class TimerBase {
 	}
 	
 	/**
-	 * 무한 타이머
+	 * 무한 {@link TimerBase}
 	 */
 	public TimerBase() {
 		InfiniteTimer = true;
-		this.MaxCount = -1;
+		this.MaxCount = 1;
 	}
 	
 	private final class TimerTask extends Thread {
@@ -145,15 +172,11 @@ abstract public class TimerBase {
 		public void run() {
 			if (AbilityWarThread.isGameTaskRunning()) {
 				if (InfiniteTimer) {
-					TimerProcess(-1);
+					TimerProcess(Count);
+					if(Count <= Integer.MAX_VALUE) Count++;
 				} else {
 					if (Count > 0) {
 						TimerProcess(Count);
-
-						if (Count <= 0) {
-							StopTimer(false);
-						}
-
 						Count--;
 					} else {
 						StopTimer(false);

@@ -33,7 +33,7 @@ public class AbilityWarThread {
 	 */
 	public static void StopGame() {
 		if(isGameTaskRunning()) {
-			Game.StopTimer(false);
+			Game.StopTimer();
 			setGame(null);
 			
 			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 중지되었습니다."));

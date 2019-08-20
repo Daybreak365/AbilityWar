@@ -23,9 +23,9 @@ import DayBreak.AbilityWar.Config.AbilitySettings;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Config.SettingWizard;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
-import DayBreak.AbilityWar.Game.Games.Mode.GameMode;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.AbilitySelect;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
+import DayBreak.AbilityWar.Game.Games.Mode.GameMode;
 import DayBreak.AbilityWar.Game.Manager.Invincibility;
 import DayBreak.AbilityWar.Game.Manager.GUI.AbilityGUI;
 import DayBreak.AbilityWar.Game.Manager.GUI.BlackListGUI;
@@ -523,18 +523,18 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
 						Messager.formatCommand(label + " util", "abi <대상/@a>", "대상에게 능력을 임의로 부여합니다.", true),
+						Messager.formatCommand(label + " util", "inv", "무적 상태를 토글합니다.", true),
 						Messager.formatCommand(label + " util", "spec", "관전자 설정 GUI를 띄웁니다.", true),
 						Messager.formatCommand(label + " util", "ablist", "능력자 목록을 확인합니다.", true),
-						Messager.formatCommand(label + " util", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true),
-						Messager.formatCommand(label + " util", "resetcool", "플레이어들의 능력 쿨타임을 초기화시킵니다.", true)));
+						Messager.formatCommand(label + " util", "blacklist", "능력 블랙리스트 설정 GUI를 띄웁니다.", true)));
 				break;
 			case 2:
 				Messager.sendStringList(sender, Messager.getStringList(
 						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
+						Messager.formatCommand(label + " util", "resetcool", "플레이어들의 능력 쿨타임을 초기화시킵니다.", true),
 						Messager.formatCommand(label + " util", "resetduration", "플레이어들의 능력 지속시간을 초기화시킵니다.", true),
-						Messager.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true),
-						Messager.formatCommand(label + " util", "inv", "무적 상태를 토글합니다.", true)));
+						Messager.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true)));
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -589,23 +589,25 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						}
 					}
 				case 3:
-					if(args[0].equalsIgnoreCase("util") && (args[1].equalsIgnoreCase("abi") || args[1].equalsIgnoreCase("kit"))) {
-						ArrayList<String> Players = new ArrayList<String>();
-						for(Player p : Bukkit.getOnlinePlayers()) Players.add(p.getName());
-						Players.add("@a");
-						Players.sort(new Comparator<String>() {
+					if(args[0].equalsIgnoreCase("util")) {
+						if(args[1].equalsIgnoreCase("abi") || args[1].equalsIgnoreCase("kit")) {
+							ArrayList<String> Players = new ArrayList<String>();
+							for(Player p : Bukkit.getOnlinePlayers()) Players.add(p.getName());
+							Players.add("@a");
+							Players.sort(new Comparator<String>() {
+								
+								public int compare(String obj1, String obj2) {
+									return obj1.compareToIgnoreCase(obj2);
+								}
+								
+							});
 							
-							public int compare(String obj1, String obj2) {
-								return obj1.compareToIgnoreCase(obj2);
+	
+							if(args[2].isEmpty()) {
+								return Players;
+							} else {
+								return Players.stream().filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase())).collect(Collectors.toList());
 							}
-							
-						});
-						
-
-						if(args[2].isEmpty()) {
-							return Players;
-						} else {
-							return Players.stream().filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase())).collect(Collectors.toList());
 						}
 					}
 					

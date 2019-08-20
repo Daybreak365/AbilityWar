@@ -42,14 +42,12 @@ abstract public class Timer {
 	/**
 	 * 타이머를 종료합니다.
 	 */
-	public void StopTimer(boolean Silent) {
+	public void StopTimer() {
 		if(this.isTimerRunning()) {
 			Bukkit.getScheduler().cancelTask(Task);
 			Count = MaxCount;
 			this.Task = -1;
-			if(!Silent) {
-				onEnd();
-			}
+			onEnd();
 		}
 	}
 	
@@ -98,12 +96,12 @@ abstract public class Timer {
 					TimerProcess(Count);
 
 					if (Count <= 0) {
-						StopTimer(false);
+						StopTimer();
 					}
 
 					Count--;
 				} else {
-					StopTimer(false);
+					StopTimer();
 				}
 			}
 		}

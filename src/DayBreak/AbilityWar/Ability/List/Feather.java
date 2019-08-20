@@ -1,7 +1,7 @@
 package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -65,7 +65,7 @@ public class Feather extends AbilityBase {
 			getPlayer().setAllowFlight(false);
 		}
 		
-	}.setForcedStopNotice(true);
+	}.setSilentNotice(true);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -102,6 +102,6 @@ public class Feather extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

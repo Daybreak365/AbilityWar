@@ -5,7 +5,7 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -127,6 +127,6 @@ public class BlackCandle extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

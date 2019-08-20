@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Development.Addon;
+package DayBreak.AbilityWar.Addon;
 
 import java.io.BufferedReader;
 import java.io.File;

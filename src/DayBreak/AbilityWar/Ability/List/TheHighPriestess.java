@@ -2,7 +2,7 @@ package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -88,9 +88,9 @@ public class TheHighPriestess extends AbilityBase {
 			for(Player p : LocationUtil.getNearbyPlayers(center, Range, Range)) {
 				if(LocationUtil.isInCircle(center, p.getLocation(), Double.valueOf(Range), true)) {
 					if(p.equals(getPlayer())) {
-						EffectLib.REGENERATION.addPotionEffect(p, 100, 1, false);
+						EffectLib.REGENERATION.addPotionEffect(p, 100, 2, false);
 					} else {
-						EffectLib.WITHER.addPotionEffect(p, 100, 0, true);
+						EffectLib.WITHER.addPotionEffect(p, 200, 1, true);
 					}
 				}
 			}
@@ -121,6 +121,6 @@ public class TheHighPriestess extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

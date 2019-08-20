@@ -1,6 +1,7 @@
 package DayBreak.AbilityWar.Game.Games.Default;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -9,7 +10,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.AbilityWar;
@@ -20,6 +20,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
+import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Game.Script.Script;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
@@ -58,11 +59,6 @@ public class DefaultGame extends AbstractGame {
 		@Override
 		public void onEnd() {}
 	};
-	
-	@Override
-	protected boolean gameCondition() {
-		return true;
-	}
 	
 	@Override
 	protected void progressGame(Integer Seconds) {
@@ -126,23 +122,6 @@ public class DefaultGame extends AbstractGame {
 		}
 	}
 	
-	@Override
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		Player Victim = e.getEntity();
-		
-		if(this.isGameStarted()) {
-			if(this.isParticipating(Victim)) {
-				if(AbilityWarSettings.getEliminate()) {
-					getDeathManager().Eliminate(Victim);
-				}
-				
-				if(AbilityWarSettings.getAbilityRemoval()) {
-					this.getParticipant(Victim).removeAbility();
-				}
-			}
-		}
-	}
-	
 	public void broadcastPlayerList() {
 		int Count = 0;
 		
@@ -154,7 +133,7 @@ public class DefaultGame extends AbstractGame {
 			msg.add(ChatColor.translateAlternateColorCodes('&', "&a" + Count + ". &f" + p.getPlayer().getName()));
 		}
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&eÃÑ ÀÎ¿ø¼ö : " + Count + "¸í"));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==========================="));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
 		
 		Messager.broadcastStringList(msg);
 	}
@@ -257,13 +236,11 @@ public class DefaultGame extends AbstractGame {
 	}
 	
 	@Override
-	protected List<Player> setupPlayers() {
+	protected List<Player> initPlayers() {
 		List<Player> Players = new ArrayList<Player>();
 		
 		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!isSpectator(p.getName())) {
-				Players.add(p);
-			}
+			if(!SpectatorManager.isSpectator(p.getName())) Players.add(p);
 		}
 		
 		return Players;
@@ -274,7 +251,7 @@ public class DefaultGame extends AbstractGame {
 		return new AbilitySelect() {
 			
 			@Override
-			protected List<Participant> setupPlayers() {
+			protected Collection<Participant> initSelectors() {
 				return DefaultGame.this.getParticipants();
 			}
 			
@@ -292,13 +269,13 @@ public class DefaultGame extends AbstractGame {
 			private List<Class<? extends AbilityBase>> abilities;
 			
 			@Override
-			protected void drawAbility() {
+			protected void drawAbility(Collection<Participant> selectors) {
 				abilities = setupAbilities();
 				
 				if(getSelectors().size() <= abilities.size()) {
 					Random random = new Random();
 					
-					for(Participant participant : getSelectors()) {
+					for(Participant participant : selectors) {
 						Player p = participant.getPlayer();
 						
 						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
@@ -356,7 +333,7 @@ public class DefaultGame extends AbstractGame {
 			protected void onSelectEnd() {}
 
 			@Override
-			protected int getChangeCount() {
+			protected int initChangeCount() {
 				return 1;
 			}
 

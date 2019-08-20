@@ -1,15 +1,15 @@
 package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Ability.SubscribeEvent;
+import DayBreak.AbilityWar.Game.Events.ParticipantDeathEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
@@ -27,16 +27,14 @@ public class Virus extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(AbilityWarThread.isGameTaskRunning()) {
-				Player Killer = getPlayer().getKiller();
-				if(Killer != null && AbilityWarThread.getGame().isParticipating(Killer)) {
-					try {
-						Participant target = AbilityWarThread.getGame().getParticipant(Killer);
-						target.setAbility(Virus.class);
-					} catch (Exception ex) {}
-				}
+	public void onPlayerDeath(ParticipantDeathEvent e) {
+		Participant participant = e.getParticipant();
+		if(participant.equals(getParticipant())) {
+			Player Killer = getPlayer().getKiller();
+			if(Killer != null && AbilityWarThread.getGame().isParticipating(Killer)) {
+				try {
+					participant.setAbility(Virus.class);
+				} catch (Exception ex) {}
 			}
 		}
 	}
@@ -45,6 +43,6 @@ public class Virus extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

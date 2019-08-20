@@ -1,37 +1,48 @@
 package DayBreak.AbilityWar.Game.Games.Mode;
 
+import static DayBreak.AbilityWar.Utils.Validate.notNull;
+
 import java.lang.reflect.Constructor;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.plugin.EventExecutor;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityBase.ClickType;
 import DayBreak.AbilityWar.Ability.AbilityBase.MaterialType;
+import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Game.Events.GameEndEvent;
+import DayBreak.AbilityWar.Game.Events.GameReadyEvent;
+import DayBreak.AbilityWar.Game.Events.GameStartEvent;
 import DayBreak.AbilityWar.Game.Manager.DeathManager;
 import DayBreak.AbilityWar.Game.Manager.EffectManager;
 import DayBreak.AbilityWar.Game.Manager.Firewall;
-import DayBreak.AbilityWar.Game.Manager.GameListener;
 import DayBreak.AbilityWar.Game.Manager.Invincibility;
 import DayBreak.AbilityWar.Game.Manager.ScoreboardManager;
 import DayBreak.AbilityWar.Game.Manager.WRECK;
@@ -42,42 +53,37 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
 public abstract class AbstractGame extends Timer implements Listener {
+
+	private final Map<String, Participant> participants = initParticipants();
 	
-	private static List<String> Spectators = new ArrayList<String>();
-	
-	public static boolean isSpectator(String name) {
-		return Spectators.contains(name);
+	/**
+	 * {@link String}이 key이고 {@link Participant}가 value인 맵의 초기값을 설정하기 위해 사용되는 메소드입니다.
+	 * @return 맵이 Unmodifiable {@link Map}으로 반환되어 요소가 변경될 수 없습니다.
+	 * @throws
+	 */
+	private final Map<String, Participant> initParticipants() {
+		Map<String, Participant> initial = new HashMap<>();
+		for(Player p : notNull(initPlayers())) initial.put(p.getUniqueId().toString(), new Participant(this, p));
+		return Collections.unmodifiableMap(initial);
 	}
 	
-	public static void addSpectator(String name) {
-		if(!Spectators.contains(name)) {
-			Spectators.add(name);
-		}
-	}
-	
-	public static void removeSpectator(String name) {
-		Spectators.remove(name);
-	}
-	
-	public static List<String> getSpectators() {
-		return new ArrayList<>(Spectators);
-	}
-	
-	
-	private final List<Participant> Participants = setupParticipants();
+	/**
+	 * 게임에 참가할 {@link Player} {@link List} 초깃값 설정
+	 * @NotNull
+	 */
+	protected abstract List<Player> initPlayers();
 
 	private final List<Listener> registeredListeners = new ArrayList<>();
-	
-	public void registerListener(Listener lis) {
-		Bukkit.getPluginManager().registerEvents(lis, AbilityWar.getPlugin());
-		registeredListeners.add(lis);
+	/**
+	 * 게임이 종료될 때 등록 해제되어야 하는 {@link Listener}를 등록합니다.
+	 */
+	public final void registerListener(Listener listener) {
+		Bukkit.getPluginManager().registerEvents(notNull(listener), AbilityWar.getPlugin());
+		registeredListeners.add(listener);
 	}
-	
-	@SuppressWarnings("unused")
-	private final GameListener gameListener = new GameListener(this);
-	
-	private final DeathManager deathManager = new DeathManager(this);
 
+	private final DeathManager deathManager = notNull(setupDeathManager());
+	
 	private final Invincibility invincibility = new Invincibility(this);
 	
 	private final EffectManager effectManager = new EffectManager(this);
@@ -100,15 +106,16 @@ public abstract class AbstractGame extends Timer implements Listener {
 	private int Seconds = 0;
 
 	@Override
-	protected void onStart() {}
+	protected void onStart() {
+		Bukkit.getPluginManager().callEvent(new GameReadyEvent(this));
+		registerListener(this);
+	}
 	
 	@Override
-	protected void TimerProcess(Integer i) {
-		if(gameCondition()) {
-			if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
-				Seconds++;
-				progressGame(Seconds);
-			}
+	protected void TimerProcess(Integer count) {
+		if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
+			Seconds++;
+			progressGame(Seconds);
 		}
 	}
 
@@ -117,8 +124,9 @@ public abstract class AbstractGame extends Timer implements Listener {
 		TimerBase.ResetTasks();
 		HandlerList.unregisterAll(this);
 		for(Listener lis : registeredListeners) HandlerList.unregisterAll(lis);
-		this.getScoreboardManager().Clear();
+		this.scoreboardManager.Clear();
 		this.onGameEnd();
+		Bukkit.getPluginManager().callEvent(new GameEndEvent(this));
 	}
 	
 	protected abstract void onGameEnd();
@@ -126,48 +134,27 @@ public abstract class AbstractGame extends Timer implements Listener {
 	/**
 	 * 게임 진행
 	 */
-	abstract protected void progressGame(Integer Seconds);
-	
-	/**
-	 * 게임 진행 조건
-	 */
-	abstract protected boolean gameCondition();
-	
-	/**
-	 * 참여자 초깃값 설정
-	 */
-	abstract protected List<Player> setupPlayers();
-	
-	/**
-	 * setupPlayers()에서 얻은 플레이어 목록을 바탕으로 Participant 목록을 만들어 반환합니다.
-	 * 반환된 목록은 Read-Only 목록으로 요소가 변경될 수 없습니다.
-	 */
-	private List<Participant> setupParticipants() {
-		List<Participant> list = new ArrayList<Participant>();
-		
-		for(Player p : setupPlayers()) {
-			list.add(new Participant(this, p));
-		}
-		
-		return Collections.unmodifiableList(list);
-	}
+	protected abstract void progressGame(Integer Seconds);
 	
 	/**
 	 * AbilitySelect 초깃값 설정
-	 * 능력 할당을 하지 않을 예정이라면 null을 반환해도 됩니다.
+	 * @Nullable 능력 할당이 필요하지 않을 경우 null을 반환하세요.
 	 */
-	abstract protected AbilitySelect setupAbilitySelect();
-	
+	protected abstract AbilitySelect setupAbilitySelect();
+
 	/**
-	 * 게임중 플레이어가 사망했을 경우 호출됨
+	 * DeathManager 초깃값 설정
+	 * @NotNull
 	 */
-	abstract public void onPlayerDeath(PlayerDeathEvent e);
+	protected DeathManager setupDeathManager() {
+		return new DeathManager(this);
+	}
 	
 	/**
 	 * 플레이어에게 기본 킷을 지급합니다.
 	 * @param p	킷을 지급할 플레이어
 	 */
-	abstract public void GiveDefaultKit(Player p);
+	public abstract void GiveDefaultKit(Player p);
 	
 	/**
 	 * 모든 플레이어들에게 기본 킷을 지급합니다.
@@ -182,38 +169,38 @@ public abstract class AbstractGame extends Timer implements Listener {
 	 * 참여자 목록을 반환합니다.
 	 * @return	참여자 목록
 	 */
-	public List<Participant> getParticipants() {
-		return new ArrayList<>(Participants);
+	public Collection<Participant> getParticipants() {
+		return participants.values();
 	}
 
 	protected ScoreboardManager getScoreboardManager() {
 		return scoreboardManager;
 	}
-	
-	private HashMap<String, Participant> participantCache = new HashMap<String, Participant>();
-	
-	/**
-	 * 해당 플레이어를 기반으로 하는 참여자를 반환합니다.
-	 * @param player	탐색할 플레이어
-	 * @return			참여자가 존재할 경우 참여자를 반환합니다.
-	 * 					참여자가 존재하지 않을 경우 null을 반환합니다.
-	 * 					null 체크가 필요합니다.
-	 */
-	public Participant getParticipant(Player player) {
-		String Key = player.getUniqueId().toString();
-		if(participantCache.containsKey(Key)) {
-			return participantCache.get(Key);
-		} else {
-			for(Participant participant : getParticipants()) {
-				if(participant.getPlayer().equals(player)) {
-					participantCache.put(Key, participant);
-					return participant;
-				}
-			}
 
-			participantCache.put(Key, null);
-			return null;
-		}
+	/**
+	 * {@link Player}를 기반으로 하는 {@link Participant}를 탐색합니다.
+	 * @param player	탐색할 플레이어
+	 * @return			존재할 경우 {@link Participant}를 반환합니다.
+	 * 					존재하지 않을 경우 null을 반환합니다.
+	 * @Nullable
+	 */
+	public final Participant getParticipant(final Player player) {
+		String key = player.getUniqueId().toString();
+		if(participants.containsKey(key)) return participants.get(key);
+		return null;
+	}
+
+	/**
+	 * 해당 {@link UUID}를 가지고 있는 {@link Player}를 기반으로 하는 {@link Participant}를 탐색합니다.
+	 * @param player	탐색할 플레이어
+	 * @return			존재할 경우 {@link Participant}를 반환합니다.
+	 * 					존재하지 않을 경우 null을 반환합니다.
+	 * @Nullable
+	 */
+	public final Participant getParticipant(final UUID uuid) {
+		String key = uuid.toString();
+		if(participants.containsKey(key)) return participants.get(key);
+		return null;
 	}
 	
 	/**
@@ -227,7 +214,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 	
 	/**
 	 * DeathManager를 반환합니다.
-	 * @return	DeathManager
+	 * @NotNull
 	 */
 	public DeathManager getDeathManager() {
 		return deathManager;
@@ -235,7 +222,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 
 	/**
 	 * EffectManager를 반환합니다.
-	 * @return	EffectManager
+	 * @NotNull
 	 */
 	public EffectManager getEffectManager() {
 		return effectManager;
@@ -243,7 +230,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 
 	/**
 	 * WRECK을 반환합니다.
-	 * @return	WRECK
+	 * @NotNull
 	 */
 	public WRECK getWRECK() {
 		return wreck;
@@ -251,7 +238,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 
 	/**
 	 * PassiveManager을 반환합니다.
-	 * @return	PassiveManager
+	 * @NotNull
 	 */
 	public PassiveManager getPassiveManager() {
 		return passiveManager;
@@ -270,18 +257,22 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * AbilitySelect를 받아옵니다.
-	 * @return AbilitySelect (사용하지 않을 경우 Null 반환, 능력 추첨 전일 경우 null 반환)
+	 * AbilitySelect를 반환합니다.
+	 * @Nullable 능력 할당 전이거나 능력 할당 기능을 사용하지 않을 경우 null을 반환합니다.
 	 */
 	public AbilitySelect getAbilitySelect() {
 		return abilitySelect;
 	}
 	
+	/**
+	 * Invincibility를 반환합니다.
+	 * @NotNull
+	 */
 	public Invincibility getInvincibility() {
 		return invincibility;
 	}
 
-	protected Integer getSeconds() {
+	protected int getSeconds() {
 		return Seconds;
 	}
 
@@ -297,6 +288,22 @@ public abstract class AbstractGame extends Timer implements Listener {
 		GameStarted = true;
 		wreck.noticeIfEnabled();
 		this.getScoreboardManager().Initialize();
+		Bukkit.getPluginManager().callEvent(new GameStartEvent(this));
+	}
+
+	@EventHandler
+	public void onWeatherChange(WeatherChangeEvent e) {
+		if(GameStarted && AbilityWarSettings.getClearWeather()) e.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void onFoodLevelChange(FoodLevelChangeEvent e) {
+		if(AbilityWarSettings.getNoHunger()) {
+			e.setCancelled(true);
+			
+			Player p = (Player) e.getEntity();
+			p.setFoodLevel(19);
+		}
 	}
 	
 	public class Participant implements EventExecutor {
@@ -308,7 +315,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 
 			Bukkit.getPluginManager().registerEvent(PlayerLoginEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
 			Bukkit.getPluginManager().registerEvent(PlayerInteractEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
-			Bukkit.getPluginManager().registerEvent(EntityDamageByEntityEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
+			Bukkit.getPluginManager().registerEvent(PlayerInteractAtEntityEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
 		}
 
 		private Instant lastClick = Instant.now();
@@ -318,7 +325,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 			if (event instanceof PlayerLoginEvent) {
 				PlayerLoginEvent e = (PlayerLoginEvent) event;
 				if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-					this.setPlayer(e.getPlayer());
+					this.player = e.getPlayer();
 				}
 			} else if (event instanceof PlayerInteractEvent) {
 				PlayerInteractEvent e = (PlayerInteractEvent) event;
@@ -329,49 +336,42 @@ public abstract class AbstractGame extends Timer implements Listener {
 					ClickType ct = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RightClick : ClickType.LeftClick;
 					if (mt != null) {
 						if (hasAbility()) {
-							if (!getAbility().isRestricted()) {
+							AbilityBase Ability = this.getAbility();
+							if (!Ability.isRestricted()) {
 								Instant Now = Instant.now();
 								long Duration = java.time.Duration.between(lastClick, Now).toMillis();
 								if (Duration >= 250) {
 									this.lastClick = Now;
-									ActiveSkill(getAbility(), mt, ct);
-
-									if (ct.equals(ClickType.LeftClick)) {
-										getAbility().TargetSkill(mt, null);
-									}
+									ActiveSkill(Ability, mt, ct);
 								}
 							}
 						}
 					}
 				}
-			} else if (event instanceof EntityDamageByEntityEvent) {
-				EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-				
-				if(e.getDamager() instanceof Player) {
-					Player p = (Player) e.getDamager();
-					if (p.equals(getPlayer())) {
-						MaterialType mt = parseMaterialType(VersionUtil.getItemInHand(p).getType());
-						if(mt != null) {
-							if(!e.isCancelled()) {
-								if(this.hasAbility()) {
-									AbilityBase Ability = this.getAbility();
-									if(!Ability.isRestricted()) {
-										Instant Now = Instant.now();
-										long Duration = java.time.Duration.between(lastClick, Now).toMillis();
-										if (Duration >= 250) {
-											Entity target = e.getEntity();
-											
-											if(target instanceof Player) {
-												Player t = (Player) target;
-												if(AbstractGame.this.isParticipating(t)) {
-													this.lastClick = Now;
-													Ability.TargetSkill(mt, e.getEntity());
-												}
-											} else {
-												this.lastClick = Now;
-												Ability.TargetSkill(mt, e.getEntity());
-											}
+			} else if (event instanceof PlayerInteractAtEntityEvent) {
+				PlayerInteractAtEntityEvent e = (PlayerInteractAtEntityEvent) event;
+
+				Player p = e.getPlayer();
+				if (p.equals(getPlayer())) {
+					MaterialType mt = parseMaterialType(VersionUtil.getItemInHand(p).getType());
+					if(mt != null && !e.isCancelled() && this.hasAbility()) {
+						AbilityBase Ability = this.getAbility();
+						if(!Ability.isRestricted()) {
+							Instant Now = Instant.now();
+							long Duration = java.time.Duration.between(lastClick, Now).toMillis();
+							if (Duration >= 250) {
+								Entity targetEntity = e.getRightClicked();
+								if(targetEntity instanceof LivingEntity) {
+									if(targetEntity instanceof Player) {
+										Player targetPlayer = (Player) targetEntity;
+										if(AbstractGame.this.isParticipating(targetPlayer)) {
+											this.lastClick = Now;
+											Ability.TargetSkill(mt, targetPlayer);
 										}
+									} else {
+										LivingEntity target = (LivingEntity) targetEntity;
+										this.lastClick = Now;
+										Ability.TargetSkill(mt, target);
 									}
 								}
 							}
@@ -442,7 +442,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 		
 		public void removeAbility() {
 			if(getAbility() != null) {
-				getAbility().Remove();
+				getAbility().destroy();
 				ability = null;
 			}
 		}
@@ -451,30 +451,43 @@ public abstract class AbstractGame extends Timer implements Listener {
 			return player;
 		}
 
-		private void setPlayer(Player player) {
-			this.player = player;
-		}
-
 	}
 	
 	public abstract class AbilitySelect extends TimerBase {
+
+		private final int changeCount = initChangeCount();
 		
-		private HashMap<Participant, Integer> Selectors = new HashMap<Participant, Integer>();
+		/**
+		 * 능력 변경 가능 횟수를 설정합니다.
+		 */
+		protected abstract int initChangeCount();
 		
-		public HashMap<Participant, Integer> getMap() {
-			return Selectors;
+		private final Map<Participant, Integer> selectors = setupSelectors();
+
+		private final Map<Participant, Integer> setupSelectors() {
+			Map<Participant, Integer> initial = new HashMap<>();
+			for(Participant p : notNull(initSelectors())) initial.put(p, changeCount);
+			return initial;
+		}
+		
+		/**
+		 * 능력을 선택할 {@link Participant} 목록을 설정합니다.
+		 * @NotNull
+		 */
+		protected abstract Collection<Participant> initSelectors();
+		
+		/**
+		 * 능력을 선택할 {@link Participant} 목록을 반환합니다.
+		 */
+		public final Collection<Participant> getSelectors() {
+			return selectors.keySet();
 		}
 
-		public List<Participant> getSelectors() {
-			return new ArrayList<Participant>(Selectors.keySet());
-		}
-		
-		public boolean hasDecided(Participant p) {
-			return Selectors.get(p) <= 0;
-		}
-		
-		private void setRemainingChangeCount(Participant participant, int count) {
-			Selectors.put(participant, count);
+		/**
+		 * {@link Participant}에게 남은 능력 변경 횟수를 설정합니다.
+		 */
+		private final void setRemainingChangeCount(Participant participant, int count) {
+			selectors.put(participant, count);
 			
 			if(count == 0) {
 				Player p = participant.getPlayer();
@@ -483,73 +496,37 @@ public abstract class AbstractGame extends Timer implements Listener {
 				
 				Messager.broadcastStringList(Messager.getStringList(
 						ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."),
-						ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayers() + "명")));
+						ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayersCount() + "명")));
 			}
 		}
-		
-		private void setDecided(Participant participant) {
-			setRemainingChangeCount(participant, 0);
-		}
-		
-		public boolean isSelector(Participant participant) {
-			return Selectors.containsKey(participant);
-		}
-		
-		protected AbilitySelect() {
-			final int ChangeCount = getChangeCount();
-			
-			for(Participant p : setupPlayers()) {
-				Selectors.put(p, ChangeCount);
-			}
-			
-			this.drawAbility();
-			this.StartTimer();
-		}
-		
-		public void decideAbility(Participant participant) {
-			if(isSelector(participant)) {
-				setDecided(participant);
-			}
-		}
-		
-		private int getLeftPlayers() {
-			int i = 0;
-			for(Participant p : Selectors.keySet()) {
-				if(!hasDecided(p)) {
-					i++;
-				}
-			}
-			
-			return i;
-		}
-		
-		public void Skip(String admin) {
-			for(Participant p : Selectors.keySet()) {
-				if(!hasDecided(p)) {
-					decideAbility(p);
-				}
-			}
 
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
-			this.StopTimer(false);
+		/**
+		 * 능력을 아직 결정하지 않은 참가자의 수를 반환합니다.
+		 */
+		private final int getLeftPlayersCount() {
+			int count = 0;
+			for(Participant p : getSelectors()) if(!hasDecided(p)) count++;
+			return count;
 		}
 		
 		/**
-		 * 능력 변경 가능 횟수를 반환합니다.
+		 * {@link Participant}의 능력 선택 여부를 반환합니다.
+		 * 능력을 선택중인 {@link Participant}가 아닐 경우 false를 반환합니다.
 		 */
-		abstract protected int getChangeCount();
-		
-		abstract protected void drawAbility();
-		
-		abstract protected boolean changeAbility(Participant participant);
-		
-		abstract protected List<Participant> setupPlayers();
-		
-		abstract protected void onSelectEnd();
-		
-		public void alterAbility(Participant participant) {
+		public final boolean hasDecided(final Participant participant) {
+			if(selectors.containsKey(participant)) {
+				return selectors.get(participant) <= 0;
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * 능력 선택 중 {@link Participant}의 능력을 변경합니다.
+		 */
+		public final void alterAbility(Participant participant) {
 			if(isSelector(participant) && !hasDecided(participant)) {
-				setRemainingChangeCount(participant, Selectors.get(participant) - 1);
+				setRemainingChangeCount(participant, selectors.get(participant) - 1);
 				if(changeAbility(participant)) {
 					Player p = participant.getPlayer();
 					
@@ -564,24 +541,47 @@ public abstract class AbstractGame extends Timer implements Listener {
 				}
 			}
 		}
+
+		/**
+		 * 참가자들의 초기 능력을 설정합니다.
+		 */
+		protected abstract void drawAbility(Collection<Participant> selectors);
 		
-		private boolean Ended = false;
+		/**
+		 * 능력 선택 중 {@link Participant}의 능력을 변경합니다.
+		 */
+		protected abstract boolean changeAbility(Participant participant);
 		
-		public boolean isEnded() {
-			return Ended;
+		/**
+		 * 능력 선택 중 {@link Participant}의 능력을 결정합니다.
+		 * 능력을 결정하면 더 이상 능력을 변경할 수 없습니다.
+		 */
+		public final void decideAbility(Participant participant) {
+			if(isSelector(participant)) setRemainingChangeCount(participant, 0);
 		}
 		
-		private boolean isEveryoneSelected() {
-			for(Participant Key : getSelectors()) {
-				if(!hasDecided(Key)) {
-					return false;
-				}
-			}
-			
-			return true;
+		/**
+		 * {@link Participant}가 능력 선택에 참여한 참가자인지의 여부를 반환합니다.
+		 */
+		public final boolean isSelector(Participant participant) {
+			return selectors.containsKey(participant);
 		}
-		
-		private int Count = 0;
+
+		/**
+		 * 모든 참가자의 능력을 강제로 결정합니다.
+		 * @param admin		출력할 관리자의 이름
+		 */
+		public final void Skip(String admin) {
+			for(Participant p : getSelectors()) if(!hasDecided(p)) decideAbility(p);
+
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
+			this.StopTimer(false);
+		}
+
+		protected AbilitySelect() {
+			drawAbility(getSelectors());
+			StartTimer();
+		}
 		
 		@Override
 		public void onStart() {}
@@ -589,23 +589,36 @@ public abstract class AbstractGame extends Timer implements Listener {
 		@Override
 		public void TimerProcess(Integer Seconds) {
 			if(!isEveryoneSelected()) {
-				Count++;
-				
-				if(Count >= 20) {
+				if(Seconds % 20 == 0) {
 					Messager.broadcastStringList(Messager.getStringList(
 							ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."),
 							ChatColor.translateAlternateColorCodes('&', "&c/ability yes나 /ability no 명령어로 능력을 확정해주세요.")));
-					Count = 0;
 				}
 			} else {
 				this.StopTimer(false);
 			}
+		}
+
+		/**
+		 * 능력을 선택중인 모든 참가자가 능력을 결정했는지의 여부를 반환합니다.
+		 */
+		private final boolean isEveryoneSelected() {
+			for(Participant Key : getSelectors()) if(!hasDecided(Key)) return false;
+			return true;
 		}
 		
 		@Override
 		public void onEnd() {
 			Ended = true;
 			onSelectEnd();
+		}
+
+		protected abstract void onSelectEnd();
+
+		private boolean Ended = false;
+		
+		public boolean isEnded() {
+			return Ended;
 		}
 		
 	}

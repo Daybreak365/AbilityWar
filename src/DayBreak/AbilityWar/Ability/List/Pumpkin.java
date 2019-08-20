@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -139,7 +139,7 @@ public class Pumpkin extends AbilityBase {
 			return Pumpkin;
 		}
 		
-	}.setForcedStopNotice(true);
+	}.setSilentNotice(true);
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -160,6 +160,6 @@ public class Pumpkin extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

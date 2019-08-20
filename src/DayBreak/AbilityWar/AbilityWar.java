@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import DayBreak.AbilityWar.Addon.AddonLoader;
 import DayBreak.AbilityWar.Config.AbilitySettings;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
-import DayBreak.AbilityWar.Development.Addon.AddonLoader;
 import DayBreak.AbilityWar.Game.MainCommand;
 import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Game.Script.Script;
@@ -82,8 +82,7 @@ public class AbilityWar extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
-		if(AbilityWarThread.isGameTaskRunning()) AbilityWarThread.StopGame();
-		
+		AbilityWarThread.StopGame();
 		AbilityWarSettings.Refresh();
 		AbilitySettings.Refresh();
 		AddonLoader.onDisable();

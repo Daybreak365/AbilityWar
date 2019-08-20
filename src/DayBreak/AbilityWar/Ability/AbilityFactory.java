@@ -68,6 +68,9 @@ import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
+/**
+ * {@link AbilityBase}를 기반으로 하는 모든 능력을 관리하는 클래스입니다.
+ */
 public class AbilityFactory {
 
 	private static Map<Class<? extends AbilityBase>, AbilityRegisteration<? extends AbilityBase>> RegisteredAbilities = new HashMap<>();

@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
-import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
+import DayBreak.AbilityWar.Config.Enums.ConfigNodes;
 import DayBreak.AbilityWar.Game.Games.ChangeAbility.ChangeAbilityWar;
 import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
 import DayBreak.AbilityWar.Game.Games.SquirtGunFight.SummerVacation;

@@ -13,16 +13,17 @@ import org.bukkit.plugin.EventExecutor;
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Game.Events.InvincibleEndEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
-import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;
+import DayBreak.AbilityWar.Utils.Library.TItle.Title;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
- * 무적
+ * 무적 
  * @author DayBreak 새벽
  */
 public class Invincibility implements EventExecutor {
@@ -71,7 +72,7 @@ public class Invincibility implements EventExecutor {
 					@Override
 					protected void onEnd() {
 						game.setRestricted(false);
-						TitlePacket titlePacket = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
+						Title titlePacket = new Title(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
 								ChatColor.translateAlternateColorCodes('&', "&f무적이 해제되었습니다."), 20, 60, 20);
 						titlePacket.Broadcast();
 						SoundLib.ENTITY_ENDER_DRAGON_AMBIENT.broadcastSound();
@@ -81,6 +82,8 @@ public class Invincibility implements EventExecutor {
 								participant.getAbility().setRestricted(false);
 							}
 						}
+
+						Bukkit.getPluginManager().callEvent(new InvincibleEndEvent(game));
 					}
 					
 				};
@@ -105,7 +108,7 @@ public class Invincibility implements EventExecutor {
 					@Override
 					protected void onEnd() {
 						game.setRestricted(false);
-						TitlePacket titlePacket = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
+						Title titlePacket = new Title(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
 								ChatColor.translateAlternateColorCodes('&', "&f무적이 해제되었습니다."), 20, 60, 20);
 						titlePacket.Broadcast();
 						SoundLib.ENTITY_ENDER_DRAGON_AMBIENT.broadcastSound();
@@ -115,6 +118,8 @@ public class Invincibility implements EventExecutor {
 								participant.getAbility().setRestricted(false);
 							}
 						}
+						
+						Bukkit.getPluginManager().callEvent(new InvincibleEndEvent(game));
 					}
 					
 				};

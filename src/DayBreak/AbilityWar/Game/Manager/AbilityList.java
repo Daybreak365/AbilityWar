@@ -60,10 +60,11 @@ import DayBreak.AbilityWar.Ability.List.Yeti;
 import DayBreak.AbilityWar.Ability.List.Zeus;
 import DayBreak.AbilityWar.Ability.List.Zombie;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
+import DayBreak.AbilityWar.Game.Games.ChangeAbility.ChangeAbilityWar;
 import DayBreak.AbilityWar.Utils.Messager;
 
 /**
- * 능력자 전쟁 플러그인의 능력 목록을 관리하는 클래스입니다.
+ * {@link DefaultGame}, {@link ChangeAbilityWar} 등에서 사용하는 능력자 플러그인의 기본적인 능력 목록을 관리하는 클래스입니다.
  */
 public class AbilityList {
 	

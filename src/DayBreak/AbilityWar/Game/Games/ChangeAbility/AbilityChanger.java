@@ -11,12 +11,13 @@ import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Config.AbilityWarSettings.ChangeAbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Game.Manager.AbilityList;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
-import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;
+import DayBreak.AbilityWar.Utils.Library.TItle.Title;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 public class AbilityChanger {
@@ -29,7 +30,7 @@ public class AbilityChanger {
 	
 	public AbilityChanger(AbstractGame game) {
 		this.game = game;
-		this.period = AbilityWarSettings.ChangeAbilityWar_getPeriod();
+		this.period = ChangeAbilityWarSettings.getPeriod();
 		this.timer = new TimerBase() {
 			
 			@Override
@@ -96,8 +97,8 @@ public class AbilityChanger {
 			
 			@Override
 			protected void onEnd() {
-				TitlePacket packet = new TitlePacket("", "", 0, 1, 0);
-				packet.Send(p);
+				Title packet = new Title("", "", 0, 1, 0);
+				packet.sendTo(p);
 			}
 			
 			@Override
@@ -114,8 +115,8 @@ public class AbilityChanger {
 					}
 				}
 				
-				TitlePacket packet = new TitlePacket(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
-				packet.Send(p);
+				Title packet = new Title(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
+				packet.sendTo(p);
 			}
 		}.setPeriod(3).StartTimer();
 		

@@ -7,11 +7,10 @@ import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
@@ -21,6 +20,7 @@ import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Ability.Timer.CooldownTimer;
 import DayBreak.AbilityWar.Ability.Timer.DurationTimer;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
+import DayBreak.AbilityWar.Game.Events.ParticipantDeathEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Data.PushingArray;
@@ -75,8 +75,8 @@ public class TimeRewind extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	public void onPlayerDeath(PlayerDeathEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
+	public void onPlayerDeath(ParticipantDeathEvent e) {
+		if(e.getParticipant().equals(getParticipant())) {
 			array = new PushingArray<>(PlayerData.class, Time * 20);
 		}
 	}
@@ -169,6 +169,6 @@ public class TimeRewind extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

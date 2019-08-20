@@ -1,7 +1,7 @@
 package DayBreak.AbilityWar.Ability.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
@@ -12,7 +12,7 @@ import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
-import DayBreak.AbilityWar.Utils.Library.Packet.TitlePacket;
+import DayBreak.AbilityWar.Utils.Library.TItle.Title;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
 @AbilityManifest(Name = "«Ï∏£π‘", Rank = Rank.C, Species = Species.HUMAN)
@@ -47,9 +47,9 @@ public class Hermit extends AbilityBase {
 		if(p != null && !getParticipant().equals(p) && getPlayer().getWorld().equals(p.getPlayer().getWorld())) {
 			if(!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), Double.valueOf(Distance), true) && 
 					LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), Double.valueOf(Distance), true)) {
-				TitlePacket title = new TitlePacket(ChatColor.translateAlternateColorCodes('&', "&8«Ï∏£π‘"),
+				Title title = new Title(ChatColor.translateAlternateColorCodes('&', "&8«Ï∏£π‘"),
 						ChatColor.translateAlternateColorCodes('&', "&e" + p.getPlayer().getName() + " &f¡¢±Ÿ¡ﬂ"), 5, 30, 5);
-				title.Send(getPlayer());
+				title.sendTo(getPlayer());
 				EffectLib.SPEED.addPotionEffect(getPlayer(), 100, 3, true);
 				EffectLib.INVISIBILITY.addPotionEffect(getPlayer(), 100, 0, true);
 			}
@@ -60,6 +60,6 @@ public class Hermit extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {}
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	
 }

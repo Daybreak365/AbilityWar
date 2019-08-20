@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -39,7 +39,7 @@ public class Gladiator extends AbilityBase {
 
 	public Gladiator(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 타격하면 투기장이 생성되며 그 안에서"),
+				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 우클릭하면 투기장이 생성되며 그 안에서"),
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
@@ -68,7 +68,7 @@ public class Gladiator extends AbilityBase {
 			Saves.clear();
 		}
 		
-	}.setForcedStopNotice(true);
+	}.setSilentNotice(true);
 	
 	private Player target = null;
 	
@@ -140,7 +140,7 @@ public class Gladiator extends AbilityBase {
 			FieldClear.StartTimer();
 		}
 		
-	}.setPeriod(2);
+	}.setPeriod(1);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -150,11 +150,9 @@ public class Gladiator extends AbilityBase {
 	@SubscribeEvent
 	public void onBlockBreak(BlockBreakEvent e) {
 		if(Saves.keySet().contains(e.getBlock())) {
-			if(!e.isCancelled()) {
-				e.setCancelled(true);
-				Player p = e.getPlayer();
-				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c투기장&f은 부술 수 없습니다!"));
-			}
+			e.setCancelled(true);
+			Player p = e.getPlayer();
+			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c투기장&f은 부술 수 없습니다!"));
 		}
 	}
 	
@@ -162,7 +160,7 @@ public class Gladiator extends AbilityBase {
 	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, Entity entity) {
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {
 		if(mt.equals(MaterialType.Iron_Ingot)) {
 			if(entity != null) {
 				if(entity instanceof Player) {

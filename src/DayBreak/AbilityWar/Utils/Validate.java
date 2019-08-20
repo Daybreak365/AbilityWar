@@ -7,20 +7,20 @@ package DayBreak.AbilityWar.Utils;
 public class Validate {
 
 	private Validate() {}
-	
+
 	/**
-	 * null 체크
-	 * @param objects						null 체크를 할 객체들
-	 * @throws IllegalArgumentException		객체중 하나라도 null일 경우
+	 * 객체가 null인지 아닌지 확인합니다.
+	 * @param object						null 여부를 확인할 객체
+	 * @throws NullPointerException			객체가 null일 경우
+	 * @return								객체가 null이 아닐 경우 그대로 반환합니다.
 	 */
-	public static void NotNull(Object... objects) throws IllegalArgumentException {
-		if(objects == null) throw new IllegalArgumentException();
-		for(Object o : objects) if(o == null) throw new IllegalArgumentException("Null이 되어서는 안됩니다.");
+	public static <T> T notNull(T object) throws NullPointerException {
+		if(object == null) throw new NullPointerException();
+		return object;
 	}
-	
+
 	public static void MinimumConstant(Class<?> enumClass, int count) throws IllegalArgumentException {
-		NotNull(enumClass);
-		if(enumClass.isEnum()) {
+		if(notNull(enumClass).isEnum()) {
 			if(enumClass.getEnumConstants().length < count) {
 				throw new IllegalArgumentException(enumClass.getName() + "에 최소 " + count + "개의 상수가 있어야 합니다.");
 			}

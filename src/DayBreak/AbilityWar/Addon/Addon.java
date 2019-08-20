@@ -1,9 +1,9 @@
-package DayBreak.AbilityWar.Development.Addon;
+package DayBreak.AbilityWar.Addon;
 
 import org.bukkit.plugin.Plugin;
 
 import DayBreak.AbilityWar.AbilityWar;
-import DayBreak.AbilityWar.Development.Addon.AddonLoader.DescriptionFile;
+import DayBreak.AbilityWar.Addon.AddonLoader.DescriptionFile;
 
 /**
  * ¾Öµå¿Â

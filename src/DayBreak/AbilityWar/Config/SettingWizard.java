@@ -1,6 +1,7 @@
 package DayBreak.AbilityWar.Config;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,7 +19,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
+import DayBreak.AbilityWar.Config.AbilityWarSettings.DeathSettings;
+import DayBreak.AbilityWar.Config.Enums.ConfigNodes;
+import DayBreak.AbilityWar.Config.Enums.OnDeath;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Data.FileManager;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
@@ -288,14 +291,15 @@ public class SettingWizard implements Listener {
 			if(i.equals(10)) {
 				ItemStack Eliminate = new ItemStack(Material.DIAMOND_SWORD);
 				ItemMeta EliminateMeta = Eliminate.getItemMeta();
-				EliminateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b게임 탈락"));
-				EliminateMeta.setLore(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 사망할 경우 탈락합니다."),
-						ChatColor.translateAlternateColorCodes('&', "&f탈락한 유저는 게임이 끝날 때까지 서버에 접속할 수 없습니다."),
-						ChatColor.translateAlternateColorCodes('&', "&c관리자 권한&f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
-						"",
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getEliminate() ? "&a활성화" : "&c비활성화"))
-						));
+				EliminateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b작업"));
+				List<String> lore = Messager.getStringList(
+						ChatColor.translateAlternateColorCodes('&', "&f게임 진행 중 플레이어가 사망했을 때 어떤 작업을 수행할지 설정합니다."),
+						"");
+				OnDeath operation = DeathSettings.getOperation();
+				for(OnDeath od : OnDeath.values()) {
+					lore.add(ChatColor.translateAlternateColorCodes('&', (operation.equals(od) ? "&a" : "&7") + od.name() + "&f: " + od.getDescription()));
+				}
+				EliminateMeta.setLore(lore);
 				Eliminate.setItemMeta(EliminateMeta);
 				
 				DeathGUI.setItem(i, Eliminate);
@@ -306,7 +310,7 @@ public class SettingWizard implements Listener {
 				AbilityRevealMeta.setLore(Messager.getStringList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다."),
 						"",
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getAbilityReveal() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (DeathSettings.getAbilityReveal() ? "&a활성화" : "&c비활성화"))
 						));
 				AbilityReveal.setItemMeta(AbilityRevealMeta);
 				
@@ -318,7 +322,7 @@ public class SettingWizard implements Listener {
 				AbilityRemovalMeta.setLore(Messager.getStringList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력이 삭제됩니다."),
 						"",
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getAbilityRemoval() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (DeathSettings.getAbilityRemoval() ? "&a활성화" : "&c비활성화"))
 						));
 				AbilityRemoval.setItemMeta(AbilityRemovalMeta);
 				
@@ -330,7 +334,7 @@ public class SettingWizard implements Listener {
 				ItemDropMeta.setLore(Messager.getStringList(
 						ChatColor.translateAlternateColorCodes('&', "&c비활성화&f하면 게임이 시작되고 난 후 사망하였을 때 아이템을 드롭하지 않습니다."),
 						"",
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getItemDrop() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (DeathSettings.getItemDrop() ? "&a활성화" : "&c비활성화"))
 						));
 				ItemDrop.setItemMeta(ItemDropMeta);
 				
@@ -500,17 +504,17 @@ public class SettingWizard implements Listener {
 			e.setCancelled(true);
 			
 			if(e.getCurrentItem() != null) {
-				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b게임 탈락"))) {
-					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Deaeth_Eliminate, !AbilityWarSettings.getEliminate());
+				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b작업"))) {
+					DeathSettings.nextOperation();
 					openDeathGUI();
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b능력 공개"))) {
-					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Deaeth_AbilityReveal, !AbilityWarSettings.getAbilityReveal());
+					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Death_AbilityReveal, !DeathSettings.getAbilityReveal());
 					openDeathGUI();
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b능력 삭제"))) {
-					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Deaeth_AbilityRemoval, !AbilityWarSettings.getAbilityRemoval());
+					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Death_AbilityRemoval, !DeathSettings.getAbilityRemoval());
 					openDeathGUI();
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b아이템 드롭"))) {
-					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Deaeth_ItemDrop, !AbilityWarSettings.getItemDrop());
+					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Death_ItemDrop, !DeathSettings.getItemDrop());
 					openDeathGUI();
 				}
 			}

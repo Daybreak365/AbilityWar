@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
-import DayBreak.AbilityWar.Utils.Library.Packet.ActionbarPacket;
+import DayBreak.AbilityWar.Utils.Library.TItle.Actionbar;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
@@ -64,8 +64,8 @@ abstract public class DurationTimer extends TimerBase {
 	}
 
 	@Override
-	public DurationTimer setForcedStopNotice(boolean forcedStopNotice) {
-		super.setForcedStopNotice(forcedStopNotice);
+	public DurationTimer setSilentNotice(boolean forcedStopNotice) {
+		super.setSilentNotice(forcedStopNotice);
 		return this;
 	}
 
@@ -83,11 +83,10 @@ abstract public class DurationTimer extends TimerBase {
 	protected void TimerProcess(Integer Seconds) {
 		Player target = Ability.getPlayer();
 		if(target != null) {
-			//Notify
 			this.DurationProcess(Seconds);
 			
-			ActionbarPacket actionbar = new ActionbarPacket(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f: &e" + NumberUtil.parseTimeString(this.getFixedCount())), 0, 25, 0);
-			actionbar.Send(target);
+			Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f: &e" + NumberUtil.parseTimeString(this.getFixedCount())), 0, 25, 0);
+			actionbar.sendTo(target);
 			
 			if(this.getFixedCount() == (Duration / 2) && !Counted.contains(this.getFixedCount())) {
 				Counted.add(this.getFixedCount());

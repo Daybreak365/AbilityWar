@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import DayBreak.AbilityWar.Development.Addon.Addon;
-import DayBreak.AbilityWar.Development.Addon.AddonLoader;
+import DayBreak.AbilityWar.Addon.Addon;
+import DayBreak.AbilityWar.Addon.AddonLoader;
 
 /**
  * Reflection Util

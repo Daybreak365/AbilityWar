@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
+import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
@@ -49,7 +49,7 @@ public class SpectatorGUI implements Listener {
 			}
 		}
 		
-		for(String p : DefaultGame.getSpectators()) {
+		for(String p : SpectatorManager.getSpectators()) {
 			if(!list.contains(p)) {
 				list.add(p);
 			}
@@ -79,7 +79,7 @@ public class SpectatorGUI implements Listener {
 		for(String player : Players) {
 			ItemStack is;
 			
-			if(DefaultGame.isSpectator(player)) {
+			if(SpectatorManager.isSpectator(player)) {
 				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
@@ -158,14 +158,14 @@ public class SpectatorGUI implements Listener {
 						
 						String target = null;
 						
-						for(String player : DefaultGame.getSpectators()) {
+						for(String player : SpectatorManager.getSpectators()) {
 							if(player.equals(targetName)) {
 								target = player;
 							}
 						}
 						
 						if(target != null) {
-							DefaultGame.removeSpectator(target);
+							SpectatorManager.removeSpectator(target);
 							
 							openSpectateGUI(PlayerPage);
 						} else {
@@ -174,7 +174,7 @@ public class SpectatorGUI implements Listener {
 					} else if(MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
 						String target = Bukkit.getPlayerExact(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName())).getName();
 						if(target != null) {
-							DefaultGame.addSpectator(target);
+							SpectatorManager.addSpectator(target);
 							
 							openSpectateGUI(PlayerPage);
 						} else {

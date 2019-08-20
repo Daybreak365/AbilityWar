@@ -7,11 +7,12 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import DayBreak.AbilityWar.Config.Nodes.ConfigNodes;
+import DayBreak.AbilityWar.Config.Enums.ConfigNodes;
+import DayBreak.AbilityWar.Config.Enums.OnDeath;
 import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.ReflectionUtil;
+import DayBreak.AbilityWar.Utils.ReflectionUtil.ClassUtil;
 import DayBreak.AbilityWar.Utils.Data.FileManager;
 
 public class AbilityWarSettings {
@@ -75,20 +76,28 @@ public class AbilityWarSettings {
 		return getBoolean(ConfigNodes.Game_Firewall);
 	}
 
-	public static boolean getEliminate() {
-		return getBoolean(ConfigNodes.Game_Deaeth_Eliminate);
-	}
+	public static class DeathSettings {
 
-	public static boolean getItemDrop() {
-		return getBoolean(ConfigNodes.Game_Deaeth_ItemDrop);
-	}
+		public static OnDeath getOperation() {
+			return OnDeath.getIfPresent(getString(ConfigNodes.Game_Death_Operation));
+		}
 
-	public static boolean getAbilityReveal() {
-		return getBoolean(ConfigNodes.Game_Deaeth_AbilityReveal);
-	}
+		public static void nextOperation() {
+			setNewProperty(ConfigNodes.Game_Death_Operation, getOperation().Next().name());
+		}
+		
+		public static boolean getItemDrop() {
+			return getBoolean(ConfigNodes.Game_Death_ItemDrop);
+		}
 
-	public static boolean getAbilityRemoval() {
-		return getBoolean(ConfigNodes.Game_Deaeth_AbilityRemoval);
+		public static boolean getAbilityReveal() {
+			return getBoolean(ConfigNodes.Game_Death_AbilityReveal);
+		}
+
+		public static boolean getAbilityRemoval() {
+			return getBoolean(ConfigNodes.Game_Death_AbilityRemoval);
+		}
+		
 	}
 	
 	public static boolean getClearWeather() {
@@ -135,30 +144,38 @@ public class AbilityWarSettings {
 		}
 	}
 
-	public static int ChangeAbilityWar_getPeriod() {
-		return getInt(ConfigNodes.AbilityChangeGame_Period);
-	}
+	public static class ChangeAbilityWarSettings {
 
-	public static int ChangeAbilityWar_getLife() {
-		return getInt(ConfigNodes.AbilityChangeGame_Life);
-	}
+		public static int getPeriod() {
+			return getInt(ConfigNodes.AbilityChangeGame_Period);
+		}
 
-	public static boolean ChangeAbilityWar_getEliminate() {
-		return getBoolean(ConfigNodes.AbilityChangeGame_Eliminate);
-	}
+		public static int getLife() {
+			return getInt(ConfigNodes.AbilityChangeGame_Life);
+		}
 
-	public static int SummerVacation_getKill() {
-		return getInt(ConfigNodes.SummerVacation_Kill);
+		public static boolean getEliminate() {
+			return getBoolean(ConfigNodes.AbilityChangeGame_Eliminate);
+		}
+
+	}
+	
+	public static class SummerVacationSettings {
+
+		public static int getMaxKill() {
+			return getInt(ConfigNodes.SummerVacation_Kill);
+		}
+		
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static Class<? extends AbstractGame> getGameMode() {
 		try {
-			Class<?> clazz = ReflectionUtil.ClassUtil.forName(getString(ConfigNodes.GameMode));
+			Class<?> clazz = ClassUtil.forName(getString(ConfigNodes.GameMode));
 			if(AbstractGame.class.isAssignableFrom(clazz)) {
 				return (Class<? extends AbstractGame>) clazz;
 			}
-		} catch (ClassNotFoundException e) {e.printStackTrace();}
+		} catch (ClassNotFoundException e) {}
 		
 		setNewProperty(ConfigNodes.GameMode, DefaultGame.class.getName());
 		return DefaultGame.class;
