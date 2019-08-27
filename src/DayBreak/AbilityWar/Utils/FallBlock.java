@@ -20,8 +20,8 @@ import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * FallingBlockÀ» ´õ¿í ÆíÇÏ°Ô »ç¿ëÇÏ±â À§ÇØ ¸¸µç À¯Æ¿ÀÔ´Ï´Ù.
- * @author DayBreak »õº®
+ * FallingBlockì„ ë”ìš± í¸í•˜ê²Œ ì‚¬ìš©í•˜ê¸° ìœ„í•´ ë§Œë“  ìœ í‹¸ì…ë‹ˆë‹¤.
+ * @author DayBreak ìƒˆë²½
  */
 @SuppressWarnings("deprecation")
 public abstract class FallBlock implements Listener {
@@ -34,9 +34,9 @@ public abstract class FallBlock implements Listener {
 	private Vector vector = new Vector(0, 0, 0);
 
 	/**
-	 * FallblockÀÇ ±âº» »ı¼ºÀÚÀÔ´Ï´Ù.
-	 * @param Data		»ı¼ºÇÒ FallingBlockÀÇ Á¾·ù
-	 * @param location	»ı¼ºÇÒ À§Ä¡
+	 * Fallblockì˜ ê¸°ë³¸ ìƒì„±ìì…ë‹ˆë‹¤.
+	 * @param Data		ìƒì„±í•  FallingBlockì˜ ì¢…ë¥˜
+	 * @param location	ìƒì„±í•  ìœ„ì¹˜
 	 */
 	public FallBlock(Material Data, Location location) {
 		if(ServerVersion.getVersion() >= 13) {
@@ -52,10 +52,10 @@ public abstract class FallBlock implements Listener {
 	}
 
 	/**
-	 * FallblockÀÇ ±âº» »ı¼ºÀÚÀÔ´Ï´Ù.
-	 * @param Data		»ı¼ºÇÒ FallingBlockÀÇ Á¾·ù
-	 * @param location	»ı¼ºÇÒ À§Ä¡
-	 * @param vector	»ı¼ºÇÒ ¶§ Àû¿ëÇÒ º¤ÅÍ
+	 * Fallblockì˜ ê¸°ë³¸ ìƒì„±ìì…ë‹ˆë‹¤.
+	 * @param Data		ìƒì„±í•  FallingBlockì˜ ì¢…ë¥˜
+	 * @param location	ìƒì„±í•  ìœ„ì¹˜
+	 * @param vector	ìƒì„±í•  ë•Œ ì ìš©í•  ë²¡í„°
 	 */
 	public FallBlock(Material Data, Location location, Vector vector) {
 		this(Data, location);
@@ -63,9 +63,9 @@ public abstract class FallBlock implements Listener {
 	}
 
 	/**
-	 * FallinBlockÀ» ½ºÆùÇÕ´Ï´Ù.
-	 * @return 			½ºÆùÇÑ FallingBlock
-	 * 					FallingBlock¸¦ ½ºÆùÇÏÁö ¸øÇßÀ» °æ¿ì null ¹İÈ¯
+	 * FallinBlockì„ ìŠ¤í°í•©ë‹ˆë‹¤.
+	 * @return 			ìŠ¤í°í•œ FallingBlock
+	 * 					FallingBlockë¥¼ ìŠ¤í°í•˜ì§€ ëª»í–ˆì„ ê²½ìš° null ë°˜í™˜
 	 */
 	public FallingBlock Spawn() {
 		final FallingBlock fb;
@@ -107,12 +107,12 @@ public abstract class FallBlock implements Listener {
 	private final List<FallingBlock> fbList = new ArrayList<>();
 	
 	/**
-	 * ½ºÆùÇÑ FallingBlock ¿£Æ¼Æ¼°¡ ¶¥¿¡ ¶³¾îÁ® ºí·ÏÀ¸·Î º¯È¯µÇ¾úÀ» ¶§ È£ÃâµË´Ï´Ù.
+	 * ìŠ¤í°í•œ FallingBlock ì—”í‹°í‹°ê°€ ë•…ì— ë–¨ì–´ì ¸ ë¸”ë¡ìœ¼ë¡œ ë³€í™˜ë˜ì—ˆì„ ë•Œ í˜¸ì¶œë©ë‹ˆë‹¤.
 	 */
 	public abstract void onChangeBlock(FallingBlock block);
 	
 	/**
-	 * FallingBlockÀÌ ¶¥¿¡ ¶³¾îÁ³À» ¶§ ºí·Ï ¼³Ä¡ Äµ½½ ¹× onChangeBlock() È£ÃâÀ» À§ÇØ »ç¿ëµË´Ï´Ù.
+	 * FallingBlockì´ ë•…ì— ë–¨ì–´ì¡Œì„ ë•Œ ë¸”ë¡ ì„¤ì¹˜ ìº”ìŠ¬ ë° onChangeBlock() í˜¸ì¶œì„ ìœ„í•´ ì‚¬ìš©ë©ë‹ˆë‹¤.
 	 */
 	@EventHandler
 	public void onEntityChangeBlock(EntityChangeBlockEvent e) {

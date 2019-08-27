@@ -24,11 +24,11 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "¾Æ·¹½º", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(Name = "ì•„ë ˆìŠ¤", Rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase {
 	
 	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 55, 
-			"# ½ºÅ³ µ¥¹ÌÁö") {
+			"# ìŠ¤í‚¬ ë°ë¯¸ì§€") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -38,7 +38,7 @@ public class Ares extends AbilityBase {
 	};
 	
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Ares.class, "Cooldown", 60, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -48,7 +48,7 @@ public class Ares extends AbilityBase {
 	};
 	
 	public static SettingObject<Boolean> DashConfig = new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false, 
-			"# true·Î ¼³Á¤ÇÏ¸é ¾Æ·¹½º ´É·Â »ç¿ë ½Ã °øÁßÀ¸·Î µ¹Áø ÇÒ ¼ö ÀÖ½À´Ï´Ù.") {
+			"# trueë¡œ ì„¤ì •í•˜ë©´ ì•„ë ˆìŠ¤ ëŠ¥ë ¥ ì‚¬ìš© ì‹œ ê³µì¤‘ìœ¼ë¡œ ëŒì§„ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Boolean value) {
@@ -59,9 +59,9 @@ public class Ares extends AbilityBase {
 	
 	public Ares(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÀüÀïÀÇ ½Å ¾Æ·¹½º."),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ¾ÕÀ¸·Î µ¹ÁøÇÏ¸ç ÁÖÀ§ÀÇ ¿£Æ¼Æ¼¿¡°Ô µ¥¹ÌÁö¸¦ ÁÖ¸ç,"),
-				ChatColor.translateAlternateColorCodes('&', "&fµ¥¹ÌÁö¸¦ ¹ŞÀº ¿£Æ¼Æ¼µéÀ» ¹ĞÃÄ³À´Ï´Ù. ") + Messager.formatCooldown(CooldownConfig.getValue()));
+				ChatColor.translateAlternateColorCodes('&', "&fì „ìŸì˜ ì‹  ì•„ë ˆìŠ¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ì•ìœ¼ë¡œ ëŒì§„í•˜ë©° ì£¼ìœ„ì˜ ì—”í‹°í‹°ì—ê²Œ ë°ë¯¸ì§€ë¥¼ ì£¼ë©°,"),
+				ChatColor.translateAlternateColorCodes('&', "&fë°ë¯¸ì§€ë¥¼ ë°›ì€ ì—”í‹°í‹°ë“¤ì„ ë°€ì³ëƒ…ë‹ˆë‹¤. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

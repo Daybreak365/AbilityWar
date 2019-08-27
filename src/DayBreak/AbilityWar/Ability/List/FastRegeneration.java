@@ -13,12 +13,12 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "ºü¸¥ È¸º¹", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "ë¹ ë¥¸ íšŒë³µ", Rank = Rank.A, Species = Species.HUMAN)
 public class FastRegeneration extends AbilityBase {
 	
 	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>(FastRegeneration.class, "RegenSpeed", 20,
-			"# È¸º¹ ¼Óµµ¸¦ ¼³Á¤ÇÕ´Ï´Ù.",
-			"# ¼ıÀÚ°¡ ³·À»¼ö·Ï È¸º¹ÀÌ ´õ¿í »¡¶óÁı´Ï´Ù.") {
+			"# íšŒë³µ ì†ë„ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# ìˆ«ìê°€ ë‚®ì„ìˆ˜ë¡ íšŒë³µì´ ë”ìš± ë¹¨ë¼ì§‘ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -29,7 +29,7 @@ public class FastRegeneration extends AbilityBase {
 	
 	public FastRegeneration(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f´Ù¸¥ ´É·Âµé¿¡ ºñÇØ¼­ ´õ ºü¸¥ ¼Óµµ·Î Ã¼·ÂÀ» È¸º¹ÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fë‹¤ë¥¸ ëŠ¥ë ¥ë“¤ì— ë¹„í•´ì„œ ë” ë¹ ë¥¸ ì†ë„ë¡œ ì²´ë ¥ì„ íšŒë³µí•©ë‹ˆë‹¤."));
 	}
 	
 	private TimerBase Passive = new TimerBase() {

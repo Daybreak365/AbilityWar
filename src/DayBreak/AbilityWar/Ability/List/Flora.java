@@ -19,11 +19,11 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "ÇÃ·Î¶ó", Rank = Rank.C, Species = Species.GOD)
+@AbilityManifest(Name = "í”Œë¡œë¼", Rank = Rank.C, Species = Species.GOD)
 public class Flora extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 3, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -34,9 +34,9 @@ public class Flora extends AbilityBase {
 	
 	public Flora(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f²É°ú Ç³¿äÀÇ ¿©½Å."),
-				ChatColor.translateAlternateColorCodes('&', "&fÁÖº¯¿¡ ÀÖ´Â ¸ğµç ÇÃ·¹ÀÌ¾î¿¡°Ô Àç»ı È¿°ú¸¦ ÁÖ°Å³ª ½Å¼Ó È¿°ú¸¦ Áİ´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é È¿°ú¸¦ µÚ¹Ù²ß´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fê½ƒê³¼ í’ìš”ì˜ ì—¬ì‹ ."),
+				ChatColor.translateAlternateColorCodes('&', "&fì£¼ë³€ì— ìˆëŠ” ëª¨ë“  í”Œë ˆì´ì–´ì—ê²Œ ì¬ìƒ íš¨ê³¼ë¥¼ ì£¼ê±°ë‚˜ ì‹ ì† íš¨ê³¼ë¥¼ ì¤ë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ íš¨ê³¼ë¥¼ ë’¤ë°”ê¿‰ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
 	private EffectType type = EffectType.Speed;
@@ -87,12 +87,12 @@ public class Flora extends AbilityBase {
 						type = EffectType.Speed;
 					}
 					
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.getName() + "&fÀ¸·Î º¯°æµÇ¾ú½À´Ï´Ù."));
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.getName() + "&fìœ¼ë¡œ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤."));
 					
 					Cool.StartTimer();
 				}
 			} else if(ct.equals(ClickType.LeftClick)) {
-				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6ÇöÀç »óÅÂ&f: " + type.getName()));
+				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6í˜„ì¬ ìƒíƒœ&f: " + type.getName()));
 			}
 		}
 		
@@ -106,8 +106,8 @@ public class Flora extends AbilityBase {
 
 	private enum EffectType {
 		
-		Regeneration(ChatColor.translateAlternateColorCodes('&', "&cÀç»ı")),
-		Speed(ChatColor.translateAlternateColorCodes('&', "&b½Å¼Ó"));
+		Regeneration(ChatColor.translateAlternateColorCodes('&', "&cì¬ìƒ")),
+		Speed(ChatColor.translateAlternateColorCodes('&', "&bì‹ ì†"));
 		
 		String name;
 		

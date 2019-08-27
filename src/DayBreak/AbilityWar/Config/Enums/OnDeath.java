@@ -6,22 +6,22 @@ import com.google.common.base.Enums;
 
 public enum OnDeath {
 
-	Å»¶ô(ChatColor.WHITE + "ÇÃ·¹ÀÌ¾î¸¦ Å»¶ô½ÃÅµ´Ï´Ù.") {
+	íƒˆë½(ChatColor.WHITE + "í”Œë ˆì´ì–´ë¥¼ íƒˆë½ì‹œí‚µë‹ˆë‹¤.") {
 		@Override
 		public OnDeath Next() {
-			return OnDeath.°üÀü¸ğµå;
+			return OnDeath.ê´€ì „ëª¨ë“œ;
 		}
 	},
-	°üÀü¸ğµå(ChatColor.WHITE + "ÇÃ·¹ÀÌ¾î¸¦ °üÀü ¸ğµå·Î ÀüÈ¯ÇÕ´Ï´Ù.") {
+	ê´€ì „ëª¨ë“œ(ChatColor.WHITE + "í”Œë ˆì´ì–´ë¥¼ ê´€ì „ ëª¨ë“œë¡œ ì „í™˜í•©ë‹ˆë‹¤.") {
 		@Override
 		public OnDeath Next() {
-			return OnDeath.¾øÀ½;
+			return OnDeath.ì—†ìŒ;
 		}
 	},
-	¾øÀ½(ChatColor.WHITE + "¾Æ¹« ÀÛ¾÷µµ ÇÏÁö ¾Ê½À´Ï´Ù.") {
+	ì—†ìŒ(ChatColor.WHITE + "ì•„ë¬´ ì‘ì—…ë„ í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.") {
 		@Override
 		public OnDeath Next() {
-			return OnDeath.Å»¶ô;
+			return OnDeath.íƒˆë½;
 		}
 	};
 	
@@ -38,11 +38,11 @@ public enum OnDeath {
 	public abstract OnDeath Next();
 	
 	/**
-	 * ÇØ´ç ÀÌ¸§ÀÇ »ó¼ö°¡ ÀÖÀ¸¸é ¹İÈ¯ÇÕ´Ï´Ù.
-	 * Á¸ÀçÇÏÁö ¾ÊÀ» °æ¿ì 'OnDeath.¾øÀ½'À» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * í•´ë‹¹ ì´ë¦„ì˜ ìƒìˆ˜ê°€ ìˆìœ¼ë©´ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * ì¡´ì¬í•˜ì§€ ì•Šì„ ê²½ìš° 'OnDeath.ì—†ìŒ'ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public static OnDeath getIfPresent(String name) {
-		return Enums.getIfPresent(OnDeath.class, name).or(OnDeath.¾øÀ½);
+		return Enums.getIfPresent(OnDeath.class, name).or(OnDeath.ì—†ìŒ);
 	}
 	
 }

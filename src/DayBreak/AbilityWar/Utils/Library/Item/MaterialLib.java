@@ -32,11 +32,11 @@ import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-//TODO: MaterialLib 1.14¹öÀü Áö¿ø ¾÷µ¥ÀÌÆ® ÇÊ¿ä
+//TODO: MaterialLib 1.14ë²„ì „ ì§€ì› ì—…ë°ì´íŠ¸ í•„ìš”
 
 /**
- * Material ¶óÀÌºê·¯¸®
- * @author DayBreak »õº®
+ * Material ë¼ì´ë¸ŒëŸ¬ë¦¬
+ * @author DayBreak ìƒˆë²½
  */
 public enum MaterialLib {
 	
@@ -905,7 +905,7 @@ public enum MaterialLib {
 	}
 	
 	/**
-	 * MaterialÀ» ±â¹İÀ¸·Î ÇÏ´Â ItemStackÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * Materialì„ ê¸°ë°˜ìœ¼ë¡œ í•˜ëŠ” ItemStackì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	@SuppressWarnings("deprecation")
 	public ItemStack getItem(){
@@ -918,7 +918,7 @@ public enum MaterialLib {
 	}
 
 	/**
-	 * MaterialÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * Materialì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public Material getMaterial(){
         Material mat = Material.matchMaterial(this.toString());
@@ -929,7 +929,7 @@ public enum MaterialLib {
     }
 
 	/**
-	 * MaterialÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * Materialì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public Material getMaterialForBlock(){
         Material mat = Material.matchMaterial(this.toString());
@@ -948,7 +948,7 @@ public enum MaterialLib {
 	}
 	
 	/**
-	 * MaterialÀ» ºñ±³ÇÕ´Ï´Ù.
+	 * Materialì„ ë¹„êµí•©ë‹ˆë‹¤.
 	 */
 	@SuppressWarnings("deprecation")
 	public boolean compareMaterial(ItemStack comp){

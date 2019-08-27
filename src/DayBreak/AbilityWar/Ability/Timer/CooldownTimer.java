@@ -12,13 +12,13 @@ import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
- * Cooldown Timer (ÄğÅ¸ÀÓ Å¸ÀÌ¸Ó)
- * @author DayBreak »õº®
+ * Cooldown Timer (ì¿¨íƒ€ì„ íƒ€ì´ë¨¸)
+ * @author DayBreak ìƒˆë²½
  */
 public class CooldownTimer extends TimerBase {
 	
 	/**
-	 * ÄğÅ¸ÀÓ ÃÊ±âÈ­
+	 * ì¿¨íƒ€ì„ ì´ˆê¸°í™”
 	 */
 	public static void ResetCool() {
 		TimerBase.StopTasks(CooldownTimer.class);
@@ -48,9 +48,9 @@ public class CooldownTimer extends TimerBase {
 			Player target = Ability.getPlayer();
 			if(target != null) {
 				if(!AbilityName.isEmpty()) {
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
+					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ì¿¨íƒ€ì„ &f" + NumberUtil.parseTimeString(this.getCount())));
 				} else {
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
+					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&cì¿¨íƒ€ì„ &f" + NumberUtil.parseTimeString(this.getCount())));
 				}
 			}
 		}
@@ -67,24 +67,24 @@ public class CooldownTimer extends TimerBase {
 		if(target != null) {
 			Actionbar actionbar;
 			if(!AbilityName.isEmpty()) {
-				actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
+				actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ì¿¨íƒ€ì„ &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 				
 				if(Seconds == (getMaxCount() / 2)) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
+					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ì¿¨íƒ€ì„ &f" + NumberUtil.parseTimeString(this.getCount())));
 				} else if(Seconds <= 5 && Seconds >= 1) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
+					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " ì¿¨íƒ€ì„ &f" + NumberUtil.parseTimeString(this.getCount())));
 				}
 			} else {
-				actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
+				actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&cì¿¨íƒ€ì„ &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 				
 				if(Seconds == (getMaxCount() / 2)) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
+					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&cì¿¨íƒ€ì„ &f" + NumberUtil.parseTimeString(this.getCount())));
 				} else if(Seconds <= 5 && Seconds >= 1) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &f" + NumberUtil.parseTimeString(this.getCount())));
+					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&cì¿¨íƒ€ì„ &f" + NumberUtil.parseTimeString(this.getCount())));
 				}
 			}
 
@@ -96,9 +96,9 @@ public class CooldownTimer extends TimerBase {
 	public void onEnd() {
 		Player target = Ability.getPlayer();
 		if(target != null) {
-			Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&a´É·ÂÀ» ´Ù½Ã »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù."), 0, 50, 0);
+			Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&aëŠ¥ë ¥ì„ ë‹¤ì‹œ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."), 0, 50, 0);
 			if(actionbarNotice) actionbar.sendTo(target);
-			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&a´É·ÂÀ» ´Ù½Ã »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù."));
+			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&aëŠ¥ë ¥ì„ ë‹¤ì‹œ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."));
 		}
 	}
 	

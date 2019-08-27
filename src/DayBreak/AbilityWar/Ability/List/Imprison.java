@@ -17,16 +17,16 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "±¸¼Ó", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "êµ¬ì†", Rank = Rank.B, Species = Species.HUMAN)
 public class Imprison extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig=new SettingObject<Integer>(Imprison.class,"Cooldown",25,"# ÄğÅ¸ÀÓ"){
+	public static SettingObject<Integer> CooldownConfig=new SettingObject<Integer>(Imprison.class,"Cooldown",25,"# ì¿¨íƒ€ì„"){
 
 	@Override public boolean Condition(Integer value){return value>=0;}
 
 	};
 
-	public static SettingObject<Integer> SizeConfig=new SettingObject<Integer>(Imprison.class,"Size",3,"# ½ºÅ³ Å©±â"){
+	public static SettingObject<Integer> SizeConfig=new SettingObject<Integer>(Imprison.class,"Size",3,"# ìŠ¤í‚¬ í¬ê¸°"){
 
 	@Override public boolean Condition(Integer value){return value>=0;}
 
@@ -34,7 +34,7 @@ public class Imprison extends AbilityBase {
 
 	public Imprison(Participant participant) {
 		super(participant, ChatColor.translateAlternateColorCodes('&',
-				"&f»ó´ë¹æÀ» Ã¶±«·Î ¿ìÅ¬¸¯ÇÏ¸é ´ë»óÀ» À¯¸®¸· ¼Ó¿¡ °¡µÓ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				"&fìƒëŒ€ë°©ì„ ì² ê´´ë¡œ ìš°í´ë¦­í•˜ë©´ ëŒ€ìƒì„ ìœ ë¦¬ë§‰ ì†ì— ê°€ë‘¡ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

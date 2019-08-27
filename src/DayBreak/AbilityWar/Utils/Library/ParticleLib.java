@@ -1,6 +1,6 @@
-/** MIT ¶óÀÌ¼±½º
+/** MIT ë¼ì´ì„ ìŠ¤
 * 
-* Copyright ¨Ï 2019 DayBreak
+* Copyright â“’ 2019 DayBreak
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"),
@@ -33,8 +33,8 @@ import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * ÆÄÆ¼Å¬ ¶óÀÌºê·¯¸®
- * @author DayBreak »õº®
+ * íŒŒí‹°í´ ë¼ì´ë¸ŒëŸ¬ë¦¬
+ * @author DayBreak ìƒˆë²½
  * @since 2019-02-19
  * @version 1.2 (Minecraft 1.14)
  */
@@ -129,7 +129,7 @@ public class ParticleLib {
 		}
 
 		/**
-		 * 1.9¹öÀü ÀÌ»ó
+		 * 1.9ë²„ì „ ì´ìƒ
 		 */
 		private Particle getParticle() {
 			Particle particle = null;

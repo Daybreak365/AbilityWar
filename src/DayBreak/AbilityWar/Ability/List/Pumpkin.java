@@ -26,11 +26,11 @@ import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "È£¹Ú", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "í˜¸ë°•", Rank = Rank.C, Species = Species.HUMAN)
 public class Pumpkin extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -40,7 +40,7 @@ public class Pumpkin extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Pumpkin.class, "Duration", 15, 
-			"# Áö¼Ó ½Ã°£") {
+			"# ì§€ì† ì‹œê°„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -51,9 +51,9 @@ public class Pumpkin extends AbilityBase {
 	
 	public Pumpkin(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ÁÖº¯ 30ºí·Ï ³»¿¡ ÀÖ¾ú´ø ÇÃ·¹ÀÌ¾îµé¿¡°Ô " + DurationConfig.getValue() + "ÃÊ°£"),
-				ChatColor.translateAlternateColorCodes('&', "&f±Í¼Ó ÀúÁÖ°¡ °É¸° È£¹ÚÀ» ¾º¿ó´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f¢Ü È£¹Ú °°Àº ³× ¾ó±¼ ¢Ü"));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ì£¼ë³€ 30ë¸”ë¡ ë‚´ì— ìˆì—ˆë˜ í”Œë ˆì´ì–´ë“¤ì—ê²Œ " + DurationConfig.getValue() + "ì´ˆê°„"),
+				ChatColor.translateAlternateColorCodes('&', "&fê·€ì† ì €ì£¼ê°€ ê±¸ë¦° í˜¸ë°•ì„ ì”Œì›ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fâ™ª í˜¸ë°• ê°™ì€ ë„¤ ì–¼êµ´ â™ª"));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -129,10 +129,10 @@ public class Pumpkin extends AbilityBase {
 		private ItemStack getPumpkin(Integer Time) {
 			ItemStack Pumpkin = new ItemStack(MaterialLib.CARVED_PUMPKIN.getMaterial());
 			ItemMeta PumpkinMeta = Pumpkin.getItemMeta();
-			PumpkinMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6È£¹Ú"));
+			PumpkinMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6í˜¸ë°•"));
 			PumpkinMeta.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&f¢Ü È£¹Ú °°Àº ³× ¾ó±¼ ¢Ü"),
-					ChatColor.translateAlternateColorCodes('&', "&f³²Àº ½Ã°£&7: &a" + Time + "ÃÊ")
+					ChatColor.translateAlternateColorCodes('&', "&fâ™ª í˜¸ë°• ê°™ì€ ë„¤ ì–¼êµ´ â™ª"),
+					ChatColor.translateAlternateColorCodes('&', "&fë‚¨ì€ ì‹œê°„&7: &a" + Time + "ì´ˆ")
 					));
 			Pumpkin.setItemMeta(PumpkinMeta);
 			EnchantLib.BINDING_CURSE.addUnsafeEnchantment(Pumpkin, 1);

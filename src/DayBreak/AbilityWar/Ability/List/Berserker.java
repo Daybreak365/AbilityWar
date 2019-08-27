@@ -16,11 +16,11 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 
-@AbilityManifest(Name = "¹ö¼­Ä¿", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "ë²„ì„œì»¤", Rank = Rank.B, Species = Species.HUMAN)
 public class Berserker extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -30,7 +30,7 @@ public class Berserker extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> StrengthConfig = new SettingObject<Integer>(Berserker.class, "Strength", 4,
-			"# °ø°İ °­È­ ¹è¼ö") {
+			"# ê³µê²© ê°•í™” ë°°ìˆ˜") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -40,8 +40,8 @@ public class Berserker extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> DebuffConfig = new SettingObject<Integer>(Berserker.class, "Debuff", 10,
-			"# ´É·Â »ç¿ë ÈÄ µğ¹öÇÁ¸¦ ¹Ş´Â ½Ã°£",
-			"# ´ÜÀ§ : ÃÊ") {
+			"# ëŠ¥ë ¥ ì‚¬ìš© í›„ ë””ë²„í”„ë¥¼ ë°›ëŠ” ì‹œê°„",
+			"# ë‹¨ìœ„ : ì´ˆ") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -52,9 +52,9 @@ public class Berserker extends AbilityBase {
 	
 	public Berserker(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÑ ÈÄ 5ÃÊ ¾È¿¡ ÇÏ´Â ´ÙÀ½ °ø°İÀÌ °­È­µË´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f°­È­µÈ °ø°İÀº " + StrengthConfig.getValue() + "¹èÀÇ µ¥¹ÌÁö¸¦ ³»¸ç, °­È­µÈ °ø°İÀ» »ç¿ëÇÑ ÈÄ"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "ÃÊ°£ µ¥¹ÌÁö¸¦ ÀÔÈú ¼ö ¾ø½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•œ í›„ 5ì´ˆ ì•ˆì— í•˜ëŠ” ë‹¤ìŒ ê³µê²©ì´ ê°•í™”ë©ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fê°•í™”ëœ ê³µê²©ì€ " + StrengthConfig.getValue() + "ë°°ì˜ ë°ë¯¸ì§€ë¥¼ ë‚´ë©°, ê°•í™”ëœ ê³µê²©ì„ ì‚¬ìš©í•œ í›„"),
+				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "ì´ˆê°„ ë°ë¯¸ì§€ë¥¼ ì…í ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
 	}
 
 	private final int Strength = StrengthConfig.getValue();

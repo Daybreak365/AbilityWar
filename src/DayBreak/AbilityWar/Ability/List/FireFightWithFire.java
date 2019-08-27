@@ -16,12 +16,12 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "ÀÌ¿­Ä¡¿­", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì´ì—´ì¹˜ì—´", Rank = Rank.B, Species = Species.HUMAN)
 public class FireFightWithFire extends AbilityBase {
 
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(FireFightWithFire.class, "Chance", 50,
-			"# °ø°İÀ» ¹Ş¾ÒÀ» ½Ã ¸î ÆÛ¼¾Æ® È®·ü·Î È¸º¹À» ÇÒÁö ¼³Á¤ÇÕ´Ï´Ù.",
-			"# 50Àº 50%¸¦ ÀÇ¹ÌÇÕ´Ï´Ù.") {
+			"# ê³µê²©ì„ ë°›ì•˜ì„ ì‹œ ëª‡ í¼ì„¼íŠ¸ í™•ë¥ ë¡œ íšŒë³µì„ í• ì§€ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# 50ì€ 50%ë¥¼ ì˜ë¯¸í•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,7 +32,7 @@ public class FireFightWithFire extends AbilityBase {
 	
 	public FireFightWithFire(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fºÒ µ¥¹ÌÁö¸¦ ¹ŞÀ» ¶§, " + ChanceConfig.getValue() + "% È®·ü·Î Ã¼·ÂÀ» È¸º¹ÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fë¶ˆ ë°ë¯¸ì§€ë¥¼ ë°›ì„ ë•Œ, " + ChanceConfig.getValue() + "% í™•ë¥ ë¡œ ì²´ë ¥ì„ íšŒë³µí•©ë‹ˆë‹¤."));
 	}
 
 	@Override

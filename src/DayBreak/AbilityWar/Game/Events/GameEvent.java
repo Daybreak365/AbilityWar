@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 
 /**
- * {@link AbstractGame} °ü·Ã ÀÌº¥Æ®
+ * {@link AbstractGame} ê´€ë ¨ ì´ë²¤íŠ¸
  */
 public abstract class GameEvent extends Event {
 

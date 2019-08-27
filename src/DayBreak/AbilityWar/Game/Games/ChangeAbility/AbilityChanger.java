@@ -104,7 +104,7 @@ public class AbilityChanger {
 			@Override
 			protected void TimerProcess(Integer Seconds) {
 				int TitleCount = 12 - Seconds;
-				String[] strs = {"", "", "´É", "·Â", " ", "Ã¼", "ÀÎ", "Áö", "!", "", ""};
+				String[] strs = {"", "", "ëŠ¥", "ë ¥", " ", "ì²´", "ì¸", "ì§€", "!", "", ""};
 				
 				StringBuilder builder = new StringBuilder();
 				for(int i = 0; i < 11; i++) {
@@ -120,12 +120,12 @@ public class AbilityChanger {
 			}
 		}.setPeriod(3).StartTimer();
 		
-		Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&d&l´É·Â &5&lÃ¼ÀÎÁö!"));
+		Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&d&lëŠ¥ë ¥ &5&lì²´ì¸ì§€!"));
 		Messager.sendStringList(p, Messager.formatAbilityInfo(participant.getAbility()));
 	}
 	
 	/**
-	 * ´É·Â Ã¼ÀÎÁö
+	 * ëŠ¥ë ¥ ì²´ì¸ì§€
 	 */
 	public void ChangeAbility() {
 		for(Participant participant : setupParticipants()) {
@@ -141,8 +141,8 @@ public class AbilityChanger {
 				
 				Notice(participant);
 			} catch (Exception e) {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f´Ô¿¡°Ô ´É·ÂÀ» ÇÒ´çÇÏ´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¹®Á¦°¡ ¹ß»ıÇÑ ´É·Â: &b" + abilityClass.getName()));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&fë‹˜ì—ê²Œ ëŠ¥ë ¥ì„ í• ë‹¹í•˜ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fë¬¸ì œê°€ ë°œìƒí•œ ëŠ¥ë ¥: &b" + abilityClass.getName()));
 			}
 		}
 	}

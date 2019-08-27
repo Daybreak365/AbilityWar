@@ -12,41 +12,41 @@ import org.bukkit.ChatColor;
 public @interface AbilityManifest {
 
 	/**
-	 * ´É·Â ÀÌ¸§
+	 * ëŠ¥ë ¥ ì´ë¦„
 	 */
 	public String Name();
 	
 	/**
-	 * ´É·Â ·©Å©
+	 * ëŠ¥ë ¥ ë­í¬
 	 */
 	public Rank Rank();
 
 	public enum Rank {
 
 		/**
-		 * SPECIAL µî±Ş
+		 * SPECIAL ë“±ê¸‰
 		 */
-		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&cSPECIAL µî±Ş")),
+		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&cSPECIAL ë“±ê¸‰")),
 		/**
-		 * S µî±Ş
+		 * S ë“±ê¸‰
 		 */
-		S(ChatColor.translateAlternateColorCodes('&', "&dS µî±Ş")),
+		S(ChatColor.translateAlternateColorCodes('&', "&dS ë“±ê¸‰")),
 		/**
-		 * A µî±Ş
+		 * A ë“±ê¸‰
 		 */
-		A(ChatColor.translateAlternateColorCodes('&', "&aA µî±Ş")),
+		A(ChatColor.translateAlternateColorCodes('&', "&aA ë“±ê¸‰")),
 		/**
-		 * B µî±Ş
+		 * B ë“±ê¸‰
 		 */
-		B(ChatColor.translateAlternateColorCodes('&', "&bB µî±Ş")),
+		B(ChatColor.translateAlternateColorCodes('&', "&bB ë“±ê¸‰")),
 		/**
-		 * C µî±Ş
+		 * C ë“±ê¸‰
 		 */
-		C(ChatColor.translateAlternateColorCodes('&', "&eC µî±Ş")),
+		C(ChatColor.translateAlternateColorCodes('&', "&eC ë“±ê¸‰")),
 		/**
-		 * D µî±Ş
+		 * D ë“±ê¸‰
 		 */
-		D(ChatColor.translateAlternateColorCodes('&', "&7D µî±Ş"));
+		D(ChatColor.translateAlternateColorCodes('&', "&7D ë“±ê¸‰"));
 		
 		private String RankName;
 		
@@ -64,12 +64,12 @@ public @interface AbilityManifest {
 	
 	public enum Species {
 
-		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&eÆ¯º° ´É·Â")),
-		HUMAN(ChatColor.translateAlternateColorCodes('&', "&fÀÎ°£")),
-		GOD(ChatColor.translateAlternateColorCodes('&', "&c½Å")),
-		DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7µ¥¹Ì&c°«")),
-		ANIMAL(ChatColor.translateAlternateColorCodes('&', "&2µ¿¹°")),
-		OTHERS(ChatColor.translateAlternateColorCodes('&', "&8±âÅ¸"));
+		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&eíŠ¹ë³„ ëŠ¥ë ¥")),
+		HUMAN(ChatColor.translateAlternateColorCodes('&', "&fì¸ê°„")),
+		GOD(ChatColor.translateAlternateColorCodes('&', "&cì‹ ")),
+		DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7ë°ë¯¸&cê°“")),
+		ANIMAL(ChatColor.translateAlternateColorCodes('&', "&2ë™ë¬¼")),
+		OTHERS(ChatColor.translateAlternateColorCodes('&', "&8ê¸°íƒ€"));
 		
 		private String name;
 		

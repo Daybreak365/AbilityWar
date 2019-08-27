@@ -4,8 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
- * Ãß»ó Å¸ÀÌÆ²
- * @author DayBreak »õº®
+ * ì¶”ìƒ íƒ€ì´í‹€
+ * @author DayBreak ìƒˆë²½
  */
 abstract public class AbstractTitle {
 	

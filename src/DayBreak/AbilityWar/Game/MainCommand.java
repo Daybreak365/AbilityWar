@@ -42,8 +42,8 @@ import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
 /**
- * ¸ŞÀÎ ¸í·É¾î
- * @author DayBreak »õº®
+ * ë©”ì¸ ëª…ë ¹ì–´
+ * @author DayBreak ìƒˆë²½
  */
 public class MainCommand implements CommandExecutor, TabCompleter {
 	
@@ -56,18 +56,18 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	private void parseCommand(CommandSender sender, String label, String[] split) {
 		if(split.length == 0) {
 			Messager.sendStringList(sender, Messager.getStringList(
-					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "´É·ÂÀÚ ÀüÀï"),
-					ChatColor.translateAlternateColorCodes('&', "&e¹öÀü &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-					ChatColor.translateAlternateColorCodes('&', "&b°³¹ßÀÚ &7: &fDayBreak »õº®"),
-					ChatColor.translateAlternateColorCodes('&', "&9µğ½ºÄÚµå &7: &fDayBreak&7#5908"),
-					ChatColor.translateAlternateColorCodes('&', "&3&o/" + label + " help &7&o·Î ¸í·É¾î µµ¿ò¸»À» È®ÀÎÇÏ¼¼¿ä.")));
+					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "ëŠ¥ë ¥ì ì „ìŸ"),
+					ChatColor.translateAlternateColorCodes('&', "&eë²„ì „ &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
+					ChatColor.translateAlternateColorCodes('&', "&bê°œë°œì &7: &fDayBreak ìƒˆë²½"),
+					ChatColor.translateAlternateColorCodes('&', "&9ë””ìŠ¤ì½”ë“œ &7: &fDayBreak&7#5908"),
+					ChatColor.translateAlternateColorCodes('&', "&3&o/" + label + " help &7&oë¡œ ëª…ë ¹ì–´ ë„ì›€ë§ì„ í™•ì¸í•˜ì„¸ìš”.")));
 		} else {
 			if(split[0].equalsIgnoreCase("help")) {
 				if(split.length > 1) {
 					if(NumberUtil.isInt(split[1])) {
 						sendHelpCommand(sender, label, Integer.valueOf(split[1]));
 					} else {
-						Messager.sendErrorMessage(sender, "Á¸ÀçÇÏÁö ¾Ê´Â ÆäÀÌÁöÀÔ´Ï´Ù.");
+						Messager.sendErrorMessage(sender, "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” í˜ì´ì§€ì…ë‹ˆë‹¤.");
 					}
 				} else {
 					sendHelpCommand(sender, label, 1);
@@ -76,35 +76,38 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(sender.isOp()) {
 					if(!AbilityWarThread.isGameTaskRunning()) {
 						if(!GameMode.startGame()) {
-							Messager.sendErrorMessage(sender, "°ÔÀÓÀ» ½ÃÀÛ½ÃÅ°´Â µµÁß¿¡ ¿À·ù°¡ ¹ß»ıÇÏ¿© ±âº» °ÔÀÓÀ» ½ÃÀÛ½ÃÅµ´Ï´Ù.");
+							Messager.sendErrorMessage(sender, "ê²Œì„ì„ ì‹œì‘ì‹œí‚¤ëŠ” ë„ì¤‘ì— ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì—¬ ê¸°ë³¸ ê²Œì„ì„ ì‹œì‘ì‹œí‚µë‹ˆë‹¤.");
 						}
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ü¸®ÀÚ &e" + sender.getName() + "&f´ÔÀÌ °ÔÀÓÀ» ½ÃÀÛ½ÃÄ×½À´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê´€ë¦¬ì &e" + sender.getName() + "&fë‹˜ì´ ê²Œì„ì„ ì‹œì‘ì‹œì¼°ìŠµë‹ˆë‹¤."));
 					} else {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÀÌ¹Ì ÁøÇàµÇ°í ÀÖ½À´Ï´Ù."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì´ë¯¸ ì§„í–‰ë˜ê³  ìˆìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 				}
 			} else if(split[0].equalsIgnoreCase("stop")) {
 				if(sender.isOp()) {
 					if(AbilityWarThread.isGameTaskRunning()) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ü¸®ÀÚ &e" + sender.getName() + "&f´ÔÀÌ °ÔÀÓÀ» ÁßÁö½ÃÄ×½À´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê´€ë¦¬ì &e" + sender.getName() + "&fë‹˜ì´ ê²Œì„ì„ ì¤‘ì§€ì‹œì¼°ìŠµë‹ˆë‹¤."));
 							
 						AbilityWarThread.StopGame();
 					} else {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 				}
 			} else if(split[0].equalsIgnoreCase("reload")) {
 				if(sender.isOp()) {
 					AbilityWarSettings.Refresh();
 					AbilitySettings.Refresh();
+					
+					AbilityWarSettings.Setup();
+					AbilitySettings.Setup();
 					Script.LoadAll();
-					Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f´É·ÂÀÚ ÀüÀï &bÄÜÇÇ±×°¡ ¸®·ÎµåµÇ¾ú½À´Ï´Ù!"));
+					Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&fëŠ¥ë ¥ì ì „ìŸ &bì½˜í”¼ê·¸ê°€ ë¦¬ë¡œë“œë˜ì—ˆìŠµë‹ˆë‹¤!"));
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 				}
 			} else if(split[0].equalsIgnoreCase("config")) {
 				if(sender instanceof Player) {
@@ -117,10 +120,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							sendHelpConfigCommand(p, label, 1);
 						}
 					} else {
-						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else if(split[0].equalsIgnoreCase("check")) {
 				if(sender instanceof Player) {
@@ -132,16 +135,16 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							if(participant.hasAbility()) {
 								Messager.sendStringList(p, Messager.formatAbilityInfo(participant.getAbility()));
 							} else {
-								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´ç½Å¿¡°Ô ´É·ÂÀÌ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cë‹¹ì‹ ì—ê²Œ ëŠ¥ë ¥ì´ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
 							}
 						} else {
-							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c°ÔÀÓ¿¡ Âü°¡ÇÏ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cê²Œì„ì— ì°¸ê°€í•˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 						}
 					} else {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else if(split[0].equalsIgnoreCase("yes")) {
 				if(sender instanceof Player) {
@@ -156,22 +159,22 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 									if(!select.hasDecided(participant)) {
 										select.decideAbility(participant);
 									} else {
-										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÀÌ¹Ì ´É·Â ¼±ÅÃÀ» ¸¶Ä¡¼Ì½À´Ï´Ù."));
+										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì´ë¯¸ ëŠ¥ë ¥ ì„ íƒì„ ë§ˆì¹˜ì…¨ìŠµë‹ˆë‹¤."));
 									}
 								} else {
-									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´ç½ÅÀº ´É·ÂÀ» ¼±ÅÃÇÏ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cë‹¹ì‹ ì€ ëŠ¥ë ¥ì„ ì„ íƒí•˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 								}
 							} else {
-								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀ» ¼±ÅÃÇÏ´Â ÁßÀÌ ¾Æ´Õ´Ï´Ù."));
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì„ ì„ íƒí•˜ëŠ” ì¤‘ì´ ì•„ë‹™ë‹ˆë‹¤."));
 							}
 						} else {
-							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c°ÔÀÓ¿¡ Âü°¡ÇÏ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cê²Œì„ì— ì°¸ê°€í•˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 						}
 					} else {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else if(split[0].equalsIgnoreCase("no")) {
 				if(sender instanceof Player) {
@@ -186,22 +189,22 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 									if(!select.hasDecided(participant)) {
 										select.alterAbility(participant);
 									} else {
-										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÀÌ¹Ì ´É·Â ¼±ÅÃÀ» ¸¶Ä¡¼Ì½À´Ï´Ù."));
+										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì´ë¯¸ ëŠ¥ë ¥ ì„ íƒì„ ë§ˆì¹˜ì…¨ìŠµë‹ˆë‹¤."));
 									}
 								} else {
-									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´ç½ÅÀº ´É·ÂÀ» ¼±ÅÃÇÏ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+									Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cë‹¹ì‹ ì€ ëŠ¥ë ¥ì„ ì„ íƒí•˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 								}
 							} else {
-								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀ» ¼±ÅÃÇÏ´Â ÁßÀÌ ¾Æ´Õ´Ï´Ù."));
+								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì„ ì„ íƒí•˜ëŠ” ì¤‘ì´ ì•„ë‹™ë‹ˆë‹¤."));
 							}
 						} else {
-							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c°ÔÀÓ¿¡ Âü°¡ÇÏ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cê²Œì„ì— ì°¸ê°€í•˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 						}
 					} else {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else if(split[0].equalsIgnoreCase("skip")) {
 				if(sender.isOp()) {
@@ -210,13 +213,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(select != null && !select.isEnded()) {
 							select.Skip(sender.getName());
 						} else {
-							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀ» ¼±ÅÃÇÏ´Â ÁßÀÌ ¾Æ´Õ´Ï´Ù."));
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì„ ì„ íƒí•˜ëŠ” ì¤‘ì´ ì•„ë‹™ë‹ˆë‹¤."));
 						}
 					} else {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 				}
 			} else if(split[0].equalsIgnoreCase("util")) {
 				if(sender instanceof Player) {
@@ -229,10 +232,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							sendHelpUtilCommand(p, label, 1);
 						}
 					} else {
-						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else if(split[0].equalsIgnoreCase("script")) {
 				if(sender instanceof Player) {
@@ -241,33 +244,33 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if(split.length > 2) {
 							try {
 								Class<? extends AbstractScript> scriptClass = Script.getScriptClass(split[1]);
-								if(Pattern.compile("^[°¡-ÆRa-zA-Z0-9_]+$").matcher(split[2]).find() && split[2].length() <= 10) {
+								if(Pattern.compile("^[ê°€-í£a-zA-Z0-9_]+$").matcher(split[2]).find() && split[2].length() <= 10) {
 									File file = new File("plugins/" + AbilityWar.getPlugin().getName() + "/Script/" + split[2] + ".yml");
 									if(!file.exists()) {
 										ScriptWizard wizard = new ScriptWizard(p, AbilityWar.getPlugin(), scriptClass, split[2]);
 										wizard.openScriptWizard(1);
 									} else {
-										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + ".yml &f½ºÅ©¸³Æ® ÆÄÀÏÀÌ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù."));
+										Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + ".yml &fìŠ¤í¬ë¦½íŠ¸ íŒŒì¼ì´ ì´ë¯¸ ì¡´ì¬í•©ë‹ˆë‹¤."));
 									}
 								} else {
-									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + "&fÀº(´Â) »ç¿ëÇÒ ¼ö ¾ø´Â ÀÌ¸§ÀÔ´Ï´Ù."));
+									Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + "&fì€(ëŠ”) ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ì´ë¦„ì…ë‹ˆë‹¤."));
 								}
 							} catch(ClassNotFoundException | ScriptException ex) {
-								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÁ¸ÀçÇÏÁö ¾Ê´Â ½ºÅ©¸³Æ® À¯ÇüÀÔ´Ï´Ù."));
+								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì¡´ì¬í•˜ì§€ ì•ŠëŠ” ìŠ¤í¬ë¦½íŠ¸ ìœ í˜•ì…ë‹ˆë‹¤."));
 							} catch(IllegalArgumentException ex) {
-								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c»ç¿ëÇÒ ¼ö ¾ø´Â ½ºÅ©¸³Æ® À¯ÇüÀÔ´Ï´Ù."));
+								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ìŠ¤í¬ë¦½íŠ¸ ìœ í˜•ì…ë‹ˆë‹¤."));
 								if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 									Messager.sendErrorMessage(ex.getMessage());
 								}
 							}
 						} else {
-							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "»ç¿ë¹ı &7: &f/" + label + " script <À¯Çü> <ÀÌ¸§>"));
+							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "ì‚¬ìš©ë²• &7: &f/" + label + " script <ìœ í˜•> <ì´ë¦„>"));
 						}
 					} else {
-						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else if(split[0].equalsIgnoreCase("gamemode")) {
 				if(sender instanceof Player) {
@@ -276,18 +279,18 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						GameModeGUI gui = new GameModeGUI(p, AbilityWar.getPlugin());
 						gui.openGameModeGUI(1);
 					} else {
-						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else if(split[0].equalsIgnoreCase("update")) {
 				if(sender.isOp()) {
 					if(!AbilityWar.getPlugin().getAutoUpdate().Update(sender)) {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&fÇÃ·¯±×ÀÎÀÌ &3ÃÖ½Å ¹öÀü &7(" + AbilityWar.getPlugin().getDescription().getVersion() + ") &fÀÔ´Ï´Ù."));
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&fí”ŒëŸ¬ê·¸ì¸ì´ &3ìµœì‹  ë²„ì „ &7(" + AbilityWar.getPlugin().getDescription().getVersion() + ") &fì…ë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÀÌ ¸í·É¾î¸¦ »ç¿ëÇÏ·Á¸é OP ±ÇÇÑÀÌ ÀÖ¾î¾ß ÇÕ´Ï´Ù."));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì´ ëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë ¤ë©´ OP ê¶Œí•œì´ ìˆì–´ì•¼ í•©ë‹ˆë‹¤."));
 				}
 			} else if(split[0].equalsIgnoreCase("specialthanks")) {
 				if(sender instanceof Player) {
@@ -295,10 +298,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					SpecialThanksGUI gui = new SpecialThanksGUI(p, AbilityWar.getPlugin());
 					gui.openGUI(1);
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cÄÜ¼Ö¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ¸í·É¾îÀÔ´Ï´Ù!"));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&cì½˜ì†”ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ëª…ë ¹ì–´ì…ë‹ˆë‹¤!"));
 				}
 			} else {
-				Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "Á¸ÀçÇÏÁö ¾Ê´Â ¼­ºê ¸í·É¾îÀÔ´Ï´Ù."));
+				Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ì„œë¸Œ ëª…ë ¹ì–´ì…ë‹ˆë‹¤."));
 			}
 			
 		}
@@ -320,7 +323,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			if(NumberUtil.isInt(args[0])) {
 				sendHelpConfigCommand(p, label, Integer.valueOf(args[0]));
 			} else {
-				Messager.sendErrorMessage(p, "Á¸ÀçÇÏÁö ¾Ê´Â ÄÜÇÇ±×ÀÔ´Ï´Ù.");
+				Messager.sendErrorMessage(p, "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ì½˜í”¼ê·¸ì…ë‹ˆë‹¤.");
 			}
 		}
 	}
@@ -329,7 +332,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		if(args[0].equalsIgnoreCase("abi")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
 				if(args.length < 2) {
-					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "»ç¿ë¹ı &7: &f/" + label + " util abi <´ë»ó>"));
+					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "ì‚¬ìš©ë²• &7: &f/" + label + " util abi <ëŒ€ìƒ>"));
 				} else {
 					if(args[1].equalsIgnoreCase("@a")) {
 						AbilityGUI gui = new AbilityGUI(p, AbilityWar.getPlugin());
@@ -343,15 +346,15 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 								AbilityGUI gui = new AbilityGUI(p, target, AbilityWar.getPlugin());
 								gui.openAbilityGUI(1);
 							} else {
-								Messager.sendErrorMessage(p, targetPlayer.getName() + "´ÔÀº Å»¶ôÇß°Å³ª °ÔÀÓ¿¡ Âü¿©ÇÏÁö ¾Ê¾Ò½À´Ï´Ù.");
+								Messager.sendErrorMessage(p, targetPlayer.getName() + "ë‹˜ì€ íƒˆë½í–ˆê±°ë‚˜ ê²Œì„ì— ì°¸ì—¬í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 							}
 						} else {
-							Messager.sendErrorMessage(p, args[1] + "Àº(´Â) Á¸ÀçÇÏÁö ¾Ê´Â ÇÃ·¹ÀÌ¾îÀÔ´Ï´Ù.");
+							Messager.sendErrorMessage(p, args[1] + "ì€(ëŠ”) ì¡´ì¬í•˜ì§€ ì•ŠëŠ” í”Œë ˆì´ì–´ì…ë‹ˆë‹¤.");
 						}
 					}
 				}
 			} else {
-				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			}
 		} else if(args[0].equalsIgnoreCase("spec")) {
 			SpectatorGUI gui = new SpectatorGUI(p, AbilityWar.getPlugin());
@@ -359,7 +362,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		} else if(args[0].equalsIgnoreCase("ablist")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
 				ArrayList<String> msg = new ArrayList<String>();
-				msg.add(ChatColor.translateAlternateColorCodes('&', "&2===== &a´É·ÂÀÚ ¸ñ·Ï &2====="));
+				msg.add(ChatColor.translateAlternateColorCodes('&', "&2===== &aëŠ¥ë ¥ì ëª©ë¡ &2====="));
 
 				Integer Count = 0;
 				for(Participant participant : AbilityWarThread.getGame().getParticipants()) {
@@ -374,18 +377,18 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				}
 				
 				if(Count.equals(0)) {
-					msg.add(ChatColor.translateAlternateColorCodes('&', "&f´É·ÂÀÚ°¡ ¹ß°ßµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+					msg.add(ChatColor.translateAlternateColorCodes('&', "&fëŠ¥ë ¥ìê°€ ë°œê²¬ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
 				}
 				
 				msg.add(ChatColor.translateAlternateColorCodes('&', "&2========================"));
 				
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a´ÔÀÌ ÇÃ·¹ÀÌ¾îµéÀÇ ´É·ÂÀ» È®ÀÎÇÏ¿´½À´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&aë‹˜ì´ í”Œë ˆì´ì–´ë“¤ì˜ ëŠ¥ë ¥ì„ í™•ì¸í•˜ì˜€ìŠµë‹ˆë‹¤."));
 				
 				for(String m : msg) {
 					Messager.sendMessage(p, m);
 				}
 			} else {
-				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			}
 		} else if(args[0].equalsIgnoreCase("blacklist")) {
 			BlackListGUI gui = new BlackListGUI(p, AbilityWar.getPlugin());
@@ -393,24 +396,24 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		} else if(args[0].equalsIgnoreCase("resetcool")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
 				CooldownTimer.ResetCool();
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a´ÔÀÌ ÇÃ·¹ÀÌ¾îµéÀÇ ´É·Â ÄğÅ¸ÀÓÀ» ÃÊ±âÈ­ÇÏ¿´½À´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&aë‹˜ì´ í”Œë ˆì´ì–´ë“¤ì˜ ëŠ¥ë ¥ ì¿¨íƒ€ì„ì„ ì´ˆê¸°í™”í•˜ì˜€ìŠµë‹ˆë‹¤."));
 			} else {
-				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			}
 		} else if(args[0].equalsIgnoreCase("resetduration")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
 				DurationTimer.ResetDuration();
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a´ÔÀÌ ÇÃ·¹ÀÌ¾îµéÀÇ ´É·Â Áö¼Ó½Ã°£À» ÃÊ±âÈ­ÇÏ¿´½À´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&aë‹˜ì´ í”Œë ˆì´ì–´ë“¤ì˜ ëŠ¥ë ¥ ì§€ì†ì‹œê°„ì„ ì´ˆê¸°í™”í•˜ì˜€ìŠµë‹ˆë‹¤."));
 			} else {
-				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			}
 		} else if(args[0].equalsIgnoreCase("kit")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
 				if(args.length < 2) {
-					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "»ç¿ë¹ı &7: &f/" + label + " util kit <´ë»ó>"));
+					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "ì‚¬ìš©ë²• &7: &f/" + label + " util kit <ëŒ€ìƒ>"));
 				} else {
 					if(args[1].equalsIgnoreCase("@a")) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a´ÔÀÌ &fÀüÃ¼ À¯Àú&a¿¡°Ô ±âº»ÅÛÀ» ´Ù½Ã Áö±ŞÇÏ¿´½À´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&aë‹˜ì´ &fì „ì²´ ìœ ì €&aì—ê²Œ ê¸°ë³¸í…œì„ ë‹¤ì‹œ ì§€ê¸‰í•˜ì˜€ìŠµë‹ˆë‹¤."));
 						AbilityWarThread.getGame().GiveDefaultKit();
 					} else {
 						if(Bukkit.getPlayerExact(args[1]) != null) {
@@ -418,17 +421,17 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							if(AbilityWarThread.getGame().isParticipating(target)) {
 								AbilityWarThread.getGame().GiveDefaultKit(target);
 								SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(target);
-								Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a´ÔÀÌ &f" + target.getName() + "&a´Ô¿¡°Ô ±âº»ÅÛÀ» ´Ù½Ã Áö±ŞÇÏ¿´½À´Ï´Ù."));
+								Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&aë‹˜ì´ &f" + target.getName() + "&aë‹˜ì—ê²Œ ê¸°ë³¸í…œì„ ë‹¤ì‹œ ì§€ê¸‰í•˜ì˜€ìŠµë‹ˆë‹¤."));
 							} else {
-								Messager.sendErrorMessage(p, target.getName() + "´ÔÀº Å»¶ôÇß°Å³ª °ÔÀÓ¿¡ Âü¿©ÇÏÁö ¾Ê¾Ò½À´Ï´Ù.");
+								Messager.sendErrorMessage(p, target.getName() + "ë‹˜ì€ íƒˆë½í–ˆê±°ë‚˜ ê²Œì„ì— ì°¸ì—¬í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 							}
 						} else {
-							Messager.sendErrorMessage(p, args[1] + "Àº(´Â) Á¸ÀçÇÏÁö ¾Ê´Â ÇÃ·¹ÀÌ¾îÀÔ´Ï´Ù.");
+							Messager.sendErrorMessage(p, args[1] + "ì€(ëŠ”) ì¡´ì¬í•˜ì§€ ì•ŠëŠ” í”Œë ˆì´ì–´ì…ë‹ˆë‹¤.");
 						}
 					}
 				}
 			} else {
-				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			}
 		} else if(args[0].equalsIgnoreCase("inv")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
@@ -436,22 +439,22 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Invincibility invincibility = AbilityWarThread.getGame().getInvincibility();
 					if(invincibility.isInvincible()) {
 						invincibility.Stop();
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a´ÔÀÌ ¹«Àû »óÅÂ¸¦ &fºñÈ°¼ºÈ­&aÇÏ¼Ì½À´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&aë‹˜ì´ ë¬´ì  ìƒíƒœë¥¼ &fë¹„í™œì„±í™”&aí•˜ì…¨ìŠµë‹ˆë‹¤."));
 					} else {
 						invincibility.Start(true);
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a´ÔÀÌ ¹«Àû »óÅÂ¸¦ &fÈ°¼ºÈ­&aÇÏ¼Ì½À´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&aë‹˜ì´ ë¬´ì  ìƒíƒœë¥¼ &fí™œì„±í™”&aí•˜ì…¨ìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ½ÃÀÛµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì‹œì‘ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
 				}
 			} else {
-				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c´É·ÂÀÚ ÀüÀïÀÌ ÁøÇàµÇ°í ÀÖÁö ¾Ê½À´Ï´Ù."));
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ì ì „ìŸì´ ì§„í–‰ë˜ê³  ìˆì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			}
 		} else {
 			if(NumberUtil.isInt(args[0])) {
 				sendHelpUtilCommand(p, label, Integer.valueOf(args[0]));
 			} else {
-				Messager.sendErrorMessage(p, "Á¸ÀçÇÏÁö ¾Ê´Â À¯Æ¿ÀÔ´Ï´Ù.");
+				Messager.sendErrorMessage(p, "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ìœ í‹¸ì…ë‹ˆë‹¤.");
 			}
 		}
 	}
@@ -462,34 +465,34 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		switch(Page) {
 			case 1:
 				Messager.sendStringList(sender, Messager.getStringList(
-						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "´É·ÂÀÚ ÀüÀï"),
-						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <ÆäÀÌÁö> &7·Î ´õ ¸¹Àº ¸í·É¾î¸¦ È®ÀÎÇÏ¼¼¿ä! ( &b" + Page + " ÆäÀÌÁö &7/ &b" + AllPage + " ÆäÀÌÁö &7)"),
-						Messager.formatCommand(label, "start", "´É·ÂÀÚ ÀüÀïÀ» ½ÃÀÛ½ÃÅµ´Ï´Ù.", true),
-						Messager.formatCommand(label, "stop", "´É·ÂÀÚ ÀüÀïÀ» ÁßÁö½ÃÅµ´Ï´Ù.", true),
-						Messager.formatCommand(label, "check", "ÀÚ½ÅÀÇ ´É·ÂÀ» È®ÀÎÇÕ´Ï´Ù.", false),
-						Messager.formatCommand(label, "yes", "ÀÚ½ÅÀÇ ´É·ÂÀ» È®Á¤ÇÕ´Ï´Ù.", false),
-						Messager.formatCommand(label, "no", "ÀÚ½ÅÀÇ ´É·ÂÀ» º¯°æÇÕ´Ï´Ù.", false)));
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "ëŠ¥ë ¥ì ì „ìŸ"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <í˜ì´ì§€> &7ë¡œ ë” ë§ì€ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì„¸ìš”! ( &b" + Page + " í˜ì´ì§€ &7/ &b" + AllPage + " í˜ì´ì§€ &7)"),
+						Messager.formatCommand(label, "start", "ëŠ¥ë ¥ì ì „ìŸì„ ì‹œì‘ì‹œí‚µë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "stop", "ëŠ¥ë ¥ì ì „ìŸì„ ì¤‘ì§€ì‹œí‚µë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "check", "ìì‹ ì˜ ëŠ¥ë ¥ì„ í™•ì¸í•©ë‹ˆë‹¤.", false),
+						Messager.formatCommand(label, "yes", "ìì‹ ì˜ ëŠ¥ë ¥ì„ í™•ì •í•©ë‹ˆë‹¤.", false),
+						Messager.formatCommand(label, "no", "ìì‹ ì˜ ëŠ¥ë ¥ì„ ë³€ê²½í•©ë‹ˆë‹¤.", false)));
 				break;
 			case 2:
 				Messager.sendStringList(sender, Messager.getStringList(
-						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "´É·ÂÀÚ ÀüÀï"),
-						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <ÆäÀÌÁö> &7·Î ´õ ¸¹Àº ¸í·É¾î¸¦ È®ÀÎÇÏ¼¼¿ä! ( &b" + Page + " ÆäÀÌÁö &7/ &b" + AllPage + " ÆäÀÌÁö &7)"),
-						Messager.formatCommand(label, "skip", "¸ğµç À¯ÀúÀÇ ´É·ÂÀ» °­Á¦·Î È®Á¤ÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label, "reload", "´É·ÂÀÚ ÀüÀï ÄÜÇÇ±×¸¦ ¸®·ÎµåÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label, "config", "´É·ÂÀÚ ÀüÀï ÄÜÇÇ±× ¸í·É¾î¸¦ È®ÀÎÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label, "util", "´É·ÂÀÚ ÀüÀï À¯Æ¿ ¸í·É¾î¸¦ È®ÀÎÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label, "script", "´É·ÂÀÚ ÀüÀï ½ºÅ©¸³Æ® ÆíÁıÀ» ½ÃÀÛÇÕ´Ï´Ù.", true)));
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "ëŠ¥ë ¥ì ì „ìŸ"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <í˜ì´ì§€> &7ë¡œ ë” ë§ì€ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì„¸ìš”! ( &b" + Page + " í˜ì´ì§€ &7/ &b" + AllPage + " í˜ì´ì§€ &7)"),
+						Messager.formatCommand(label, "skip", "ëª¨ë“  ìœ ì €ì˜ ëŠ¥ë ¥ì„ ê°•ì œë¡œ í™•ì •í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "reload", "ëŠ¥ë ¥ì ì „ìŸ ì½˜í”¼ê·¸ë¥¼ ë¦¬ë¡œë“œí•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "config", "ëŠ¥ë ¥ì ì „ìŸ ì½˜í”¼ê·¸ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "util", "ëŠ¥ë ¥ì ì „ìŸ ìœ í‹¸ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "script", "ëŠ¥ë ¥ì ì „ìŸ ìŠ¤í¬ë¦½íŠ¸ í¸ì§‘ì„ ì‹œì‘í•©ë‹ˆë‹¤.", true)));
 				break;
 			case 3:
 				Messager.sendStringList(sender, Messager.getStringList(
-						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "´É·ÂÀÚ ÀüÀï"),
-						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <ÆäÀÌÁö> &7·Î ´õ ¸¹Àº ¸í·É¾î¸¦ È®ÀÎÇÏ¼¼¿ä! ( &b" + Page + " ÆäÀÌÁö &7/ &b" + AllPage + " ÆäÀÌÁö &7)"),
-						Messager.formatCommand(label, "gamemode", "´É·ÂÀÚ ÀüÀï °ÔÀÓ ¸ğµå¸¦ ¼³Á¤ÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label, "update", "ÃÖ½Å¹öÀüÀ¸·Î ¾÷µ¥ÀÌÆ®¸¦ ½ÃµµÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label, "specialthanks", "´É·ÂÀÚ ÀüÀï ÇÃ·¯±×ÀÎ¿¡ ±â¿©ÇÑ »ç¶÷µéÀ» È®ÀÎÇÕ´Ï´Ù.", false)));
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "ëŠ¥ë ¥ì ì „ìŸ"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " help <í˜ì´ì§€> &7ë¡œ ë” ë§ì€ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì„¸ìš”! ( &b" + Page + " í˜ì´ì§€ &7/ &b" + AllPage + " í˜ì´ì§€ &7)"),
+						Messager.formatCommand(label, "gamemode", "ëŠ¥ë ¥ì ì „ìŸ ê²Œì„ ëª¨ë“œë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "update", "ìµœì‹ ë²„ì „ìœ¼ë¡œ ì—…ë°ì´íŠ¸ë¥¼ ì‹œë„í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label, "specialthanks", "ëŠ¥ë ¥ì ì „ìŸ í”ŒëŸ¬ê·¸ì¸ì— ê¸°ì—¬í•œ ì‚¬ëŒë“¤ì„ í™•ì¸í•©ë‹ˆë‹¤.", false)));
 				break;
 			default:
-				Messager.sendErrorMessage(sender, "Á¸ÀçÇÏÁö ¾Ê´Â ÆäÀÌÁöÀÔ´Ï´Ù.");
+				Messager.sendErrorMessage(sender, "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” í˜ì´ì§€ì…ë‹ˆë‹¤.");
 				break;
 		}
 	}
@@ -500,16 +503,16 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		switch(Page) {
 			case 1:
 				Messager.sendStringList(sender, Messager.getStringList(
-						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "´É·ÂÀÚ ÀüÀï ÄÜÇÇ±×"),
-						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " config <ÆäÀÌÁö> &7·Î ´õ ¸¹Àº ¸í·É¾î¸¦ È®ÀÎÇÏ¼¼¿ä! ( &b" + Page + " ÆäÀÌÁö &7/ &b" + AllPage + " ÆäÀÌÁö &7)"),
-						Messager.formatCommand(label + " config", "kit", "´É·ÂÀÚ ÀüÀï ±âº»ÅÛÀ» ¼³Á¤ÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label + " config", "spawn", "´É·ÂÀÚ ÀüÀï ½ºÆùÀ» ¼³Á¤ÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label + " config", "inv", "ÃÊ¹İ ¹«ÀûÀ» ¼³Á¤ÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label + " config", "game", "°ÔÀÓÀÇ Àü¹İÀûÀÎ ºÎºĞµéÀ» ¼³Á¤ÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label + " config", "death", "ÇÃ·¹ÀÌ¾î »ç¸Á¿¡ °ü·ÃµÈ ÄÜÇÇ±×¸¦ ¼³Á¤ÇÕ´Ï´Ù.", true)));
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "ëŠ¥ë ¥ì ì „ìŸ ì½˜í”¼ê·¸"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " config <í˜ì´ì§€> &7ë¡œ ë” ë§ì€ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì„¸ìš”! ( &b" + Page + " í˜ì´ì§€ &7/ &b" + AllPage + " í˜ì´ì§€ &7)"),
+						Messager.formatCommand(label + " config", "kit", "ëŠ¥ë ¥ì ì „ìŸ ê¸°ë³¸í…œì„ ì„¤ì •í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " config", "spawn", "ëŠ¥ë ¥ì ì „ìŸ ìŠ¤í°ì„ ì„¤ì •í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " config", "inv", "ì´ˆë°˜ ë¬´ì ì„ ì„¤ì •í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " config", "game", "ê²Œì„ì˜ ì „ë°˜ì ì¸ ë¶€ë¶„ë“¤ì„ ì„¤ì •í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " config", "death", "í”Œë ˆì´ì–´ ì‚¬ë§ì— ê´€ë ¨ëœ ì½˜í”¼ê·¸ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.", true)));
 				break;
 			default:
-				Messager.sendErrorMessage(sender, "Á¸ÀçÇÏÁö ¾Ê´Â ÆäÀÌÁöÀÔ´Ï´Ù.");
+				Messager.sendErrorMessage(sender, "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” í˜ì´ì§€ì…ë‹ˆë‹¤.");
 				break;
 		}
 	}
@@ -520,24 +523,24 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		switch(Page) {
 			case 1:
 				Messager.sendStringList(sender, Messager.getStringList(
-						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "´É·ÂÀÚ ÀüÀï À¯Æ¿"),
-						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <ÆäÀÌÁö> &7·Î ´õ ¸¹Àº ¸í·É¾î¸¦ È®ÀÎÇÏ¼¼¿ä! ( &b" + Page + " ÆäÀÌÁö &7/ &b" + AllPage + " ÆäÀÌÁö &7)"),
-						Messager.formatCommand(label + " util", "abi <´ë»ó/@a>", "´ë»ó¿¡°Ô ´É·ÂÀ» ÀÓÀÇ·Î ºÎ¿©ÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label + " util", "inv", "¹«Àû »óÅÂ¸¦ Åä±ÛÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label + " util", "spec", "°üÀüÀÚ ¼³Á¤ GUI¸¦ ¶ç¿ó´Ï´Ù.", true),
-						Messager.formatCommand(label + " util", "ablist", "´É·ÂÀÚ ¸ñ·ÏÀ» È®ÀÎÇÕ´Ï´Ù.", true),
-						Messager.formatCommand(label + " util", "blacklist", "´É·Â ºí·¢¸®½ºÆ® ¼³Á¤ GUI¸¦ ¶ç¿ó´Ï´Ù.", true)));
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "ëŠ¥ë ¥ì ì „ìŸ ìœ í‹¸"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <í˜ì´ì§€> &7ë¡œ ë” ë§ì€ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì„¸ìš”! ( &b" + Page + " í˜ì´ì§€ &7/ &b" + AllPage + " í˜ì´ì§€ &7)"),
+						Messager.formatCommand(label + " util", "abi <ëŒ€ìƒ/@a>", "ëŒ€ìƒì—ê²Œ ëŠ¥ë ¥ì„ ì„ì˜ë¡œ ë¶€ì—¬í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " util", "inv", "ë¬´ì  ìƒíƒœë¥¼ í† ê¸€í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " util", "spec", "ê´€ì „ì ì„¤ì • GUIë¥¼ ë„ì›ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " util", "ablist", "ëŠ¥ë ¥ì ëª©ë¡ì„ í™•ì¸í•©ë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " util", "blacklist", "ëŠ¥ë ¥ ë¸”ë™ë¦¬ìŠ¤íŠ¸ ì„¤ì • GUIë¥¼ ë„ì›ë‹ˆë‹¤.", true)));
 				break;
 			case 2:
 				Messager.sendStringList(sender, Messager.getStringList(
-						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "´É·ÂÀÚ ÀüÀï À¯Æ¿"),
-						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <ÆäÀÌÁö> &7·Î ´õ ¸¹Àº ¸í·É¾î¸¦ È®ÀÎÇÏ¼¼¿ä! ( &b" + Page + " ÆäÀÌÁö &7/ &b" + AllPage + " ÆäÀÌÁö &7)"),
-						Messager.formatCommand(label + " util", "resetcool", "ÇÃ·¹ÀÌ¾îµéÀÇ ´É·Â ÄğÅ¸ÀÓÀ» ÃÊ±âÈ­½ÃÅµ´Ï´Ù.", true),
-						Messager.formatCommand(label + " util", "resetduration", "ÇÃ·¹ÀÌ¾îµéÀÇ ´É·Â Áö¼Ó½Ã°£À» ÃÊ±âÈ­½ÃÅµ´Ï´Ù.", true),
-						Messager.formatCommand(label + " util", "kit <´ë»ó/@a>", "´ë»ó¿¡°Ô ±âº»ÅÛÀ» ´Ù½Ã Áö±ŞÇÕ´Ï´Ù.", true)));
+						Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "ëŠ¥ë ¥ì ì „ìŸ ìœ í‹¸"),
+						ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util <í˜ì´ì§€> &7ë¡œ ë” ë§ì€ ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ì„¸ìš”! ( &b" + Page + " í˜ì´ì§€ &7/ &b" + AllPage + " í˜ì´ì§€ &7)"),
+						Messager.formatCommand(label + " util", "resetcool", "í”Œë ˆì´ì–´ë“¤ì˜ ëŠ¥ë ¥ ì¿¨íƒ€ì„ì„ ì´ˆê¸°í™”ì‹œí‚µë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " util", "resetduration", "í”Œë ˆì´ì–´ë“¤ì˜ ëŠ¥ë ¥ ì§€ì†ì‹œê°„ì„ ì´ˆê¸°í™”ì‹œí‚µë‹ˆë‹¤.", true),
+						Messager.formatCommand(label + " util", "kit <ëŒ€ìƒ/@a>", "ëŒ€ìƒì—ê²Œ ê¸°ë³¸í…œì„ ë‹¤ì‹œ ì§€ê¸‰í•©ë‹ˆë‹¤.", true)));
 				break;
 			default:
-				Messager.sendErrorMessage(sender, "Á¸ÀçÇÏÁö ¾Ê´Â ÆäÀÌÁöÀÔ´Ï´Ù.");
+				Messager.sendErrorMessage(sender, "ì¡´ì¬í•˜ì§€ ì•ŠëŠ” í˜ì´ì§€ì…ë‹ˆë‹¤.");
 				break;
 		}
 	}
@@ -550,7 +553,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	private List<String> parseTabComplete(CommandSender sender, String label, String[] args) {
 		if(label.equalsIgnoreCase("abilitywar") || label.equalsIgnoreCase("ability")
 		|| label.equalsIgnoreCase("aw") || label.equalsIgnoreCase("va")
-		|| label.equalsIgnoreCase("´É·ÂÀÚ")) {
+		|| label.equalsIgnoreCase("ëŠ¥ë ¥ì")) {
 			switch(args.length) {
 				case 1:
 					ArrayList<String> Complete = Messager.getStringList(

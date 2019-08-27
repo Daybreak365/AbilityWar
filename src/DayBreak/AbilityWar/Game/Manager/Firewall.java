@@ -19,8 +19,8 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 
 /**
- * ¹æÈ­º®
- * @author DayBreak »õº®
+ * ë°©í™”ë²½
+ * @author DayBreak ìƒˆë²½
  */
 public class Firewall implements EventExecutor {
 	
@@ -60,18 +60,18 @@ public class Firewall implements EventExecutor {
 				
 				if(!canLogin) {
 					e.disallow(Result.KICK_OTHER,
-							ChatColor.translateAlternateColorCodes('&', "&2¡¶&aAbilityWar&2¡·")
+							ChatColor.translateAlternateColorCodes('&', "&2ã€Š&aAbilityWar&2ã€‹")
 							+ "\n"
-							+ ChatColor.translateAlternateColorCodes('&', "&f°ÔÀÓ ÁøÇàÁßÀÌ¹Ç·Î Á¢¼ÓÇÒ ¼ö ¾ø½À´Ï´Ù."));
+							+ ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ ì§„í–‰ì¤‘ì´ë¯€ë¡œ ì ‘ì†í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
 				}
 			}
 			
-			if(DeathSettings.getOperation().equals(OnDeath.Å»¶ô)) {
+			if(DeathSettings.getOperation().equals(OnDeath.íƒˆë½)) {
 				if(game.getDeathManager().isEliminated(p) && !p.isOp()) {
 					e.disallow(Result.KICK_OTHER,
-							ChatColor.translateAlternateColorCodes('&', "&2¡¶&aAbilityWar&2¡·")
+							ChatColor.translateAlternateColorCodes('&', "&2ã€Š&aAbilityWar&2ã€‹")
 							+ "\n"
-							+ ChatColor.translateAlternateColorCodes('&', "&fÅ»¶ôÇÏ¼Ì½À´Ï´Ù."));
+							+ ChatColor.translateAlternateColorCodes('&', "&fíƒˆë½í•˜ì…¨ìŠµë‹ˆë‹¤."));
 				}
 			}
 		}

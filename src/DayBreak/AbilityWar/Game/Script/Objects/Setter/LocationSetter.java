@@ -54,8 +54,8 @@ public class LocationSetter extends Setter<Location> {
 	public void onClick(ClickType click) {
 		Setting = true;
 		getWizard().safeClose();
-		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&fÁöÁ¤ÇÒ &6À§Ä¡&f¸¦ Å¬¸¯ÇØÁÖ¼¼¿ä. &eÁÂÅ¬¸¯&fÀº Å¬¸¯ÇÑ ºí·ÏÀÇ À§Ä¡¸¦ ÀúÀåÇÏ°í,"));
-		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e¿ìÅ¬¸¯&fÀº Å¬¸¯ÇÑ ºí·Ï À§ÀÇ À§Ä¡¸¦ ÀúÀåÇÕ´Ï´Ù."));
+		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&fì§€ì •í•  &6ìœ„ì¹˜&fë¥¼ í´ë¦­í•´ì£¼ì„¸ìš”. &eì¢Œí´ë¦­&fì€ í´ë¦­í•œ ë¸”ë¡ì˜ ìœ„ì¹˜ë¥¼ ì €ì¥í•˜ê³ ,"));
+		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&eìš°í´ë¦­&fì€ í´ë¦­í•œ ë¸”ë¡ ìœ„ì˜ ìœ„ì¹˜ë¥¼ ì €ì¥í•©ë‹ˆë‹¤."));
 	}
 
 	@Override
@@ -70,14 +70,14 @@ public class LocationSetter extends Setter<Location> {
 			Double Y = l.getY();
 			Double Z = l.getZ();
 			locMeta.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&a¿ùµå&f: " + world),
+					ChatColor.translateAlternateColorCodes('&', "&aì›”ë“œ&f: " + world),
 					ChatColor.translateAlternateColorCodes('&', "&bX&f: " + X),
 					ChatColor.translateAlternateColorCodes('&', "&bY&f: " + Y),
 					ChatColor.translateAlternateColorCodes('&', "&bZ&f: " + Z)
 					));
 		} else {
 			locMeta.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&fÁöÁ¤µÈ À§Ä¡°¡ ¾ø½À´Ï´Ù.")
+					ChatColor.translateAlternateColorCodes('&', "&fì§€ì •ëœ ìœ„ì¹˜ê°€ ì—†ìŠµë‹ˆë‹¤.")
 					));
 		}
 		

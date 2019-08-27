@@ -14,17 +14,15 @@ import DayBreak.AbilityWar.Utils.Messager;
 
 public class LocationNoticeScript extends AbstractScript {
 
-	private static final long serialVersionUID = 7506633181977083329L;
-
-	public LocationNoticeScript(String ScriptName, int Time, boolean Loop, int LoopCount, String PreRunMessage, String RunMessage) {
-		super(ScriptName, Time, Loop, LoopCount, PreRunMessage, RunMessage);
+	public LocationNoticeScript(String ScriptName, int Time, int LoopCount, String PreRunMessage, String RunMessage) {
+		super(ScriptName, Time, LoopCount, PreRunMessage, RunMessage);
 	}
 
 	@Override
 	protected void Execute(AbstractGame game) {
 		List<String> msg = new ArrayList<String>();
 		
-		msg.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "«√∑π¿ÃæÓ ¿ßƒ°"));
+		msg.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "ÌîåÎ†àÏù¥Ïñ¥ ÏúÑÏπò"));
 		
 		for(Participant participant : game.getParticipants()) {
 			Player player = participant.getPlayer();
@@ -38,7 +36,7 @@ public class LocationNoticeScript extends AbstractScript {
 			}
 		}
 		
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&3------------------------------------------------------------------------------"));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&3-------------------------------------------------------------"));
 		
 		Messager.broadcastMessage(msg);
 	}

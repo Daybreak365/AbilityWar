@@ -16,7 +16,7 @@ import DayBreak.AbilityWar.Game.Script.ScriptWizard;
 
 /**
  * Enum Setter
- * @author DayBreak 새벽
+ * @author DayBreak ?덈꼍
  *
  */
 public class EnumSetter extends Setter<Object> {
@@ -79,9 +79,9 @@ public class EnumSetter extends Setter<Object> {
 			}
 		}
 		
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f전체 상수&7: &a" + (maxNumber + 1) + "&f개, 현재 상수&7: &a" + (number + 1) + "&f번째"));
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f이전 상수로 변경하려면 &c좌클릭&f하세요."));
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f다음 상수로 변경하려면 &c우클릭&f하세요."));
+		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f?꾩껜 ?곸닔&7: &a" + (maxNumber + 1) + "&f媛? ?꾩옱 ?곸닔&7: &a" + (number + 1) + "&f踰덉㎏"));
+		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f?댁쟾 ?곸닔濡?蹂寃쏀븯?ㅻ㈃ &c醫뚰겢由?f?섏꽭??"));
+		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f?ㅼ쓬 ?곸닔濡?蹂寃쏀븯?ㅻ㈃ &c?고겢由?f?섏꽭??"));
 		
 		enumItemMeta.setLore(enumItemLore);
 		

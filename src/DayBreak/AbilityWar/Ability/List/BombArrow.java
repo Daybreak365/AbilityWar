@@ -19,12 +19,12 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "Æø¹ßÈ­»ì", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "í­ë°œí™”ì‚´", Rank = Rank.S, Species = Species.HUMAN)
 public class BombArrow extends AbilityBase {
 
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BombArrow.class, "Chance", 50,
-			"# È­»ìÀ» ¸ÂÃèÀ» ¶§ ¸î ÆÛ¼¾Æ® È®·ü·Î Æø¹ßÀ» ÀÏÀ¸Å³Áö ¼³Á¤ÇÕ´Ï´Ù.",
-			"# 50Àº 50%¸¦ ÀÇ¹ÌÇÕ´Ï´Ù.") {
+			"# í™”ì‚´ì„ ë§ì·„ì„ ë•Œ ëª‡ í¼ì„¼íŠ¸ í™•ë¥ ë¡œ í­ë°œì„ ì¼ìœ¼í‚¬ì§€ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# 50ì€ 50%ë¥¼ ì˜ë¯¸í•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -34,7 +34,7 @@ public class BombArrow extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 2,
-			"# È­»ìÀ» ¸ÂÃèÀ» ¶§ ¾ó¸¶³ª Å« Æø¹ßÀ» ÀÏÀ¸Å³Áö ¼³Á¤ÇÕ´Ï´Ù.") {
+			"# í™”ì‚´ì„ ë§ì·„ì„ ë•Œ ì–¼ë§ˆë‚˜ í° í­ë°œì„ ì¼ìœ¼í‚¬ì§€ ì„¤ì •í•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -45,7 +45,7 @@ public class BombArrow extends AbilityBase {
 	
 	public BombArrow(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÈ­»ìÀ» ¸ÂÃèÀ» ¶§ " + ChanceConfig.getValue() + "% È®·ü·Î Æø¹ßÀ» ÀÏÀ¸Åµ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fí™”ì‚´ì„ ë§ì·„ì„ ë•Œ " + ChanceConfig.getValue() + "% í™•ë¥ ë¡œ í­ë°œì„ ì¼ìœ¼í‚µë‹ˆë‹¤."));
 	}
 
 	@Override

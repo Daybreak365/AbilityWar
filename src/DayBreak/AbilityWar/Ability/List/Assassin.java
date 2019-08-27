@@ -18,11 +18,11 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "¾Ï»ìÀÚ", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì•”ì‚´ì", Rank = Rank.A, Species = Species.HUMAN)
 public class Assassin extends AbilityBase {
 
 	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 6, 
-			"# ½ºÅ³ µ¥¹ÌÁö") {
+			"# ìŠ¤í‚¬ ë°ë¯¸ì§€") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,7 +32,7 @@ public class Assassin extends AbilityBase {
 	};
 	
 	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 12, 
-			"# ½ºÅ³ µ¥¹ÌÁö") {
+			"# ìŠ¤í‚¬ ë°ë¯¸ì§€") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -42,7 +42,7 @@ public class Assassin extends AbilityBase {
 	};
 	
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Assassin.class, "Cooldown", 25,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -52,7 +52,7 @@ public class Assassin extends AbilityBase {
 	};
 	
 	public static SettingObject<Integer> TeleportCountConfig = new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
-			"# ´É·Â »ç¿ë ½Ã ÅÚ·¹Æ÷Æ® È½¼ö") {
+			"# ëŠ¥ë ¥ ì‚¬ìš© ì‹œ í…”ë ˆí¬íŠ¸ íšŸìˆ˜") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -63,8 +63,8 @@ public class Assassin extends AbilityBase {
 	
 	public Assassin(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é 6Ä­ ÀÌ³»¿¡ ÀÖ´Â Àû " + TeleportCountConfig.getValue() + "¸í¿¡°Ô ÀÌµ¿ÇÏ¸ç"),
-				ChatColor.translateAlternateColorCodes('&', "&fµ¥¹ÌÁö¸¦ Áİ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ 6ì¹¸ ì´ë‚´ì— ìˆëŠ” ì  " + TeleportCountConfig.getValue() + "ëª…ì—ê²Œ ì´ë™í•˜ë©°"),
+				ChatColor.translateAlternateColorCodes('&', "&fë°ë¯¸ì§€ë¥¼ ì¤ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -112,7 +112,7 @@ public class Assassin extends AbilityBase {
 						Cool.StartTimer();
 						return true;
 					} else {
-						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f" + Distance + "Ä­ ÀÌ³»¿¡ &a¿£Æ¼Æ¼&f°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f" + Distance + "ì¹¸ ì´ë‚´ì— &aì—”í‹°í‹°&fê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				}
 			}

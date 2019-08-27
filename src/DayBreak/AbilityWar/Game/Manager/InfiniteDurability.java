@@ -13,7 +13,7 @@ import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
 public class InfiniteDurability implements Listener {
 
 	/**
-	 * ³»±¸µµ Listener
+	 * ë‚´êµ¬ë„ Listener
 	 */
 	@EventHandler
 	public void onItemDurability(PlayerInteractEvent e) {
@@ -25,7 +25,7 @@ public class InfiniteDurability implements Listener {
 	}
 
 	/**
-	 * ³»±¸µµ Listener
+	 * ë‚´êµ¬ë„ Listener
 	 */
 	@EventHandler
 	public void onArmorDurability(EntityDamageEvent e) {

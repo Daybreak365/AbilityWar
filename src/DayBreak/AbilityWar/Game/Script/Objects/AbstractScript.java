@@ -1,116 +1,117 @@
 package DayBreak.AbilityWar.Game.Script.Objects;
 
-import java.io.Serializable;
-
 import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-abstract public class AbstractScript implements Serializable {
-	
-	private static final long serialVersionUID = 7230527266220521425L;
-	
-	private final String ScriptName;
-	private final int Time;
-	private final boolean Loop;
-	private final int LoopCount;
-	private final String PreRunMessage;
-	private final String RunMessage;
+public abstract class AbstractScript {
+
+	private final String scriptType;
+	private final String name;
+	private final int period;
+	private final int loopCount;
+	private final String preMessage;
+	private final String runMessage;
 	private transient TimerBase Timer;
-	
-	public AbstractScript(String ScriptName, int Time, boolean Loop, int LoopCount, String PreRunMessage, String RunMessage) {
-		this.ScriptName = ScriptName;
-		this.Time = Time;
-		this.Loop = Loop;
-		this.LoopCount = LoopCount;
-		this.PreRunMessage = PreRunMessage;
-		this.RunMessage = RunMessage;
+
+	public AbstractScript(String name, int period, int loopCount, String preMessage, String runMessage) {
+		this.scriptType = this.getClass().getName();
+		this.name = name;
+		this.period = period;
+		this.loopCount = loopCount;
+		this.preMessage = preMessage;
+		this.runMessage = runMessage;
 		this.Timer = newTimer();
 	}
-	
+
 	private transient AbstractGame game;
-	
+
 	public void Start(AbstractGame game) {
 		this.game = game;
-		
-		if(Timer != null) {
+
+		if (Timer != null) {
 			Timer.StartTimer();
 		} else {
 			Timer = newTimer();
 			Timer.StartTimer();
 		}
 	}
-	
+
 	private TimerBase newTimer() {
-		return new TimerBase(Time) {
-			
-			//loopCount°¡ 0ÀÌ µÇ¸é ·çÇÁ Á¾·á
-			//loopCount°¡ 0º¸´Ù ÀÛÀ» °æ¿ì ¹«ÇÑ·çÇÁ
-			//Loop°¡ trueÀÏ °æ¿ì¿¡¸¸ ÀÛµ¿
-			int loopCount = LoopCount;
-			
+		return new TimerBase(period) {
+
+			// countê°€ 0ì´ ë˜ë©´ ë£¨í”„ ì¢…ë£Œ
+			// countê°€ 0ë³´ë‹¤ ìž‘ì„ ê²½ìš° ë¬´í•œë£¨í”„
+			int count = loopCount;
+
 			@Override
-			public void onStart() {}
-			
+			public void onStart() {
+				if(count > 0) count--;
+			}
+
 			@Override
 			public void TimerProcess(Integer Seconds) {
 				String msg = getPreRunMessage(Seconds);
-				
-				if(!msg.equalsIgnoreCase("none")) {
-					if(Seconds == (this.getMaxCount() / 2)) {
+
+				if (!msg.equalsIgnoreCase("none")) {
+					if (Seconds == (this.getMaxCount() / 2)) {
 						Messager.broadcastMessage(msg);
-					} else if(Seconds <= 5 && Seconds >= 1) {
+					} else if (Seconds <= 5 && Seconds >= 1) {
 						Messager.broadcastMessage(msg);
 					}
 				}
 			}
-			
+
 			@Override
 			public void onEnd() {
 				Execute(game);
-				
+
 				String msg = getRunMessage();
-				if(!msg.equalsIgnoreCase("none")) {
+				if (!msg.equalsIgnoreCase("none")) {
 					Messager.broadcastMessage(msg);
 				}
-				
-				if(Loop) {
-					if(loopCount > -1) {
-						if(loopCount > 1) {
-		 					this.StartTimer();
-		 					loopCount--;
+
+				if (isLoop()) {
+					if(count > -1) {
+						if(count > 0) {
+							this.StartTimer();
 						}
 					} else {
-	 					this.StartTimer();
+						this.StartTimer();
 					}
 				}
 			}
-			
+
 		};
 	}
-	
-	public String getScriptName() {
-		return ScriptName;
+
+	public String getType() {
+		return scriptType;
 	}
-	
+
+	public String getName() {
+		return name;
+	}
+
 	protected boolean isLoop() {
-		return Loop;
+		return loopCount != 0;
 	}
-	
+
 	protected TimerBase getTimer() {
 		return Timer;
 	}
-	
+
 	private String getPreRunMessage(Integer Time) {
-		return ChatColor.translateAlternateColorCodes('&', PreRunMessage.replaceAll("%Time%", Time.toString()).replaceAll("%ScriptName%", this.getScriptName()));
+		return ChatColor.translateAlternateColorCodes('&',
+				preMessage.replaceAll("%Time%", Time.toString()).replaceAll("%ScriptName%", name));
 	}
 
 	private String getRunMessage() {
-		return ChatColor.translateAlternateColorCodes('&', RunMessage.replaceAll("%ScriptName%", this.getScriptName()));
+		return ChatColor.translateAlternateColorCodes('&', runMessage.replaceAll("%ScriptName%", name));
 	}
 
-	abstract protected void Execute(AbstractGame game);
-	
+	protected abstract void Execute(AbstractGame game);
+
 }

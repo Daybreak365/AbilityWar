@@ -13,12 +13,12 @@ import DayBreak.AbilityWar.Game.Events.ParticipantDeathEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
-@AbilityManifest(Name = "¹ÙÀÌ·¯½º", Rank = Rank.D, Species = Species.OTHERS)
+@AbilityManifest(Name = "ë°”ì´ëŸ¬ìŠ¤", Rank = Rank.D, Species = Species.OTHERS)
 public class Virus extends AbilityBase {
 
 	public Virus(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÀÌ ´É·ÂÀº ´ç½ÅÀ» Á×ÀÎ »ç¶÷¿¡°Ô °¨¿°µË´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì´ ëŠ¥ë ¥ì€ ë‹¹ì‹ ì„ ì£½ì¸ ì‚¬ëŒì—ê²Œ ê°ì—¼ë©ë‹ˆë‹¤."));
 	}
 
 	@Override

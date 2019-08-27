@@ -15,11 +15,11 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "ÇØÆÄ¸®", Rank = Rank.A, Species = Species.ANIMAL)
+@AbilityManifest(Name = "í•´íŒŒë¦¬", Rank = Rank.A, Species = Species.ANIMAL)
 public class JellyFish extends AbilityBase {
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(JellyFish.class, "Duration", 4, 
-			"# Áö¼Ó ½Ã°£ (Æ½ ´ÜÀ§)") {
+			"# ì§€ì† ì‹œê°„ (í‹± ë‹¨ìœ„)") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -30,7 +30,7 @@ public class JellyFish extends AbilityBase {
 
 	public JellyFish(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "ÇÃ·¹ÀÌ¾î¸¦ Å¸°İÇÏ¸é ´ë»óÀ» " + DurationConfig.getValue() + "Æ½µ¿¾È ¿òÁ÷ÀÌÁö ¸øÇÏ°Ô ÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "í”Œë ˆì´ì–´ë¥¼ íƒ€ê²©í•˜ë©´ ëŒ€ìƒì„ " + DurationConfig.getValue() + "í‹±ë™ì•ˆ ì›€ì§ì´ì§€ ëª»í•˜ê²Œ í•©ë‹ˆë‹¤."));
 	}
 
 	private final int duration = DurationConfig.getValue();

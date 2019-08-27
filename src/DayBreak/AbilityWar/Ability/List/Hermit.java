@@ -15,11 +15,11 @@ import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.TItle.Title;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "Çì¸£¹Ô", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "í—¤ë¥´ë°‹", Rank = Rank.C, Species = Species.HUMAN)
 public class Hermit extends AbilityBase {
 
 	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Hermit.class, "Distance", 15, 
-			"# ¸îÄ­ ÀÌ³»¿¡ ÇÃ·¹ÀÌ¾î°¡ µé¾î¿ÔÀ» ¶§ ¾Ë¸²À» ¶ç¿ïÁö ¼³Á¤ÇÕ´Ï´Ù.") {
+			"# ëª‡ì¹¸ ì´ë‚´ì— í”Œë ˆì´ì–´ê°€ ë“¤ì–´ì™”ì„ ë•Œ ì•Œë¦¼ì„ ë„ìš¸ì§€ ì„¤ì •í•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -30,8 +30,8 @@ public class Hermit extends AbilityBase {
 
 	public Hermit(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÀÚ½ÅÀÇ ÁÖº¯ " + DistanceConfig.getValue() + "Ä­ ³»¿¡ ÇÃ·¹ÀÌ¾î°¡ µé¾î¿Ã °æ¿ì ¾Ë·ÁÁİ´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&f¶ÇÇÑ, ÇÃ·¹ÀÌ¾î°¡ µé¾î¿ÔÀ» ¶§ ½Å¼Ó°ú Åõ¸í ¹öÇÁ°¡ ºÎ¿©µË´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fìì‹ ì˜ ì£¼ë³€ " + DistanceConfig.getValue() + "ì¹¸ ë‚´ì— í”Œë ˆì´ì–´ê°€ ë“¤ì–´ì˜¬ ê²½ìš° ì•Œë ¤ì¤ë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fë˜í•œ, í”Œë ˆì´ì–´ê°€ ë“¤ì–´ì™”ì„ ë•Œ ì‹ ì†ê³¼ íˆ¬ëª… ë²„í”„ê°€ ë¶€ì—¬ë©ë‹ˆë‹¤."));
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public class Hermit extends AbilityBase {
 		if(p != null && !getParticipant().equals(p) && getPlayer().getWorld().equals(p.getPlayer().getWorld())) {
 			if(!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), Double.valueOf(Distance), true) && 
 					LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), Double.valueOf(Distance), true)) {
-				Title title = new Title(ChatColor.translateAlternateColorCodes('&', "&8Çì¸£¹Ô"),
-						ChatColor.translateAlternateColorCodes('&', "&e" + p.getPlayer().getName() + " &fÁ¢±ÙÁß"), 5, 30, 5);
+				Title title = new Title(ChatColor.translateAlternateColorCodes('&', "&8í—¤ë¥´ë°‹"),
+						ChatColor.translateAlternateColorCodes('&', "&e" + p.getPlayer().getName() + " &fì ‘ê·¼ì¤‘"), 5, 30, 5);
 				title.sendTo(getPlayer());
 				EffectLib.SPEED.addPotionEffect(getPlayer(), 100, 3, true);
 				EffectLib.INVISIBILITY.addPotionEffect(getPlayer(), 100, 0, true);

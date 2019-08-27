@@ -15,13 +15,13 @@ import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "Á»ºñ", Rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(Name = "ì¢€ë¹„", Rank = Rank.B, Species = Species.OTHERS)
 public class Zombie extends AbilityBase {
 
 	public Zombie(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f¹Ş´Â µ¥¹ÌÁö°¡ 50% °¨¼ÒÇÕ´Ï´Ù. ±ÙÀ° °æ·ÃÀ¸·Î ÀÎÇØ"),
-				ChatColor.translateAlternateColorCodes('&', "&f¿¡ÀÓÀÌ Á¾Á¾ Æ§´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fë°›ëŠ” ë°ë¯¸ì§€ê°€ 50% ê°ì†Œí•©ë‹ˆë‹¤. ê·¼ìœ¡ ê²½ë ¨ìœ¼ë¡œ ì¸í•´"),
+				ChatColor.translateAlternateColorCodes('&', "&fì—ì„ì´ ì¢…ì¢… íŠ‘ë‹ˆë‹¤."));
 	}
 
 	private TimerBase Aim = new TimerBase() {

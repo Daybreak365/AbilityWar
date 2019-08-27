@@ -17,12 +17,12 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "¾Ç¸¶ÀÇ ºÎÃ÷", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì•…ë§ˆì˜ ë¶€ì¸ ", Rank = Rank.B, Species = Species.HUMAN)
 public class DevilBoots extends AbilityBase {
 
 	public DevilBoots(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f½Å¼ÓÇÏ°Ô ÀÌµ¿ÇÏ¸ç Áö³ª°¡´Â ÀÚ¸®¿¡ ºÒÀÌ ºÙ½À´Ï´Ù. È­¿° ÇÇÇØ¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì‹ ì†í•˜ê²Œ ì´ë™í•˜ë©° ì§€ë‚˜ê°€ëŠ” ìë¦¬ì— ë¶ˆì´ ë¶™ìŠµë‹ˆë‹¤. í™”ì—¼ í”¼í•´ë¥¼ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 	}
 	
 	@Override

@@ -20,11 +20,11 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "º¸ÀÌµå", Rank = Rank.A, Species = Species.OTHERS)
+@AbilityManifest(Name = "ë³´ì´ë“œ", Rank = Rank.A, Species = Species.OTHERS)
 public class Void extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Void.class, "Cooldown", 80,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -35,9 +35,9 @@ public class Void extends AbilityBase {
 
 	public Void(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f°øÇãÀÇ Á¸Àç º¸ÀÌµå. Ã¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é º¸ÀÌµå°¡ °øÇã¸¦ ÅëÇÏ¿©"),
-				ChatColor.translateAlternateColorCodes('&', "Á¦ÀÏ °¡±îÀÌ ÀÖ´Â ÇÃ·¹ÀÌ¾î¿¡°Ô ÅÚ·¹Æ÷Æ®ÇÕ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fÅÚ·¹Æ÷Æ®¸¦ ÇÏ°í ³­ ÈÄ 5ÃÊ°£ µ¥¹ÌÁö¸¦ ÀÔÁö ¾Ê½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fê³µí—ˆì˜ ì¡´ì¬ ë³´ì´ë“œ. ì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ë³´ì´ë“œê°€ ê³µí—ˆë¥¼ í†µí•˜ì—¬"),
+				ChatColor.translateAlternateColorCodes('&', "ì œì¼ ê°€ê¹Œì´ ìˆëŠ” í”Œë ˆì´ì–´ì—ê²Œ í…”ë ˆí¬íŠ¸í•©ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fí…”ë ˆí¬íŠ¸ë¥¼ í•˜ê³  ë‚œ í›„ 5ì´ˆê°„ ë°ë¯¸ì§€ë¥¼ ì…ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 	}
 
 	private boolean Inv = false;
@@ -69,7 +69,7 @@ public class Void extends AbilityBase {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 
 					if(target != null) {
-						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f´Ô¿¡°Ô ÅÚ·¹Æ÷Æ®ÇÕ´Ï´Ù."));
+						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&fë‹˜ì—ê²Œ í…”ë ˆí¬íŠ¸í•©ë‹ˆë‹¤."));
 						getPlayer().teleport(target);
 						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 						
@@ -77,7 +77,7 @@ public class Void extends AbilityBase {
 						
 						Cool.StartTimer();
 					} else {
-						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a°¡Àå °¡±î¿î ÇÃ·¹ÀÌ¾î&f°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù."));
+						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&aê°€ì¥ ê°€ê¹Œìš´ í”Œë ˆì´ì–´&fê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				}
 			}

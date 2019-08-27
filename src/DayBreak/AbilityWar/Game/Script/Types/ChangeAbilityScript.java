@@ -20,24 +20,22 @@ import DayBreak.AbilityWar.Utils.Messager;
 
 public class ChangeAbilityScript extends AbstractScript {
 
-	private static final long serialVersionUID = 2520425818021196083L;
-
 	private final ChangeTarget target;
 	
-	public ChangeAbilityScript(String ScriptName, int Time, boolean Loop, int LoopCount, String PreRunMessage, String RunMessage, ChangeTarget target) {
-		super(ScriptName, Time, Loop, LoopCount, PreRunMessage, RunMessage);
+	public ChangeAbilityScript(String ScriptName, int Time, int LoopCount, String PreRunMessage, String RunMessage, ChangeTarget target) {
+		super(ScriptName, Time, LoopCount, PreRunMessage, RunMessage);
 		this.target = target;
 	}
 
 	public enum ChangeTarget implements Serializable {
 		
-		¸ğµç_ÇÃ·¹ÀÌ¾î {
+		ëª¨ë“ _í”Œë ˆì´ì–´ {
 			@Override
 			public Collection<Participant> getParticipant(AbstractGame game) {
 				return game.getParticipants();
 			}
 		},
-		·£´ı_ÇÃ·¹ÀÌ¾î {
+		ëœë¤_í”Œë ˆì´ì–´ {
 			@Override
 			public Collection<Participant> getParticipant(AbstractGame game) {
 				Random random = new Random();
@@ -75,10 +73,10 @@ public class ChangeAbilityScript extends AbstractScript {
 				Abilities.remove(abilityClass);
 				
 				Messager.sendStringList(p, Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&a´ç½ÅÀÇ ´É·ÂÀÌ º¯°æµÇ¾ú½À´Ï´Ù. &e/ability check&f·Î È®ÀÎ ÇÒ ¼ö ÀÖ½À´Ï´Ù.")));
+						ChatColor.translateAlternateColorCodes('&', "&aë‹¹ì‹ ì˜ ëŠ¥ë ¥ì´ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤. &e/ability check&fë¡œ í™•ì¸ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.")));
 			} catch (Exception e) {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f´Ô¿¡°Ô ´É·ÂÀ» ÇÒ´çÇÏ´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¹®Á¦°¡ ¹ß»ıÇÑ ´É·Â: &b" + abilityClass.getName()));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&fë‹˜ì—ê²Œ ëŠ¥ë ¥ì„ í• ë‹¹í•˜ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fë¬¸ì œê°€ ë°œìƒí•œ ëŠ¥ë ¥: &b" + abilityClass.getName()));
 			}
 		}
 	}

@@ -19,11 +19,11 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "´ÙÀÌ½º °«", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(Name = "ë‹¤ì´ìŠ¤ ê°“", Rank = Rank.A, Species = Species.GOD)
 public class DiceGod extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 60, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -34,9 +34,9 @@ public class DiceGod extends AbilityBase {
 	
 	public DiceGod(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é &cÀç»ı &f/ &b½Å¼Ó &f/ &6Èû &f/ &3ÀúÇ× &f/ &8±¸¼Ó &f/ &7³ª¾àÇÔ &fÈ¿°ú Áß ÇÏ³ª¸¦"),
-				ChatColor.translateAlternateColorCodes('&', "&f10ÃÊ°£ ¹Ş½À´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f°ø°İÀ» ¹Ş¾ÒÀ» ¶§ 1/6 È®·ü·Î µ¥¹ÌÁö¸¦ ¹Ş´Â ´ë½Å µ¥¹ÌÁö¸¸Å­ Ã¼·ÂÀ» È¸º¹ÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ &cì¬ìƒ &f/ &bì‹ ì† &f/ &6í˜ &f/ &3ì €í•­ &f/ &8êµ¬ì† &f/ &7ë‚˜ì•½í•¨ &fíš¨ê³¼ ì¤‘ í•˜ë‚˜ë¥¼"),
+				ChatColor.translateAlternateColorCodes('&', "&f10ì´ˆê°„ ë°›ìŠµë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fê³µê²©ì„ ë°›ì•˜ì„ ë•Œ 1/6 í™•ë¥ ë¡œ ë°ë¯¸ì§€ë¥¼ ë°›ëŠ” ëŒ€ì‹  ë°ë¯¸ì§€ë§Œí¼ ì²´ë ¥ì„ íšŒë³µí•©ë‹ˆë‹¤."));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -52,22 +52,22 @@ public class DiceGod extends AbilityBase {
 					Integer random = r.nextInt(6);
 					
 					if(random.equals(0)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cÀç»ı &fÈ¿°ú¸¦ ¹Ş¾Ò½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cì¬ìƒ &fíš¨ê³¼ë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤."));
 						EffectLib.REGENERATION.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(1)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b½Å¼Ó &fÈ¿°ú¸¦ ¹Ş¾Ò½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bì‹ ì† &fíš¨ê³¼ë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤."));
 						EffectLib.SPEED.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(2)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Èû &fÈ¿°ú¸¦ ¹Ş¾Ò½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6í˜ &fíš¨ê³¼ë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤."));
 						EffectLib.INCREASE_DAMAGE.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(3)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3ÀúÇ× &fÈ¿°ú¸¦ ¹Ş¾Ò½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3ì €í•­ &fíš¨ê³¼ë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤."));
 						EffectLib.DAMAGE_RESISTANCE.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(4)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8±¸¼Ó &fÈ¿°ú¸¦ ¹Ş¾Ò½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8êµ¬ì† &fíš¨ê³¼ë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤."));
 						EffectLib.SLOW.addPotionEffect(p, 200, 1, true);
 					} else if(random.equals(5)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7³ª¾àÇÔ &fÈ¿°ú¸¦ ¹Ş¾Ò½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7ë‚˜ì•½í•¨ &fíš¨ê³¼ë¥¼ ë°›ì•˜ìŠµë‹ˆë‹¤."));
 						EffectLib.WEAKNESS.addPotionEffect(p, 200, 1, true);
 					}
 					

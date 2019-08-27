@@ -12,9 +12,9 @@ public class VersionUtil {
 	private VersionUtil() {}
 	
 	/**
-	 * ÇÃ·¹ÀÌ¾îÀÇ ¼Õ¿¡ ÀÖ´Â ¾ÆÀÌÅÛÀ» ¹ÝÈ¯ÇÕ´Ï´Ù.
-	 * @param p	¼Õ¿¡ ÀÖ´Â ¾ÆÀÌÅÛÀ» È®ÀÎÇÒ ÇÃ·¹ÀÌ¾î
-	 * @return	¼Õ¿¡ ÀÖ´Â ¾ÆÀÌÅÛ
+	 * í”Œë ˆì´ì–´ì˜ ì†ì— ìžˆëŠ” ì•„ì´í…œì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @param p	ì†ì— ìžˆëŠ” ì•„ì´í…œì„ í™•ì¸í•  í”Œë ˆì´ì–´
+	 * @return	ì†ì— ìžˆëŠ” ì•„ì´í…œ
 	 */
 	public static ItemStack getItemInHand(Player p) {
 		if(ServerVersion.getVersion() >= 9) {
@@ -25,9 +25,9 @@ public class VersionUtil {
 	}
 	
 	/**
-	 * ÇÃ·¹ÀÌ¾îÀÇ ÃÖ´ë Ã¼·ÂÀ» ¹ÝÈ¯ÇÕ´Ï´Ù.
-	 * @param p	ÃÖ´ë Ã¼·ÂÀ» È®ÀÎÇÒ ÇÃ·¹ÀÌ¾î
-	 * @return	ÃÖ´ë Ã¼·Â
+	 * í”Œë ˆì´ì–´ì˜ ìµœëŒ€ ì²´ë ¥ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @param p	ìµœëŒ€ ì²´ë ¥ì„ í™•ì¸í•  í”Œë ˆì´ì–´
+	 * @return	ìµœëŒ€ ì²´ë ¥
 	 */
 	public static double getMaxHealth(Player p) {
 		if(ServerVersion.getVersion() >= 9) {

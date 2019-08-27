@@ -6,10 +6,10 @@ import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Addon.AddonLoader.DescriptionFile;
 
 /**
- * ¾Öµå¿Â
- * @author DayBreak »õº®
+ * ì• ë“œì˜¨
+ * @author DayBreak ìƒˆë²½
  */
-abstract public class Addon {
+public abstract class Addon {
 
 	private DescriptionFile description;
 
@@ -20,21 +20,21 @@ abstract public class Addon {
 	abstract public void onDisable();
 
 	/**
-	 * AbilityWar ÇÃ·¯±×ÀÎÀ» ¹Ş¾Æ¿É´Ï´Ù.
+	 * AbilityWar í”ŒëŸ¬ê·¸ì¸ì„ ë°›ì•„ì˜µë‹ˆë‹¤.
 	 */
 	protected Plugin getPlugin() {
 		return AbilityWar.getPlugin();
 	}
 
 	/**
-	 * addon.yml¿¡ ÀÛ¼ºÇÑ ¾Öµå¿ÂÀÇ ¼³¸íÀ» ¹Ş¾Æ¿É´Ï´Ù.
+	 * addon.ymlì— ì‘ì„±í•œ ì• ë“œì˜¨ì˜ ì„¤ëª…ì„ ë°›ì•„ì˜µë‹ˆë‹¤.
 	 */
 	public DescriptionFile getDescription() {
 		return description;
 	}
 
 	/**
-	 * ÀÌ ¾Öµå¿ÂÀ» ºÒ·¯¿Ã ¶§ »ç¿ëµÈ ClassLoader¸¦ ¹Ş¾Æ¿É´Ï´Ù.
+	 * ì´ ì• ë“œì˜¨ì„ ë¶ˆëŸ¬ì˜¬ ë•Œ ì‚¬ìš©ëœ ClassLoaderë¥¼ ë°›ì•„ì˜µë‹ˆë‹¤.
 	 */
 	public ClassLoader getClassLoader() {
 		return classLoader;

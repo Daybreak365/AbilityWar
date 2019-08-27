@@ -23,8 +23,8 @@ public class WRECK {
 
 	public void noticeIfEnabled() {
 		if(enabled) {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cW&6R&eE&aC&bK &f¸ğµå°¡ È°¼ºÈ­µÇ¾ú½À´Ï´Ù!"));
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c¸ğµç ´É·ÂÀÇ ÄğÅ¸ÀÓÀÌ 90% °¨¼ÒÇÕ´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cW&6R&eE&aC&bK &fëª¨ë“œê°€ í™œì„±í™”ë˜ì—ˆìŠµë‹ˆë‹¤!"));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cëª¨ë“  ëŠ¥ë ¥ì˜ ì¿¨íƒ€ì„ì´ 90% ê°ì†Œí•©ë‹ˆë‹¤."));
 		}
 	}
 	

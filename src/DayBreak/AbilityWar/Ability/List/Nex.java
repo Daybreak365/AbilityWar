@@ -31,10 +31,10 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 @SuppressWarnings("deprecation")
-@AbilityManifest(Name = "³Ø½º", Rank = Rank.B, Species = Species.GOD)
+@AbilityManifest(Name = "ë„¥ìŠ¤", Rank = Rank.B, Species = Species.GOD)
 public class Nex extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# ÄğÅ¸ÀÓ") {
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -43,7 +43,7 @@ public class Nex extends AbilityBase {
 
 	};
 
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# µ¥¹ÌÁö") {
+	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# ë°ë¯¸ì§€") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -54,8 +54,8 @@ public class Nex extends AbilityBase {
 	
 	public Nex(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é °øÁßÀ¸·Î ¿Ã¶ó°¬´Ù°¡ ¹Ù´ÚÀ¸·Î ³»·Á ÂïÀ¸¸ç"),
-				ChatColor.translateAlternateColorCodes('&', "ÁÖº¯ÀÇ ÇÃ·¹ÀÌ¾îµé¿¡°Ô µ¥¹ÌÁö¸¦ ÀÔÈü´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ê³µì¤‘ìœ¼ë¡œ ì˜¬ë¼ê°”ë‹¤ê°€ ë°”ë‹¥ìœ¼ë¡œ ë‚´ë ¤ ì°ìœ¼ë©°"),
+				ChatColor.translateAlternateColorCodes('&', "ì£¼ë³€ì˜ í”Œë ˆì´ì–´ë“¤ì—ê²Œ ë°ë¯¸ì§€ë¥¼ ì…í™ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

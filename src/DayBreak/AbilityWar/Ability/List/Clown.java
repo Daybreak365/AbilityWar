@@ -18,11 +18,11 @@ import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "±¤´ë", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "ê´‘ëŒ€", Rank = Rank.B, Species = Species.HUMAN)
 public class Clown extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Clown.class, "Cooldown", 60, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,7 +32,7 @@ public class Clown extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Clown.class, "Range", 10, 
-			"# ½ºÅ³ ¹üÀ§") {
+			"# ìŠ¤í‚¬ ë²”ìœ„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -43,9 +43,9 @@ public class Clown extends AbilityBase {
 
 	public Clown(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ½ºÆùÀ¸·Î ÀÌµ¿ÇÕ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f½ºÆùÀ¸·Î ÀÌµ¿ÇÑ ÈÄ 10ÃÊ ¾È¿¡ Ã¶±«¸¦ ´Ù½Ã ¿ìÅ¬¸¯ÇÏ¸é ¿ø·¡ À§Ä¡·Î µ¹¾Æ°¡"),
-				ChatColor.translateAlternateColorCodes('&', "&fÁÖº¯ " + RangeConfig.getValue() + "Ä­ ÀÌ³»ÀÇ ÇÃ·¹ÀÌ¾îµéÀ» ½Ç¸í½ÃÅµ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ìŠ¤í°ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fìŠ¤í°ìœ¼ë¡œ ì´ë™í•œ í›„ 10ì´ˆ ì•ˆì— ì² ê´´ë¥¼ ë‹¤ì‹œ ìš°í´ë¦­í•˜ë©´ ì›ë˜ ìœ„ì¹˜ë¡œ ëŒì•„ê°€"),
+				ChatColor.translateAlternateColorCodes('&', "&fì£¼ë³€ " + RangeConfig.getValue() + "ì¹¸ ì´ë‚´ì˜ í”Œë ˆì´ì–´ë“¤ì„ ì‹¤ëª…ì‹œí‚µë‹ˆë‹¤."));
 	}
 
 	private Location OriginalPoint = null;

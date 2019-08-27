@@ -16,11 +16,11 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.Timer;
 
-@AbilityManifest(Name = "ÃÊ½Å¼º", Rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(Name = "ì´ˆì‹ ì„±", Rank = Rank.B, Species = Species.OTHERS)
 public class SuperNova extends AbilityBase {
 
 	public static SettingObject<Integer> SizeConfig = new SettingObject<Integer>(SuperNova.class, "Size", 10,
-			"# ÃÊ½Å¼ºÀÌ »ç¸ÁÇÒ ¶§ ÀÏ¾î³¯ Æø¹ßÀÇ Å©±â") {
+			"# ì´ˆì‹ ì„±ì´ ì‚¬ë§í•  ë•Œ ì¼ì–´ë‚  í­ë°œì˜ í¬ê¸°") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -31,7 +31,7 @@ public class SuperNova extends AbilityBase {
 
 	public SuperNova(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f¸¶Áö¸· ¼ø°£¿¡ Å« Æø¹ßÀ» ÀÏÀ¸Å°°í »ç¸ÁÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fë§ˆì§€ë§‰ ìˆœê°„ì— í° í­ë°œì„ ì¼ìœ¼í‚¤ê³  ì‚¬ë§í•©ë‹ˆë‹¤."));
 	}
 	
 	@Override

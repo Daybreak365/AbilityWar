@@ -19,11 +19,11 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib.RGB;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "¿¡³ÊÁö ºí·ÎÄ¿", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì—ë„ˆì§€ ë¸”ë¡œì»¤", Rank = Rank.A, Species = Species.HUMAN)
 public class EnergyBlocker extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(EnergyBlocker.class, "Cooldown", 3, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -36,10 +36,10 @@ public class EnergyBlocker extends AbilityBase {
 	
 	public EnergyBlocker(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f¿ø°Å¸® °ø°İ ÇÇÇØ¸¦ 1/3·Î, ±Ù°Å¸® °ø°İ ÇÇÇØ¸¦ µÎ ¹è·Î ¹Ş°Å³ª"),
-				ChatColor.translateAlternateColorCodes('&', "&f¿ø°Å¸® °ø°İ ÇÇÇØ¸¦ µÎ ¹è·Î, ±Ù°Å¸® °ø°İ ÇÇÇØ¸¦ 1/3·Î ¹ŞÀ» ¼ö ÀÖ½À´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é °¢°¢ÀÇ ÇÇÇØ Á¤µµ¸¦ µÚ¹Ù²ß´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ÁÂÅ¬¸¯ÇÏ¸é ÇöÀç »óÅÂ¸¦ È®ÀÎÇÒ ¼ö ÀÖ½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì›ê±°ë¦¬ ê³µê²© í”¼í•´ë¥¼ 1/3ë¡œ, ê·¼ê±°ë¦¬ ê³µê²© í”¼í•´ë¥¼ ë‘ ë°°ë¡œ ë°›ê±°ë‚˜"),
+				ChatColor.translateAlternateColorCodes('&', "&fì›ê±°ë¦¬ ê³µê²© í”¼í•´ë¥¼ ë‘ ë°°ë¡œ, ê·¼ê±°ë¦¬ ê³µê²© í”¼í•´ë¥¼ 1/3ë¡œ ë°›ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ê°ê°ì˜ í”¼í•´ ì •ë„ë¥¼ ë’¤ë°”ê¿‰ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ì¢Œí´ë¦­í•˜ë©´ í˜„ì¬ ìƒíƒœë¥¼ í™•ì¸í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -52,18 +52,18 @@ public class EnergyBlocker extends AbilityBase {
 					Default = !Default;
 					Player p = getPlayer();
 					if(Default) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b¿ø°Å¸® &f1/3&7, &a±Ù°Å¸® &fµÎ ¹è·Î º¯°æµÇ¾ú½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bì›ê±°ë¦¬ &f1/3&7, &aê·¼ê±°ë¦¬ &fë‘ ë°°ë¡œ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤."));
 					} else {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b¿ø°Å¸® &fµÎ ¹è&7, &a±Ù°Å¸® &f1/3·Î º¯°æµÇ¾ú½À´Ï´Ù."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bì›ê±°ë¦¬ &fë‘ ë°°&7, &aê·¼ê±°ë¦¬ &f1/3ë¡œ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤."));
 					}
 					
 					Cool.StartTimer();
 				}
 			} else if(ct.equals(ClickType.LeftClick)) {
 				if(Default) {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6ÇöÀç »óÅÂ&f: &b¿ø°Å¸® &f1/3&7, &a±Ù°Å¸® &fµÎ ¹è"));
+					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6í˜„ì¬ ìƒíƒœ&f: &bì›ê±°ë¦¬ &f1/3&7, &aê·¼ê±°ë¦¬ &fë‘ ë°°"));
 				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6ÇöÀç »óÅÂ&f: &b¿ø°Å¸® &fµÎ ¹è&7, &a±Ù°Å¸® &f1/3"));
+					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6í˜„ì¬ ìƒíƒœ&f: &bì›ê±°ë¦¬ &fë‘ ë°°&7, &aê·¼ê±°ë¦¬ &f1/3"));
 				}
 			}
 		}

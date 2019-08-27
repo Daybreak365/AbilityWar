@@ -21,7 +21,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 
 /**
  * Death Manager
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public class DeathManager implements Listener {
 	
@@ -33,37 +33,37 @@ public class DeathManager implements Listener {
 	}
 
 	@EventHandler
-	private final void onDeath(PlayerDeathEvent e) {
+	private void onDeath(PlayerDeathEvent e) {
 		Player victimPlayer = e.getEntity();
 		Player killerPlayer = victimPlayer.getKiller();
 		if(victimPlayer.getLastDamageCause() != null) {
 			DamageCause Cause = victimPlayer.getLastDamageCause().getCause();
 
 			if(killerPlayer != null) {
-				e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&f´ÔÀÌ &c" + victimPlayer.getName() + "&f´ÔÀ» Á×¿´½À´Ï´Ù."));
+				e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&fë‹˜ì´ &c" + victimPlayer.getName() + "&fë‹˜ì„ ì£½ì˜€ìŠµë‹ˆë‹¤."));
 			} else {
 				if(Cause.equals(DamageCause.CONTACT)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ Âñ·Á Á×¾ú½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ì°”ë ¤ ì£½ì—ˆìŠµë‹ˆë‹¤."));
 				} else if(Cause.equals(DamageCause.FALL)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ ¶³¾îÁ® Á×¾ú½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë–¨ì–´ì ¸ ì£½ì—ˆìŠµë‹ˆë‹¤."));
 				} else if(Cause.equals(DamageCause.FALLING_BLOCK)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ ¶³¾îÁö´Â ºí·Ï¿¡ ¸Â¾Æ Á×¾ú½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë–¨ì–´ì§€ëŠ” ë¸”ë¡ì— ë§ì•„ ì£½ì—ˆìŠµë‹ˆë‹¤."));
 				} else if(Cause.equals(DamageCause.SUFFOCATION)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ ³¢¿© Á×¾ú½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë¼ì—¬ ì£½ì—ˆìŠµë‹ˆë‹¤."));
 				} else if(Cause.equals(DamageCause.DROWNING)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ ÀÍ»çÇß½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ìµì‚¬í–ˆìŠµë‹ˆë‹¤."));
 				} else if(Cause.equals(DamageCause.ENTITY_EXPLOSION)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ Æø¹ßÇß½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ í­ë°œí–ˆìŠµë‹ˆë‹¤."));
 				} else if(Cause.equals(DamageCause.LAVA)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ ¿ë¾Ï¿¡ ºüÁ® Á×¾ú½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ìš©ì•”ì— ë¹ ì ¸ ì£½ì—ˆìŠµë‹ˆë‹¤."));
 				} else if(Cause.equals(DamageCause.FIRE) || Cause.equals(DamageCause.FIRE_TICK)) {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ ³ë¸©³ë¸©ÇÏ°Ô ±¸¿öÁ³½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë…¸ë¦‡ë…¸ë¦‡í•˜ê²Œ êµ¬ì›Œì¡ŒìŠµë‹ˆë‹¤."));
 				} else {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ Á×¾ú½À´Ï´Ù."));
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ì£½ì—ˆìŠµë‹ˆë‹¤."));
 				}
 			}
 		} else {
-			e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f´ÔÀÌ Á×¾ú½À´Ï´Ù."));
+			e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ì£½ì—ˆìŠµë‹ˆë‹¤."));
 		}
 
 		if(DeathSettings.getItemDrop()) {
@@ -82,57 +82,51 @@ public class DeathManager implements Listener {
 				if(victim.hasAbility()) {
 					String name = victim.getAbility().getName();
 					if(name != null) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c´É·Â&f] &c" + victimPlayer.getName() + "&f´ÔÀÇ ´É·ÂÀº " + KoreanUtil.getCompleteWord("&e" + name, "&fÀÌ¾ú", "&f¿´") + "½À´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&cëŠ¥ë ¥&f] &c" + victimPlayer.getName() + "&fë‹˜ì˜ ëŠ¥ë ¥ì€ " + KoreanUtil.getCompleteWord("&e" + name, "&fì´ì—ˆ", "&fì˜€") + "ìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c´É·Â&f] &c" + victimPlayer.getName() + "&f´ÔÀº ´É·ÂÀÌ ¾ø½À´Ï´Ù."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&cëŠ¥ë ¥&f] &c" + victimPlayer.getName() + "&fë‹˜ì€ ëŠ¥ë ¥ì´ ì—†ìŠµë‹ˆë‹¤."));
 				}
 			}
 		}
-		
-		this.onPlayerDeath(e);
-	}
 
-	protected void onPlayerDeath(PlayerDeathEvent e) {
-		Player Victim = e.getEntity();
-		
-		if(game.isGameStarted() && game.isParticipating(Victim)) {
+		if(game.isGameStarted() && game.isParticipating(victimPlayer)) {
 			switch(DeathSettings.getOperation()) {
-			case Å»¶ô:
-				this.Eliminate(Victim);
+			case íƒˆë½:
+				this.Eliminate(victimPlayer);
 				break;
-			case °üÀü¸ğµå:
-				Victim.setGameMode(GameMode.SPECTATOR);
+			case ê´€ì „ëª¨ë“œ:
+				victimPlayer.setGameMode(GameMode.SPECTATOR);
 				break;
 			default:
 				break;
 			}
-			if(DeathSettings.getAbilityRemoval()) game.getParticipant(Victim).removeAbility();
+			if(DeathSettings.getAbilityRemoval()) game.getParticipant(victimPlayer).removeAbility();
 		}
 	}
 	
 	/**
-	 * Å»¶ôµÈ À¯Àú UUID ¸ñ·Ï
+	 * íƒˆë½ëœ ìœ ì € UUID ëª©ë¡
 	 */
 	private final ArrayList<UUID> Eliminated = new ArrayList<UUID>();
 	
 	/**
-	 * ÇÃ·¹ÀÌ¾î¸¦ Å»¶ô½ÃÅµ´Ï´Ù.
-	 * @param p   Å»¶ô½ÃÅ³ ÇÃ·¹ÀÌ¾îÀÔ´Ï´Ù.
+	 * í”Œë ˆì´ì–´ë¥¼ íƒˆë½ì‹œí‚µë‹ˆë‹¤.
+	 * @param p   íƒˆë½ì‹œí‚¬ í”Œë ˆì´ì–´ì…ë‹ˆë‹¤.
 	 */
-	public final void Eliminate(Player p) {
+	public void Eliminate(Player p) {
 		Eliminated.add(p.getUniqueId());
 		p.kickPlayer(
 				Messager.getPrefix()
 				+ "\n"
-				+ ChatColor.translateAlternateColorCodes('&', "&fÅ»¶ôÇÏ¼Ì½À´Ï´Ù."));
-		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + p.getName() + "&f´ÔÀÌ Å»¶ôÇÏ¼Ì½À´Ï´Ù."));
+				+ ChatColor.translateAlternateColorCodes('&', "&fíƒˆë½í•˜ì…¨ìŠµë‹ˆë‹¤."));
+		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + p.getName() + "&fë‹˜ì´ íƒˆë½í•˜ì…¨ìŠµë‹ˆë‹¤."));
 	}
 	
 	/**
-	 * ÇÃ·¹ÀÌ¾îÀÇ Å»¶ô ¿©ºÎ¸¦ È®ÀÎÇÕ´Ï´Ù.
+	 * í”Œë ˆì´ì–´ì˜ íƒˆë½ ì—¬ë¶€ë¥¼ í™•ì¸í•©ë‹ˆë‹¤.
 	 */
-	public final boolean isEliminated(Player p) {
+	public boolean isEliminated(Player p) {
 		return Eliminated.contains(p.getUniqueId());
 	}
 	

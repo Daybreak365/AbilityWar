@@ -17,8 +17,8 @@ import org.bukkit.potion.PotionType;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * Item ¶óÀÌºê·¯¸®
- * @author DayBreak »õº®
+ * Item ë¼ì´ë¸ŒëŸ¬ë¦¬
+ * @author DayBreak ìƒˆë²½
  */
 public class ItemLib {
 	
@@ -63,71 +63,71 @@ public class ItemLib {
 	public static enum ItemColor {
 
 		/**
-		 * ÇÏ¾á»ö
+		 * í•˜ì–€ìƒ‰
 		 */
 		WHITE((short) 0),
 		/**
-		 * ÁÖÈ²»ö
+		 * ì£¼í™©ìƒ‰
 		 */
 		ORANGE((short) 1),
 		/**
-		 * ÀÚÈ«»ö
+		 * ìí™ìƒ‰
 		 */
 		MAGENTA((short) 2),
 		/**
-		 * ÇÏ´Ã»ö
+		 * í•˜ëŠ˜ìƒ‰
 		 */
 		LIGHT_BLUE((short) 3),
 		/**
-		 * ³ë¶õ»ö
+		 * ë…¸ë€ìƒ‰
 		 */
 		YELLOW((short) 4),
 		/**
-		 * ¿¬µÎ»ö
+		 * ì—°ë‘ìƒ‰
 		 */
 		LIME((short) 5),
 		/**
-		 * ºĞÈ«»ö
+		 * ë¶„í™ìƒ‰
 		 */
 		PINK((short) 6),
 		/**
-		 * È¸»ö
+		 * íšŒìƒ‰
 		 */
 		GRAY((short) 7),
 		/**
-		 * È¸¹é»ö
+		 * íšŒë°±ìƒ‰
 		 */
 		LIGHT_GRAY((short) 8),
 		/**
-		 * Ã»·Ï»ö
+		 * ì²­ë¡ìƒ‰
 		 */
 		CYAN((short) 9),
 		/**
-		 * º¸¶ó»ö
+		 * ë³´ë¼ìƒ‰
 		 */
 		PURPLE((short) 10),
 		/**
-		 * ÆÄ¶õ»ö
+		 * íŒŒë€ìƒ‰
 		 */
 		BLUE((short) 11),
 		/**
-		 * °¥»ö
+		 * ê°ˆìƒ‰
 		 */
 		BROWN((short) 12),
 		/**
-		 * ÃÊ·Ï»ö
+		 * ì´ˆë¡ìƒ‰
 		 */
 		GREEN((short) 13),
 		/**
-		 * »¡°£»ö
+		 * ë¹¨ê°„ìƒ‰
 		 */
 		RED((short) 14),
 		/**
-		 * °ËÀº»ö
+		 * ê²€ì€ìƒ‰
 		 */
 		BLACK((short) 15),
 		/**
-		 * ¿¡·¯°¡ ³µÀ» °æ¿ì »ç¿ëµÇ´Â °ªÀÔ´Ï´Ù.
+		 * ì—ëŸ¬ê°€ ë‚¬ì„ ê²½ìš° ì‚¬ìš©ë˜ëŠ” ê°’ì…ë‹ˆë‹¤.
 		 */
 		ERROR((short) -1);
 
@@ -142,8 +142,8 @@ public class ItemLib {
 		}
 		
 		/**
-		 * Damage·Î ItemColor¸¦ ¹Ş¾Æ¿É´Ï´Ù.
-		 * ÇØ´çÇÏ´Â ItemColor°¡ ¾øÀ» °æ¿ì ERROR¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+		 * Damageë¡œ ItemColorë¥¼ ë°›ì•„ì˜µë‹ˆë‹¤.
+		 * í•´ë‹¹í•˜ëŠ” ItemColorê°€ ì—†ì„ ê²½ìš° ERRORë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 		 */
 		public static ItemColor getByDamage(short damage) {
 			for(ItemColor color : ItemColor.values()) {
@@ -301,8 +301,8 @@ public class ItemLib {
 		}
 		
 		/**
-		 * Æ÷¼ÇÀ» ItemStackÀ¸·Î ¹Ş¾Æ¿É´Ï´Ù.
-		 * @param Amount	°³¼ö
+		 * í¬ì…˜ì„ ItemStackìœ¼ë¡œ ë°›ì•„ì˜µë‹ˆë‹¤.
+		 * @param Amount	ê°œìˆ˜
 		 * @return			ItemStack
 		 */
 		public ItemStack getItemStack(int Amount) throws Exception {
@@ -330,15 +330,15 @@ public class ItemLib {
 		
 		public enum PotionShape {
 			/**
-			 * ÀÏ¹İ ¹°¾à
+			 * ì¼ë°˜ ë¬¼ì•½
 			 */
 			NORMAL,
 			/**
-			 * ÅõÃ´¿ë ¹°¾à
+			 * íˆ¬ì²™ìš© ë¬¼ì•½
 			 */
 			SPLASH,
 			/**
-			 * ÀÜ·ùÇü ¹°¾à
+			 * ì”ë¥˜í˜• ë¬¼ì•½
 			 */
 			LINGERING;
 		}

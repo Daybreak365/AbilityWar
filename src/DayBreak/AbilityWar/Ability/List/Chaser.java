@@ -17,11 +17,11 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "ÃßÀûÀÚ", Rank = Rank.D, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì¶”ì ì", Rank = Rank.D, Species = Species.HUMAN)
 public class Chaser extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaser.class, "Cooldown", 120,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,9 +32,9 @@ public class Chaser extends AbilityBase {
 	
 	public Chaser(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f»ó´ë¹æÀ» Ã¶±«·Î Å¸°İÇÏ¸é ´ë»ó¿¡°Ô ÃßÀû ÀåÄ¡¸¦ ºÎÂøÇÕ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fÀÌÈÄ Ã¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ÃßÀû ÀåÄ¡¸¦ ºÎÂøÇÑ ÇÃ·¹ÀÌ¾îÀÇ ÁÂÇ¥¸¦ ¾Ë ¼ö ÀÖ½À´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÃßÀû ÀåÄ¡´Â ÇÑ¸í¿¡°Ô¸¸ ºÎÂøÇÒ ¼ö ÀÖ½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fìƒëŒ€ë°©ì„ ì² ê´´ë¡œ íƒ€ê²©í•˜ë©´ ëŒ€ìƒì—ê²Œ ì¶”ì  ì¥ì¹˜ë¥¼ ë¶€ì°©í•©ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fì´í›„ ì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ì¶”ì  ì¥ì¹˜ë¥¼ ë¶€ì°©í•œ í”Œë ˆì´ì–´ì˜ ì¢Œí‘œë¥¼ ì•Œ ìˆ˜ ìˆìŠµë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fì¶”ì  ì¥ì¹˜ëŠ” í•œëª…ì—ê²Œë§Œ ë¶€ì°©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."));
 	}
 
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -52,9 +52,9 @@ public class Chaser extends AbilityBase {
 					int Y = (int) target.getLocation().getY();
 					int Z = (int) target.getLocation().getZ();
 					
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f´ÔÀº &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f¿¡ ÀÖ½À´Ï´Ù."));
+					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&fë‹˜ì€ &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&fì— ìˆìŠµë‹ˆë‹¤."));
 				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f¾Æ¹«¿¡°Ôµµ ÃßÀû ÀåÄ¡¸¦ ºÎÂøÇÏÁö ¾Ê¾Ò½À´Ï´Ù. &8( &7ÃßÀû ºÒ°¡´É &8)"));
+					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&fì•„ë¬´ì—ê²Œë„ ì¶”ì  ì¥ì¹˜ë¥¼ ë¶€ì°©í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. &8( &7ì¶”ì  ë¶ˆê°€ëŠ¥ &8)"));
 				}
 			}
 		}
@@ -71,7 +71,7 @@ public class Chaser extends AbilityBase {
 						if(!Cool.isCooldown()) {
 							Player p = (Player) e.getEntity();
 							this.target = p;
-							Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f´Ô¿¡°Ô ÃßÀû ÀåÄ¡¸¦ ºÎÂøÇÏ¿´½À´Ï´Ù."));
+							Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&fë‹˜ì—ê²Œ ì¶”ì  ì¥ì¹˜ë¥¼ ë¶€ì°©í•˜ì˜€ìŠµë‹ˆë‹¤."));
 							
 							Cool.StartTimer();
 						}

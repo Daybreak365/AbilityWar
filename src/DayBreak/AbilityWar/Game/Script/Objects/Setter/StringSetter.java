@@ -31,7 +31,7 @@ public class StringSetter extends Setter<String> {
 					e.setCancelled(true);
 					
 					if(!e.getMessage().equals("%")) {
-						//°ªÀÌ ¾÷µ¥ÀÌÆ®µÇ¸é ÀÎº¥Åä¸®°¡ ÀÚµ¿À¸·Î ¿­¸²
+						//ê°’ì´ ì—…ë°ì´íŠ¸ë˜ë©´ ì¸ë²¤í† ë¦¬ê°€ ìë™ìœ¼ë¡œ ì—´ë¦¼
 						this.setValue(e.getMessage());
 					} else {
 						this.updateGUI();
@@ -47,7 +47,7 @@ public class StringSetter extends Setter<String> {
 	public void onClick(ClickType click) {
 		Setting = true;
 		getWizard().safeClose();
-		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&fº¯°æÇÒ &6ÅØ½ºÆ®&f¸¦ Ã¤ÆÃÃ¢¿¡ ÀÔ·ÂÇØÁÖ¼¼¿ä. Ãë¼ÒÇÏ·Á¸é &e%&f¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä."));
+		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&fë³€ê²½í•  &6í…ìŠ¤íŠ¸&fë¥¼ ì±„íŒ…ì°½ì— ì…ë ¥í•´ì£¼ì„¸ìš”. ì·¨ì†Œí•˜ë ¤ë©´ &e%&fë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”."));
 	}
 	
 	@Override
@@ -58,7 +58,7 @@ public class StringSetter extends Setter<String> {
 		stringMeta.setLore(Messager.getStringList(
 				ChatColor.translateAlternateColorCodes('&', "&f\"" + this.getValue() + "&f\""),
 				"",
-				ChatColor.translateAlternateColorCodes('&', "&6ÅØ½ºÆ®&f¸¦ º¯°æÇÏ·Á¸é Å¬¸¯ÇÏ¼¼¿ä.")
+				ChatColor.translateAlternateColorCodes('&', "&6í…ìŠ¤íŠ¸&fë¥¼ ë³€ê²½í•˜ë ¤ë©´ í´ë¦­í•˜ì„¸ìš”.")
 				));
 		
 		string.setItemMeta(stringMeta);

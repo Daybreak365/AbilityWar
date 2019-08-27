@@ -3,7 +3,7 @@ package DayBreak.AbilityWar.Game.Events;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 
 /**
- * {@link AbstractGame}ÀÌ ½ÃÀÛµÉ ¶§ È£ÃâµÇ´Â ÀÌº¥Æ®ÀÔ´Ï´Ù.
+ * {@link AbstractGame}ì´ ì‹œì‘ë  ë•Œ í˜¸ì¶œë˜ëŠ” ì´ë²¤íŠ¸ì…ë‹ˆë‹¤.
  */
 public class GameStartEvent extends GameEvent {
 

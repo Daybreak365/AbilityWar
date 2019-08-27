@@ -15,28 +15,28 @@ import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate.UpdateObject;
 
 /**
- * ¸Ş½ÃÁö °ü¸® Å¬·¡½º
- * @author DayBreak »õº®
+ * ë©”ì‹œì§€ ê´€ë¦¬ í´ë˜ìŠ¤
+ * @author DayBreak ìƒˆë²½
  */
 public class Messager {
 	
 	private Messager() {}
 	
-	private static final String Prefix = ChatColor.translateAlternateColorCodes('&', "&2¡¶&aAbilityWar&2¡·&f");
+	private static final String Prefix = ChatColor.translateAlternateColorCodes('&', "&2ã€Š&aAbilityWar&2ã€‹&f");
 	
 	public static String getPrefix() {
 		return Prefix;
 	}
 	
 	/**
-	 * ÄÜ¼Ö¿¡ ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * ì½˜ì†”ì— ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendMessage(String msg) {
 		Bukkit.getConsoleSender().sendMessage(Prefix + msg);
 	}
 	
 	/**
-	 * ÄÜ¼Ö¿¡ ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * ì½˜ì†”ì— ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendMessage(List<String> messages) {
 		for(String msg : messages) {
@@ -45,63 +45,63 @@ public class Messager {
 	}
 
 	/**
-	 * ÇÃ·¹ÀÌ¾î¿¡°Ô ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * í”Œë ˆì´ì–´ì—ê²Œ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendMessage(Player p, String msg) {
 		p.sendMessage(msg);
 	}
 	
 	/**
-	 * ¸í·É¾î¸¦ ½ÇÇàÇÑ °´Ã¼¿¡°Ô ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * ëª…ë ¹ì–´ë¥¼ ì‹¤í–‰í•œ ê°ì²´ì—ê²Œ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendMessage(CommandSender sender, String msg) {
 		sender.sendMessage(msg);
 	}
 	
 	/**
-	 * ÄÜ¼Ö¿¡ µğ¹ö±× ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * ì½˜ì†”ì— ë””ë²„ê·¸ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendDebugMessage(String msg) {
 		Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&8[&7AbilityWar&8] &f" + msg));
 	}
 	
 	/**
-	 * ÄÜ¼Ö¿¡ ¿À·ù ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * ì½˜ì†”ì— ì˜¤ë¥˜ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendErrorMessage(String msg) {
 		System.out.println(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &r&c" + msg));
 	}
 
 	/**
-	 * ÄÜ¼Ö¿¡ ¿À·ù ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * ì½˜ì†”ì— ì˜¤ë¥˜ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendErrorMessage() {
-		System.out.println(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &r&c¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
+		System.out.println(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &r&cì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
 	}
 	
 	/**
-	 * ÇÃ·¹ÀÌ¾î¿¡°Ô ¿À·ù ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * í”Œë ˆì´ì–´ì—ê²Œ ì˜¤ë¥˜ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendErrorMessage(Player p, String msg) {
 		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &f") + msg);
 	}
 	
 	/**
-	 * ¸í·É¾î¸¦ ½ÇÇàÇÑ °´Ã¼¿¡°Ô ¿À·ù ¸Ş½ÃÁö¸¦ Àü¼ÛÇÕ´Ï´Ù.
+	 * ëª…ë ¹ì–´ë¥¼ ì‹¤í–‰í•œ ê°ì²´ì—ê²Œ ì˜¤ë¥˜ ë©”ì‹œì§€ë¥¼ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendErrorMessage(CommandSender sender, String msg) {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &f") + msg);
 	}
 	
 	/**
-	 * ¿À·ù ¸Ş½ÃÁö¸¦ °øÁöÇÕ´Ï´Ù.
+	 * ì˜¤ë¥˜ ë©”ì‹œì§€ë¥¼ ê³µì§€í•©ë‹ˆë‹¤.
 	 */
 	public static void broadcastErrorMessage(String msg) {
 		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f&l[&c&l!&f&l] &f") + msg);
 	}
 	
 	/**
-	 * ¸Ş½ÃÁö¸¦ °øÁöÇÕ´Ï´Ù.
+	 * ë©”ì‹œì§€ë¥¼ ê³µì§€í•©ë‹ˆë‹¤.
 	 */
 	public static void broadcastMessage(String msg) {
 		Bukkit.broadcastMessage(msg);
@@ -114,21 +114,21 @@ public class Messager {
 	}
 
 	/**
-	 * Ã¤ÆÃÃ¢À» Ã»¼ÒÇÕ´Ï´Ù.
+	 * ì±„íŒ…ì°½ì„ ì²­ì†Œí•©ë‹ˆë‹¤.
 	 */
 	public static void clearChat() {
 		for(int i = 0; i < 100; i++) for(Player p : Bukkit.getOnlinePlayers()) Messager.sendMessage(p, "");
 	}
 
 	/**
-	 * ÇÃ·¹ÀÌ¾îÀÇ Ã¤ÆÃÃ¢À» Ã»¼ÒÇÕ´Ï´Ù.
+	 * í”Œë ˆì´ì–´ì˜ ì±„íŒ…ì°½ì„ ì²­ì†Œí•©ë‹ˆë‹¤.
 	 */
 	public static void clearChat(Player target) {
 		for(int i = 0; i < 100; i++) Messager.sendMessage(target, "");
 	}
 	
 	/**
-	 * Á¦¸ñÀ» ±¸¼ºÇÕ´Ï´Ù.
+	 * ì œëª©ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static String formatTitle(String title) {
 		String Base = "_________________________________________________________";
@@ -140,7 +140,7 @@ public class Messager {
 	}
 	
 	/**
-	 * ÂªÀº Á¦¸ñÀ» ±¸¼ºÇÕ´Ï´Ù.
+	 * ì§§ì€ ì œëª©ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static String formatShortTitle(String title) {
 		String Base = "________________________________";
@@ -152,7 +152,7 @@ public class Messager {
 	}
 
 	/**
-	 * Á¦¸ñÀ» ±¸¼ºÇÕ´Ï´Ù.
+	 * ì œëª©ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static String formatTitle(ChatColor First, ChatColor Second, String title) {
 		String Base = "_________________________________________________________";
@@ -164,7 +164,7 @@ public class Messager {
 	}
 
 	/**
-	 * ÂªÀº Á¦¸ñÀ» ±¸¼ºÇÕ´Ï´Ù.
+	 * ì§§ì€ ì œëª©ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static String formatShortTitle(ChatColor First, ChatColor Second, String title) {
 		String Base = "________________________________";
@@ -176,13 +176,13 @@ public class Messager {
 	}
 
 	/**
-	 * ¾÷µ¥ÀÌÆ® ¼³¸íÀ» ±¸¼ºÇÕ´Ï´Ù.
+	 * ì—…ë°ì´íŠ¸ ì„¤ëª…ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 * @throws IOException 
 	 */
 	public static ArrayList<String> formatUpdate(UpdateObject update) throws IOException {
 		ArrayList<String> UpdateInfo = new ArrayList<String>();
-		UpdateInfo.add(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "¾÷µ¥ÀÌÆ®"));
-		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + update.getTag() + " &f¾÷µ¥ÀÌÆ® &f(&7v" + update.getVersion() + "&f) "
+		UpdateInfo.add(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "ì—…ë°ì´íŠ¸"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + update.getTag() + " &fì—…ë°ì´íŠ¸ &f(&7v" + update.getVersion() + "&f) "
 				+ "(&7" + (update.getFileSize() / 1024) + "KB&f)"));
 		for(String s : update.getPatchNote()) {
 			UpdateInfo.add(s);
@@ -193,40 +193,40 @@ public class Messager {
 	}
 
 	/**
-	 * ¾÷µ¥ÀÌÆ® °øÁö¸¦ ±¸¼ºÇÕ´Ï´Ù.
+	 * ì—…ë°ì´íŠ¸ ê³µì§€ë¥¼ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 * @throws IOException 
 	 */
 	public static ArrayList<String> formatUpdateNotice(UpdateObject update) throws IOException {
 		ArrayList<String> UpdateInfo = new ArrayList<String>();
-		UpdateInfo.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "¾÷µ¥ÀÌÆ®"));
-		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&fÀû¿ë °¡´ÉÇÑ &3¾÷µ¥ÀÌÆ®&f°¡ ÀÖ½À´Ï´Ù: &b" + update.getTag() + " &f¾÷µ¥ÀÌÆ® &f(&7v" + update.getVersion() + "&f) "
+		UpdateInfo.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "ì—…ë°ì´íŠ¸"));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&fì ìš© ê°€ëŠ¥í•œ &3ì—…ë°ì´íŠ¸&fê°€ ìˆìŠµë‹ˆë‹¤: &b" + update.getTag() + " &fì—…ë°ì´íŠ¸ &f(&7v" + update.getVersion() + "&f) "
 				+ "(&7" + (update.getFileSize() / 1024) + "KB&f)"));
-		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3¾÷µ¥ÀÌÆ®&f¸¦ ÁøÇàÇÏ·Á¸é &e/aw update &f¸í·É¾î¸¦ »ç¿ëÇÏ¼¼¿ä."));
+		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3ì—…ë°ì´íŠ¸&fë¥¼ ì§„í–‰í•˜ë ¤ë©´ &e/aw update &fëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ì„¸ìš”."));
 		UpdateInfo.add(ChatColor.translateAlternateColorCodes('&', "&3---------------------------------------------------------"));
 		
 		return UpdateInfo;
 	}
 	
 	/**
-	 * ´É·Â ¼³¸íÀ» ±¸¼ºÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ ì„¤ëª…ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static ArrayList<String> formatAbilityInfo(AbilityBase Ability) {
 		ArrayList<String> AbilityInfo = new ArrayList<String>();
-		AbilityInfo.add(formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "´É·Â Á¤º¸"));
+		AbilityInfo.add(formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "ëŠ¥ë ¥ ì •ë³´"));
 		
 		String name = Ability.getName();
 		Rank rank = Ability.getRank();
 		Species species = Ability.getSpecies();
 		
 		if(name != null && rank != null) {
-			String Restricted = Ability.isRestricted() ? "&f[&7´É·Â ºñÈ°¼ºÈ­µÊ&f]" : "&f[&a´É·Â È°¼ºÈ­µÊ&f]";
+			String Restricted = Ability.isRestricted() ? "&f[&7ëŠ¥ë ¥ ë¹„í™œì„±í™”ë¨&f]" : "&f[&aëŠ¥ë ¥ í™œì„±í™”ë¨&f]";
 			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + Restricted + " " + rank.getRankName() + " " + species.getName()));
 			
 			for(String s : Ability.getExplain()) {
 				AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&f" + s));
 			}
 		} else {
-			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&c´É·Â ¼³¸íÀ» ºÒ·¯¿À´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
+			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&cëŠ¥ë ¥ ì„¤ëª…ì„ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
 			AbilityInfo.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
 		}
 		
@@ -236,32 +236,32 @@ public class Messager {
 	}
 
 	/**
-	 * ÄğÅ¸ÀÓ ¼³¸íÀ» ±¸¼ºÇÕ´Ï´Ù.
+	 * ì¿¨íƒ€ì„ ì„¤ëª…ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static String formatCooldown(Integer Cool) {
-		return ChatColor.translateAlternateColorCodes('&', "&cÄğÅ¸ÀÓ &7: &f" + Cool + "ÃÊ");
+		return ChatColor.translateAlternateColorCodes('&', "&cì¿¨íƒ€ì„ &7: &f" + Cool + "ì´ˆ");
 	}
 	
 	/**
-	 * ¸í·É¾î µµ¿ò¸»À» ±¸¼ºÇÕ´Ï´Ù.
+	 * ëª…ë ¹ì–´ ë„ì›€ë§ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static String formatCommand(String Label, String Command, String Help, boolean AdminCommand) {
 		if(!AdminCommand) {
-			return ChatColor.translateAlternateColorCodes('&', "&aÀ¯  Àú: &6/" + Label + " &e" + Command + " &7: &f" + Help);
+			return ChatColor.translateAlternateColorCodes('&', "&aìœ   ì €: &6/" + Label + " &e" + Command + " &7: &f" + Help);
 		} else {
-			return ChatColor.translateAlternateColorCodes('&', "&c°ü¸®ÀÚ: &6/" + Label + " &e" + Command + " &7: &f" + Help);
+			return ChatColor.translateAlternateColorCodes('&', "&cê´€ë¦¬ì: &6/" + Label + " &e" + Command + " &7: &f" + Help);
 		}
 	}
 
 	/**
-	 * ¸í·É¾î µµ¿ò¸»À» ±¸¼ºÇÕ´Ï´Ù.
+	 * ëª…ë ¹ì–´ ë„ì›€ë§ì„ êµ¬ì„±í•©ë‹ˆë‹¤.
 	 */
 	public static String formatCommand(String Label, String Command, String Help) {
 		return ChatColor.translateAlternateColorCodes('&', "&6/" + Label + " &e" + Command + " &7: &f" + Help);
 	}
 
 	/**
-	 * String ArrayList¸¦ ¸¸µì´Ï´Ù.
+	 * String ArrayListë¥¼ ë§Œë“­ë‹ˆë‹¤.
 	 */
 	public static ArrayList<String> getStringList(String[] arr, String... str) {
 		ArrayList<String> Return = new ArrayList<String>();
@@ -277,7 +277,7 @@ public class Messager {
 	}
 	
 	/**
-	 * String ArrayList¸¦ ¸¸µì´Ï´Ù.
+	 * String ArrayListë¥¼ ë§Œë“­ë‹ˆë‹¤.
 	 */
 	public static ArrayList<String> getStringList(String... str) {
 		ArrayList<String> Return = new ArrayList<String>();
@@ -289,7 +289,7 @@ public class Messager {
 	}
 	
 	/**
-	 * ¸Ş½ÃÁö ¸ñ·ÏÀ» °øÁöÇÕ´Ï´Ù.
+	 * ë©”ì‹œì§€ ëª©ë¡ì„ ê³µì§€í•©ë‹ˆë‹¤.
 	 */
 	public static void broadcastStringList(List<String> msg) {
 		for(String s : msg) {
@@ -298,7 +298,7 @@ public class Messager {
 	}
 	
 	/**
-	 * ¸í·É¾î¸¦ ½ÇÇàÇÑ °´Ã¼¿¡°Ô ¸Ş½ÃÁö ¸ñ·ÏÀ» Àü¼ÛÇÕ´Ï´Ù.
+	 * ëª…ë ¹ì–´ë¥¼ ì‹¤í–‰í•œ ê°ì²´ì—ê²Œ ë©”ì‹œì§€ ëª©ë¡ì„ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendStringList(CommandSender sender, List<String> msg) {
 		for(String s : msg) {
@@ -307,7 +307,7 @@ public class Messager {
 	}
 
 	/**
-	 * ÇÃ·¹ÀÌ¾î¿¡°Ô ¸Ş½ÃÁö ¸ñ·ÏÀ» Àü¼ÛÇÕ´Ï´Ù.
+	 * í”Œë ˆì´ì–´ì—ê²Œ ë©”ì‹œì§€ ëª©ë¡ì„ ì „ì†¡í•©ë‹ˆë‹¤.
 	 */
 	public static void sendStringList(Player p, ArrayList<String> msg) {
 		for(String s : msg) {
@@ -316,14 +316,14 @@ public class Messager {
 	}
 	
 	/**
-	 * String ¹è¿­¿¡¼­ Ã¹¹øÂ° ÀÎ¼ö¸¦ »èÁ¦ÇÕ´Ï´Ù.
+	 * String ë°°ì—´ì—ì„œ ì²«ë²ˆì§¸ ì¸ìˆ˜ë¥¼ ì‚­ì œí•©ë‹ˆë‹¤.
 	 */
 	public static String[] removeFirstArg(String[] args) {
 		return removeArgs(args, 1);
 	}
 	
 	/**
-	 * String ¹è¿­¿¡¼­ ÀÎ¼ö¸¦ »èÁ¦ÇÕ´Ï´Ù.
+	 * String ë°°ì—´ì—ì„œ ì¸ìˆ˜ë¥¼ ì‚­ì œí•©ë‹ˆë‹¤.
 	 */
 	public static String[] removeArgs(String[] args, int startIndex) {
 		if (args.length == 0)

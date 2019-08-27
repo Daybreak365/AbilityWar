@@ -26,11 +26,11 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 
-@AbilityManifest(Name = "¹ÂÁî", Rank = Rank.S, Species = Species.OTHERS)
+@AbilityManifest(Name = "ë®¤ì¦ˆ", Rank = Rank.S, Species = Species.OTHERS)
 public class Muse extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Muse.class, "Cooldown", 80, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -41,8 +41,8 @@ public class Muse extends AbilityBase {
 	
 	public Muse(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ¹ÂÁî°¡ ÁÖº¯ Áö¿ªÀ» Ãàº¹ÇÏ¿©"),
-				ChatColor.translateAlternateColorCodes('&', "&f¸ğµÎ°¡ µ¥¹ÌÁö¸¦ ¹ŞÁö ¾Ê´Â Áö¿ªÀ» ¸¸µé¾î³À´Ï´Ù. ") + Messager.formatCooldown(CooldownConfig.getValue()));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ë®¤ì¦ˆê°€ ì£¼ë³€ ì§€ì—­ì„ ì¶•ë³µí•˜ì—¬"),
+				ChatColor.translateAlternateColorCodes('&', "&fëª¨ë‘ê°€ ë°ë¯¸ì§€ë¥¼ ë°›ì§€ ì•ŠëŠ” ì§€ì—­ì„ ë§Œë“¤ì–´ëƒ…ë‹ˆë‹¤. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

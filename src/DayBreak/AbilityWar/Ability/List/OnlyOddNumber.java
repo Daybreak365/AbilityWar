@@ -13,12 +13,12 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "È¦¼ö°­¹ÚÁõ", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "í™€ìˆ˜ê°•ë°•ì¦", Rank = Rank.S, Species = Species.HUMAN)
 public class OnlyOddNumber extends AbilityBase {
 
 	public static SettingObject<Integer> PercentageConfig = new SettingObject<Integer>(OnlyOddNumber.class, "Percentage", 79, 
-			"# Ã¼·ÂÀÌ ¸î ÆÛ¼¾Æ® ÀÌÇÏÀÏ ¶§ ´É·ÂÀÌ ¹ßµ¿µÉÁö ¼³Á¤ÇÕ´Ï´Ù.",
-			"# 1 ÀÌ»ó, 100 ÀÌÇÏÀÇ ¼ö Áß È¦¼ö·Î¸¸ ¼³Á¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.") {
+			"# ì²´ë ¥ì´ ëª‡ í¼ì„¼íŠ¸ ì´í•˜ì¼ ë•Œ ëŠ¥ë ¥ì´ ë°œë™ë ì§€ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# 1 ì´ìƒ, 100 ì´í•˜ì˜ ìˆ˜ ì¤‘ í™€ìˆ˜ë¡œë§Œ ì„¤ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -28,8 +28,8 @@ public class OnlyOddNumber extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 39, 
-			"# Ã¼·ÂÀÌ È¦¼öÀÏ ¶§ µ¥¹ÌÁö¸¦ ¸î ÆÛ¼¾Æ® ÁÙ¿© ¹ŞÀ»Áö ¼³Á¤ÇÕ´Ï´Ù.",
-			"# 60À¸·Î ¼³Á¤ÇÏ¸é ¿ø·¡ µ¥¹ÌÁöÀÇ 40%¸¦ ¹Ş½À´Ï´Ù.") {
+			"# ì²´ë ¥ì´ í™€ìˆ˜ì¼ ë•Œ ë°ë¯¸ì§€ë¥¼ ëª‡ í¼ì„¼íŠ¸ ì¤„ì—¬ ë°›ì„ì§€ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# 60ìœ¼ë¡œ ì„¤ì •í•˜ë©´ ì›ë˜ ë°ë¯¸ì§€ì˜ 40%ë¥¼ ë°›ìŠµë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -39,8 +39,8 @@ public class OnlyOddNumber extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> EvenNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "EvenNumber", 29, 
-			"# Ã¼·ÂÀÌ Â¦¼öÀÏ ¶§ µ¥¹ÌÁö¸¦ ¸î ÆÛ¼¾Æ® ´Ã·Á ¹ŞÀ»Áö ¼³Á¤ÇÕ´Ï´Ù.",
-			"# 30À¸·Î ¼³Á¤ÇÏ¸é ¿ø·¡ µ¥¹ÌÁöÀÇ 130%¸¦ ¹Ş½À´Ï´Ù.") {
+			"# ì²´ë ¥ì´ ì§ìˆ˜ì¼ ë•Œ ë°ë¯¸ì§€ë¥¼ ëª‡ í¼ì„¼íŠ¸ ëŠ˜ë ¤ ë°›ì„ì§€ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# 30ìœ¼ë¡œ ì„¤ì •í•˜ë©´ ì›ë˜ ë°ë¯¸ì§€ì˜ 130%ë¥¼ ë°›ìŠµë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -51,9 +51,9 @@ public class OnlyOddNumber extends AbilityBase {
 	
 	public OnlyOddNumber(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¼·ÂÀÌ ÃÖ´ë Ã¼·ÂÀÇ " + PercentageConfig.getValue() + "% ÀÌÇÏÀÏ ¶§"),
-				ChatColor.translateAlternateColorCodes('&', "&f°ø°İÀ» ¹ŞÀ¸¸é Ã¼·Â¿¡ µû¶ó ´Ù¸¥ È¿°ú¸¦ ¹Ş½À´Ï´Ù. &fÃ¼·ÂÀÌ È¦¼öÀÏ °æ¿ì µ¥¹ÌÁö¸¦"),
-				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% ÁÙ¿© ¹Ş°í, Ã¼·ÂÀÌ Â¦¼öÀÏ °æ¿ì µ¥¹ÌÁö¸¦ " + EvenNumberConfig.getValue() + "% ´Ã·Á ¹Ş½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì²´ë ¥ì´ ìµœëŒ€ ì²´ë ¥ì˜ " + PercentageConfig.getValue() + "% ì´í•˜ì¼ ë•Œ"),
+				ChatColor.translateAlternateColorCodes('&', "&fê³µê²©ì„ ë°›ìœ¼ë©´ ì²´ë ¥ì— ë”°ë¼ ë‹¤ë¥¸ íš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤. &fì²´ë ¥ì´ í™€ìˆ˜ì¼ ê²½ìš° ë°ë¯¸ì§€ë¥¼"),
+				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% ì¤„ì—¬ ë°›ê³ , ì²´ë ¥ì´ ì§ìˆ˜ì¼ ê²½ìš° ë°ë¯¸ì§€ë¥¼ " + EvenNumberConfig.getValue() + "% ëŠ˜ë ¤ ë°›ìŠµë‹ˆë‹¤."));
 	}
 	
 	@Override
@@ -74,9 +74,9 @@ public class OnlyOddNumber extends AbilityBase {
 			Integer Health = (int) getPlayer().getHealth();
 			
 			if(doubleHealth <= (doubleMaxHealth / 100) * Percentage) {
-				if(Health % 2 == 0) { //Â¦¼ö
+				if(Health % 2 == 0) { //ì§ìˆ˜
 					e.setDamage(e.getDamage() + ((e.getDamage() / 100) * Even));
-				} else { //È¦¼ö
+				} else { //í™€ìˆ˜
 					e.setDamage(e.getDamage() - ((e.getDamage() / 100) * Odd));
 				}
 			}

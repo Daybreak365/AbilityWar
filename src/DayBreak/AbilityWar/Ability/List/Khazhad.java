@@ -19,10 +19,10 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-@AbilityManifest(Name = "Ä«Àğµå", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(Name = "ì¹´ìŸˆë“œ", Rank = Rank.A, Species = Species.GOD)
 public class Khazhad extends AbilityBase {
 
-	private static SettingObject<Integer> LeftCooldownConfig = new SettingObject<Integer>(Khazhad.class, "LeftCooldown", 4, "# ÁÂÅ¬¸¯ ÄğÅ¸ÀÓ") {
+	private static SettingObject<Integer> LeftCooldownConfig = new SettingObject<Integer>(Khazhad.class, "LeftCooldown", 4, "# ì¢Œí´ë¦­ ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer arg0) {
@@ -31,7 +31,7 @@ public class Khazhad extends AbilityBase {
 
 	};
 
-	private static SettingObject<Integer> RightCooldownConfig = new SettingObject<Integer>(Khazhad.class, "RightCooldown", 10, "# ¿ìÅ¬¸¯ ÄğÅ¸ÀÓ") {
+	private static SettingObject<Integer> RightCooldownConfig = new SettingObject<Integer>(Khazhad.class, "RightCooldown", 10, "# ìš°í´ë¦­ ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer arg0) {
@@ -42,13 +42,13 @@ public class Khazhad extends AbilityBase {
 	
 	public Khazhad(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ÁÂÅ¬¸¯ÇÏ¸é ÀÚ½ÅÀÌ º¸°í ÀÖ´Â ¹æÇâÀ¸·Î ¾óÀ½À» ³¯¸³´Ï´Ù. " + Messager.formatCooldown(LeftCooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ÀÚ½ÅÀÌ º¸°í ÀÖ´Â ºí·Ï 5Ä­ ÁÖº¯ÀÇ ¹°À» ¸ğµÎ ¾ó¸³´Ï´Ù. "),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ì¢Œí´ë¦­í•˜ë©´ ìì‹ ì´ ë³´ê³  ìˆëŠ” ë°©í–¥ìœ¼ë¡œ ì–¼ìŒì„ ë‚ ë¦½ë‹ˆë‹¤. " + Messager.formatCooldown(LeftCooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ìì‹ ì´ ë³´ê³  ìˆëŠ” ë¸”ë¡ 5ì¹¸ ì£¼ë³€ì˜ ë¬¼ì„ ëª¨ë‘ ì–¼ë¦½ë‹ˆë‹¤. "),
 				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(RightCooldownConfig.getValue())));
 	}
 
-	private CooldownTimer LeftCool = new CooldownTimer(this, LeftCooldownConfig.getValue(), "ÁÂÅ¬¸¯");
-	private CooldownTimer RightCool = new CooldownTimer(this, RightCooldownConfig.getValue(), "¿ìÅ¬¸¯").setActionbarNotice(false);
+	private CooldownTimer LeftCool = new CooldownTimer(this, LeftCooldownConfig.getValue(), "ì¢Œí´ë¦­");
+	private CooldownTimer RightCool = new CooldownTimer(this, RightCooldownConfig.getValue(), "ìš°í´ë¦­").setActionbarNotice(false);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {

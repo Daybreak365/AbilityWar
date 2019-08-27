@@ -26,21 +26,21 @@ import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
- * {@link AbilityWar} ÇÃ·¯±×ÀÎ¿¡¼­ »ç¿ëÇÏ´Â <strong>¸ğµç ´É·Â</strong>ÀÇ ±â¹İÀÌ µÇ´Â Å¬·¡½ºÀÔ´Ï´Ù.
+ * {@link AbilityWar} í”ŒëŸ¬ê·¸ì¸ì—ì„œ ì‚¬ìš©í•˜ëŠ” <strong>ëª¨ë“  ëŠ¥ë ¥</strong>ì˜ ê¸°ë°˜ì´ ë˜ëŠ” í´ë˜ìŠ¤ì…ë‹ˆë‹¤.
  * <p>
- * ¸¸µé¾îÁø <strong>¸ğµç ´É·ÂÀº ¹İµå½Ã {@link AbilityFactory}¿¡ µî·ÏµÇ¾î¾ß ÇÕ´Ï´Ù.</strong>
+ * ë§Œë“¤ì–´ì§„ <strong>ëª¨ë“  ëŠ¥ë ¥ì€ ë°˜ë“œì‹œ {@link AbilityFactory}ì— ë“±ë¡ë˜ì–´ì•¼ í•©ë‹ˆë‹¤.</strong>
  * <p>
  * <ul>
  * {@link AbilityFactory#registerAbility(clazz)}
  * </ul>
- * {@link DefaultGame}, {@link ChangeAbilityWar} µî¿¡¼­ »ç¿ëÇÒ ´É·ÂÀº Ãß°¡ÀûÀ¸·Î
- * {@link AbilityList}¿¡ µî·ÏÇØ¾ß ÇÕ´Ï´Ù.
+ * {@link DefaultGame}, {@link ChangeAbilityWar} ë“±ì—ì„œ ì‚¬ìš©í•  ëŠ¥ë ¥ì€ ì¶”ê°€ì ìœ¼ë¡œ
+ * {@link AbilityList}ì— ë“±ë¡í•´ì•¼ í•©ë‹ˆë‹¤.
  * <p>
  * <ul>
  * {@link AbilityList#registerAbility(clazz)}
  * </ul>
  * 
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public abstract class AbilityBase implements PassiveExecutor {
 
@@ -53,13 +53,13 @@ public abstract class AbilityBase implements PassiveExecutor {
 	private boolean Restricted = true;
 
 	/**
-	 * {@link AbilityBase}ÀÇ ±âº» »ı¼ºÀÚÀÔ´Ï´Ù.
+	 * {@link AbilityBase}ì˜ ê¸°ë³¸ ìƒì„±ìì…ë‹ˆë‹¤.
 	 * 
-	 * @param participant ´É·ÂÀ» ¼ÒÀ¯ÇÏ´Â Âü°¡ÀÚ
-	 * @param explain     ´É·Â ¼³¸í
+	 * @param participant ëŠ¥ë ¥ì„ ì†Œìœ í•˜ëŠ” ì°¸ê°€ì
+	 * @param explain     ëŠ¥ë ¥ ì„¤ëª…
 	 * 
-	 * @throws IllegalStateException °ÔÀÓÀÌ ÁøÇàÁßÀÌÁö ¾ÊÀº °æ¿ì, {@link AbilityFactory}¿¡ µî·ÏµÇÁö
-	 *                               ¾ÊÀº ´É·ÂÀÏ °æ¿ì
+	 * @throws IllegalStateException ê²Œì„ì´ ì§„í–‰ì¤‘ì´ì§€ ì•Šì€ ê²½ìš°, {@link AbilityFactory}ì— ë“±ë¡ë˜ì§€
+	 *                               ì•Šì€ ëŠ¥ë ¥ì¼ ê²½ìš°
 	 */
 	public AbilityBase(Participant participant, String... explain) {
 		this.participant = participant;
@@ -68,7 +68,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		if (AbilityWarThread.isGameTaskRunning()) {
 			this.game = AbilityWarThread.getGame();
 		} else {
-			throw new IllegalStateException("°ÔÀÓÀÌ ÁøÇàÁßÀÏ ¶§ AbilityBase Å¬·¡½º°¡ °´Ã¼È­µÇ¾î¾ß ÇÕ´Ï´Ù.");
+			throw new IllegalStateException("ê²Œì„ì´ ì§„í–‰ì¤‘ì¼ ë•Œ AbilityBase í´ë˜ìŠ¤ê°€ ê°ì²´í™”ë˜ì–´ì•¼ í•©ë‹ˆë‹¤.");
 		}
 
 		if (AbilityFactory.isRegistered(this.getClass())) {
@@ -80,7 +80,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 			for (Class<? extends Event> eventClass : eventhandlers.keySet())
 				game.getPassiveManager().register(eventClass, this);
 		} else {
-			throw new IllegalStateException("AbilityFactory¿¡ µî·ÏµÇÁö ¾ÊÀº ´É·ÂÀÔ´Ï´Ù.");
+			throw new IllegalStateException("AbilityFactoryì— ë“±ë¡ë˜ì§€ ì•Šì€ ëŠ¥ë ¥ì…ë‹ˆë‹¤.");
 		}
 	}
 
@@ -101,31 +101,31 @@ public abstract class AbilityBase implements PassiveExecutor {
 	}
 
 	/**
-	 * ¾×Æ¼ºê ½ºÅ³ ¹ßµ¿À» À§ÇØ »ç¿ëµË´Ï´Ù.
+	 * ì•¡í‹°ë¸Œ ìŠ¤í‚¬ ë°œë™ì„ ìœ„í•´ ì‚¬ìš©ë©ë‹ˆë‹¤.
 	 * 
-	 * @param materialType ÇÃ·¹ÀÌ¾î°¡ Å¬¸¯ÇÒ ¶§ {@link MainHand}¿¡ µé°í ÀÖ¾ú´ø ¾ÆÀÌÅÛ
-	 * @param clickType    Å¬¸¯ÀÇ Á¾·ù
-	 * @return ´É·Â ¹ßµ¿ ¿©ºÎ
+	 * @param materialType í”Œë ˆì´ì–´ê°€ í´ë¦­í•  ë•Œ {@link MainHand}ì— ë“¤ê³  ìˆì—ˆë˜ ì•„ì´í…œ
+	 * @param clickType    í´ë¦­ì˜ ì¢…ë¥˜
+	 * @return ëŠ¥ë ¥ ë°œë™ ì—¬ë¶€
 	 */
 	public abstract boolean ActiveSkill(MaterialType mt, ClickType ct);
 
 	/**
-	 * Å¸°ÙÆÃ ½ºÅ³ ¹ßµ¿À» À§ÇØ »ç¿ëµË´Ï´Ù.
+	 * íƒ€ê²ŸíŒ… ìŠ¤í‚¬ ë°œë™ì„ ìœ„í•´ ì‚¬ìš©ë©ë‹ˆë‹¤.
 	 * 
-	 * @param materialType ÇÃ·¹ÀÌ¾î°¡ Å¬¸¯ÇÒ ¶§ {@link MainHand}¿¡ µé°í ÀÖ¾ú´ø ¾ÆÀÌÅÛ
-	 * @param entity       Å¸°ÙÆÃÀÇ ´ë»ó, Å¸°ÙÆÃÀÇ ´ë»óÀÌ ¾øÀ» °æ¿ì nullÀÌ µÉ ¼ö ÀÖ½À´Ï´Ù. null Ã¼Å©°¡ ÇÊ¿äÇÕ´Ï´Ù.
+	 * @param materialType í”Œë ˆì´ì–´ê°€ í´ë¦­í•  ë•Œ {@link MainHand}ì— ë“¤ê³  ìˆì—ˆë˜ ì•„ì´í…œ
+	 * @param entity       íƒ€ê²ŸíŒ…ì˜ ëŒ€ìƒ, íƒ€ê²ŸíŒ…ì˜ ëŒ€ìƒì´ ì—†ì„ ê²½ìš° nullì´ ë  ìˆ˜ ìˆìŠµë‹ˆë‹¤. null ì²´í¬ê°€ í•„ìš”í•©ë‹ˆë‹¤.
 	 */
 	public abstract void TargetSkill(MaterialType mt, LivingEntity entity);
 
 	/**
-	 * ´É·Â Á¦ÇÑÀÌ ÇØÁ¦µÉ °æ¿ì È£ÃâµË´Ï´Ù.
+	 * ëŠ¥ë ¥ ì œí•œì´ í•´ì œë  ê²½ìš° í˜¸ì¶œë©ë‹ˆë‹¤.
 	 */
 	protected abstract void onRestrictClear();
 
 	/**
-	 * ´õ ÀÌ»ó »ç¿ëµÇÁö ¾Ê´Â {@link AbilityBase}¸¦ Á¦°ÅÇÒ ¶§ »ç¿ëµË´Ï´Ù.<p>
-	 * {@link Participant#removeAbility()}¸¦ ÅëÇØ {@link Participant}ÀÇ ´É·ÂÀ» Á¦°ÅÇÒ ¶§ È£ÃâµË´Ï´Ù.
-	 * Àı´ë ÀÓÀÇ·Î È£ÃâÇÏÁö ¸¶½Ê½Ã¿À.
+	 * ë” ì´ìƒ ì‚¬ìš©ë˜ì§€ ì•ŠëŠ” {@link AbilityBase}ë¥¼ ì œê±°í•  ë•Œ ì‚¬ìš©ë©ë‹ˆë‹¤.<p>
+	 * {@link Participant#removeAbility()}ë¥¼ í†µí•´ {@link Participant}ì˜ ëŠ¥ë ¥ì„ ì œê±°í•  ë•Œ í˜¸ì¶œë©ë‹ˆë‹¤.
+	 * ì ˆëŒ€ ì„ì˜ë¡œ í˜¸ì¶œí•˜ì§€ ë§ˆì‹­ì‹œì˜¤.
 	 */
 	public final void destroy() {
 		game.getPassiveManager().unregisterAll(this);
@@ -139,7 +139,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	}
 
 	/**
-	 * ´É·Â¿¡ »ç¿ëµÇ´Â ¸ğµç Å¸ÀÌ¸Ó¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì— ì‚¬ìš©ë˜ëŠ” ëª¨ë“  íƒ€ì´ë¨¸ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	private final List<TimerBase> getTimers() {
 		List<TimerBase> timers = new ArrayList<>();
@@ -155,63 +155,63 @@ public abstract class AbilityBase implements PassiveExecutor {
 	}
 
 	/**
-	 * ´É·ÂÀ» ¼ÒÀ¯ÇÏ´Â ÇÃ·¹ÀÌ¾î¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì„ ì†Œìœ í•˜ëŠ” í”Œë ˆì´ì–´ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final Player getPlayer() {
 		return participant.getPlayer();
 	}
 
 	/**
-	 * ´É·ÂÀ» ¼ÒÀ¯ÇÏ´Â Âü°¡ÀÚ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì„ ì†Œìœ í•˜ëŠ” ì°¸ê°€ìë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final Participant getParticipant() {
 		return participant;
 	}
 
 	/**
-	 * ´É·ÂÀÇ ¼³¸íÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì˜ ì„¤ëª…ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final String[] getExplain() {
 		return explain;
 	}
 
 	/**
-	 * ´É·ÂÀÇ ÀÌ¸§À» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì˜ ì´ë¦„ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final String getName() {
 		return manifest.Name();
 	}
 
 	/**
-	 * ´É·ÂÀÇ µî±ŞÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì˜ ë“±ê¸‰ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final Rank getRank() {
 		return manifest.Rank();
 	}
 
 	/**
-	 * ´É·ÂÀÇ Á¾Á·À» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì˜ ì¢…ì¡±ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final Species getSpecies() {
 		return manifest.Species();
 	}
 
 	/**
-	 * ÀÌ ´É·ÂÀÌ »ç¿ëµÇ´Â °ÔÀÓÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ì´ ëŠ¥ë ¥ì´ ì‚¬ìš©ë˜ëŠ” ê²Œì„ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	protected final AbstractGame getGame() {
 		return game;
 	}
 
 	/**
-	 * ´É·ÂÀÇ Á¦ÇÑ ¿©ºÎ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì˜ ì œí•œ ì—¬ë¶€ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final boolean isRestricted() {
 		return Restricted;
 	}
 
 	/**
-	 * ´É·ÂÀÇ Á¦ÇÑ ¿©ºÎ¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì˜ ì œí•œ ì—¬ë¶€ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 	 */
 	public final void setRestricted(boolean restricted) {
 		this.Restricted = restricted;

@@ -23,11 +23,11 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.VersionCompat.VersionUtil;
 
-@AbilityManifest(Name = "¸¶¼ú»ç", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "ë§ˆìˆ ì‚¬", Rank = Rank.A, Species = Species.HUMAN)
 public class TheMagician extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 3, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -38,8 +38,8 @@ public class TheMagician extends AbilityBase {
 
 	public TheMagician(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÈ°À» ½úÀ» ¶§, È­»ìÀÌ ¸ÂÀº À§Ä¡¿¡¼­ 5Ä­ ¹üÀ§ ³»¿¡ ÀÖ´Â ¿£Æ¼Æ¼µé¿¡°Ô"),
-				ChatColor.translateAlternateColorCodes('&', "&fÃÖ´ëÃ¼·ÂÀÇ 1/5 ¸¸Å­ÀÇ µ¥¹ÌÁö¸¦ Ãß°¡·Î ÀÔÈü´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fí™œì„ ìˆì„ ë•Œ, í™”ì‚´ì´ ë§ì€ ìœ„ì¹˜ì—ì„œ 5ì¹¸ ë²”ìœ„ ë‚´ì— ìˆëŠ” ì—”í‹°í‹°ë“¤ì—ê²Œ"),
+				ChatColor.translateAlternateColorCodes('&', "&fìµœëŒ€ì²´ë ¥ì˜ 1/5 ë§Œí¼ì˜ ë°ë¯¸ì§€ë¥¼ ì¶”ê°€ë¡œ ì…í™ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	@Override

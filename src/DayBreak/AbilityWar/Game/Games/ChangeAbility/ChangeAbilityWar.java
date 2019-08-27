@@ -8,7 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -18,6 +19,8 @@ import org.bukkit.scoreboard.Score;
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Config.AbilityWarSettings.ChangeAbilityWarSettings;
+import DayBreak.AbilityWar.Config.AbilityWarSettings.DeathSettings;
+import DayBreak.AbilityWar.Game.Events.ParticipantDeathEvent;
 import DayBreak.AbilityWar.Game.Games.GameCreditEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.WinnableGame;
@@ -26,6 +29,7 @@ import DayBreak.AbilityWar.Game.Manager.DeathManager;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
 import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Utils.FireworkUtil;
+import DayBreak.AbilityWar.Utils.KoreanUtil;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
@@ -35,11 +39,11 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * Ã¼ÀÎÁö ´É·Â ÀüÀï
- * @author DayBreak »õº®
+ * ì²´ì¸ì§€ ëŠ¥ë ¥ ì „ìŸ
+ * @author DayBreak ìƒˆë²½
  */
-@GameManifest(Name = "Ã¼ÀÎÁö ´É·Â ÀüÀï (Beta)", Description = { "¡×fÀÏÁ¤ ½Ã°£¸¶´Ù ¹Ù²î´Â ´É·ÂÀ» °¡Áö°í ÇÃ·¹ÀÌÇÏ´Â ½ÉÀå ÂÌ±êÇÑ ¸ğµåÀÔ´Ï´Ù.", "¡×f¸ğµç ÇÃ·¹ÀÌ¾î¿¡°Ô´Â ÀÏÁ¤·®ÀÇ »ı¸íÀÌ ÁÖ¾îÁö¸ç, Á×À» ¶§¸¶´Ù »ı¸íÀÌ ¼Ò¸ğµË´Ï´Ù.", "¡×f»ı¸íÀÌ ¸ğµÎ ¼Ò¸ğµÇ¸é ¼³Á¤¿¡ µû¶ó °ÔÀÓ¿¡¼­ Å»¶ôÇÕ´Ï´Ù.", "¡×f¸ğµÎ¸¦ Å»¶ô½ÃÅ°°í ÃÖÈÄÀÇ 1ÀÎÀ¸·Î ³²´Â ÇÃ·¹ÀÌ¾î°¡ ½Â¸®ÇÕ´Ï´Ù.", "", "¡×a¡Ü ¡×f½ºÅ©¸³Æ®°¡ Àû¿ëµÇÁö ¾Ê½À´Ï´Ù.",
-														"¡×a¡Ü ¡×fÀÏºÎ ÄÜÇÇ±×°¡ ÀÓÀÇ·Î º¯°æµÉ ¼ö ÀÖ½À´Ï´Ù.", "", "¡×6¡Ü ¡×fÃ¼ÀÎÁö ´É·ÂÀüÀï Àü¿ë ÄÜÇÇ±×°¡ ÀÖ½À´Ï´Ù. Config.ymlÀ» È®ÀÎÇØº¸¼¼¿ä."})
+@GameManifest(Name = "ì²´ì¸ì§€ ëŠ¥ë ¥ ì „ìŸ (Beta)", Description = { "Â§fì¼ì • ì‹œê°„ë§ˆë‹¤ ë°”ë€ŒëŠ” ëŠ¥ë ¥ì„ ê°€ì§€ê³  í”Œë ˆì´í•˜ëŠ” ì‹¬ì¥ ì«„ê¹ƒí•œ ëª¨ë“œì…ë‹ˆë‹¤.", "Â§fëª¨ë“  í”Œë ˆì´ì–´ì—ê²ŒëŠ” ì¼ì •ëŸ‰ì˜ ìƒëª…ì´ ì£¼ì–´ì§€ë©°, ì£½ì„ ë•Œë§ˆë‹¤ ìƒëª…ì´ ì†Œëª¨ë©ë‹ˆë‹¤.", "Â§fìƒëª…ì´ ëª¨ë‘ ì†Œëª¨ë˜ë©´ ì„¤ì •ì— ë”°ë¼ ê²Œì„ì—ì„œ íƒˆë½í•©ë‹ˆë‹¤.", "Â§fëª¨ë‘ë¥¼ íƒˆë½ì‹œí‚¤ê³  ìµœí›„ì˜ 1ì¸ìœ¼ë¡œ ë‚¨ëŠ” í”Œë ˆì´ì–´ê°€ ìŠ¹ë¦¬í•©ë‹ˆë‹¤.", "", "Â§aâ— Â§fìŠ¤í¬ë¦½íŠ¸ê°€ ì ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.",
+														"Â§aâ— Â§fì¼ë¶€ ì½˜í”¼ê·¸ê°€ ì„ì˜ë¡œ ë³€ê²½ë  ìˆ˜ ìˆìŠµë‹ˆë‹¤.", "", "Â§6â— Â§fì²´ì¸ì§€ ëŠ¥ë ¥ì „ìŸ ì „ìš© ì½˜í”¼ê·¸ê°€ ìˆìŠµë‹ˆë‹¤. Config.ymlì„ í™•ì¸í•´ë³´ì„¸ìš”."})
 public class ChangeAbilityWar extends WinnableGame {
 	
 	public ChangeAbilityWar() {
@@ -49,8 +53,8 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	@SuppressWarnings("deprecation")
 	private final Objective lifeObjective = ServerVersion.getVersion() >= 13 ?
-			getScoreboardManager().getScoreboard().registerNewObjective("»ı¸í", "dummy", ChatColor.translateAlternateColorCodes('&', "&c»ı¸í"))
-			: getScoreboardManager().getScoreboard().registerNewObjective("»ı¸í", "dummy");
+			getScoreboardManager().getScoreboard().registerNewObjective("ìƒëª…", "dummy", ChatColor.translateAlternateColorCodes('&', "&cìƒëª…"))
+			: getScoreboardManager().getScoreboard().registerNewObjective("ìƒëª…", "dummy");
 	
 	private final AbilityChanger changer = new AbilityChanger(this);
 	
@@ -62,7 +66,7 @@ public class ChangeAbilityWar extends WinnableGame {
 		
 		@Override
 		public void onStart() {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a¹è°íÇÄ ¹«Á¦ÇÑÀÌ Àû¿ëµË´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&aë°°ê³ í”” ë¬´ì œí•œì´ ì ìš©ë©ë‹ˆë‹¤."));
 		}
 		
 		@Override
@@ -83,7 +87,7 @@ public class ChangeAbilityWar extends WinnableGame {
 				broadcastPlayerList();
 				if(getParticipants().size() < 2) {
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cÃÖ¼Ò Âü°¡ÀÚ ¼ö¸¦ ÃæÁ·ÇÏÁö ¸øÇÏ¿© °ÔÀÓÀ» ÁßÁöÇÕ´Ï´Ù. &8(&72¸í&8)"));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cìµœì†Œ ì°¸ê°€ì ìˆ˜ë¥¼ ì¶©ì¡±í•˜ì§€ ëª»í•˜ì—¬ ê²Œì„ì„ ì¤‘ì§€í•©ë‹ˆë‹¤. &8(&72ëª…&8)"));
 				}
 				break;
 			case 5:
@@ -94,27 +98,27 @@ public class ChangeAbilityWar extends WinnableGame {
 				break;
 			case 13:
 				scoreboardSetup();
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7½ºÄÚ¾îº¸µå &f¼³Á¤Áß..."));
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&dÀá½Ã ÈÄ &f°ÔÀÓÀÌ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7ìŠ¤ì½”ì–´ë³´ë“œ &fì„¤ì •ì¤‘..."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&dì ì‹œ í›„ &fê²Œì„ì´ ì‹œì‘ë©ë‹ˆë‹¤."));
 				break;
 			case 16:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ÔÀÓÀÌ &55&fÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ì´ &55&fì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 17:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ÔÀÓÀÌ &54&fÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ì´ &54&fì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 18:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ÔÀÓÀÌ &53&fÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ì´ &53&fì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 19:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ÔÀÓÀÌ &52&fÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ì´ &52&fì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 20:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ÔÀÓÀÌ &51&fÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê²Œì„ì´ &51&fì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 21:
@@ -127,7 +131,7 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	private void scoreboardSetup() {
 		lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		if(ServerVersion.getVersion() < 13) lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c»ı¸í"));
+		if(ServerVersion.getVersion() < 13) lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&cìƒëª…"));
 		for(Participant p : getParticipants()) {
 			Score score = lifeObjective.getScore(p.getPlayer().getName());
 			score.setScore(maxLife);
@@ -141,17 +145,72 @@ public class ChangeAbilityWar extends WinnableGame {
 	@Override
 	protected DeathManager setupDeathManager() {
 		return new DeathManager(this) {
-			@Override
-			protected void onPlayerDeath(PlayerDeathEvent e) {
-				Player Victim = e.getEntity();
-				Participant VictimPart = getParticipant(Victim);
+			@EventHandler
+			protected void onDeath(PlayerDeathEvent e) {
+				Player victimPlayer = e.getEntity();
+				Player killerPlayer = victimPlayer.getKiller();
+				if(victimPlayer.getLastDamageCause() != null) {
+					DamageCause Cause = victimPlayer.getLastDamageCause().getCause();
+
+					if(killerPlayer != null) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&fë‹˜ì´ &c" + victimPlayer.getName() + "&fë‹˜ì„ ì£½ì˜€ìŠµë‹ˆë‹¤."));
+					} else {
+						if(Cause.equals(DamageCause.CONTACT)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ì°”ë ¤ ì£½ì—ˆìŠµë‹ˆë‹¤."));
+						} else if(Cause.equals(DamageCause.FALL)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë–¨ì–´ì ¸ ì£½ì—ˆìŠµë‹ˆë‹¤."));
+						} else if(Cause.equals(DamageCause.FALLING_BLOCK)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë–¨ì–´ì§€ëŠ” ë¸”ë¡ì— ë§ì•„ ì£½ì—ˆìŠµë‹ˆë‹¤."));
+						} else if(Cause.equals(DamageCause.SUFFOCATION)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë¼ì—¬ ì£½ì—ˆìŠµë‹ˆë‹¤."));
+						} else if(Cause.equals(DamageCause.DROWNING)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ìµì‚¬í–ˆìŠµë‹ˆë‹¤."));
+						} else if(Cause.equals(DamageCause.ENTITY_EXPLOSION)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ í­ë°œí–ˆìŠµë‹ˆë‹¤."));
+						} else if(Cause.equals(DamageCause.LAVA)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ìš©ì•”ì— ë¹ ì ¸ ì£½ì—ˆìŠµë‹ˆë‹¤."));
+						} else if(Cause.equals(DamageCause.FIRE) || Cause.equals(DamageCause.FIRE_TICK)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ë…¸ë¦‡ë…¸ë¦‡í•˜ê²Œ êµ¬ì›Œì¡ŒìŠµë‹ˆë‹¤."));
+						} else {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ì£½ì—ˆìŠµë‹ˆë‹¤."));
+						}
+					}
+				} else {
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&fë‹˜ì´ ì£½ì—ˆìŠµë‹ˆë‹¤."));
+				}
+
+				if(DeathSettings.getItemDrop()) {
+					e.setKeepInventory(false);
+					victimPlayer.getInventory().clear();
+				} else {
+					e.setKeepInventory(true);
+				}
+
+				if(isParticipating(victimPlayer)) {
+					Participant victim = getParticipant(victimPlayer);
+					
+					Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
+					
+					if(DeathSettings.getAbilityReveal()) {
+						if(victim.hasAbility()) {
+							String name = victim.getAbility().getName();
+							if(name != null) {
+								Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&cëŠ¥ë ¥&f] &c" + victimPlayer.getName() + "&fë‹˜ì˜ ëŠ¥ë ¥ì€ " + KoreanUtil.getCompleteWord("&e" + name, "&fì´ì—ˆ", "&fì˜€") + "ìŠµë‹ˆë‹¤."));
+							}
+						} else {
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&cëŠ¥ë ¥&f] &c" + victimPlayer.getName() + "&fë‹˜ì€ ëŠ¥ë ¥ì´ ì—†ìŠµë‹ˆë‹¤."));
+						}
+					}
+				}
+
+				Participant VictimPart = getParticipant(victimPlayer);
 				if(VictimPart != null) {
-					Score score = lifeObjective.getScore(Victim.getName());
+					Score score = lifeObjective.getScore(victimPlayer.getName());
 					if(score.isScoreSet()) {
 						if(score.getScore() >= 1) score.setScore(score.getScore() - 1);
 						if(score.getScore() <= 0) {
 							NoLife.add(VictimPart);
-							if(Eliminate) getDeathManager().Eliminate(Victim);
+							if(Eliminate) getDeathManager().Eliminate(victimPlayer);
 
 							Participant hasLife = null;
 							int count = 0;
@@ -177,12 +236,12 @@ public class ChangeAbilityWar extends WinnableGame {
 		
         ArrayList<String> msg = new ArrayList<String>();
 		
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&d==== &f°ÔÀÓ Âü¿©ÀÚ ¸ñ·Ï &d===="));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&d==== &fê²Œì„ ì°¸ì—¬ì ëª©ë¡ &d===="));
 		for(Participant p : getParticipants()) {
 			Count++;
 			msg.add(ChatColor.translateAlternateColorCodes('&', "&5" + Count + ". &f" + p.getPlayer().getName()));
 		}
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&fÃÑ ÀÎ¿ø¼ö &5: &d" + Count + "¸í"));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&fì´ ì¸ì›ìˆ˜ &5: &d" + Count + "ëª…"));
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&d=========================="));
 		
 		Messager.broadcastStringList(msg);
@@ -190,10 +249,10 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	public void broadcastPluginDescription() {
 		ArrayList<String> msg = Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&5&lÃ¼ÀÎÁö! &d&l´É·Â &f&lÀüÀï"),
-				ChatColor.translateAlternateColorCodes('&', "&eÇÃ·¯±×ÀÎ ¹öÀü &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-				ChatColor.translateAlternateColorCodes('&', "&b¸ğµå °³¹ßÀÚ &7: &fDayBreak »õº®"),
-				ChatColor.translateAlternateColorCodes('&', "&9µğ½ºÄÚµå &7: &fDayBreak&7#5908"));
+				ChatColor.translateAlternateColorCodes('&', "&5&lì²´ì¸ì§€! &d&lëŠ¥ë ¥ &f&lì „ìŸ"),
+				ChatColor.translateAlternateColorCodes('&', "&eí”ŒëŸ¬ê·¸ì¸ ë²„ì „ &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
+				ChatColor.translateAlternateColorCodes('&', "&bëª¨ë“œ ê°œë°œì &7: &fDayBreak ìƒˆë²½"),
+				ChatColor.translateAlternateColorCodes('&', "&9ë””ìŠ¤ì½”ë“œ &7: &fDayBreak&7#5908"));
 		
 		GameCreditEvent event = new GameCreditEvent();
 		Bukkit.getPluginManager().callEvent(event);
@@ -207,18 +266,18 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	public void broadcastAbilityReady() {
 		ArrayList<String> msg = Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&fÇÃ·¯±×ÀÎ¿¡ ÃÑ &d" + AbilityList.nameValues().size() + "°³&fÀÇ ´É·ÂÀÌ µî·ÏµÇ¾î ÀÖ½À´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&7°ÔÀÓ ½ÃÀÛ½Ã &fÃ¹¹øÂ° ´É·Â&7ÀÌ ÇÒ´çµÇ¸ç, ÀÌÈÄ &f" + NumberUtil.parseTimeString(changer.getPeriod()) + "&7¸¶´Ù ´É·ÂÀÌ º¯°æµË´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fí”ŒëŸ¬ê·¸ì¸ì— ì´ &d" + AbilityList.nameValues().size() + "ê°œ&fì˜ ëŠ¥ë ¥ì´ ë“±ë¡ë˜ì–´ ìˆìŠµë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&7ê²Œì„ ì‹œì‘ì‹œ &fì²«ë²ˆì§¸ ëŠ¥ë ¥&7ì´ í• ë‹¹ë˜ë©°, ì´í›„ &f" + NumberUtil.parseTimeString(changer.getPeriod()) + "&7ë§ˆë‹¤ ëŠ¥ë ¥ì´ ë³€ê²½ë©ë‹ˆë‹¤."));
 		
 		Messager.broadcastStringList(msg);
 	}
 	
 	public void GameStart() {
 		Messager.broadcastStringList(Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&d¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á"),
-				ChatColor.translateAlternateColorCodes('&', "&f                &5&lÃ¼ÀÎÁö! &d&l´É·Â &f&lÀüÀï"),
-				ChatColor.translateAlternateColorCodes('&', "&f                    °ÔÀÓ ½ÃÀÛ                "),
-				ChatColor.translateAlternateColorCodes('&', "&d¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á")));
+				ChatColor.translateAlternateColorCodes('&', "&dâ– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– "),
+				ChatColor.translateAlternateColorCodes('&', "&f                &5&lì²´ì¸ì§€! &d&lëŠ¥ë ¥ &f&lì „ìŸ"),
+				ChatColor.translateAlternateColorCodes('&', "&f                    ê²Œì„ ì‹œì‘                "),
+				ChatColor.translateAlternateColorCodes('&', "&dâ– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– ")));
 		SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
 		
 		this.GiveDefaultKit();
@@ -233,13 +292,13 @@ public class ChangeAbilityWar extends WinnableGame {
 			NoHunger.setPeriod(1);
 			NoHunger.StartTimer();
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4¹è°íÇÄ ¹«Á¦ÇÑ&cÀÌ Àû¿ëµÇÁö ¾Ê½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ë°°ê³ í”” ë¬´ì œí•œ&cì´ ì ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 		}
 		
 		if(Invincible) {
 			getInvincibility().Start(false);
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ÃÊ¹İ ¹«Àû&cÀÌ Àû¿ëµÇÁö ¾Ê½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ì´ˆë°˜ ë¬´ì &cì´ ì ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			for(Participant participant : this.getParticipants()) {
 				if(participant.hasAbility()) {
 					participant.getAbility().setRestricted(false);
@@ -248,9 +307,9 @@ public class ChangeAbilityWar extends WinnableGame {
 		}
 		
 		if(AbilityWarSettings.getInfiniteDurability()) {
-			Bukkit.getPluginManager().registerEvents(infiniteDurability, AbilityWar.getPlugin());
+			registerListener(infiniteDurability);
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4³»±¸µµ ¹«Á¦ÇÑ&cÀÌ Àû¿ëµÇÁö ¾Ê½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ë‚´êµ¬ë„ ë¬´ì œí•œ&cì´ ì ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 		}
 		
 		for(World w : Bukkit.getWorlds()) {
@@ -265,7 +324,7 @@ public class ChangeAbilityWar extends WinnableGame {
 	}
 	
 	/**
-	 * ±âº» Å¶ À¯Àú Áö±Ş
+	 * ê¸°ë³¸ í‚· ìœ ì € ì§€ê¸‰
 	 */
 	@Override
 	public void GiveDefaultKit(Player p) {
@@ -290,9 +349,9 @@ public class ChangeAbilityWar extends WinnableGame {
 	protected void onVictory(Participant... participants) {
 		Messager.clearChat();
 		StringBuilder builder = new StringBuilder();
-		builder.append(ChatColor.translateAlternateColorCodes('&', "&5&l¿ì½ÂÀÚ&f: "));
+		builder.append(ChatColor.translateAlternateColorCodes('&', "&5&lìš°ìŠ¹ì&f: "));
 		
-		StringJoiner joiner = new StringJoiner("¡×f, ¡×d", "¡×d", "¡×f.");
+		StringJoiner joiner = new StringJoiner("Â§f, Â§d", "Â§d", "Â§f.");
 		for(Participant participant : participants) {
 			Player p = participant.getPlayer();
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
@@ -337,7 +396,6 @@ public class ChangeAbilityWar extends WinnableGame {
 	@Override
 	protected void onGameEnd() {
 		lifeObjective.unregister();
-		HandlerList.unregisterAll(infiniteDurability);
 	}
 
 }

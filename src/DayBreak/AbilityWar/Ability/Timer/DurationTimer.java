@@ -13,13 +13,13 @@ import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
- * Duration Timer (Áö¼Ó½Ã°£ Å¸ÀÌ¸Ó)
- * @author DayBreak »õº®
+ * Duration Timer (ì§€ì†ì‹œê°„ íƒ€ì´ë¨¸)
+ * @author DayBreak ìƒˆë²½
  */
 abstract public class DurationTimer extends TimerBase {
 
 	/**
-	 * Áö¼Ó½Ã°£ ÃÊ±âÈ­
+	 * ì§€ì†ì‹œê°„ ì´ˆê¸°í™”
 	 */
 	public static void ResetDuration() {
 		TimerBase.StopTasks(DurationTimer.class);
@@ -51,7 +51,7 @@ abstract public class DurationTimer extends TimerBase {
 	
 	public boolean isDuration() {
 		if(isTimerRunning()) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6Áö¼Ó ½Ã°£ &f" + NumberUtil.parseTimeString(this.getFixedCount())));
+			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6ì§€ì† ì‹œê°„ &f" + NumberUtil.parseTimeString(this.getFixedCount())));
 		}
 		
 		return isTimerRunning();
@@ -85,16 +85,16 @@ abstract public class DurationTimer extends TimerBase {
 		if(target != null) {
 			this.DurationProcess(Seconds);
 			
-			Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&6Áö¼Ó ½Ã°£ &f: &e" + NumberUtil.parseTimeString(this.getFixedCount())), 0, 25, 0);
+			Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&6ì§€ì† ì‹œê°„ &f: &e" + NumberUtil.parseTimeString(this.getFixedCount())), 0, 25, 0);
 			actionbar.sendTo(target);
 			
 			if(this.getFixedCount() == (Duration / 2) && !Counted.contains(this.getFixedCount())) {
 				Counted.add(this.getFixedCount());
-				Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6Áö¼Ó ½Ã°£ &f" + NumberUtil.parseTimeString(this.getFixedCount())));
+				Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6ì§€ì† ì‹œê°„ &f" + NumberUtil.parseTimeString(this.getFixedCount())));
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
 			} else if(this.getFixedCount() <= 5 && this.getFixedCount() >= 1 && !Counted.contains(this.getFixedCount())) {
 				Counted.add(this.getFixedCount());
-				Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6Áö¼Ó ½Ã°£ &f" + NumberUtil.parseTimeString(this.getFixedCount())));
+				Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6ì§€ì† ì‹œê°„ &f" + NumberUtil.parseTimeString(this.getFixedCount())));
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
 			}
 		}
@@ -111,7 +111,7 @@ abstract public class DurationTimer extends TimerBase {
 				CooldownTimer.StartTimer();
 			}
 			
-			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6Áö¼Ó ½Ã°£&fÀÌ Á¾·áµÇ¾ú½À´Ï´Ù."));
+			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6ì§€ì† ì‹œê°„&fì´ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤."));
 		}
 	}
 	

@@ -21,11 +21,11 @@ import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "°ËÀº ¾çÃÊ", Rank = Rank.A, Species = Species.OTHERS)
+@AbilityManifest(Name = "ê²€ì€ ì–‘ì´ˆ", Rank = Rank.A, Species = Species.OTHERS)
 public class BlackCandle extends AbilityBase {
 
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 35,
-			"# µ¥¹ÌÁö¸¦ ¹Ş¾ÒÀ» ½Ã Ã¼·ÂÀ» È¸º¹ÇÒ È®·ü") {
+			"# ë°ë¯¸ì§€ë¥¼ ë°›ì•˜ì„ ì‹œ ì²´ë ¥ì„ íšŒë³µí•  í™•ë¥ ") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -36,8 +36,8 @@ public class BlackCandle extends AbilityBase {
 
 	public BlackCandle(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fµğ¹öÇÁ¸¦ ¹ŞÁö ¾ÊÀ¸¸ç, ½ºÅÏ °ø°İÀ» ¹ŞÁö ¾Ê½À´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&f¶ÇÇÑ, µ¥¹ÌÁö¸¦ ¹Ş¾ÒÀ» ¶§ " + ChanceConfig.getValue() + "% È®·ü·Î Ã¼·ÂÀ» 1.5Ä­ È¸º¹ÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fë””ë²„í”„ë¥¼ ë°›ì§€ ì•Šìœ¼ë©°, ìŠ¤í„´ ê³µê²©ì„ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fë˜í•œ, ë°ë¯¸ì§€ë¥¼ ë°›ì•˜ì„ ë•Œ " + ChanceConfig.getValue() + "% í™•ë¥ ë¡œ ì²´ë ¥ì„ 1.5ì¹¸ íšŒë³µí•©ë‹ˆë‹¤."));
 	}
 
 	private TimerBase NoDebuff = new TimerBase() {

@@ -18,11 +18,11 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 
-@AbilityManifest(Name = "Ä«¿À½º", Rank = Rank.S, Species = Species.GOD)
+@AbilityManifest(Name = "ì¹´ì˜¤ìŠ¤", Rank = Rank.S, Species = Species.GOD)
 public class Chaos extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,7 +32,7 @@ public class Chaos extends AbilityBase {
 	};
 	
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Chaos.class, "Duration", 5,
-			"# ´É·Â Áö¼Ó ½Ã°£") {
+			"# ëŠ¥ë ¥ ì§€ì† ì‹œê°„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -42,7 +42,7 @@ public class Chaos extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Chaos.class, "Distance", 5,
-			"# °Å¸® ¼³Á¤") {
+			"# ê±°ë¦¬ ì„¤ì •") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -53,9 +53,9 @@ public class Chaos extends AbilityBase {
 
 	public Chaos(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f½ÃÀÛÀÇ ½Å Ä«¿À½º."),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é 5ÃÊ°£ Â£Àº ¾ÏÈæ ¼ÓÀ¸·Î ÁÖº¯ÀÇ »ı¸íÃ¼µéÀ»"),
-				ChatColor.translateAlternateColorCodes('&', "&f¸ğµÎ ²ø¾î´ç±é´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fì‹œì‘ì˜ ì‹  ì¹´ì˜¤ìŠ¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ 5ì´ˆê°„ ì§™ì€ ì•”í‘ ì†ìœ¼ë¡œ ì£¼ë³€ì˜ ìƒëª…ì²´ë“¤ì„"),
+				ChatColor.translateAlternateColorCodes('&', "&fëª¨ë‘ ëŒì–´ë‹¹ê¹ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

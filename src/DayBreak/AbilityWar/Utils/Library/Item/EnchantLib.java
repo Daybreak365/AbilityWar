@@ -7,8 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * ÀÎÃ¾Æ® ¶óÀÌºê·¯¸®
- * @author DayBreak »õº®
+ * ì¸ì²¸íŠ¸ ë¼ì´ë¸ŒëŸ¬ë¦¬
+ * @author DayBreak ìƒˆë²½
  * @version 1.2 (Minecraft 1.14)
  */
 public class EnchantLib {
@@ -69,9 +69,9 @@ public class EnchantLib {
 		}
 		
 		/**
-		 * ¾ÆÀÌÅÛ¿¡ ÀÎÃ¾Æ®¸¦ Ãß°¡ÇÕ´Ï´Ù.
-		 * @param item		ÀÎÃ¾Æ®¸¦ Ãß°¡ÇÒ ¾ÆÀÌÅÛ
-		 * @param level		ÀÎÃ¾Æ® ·¹º§
+		 * ì•„ì´í…œì— ì¸ì²¸íŠ¸ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+		 * @param item		ì¸ì²¸íŠ¸ë¥¼ ì¶”ê°€í•  ì•„ì´í…œ
+		 * @param level		ì¸ì²¸íŠ¸ ë ˆë²¨
 		 */
 		public ItemStack addEnchantment(ItemStack item, int level) {
 			if(enchantment != null) {
@@ -82,9 +82,9 @@ public class EnchantLib {
 		}
 		
 		/**
-		 * ¾ÆÀÌÅÛ¿¡ ÀÎÃ¾Æ®¸¦ Ãß°¡ÇÕ´Ï´Ù.
-		 * @param item		ÀÎÃ¾Æ®¸¦ Ãß°¡ÇÒ ¾ÆÀÌÅÛ
-		 * @param level		ÀÎÃ¾Æ® ·¹º§
+		 * ì•„ì´í…œì— ì¸ì²¸íŠ¸ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+		 * @param item		ì¸ì²¸íŠ¸ë¥¼ ì¶”ê°€í•  ì•„ì´í…œ
+		 * @param level		ì¸ì²¸íŠ¸ ë ˆë²¨
 		 */
 		public ItemStack addUnsafeEnchantment(ItemStack item, int level) {
 			if(enchantment != null) {
@@ -95,8 +95,8 @@ public class EnchantLib {
 		}
 
 		/**
-		 * ¾ÆÀÌÅÛ¿¡¼­ ÀÎÃ¾Æ®¸¦ Á¦°ÅÇÕ´Ï´Ù.
-		 * @param item		ÀÎÃ¾Æ®¸¦ Á¦°ÅÇÒ ¾ÆÀÌÅÛ
+		 * ì•„ì´í…œì—ì„œ ì¸ì²¸íŠ¸ë¥¼ ì œê±°í•©ë‹ˆë‹¤.
+		 * @param item		ì¸ì²¸íŠ¸ë¥¼ ì œê±°í•  ì•„ì´í…œ
 		 */
 		public ItemStack removeEnchantment(ItemStack item) {
 			if(enchantment != null) {
@@ -107,9 +107,9 @@ public class EnchantLib {
 		}
 
 		/**
-		 * ¾ÆÀÌÅÛ¿¡ ºÎ¿©µÈ ÀÎÃ¾Æ®ÀÇ ·¹º§À» È®ÀÎÇÕ´Ï´Ù.
-		 * ÇöÀç ¼­¹ö ¹öÀü¿¡¼­ »ç¿ëÇÒ ¼ö ¾ø´Â ÀÎÃ¾Æ®ÀÏ °æ¿ì -1À» ¹İÈ¯ÇÕ´Ï´Ù.
-		 * @param item		ÀÎÃ¾Æ® ·¹º§À» È®ÀÎÇÒ ¾ÆÀÌÅÛ
+		 * ì•„ì´í…œì— ë¶€ì—¬ëœ ì¸ì²¸íŠ¸ì˜ ë ˆë²¨ì„ í™•ì¸í•©ë‹ˆë‹¤.
+		 * í˜„ì¬ ì„œë²„ ë²„ì „ì—ì„œ ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” ì¸ì²¸íŠ¸ì¼ ê²½ìš° -1ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+		 * @param item		ì¸ì²¸íŠ¸ ë ˆë²¨ì„ í™•ì¸í•  ì•„ì´í…œ
 		 */
 		public int getEnchantmentLevel(ItemStack item) {
 			if(enchantment != null) {

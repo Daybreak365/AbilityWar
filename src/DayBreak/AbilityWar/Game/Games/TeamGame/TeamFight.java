@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 import DayBreak.AbilityWar.AbilityWar;
@@ -21,6 +20,7 @@ import DayBreak.AbilityWar.Game.Games.GameCreditEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.TeamGame;
 import DayBreak.AbilityWar.Game.Manager.AbilityList;
+import DayBreak.AbilityWar.Game.Manager.DeathManager;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
 import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Game.Script.Script;
@@ -29,7 +29,7 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@GameManifest(Name = "ÆÀ ÀüÅõ", Description = {"¡×f´É·ÂÀÚ ÀüÀïÀ» ÆÀ ´ëÇ×ÀüÀ¸·Î ÇÃ·¹ÀÌÇÒ ¼ö ÀÖ½À´Ï´Ù."})
+@GameManifest(Name = "íŒ€ ì „íˆ¬", Description = {"Â§fëŠ¥ë ¥ì ì „ìŸì„ íŒ€ ëŒ€í•­ì „ìœ¼ë¡œ í”Œë ˆì´í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."})
 public class TeamFight extends TeamGame {
 
 	public TeamFight() {
@@ -44,7 +44,7 @@ public class TeamFight extends TeamGame {
 		
 		@Override
 		public void onStart() {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a¹è°íÇÄ ¹«Á¦ÇÑÀÌ Àû¿ëµË´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&aë°°ê³ í”” ë¬´ì œí•œì´ ì ìš©ë©ë‹ˆë‹¤."));
 		}
 		
 		@Override
@@ -65,7 +65,7 @@ public class TeamFight extends TeamGame {
 				broadcastPlayerList();
 				if(getParticipants().size() > 0 && getParticipants().size() % 2 != 0) {
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cÆÀ ÀüÅõ´Â 2¸í ÀÌ»óÀÇ Â¦¼ö ÀÎ¿ø¿¡¼­¸¸ ÇÃ·¹ÀÌÇÒ ¼ö ÀÖ½À´Ï´Ù."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cíŒ€ ì „íˆ¬ëŠ” 2ëª… ì´ìƒì˜ ì§ìˆ˜ ì¸ì›ì—ì„œë§Œ í”Œë ˆì´í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."));
 				}
 				break;
 			case 5:
@@ -83,38 +83,38 @@ public class TeamFight extends TeamGame {
 				break;
 			case 13:
 				if(AbilityWarSettings.getDrawAbility()) {
-					//´É·Â ÇÒ´ç ½ÃÀÛ
+					//ëŠ¥ë ¥ í• ë‹¹ ì‹œì‘
 					this.startAbilitySelect();
 				}
 				break;
 			case 15:
 				if(AbilityWarSettings.getDrawAbility()) {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f¸ğµç Âü°¡ÀÚ°¡ ´É·ÂÀ» &bÈ®Á¤&fÇß½À´Ï´Ù."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fëª¨ë“  ì°¸ê°€ìê°€ ëŠ¥ë ¥ì„ &bí™•ì •&fí–ˆìŠµë‹ˆë‹¤."));
 				} else {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f´É·ÂÀÚ °ÔÀÓ ¼³Á¤¿¡ µû¶ó &b´É·Â&fÀ» ÃßÃ·ÇÏÁö ¾Ê½À´Ï´Ù."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fëŠ¥ë ¥ì ê²Œì„ ì„¤ì •ì— ë”°ë¼ &bëŠ¥ë ¥&fì„ ì¶”ì²¨í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 				}
 				break;
 			case 17:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&eÀá½Ã ÈÄ °ÔÀÓÀÌ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&eì ì‹œ í›„ ê²Œì„ì´ ì‹œì‘ë©ë‹ˆë‹¤."));
 				break;
 			case 20:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e°ÔÀÓÀÌ &c5&eÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&eê²Œì„ì´ &c5&eì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 21:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e°ÔÀÓÀÌ &c4&eÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&eê²Œì„ì´ &c4&eì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 22:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e°ÔÀÓÀÌ &c3&eÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&eê²Œì„ì´ &c3&eì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 23:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e°ÔÀÓÀÌ &c2&eÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&eê²Œì„ì´ &c2&eì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 24:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e°ÔÀÓÀÌ &c1&eÃÊ ÈÄ¿¡ ½ÃÀÛµË´Ï´Ù."));
+				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&eê²Œì„ì´ &c1&eì´ˆ í›„ì— ì‹œì‘ë©ë‹ˆë‹¤."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 25:
@@ -128,12 +128,12 @@ public class TeamFight extends TeamGame {
 		
         ArrayList<String> msg = new ArrayList<String>();
 		
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==== &e°ÔÀÓ Âü¿©ÀÚ ¸ñ·Ï &6===="));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==== &eê²Œì„ ì°¸ì—¬ì ëª©ë¡ &6===="));
 		for(Participant p : getParticipants()) {
 			Count++;
 			msg.add(ChatColor.translateAlternateColorCodes('&', "&a" + Count + ". &f" + p.getPlayer().getName()));
 		}
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&eÃÑ ÀÎ¿ø¼ö : " + Count + "¸í"));
+		msg.add(ChatColor.translateAlternateColorCodes('&', "&eì´ ì¸ì›ìˆ˜ : " + Count + "ëª…"));
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
 		
 		Messager.broadcastStringList(msg);
@@ -141,10 +141,10 @@ public class TeamFight extends TeamGame {
 	
 	public void broadcastPluginDescription() {
 		ArrayList<String> msg = Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6´É·ÂÀÚ ÀüÀï"),
-				ChatColor.translateAlternateColorCodes('&', "&e¹öÀü &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-				ChatColor.translateAlternateColorCodes('&', "&b°³¹ßÀÚ &7: &fDayBreak »õº®"),
-				ChatColor.translateAlternateColorCodes('&', "&9µğ½ºÄÚµå &7: &fDayBreak&7#5908"));
+				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6ëŠ¥ë ¥ì ì „ìŸ"),
+				ChatColor.translateAlternateColorCodes('&', "&eë²„ì „ &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
+				ChatColor.translateAlternateColorCodes('&', "&bê°œë°œì &7: &fDayBreak ìƒˆë²½"),
+				ChatColor.translateAlternateColorCodes('&', "&9ë””ìŠ¤ì½”ë“œ &7: &fDayBreak&7#5908"));
 		
 		GameCreditEvent event = new GameCreditEvent();
 		Bukkit.getPluginManager().callEvent(event);
@@ -158,18 +158,18 @@ public class TeamFight extends TeamGame {
 	
 	public void broadcastAbilityReady() {
 		ArrayList<String> msg = Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&fÇÃ·¯±×ÀÎ¿¡ ÃÑ &b" + AbilityList.nameValues().size() + "°³&fÀÇ ´É·ÂÀÌ µî·ÏµÇ¾î ÀÖ½À´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&7´É·ÂÀ» ¹«ÀÛÀ§·Î ÇÒ´çÇÕ´Ï´Ù..."));
+				ChatColor.translateAlternateColorCodes('&', "&fí”ŒëŸ¬ê·¸ì¸ì— ì´ &b" + AbilityList.nameValues().size() + "ê°œ&fì˜ ëŠ¥ë ¥ì´ ë“±ë¡ë˜ì–´ ìˆìŠµë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&7ëŠ¥ë ¥ì„ ë¬´ì‘ìœ„ë¡œ í• ë‹¹í•©ë‹ˆë‹¤..."));
 		
 		Messager.broadcastStringList(msg);
 	}
 	
 	public void GameStart() {
 		Messager.broadcastStringList(Messager.getStringList(
-				ChatColor.translateAlternateColorCodes('&', "&e¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á"),
-				ChatColor.translateAlternateColorCodes('&', "&f             &cAbilityWar &f- &6´É·ÂÀÚ ÀüÀï  "),
-				ChatColor.translateAlternateColorCodes('&', "&f                    °ÔÀÓ ½ÃÀÛ                "),
-				ChatColor.translateAlternateColorCodes('&', "&e¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á¡á")));
+				ChatColor.translateAlternateColorCodes('&', "&eâ– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– "),
+				ChatColor.translateAlternateColorCodes('&', "&f             &cAbilityWar &f- &6ëŠ¥ë ¥ì ì „ìŸ  "),
+				ChatColor.translateAlternateColorCodes('&', "&f                    ê²Œì„ ì‹œì‘                "),
+				ChatColor.translateAlternateColorCodes('&', "&eâ– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– â– ")));
 		
 		this.GiveDefaultKit();
 		
@@ -183,13 +183,13 @@ public class TeamFight extends TeamGame {
 			NoHunger.setPeriod(1);
 			NoHunger.StartTimer();
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4¹è°íÇÄ ¹«Á¦ÇÑ&cÀÌ Àû¿ëµÇÁö ¾Ê½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ë°°ê³ í”” ë¬´ì œí•œ&cì´ ì ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 		}
 		
 		if(Invincible) {
 			getInvincibility().Start(false);
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ÃÊ¹İ ¹«Àû&cÀÌ Àû¿ëµÇÁö ¾Ê½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ì´ˆë°˜ ë¬´ì &cì´ ì ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 			for(Participant participant : this.getParticipants()) {
 				if(participant.hasAbility()) {
 					participant.getAbility().setRestricted(false);
@@ -198,9 +198,9 @@ public class TeamFight extends TeamGame {
 		}
 		
 		if(AbilityWarSettings.getInfiniteDurability()) {
-			Bukkit.getPluginManager().registerEvents(infiniteDurability, AbilityWar.getPlugin());
+			registerListener(infiniteDurability);
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4³»±¸µµ ¹«Á¦ÇÑ&cÀÌ Àû¿ëµÇÁö ¾Ê½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4ë‚´êµ¬ë„ ë¬´ì œí•œ&cì´ ì ìš©ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 		}
 		
 		for(World w : Bukkit.getWorlds()) {
@@ -215,7 +215,7 @@ public class TeamFight extends TeamGame {
 	}
 	
 	/**
-	 * ±âº» Å¶ À¯Àú Áö±Ş
+	 * ê¸°ë³¸ í‚· ìœ ì € ì§€ê¸‰
 	 */
 	@Override
 	public void GiveDefaultKit(Player p) {
@@ -287,18 +287,18 @@ public class TeamFight extends TeamGame {
 							abilities.remove(abilityClass);
 							
 							Messager.sendStringList(p, Messager.getStringList(
-									ChatColor.translateAlternateColorCodes('&', "&a´ç½Å¿¡°Ô ´É·ÂÀÌ ÇÒ´çµÇ¾ú½À´Ï´Ù. &e/ability check&f·Î È®ÀÎ ÇÒ ¼ö ÀÖ½À´Ï´Ù."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f¸í·É¾î¸¦ »ç¿ëÇÏ¸é ´É·ÂÀ» È®Á¤ÇÕ´Ï´Ù."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f¸í·É¾î¸¦ »ç¿ëÇÏ¸é ´É·ÂÀ» º¯°æÇÒ ¼ö ÀÖ½À´Ï´Ù.")));
+									ChatColor.translateAlternateColorCodes('&', "&aë‹¹ì‹ ì—ê²Œ ëŠ¥ë ¥ì´ í• ë‹¹ë˜ì—ˆìŠµë‹ˆë‹¤. &e/ability check&fë¡œ í™•ì¸ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."),
+									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &fëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë©´ ëŠ¥ë ¥ì„ í™•ì •í•©ë‹ˆë‹¤."),
+									ChatColor.translateAlternateColorCodes('&', "&e/ability no &fëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë©´ ëŠ¥ë ¥ì„ ë³€ê²½í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.")));
 						} catch (Exception e) {
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f´Ô¿¡°Ô ´É·ÂÀ» ÇÒ´çÇÏ´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¹®Á¦°¡ ¹ß»ıÇÑ ´É·Â: &b" + abilityClass.getName()));
+							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&fë‹˜ì—ê²Œ ëŠ¥ë ¥ì„ í• ë‹¹í•˜ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
+							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fë¬¸ì œê°€ ë°œìƒí•œ ëŠ¥ë ¥: &b" + abilityClass.getName()));
 						}
 					}
 				} else {
-					Messager.broadcastErrorMessage("»ç¿ë °¡´ÉÇÑ ´É·ÂÀÇ ¼ö°¡ Âü°¡ÀÚÀÇ ¼öº¸´Ù Àû¾î °ÔÀÓÀ» Á¾·áÇÕ´Ï´Ù.");
+					Messager.broadcastErrorMessage("ì‚¬ìš© ê°€ëŠ¥í•œ ëŠ¥ë ¥ì˜ ìˆ˜ê°€ ì°¸ê°€ìì˜ ìˆ˜ë³´ë‹¤ ì ì–´ ê²Œì„ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.");
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7°ÔÀÓÀÌ ÃÊ±âÈ­µÇ¾ú½À´Ï´Ù."));
+					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7ê²Œì„ì´ ì´ˆê¸°í™”ë˜ì—ˆìŠµë‹ˆë‹¤."));
 				}
 			}
 			
@@ -321,12 +321,12 @@ public class TeamFight extends TeamGame {
 							return true;
 						} catch (Exception e) {
 							e.printStackTrace();
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f´ÔÀÇ ´É·ÂÀ» º¯°æÇÏ´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¹®Á¦°¡ ¹ß»ıÇÑ ´É·Â: &b" + abilityClass.getName()));
+							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&fë‹˜ì˜ ëŠ¥ë ¥ì„ ë³€ê²½í•˜ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
+							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fë¬¸ì œê°€ ë°œìƒí•œ ëŠ¥ë ¥: &b" + abilityClass.getName()));
 						}
 					}
 				} else {
-					Messager.sendErrorMessage(p, "´É·ÂÀ» º¯°æÇÒ ¼ö ¾ø½À´Ï´Ù.");
+					Messager.sendErrorMessage(p, "ëŠ¥ë ¥ì„ ë³€ê²½í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 				}
 				
 				return false;
@@ -344,9 +344,7 @@ public class TeamFight extends TeamGame {
 	}
 	
 	@Override
-	protected void onGameEnd() {
-		HandlerList.unregisterAll(infiniteDurability);
-	}
+	protected void onGameEnd() {}
 
 	@Override
 	protected List<Team> setupTeams() {
@@ -356,11 +354,16 @@ public class TeamFight extends TeamGame {
 		Collections.shuffle(participants, new Random());
 		
 		List<Participant> blueMembers = new ArrayList<>(participants.subList(0, (size + 1) / 2));
-		Team blueTeam = this.newTeam("¡×bÆÄ¶õÆÀ", blueMembers);
+		Team blueTeam = this.newTeam("Â§bíŒŒë€íŒ€", blueMembers);
 		List<Participant> redMembers = new ArrayList<>(participants.subList((size + 1) / 2, size));
-		Team redTeam = this.newTeam("¡×c»¡°£ÆÀ", redMembers);
+		for(Participant p : redMembers) blueTeam.addMember(p);
 		
-		return Arrays.asList(blueTeam, redTeam);
+		return Arrays.asList(blueTeam);
+	}
+
+	@Override
+	protected DeathManager setupDeathManager() {
+		return new DeathManager(this);
 	}
 	
 }

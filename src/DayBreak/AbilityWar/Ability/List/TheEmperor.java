@@ -14,12 +14,12 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "È²Á¦", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "í™©ì œ", Rank = Rank.A, Species = Species.HUMAN)
 public class TheEmperor extends AbilityBase {
 
 	public static SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>(TheEmperor.class, "DamageDecrease", 20, 
-			"# °ø°İ ÇÇÇØ °¨¼Ò·®",
-			"# 10À¸·Î ¼³Á¤ÇÏ¸é °ø°İÀ» ¹Ş¾ÒÀ» ¶§ ÀüÃ¼ ´ë¹ÌÁöÀÇ 90%¸¦ ¹Ş½À´Ï´Ù.") {
+			"# ê³µê²© í”¼í•´ ê°ì†ŒëŸ‰",
+			"# 10ìœ¼ë¡œ ì„¤ì •í•˜ë©´ ê³µê²©ì„ ë°›ì•˜ì„ ë•Œ ì „ì²´ ëŒ€ë¯¸ì§€ì˜ 90%ë¥¼ ë°›ìŠµë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -30,8 +30,8 @@ public class TheEmperor extends AbilityBase {
 	
 	public TheEmperor(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f´À¸®°í Ç°À§ÀÖ°Ô °É¾î°¡¸ç °ø°İ ÇÇÇØ°¡ ÀÏÁ¤·® °¨¼ÒÇÕ´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¼·ÂÀÌ ÇÑÄ­ ¹İ ÀÌÇÏÀÏ ¶§ °ø°İ ÇÇÇØ¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fëŠë¦¬ê³  í’ˆìœ„ìˆê²Œ ê±¸ì–´ê°€ë©° ê³µê²© í”¼í•´ê°€ ì¼ì •ëŸ‰ ê°ì†Œí•©ë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fì²´ë ¥ì´ í•œì¹¸ ë°˜ ì´í•˜ì¼ ë•Œ ê³µê²© í”¼í•´ë¥¼ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 	}
 	
 	private TimerBase Passive = new TimerBase() {

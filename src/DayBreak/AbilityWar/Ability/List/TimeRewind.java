@@ -27,11 +27,11 @@ import DayBreak.AbilityWar.Utils.Data.PushingArray;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "½Ã°£ ¿ªÇà", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì‹œê°„ ì—­í–‰", Rank = Rank.S, Species = Species.HUMAN)
 public class TimeRewind extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -41,7 +41,7 @@ public class TimeRewind extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> TimeConfig = new SettingObject<Integer>(TimeRewind.class, "Time", 5, 
-			"# ´É·ÂÀ» »ç¿ëÇßÀ» ¶§ ¸îÃÊ ÀüÀ¸·Î µ¹¾Æ°¥Áö ¼³Á¤ÇÕ´Ï´Ù.") {
+			"# ëŠ¥ë ¥ì„ ì‚¬ìš©í–ˆì„ ë•Œ ëª‡ì´ˆ ì „ìœ¼ë¡œ ëŒì•„ê°ˆì§€ ì„¤ì •í•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -52,7 +52,7 @@ public class TimeRewind extends AbilityBase {
 
 	public TimeRewind(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ½Ã°£À» ¿ªÇàÇØ " + TimeConfig.getValue() + "ÃÊ ÀüÀ¸·Î µ¹¾Æ°©´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ì‹œê°„ì„ ì—­í–‰í•´ " + TimeConfig.getValue() + "ì´ˆ ì „ìœ¼ë¡œ ëŒì•„ê°‘ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

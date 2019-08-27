@@ -186,14 +186,10 @@ public class ScriptWizard implements Listener {
 							//시간
 							classList.add(int.class);
 							valueList.add(Time.getValue());
-							
-							//반복 여부
-							classList.add(boolean.class);
-							valueList.add(Loop.getValue());
 
 							//반복 횟수
 							classList.add(int.class);
-							valueList.add(LoopCount.getValue());
+							valueList.add(Loop.getValue() ? (LoopCount.getValue()) : 0);
 							
 							//실행 예고 메시지
 							classList.add(String.class);

@@ -2,17 +2,17 @@ package DayBreak.AbilityWar.Utils;
 
 /**
  * Validate
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public class Validate {
 
 	private Validate() {}
 
 	/**
-	 * °´Ã¼°¡ nullÀÎÁö ¾Æ´ÑÁö È®ÀÎÇÕ´Ï´Ù.
-	 * @param object						null ¿©ºÎ¸¦ È®ÀÎÇÒ °´Ã¼
-	 * @throws NullPointerException			°´Ã¼°¡ nullÀÏ °æ¿ì
-	 * @return								°´Ã¼°¡ nullÀÌ ¾Æ´Ò °æ¿ì ±×´ë·Î ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ê°ì²´ê°€ nullì¸ì§€ ì•„ë‹Œì§€ í™•ì¸í•©ë‹ˆë‹¤.
+	 * @param object						null ì—¬ë¶€ë¥¼ í™•ì¸í•  ê°ì²´
+	 * @throws NullPointerException			ê°ì²´ê°€ nullì¼ ê²½ìš°
+	 * @return								ê°ì²´ê°€ nullì´ ì•„ë‹ ê²½ìš° ê·¸ëŒ€ë¡œ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public static <T> T notNull(T object) throws NullPointerException {
 		if(object == null) throw new NullPointerException();
@@ -22,7 +22,7 @@ public class Validate {
 	public static void MinimumConstant(Class<?> enumClass, int count) throws IllegalArgumentException {
 		if(notNull(enumClass).isEnum()) {
 			if(enumClass.getEnumConstants().length < count) {
-				throw new IllegalArgumentException(enumClass.getName() + "¿¡ ÃÖ¼Ò " + count + "°³ÀÇ »ó¼ö°¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù.");
+				throw new IllegalArgumentException(enumClass.getName() + "ì— ìµœì†Œ " + count + "ê°œì˜ ìƒìˆ˜ê°€ ìˆì–´ì•¼ í•©ë‹ˆë‹¤.");
 			}
 		} else {
 			throw new IllegalArgumentException();

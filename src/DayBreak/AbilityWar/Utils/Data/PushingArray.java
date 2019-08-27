@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Advanced Array
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public class PushingArray<T> {
 	

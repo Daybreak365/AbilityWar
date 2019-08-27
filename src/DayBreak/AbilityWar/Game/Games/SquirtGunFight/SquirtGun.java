@@ -31,22 +31,22 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-@AbilityManifest(Name = "¹°ÃÑ", Rank = Rank.SPECIAL, Species = Species.SPECIAL)
+@AbilityManifest(Name = "ë¬¼ì´", Rank = Rank.SPECIAL, Species = Species.SPECIAL)
 public class SquirtGun extends AbilityBase {
 
 	public SquirtGun(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f¹° ¾È¿¡¼­ ¿õÅ©¸®¸é ºü¸¥ ¼Óµµ·Î ¾ÕÀ¸·Î ³ª¾Æ°©´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÈ°À» ½î¸é ¹°ÃÑÀÌ ³ª°¡¸ç, ÇÃ·¹ÀÌ¾î¸¦ ¸ÂÃß¸é ÇÑ¹æ¿¡ Á×ÀÏ ¼ö ÀÖ½À´Ï´Ù. " + Messager.formatCooldown(3)),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ¹°ÆøÅºÀ» ÅÍ¶ß¸®¸ç, ÁÖº¯ ÇÃ·¹ÀÌ¾îµé¿¡°Ô ÇÇÇØ¸¦ Áİ´Ï´Ù."),
+				ChatColor.translateAlternateColorCodes('&', "&fë¬¼ ì•ˆì—ì„œ ì›…í¬ë¦¬ë©´ ë¹ ë¥¸ ì†ë„ë¡œ ì•ìœ¼ë¡œ ë‚˜ì•„ê°‘ë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fí™œì„ ì˜ë©´ ë¬¼ì´ì´ ë‚˜ê°€ë©°, í”Œë ˆì´ì–´ë¥¼ ë§ì¶”ë©´ í•œë°©ì— ì£½ì¼ ìˆ˜ ìˆìŠµë‹ˆë‹¤. " + Messager.formatCooldown(3)),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ë¬¼í­íƒ„ì„ í„°ëœ¨ë¦¬ë©°, ì£¼ë³€ í”Œë ˆì´ì–´ë“¤ì—ê²Œ í”¼í•´ë¥¼ ì¤ë‹ˆë‹¤."),
 				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(30)),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ÁÂÅ¬¸¯ÇÏ¸é ½ºÆİÁö·Î ÁÖº¯ÀÇ ¹°À» »¡¾ÆµéÀÔ´Ï´Ù. " + Messager.formatCooldown(15)),
-				ChatColor.translateAlternateColorCodes('&', "&f½Ã¿øÇÑ &e¿©¸§ &fº¸³»¼¼¿ä!"));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ì¢Œí´ë¦­í•˜ë©´ ìŠ¤í€ì§€ë¡œ ì£¼ë³€ì˜ ë¬¼ì„ ë¹¨ì•„ë“¤ì…ë‹ˆë‹¤. " + Messager.formatCooldown(15)),
+				ChatColor.translateAlternateColorCodes('&', "&fì‹œì›í•œ &eì—¬ë¦„ &fë³´ë‚´ì„¸ìš”!"));
 	}
 
-	private CooldownTimer bombCool = new CooldownTimer(this, 30, "¹°ÆøÅº").setActionbarNotice(false);
+	private CooldownTimer bombCool = new CooldownTimer(this, 30, "ë¬¼í­íƒ„").setActionbarNotice(false);
 
-	private CooldownTimer spongeCool = new CooldownTimer(this, 15, "½ºÆİÁö").setActionbarNotice(false);
+	private CooldownTimer spongeCool = new CooldownTimer(this, 15, "ìŠ¤í€ì§€").setActionbarNotice(false);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -87,7 +87,7 @@ public class SquirtGun extends AbilityBase {
 		return false;
 	}
 
-	CooldownTimer gunCool = new CooldownTimer(this, 3, "¹°ÃÑ");
+	CooldownTimer gunCool = new CooldownTimer(this, 3, "ë¬¼ì´");
 	
 	List<Arrow> arrows = new ArrayList<Arrow>();
 	

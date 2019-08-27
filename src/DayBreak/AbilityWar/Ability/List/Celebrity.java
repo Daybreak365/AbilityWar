@@ -15,11 +15,11 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
-@AbilityManifest(Name = "À¯¸í ÀÎ»ç", Rank = Rank.D, Species = Species.HUMAN)
+@AbilityManifest(Name = "ìœ ëª… ì¸ì‚¬", Rank = Rank.D, Species = Species.HUMAN)
 public class Celebrity extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 25,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -30,7 +30,7 @@ public class Celebrity extends AbilityBase {
 
 	public Celebrity(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ¸ğµç ÇÃ·¹ÀÌ¾î°¡ ÀÚ½ÅÀÇ ¹æÇâÀ» ¹Ù¶óº¾´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ëª¨ë“  í”Œë ˆì´ì–´ê°€ ìì‹ ì˜ ë°©í–¥ì„ ë°”ë¼ë´…ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -42,7 +42,7 @@ public class Celebrity extends AbilityBase {
 				if(!Cool.isCooldown()) {
 					
 					if(AbilityWarThread.isGameTaskRunning()) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f¾È³çÇÏ¼¼¿ä, ¿©·¯ºĞ! Àü ¼¼°èÀûÀ¸·Î &c¼±Ç³ÀûÀÎ &fÀÎ±â¸¦ ²ø°íÀÖ´Â &e" + getPlayer().getName() + "&fÀÔ´Ï´Ù! @==(^o^)@"));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fì•ˆë…•í•˜ì„¸ìš”, ì—¬ëŸ¬ë¶„! ì „ ì„¸ê³„ì ìœ¼ë¡œ &cì„ í’ì ì¸ &fì¸ê¸°ë¥¼ ëŒê³ ìˆëŠ” &e" + getPlayer().getName() + "&fì…ë‹ˆë‹¤! @==(^o^)@"));
 						for(Participant participant : AbilityWarThread.getGame().getParticipants()) {
 							Player p = participant.getPlayer();
 							if(!p.equals(getPlayer())) {

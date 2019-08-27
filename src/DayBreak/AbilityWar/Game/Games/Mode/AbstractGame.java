@@ -57,8 +57,8 @@ public abstract class AbstractGame extends Timer implements Listener {
 	private final Map<String, Participant> participants = initParticipants();
 	
 	/**
-	 * {@link String}ÀÌ keyÀÌ°í {@link Participant}°¡ valueÀÎ ¸ÊÀÇ ÃÊ±â°ªÀ» ¼³Á¤ÇÏ±â À§ÇØ »ç¿ëµÇ´Â ¸Ş¼ÒµåÀÔ´Ï´Ù.
-	 * @return ¸ÊÀÌ Unmodifiable {@link Map}À¸·Î ¹İÈ¯µÇ¾î ¿ä¼Ò°¡ º¯°æµÉ ¼ö ¾ø½À´Ï´Ù.
+	 * {@link String}ì´ keyì´ê³  {@link Participant}ê°€ valueì¸ ë§µì˜ ì´ˆê¸°ê°’ì„ ì„¤ì •í•˜ê¸° ìœ„í•´ ì‚¬ìš©ë˜ëŠ” ë©”ì†Œë“œì…ë‹ˆë‹¤.
+	 * @return ë§µì´ Unmodifiable {@link Map}ìœ¼ë¡œ ë°˜í™˜ë˜ì–´ ìš”ì†Œê°€ ë³€ê²½ë  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
 	 * @throws
 	 */
 	private final Map<String, Participant> initParticipants() {
@@ -68,14 +68,14 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 	
 	/**
-	 * °ÔÀÓ¿¡ Âü°¡ÇÒ {@link Player} {@link List} ÃÊ±ê°ª ¼³Á¤
+	 * ê²Œì„ì— ì°¸ê°€í•  {@link Player} {@link List} ì´ˆê¹ƒê°’ ì„¤ì •
 	 * @NotNull
 	 */
 	protected abstract List<Player> initPlayers();
 
 	private final List<Listener> registeredListeners = new ArrayList<>();
 	/**
-	 * °ÔÀÓÀÌ Á¾·áµÉ ¶§ µî·Ï ÇØÁ¦µÇ¾î¾ß ÇÏ´Â {@link Listener}¸¦ µî·ÏÇÕ´Ï´Ù.
+	 * ê²Œì„ì´ ì¢…ë£Œë  ë•Œ ë“±ë¡ í•´ì œë˜ì–´ì•¼ í•˜ëŠ” {@link Listener}ë¥¼ ë“±ë¡í•©ë‹ˆë‹¤.
 	 */
 	public final void registerListener(Listener listener) {
 		Bukkit.getPluginManager().registerEvents(notNull(listener), AbilityWar.getPlugin());
@@ -132,18 +132,18 @@ public abstract class AbstractGame extends Timer implements Listener {
 	protected abstract void onGameEnd();
 	
 	/**
-	 * °ÔÀÓ ÁøÇà
+	 * ê²Œì„ ì§„í–‰
 	 */
 	protected abstract void progressGame(Integer Seconds);
 	
 	/**
-	 * AbilitySelect ÃÊ±ê°ª ¼³Á¤
-	 * @Nullable ´É·Â ÇÒ´çÀÌ ÇÊ¿äÇÏÁö ¾ÊÀ» °æ¿ì nullÀ» ¹İÈ¯ÇÏ¼¼¿ä.
+	 * AbilitySelect ì´ˆê¹ƒê°’ ì„¤ì •
+	 * @Nullable ëŠ¥ë ¥ í• ë‹¹ì´ í•„ìš”í•˜ì§€ ì•Šì„ ê²½ìš° nullì„ ë°˜í™˜í•˜ì„¸ìš”.
 	 */
 	protected abstract AbilitySelect setupAbilitySelect();
 
 	/**
-	 * DeathManager ÃÊ±ê°ª ¼³Á¤
+	 * DeathManager ì´ˆê¹ƒê°’ ì„¤ì •
 	 * @NotNull
 	 */
 	protected DeathManager setupDeathManager() {
@@ -151,13 +151,13 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 	
 	/**
-	 * ÇÃ·¹ÀÌ¾î¿¡°Ô ±âº» Å¶À» Áö±ŞÇÕ´Ï´Ù.
-	 * @param p	Å¶À» Áö±ŞÇÒ ÇÃ·¹ÀÌ¾î
+	 * í”Œë ˆì´ì–´ì—ê²Œ ê¸°ë³¸ í‚·ì„ ì§€ê¸‰í•©ë‹ˆë‹¤.
+	 * @param p	í‚·ì„ ì§€ê¸‰í•  í”Œë ˆì´ì–´
 	 */
 	public abstract void GiveDefaultKit(Player p);
 	
 	/**
-	 * ¸ğµç ÇÃ·¹ÀÌ¾îµé¿¡°Ô ±âº» Å¶À» Áö±ŞÇÕ´Ï´Ù.
+	 * ëª¨ë“  í”Œë ˆì´ì–´ë“¤ì—ê²Œ ê¸°ë³¸ í‚·ì„ ì§€ê¸‰í•©ë‹ˆë‹¤.
 	 */
 	public void GiveDefaultKit() {
 		for(Participant p : getParticipants()) {
@@ -166,8 +166,8 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * Âü¿©ÀÚ ¸ñ·ÏÀ» ¹İÈ¯ÇÕ´Ï´Ù.
-	 * @return	Âü¿©ÀÚ ¸ñ·Ï
+	 * ì°¸ì—¬ì ëª©ë¡ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @return	ì°¸ì—¬ì ëª©ë¡
 	 */
 	public Collection<Participant> getParticipants() {
 		return participants.values();
@@ -178,10 +178,10 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * {@link Player}¸¦ ±â¹İÀ¸·Î ÇÏ´Â {@link Participant}¸¦ Å½»öÇÕ´Ï´Ù.
-	 * @param player	Å½»öÇÒ ÇÃ·¹ÀÌ¾î
-	 * @return			Á¸ÀçÇÒ °æ¿ì {@link Participant}¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-	 * 					Á¸ÀçÇÏÁö ¾ÊÀ» °æ¿ì nullÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * {@link Player}ë¥¼ ê¸°ë°˜ìœ¼ë¡œ í•˜ëŠ” {@link Participant}ë¥¼ íƒìƒ‰í•©ë‹ˆë‹¤.
+	 * @param player	íƒìƒ‰í•  í”Œë ˆì´ì–´
+	 * @return			ì¡´ì¬í•  ê²½ìš° {@link Participant}ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * 					ì¡´ì¬í•˜ì§€ ì•Šì„ ê²½ìš° nullì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 * @Nullable
 	 */
 	public final Participant getParticipant(final Player player) {
@@ -191,10 +191,10 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * ÇØ´ç {@link UUID}¸¦ °¡Áö°í ÀÖ´Â {@link Player}¸¦ ±â¹İÀ¸·Î ÇÏ´Â {@link Participant}¸¦ Å½»öÇÕ´Ï´Ù.
-	 * @param player	Å½»öÇÒ ÇÃ·¹ÀÌ¾î
-	 * @return			Á¸ÀçÇÒ °æ¿ì {@link Participant}¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-	 * 					Á¸ÀçÇÏÁö ¾ÊÀ» °æ¿ì nullÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * í•´ë‹¹ {@link UUID}ë¥¼ ê°€ì§€ê³  ìˆëŠ” {@link Player}ë¥¼ ê¸°ë°˜ìœ¼ë¡œ í•˜ëŠ” {@link Participant}ë¥¼ íƒìƒ‰í•©ë‹ˆë‹¤.
+	 * @param player	íƒìƒ‰í•  í”Œë ˆì´ì–´
+	 * @return			ì¡´ì¬í•  ê²½ìš° {@link Participant}ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * 					ì¡´ì¬í•˜ì§€ ì•Šì„ ê²½ìš° nullì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 * @Nullable
 	 */
 	public final Participant getParticipant(final UUID uuid) {
@@ -204,16 +204,16 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 	
 	/**
-	 * ´ë»ó ÇÃ·¹ÀÌ¾îÀÇ Âü¿© ¿©ºÎ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-	 * @param p	´ë»ó ÇÃ·¹ÀÌ¾î
-	 * @return	´ë»ó ÇÃ·¹ÀÌ¾îÀÇ Âü¿© ¿©ºÎ
+	 * ëŒ€ìƒ í”Œë ˆì´ì–´ì˜ ì°¸ì—¬ ì—¬ë¶€ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @param p	ëŒ€ìƒ í”Œë ˆì´ì–´
+	 * @return	ëŒ€ìƒ í”Œë ˆì´ì–´ì˜ ì°¸ì—¬ ì—¬ë¶€
 	 */
 	public boolean isParticipating(Player player) {
 		return getParticipant(player) != null;
 	}
 	
 	/**
-	 * DeathManager¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * DeathManagerë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 * @NotNull
 	 */
 	public DeathManager getDeathManager() {
@@ -221,7 +221,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * EffectManager¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * EffectManagerë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 * @NotNull
 	 */
 	public EffectManager getEffectManager() {
@@ -229,7 +229,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * WRECKÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * WRECKì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 * @NotNull
 	 */
 	public WRECK getWRECK() {
@@ -237,7 +237,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * PassiveManagerÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * PassiveManagerì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 * @NotNull
 	 */
 	public PassiveManager getPassiveManager() {
@@ -257,15 +257,15 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	/**
-	 * AbilitySelect¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-	 * @Nullable ´É·Â ÇÒ´ç ÀüÀÌ°Å³ª ´É·Â ÇÒ´ç ±â´ÉÀ» »ç¿ëÇÏÁö ¾ÊÀ» °æ¿ì nullÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * AbilitySelectë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @Nullable ëŠ¥ë ¥ í• ë‹¹ ì „ì´ê±°ë‚˜ ëŠ¥ë ¥ í• ë‹¹ ê¸°ëŠ¥ì„ ì‚¬ìš©í•˜ì§€ ì•Šì„ ê²½ìš° nullì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public AbilitySelect getAbilitySelect() {
 		return abilitySelect;
 	}
 	
 	/**
-	 * Invincibility¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * Invincibilityë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 * @NotNull
 	 */
 	public Invincibility getInvincibility() {
@@ -385,7 +385,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 			boolean Executed = Ability.ActiveSkill(mt, ct);
 
 			if (Executed) {
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&d´É·ÂÀ» »ç¿ëÇÏ¿´½À´Ï´Ù."));
+				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&dëŠ¥ë ¥ì„ ì‚¬ìš©í•˜ì˜€ìŠµë‹ˆë‹¤."));
 			}
 		}
 
@@ -402,10 +402,10 @@ public abstract class AbstractGame extends Timer implements Listener {
 		private AbilityBase ability;
 
 		/**
-		 * ÇÃ·¹ÀÌ¾î¿¡°Ô ÇØ´ç ´É·ÂÀ» ºÎ¿©ÇÕ´Ï´Ù.
-		 * @param p            	´É·ÂÀ» ºÎ¿©ÇÒ ÇÃ·¹ÀÌ¾î
-		 * @param abilityClass 	ºÎ¿©ÇÒ ´É·ÂÀÇ Á¾·ù (´É·Â Å¬·¡½º)
-		 * @throws Exception 	´É·ÂÀ» ºÎ¿©ÇÏ´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´À» °æ¿ì
+		 * í”Œë ˆì´ì–´ì—ê²Œ í•´ë‹¹ ëŠ¥ë ¥ì„ ë¶€ì—¬í•©ë‹ˆë‹¤.
+		 * @param p            	ëŠ¥ë ¥ì„ ë¶€ì—¬í•  í”Œë ˆì´ì–´
+		 * @param abilityClass 	ë¶€ì—¬í•  ëŠ¥ë ¥ì˜ ì¢…ë¥˜ (ëŠ¥ë ¥ í´ë˜ìŠ¤)
+		 * @throws Exception 	ëŠ¥ë ¥ì„ ë¶€ì—¬í•˜ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ì„ ê²½ìš°
 		 */
 		public void setAbility(Class<? extends AbilityBase> abilityClass) throws Exception {
 			if(hasAbility()) removeAbility();
@@ -419,8 +419,8 @@ public abstract class AbstractGame extends Timer implements Listener {
 		}
 
 		/**
-		 * ÇÃ·¹ÀÌ¾î¿¡°Ô ÇØ´ç ´É·ÂÀ» ºÎ¿©ÇÕ´Ï´Ù.
-		 * @param ability	ºÎ¿©ÇÒ ´É·Â
+		 * í”Œë ˆì´ì–´ì—ê²Œ í•´ë‹¹ ëŠ¥ë ¥ì„ ë¶€ì—¬í•©ë‹ˆë‹¤.
+		 * @param ability	ë¶€ì—¬í•  ëŠ¥ë ¥
 		 */
 		public void setAbility(AbilityBase ability) {
 			if(hasAbility()) {
@@ -458,7 +458,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 		private final int changeCount = initChangeCount();
 		
 		/**
-		 * ´É·Â º¯°æ °¡´É È½¼ö¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+		 * ëŠ¥ë ¥ ë³€ê²½ ê°€ëŠ¥ íšŸìˆ˜ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 		 */
 		protected abstract int initChangeCount();
 		
@@ -471,20 +471,20 @@ public abstract class AbstractGame extends Timer implements Listener {
 		}
 		
 		/**
-		 * ´É·ÂÀ» ¼±ÅÃÇÒ {@link Participant} ¸ñ·ÏÀ» ¼³Á¤ÇÕ´Ï´Ù.
+		 * ëŠ¥ë ¥ì„ ì„ íƒí•  {@link Participant} ëª©ë¡ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 		 * @NotNull
 		 */
 		protected abstract Collection<Participant> initSelectors();
 		
 		/**
-		 * ´É·ÂÀ» ¼±ÅÃÇÒ {@link Participant} ¸ñ·ÏÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+		 * ëŠ¥ë ¥ì„ ì„ íƒí•  {@link Participant} ëª©ë¡ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 		 */
 		public final Collection<Participant> getSelectors() {
 			return selectors.keySet();
 		}
 
 		/**
-		 * {@link Participant}¿¡°Ô ³²Àº ´É·Â º¯°æ È½¼ö¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+		 * {@link Participant}ì—ê²Œ ë‚¨ì€ ëŠ¥ë ¥ ë³€ê²½ íšŸìˆ˜ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 		 */
 		private final void setRemainingChangeCount(Participant participant, int count) {
 			selectors.put(participant, count);
@@ -492,16 +492,16 @@ public abstract class AbstractGame extends Timer implements Listener {
 			if(count == 0) {
 				Player p = participant.getPlayer();
 
-				Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&6´É·ÂÀÌ È®Á¤µÇ¼Ì½À´Ï´Ù. ´Ù¸¥ ÇÃ·¹ÀÌ¾î¸¦ ±â´Ù·ÁÁÖ¼¼¿ä."));
+				Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&6ëŠ¥ë ¥ì´ í™•ì •ë˜ì…¨ìŠµë‹ˆë‹¤. ë‹¤ë¥¸ í”Œë ˆì´ì–´ë¥¼ ê¸°ë‹¤ë ¤ì£¼ì„¸ìš”."));
 				
 				Messager.broadcastStringList(Messager.getStringList(
-						ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f´ÔÀÌ ´É·ÂÀ» È®Á¤ÇÏ¼Ì½À´Ï´Ù."),
-						ChatColor.translateAlternateColorCodes('&', "&a³²Àº ÀÎ¿ø &7: &f" + getLeftPlayersCount() + "¸í")));
+						ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&fë‹˜ì´ ëŠ¥ë ¥ì„ í™•ì •í•˜ì…¨ìŠµë‹ˆë‹¤."),
+						ChatColor.translateAlternateColorCodes('&', "&aë‚¨ì€ ì¸ì› &7: &f" + getLeftPlayersCount() + "ëª…")));
 			}
 		}
 
 		/**
-		 * ´É·ÂÀ» ¾ÆÁ÷ °áÁ¤ÇÏÁö ¾ÊÀº Âü°¡ÀÚÀÇ ¼ö¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+		 * ëŠ¥ë ¥ì„ ì•„ì§ ê²°ì •í•˜ì§€ ì•Šì€ ì°¸ê°€ìì˜ ìˆ˜ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 		 */
 		private final int getLeftPlayersCount() {
 			int count = 0;
@@ -510,8 +510,8 @@ public abstract class AbstractGame extends Timer implements Listener {
 		}
 		
 		/**
-		 * {@link Participant}ÀÇ ´É·Â ¼±ÅÃ ¿©ºÎ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-		 * ´É·ÂÀ» ¼±ÅÃÁßÀÎ {@link Participant}°¡ ¾Æ´Ò °æ¿ì false¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+		 * {@link Participant}ì˜ ëŠ¥ë ¥ ì„ íƒ ì—¬ë¶€ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+		 * ëŠ¥ë ¥ì„ ì„ íƒì¤‘ì¸ {@link Participant}ê°€ ì•„ë‹ ê²½ìš° falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 		 */
 		public final boolean hasDecided(final Participant participant) {
 			if(selectors.containsKey(participant)) {
@@ -522,7 +522,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 		}
 
 		/**
-		 * ´É·Â ¼±ÅÃ Áß {@link Participant}ÀÇ ´É·ÂÀ» º¯°æÇÕ´Ï´Ù.
+		 * ëŠ¥ë ¥ ì„ íƒ ì¤‘ {@link Participant}ì˜ ëŠ¥ë ¥ì„ ë³€ê²½í•©ë‹ˆë‹¤.
 		 */
 		public final void alterAbility(Participant participant) {
 			if(isSelector(participant) && !hasDecided(participant)) {
@@ -532,49 +532,49 @@ public abstract class AbstractGame extends Timer implements Listener {
 					
 					if(!hasDecided(participant)) {
 						Messager.sendStringList(p, Messager.getStringList(
-								ChatColor.translateAlternateColorCodes('&', "&a´ç½Å¿¡°Ô ´É·ÂÀÌ ÇÒ´çµÇ¾ú½À´Ï´Ù. &e/ability check&f·Î È®ÀÎ ÇÒ ¼ö ÀÖ½À´Ï´Ù."),
-								ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f¸í·É¾î¸¦ »ç¿ëÇÏ¸é ´É·ÂÀ» È®Á¤ÇÕ´Ï´Ù."),
-								ChatColor.translateAlternateColorCodes('&', "&e/ability no &f¸í·É¾î¸¦ »ç¿ëÇÏ¸é ´É·ÂÀ» º¯°æÇÒ ¼ö ÀÖ½À´Ï´Ù.")));
+								ChatColor.translateAlternateColorCodes('&', "&aë‹¹ì‹ ì—ê²Œ ëŠ¥ë ¥ì´ í• ë‹¹ë˜ì—ˆìŠµë‹ˆë‹¤. &e/ability check&fë¡œ í™•ì¸ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."),
+								ChatColor.translateAlternateColorCodes('&', "&e/ability yes &fëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë©´ ëŠ¥ë ¥ì„ í™•ì •í•©ë‹ˆë‹¤."),
+								ChatColor.translateAlternateColorCodes('&', "&e/ability no &fëª…ë ¹ì–´ë¥¼ ì‚¬ìš©í•˜ë©´ ëŠ¥ë ¥ì„ ë³€ê²½í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.")));
 					} else {
-						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a´ç½ÅÀÇ ´É·ÂÀÌ º¯°æµÇ¾ú½À´Ï´Ù. &e/ability check&f·Î È®ÀÎ ÇÒ ¼ö ÀÖ½À´Ï´Ù."));
+						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&aë‹¹ì‹ ì˜ ëŠ¥ë ¥ì´ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤. &e/ability check&fë¡œ í™•ì¸ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."));
 					}
 				}
 			}
 		}
 
 		/**
-		 * Âü°¡ÀÚµéÀÇ ÃÊ±â ´É·ÂÀ» ¼³Á¤ÇÕ´Ï´Ù.
+		 * ì°¸ê°€ìë“¤ì˜ ì´ˆê¸° ëŠ¥ë ¥ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 		 */
 		protected abstract void drawAbility(Collection<Participant> selectors);
 		
 		/**
-		 * ´É·Â ¼±ÅÃ Áß {@link Participant}ÀÇ ´É·ÂÀ» º¯°æÇÕ´Ï´Ù.
+		 * ëŠ¥ë ¥ ì„ íƒ ì¤‘ {@link Participant}ì˜ ëŠ¥ë ¥ì„ ë³€ê²½í•©ë‹ˆë‹¤.
 		 */
 		protected abstract boolean changeAbility(Participant participant);
 		
 		/**
-		 * ´É·Â ¼±ÅÃ Áß {@link Participant}ÀÇ ´É·ÂÀ» °áÁ¤ÇÕ´Ï´Ù.
-		 * ´É·ÂÀ» °áÁ¤ÇÏ¸é ´õ ÀÌ»ó ´É·ÂÀ» º¯°æÇÒ ¼ö ¾ø½À´Ï´Ù.
+		 * ëŠ¥ë ¥ ì„ íƒ ì¤‘ {@link Participant}ì˜ ëŠ¥ë ¥ì„ ê²°ì •í•©ë‹ˆë‹¤.
+		 * ëŠ¥ë ¥ì„ ê²°ì •í•˜ë©´ ë” ì´ìƒ ëŠ¥ë ¥ì„ ë³€ê²½í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.
 		 */
 		public final void decideAbility(Participant participant) {
 			if(isSelector(participant)) setRemainingChangeCount(participant, 0);
 		}
 		
 		/**
-		 * {@link Participant}°¡ ´É·Â ¼±ÅÃ¿¡ Âü¿©ÇÑ Âü°¡ÀÚÀÎÁöÀÇ ¿©ºÎ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+		 * {@link Participant}ê°€ ëŠ¥ë ¥ ì„ íƒì— ì°¸ì—¬í•œ ì°¸ê°€ìì¸ì§€ì˜ ì—¬ë¶€ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 		 */
 		public final boolean isSelector(Participant participant) {
 			return selectors.containsKey(participant);
 		}
 
 		/**
-		 * ¸ğµç Âü°¡ÀÚÀÇ ´É·ÂÀ» °­Á¦·Î °áÁ¤ÇÕ´Ï´Ù.
-		 * @param admin		Ãâ·ÂÇÒ °ü¸®ÀÚÀÇ ÀÌ¸§
+		 * ëª¨ë“  ì°¸ê°€ìì˜ ëŠ¥ë ¥ì„ ê°•ì œë¡œ ê²°ì •í•©ë‹ˆë‹¤.
+		 * @param admin		ì¶œë ¥í•  ê´€ë¦¬ìì˜ ì´ë¦„
 		 */
 		public final void Skip(String admin) {
 			for(Participant p : getSelectors()) if(!hasDecided(p)) decideAbility(p);
 
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f°ü¸®ÀÚ &e" + admin + "&f´ÔÀÌ ¸ğµç ÇÃ·¹ÀÌ¾îÀÇ ´É·ÂÀ» °­Á¦·Î È®Á¤½ÃÄ×½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&fê´€ë¦¬ì &e" + admin + "&fë‹˜ì´ ëª¨ë“  í”Œë ˆì´ì–´ì˜ ëŠ¥ë ¥ì„ ê°•ì œë¡œ í™•ì •ì‹œì¼°ìŠµë‹ˆë‹¤."));
 			this.StopTimer(false);
 		}
 
@@ -591,8 +591,8 @@ public abstract class AbstractGame extends Timer implements Listener {
 			if(!isEveryoneSelected()) {
 				if(Seconds % 20 == 0) {
 					Messager.broadcastStringList(Messager.getStringList(
-							ChatColor.translateAlternateColorCodes('&', "&c¾ÆÁ÷ ¸ğµç À¯Àú°¡ ´É·ÂÀ» È®Á¤ÇÏÁö ¾Ê¾Ò½À´Ï´Ù."),
-							ChatColor.translateAlternateColorCodes('&', "&c/ability yes³ª /ability no ¸í·É¾î·Î ´É·ÂÀ» È®Á¤ÇØÁÖ¼¼¿ä.")));
+							ChatColor.translateAlternateColorCodes('&', "&cì•„ì§ ëª¨ë“  ìœ ì €ê°€ ëŠ¥ë ¥ì„ í™•ì •í•˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."),
+							ChatColor.translateAlternateColorCodes('&', "&c/ability yesë‚˜ /ability no ëª…ë ¹ì–´ë¡œ ëŠ¥ë ¥ì„ í™•ì •í•´ì£¼ì„¸ìš”.")));
 				}
 			} else {
 				this.StopTimer(false);
@@ -600,7 +600,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 		}
 
 		/**
-		 * ´É·ÂÀ» ¼±ÅÃÁßÀÎ ¸ğµç Âü°¡ÀÚ°¡ ´É·ÂÀ» °áÁ¤Çß´ÂÁöÀÇ ¿©ºÎ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+		 * ëŠ¥ë ¥ì„ ì„ íƒì¤‘ì¸ ëª¨ë“  ì°¸ê°€ìê°€ ëŠ¥ë ¥ì„ ê²°ì •í–ˆëŠ”ì§€ì˜ ì—¬ë¶€ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 		 */
 		private final boolean isEveryoneSelected() {
 			for(Participant Key : getSelectors()) if(!hasDecided(Key)) return false;

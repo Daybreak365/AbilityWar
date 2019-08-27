@@ -31,7 +31,7 @@ public class SpecialThanksGUI implements Listener {
 				new SpecialThank("ecb53e2ffdf34089ae3486cff3fc5f34", "능력 아이디어 제공 및 코드 개선에 도움을 주셨습니다."),
 				new SpecialThank("48b5f9e0ba544368ab4dc6f2be56d9f4", "테스팅에 도움을 주셨습니다."),
 				new SpecialThank("101ceb32a2bc4dbd9d32291c86b66eca", "테스팅에 도움을 주셨습니다."),
-				new SpecialThank("507fc49666fb43489200251f48bf4719", "일부 업데이트에 기여하셨습니다.")
+				new SpecialThank("507fc49666fb43489200251f48bf4719", "몇몇 업데이트에 기여하셨습니다.")
 			};
 	
 	public static class SpecialThank {

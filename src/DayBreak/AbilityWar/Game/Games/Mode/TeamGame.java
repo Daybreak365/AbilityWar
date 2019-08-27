@@ -6,41 +6,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.EventPriority;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.plugin.EventExecutor;
+import org.bukkit.projectiles.ProjectileSource;
 
-import DayBreak.AbilityWar.AbilityWar;
+import DayBreak.AbilityWar.Utils.KoreanUtil;
 import DayBreak.AbilityWar.Utils.Messager;
 
 public abstract class TeamGame extends AbstractGame {
 
 	public TeamGame() {
-		Bukkit.getPluginManager().registerEvent(EntityDamageByEntityEvent.class, this, EventPriority.HIGHEST, new EventExecutor() {
-			@Override
-			public void execute(Listener listener, Event event) throws EventException {
-				if(event instanceof EntityDamageByEntityEvent) {
-					EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) event;
-					if(e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
-						Player victim = (Player) e.getEntity();
-						Player damager = (Player) e.getDamager();
-						if(isParticipating(victim) && isParticipating(damager)) {
-							Participant v = getParticipant(victim);
-							Participant d = getParticipant(damager);
-							if(hasTeam(v) && hasTeam(d) && (getTeam(v).equals(getTeam(d)))) {
-								e.setCancelled(true);
-							}
-						}
+		registerListener(new Listener() {
+			@EventHandler
+			private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+				Entity damagerEntity = e.getDamager();
+				if(damagerEntity instanceof Projectile) {
+					ProjectileSource source = ((Projectile) damagerEntity).getShooter();
+					if(source instanceof Entity) damagerEntity = (Entity) source;
+				}
+				if(e.getEntity() instanceof Player && damagerEntity instanceof Player) {
+					Player victim = (Player) e.getEntity(), damager = (Player) damagerEntity;
+					if(isParticipating(victim) && isParticipating(damager)) {
+						Participant v = getParticipant(victim), d = getParticipant(damager);
+						if(hasTeam(v) && hasTeam(d) && (getTeam(v).equals(getTeam(d)))) e.setCancelled(true);
 					}
 				}
 			}
-		}, AbilityWar.getPlugin());
+		});
 	}
 	
 	private List<Team> teams = new ArrayList<>();
@@ -66,7 +63,7 @@ public abstract class TeamGame extends AbstractGame {
 	}
 	
 	protected Team newTeam(String name, List<Participant> members) throws IllegalArgumentException {
-		if(teamNameExists(name)) throw new IllegalArgumentException("ÀÌ¹Ì Á¸ÀçÇÏ´Â ÆÀ ÀÌ¸§ÀÔ´Ï´Ù: " + name);
+		if(teamNameExists(name)) throw new IllegalArgumentException("ì´ë¯¸ ì¡´ì¬í•˜ëŠ” íŒ€ ì´ë¦„ì…ë‹ˆë‹¤: " + name);
 		return new Team(name, members);
 	}
 	
@@ -110,16 +107,22 @@ public abstract class TeamGame extends AbstractGame {
 			return Collections.unmodifiableList(members);
 		}
 		
-		private void addMember(Participant p) {
-			if(!members.contains(p)) {
+		public void addMember(Participant p) {
+			if(!isMember(p)) {
 				members.add(p);
-				
-				Messager.sendMessage(p.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f´ç½ÅÀÇ ÆÀÀÌ " + this.name + "&f(À¸)·Î ¼³Á¤µÇ¾ú½À´Ï´Ù."));
+				Messager.sendMessage(p.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&fë‹¹ì‹ ì˜ íŒ€ì´ " + KoreanUtil.getCompleteWord(this.name, "&fìœ¼ë¡œ", "&fë¡œ") + " ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤."));
 			}
 		}
 
-		private void removeMember(Participant p) {
-			members.remove(p);
+		public void removeMember(Participant p) {
+			if(isMember(p)) {
+				members.remove(p);
+				Messager.sendMessage(p.getPlayer(), ChatColor.translateAlternateColorCodes('&', this.name + "&f íŒ€ì—ì„œ ë‚˜ì™”ìŠµë‹ˆë‹¤."));
+			}
+		}
+		
+		public boolean isMember(Participant p) {
+			return members.contains(p);
 		}
 		
 	}

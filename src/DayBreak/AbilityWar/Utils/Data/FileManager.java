@@ -10,8 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import DayBreak.AbilityWar.Utils.Messager;
 
 /**
- * File À¯Æ¿
- * @author DayBreak »õº®
+ * File ìœ í‹¸
+ * @author DayBreak ìƒˆë²½
  */
 public class FileManager {
 	
@@ -46,7 +46,7 @@ public class FileManager {
 		
 		try {
 			if(createDataFolder()) {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f Æú´õ¸¦ »ı¼ºÇß½À´Ï´Ù."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f í´ë”ë¥¼ ìƒì„±í–ˆìŠµë‹ˆë‹¤."));
 			}
 			
 			if(!f.exists()) {
@@ -55,7 +55,7 @@ public class FileManager {
 			
 			return f;
 		} catch (IOException e) {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + f.getPath() + " ÆÄÀÏÀ» »ı¼ºÇÏÁö ¸øÇß½À´Ï´Ù."));
+			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + f.getPath() + " íŒŒì¼ì„ ìƒì„±í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤."));
 			return null;
 		}
 	}
@@ -65,7 +65,7 @@ public class FileManager {
 		File f = new File(getDataFolder().getPath() + "/" + Folder);
 
 		if(createDataFolder()) {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f Æú´õ¸¦ »ı¼ºÇß½À´Ï´Ù."));
+			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f í´ë”ë¥¼ ìƒì„±í–ˆìŠµë‹ˆë‹¤."));
 		}
 		
 		if(!f.exists()) {

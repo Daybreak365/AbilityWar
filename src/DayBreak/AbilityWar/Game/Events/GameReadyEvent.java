@@ -4,7 +4,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
- * {@link AbstractGame} {@link TimerBase}°¡ ½ÇÇàµÉ ¶§ È£ÃâµÇ´Â ÀÌº¥Æ®ÀÔ´Ï´Ù.
+ * {@link AbstractGame} {@link TimerBase}ê°€ ì‹¤í–‰ë  ë•Œ í˜¸ì¶œë˜ëŠ” ì´ë²¤íŠ¸ì…ë‹ˆë‹¤.
  */
 public class GameReadyEvent extends GameEvent {
 

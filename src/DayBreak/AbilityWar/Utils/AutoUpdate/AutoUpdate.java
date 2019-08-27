@@ -41,8 +41,8 @@ import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.Thread.Timer;
 
 /**
- * ±êÇé ÀÚµ¿ ¾÷µ¥ÀÌÆ®
- * @author DayBreak »õº®
+ * ê¹ƒí—™ ìë™ ì—…ë°ì´íŠ¸
+ * @author DayBreak ìƒˆë²½
  */
 public class AutoUpdate {
 	
@@ -61,8 +61,8 @@ public class AutoUpdate {
 	private UpdateObject queuedUpdate = null;
 	
 	/**
-	 * ¾÷µ¥ÀÌÆ® È®ÀÎ
-	 * @return ÃÖ½Å¹öÀü ¿©ºÎ (¾÷µ¥ÀÌÆ®¸¦ È®ÀÎÇÒ ¼ö ¾øÀ» °æ¿ì¿¡µµ True ¹İÈ¯)
+	 * ì—…ë°ì´íŠ¸ í™•ì¸
+	 * @return ìµœì‹ ë²„ì „ ì—¬ë¶€ (ì—…ë°ì´íŠ¸ë¥¼ í™•ì¸í•  ìˆ˜ ì—†ì„ ê²½ìš°ì—ë„ True ë°˜í™˜)
 	 */
 	public final boolean Check() {
 		try {
@@ -88,11 +88,11 @@ public class AutoUpdate {
 					}
 				}.setPeriod(6000).StartTimer();
 			} else {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fÇÃ·¯±×ÀÎÀÌ ÃÖ½Å ¹öÀüÀÔ´Ï´Ù."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fí”ŒëŸ¬ê·¸ì¸ì´ ìµœì‹  ë²„ì „ì…ë‹ˆë‹¤."));
 				return true;
 			}
 		} catch (Exception ex) {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fÇÃ·¯±×ÀÎ ÃÖ½Å ¾÷µ¥ÀÌÆ®¸¦ È®ÀÎÇÒ ¼ö ¾ø½À´Ï´Ù."));
+			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fí”ŒëŸ¬ê·¸ì¸ ìµœì‹  ì—…ë°ì´íŠ¸ë¥¼ í™•ì¸í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
 			return true;
 		}
 		
@@ -106,14 +106,14 @@ public class AutoUpdate {
 				
 				unload(Plugin);
 				
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¾÷µ¥ÀÌÆ®¸¦ ½ÃÀÛÇÕ´Ï´Ù."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fì—…ë°ì´íŠ¸ë¥¼ ì‹œì‘í•©ë‹ˆë‹¤."));
 				
 				Download(queuedUpdate);
 				
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¾÷µ¥ÀÌÆ®¸¦ ¿Ï·áÇÏ¿´½À´Ï´Ù."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fì—…ë°ì´íŠ¸ë¥¼ ì™„ë£Œí•˜ì˜€ìŠµë‹ˆë‹¤."));
 				load(Plugin);
 			} catch(Exception ex) {
-				Messager.sendErrorMessage("¾÷µ¥ÀÌÆ® µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
+				Messager.sendErrorMessage("ì—…ë°ì´íŠ¸ ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 			}
 			return true;
 		}
@@ -127,17 +127,17 @@ public class AutoUpdate {
 				
 				unload(Plugin);
 
-				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&f¾÷µ¥ÀÌÆ®¸¦ ½ÃÀÛÇÕ´Ï´Ù."));
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¾÷µ¥ÀÌÆ®¸¦ ½ÃÀÛÇÕ´Ï´Ù."));
+				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&fì—…ë°ì´íŠ¸ë¥¼ ì‹œì‘í•©ë‹ˆë‹¤."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fì—…ë°ì´íŠ¸ë¥¼ ì‹œì‘í•©ë‹ˆë‹¤."));
 				
 				Download(queuedUpdate);
 
-				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&f¾÷µ¥ÀÌÆ®¸¦ ¿Ï·áÇÏ¿´½À´Ï´Ù."));
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f¾÷µ¥ÀÌÆ®¸¦ ¿Ï·áÇÏ¿´½À´Ï´Ù."));
+				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&fì—…ë°ì´íŠ¸ë¥¼ ì™„ë£Œí•˜ì˜€ìŠµë‹ˆë‹¤."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fì—…ë°ì´íŠ¸ë¥¼ ì™„ë£Œí•˜ì˜€ìŠµë‹ˆë‹¤."));
 				load(Plugin);
 			} catch(Exception ex) {
-				Messager.sendErrorMessage(sender, "¾÷µ¥ÀÌÆ® µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
-				Messager.sendErrorMessage("¾÷µ¥ÀÌÆ® µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
+				Messager.sendErrorMessage(sender, "ì—…ë°ì´íŠ¸ ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
+				Messager.sendErrorMessage("ì—…ë°ì´íŠ¸ ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 			}
 			return true;
 		}
@@ -281,7 +281,7 @@ public class AutoUpdate {
 	}
 	
 	/**
-	 * ÇÃ·¯±×ÀÎÀ» Load ÇÕ´Ï´Ù.
+	 * í”ŒëŸ¬ê·¸ì¸ì„ Load í•©ë‹ˆë‹¤.
 	 */
 	private void load(String name) {
 
@@ -324,7 +324,7 @@ public class AutoUpdate {
 	}
 	
 	/**
-	 * ÇÃ·¯±×ÀÎÀ» UnloadÇÕ´Ï´Ù.
+	 * í”ŒëŸ¬ê·¸ì¸ì„ Unloadí•©ë‹ˆë‹¤.
 	 */
 	@SuppressWarnings("unchecked")
 	private void unload(Plugin plugin) {

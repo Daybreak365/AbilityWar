@@ -3,10 +3,10 @@ package DayBreak.AbilityWar.Utils;
 public class KoreanUtil {
 
 	/**
-	 * ¹ŞÄ§ Æ÷ÇÔ ¿©ºÎ¿¡ µû¶ó ¹®ÀÚ¿­À» º¯ÇüÇÏ¿© ¹İÈ¯ÇÕ´Ï´Ù.
-	 * @param str			È®ÀÎÇÒ ¹®ÀÚ¿­
-	 * @param firstValue	¹ŞÄ§ÀÌ ÀÖÀ» ¶§ »ç¿ëÇÒ °ª
-	 * @param secondValue	¹ŞÄ§ÀÌ ¾øÀ» ¶§ »ç¿ëÇÒ °ª
+	 * ë°›ì¹¨ í¬í•¨ ì—¬ë¶€ì— ë”°ë¼ ë¬¸ìì—´ì„ ë³€í˜•í•˜ì—¬ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @param str			í™•ì¸í•  ë¬¸ìì—´
+	 * @param firstValue	ë°›ì¹¨ì´ ìˆì„ ë•Œ ì‚¬ìš©í•  ê°’
+	 * @param secondValue	ë°›ì¹¨ì´ ì—†ì„ ë•Œ ì‚¬ìš©í•  ê°’
 	 */
 	public static final String getCompleteWord(String str, String firstValue, String secondValue) {
 		char lastChar = str.charAt(str.length() - 1);

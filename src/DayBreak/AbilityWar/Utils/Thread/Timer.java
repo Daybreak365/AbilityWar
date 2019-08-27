@@ -5,8 +5,8 @@ import org.bukkit.Bukkit;
 import DayBreak.AbilityWar.AbilityWar;
 
 /**
- * ÀÏ¹İ Å¸ÀÌ¸Ó
- * @author DayBreak »õº®
+ * ì¼ë°˜ íƒ€ì´ë¨¸
+ * @author DayBreak ìƒˆë²½
  */
 abstract public class Timer {
 
@@ -29,7 +29,7 @@ abstract public class Timer {
 	}
 
 	/**
-	 * Å¸ÀÌ¸Ó¸¦ ½ÃÀÛÇÕ´Ï´Ù.
+	 * íƒ€ì´ë¨¸ë¥¼ ì‹œì‘í•©ë‹ˆë‹¤.
 	 */
 	public void StartTimer() {
 		if(!this.isTimerRunning()) {
@@ -40,7 +40,7 @@ abstract public class Timer {
 	}
 
 	/**
-	 * Å¸ÀÌ¸Ó¸¦ Á¾·áÇÕ´Ï´Ù.
+	 * íƒ€ì´ë¨¸ë¥¼ ì¢…ë£Œí•©ë‹ˆë‹¤.
 	 */
 	public void StopTimer() {
 		if(this.isTimerRunning()) {
@@ -69,7 +69,7 @@ abstract public class Timer {
 	}
 	
 	/**
-	 * ÀÏ¹İ Å¸ÀÌ¸Ó
+	 * ì¼ë°˜ íƒ€ì´ë¨¸
 	 */
 	public Timer(int Count) {
 		InfiniteTimer = false;
@@ -77,7 +77,7 @@ abstract public class Timer {
 	}
 	
 	/**
-	 * ¹«ÇÑ Å¸ÀÌ¸Ó
+	 * ë¬´í•œ íƒ€ì´ë¨¸
 	 */
 	public Timer() {
 		InfiniteTimer = true;

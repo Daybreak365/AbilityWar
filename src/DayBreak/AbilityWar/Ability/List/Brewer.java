@@ -20,11 +20,11 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.PotionBuilder;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.PotionBuilder.PotionShape;
 
-@AbilityManifest(Name = "¾çÁ¶»ç", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì–‘ì¡°ì‚¬", Rank = Rank.B, Species = Species.HUMAN)
 public class Brewer extends AbilityBase {
 	
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Brewer.class, "Cooldown", 7, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -35,7 +35,7 @@ public class Brewer extends AbilityBase {
 	
 	public Brewer(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ·£´ıÇÑ Æ÷¼Ç ÇÏ³ª¸¦ ¾ò½À´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ëœë¤í•œ í¬ì…˜ í•˜ë‚˜ë¥¼ ì–»ìŠµë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -54,7 +54,7 @@ public class Brewer extends AbilityBase {
 						p.getInventory().addItem(new PotionBuilder(type, PotionShape.values()[r.nextInt(PotionShape.values().length)])
 								.setExtended(r.nextBoolean()).setUpgraded(r.nextBoolean()).getItemStack(1));
 					} catch (Exception e) {}
-					Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&5¿À´ÃÀº ¾î¶² Æ÷¼ÇÀ» ¸¶½Ç±î..."));
+					Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&5ì˜¤ëŠ˜ì€ ì–´ë–¤ í¬ì…˜ì„ ë§ˆì‹¤ê¹Œ..."));
 					SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(p);
 					ParticleLib.SPELL_WITCH.spawnParticle(p.getLocation(), 2, 2, 2, 10);
 					

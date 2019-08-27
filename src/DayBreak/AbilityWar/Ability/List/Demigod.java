@@ -16,12 +16,12 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 
-@AbilityManifest(Name = "µ¥¹Ì°«", Rank = Rank.S, Species = Species.DEMIGOD)
+@AbilityManifest(Name = "ë°ë¯¸ê°“", Rank = Rank.S, Species = Species.DEMIGOD)
 public class Demigod extends AbilityBase {
 	
 	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(Demigod.class, "Chance", 40,
-			"# °ø°İÀ» ¹Ş¾ÒÀ» ½Ã ¸î ÆÛ¼¾Æ® È®·ü·Î ·£´ı ¹öÇÁ¸¦ ¹ŞÀ»Áö ¼³Á¤ÇÕ´Ï´Ù.",
-			"# 40Àº 40%¸¦ ÀÇ¹ÌÇÕ´Ï´Ù.") {
+			"# ê³µê²©ì„ ë°›ì•˜ì„ ì‹œ ëª‡ í¼ì„¼íŠ¸ í™•ë¥ ë¡œ ëœë¤ ë²„í”„ë¥¼ ë°›ì„ì§€ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# 40ì€ 40%ë¥¼ ì˜ë¯¸í•©ë‹ˆë‹¤.") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,8 +32,8 @@ public class Demigod extends AbilityBase {
 	
 	public Demigod(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f¹İ½Å¹İÀÎÀÇ ´É·ÂÀÚÀÔ´Ï´Ù. °ø°İÀ» ¹ŞÀ¸¸é"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + ChanceConfig.getValue() + "% È®·ü·Î 5ÃÊ°£ ·£´ı ¹öÇÁ°¡ ¹ßµ¿µË´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fë°˜ì‹ ë°˜ì¸ì˜ ëŠ¥ë ¥ìì…ë‹ˆë‹¤. ê³µê²©ì„ ë°›ìœ¼ë©´"),
+				ChatColor.translateAlternateColorCodes('&', "&f" + ChanceConfig.getValue() + "% í™•ë¥ ë¡œ 5ì´ˆê°„ ëœë¤ ë²„í”„ê°€ ë°œë™ë©ë‹ˆë‹¤."));
 	}
 	
 	@Override

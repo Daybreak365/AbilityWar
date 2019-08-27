@@ -4,7 +4,7 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Manager.Invincibility;
 
 /**
- * {@link Invincibility}°¡ Á¾·áµÉ ¶§ È£ÃâµÇ´Â ÀÌº¥Æ®ÀÔ´Ï´Ù.
+ * {@link Invincibility}ê°€ ì¢…ë£Œë  ë•Œ í˜¸ì¶œë˜ëŠ” ì´ë²¤íŠ¸ì…ë‹ˆë‹¤.
  */
 public class InvincibleEndEvent extends GameEvent {
 

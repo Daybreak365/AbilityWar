@@ -1,34 +1,41 @@
 package DayBreak.AbilityWar.Game.Script;
 
+import static DayBreak.AbilityWar.Utils.Validate.notNull;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
+import DayBreak.AbilityWar.Game.Script.ScriptException.State;
 import DayBreak.AbilityWar.Game.Script.Objects.AbstractScript;
 import DayBreak.AbilityWar.Game.Script.Objects.Setter.Setter;
-import DayBreak.AbilityWar.Game.Script.ScriptException.State;
 import DayBreak.AbilityWar.Utils.Messager;
+import DayBreak.AbilityWar.Utils.ReflectionUtil.ClassUtil;
 import DayBreak.AbilityWar.Utils.Data.FileManager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
 /**
- * ½ºÅ©¸³Æ®
- * @author DayBreak »õº®
+ * ìŠ¤í¬ë¦½íŠ¸
+ * @author DayBreak ìƒˆë²½
  */
 abstract public class Script {
 	
 	private static ArrayList<AbstractScript> Scripts = new ArrayList<AbstractScript>();
 	
 	/**
-	 * ¸ğµç ½ºÅ©¸³Æ®¸¦ ½ÃÀÛ½ÃÅµ´Ï´Ù.
+	 * ëª¨ë“  ìŠ¤í¬ë¦½íŠ¸ë¥¼ ì‹œì‘ì‹œí‚µë‹ˆë‹¤.
 	 */
 	public static void RunAll(AbstractGame game) {
 		if(AbilityWarThread.isGameTaskRunning()) {
@@ -39,7 +46,7 @@ abstract public class Script {
 	}
 	
 	/**
-	 * ½ºÅ©¸³Æ®¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	 * ìŠ¤í¬ë¦½íŠ¸ë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	 */
 	public static void AddScript(AbstractScript script) {
 		if(!Scripts.contains(script)) {
@@ -48,10 +55,10 @@ abstract public class Script {
 	}
 	
 	/**
-	 * ½ºÅ©¸³Æ® Æú´õ ¾È¿¡ ÀÖ´Â ¸ğµç ½ºÅ©¸³Æ®¸¦ ºÒ·¯¿É´Ï´Ù.
+	 * ìŠ¤í¬ë¦½íŠ¸ í´ë” ì•ˆì— ìˆëŠ” ëª¨ë“  ìŠ¤í¬ë¦½íŠ¸ë¥¼ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.
 	 */
 	public static void LoadAll() {
-		Scripts.clear();
+		Scripts = new ArrayList<>();
 		
 		for(File file : FileManager.getFolder("Script").listFiles()) {
 			try {
@@ -64,21 +71,21 @@ abstract public class Script {
 	private static ArrayList<ScriptRegisteration> ScriptTypes = new ArrayList<ScriptRegisteration>();
 	
 	/**
-	 * ½ºÅ©¸³Æ® µî·Ï
-	 * @throws IllegalArgumentException µî·ÏÇÏ·Á´Â ½ºÅ©¸³Æ® Å¬·¡½ºÀÇ ÀÌ¸§ÀÌ ´Ù¸¥ ½ºÅ©¸³Æ® Å¬·¡½º°¡
-	 *                                  ÀÌ¹Ì »ç¿ëÇÏ°í ÀÖ´Â ÀÌ¸§ÀÏ °æ¿ì,
-	 *                                  ÀÌ¹Ì µî·ÏµÈ ½ºÅ©¸³Æ® Å¬·¡½ºÀÏ °æ¿ì
+	 * ìŠ¤í¬ë¦½íŠ¸ ë“±ë¡
+	 * @throws IllegalArgumentException ë“±ë¡í•˜ë ¤ëŠ” ìŠ¤í¬ë¦½íŠ¸ í´ë˜ìŠ¤ì˜ ì´ë¦„ì´ ë‹¤ë¥¸ ìŠ¤í¬ë¦½íŠ¸ í´ë˜ìŠ¤ê°€
+	 *                                  ì´ë¯¸ ì‚¬ìš©í•˜ê³  ìˆëŠ” ì´ë¦„ì¼ ê²½ìš°,
+	 *                                  ì´ë¯¸ ë“±ë¡ëœ ìŠ¤í¬ë¦½íŠ¸ í´ë˜ìŠ¤ì¼ ê²½ìš°
 	 */
 	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) {
 		for(ScriptRegisteration check : ScriptTypes) {
 			if(check.getClazz().getSimpleName().equalsIgnoreCase(clazz.getSimpleName())) {
-				Messager.sendMessage(clazz.getName() + " ½ºÅ©¸³Æ®´Â °ãÄ¡´Â ÀÌ¸§ÀÌ ÀÖ¾î µî·ÏµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+				Messager.sendMessage(clazz.getName() + " ìŠ¤í¬ë¦½íŠ¸ëŠ” ê²¹ì¹˜ëŠ” ì´ë¦„ì´ ìˆì–´ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 				return;
 			}
 		}
 		
 		if(isRegistered(clazz)) {
-			Messager.sendMessage(clazz.getName() + " ½ºÅ©¸³Æ®´Â ÀÌ¹Ì µî·ÏµÇ¾ú½À´Ï´Ù.");
+			Messager.sendMessage(clazz.getName() + " ìŠ¤í¬ë¦½íŠ¸ëŠ” ì´ë¯¸ ë“±ë¡ë˜ì—ˆìŠµë‹ˆë‹¤.");
 			return;
 		}
 		
@@ -95,7 +102,7 @@ abstract public class Script {
 			
 			throw new ScriptException(State.Not_Found);
 		} else {
-			throw new IllegalArgumentException("µî·ÏµÇÁö ¾ÊÀº ½ºÅ©¸³Æ®ÀÔ´Ï´Ù.");
+			throw new IllegalArgumentException("ë“±ë¡ë˜ì§€ ì•Šì€ ìŠ¤í¬ë¦½íŠ¸ì…ë‹ˆë‹¤.");
 		}
 	}
 	
@@ -201,41 +208,43 @@ abstract public class Script {
 		
 	}
 	
+	private static final Gson gson = new Gson();
+	private static final JsonParser parser = new JsonParser();
+	
 	/**
-	 * ½ºÅ©¸³Æ® ÀúÀå
+	 * {@link AbstractScript} ì €ì¥
 	 */
 	public static void Save(AbstractScript script) {
 		try {
 			if(isRegistered(script.getClass())) {
 				FileManager.getFolder("Script");
-				File f = FileManager.getFile("Script/" + script.getScriptName() + ".yml");
-				ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(f));
-				output.writeObject(script);
-				output.flush();
-				output.close();
+				File f = FileManager.getFile("Script/" + script.getName() + ".json");
+				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+				gson.toJson(script, bw);
+				bw.close();
 			} else {
-				throw new ClassNotFoundException();
+				Messager.sendErrorMessage("ë“±ë¡ë˜ì§€ ì•Šì€ ìŠ¤í¬ë¦½íŠ¸ì…ë‹ˆë‹¤.");
 			}
 		} catch (IOException ioException) {
-			Messager.sendErrorMessage("½ºÅ©¸³Æ®¸¦ ÀúÀåÇÏ´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
-		} catch (ClassNotFoundException e) {
-			Messager.sendErrorMessage("µî·ÏµÇÁö ¾ÊÀº ½ºÅ©¸³Æ®ÀÔ´Ï´Ù.");
+			Messager.sendErrorMessage("ìŠ¤í¬ë¦½íŠ¸ë¥¼ ì €ì¥í•˜ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 	}
 	
 	/**
-	 * ½ºÅ©¸³Æ® ºÒ·¯¿À±â
+	 * {@link AbstractScript} ë¶ˆëŸ¬ì˜¤ê¸°
 	 */
 	public static AbstractScript Load(File file) throws ScriptException {
 		try {
 			if(file.exists()) {
-				ObjectInputStream input = new ObjectInputStream(new FileInputStream(file));
-				Object obj = input.readObject();
-				input.close();
+				JsonObject object = notNull(parser.parse(new BufferedReader(new FileReader(file)))).getAsJsonObject();
+				Class<?> typeClass = ClassUtil.forName(object.get("scriptType").getAsString());
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				Object script = gson.fromJson(br, typeClass);
+				br.close();
 				
-				if(obj != null) {
-					if(obj instanceof AbstractScript) {
-						return (AbstractScript) obj;
+				if(script != null) {
+					if(script instanceof AbstractScript) {
+						return (AbstractScript) script;
 					} else {
 						throw new ScriptException(State.IllegalFile);
 					}
@@ -246,7 +255,7 @@ abstract public class Script {
 				throw new IOException();
 			}
 		} catch (IOException | NullPointerException | ClassNotFoundException Exception) {
-			Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + file.getName() + " &f½ºÅ©¸³Æ®¸¦ ºÒ·¯¿À´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
+			Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + file.getName() + " &fìŠ¤í¬ë¦½íŠ¸ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
 			Exception.printStackTrace();
 			throw new ScriptException(State.Not_Loaded);
 		}

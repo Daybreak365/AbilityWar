@@ -24,11 +24,11 @@ import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "±Û·¡µğ¿¡ÀÌÅÍ", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "ê¸€ë˜ë””ì—ì´í„°", Rank = Rank.S, Species = Species.HUMAN)
 public class Gladiator extends AbilityBase {
 	
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -39,8 +39,8 @@ public class Gladiator extends AbilityBase {
 
 	public Gladiator(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f»ó´ë¹æÀ» Ã¶±«·Î ¿ìÅ¬¸¯ÇÏ¸é Åõ±âÀåÀÌ »ı¼ºµÇ¸ç ±× ¾È¿¡¼­"),
-				ChatColor.translateAlternateColorCodes('&', "&f1:1 ´ë°áÀ» ÇÏ°Ô µË´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fìƒëŒ€ë°©ì„ ì² ê´´ë¡œ ìš°í´ë¦­í•˜ë©´ íˆ¬ê¸°ì¥ì´ ìƒì„±ë˜ë©° ê·¸ ì•ˆì—ì„œ"),
+				ChatColor.translateAlternateColorCodes('&', "&f1:1 ëŒ€ê²°ì„ í•˜ê²Œ ë©ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -54,8 +54,8 @@ public class Gladiator extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&4[&cÅõ±âÀå&4] &f" + Seconds + "ÃÊ ÈÄ¿¡ Åõ±âÀåÀÌ »èÁ¦µË´Ï´Ù."));
-			Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&4[&cÅõ±âÀå&4] &f" + Seconds + "ÃÊ ÈÄ¿¡ Åõ±âÀåÀÌ »èÁ¦µË´Ï´Ù."));
+			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&4[&cíˆ¬ê¸°ì¥&4] &f" + Seconds + "ì´ˆ í›„ì— íˆ¬ê¸°ì¥ì´ ì‚­ì œë©ë‹ˆë‹¤."));
+			Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&4[&cíˆ¬ê¸°ì¥&4] &f" + Seconds + "ì´ˆ í›„ì— íˆ¬ê¸°ì¥ì´ ì‚­ì œë©ë‹ˆë‹¤."));
 		}
 		
 		@Override
@@ -152,7 +152,7 @@ public class Gladiator extends AbilityBase {
 		if(Saves.keySet().contains(e.getBlock())) {
 			e.setCancelled(true);
 			Player p = e.getPlayer();
-			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cÅõ±âÀå&fÀº ºÎ¼ú ¼ö ¾ø½À´Ï´Ù!"));
+			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cíˆ¬ê¸°ì¥&fì€ ë¶€ìˆ  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!"));
 		}
 	}
 	

@@ -26,7 +26,7 @@ import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate;
 
 /**
  * Server Version
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public class ServerVersion {
 
@@ -36,7 +36,7 @@ public class ServerVersion {
 	private static int Version = getSimpleVersion();
 	
 	/**
-	 * ¼­¹ö ¹öÀüÀ» StringÀ¸·Î ¹Ş¾Æ¿É´Ï´Ù. Ex. v1_12_R1
+	 * ì„œë²„ ë²„ì „ì„ Stringìœ¼ë¡œ ë°›ì•„ì˜µë‹ˆë‹¤. Ex. v1_12_R1
 	 */
 	private static String getVersionString() {
 		String[] versionArray = Bukkit.getServer().getClass().getName().replace('.', ',').split(",");
@@ -48,7 +48,7 @@ public class ServerVersion {
 	}
 	
 	/**
-	 * ¼­¹ö ¹öÀüÀ» °£´ÜÇÑ Int·Î ¹Ş¾Æ¿É´Ï´Ù. Ex. 1.14.3 => 14
+	 * ì„œë²„ ë²„ì „ì„ ê°„ë‹¨í•œ Intë¡œ ë°›ì•„ì˜µë‹ˆë‹¤. Ex. 1.14.3 => 14
 	 */
 	private static int getSimpleVersion() {
 		int Version = -1;
@@ -73,7 +73,7 @@ public class ServerVersion {
 	}
 	
 	/**
-	 * ¹öÀü È£È¯ ÀÛ¾÷
+	 * ë²„ì „ í˜¸í™˜ ì‘ì—…
 	 */
 	public static void VersionCompat(Plugin plugin) {
 		if(getVersion() >= 12) {
@@ -81,7 +81,7 @@ public class ServerVersion {
 				setAPIVersion(plugin, "1.13");
 			}
 		} else {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fÇÃ·¯±×ÀÎÀÌ Áö¿øÇÏÁö ¾Ê´Â ¹öÀüÀ» ÀÌ¿ëÇÏ°í ÀÖ½À´Ï´Ù."));
+			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&fí”ŒëŸ¬ê·¸ì¸ì´ ì§€ì›í•˜ì§€ ì•ŠëŠ” ë²„ì „ì„ ì´ìš©í•˜ê³  ìˆìŠµë‹ˆë‹¤."));
 			unload(plugin);
 		}
 	}
@@ -99,7 +99,7 @@ public class ServerVersion {
 	}
 
 	/**
-	 * ÇÃ·¯±×ÀÎÀ» UnloadÇÕ´Ï´Ù.
+	 * í”ŒëŸ¬ê·¸ì¸ì„ Unloadí•©ë‹ˆë‹¤.
 	 */
 	@SuppressWarnings("unchecked")
 	private static void unload(Plugin plugin) {

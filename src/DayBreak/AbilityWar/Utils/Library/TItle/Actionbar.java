@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * ¾×¼Ç¹Ù ¸Þ½ÃÁö
- * @author DayBreak »õº®
+ * ì•¡ì…˜ë°” ë©”ì‹œì§€
+ * @author DayBreak ìƒˆë²½
  */
 public class Actionbar extends AbstractTitle {
 	
@@ -18,11 +18,11 @@ public class Actionbar extends AbstractTitle {
 	private int fadeOut;
 
 	/**
-	 * ¾×¼Ç¹Ù ¸Þ½ÃÁö
-	 * @param Message 	¸Þ½ÃÁö
-	 * @param fadeIn 	FadeIn ½Ã°£ (Æ½ ´ÜÀ§)
-	 * @param stay 		Stay ½Ã°£ (Æ½ ´ÜÀ§)
-	 * @param fadeOut 	FadeOut ½Ã°£ (Æ½ ´ÜÀ§)
+	 * ì•¡ì…˜ë°” ë©”ì‹œì§€
+	 * @param Message 	ë©”ì‹œì§€
+	 * @param fadeIn 	FadeIn ì‹œê°„ (í‹± ë‹¨ìœ„)
+	 * @param stay 		Stay ì‹œê°„ (í‹± ë‹¨ìœ„)
+	 * @param fadeOut 	FadeOut ì‹œê°„ (í‹± ë‹¨ìœ„)
 	 */
 	public Actionbar(String Message, int fadeIn, int stay, int fadeOut) {
 		this.Message = Message;

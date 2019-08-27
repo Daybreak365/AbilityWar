@@ -11,7 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,7 +22,9 @@ import org.bukkit.scoreboard.Score;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
+import DayBreak.AbilityWar.Config.AbilityWarSettings.DeathSettings;
 import DayBreak.AbilityWar.Config.AbilityWarSettings.SummerVacationSettings;
+import DayBreak.AbilityWar.Game.Events.ParticipantDeathEvent;
 import DayBreak.AbilityWar.Game.Games.GameCreditEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.GameManifest;
 import DayBreak.AbilityWar.Game.Games.Mode.WinnableGame;
@@ -29,6 +32,7 @@ import DayBreak.AbilityWar.Game.Manager.DeathManager;
 import DayBreak.AbilityWar.Game.Manager.InfiniteDurability;
 import DayBreak.AbilityWar.Game.Manager.SpectatorManager;
 import DayBreak.AbilityWar.Utils.FireworkUtil;
+import DayBreak.AbilityWar.Utils.KoreanUtil;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
@@ -161,14 +165,69 @@ public class SummerVacation extends WinnableGame {
 	@Override
 	protected DeathManager setupDeathManager() {
 		return new DeathManager(this) {
-			@Override
-			protected void onPlayerDeath(PlayerDeathEvent e) {
-				Player Victim = e.getEntity();
-				if(Victim.getKiller() != null) {
-					Participant VictimPart = getParticipant(Victim);
+			@EventHandler
+			protected void onDeath(PlayerDeathEvent e) {
+				Player victimPlayer = e.getEntity();
+				Player killerPlayer = victimPlayer.getKiller();
+				if(victimPlayer.getLastDamageCause() != null) {
+					DamageCause Cause = victimPlayer.getLastDamageCause().getCause();
+
+					if(killerPlayer != null) {
+						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&f님이 &c" + victimPlayer.getName() + "&f님을 죽였습니다."));
+					} else {
+						if(Cause.equals(DamageCause.CONTACT)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 찔려 죽었습니다."));
+						} else if(Cause.equals(DamageCause.FALL)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어져 죽었습니다."));
+						} else if(Cause.equals(DamageCause.FALLING_BLOCK)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어지는 블록에 맞아 죽었습니다."));
+						} else if(Cause.equals(DamageCause.SUFFOCATION)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 끼여 죽었습니다."));
+						} else if(Cause.equals(DamageCause.DROWNING)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 익사했습니다."));
+						} else if(Cause.equals(DamageCause.ENTITY_EXPLOSION)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 폭발했습니다."));
+						} else if(Cause.equals(DamageCause.LAVA)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 용암에 빠져 죽었습니다."));
+						} else if(Cause.equals(DamageCause.FIRE) || Cause.equals(DamageCause.FIRE_TICK)) {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 노릇노릇하게 구워졌습니다."));
+						} else {
+							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
+						}
+					}
+				} else {
+					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
+				}
+
+				if(DeathSettings.getItemDrop()) {
+					e.setKeepInventory(false);
+					victimPlayer.getInventory().clear();
+				} else {
+					e.setKeepInventory(true);
+				}
+
+				if(isParticipating(victimPlayer)) {
+					Participant victim = getParticipant(victimPlayer);
+					
+					Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
+					
+					if(DeathSettings.getAbilityReveal()) {
+						if(victim.hasAbility()) {
+							String name = victim.getAbility().getName();
+							if(name != null) {
+								Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 " + KoreanUtil.getCompleteWord("&e" + name, "&f이었", "&f였") + "습니다."));
+							}
+						} else {
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f?님은 능력이 없습니다."));
+						}
+					}
+				}
+				
+				if(victimPlayer.getKiller() != null) {
+					Participant VictimPart = getParticipant(victimPlayer);
 					if(VictimPart != null && Killers.contains(VictimPart)) Killers.remove(VictimPart);
-					Participant Killer = getParticipant(Victim.getKiller());
-					if(Killer != null && !Killer.getPlayer().equals(Victim)) {
+					Participant Killer = getParticipant(victimPlayer.getKiller());
+					if(Killer != null && !Killer.getPlayer().equals(victimPlayer)) {
 						if(!Killers.contains(Killer)) Killers.add(Killer);
 						Score score = killObjective.getScore(Killer.getPlayer().getName());
 						if(score.isScoreSet()) {
@@ -251,7 +310,7 @@ public class SummerVacation extends WinnableGame {
 			}
 		}
 
-		Bukkit.getPluginManager().registerEvents(infiniteDurability, AbilityWar.getPlugin());
+		registerListener(infiniteDurability);
 		
 		for(World w : Bukkit.getWorlds()) {
 			if(AbilityWarSettings.getClearWeather()) {
@@ -352,7 +411,6 @@ public class SummerVacation extends WinnableGame {
 	@Override
 	protected void onGameEnd() {
 		killObjective.unregister();
-		HandlerList.unregisterAll(infiniteDurability);
 	}
 
 }

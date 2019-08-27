@@ -14,11 +14,11 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "»óÀ§Á¸Àç", Rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(Name = "ìƒìœ„ì¡´ì¬", Rank = Rank.B, Species = Species.OTHERS)
 public class HigherBeing extends AbilityBase {
 
 	public static SettingObject<Double> DamageConfig = new SettingObject<Double>(HigherBeing.class, "DamageMultiple", 2.0,
-			"# °ø°İ ¹è¼ö") {
+			"# ê³µê²© ë°°ìˆ˜") {
 		
 		@Override
 		public boolean Condition(Double value) {
@@ -29,9 +29,9 @@ public class HigherBeing extends AbilityBase {
 	
 	public HigherBeing(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÀÚ½Åº¸´Ù ³·Àº À§Ä¡¿¡ ÀÖ´Â »ı¸íÃ¼¸¦ ±ÙÁ¢ °ø°İ ÇÒ ¶§"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + DamageConfig.getValue() + "¹è °­·ÂÇÏ°Ô °ø°İÇÕ´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÀÚ½Åº¸´Ù ³ôÀº À§Ä¡¿¡ ÀÖ´Â »ı¸íÃ¼´Â ±ÙÁ¢ °ø°İÀ¸·Î µ¥¹ÌÁö¸¦ ÀÔÈú ¼ö ¾ø½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fìì‹ ë³´ë‹¤ ë‚®ì€ ìœ„ì¹˜ì— ìˆëŠ” ìƒëª…ì²´ë¥¼ ê·¼ì ‘ ê³µê²© í•  ë•Œ"),
+				ChatColor.translateAlternateColorCodes('&', "&f" + DamageConfig.getValue() + "ë°° ê°•ë ¥í•˜ê²Œ ê³µê²©í•©ë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fìì‹ ë³´ë‹¤ ë†’ì€ ìœ„ì¹˜ì— ìˆëŠ” ìƒëª…ì²´ëŠ” ê·¼ì ‘ ê³µê²©ìœ¼ë¡œ ë°ë¯¸ì§€ë¥¼ ì…í ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
 	}
 
 	@Override

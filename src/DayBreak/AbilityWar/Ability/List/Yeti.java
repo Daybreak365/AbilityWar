@@ -19,10 +19,10 @@ import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "¼³ÀÎ", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì„¤ì¸", Rank = Rank.S, Species = Species.HUMAN)
 public class Yeti extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# ÄğÅ¸ÀÓ") {
+	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# ì¿¨íƒ€ì„") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,7 +32,7 @@ public class Yeti extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Yeti.class, "Range", 15,
-			"# ½ºÅ³ »ç¿ë ½Ã ´« ÁöÇüÀ¸·Î ¹Ù²Ü ¹üÀ§") {
+			"# ìŠ¤í‚¬ ì‚¬ìš© ì‹œ ëˆˆ ì§€í˜•ìœ¼ë¡œ ë°”ê¿€ ë²”ìœ„") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -43,8 +43,8 @@ public class Yeti extends AbilityBase {
 
 	public Yeti(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f´«°ú ¾óÀ½ À§¿¡ ¼­ÀÖÀ¸¸é ´Ù¾çÇÑ ¹öÇÁ¸¦ ¹Ş½À´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ÁÖº¯À» ´« ÁöÇüÀ¸·Î ¹Ù²ß´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fëˆˆê³¼ ì–¼ìŒ ìœ„ì— ì„œìˆìœ¼ë©´ ë‹¤ì–‘í•œ ë²„í”„ë¥¼ ë°›ìŠµë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ì£¼ë³€ì„ ëˆˆ ì§€í˜•ìœ¼ë¡œ ë°”ê¿‰ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private TimerBase Buff = new TimerBase() {

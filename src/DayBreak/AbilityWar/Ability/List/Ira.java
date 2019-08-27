@@ -14,12 +14,12 @@ import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 
-@AbilityManifest(Name = "ÀÌ¶ó", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì´ë¼", Rank = Rank.S, Species = Species.HUMAN)
 public class Ira extends AbilityBase {
 
 	public static SettingObject<Integer> AttackConfig = new SettingObject<Integer>(Ira.class, "AttackTime", 4,
-			"# ¸î¹ø °ø°İÀ» ´çÇÏ¸é Æø¹ßÀ» ÀÏÀ¸Å³Áö ¼³Á¤ÇÕ´Ï´Ù.",
-			"# ±âº»°ª: 4") {
+			"# ëª‡ë²ˆ ê³µê²©ì„ ë‹¹í•˜ë©´ í­ë°œì„ ì¼ìœ¼í‚¬ì§€ ì„¤ì •í•©ë‹ˆë‹¤.",
+			"# ê¸°ë³¸ê°’: 4") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -30,8 +30,8 @@ public class Ira extends AbilityBase {
 	
 	public Ira(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f" + AttackConfig.getValue() + "¹ø °ø°İÀ» ´çÇÒ ¶§¸¶´Ù »ó´ë¹æÀÇ À§Ä¡¿¡ Æø¹ßÀ» ÀÏÀ¸Åµ´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&fÀÚ±â ÀÚ½Åµµ Æø¹ß µ¥¹ÌÁö¸¦ ÀÔ½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&f" + AttackConfig.getValue() + "ë²ˆ ê³µê²©ì„ ë‹¹í•  ë•Œë§ˆë‹¤ ìƒëŒ€ë°©ì˜ ìœ„ì¹˜ì— í­ë°œì„ ì¼ìœ¼í‚µë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&fìê¸° ìì‹ ë„ í­ë°œ ë°ë¯¸ì§€ë¥¼ ì…ìŠµë‹ˆë‹¤."));
 	}
 
 	@Override

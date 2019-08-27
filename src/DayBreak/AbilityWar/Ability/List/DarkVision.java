@@ -14,11 +14,11 @@ import DayBreak.AbilityWar.Utils.Library.EffectLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "½É¾È", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì‹¬ì•ˆ", Rank = Rank.C, Species = Species.HUMAN)
 public class DarkVision extends AbilityBase {
 	
 	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
-			"# °Å¸® ¼³Á¤") {
+			"# ê±°ë¦¬ ì„¤ì •") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -29,8 +29,8 @@ public class DarkVision extends AbilityBase {
 	
 	public DarkVision(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f¾ÕÀÌ º¸ÀÌÁö ¾Ê´Â ´ë½Å, ÇÃ·¹ÀÌ¾îÀÇ " + DistanceConfig.getValue() + "Ä­ ¾È¿¡ ÀÖ´Â ÇÃ·¹ÀÌ¾îµéÀº"),
-				ChatColor.translateAlternateColorCodes('&', "&f¹ß±¤ È¿°ú°¡ Àû¿ëµË´Ï´Ù. ¶ÇÇÑ, ºü¸£°Ô ´Ş¸®°í ³ô°Ô Á¡ÇÁÇÒ ¼ö ÀÖ½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì•ì´ ë³´ì´ì§€ ì•ŠëŠ” ëŒ€ì‹ , í”Œë ˆì´ì–´ì˜ " + DistanceConfig.getValue() + "ì¹¸ ì•ˆì— ìˆëŠ” í”Œë ˆì´ì–´ë“¤ì€"),
+				ChatColor.translateAlternateColorCodes('&', "&fë°œê´‘ íš¨ê³¼ê°€ ì ìš©ë©ë‹ˆë‹¤. ë˜í•œ, ë¹ ë¥´ê²Œ ë‹¬ë¦¬ê³  ë†’ê²Œ ì í”„í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."));
 	}
 
 	private TimerBase Dark = new TimerBase() {

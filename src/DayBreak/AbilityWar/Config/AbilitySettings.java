@@ -7,8 +7,8 @@ import DayBreak.AbilityWar.Ability.AbilityManifest;
 import DayBreak.AbilityWar.Utils.Data.FileManager;
 
 /**
- * ´É·Â ¼¼ºÎ ¼³Á¤
- * @author DayBreak »õº®
+ * ëŠ¥ë ¥ ì„¸ë¶€ ì„¤ì •
+ * @author DayBreak ìƒˆë²½
  */
 public class AbilitySettings {
 	
@@ -46,9 +46,9 @@ public class AbilitySettings {
 		public SettingObject(Class<? extends AbilityBase> abilityClass, String Path, T Default, String... Comments) {
 			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
 			if(manifest != null) {
-				this.Path = "´É·Â." + manifest.Name() + "." + Path;
+				this.Path = "ëŠ¥ë ¥." + manifest.Name() + "." + Path;
 			} else {
-				throw new IllegalArgumentException(abilityClass.getName() + " Å¬·¡½º¿¡ AbilityManifest ¾î³ëÅ×ÀÌ¼ÇÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+				throw new IllegalArgumentException(abilityClass.getName() + " í´ë˜ìŠ¤ì— AbilityManifest ì–´ë…¸í…Œì´ì…˜ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
 			}
 			
 			this.Default = Default;

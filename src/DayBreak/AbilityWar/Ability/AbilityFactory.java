@@ -69,20 +69,20 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
- * {@link AbilityBase}¸¦ ±â¹İÀ¸·Î ÇÏ´Â ¸ğµç ´É·ÂÀ» °ü¸®ÇÏ´Â Å¬·¡½ºÀÔ´Ï´Ù.
+ * {@link AbilityBase}ë¥¼ ê¸°ë°˜ìœ¼ë¡œ í•˜ëŠ” ëª¨ë“  ëŠ¥ë ¥ì„ ê´€ë¦¬í•˜ëŠ” í´ë˜ìŠ¤ì…ë‹ˆë‹¤.
  */
 public class AbilityFactory {
 
 	private static Map<Class<? extends AbilityBase>, AbilityRegisteration<? extends AbilityBase>> RegisteredAbilities = new HashMap<>();
 	
 	/**
-	 * ´É·ÂÀ» µî·ÏÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì„ ë“±ë¡í•©ë‹ˆë‹¤.
 	 * 
-	 * ´É·ÂÀ» µî·ÏÇÏ±â Àü, AbilityManifest ¾î³ëÅ×ÀÌ¼ÇÀÌ Å¬·¡½º¿¡ Á¸ÀçÇÏ´ÂÁö,
-	 * °ãÄ¡´Â ÀÌ¸§Àº ¾ø´ÂÁö, »ı¼ºÀÚ´Â ¿Ã¹Ù¸¥Áö È®ÀÎÇØÁÖ½Ã±æ ¹Ù¶ø´Ï´Ù.
+	 * ëŠ¥ë ¥ì„ ë“±ë¡í•˜ê¸° ì „, AbilityManifest ì–´ë…¸í…Œì´ì…˜ì´ í´ë˜ìŠ¤ì— ì¡´ì¬í•˜ëŠ”ì§€,
+	 * ê²¹ì¹˜ëŠ” ì´ë¦„ì€ ì—†ëŠ”ì§€, ìƒì„±ìëŠ” ì˜¬ë°”ë¥¸ì§€ í™•ì¸í•´ì£¼ì‹œê¸¸ ë°”ëë‹ˆë‹¤.
 	 * 
-	 * ÀÌ¹Ì µî·ÏµÈ ´É·ÂÀÏ °æ¿ì ´Ù½Ã µî·ÏÀÌ µÇÁö ¾Ê½À´Ï´Ù.
-	 * @param Ability		´É·Â Å¬·¡½º
+	 * ì´ë¯¸ ë“±ë¡ëœ ëŠ¥ë ¥ì¼ ê²½ìš° ë‹¤ì‹œ ë“±ë¡ì´ ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+	 * @param Ability		ëŠ¥ë ¥ í´ë˜ìŠ¤
 	 */
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
 		if(!RegisteredAbilities.containsKey(abilityClass)) {
@@ -97,13 +97,13 @@ public class AbilityFactory {
 						}
 					}
 				} else {
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f´É·ÂÀº °ãÄ¡´Â ÀÌ¸§ÀÌ ÀÖ¾î µî·ÏµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &fëŠ¥ë ¥ì€ ê²¹ì¹˜ëŠ” ì´ë¦„ì´ ìˆì–´ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
 				}
 			} catch(Exception ex) {
 				if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 					Messager.sendErrorMessage(ex.getMessage());
 				} else {
-					Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f´É·Â µî·ÏÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù."));
+					Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &fëŠ¥ë ¥ ë“±ë¡ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤."));
 				}
 			}
 		}
@@ -129,10 +129,10 @@ public class AbilityFactory {
 	}
 	
 	/**
-	 * ÇÃ·¯±×ÀÎ ±âº» ´É·Â µî·Ï
+	 * í”ŒëŸ¬ê·¸ì¸ ê¸°ë³¸ ëŠ¥ë ¥ ë“±ë¡
 	 */
 	static {
-		//ÃÊÃ¢±â ´É·ÂÀÚ
+		//ì´ˆì°½ê¸° ëŠ¥ë ¥ì
 		registerAbility(Assassin.class);
 		registerAbility(Feather.class);
 		registerAbility(Demigod.class);
@@ -179,18 +179,18 @@ public class AbilityFactory {
 		registerAbility(Curse.class);
 		registerAbility(TimeRewind.class);
 		
-		//2019 ¿©¸§ ¾÷µ¥ÀÌÆ®
+		//2019 ì—¬ë¦„ ì—…ë°ì´íŠ¸
 		registerAbility(Khazhad.class);
 		registerAbility(Sniper.class);
 		registerAbility(JellyFish.class);
 		
-		//Áñ°Å¿î ¿©¸§ÈŞ°¡ °ÔÀÓ¸ğµå
+		//ì¦ê±°ìš´ ì—¬ë¦„íœ´ê°€ ê²Œì„ëª¨ë“œ
 		registerAbility(SquirtGun.class);
 	}
 
 	/**
-	 * µî·ÏµÈ ´É·ÂµéÀÇ ÀÌ¸§À» String List·Î ¹İÈ¯ÇÕ´Ï´Ù.
-	 * AbilityManifest°¡ Á¸ÀçÇÏÁö ¾Ê´Â ´É·ÂÀº Æ÷ÇÔµÇÁö ¾Ê½À´Ï´Ù.
+	 * ë“±ë¡ëœ ëŠ¥ë ¥ë“¤ì˜ ì´ë¦„ì„ String Listë¡œ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * AbilityManifestê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ëŠ¥ë ¥ì€ í¬í•¨ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	 */
 	public static List<String> nameValues() {
 		ArrayList<String> Values = new ArrayList<String>();
@@ -204,10 +204,10 @@ public class AbilityFactory {
 	}
 
 	/**
-	 * µî·ÏµÈ ´É·Â Áß ÇØ´ç ÀÌ¸§ÀÇ ´É·ÂÀ» ¹İÈ¯ÇÕ´Ï´Ù.
-	 * AbilityManifest°¡ Á¸ÀçÇÏÁö ¾Ê´Â ´É·ÂÀÌ°Å³ª Á¸ÀçÇÏÁö ¾Ê´Â ´É·ÂÀÏ °æ¿ì nullÀ» ¹İÈ¯ÇÕ´Ï´Ù.
-	 * @param name	´É·ÂÀÇ ÀÌ¸§
-	 * @return		´É·Â Class
+	 * ë“±ë¡ëœ ëŠ¥ë ¥ ì¤‘ í•´ë‹¹ ì´ë¦„ì˜ ëŠ¥ë ¥ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * AbilityManifestê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ëŠ¥ë ¥ì´ê±°ë‚˜ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ëŠ¥ë ¥ì¼ ê²½ìš° nullì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @param name	ëŠ¥ë ¥ì˜ ì´ë¦„
+	 * @return		ëŠ¥ë ¥ Class
 	 */
 	public static Class<? extends AbilityBase> getByString(String name) {
 		for(AbilityRegisteration<?> r : RegisteredAbilities.values()) {

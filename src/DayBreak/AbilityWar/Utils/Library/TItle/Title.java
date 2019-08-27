@@ -3,8 +3,8 @@ package DayBreak.AbilityWar.Utils.Library.TItle;
 import org.bukkit.entity.Player;
 
 /**
- * Á¦¸ñ ¸Þ½ÃÁö
- * @author DayBreak »õº®
+ * ì œëª© ë©”ì‹œì§€
+ * @author DayBreak ìƒˆë²½
  */
 public class Title extends AbstractTitle {
 	
@@ -15,12 +15,12 @@ public class Title extends AbstractTitle {
 	private int fadeOut;
 
 	/**
-	 * Á¦¸ñ ¸Þ½ÃÁö
-	 * @param Title 	Á¦¸ñ
-	 * @param SubTitle 	ºÎÁ¦¸ñ
-	 * @param fadeIn 	FadeIn ½Ã°£ (Æ½ ´ÜÀ§)
-	 * @param stay 		Stay ½Ã°£ (Æ½ ´ÜÀ§)
-	 * @param fadeOut 	FadeOut ½Ã°£ (Æ½ ´ÜÀ§)
+	 * ì œëª© ë©”ì‹œì§€
+	 * @param Title 	ì œëª©
+	 * @param SubTitle 	ë¶€ì œëª©
+	 * @param fadeIn 	FadeIn ì‹œê°„ (í‹± ë‹¨ìœ„)
+	 * @param stay 		Stay ì‹œê°„ (í‹± ë‹¨ìœ„)
+	 * @param fadeOut 	FadeOut ì‹œê°„ (í‹± ë‹¨ìœ„)
 	 */
 	public Title(String Title, String SubTitle, int fadeIn, int stay, int fadeOut) {
 		this.Title = Title;

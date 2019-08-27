@@ -235,7 +235,7 @@ public class AbilityWarSettings {
 			Cache.put(node, o);
 			return o;
 		} catch (Exception e) {
-			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "¿¡¼­ ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
+			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "ì—ì„œ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 			Config.set(node.getPath(), node.getDefault());
 			Config.save();
 
@@ -279,7 +279,7 @@ public class AbilityWarSettings {
 
 			return list;
 		} catch (Exception e) {
-			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "¿¡¼­ ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
+			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "ì—ì„œ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 			Config.set(node.getPath(), node.getDefault());
 			Config.save();
 

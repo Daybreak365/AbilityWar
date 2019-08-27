@@ -15,28 +15,25 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Data.FileManager;
 
 /**
- * ¾Öµå¿Â¿¡ Á÷Á¢ÀûÀ¸·Î ¿¢¼¼½ºÇÏ¿© Ã³¸®ÇÏ´Â ·Î´õÀÔ´Ï´Ù.
- * @author DayBreak »õº®
+ * ì• ë“œì˜¨ì— ì§ì ‘ì ìœ¼ë¡œ ì—‘ì„¸ìŠ¤í•˜ì—¬ ì²˜ë¦¬í•˜ëŠ” ë¡œë”ì…ë‹ˆë‹¤.
+ * @author DayBreak ìƒˆë²½
  */
 public class AddonLoader {
 	
-	private AddonLoader() {
-		//¿ÜºÎ¿¡¼­ AddonLoader¸¦ ÀÎ½ºÅÏ½ºÈ­ÇÏÁö ¸øÇÏµµ·Ï ¹æÁö
-	}
+	private AddonLoader() {}
 	
-	private static final ArrayList<Addon> Addons = new ArrayList<Addon>();
+	private static ArrayList<Addon> Addons = new ArrayList<Addon>();
 	
 	public static List<Addon> getAddons() {
 		return Addons;
 	}
 
 	/**
-	 * ºÒ·¯¿ÍÁø ¾Öµå¿ÂµéÀÇ ¼³¸í ¸ñ·ÏÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ë¶ˆëŸ¬ì™€ì§„ ì• ë“œì˜¨ë“¤ì˜ ì„¤ëª… ëª©ë¡ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public static List<DescriptionFile> getDescriptions() {
 		List<DescriptionFile> desc = new ArrayList<DescriptionFile>();
@@ -48,39 +45,23 @@ public class AddonLoader {
 	}
 
 	/**
-	 * ¾Öµå¿Â Æú´õ¿¡ ÀÖ´Â ¸ğµç ¾Öµå¿ÂÀ» ºÒ·¯¿É´Ï´Ù.
+	 * ì• ë“œì˜¨ í´ë”ì— ìˆëŠ” ëª¨ë“  ì• ë“œì˜¨ì„ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.
 	 */
 	public static void loadAddons() {
 		for(File file : FileManager.getFolder("Addon").listFiles()) {
 			try {
 				Addons.add(load(file));
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				Messager.sendDebugMessage(file.getName() + " ÆÄÀÏÀÌ ¿Ã¹Ù¸¥ ¾Öµå¿ÂÀÌ ¾Æ´Õ´Ï´Ù.");
+				Messager.sendDebugMessage(file.getName() + " íŒŒì¼ì´ ì˜¬ë°”ë¥¸ ì• ë“œì˜¨ì´ ì•„ë‹™ë‹ˆë‹¤.");e.printStackTrace();
 			} catch (IOException e) {
-				Messager.sendDebugMessage(file.getName() + " ÆÄÀÏÀ» ºÒ·¯¿Ã ¼ö ¾ø½À´Ï´Ù.");
+				Messager.sendDebugMessage(file.getName() + " íŒŒì¼ì„ ë¶ˆëŸ¬ì˜¬ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
 			} catch (Exception e) {
 				e.printStackTrace();
-				Messager.sendDebugMessage(file.getName() + " ¾Öµå¿ÂÀ» ºÒ·¯¿À´Â µµÁß ¿¹»óÄ¡ ¸øÇÑ ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
+				Messager.sendDebugMessage(file.getName() + " ì• ë“œì˜¨ì„ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ ì˜ˆìƒì¹˜ ëª»í•œ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ìŠµë‹ˆë‹¤.");
 			}
 		}
 	}
 
-	/**
-	 * ¾Öµå¿Â Æú´õ¿¡ ÀÖ´Â ¸ğµç ¾Öµå¿ÂÀ» ºÒ·¯¿É´Ï´Ù.
-	 */
-	public static void loadAddon(File file) {
-		try {
-			Addons.add(load(file));
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			Messager.sendDebugMessage(file.getName() + " ÆÄÀÏÀÌ ¿Ã¹Ù¸¥ ¾Öµå¿ÂÀÌ ¾Æ´Õ´Ï´Ù.");
-		} catch (IOException e) {
-			Messager.sendDebugMessage(file.getName() + " ÆÄÀÏÀ» ºÒ·¯¿Ã ¼ö ¾ø½À´Ï´Ù.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			Messager.sendDebugMessage(file.getName() + " ¾Öµå¿ÂÀ» ºÒ·¯¿À´Â µµÁß ¿¹»óÄ¡ ¸øÇÑ ¿À·ù°¡ ¹ß»ıÇÏ¿´½À´Ï´Ù.");
-		}
-	}
-	
 	public static void onEnable() {
 		try {
 			for(Addon addon : Addons) {
@@ -102,15 +83,15 @@ public class AddonLoader {
 	}
 	
 	/**
-	 * ¾Öµå¿ÂÀ» ºÒ·¯¿É´Ï´Ù.
-	 * @param file			¾Öµå¿ÂÀÇ ±â¹İÀÌ µÇ´Â ÆÄÀÏ
-	 * @return				ºÒ·¯¿Â ¾Öµå¿Â
-	 * @throws Exception	¾Öµå¿ÂÀ» ºÒ·¯¿À´Â µµÁß ¿À·ù°¡ ¹ß»ıÇÏ¿´À» °æ¿ì
+	 * ì• ë“œì˜¨ì„ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.
+	 * @param file			ì• ë“œì˜¨ì˜ ê¸°ë°˜ì´ ë˜ëŠ” íŒŒì¼
+	 * @return				ë¶ˆëŸ¬ì˜¨ ì• ë“œì˜¨
+	 * @throws Exception	ì• ë“œì˜¨ì„ ë¶ˆëŸ¬ì˜¤ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì˜€ì„ ê²½ìš°
 	 */
 	private static Addon load(File file) throws Exception {
 		JarFile jar = new JarFile(file);
 		URL[] url = { file.toURI().toURL() };
-		URLClassLoader loader = new URLClassLoader(url, AbilityWar.class.getClassLoader());
+		URLClassLoader loader = new URLClassLoader(url, Addon.class.getClassLoader());
 		
 		DescriptionFile description = new DescriptionFile(jar);
 		if(!nameExists(description.getName())) {
@@ -149,7 +130,7 @@ public class AddonLoader {
 			}
 		} else {
 			loader.close();
-			throw new Exception(description.getName() + " ¾Öµå¿ÂÀº Áßº¹µÇ´Â ÀÌ¸§ÀÇ ¾Öµå¿ÂÀÌ ÀÖ°Å³ª ÀÌ¹Ì µî·ÏµÈ ¾Öµå¿ÂÀÔ´Ï´Ù.");
+			throw new Exception(description.getName() + " ì• ë“œì˜¨ì€ ì¤‘ë³µë˜ëŠ” ì´ë¦„ì˜ ì• ë“œì˜¨ì´ ìˆê±°ë‚˜ ì´ë¯¸ ë“±ë¡ëœ ì• ë“œì˜¨ì…ë‹ˆë‹¤.");
 		}
 	}
 	

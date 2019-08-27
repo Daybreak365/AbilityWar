@@ -18,11 +18,11 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "±êÅĞ", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "ê¹ƒí„¸", Rank = Rank.A, Species = Species.HUMAN)
 public class Feather extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -32,7 +32,7 @@ public class Feather extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Feather.class, "Duration", 10, 
-			"# Áö¼Ó½Ã°£") {
+			"# ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -43,8 +43,8 @@ public class Feather extends AbilityBase {
 	
 	public Feather(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é " + DurationConfig.getValue() + "ÃÊ°£ ºñÇàÇÒ ¼ö ÀÖ½À´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f³«ÇÏ µ¥¹ÌÁö¸¦ ¹«½ÃÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ " + DurationConfig.getValue() + "ì´ˆê°„ ë¹„í–‰í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fë‚™í•˜ ë°ë¯¸ì§€ë¥¼ ë¬´ì‹œí•©ë‹ˆë‹¤."));
 	}
 	
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
@@ -90,7 +90,7 @@ public class Feather extends AbilityBase {
 				if(p.equals(this.getPlayer())) {
 					if(e.getCause().equals(DamageCause.FALL)) {
 						e.setCancelled(true);
-						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a³«ÇÏ µ¥¹ÌÁö¸¦ ¹ŞÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&aë‚™í•˜ ë°ë¯¸ì§€ë¥¼ ë°›ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 					}
 				}

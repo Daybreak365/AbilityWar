@@ -16,13 +16,13 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "¼î¸Ç½±", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì‡¼ë§¨ì‰½", Rank = Rank.A, Species = Species.HUMAN)
 public class ShowmanShip extends AbilityBase {
 
 	public ShowmanShip(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÁÖº¯ 10Ä­ ÀÌ³»¿¡ ÀÖ´Â »ç¶÷ ¼ö¿¡ µû¶ó È¿°ú¸¦ ¹Ş½À´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&a1¸í ÀÌÇÏ &7: &f³ª¾àÇÔ  &a2¸í ÀÌ»ó &7: &fÈû II  &a3¸í ÀÌ»ó &7: &fÈû III"));
+				ChatColor.translateAlternateColorCodes('&', "&fì£¼ë³€ 10ì¹¸ ì´ë‚´ì— ìˆëŠ” ì‚¬ëŒ ìˆ˜ì— ë”°ë¼ íš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&a1ëª… ì´í•˜ &7: &fë‚˜ì•½í•¨  &a2ëª… ì´ìƒ &7: &fí˜ II  &a3ëª… ì´ìƒ &7: &fí˜ III"));
 	}
 
 	private final RGB WEAK = new RGB(214, 255, 212);

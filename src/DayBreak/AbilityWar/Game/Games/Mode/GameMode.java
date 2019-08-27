@@ -15,8 +15,8 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
 /**
- * °ÔÀÓ ¸ğµå
- * @author DayBreak »õº®
+ * ê²Œì„ ëª¨ë“œ
+ * @author DayBreak ìƒˆë²½
  */
 public class GameMode {
 	
@@ -38,16 +38,16 @@ public class GameMode {
 						gameClass.getConstructor();
 						modeList.add(gameClass);
 					} catch (NoSuchMethodException | SecurityException e) {
-						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f°ÔÀÓ¸ğµå´Â »ı¼ºÀÚ°¡ ¿Ã¹Ù¸£Áö ¾Ê¾Æ µî·ÏµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &fê²Œì„ëª¨ë“œëŠ” ìƒì„±ìê°€ ì˜¬ë°”ë¥´ì§€ ì•Šì•„ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
 					}
 				} else {
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f°ÔÀÓ¸ğµå´Â °ãÄ¡´Â ÀÌ¸§ÀÌ ÀÖ¾î µî·ÏµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &fê²Œì„ëª¨ë“œëŠ” ê²¹ì¹˜ëŠ” ì´ë¦„ì´ ìˆì–´ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
 				}
 			} else {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f°ÔÀÓ¸ğµå´Â GameManifest ¾î³ëÅ×ÀÌ¼ÇÀÌ Á¸ÀçÇÏÁö ¾Ê¾Æ µî·ÏµÇÁö ¾Ê¾Ò½À´Ï´Ù."));
+				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &fê²Œì„ëª¨ë“œëŠ” GameManifest ì–´ë…¸í…Œì´ì…˜ì´ ì¡´ì¬í•˜ì§€ ì•Šì•„ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤."));
 			}
 		} else {
-			Messager.sendMessage(gameClass.getName() + " °ÔÀÓ¸ğµå´Â °ãÄ¡´Â ÀÌ¸§ÀÌ ÀÖ¾î µî·ÏµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+			Messager.sendMessage(gameClass.getName() + " ê²Œì„ëª¨ë“œëŠ” ê²¹ì¹˜ëŠ” ì´ë¦„ì´ ìˆì–´ ë“±ë¡ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
 		}
 	}
 

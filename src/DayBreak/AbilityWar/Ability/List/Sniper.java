@@ -22,11 +22,11 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
-@AbilityManifest(Name = "½º³ªÀÌÆÛ", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "ìŠ¤ë‚˜ì´í¼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Sniper.class, "Duration", 2, 
-			"# ´É·Â Áö¼Ó½Ã°£") {
+			"# ëŠ¥ë ¥ ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -37,7 +37,7 @@ public class Sniper extends AbilityBase {
 	
 	public Sniper(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f½º³ªÀÌÆÛ°¡ ½î´Â È­»ìÀº " + DurationConfig.getValue() + "ÃÊ°£ ºü¸¥ ¼Óµµ·Î °ğ°Ô »¸¾î³ª°¡´Ù ¶³¾îÁı´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fìŠ¤ë‚˜ì´í¼ê°€ ì˜ëŠ” í™”ì‚´ì€ " + DurationConfig.getValue() + "ì´ˆê°„ ë¹ ë¥¸ ì†ë„ë¡œ ê³§ê²Œ ë»—ì–´ë‚˜ê°€ë‹¤ ë–¨ì–´ì§‘ë‹ˆë‹¤."));
 	}
 
 	private final int Duration = DurationConfig.getValue();

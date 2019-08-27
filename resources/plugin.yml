@@ -1,6 +1,6 @@
 name: AbilityWar
 main: DayBreak.AbilityWar.AbilityWar
-version: 1.9.8
+version: ${project.version}
 
 commands:
   abilitywar:

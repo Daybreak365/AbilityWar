@@ -9,7 +9,7 @@ import DayBreak.AbilityWar.Addon.AddonLoader;
 
 /**
  * Reflection Util
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public class ReflectionUtil {
 
@@ -33,7 +33,7 @@ public class ReflectionUtil {
 				}
 			}
 			
-			throw new ClassNotFoundException(name + " Å¬·¡½º¸¦ Ã£Áö ¸øÇÏ¿´½À´Ï´Ù.");
+			throw new ClassNotFoundException(name + " í´ë˜ìŠ¤ë¥¼ ì°¾ì§€ ëª»í•˜ì˜€ìŠµë‹ˆë‹¤.");
 		}
 		
 	}

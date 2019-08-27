@@ -9,8 +9,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 /**
- * ¸ðÀå rest API Wrapper
- * @author DayBreak »õº®
+ * ëª¨ìž¥ rest API Wrapper
+ * @author DayBreak ìƒˆë²½
  */
 public class MojangAPI {
 	

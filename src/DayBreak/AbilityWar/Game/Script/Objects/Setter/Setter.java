@@ -18,7 +18,7 @@ import DayBreak.AbilityWar.Utils.Validate;
 
 /**
  * Setter
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 abstract public class Setter<T> implements EventExecutor {
 	

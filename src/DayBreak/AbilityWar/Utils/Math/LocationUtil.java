@@ -20,20 +20,20 @@ import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
 /**
  * Location Util
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public class LocationUtil {
 
 	private LocationUtil() {}
 	
 	/**
-	 * LocationÀÌ ¿ø ¾È¿¡ À§Ä¡ÇÏ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
-	 * @param c ¿øÀÇ Áß½É
+	 * Locationì´ ì› ì•ˆì— ìœ„ì¹˜í•˜ëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
+	 * @param c ì›ì˜ ì¤‘ì‹¬
 	 * @param l Location
-	 * @param radius ¿øÀÇ ¹İÁö¸§
+	 * @param radius ì›ì˜ ë°˜ì§€ë¦„
 	 * @param flatsurface
-	 *        true:  Y ÁÂÇ¥¸¦ µû·Î °è»êÇÏÁö ¾Ê½À´Ï´Ù.
-	 *        false: Y ÁÂÇ¥ ¶ÇÇÑ Æ÷ÇÔÇÏ¿© °è»êÇÕ´Ï´Ù.
+	 *        true:  Y ì¢Œí‘œë¥¼ ë”°ë¡œ ê³„ì‚°í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+	 *        false: Y ì¢Œí‘œ ë˜í•œ í¬í•¨í•˜ì—¬ ê³„ì‚°í•©ë‹ˆë‹¤.
 	 */
 	public static boolean isInCircle(final Location c, final Location l, final double radius, final boolean flatsurface) {
 		final Location center = c.clone();
@@ -54,9 +54,9 @@ public class LocationUtil {
 	}
 	
 	/**
-	 * ¹üÀ§ ¾È¿¡ ÀÖ´Â ºí·ÏµéÀ» List·Î ¹İÈ¯ÇÕ´Ï´Ù.
-	 * @param center Áß½É
-	 * @param radius ¹İÁö¸§
+	 * ë²”ìœ„ ì•ˆì— ìˆëŠ” ë¸”ë¡ë“¤ì„ Listë¡œ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @param center ì¤‘ì‹¬
+	 * @param radius ë°˜ì§€ë¦„
 	 */
 	public static List<Block> getBlocks(Location center, Integer radius, boolean hollow, boolean top,
 			boolean alsoAir) {
@@ -118,9 +118,9 @@ public class LocationUtil {
 	}
 
 	/**
-	 * ¹üÀ§ ¾È¿¡¼­ °°Àº Y ÁÂÇ¥¿¡ ÀÖ´Â ºí·ÏµéÀ» List·Î ¹İÈ¯ÇÕ´Ï´Ù.
-	 * @param center Áß½É
-	 * @param radius ¹İÁö¸§
+	 * ë²”ìœ„ ì•ˆì—ì„œ ê°™ì€ Y ì¢Œí‘œì— ìˆëŠ” ë¸”ë¡ë“¤ì„ Listë¡œ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * @param center ì¤‘ì‹¬
+	 * @param radius ë°˜ì§€ë¦„
 	 */
 	public static List<Block> getBlocksAtSameY(Location center, Integer radius, boolean hollow, boolean top) {
 		List<Block> blocks = new ArrayList<Block>();

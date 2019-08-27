@@ -1,6 +1,6 @@
-/** MIT ¶óÀÌ¼±½º
+/** MIT ë¼ì´ì„ ìŠ¤
 * 
-* Copyright ¨Ï 2019 DayBreak
+* Copyright â“’ 2019 DayBreak
 * 
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"),
@@ -34,8 +34,8 @@ import org.bukkit.entity.Player;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * ¼Ò¸® ¶óÀÌºê·¯¸®
- * @author DayBreak »õº®
+ * ì†Œë¦¬ ë¼ì´ë¸ŒëŸ¬ë¦¬
+ * @author DayBreak ìƒˆë²½
  * @since 2019-02-19
  * @version 1.2 (Minecraft 1.14)
  */
@@ -927,82 +927,82 @@ public class SoundLib {
 	}
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.14 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.14 â†‘
 	 */
 	public static Instruments BANJO = new Instruments("BANJO", "", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.9 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.9 â†‘
 	 */
 	public static Instruments BASS_DRUM = new Instruments("BASS_DRUM", "BASS_DRUM", "BASS_DRUM");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.9 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.9 â†‘
 	 */
 	public static Instruments BASS_GUITAR = new Instruments("BASS_GUITAR", "BASS_GUITAR", "BASS_GUITAR");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.12 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.12 â†‘
 	 */
 	public static Instruments BELL = new Instruments("BELL", "BELL", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.14 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.14 â†‘
 	 */
 	public static Instruments BIT = new Instruments("BIT", "", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.12 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.12 â†‘
 	 */
 	public static Instruments CHIME = new Instruments("CHIME", "CHIME", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.14 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.14 â†‘
 	 */
 	public static Instruments COW_BELL = new Instruments("COW_BELL", "", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.14 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.14 â†‘
 	 */
 	public static Instruments DIDGERIDOO = new Instruments("DIDGERIDOO", "", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.12 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.12 â†‘
 	 */
 	public static Instruments FLUTE = new Instruments("FLUTE", "FLUTE", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.12 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.12 â†‘
 	 */
 	public static Instruments GUITAR = new Instruments("GUITAR", "GUITAR", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.14 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.14 â†‘
 	 */
 	public static Instruments IRON_XYLOPHONE = new Instruments("IRON_XYLOPHONE", "", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.9 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.9 â†‘
 	 */
 	public static Instruments PIANO = new Instruments("PIANO", "PIANO", "PIANO");
 	
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.14 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.14 â†‘
 	 */
 	public static Instruments PLING = new Instruments("PLING", "", "");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.9 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.9 â†‘
 	 */
 	public static Instruments SNARE_DRUM = new Instruments("SNARE_DRUM", "SNARE_DRUM", "SNARE_DRUM");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.9 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.9 â†‘
 	 */
 	public static Instruments STICKS = new Instruments("STICKS", "STICKS", "STICKS");
 
 	/**
-	 * @version ¸¶ÀÎÅ©·¡ÇÁÆ® 1.12 ¡è
+	 * @version ë§ˆì¸í¬ë˜í”„íŠ¸ 1.12 â†‘
 	 */
 	public static Instruments XYLOPHONE = new Instruments("XYLOPHONE", "XYLOPHONE", "");
 

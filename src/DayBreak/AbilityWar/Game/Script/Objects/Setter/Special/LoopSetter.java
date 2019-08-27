@@ -16,7 +16,7 @@ import DayBreak.AbilityWar.Utils.Messager;
 public class LoopSetter extends Setter<Boolean> {
 	
 	public LoopSetter(ScriptWizard Wizard) {
-		super("¹Ýº¹ ½ÇÇà", false, Wizard);
+		super("ë°˜ë³µ ì‹¤í–‰", false, Wizard);
 	}
 
 	@Override
@@ -34,13 +34,13 @@ public class LoopSetter extends Setter<Boolean> {
 		loopMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 		if(this.getValue()) {
 			loopMeta.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&a¹Ýº¹ ½ÇÇà"),
-					ChatColor.translateAlternateColorCodes('&', "&7ÇÑ¹ø ½ÇÇà")
+					ChatColor.translateAlternateColorCodes('&', "&aë°˜ë³µ ì‹¤í–‰"),
+					ChatColor.translateAlternateColorCodes('&', "&7í•œë²ˆ ì‹¤í–‰")
 					));
 		} else {
 			loopMeta.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&7¹Ýº¹ ½ÇÇà"),
-					ChatColor.translateAlternateColorCodes('&', "&aÇÑ¹ø ½ÇÇà")
+					ChatColor.translateAlternateColorCodes('&', "&7ë°˜ë³µ ì‹¤í–‰"),
+					ChatColor.translateAlternateColorCodes('&', "&aí•œë²ˆ ì‹¤í–‰")
 					));
 		}
 		

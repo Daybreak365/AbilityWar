@@ -20,11 +20,11 @@ import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 
-@AbilityManifest(Name = "±³È²", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "êµí™©", Rank = Rank.A, Species = Species.HUMAN)
 public class TheHighPriestess extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheHighPriestess.class, "Cooldown", 80,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -34,7 +34,7 @@ public class TheHighPriestess extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(TheHighPriestess.class, "Duration", 6,
-			"# ½ºÅ³ Áö¼Ó½Ã°£") {
+			"# ìŠ¤í‚¬ ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -44,7 +44,7 @@ public class TheHighPriestess extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(TheHighPriestess.class, "Range", 8,
-			"# ½ºÅ³ »ç¿ë ½Ã ÀÚ½ÅÀÇ ¿µÁö·Î ¼±Æ÷ÇÒ ¹üÀ§") {
+			"# ìŠ¤í‚¬ ì‚¬ìš© ì‹œ ìì‹ ì˜ ì˜ì§€ë¡œ ì„ í¬í•  ë²”ìœ„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -55,8 +55,8 @@ public class TheHighPriestess extends AbilityBase {
 
 	public TheHighPriestess(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é " + DurationConfig.getValue() + "ÃÊ°£ ÁÖº¯ " + RangeConfig.getValue() + "Ä­À» ÀÚ½ÅÀÇ ¿µÁö·Î ¼±Æ÷ÇÕ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f¿µÁö ¾È¿¡¼­ ÀÚ½ÅÀº Àç»ı È¿°ú¸¦, »ó´ë¹æÀº À§´õ È¿°ú¸¦ ¹Ş½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ " + DurationConfig.getValue() + "ì´ˆê°„ ì£¼ë³€ " + RangeConfig.getValue() + "ì¹¸ì„ ìì‹ ì˜ ì˜ì§€ë¡œ ì„ í¬í•©ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fì˜ì§€ ì•ˆì—ì„œ ìì‹ ì€ ì¬ìƒ íš¨ê³¼ë¥¼, ìƒëŒ€ë°©ì€ ìœ„ë” íš¨ê³¼ë¥¼ ë°›ìŠµë‹ˆë‹¤."));
 	}
 
 	private final Integer Duration = DurationConfig.getValue();

@@ -20,11 +20,11 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 
-@AbilityManifest(Name = "Å×·¯¸®½ºÆ®", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "í…ŒëŸ¬ë¦¬ìŠ¤íŠ¸", Rank = Rank.A, Species = Species.HUMAN)
 public class Terrorist extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -34,7 +34,7 @@ public class Terrorist extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Terrorist.class, "Count", 15,
-			"# TNT °³¼ö") {
+			"# TNT ê°œìˆ˜") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -45,8 +45,8 @@ public class Terrorist extends AbilityBase {
 	
 	public Terrorist(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ÀÚ½ÅÀÇ ÁÖÀ§¿¡ TNT " + (CountConfig.getValue() * 2) + "°³¸¦ ¶³¾î¶ß¸³´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&fÆø¹ß µ¥¹ÌÁö¸¦ ÀÔÁö ¾Ê½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ìì‹ ì˜ ì£¼ìœ„ì— TNT " + (CountConfig.getValue() * 2) + "ê°œë¥¼ ë–¨ì–´ëœ¨ë¦½ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&fí­ë°œ ë°ë¯¸ì§€ë¥¼ ì…ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 	}
 
 	private final int count = CountConfig.getValue();

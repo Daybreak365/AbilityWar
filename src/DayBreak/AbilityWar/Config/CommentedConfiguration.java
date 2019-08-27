@@ -14,14 +14,13 @@ import java.io.Writer;
 import java.util.HashMap;
 
 import org.bukkit.configuration.InvalidConfigurationException;
-
-import DayBreak.AbilityWar.Config.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * Configuration ÆĞÄ¡¸¦ ÁøÇàÇÏ¿© ÇÏÀ§ ¹öÀü¿¡¼­µµ ÄÜÇÇ±×°¡ ±úÁöÁö ¾Ê½À´Ï´Ù.
+ * Configuration íŒ¨ì¹˜ë¥¼ ì§„í–‰í•˜ì—¬ í•˜ìœ„ ë²„ì „ì—ì„œë„ ì½˜í”¼ê·¸ê°€ ê¹¨ì§€ì§€ ì•ŠìŠµë‹ˆë‹¤.
  * 
- * ÁÖ¼® ÄÜÇÇ±×
- * @author dumptruckman, DayBreak »õº®
+ * ì£¼ì„ ì½˜í”¼ê·¸
+ * @author dumptruckman, DayBreak ìƒˆë²½
  */
 public class CommentedConfiguration extends YamlConfiguration {
 

@@ -2,7 +2,7 @@ package DayBreak.AbilityWar.Utils.Math;
 
 /**
  * Number Util
- * @author DayBreak »õº®
+ * @author DayBreak ìƒˆë²½
  */
 public class NumberUtil {
 
@@ -32,7 +32,7 @@ public class NumberUtil {
 		Integer Minute = Second / 60;
 		Second -= Minute * 60;
 
-		return (Hour != 0 ? Hour + "½Ã°£ " : "") + (Minute != 0 ? Minute + "ºĞ " : "") + (Second >= 0 ? Second + "ÃÊ" : "");
+		return (Hour != 0 ? Hour + "ì‹œê°„ " : "") + (Minute != 0 ? Minute + "ë¶„ " : "") + (Second >= 0 ? Second + "ì´ˆ" : "");
 	}
 
 	public static NumberStatus getNumberStatus(Number Number) {

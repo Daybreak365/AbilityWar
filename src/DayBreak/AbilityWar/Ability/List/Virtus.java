@@ -19,11 +19,11 @@ import DayBreak.AbilityWar.Utils.Library.ParticleLib;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "º£¸£Åõ½º", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "ë² ë¥´íˆ¬ìŠ¤", Rank = Rank.A, Species = Species.HUMAN)
 public class Virtus extends AbilityBase {
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 5,
-			"# ´É·Â Áö¼Ó½Ã°£") {
+			"# ëŠ¥ë ¥ ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -33,7 +33,7 @@ public class Virtus extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Virtus.class, "Cooldown", 70,
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -44,7 +44,7 @@ public class Virtus extends AbilityBase {
 	
 	public Virtus(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ´ÙÀ½ " + DurationConfig.getValue() + "&fÃÊ°£ ¹Ş´Â µ¥¹ÌÁö°¡ 75% °¨¼ÒÇÕ´Ï´Ù. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ë‹¤ìŒ " + DurationConfig.getValue() + "&fì´ˆê°„ ë°›ëŠ” ë°ë¯¸ì§€ê°€ 75% ê°ì†Œí•©ë‹ˆë‹¤. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());

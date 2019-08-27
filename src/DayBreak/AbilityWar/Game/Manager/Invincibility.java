@@ -23,8 +23,8 @@ import DayBreak.AbilityWar.Utils.Math.NumberUtil;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 /**
- * ¹«Àû 
- * @author DayBreak »õº®
+ * ë¬´ì  
+ * @author DayBreak ìƒˆë²½
  */
 public class Invincibility implements EventExecutor {
 	
@@ -53,18 +53,18 @@ public class Invincibility implements EventExecutor {
 							}
 						}
 						
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a¹«ÀûÀÌ &f" + NumberUtil.parseTimeString(Duration * 60) + "&aµ¿¾È Àû¿ëµË´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&aë¬´ì ì´ &f" + NumberUtil.parseTimeString(Duration * 60) + "&aë™ì•ˆ ì ìš©ë©ë‹ˆë‹¤."));
 					}
 					
 					@Override
 					protected void TimerProcess(Integer Seconds) {
 						if(Seconds == (Duration * 60) / 2) {
-							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a¹«ÀûÀÌ &f" + NumberUtil.parseTimeString(Seconds) + " &aÈÄ¿¡ ÇØÁ¦µË´Ï´Ù."));
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&aë¬´ì ì´ &f" + NumberUtil.parseTimeString(Seconds) + " &aí›„ì— í•´ì œë©ë‹ˆë‹¤."));
 						}
 						
 
 						if(Seconds <= 5 && Seconds >= 1) {
-							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a¹«ÀûÀÌ &f" + NumberUtil.parseTimeString(Seconds) + " &aÈÄ¿¡ ÇØÁ¦µË´Ï´Ù."));
+							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&aë¬´ì ì´ &f" + NumberUtil.parseTimeString(Seconds) + " &aí›„ì— í•´ì œë©ë‹ˆë‹¤."));
 							SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 						}
 					}
@@ -73,7 +73,7 @@ public class Invincibility implements EventExecutor {
 					protected void onEnd() {
 						game.setRestricted(false);
 						Title titlePacket = new Title(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
-								ChatColor.translateAlternateColorCodes('&', "&f¹«ÀûÀÌ ÇØÁ¦µÇ¾ú½À´Ï´Ù."), 20, 60, 20);
+								ChatColor.translateAlternateColorCodes('&', "&fë¬´ì ì´ í•´ì œë˜ì—ˆìŠµë‹ˆë‹¤."), 20, 60, 20);
 						titlePacket.Broadcast();
 						SoundLib.ENTITY_ENDER_DRAGON_AMBIENT.broadcastSound();
 						
@@ -99,7 +99,7 @@ public class Invincibility implements EventExecutor {
 								ability.setRestricted(true);
 							}
 						}
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a¹«ÀûÀÌ Àû¿ëµÇ¾ú½À´Ï´Ù. Áö±İºÎÅÍ ¹«ÀûÀÌ ÇØÁ¦µÉ ¶§±îÁö µ¥¹ÌÁö¸¦ ÀÔÁö ¾Ê½À´Ï´Ù."));
+						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&aë¬´ì ì´ ì ìš©ë˜ì—ˆìŠµë‹ˆë‹¤. ì§€ê¸ˆë¶€í„° ë¬´ì ì´ í•´ì œë  ë•Œê¹Œì§€ ë°ë¯¸ì§€ë¥¼ ì…ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 					
 					@Override
@@ -109,7 +109,7 @@ public class Invincibility implements EventExecutor {
 					protected void onEnd() {
 						game.setRestricted(false);
 						Title titlePacket = new Title(ChatColor.translateAlternateColorCodes('&', "&c&lWarning"),
-								ChatColor.translateAlternateColorCodes('&', "&f¹«ÀûÀÌ ÇØÁ¦µÇ¾ú½À´Ï´Ù."), 20, 60, 20);
+								ChatColor.translateAlternateColorCodes('&', "&fë¬´ì ì´ í•´ì œë˜ì—ˆìŠµë‹ˆë‹¤."), 20, 60, 20);
 						titlePacket.Broadcast();
 						SoundLib.ENTITY_ENDER_DRAGON_AMBIENT.broadcastSound();
 						

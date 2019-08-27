@@ -6,8 +6,8 @@ import org.bukkit.potion.PotionEffect;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * È¿°ú ¶óÀÌºê·¯¸®
- * @author DayBreak »õº®
+ * íš¨ê³¼ ë¼ì´ë¸ŒëŸ¬ë¦¬
+ * @author DayBreak ìƒˆë²½
  * @since 2019-02-19
  * @version 1.2 (Minecraft 1.14)
  */

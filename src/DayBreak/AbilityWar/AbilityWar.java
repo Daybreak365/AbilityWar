@@ -22,8 +22,8 @@ import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
 
 /**
- * Ability War ´É·ÂÀÚ ÀüÀï ÇÃ·¯±×ÀÎ
- * @author DayBreak »õº®
+ * Ability War ëŠ¥ë ¥ì ì „ìŸ í”ŒëŸ¬ê·¸ì¸
+ * @author DayBreak ìƒˆë²½
  */
 public class AbilityWar extends JavaPlugin {
 	
@@ -38,27 +38,24 @@ public class AbilityWar extends JavaPlugin {
 	public AutoUpdate getAutoUpdate() {
 		return au;
 	}
+
+	public AbilityWar() {
+		AbilityWar.Plugin = this;
+	}
 	
 	@Override
 	public void onEnable() {
-		AbilityWar.Plugin = this;
-		
 		ServerVersion.VersionCompat(this);
 
 		au.Check();
 		
 		Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
+
 		
-		Load();
-		
-		Messager.sendMessage("ÇÃ·¯±×ÀÎÀÌ È°¼ºÈ­µÇ¾ú½À´Ï´Ù.");
-	}
-	
-	private void Load() {
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
 
-		Script.registerScript(TeleportScript.class, new RequiredData<Location>("ÅÚ·¹Æ÷Æ® À§Ä¡", Location.class));
-		Script.registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("´É·Â º¯°æ ´ë»ó", ChangeTarget.class));
+		Script.registerScript(TeleportScript.class, new RequiredData<Location>("í…”ë ˆí¬íŠ¸ ìœ„ì¹˜", Location.class));
+		Script.registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("ëŠ¥ë ¥ ë³€ê²½ ëŒ€ìƒ", ChangeTarget.class));
 		Script.registerScript(LocationNoticeScript.class);
 		
 		AbilityList.nameValues();
@@ -67,7 +64,7 @@ public class AbilityWar extends JavaPlugin {
 		AddonLoader.onEnable();
 		
 		/*
-		 * ¼­¹ö ºÎÆÃÀÌ ³¡³ª¸é ½ÇÇà
+		 * ì„œë²„ ë¶€íŒ…ì´ ëë‚˜ë©´ ì‹¤í–‰
 		 */
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			@Override
@@ -78,6 +75,8 @@ public class AbilityWar extends JavaPlugin {
 			}
 		});
 		
+		
+		Messager.sendMessage("í”ŒëŸ¬ê·¸ì¸ì´ í™œì„±í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
 	}
 	
 	@Override
@@ -87,7 +86,7 @@ public class AbilityWar extends JavaPlugin {
 		AbilitySettings.Refresh();
 		AddonLoader.onDisable();
 		
-		Messager.sendMessage("ÇÃ·¯±×ÀÎÀÌ ºñÈ°¼ºÈ­µÇ¾ú½À´Ï´Ù.");
+		Messager.sendMessage("í”ŒëŸ¬ê·¸ì¸ì´ ë¹„í™œì„±í™”ë˜ì—ˆìŠµë‹ˆë‹¤.");
 	}
-
+	
 }

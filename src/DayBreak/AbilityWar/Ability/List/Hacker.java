@@ -23,11 +23,11 @@ import DayBreak.AbilityWar.Utils.Math.LocationUtil;
 import DayBreak.AbilityWar.Utils.Math.Geometry.Circle;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
-@AbilityManifest(Name = "ÇØÄ¿", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "í•´ì»¤", Rank = Rank.A, Species = Species.HUMAN)
 public class Hacker extends AbilityBase {
 
 	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180, 
-			"# ÄğÅ¸ÀÓ") {
+			"# ì¿¨íƒ€ì„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -37,7 +37,7 @@ public class Hacker extends AbilityBase {
 	};
 
 	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Hacker.class, "Duration", 5, 
-			"# ´É·Â Áö¼Ó½Ã°£") {
+			"# ëŠ¥ë ¥ ì§€ì†ì‹œê°„") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -48,8 +48,8 @@ public class Hacker extends AbilityBase {
 	
 	public Hacker(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fÃ¶±«¸¦ ¿ìÅ¬¸¯ÇÏ¸é ÀÚ½Å¿¡°Ô Á¦ÀÏ °¡±î¿î ÇÃ·¹ÀÌ¾î¸¦ ÇØÅ·ÇØ ÁÂÇ¥¸¦ ¾Ë¾Æ³»°í"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + DurationConfig.getValue() + "ÃÊ°£ ÇØ´ç ÇÃ·¹ÀÌ¾î°¡ ¿òÁ÷ÀÌÁö ¸øÇÏ°Ô ÇÕ´Ï´Ù."),
+				ChatColor.translateAlternateColorCodes('&', "&fì² ê´´ë¥¼ ìš°í´ë¦­í•˜ë©´ ìì‹ ì—ê²Œ ì œì¼ ê°€ê¹Œìš´ í”Œë ˆì´ì–´ë¥¼ í•´í‚¹í•´ ì¢Œí‘œë¥¼ ì•Œì•„ë‚´ê³ "),
+				ChatColor.translateAlternateColorCodes('&', "&f" + DurationConfig.getValue() + "ì´ˆê°„ í•´ë‹¹ í”Œë ˆì´ì–´ê°€ ì›€ì§ì´ì§€ ëª»í•˜ê²Œ í•©ë‹ˆë‹¤."),
 				Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
@@ -76,9 +76,9 @@ public class Hacker extends AbilityBase {
 				int X = (int) Target.getLocation().getX();
 				int Y = (int) Target.getLocation().getY();
 				int Z = (int) Target.getLocation().getZ();
-				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + "&f´ÔÀº &aX " + X + "&f, &aY " + Y + "&f, &aZ "+ Z + "&f¿¡ ÀÖ½À´Ï´Ù."));
+				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + "&fë‹˜ì€ &aX " + X + "&f, &aY " + Y + "&f, &aZ "+ Z + "&fì— ìˆìŠµë‹ˆë‹¤."));
 
-				new Title(ChatColor.translateAlternateColorCodes('&', "&5ÇØÅ·´çÇß½À´Ï´Ù!"), "", 0, 40, 0).sendTo(Target);
+				new Title(ChatColor.translateAlternateColorCodes('&', "&5í•´í‚¹ë‹¹í–ˆìŠµë‹ˆë‹¤!"), "", 0, 40, 0).sendTo(Target);
 				Hacker.this.getGame().getEffectManager().Stun(Target, DurationTick);
 				Particle.StartTimer();
 			}
@@ -94,7 +94,7 @@ public class Hacker extends AbilityBase {
 				int gray = all - green;
 				for(int i = 0; i < gray; i++) sb.append(ChatColor.GRAY + "|");
 				
-				Title packet = new Title(ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + " &fÇØÅ·Áß..."),
+				Title packet = new Title(ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + " &fí•´í‚¹ì¤‘..."),
 						ChatColor.translateAlternateColorCodes('&', sb.toString() + " &f" + Count + "%"), 0, 5, 0);
 				packet.sendTo(getPlayer());
 				
@@ -163,7 +163,7 @@ public class Hacker extends AbilityBase {
 						
 						return true;
 					} else {
-						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&a°¡Àå °¡±î¿î ÇÃ·¹ÀÌ¾î&f°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù."));
+						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&aê°€ì¥ ê°€ê¹Œìš´ í”Œë ˆì´ì–´&fê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."));
 					}
 				}
 			}

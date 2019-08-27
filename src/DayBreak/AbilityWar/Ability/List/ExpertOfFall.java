@@ -14,13 +14,13 @@ import DayBreak.AbilityWar.Ability.SubscribeEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 
-@AbilityManifest(Name = "³«¹ıÀÇ ´ŞÀÎ", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "ë‚™ë²•ì˜ ë‹¬ì¸", Rank = Rank.C, Species = Species.HUMAN)
 public class ExpertOfFall extends AbilityBase {
 
 	public ExpertOfFall(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f30³â°£ÀÇ °íµÈ ¼ö·ÃÀ¸·Î ³«¹ı°ú ÀÏ½Éµ¿Ã¼°¡ µÈ ³«¹ıÀÇ ´ŞÀÎ."),
-				ChatColor.translateAlternateColorCodes('&', "&f³«ÇÏÇØ ¶¥¿¡ ´ê¾ÒÀ» ¶§ ÀÚµ¿À¸·Î ¹°³«¹ıÀ» ÇÕ´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&f30ë…„ê°„ì˜ ê³ ëœ ìˆ˜ë ¨ìœ¼ë¡œ ë‚™ë²•ê³¼ ì¼ì‹¬ë™ì²´ê°€ ëœ ë‚™ë²•ì˜ ë‹¬ì¸."),
+				ChatColor.translateAlternateColorCodes('&', "&fë‚™í•˜í•´ ë•…ì— ë‹¿ì•˜ì„ ë•Œ ìë™ìœ¼ë¡œ ë¬¼ë‚™ë²•ì„ í•©ë‹ˆë‹¤."));
 	}
 
 	@Override

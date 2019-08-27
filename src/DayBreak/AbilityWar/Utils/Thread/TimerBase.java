@@ -12,22 +12,22 @@ import DayBreak.AbilityWar.Ability.List.Gladiator;
 import DayBreak.AbilityWar.Ability.List.Pumpkin;
 
 /**
- * °ÔÀÓ ÁøÇà Áß ½ÇÇàµÇ´Â Å¸ÀÌ¸Ó
- * @author DayBreak »õº®
+ * ê²Œì„ ì§„í–‰ ì¤‘ ì‹¤í–‰ë˜ëŠ” íƒ€ì´ë¨¸
+ * @author DayBreak ìƒˆë²½
  */
 abstract public class TimerBase {
 
 	private static List<TimerBase> Tasks = new ArrayList<>();
 	
 	/**
-	 * ÇöÀç ½ÇÇàÁßÀÎ ¸ğµç {@link TimerBase}¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * í˜„ì¬ ì‹¤í–‰ì¤‘ì¸ ëª¨ë“  {@link TimerBase}ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public static Collection<TimerBase> getTasks() {
 		return new ArrayList<TimerBase>(Tasks);
 	}
 
 	/**
-	 * ÇØ´ç Å¸ÀÔÀÇ {@link TimerBase}¸¦ ¸ğµÎ Á¾·áÇÕ´Ï´Ù.
+	 * í•´ë‹¹ íƒ€ì…ì˜ {@link TimerBase}ë¥¼ ëª¨ë‘ ì¢…ë£Œí•©ë‹ˆë‹¤.
 	 * @param timerClass
 	 */
 	public static void StopTasks(Class<? extends TimerBase> timerClass) {
@@ -39,7 +39,7 @@ abstract public class TimerBase {
 	}
 
 	/**
-	 * ÇöÀç ½ÇÇàÁßÀÎ {@link TimerBase}¸¦ ¸ğµÎ Á¾·áÇÕ´Ï´Ù.
+	 * í˜„ì¬ ì‹¤í–‰ì¤‘ì¸ {@link TimerBase}ë¥¼ ëª¨ë‘ ì¢…ë£Œí•©ë‹ˆë‹¤.
 	 */
 	public static void ResetTasks() {
 		for(TimerBase timer : getTasks()) timer.StopTimer(true);
@@ -55,48 +55,48 @@ abstract public class TimerBase {
 	private int Period = 20;
 	
 	/**
-	 * Å¸ÀÌ¸Ó¸¦ Silent ¸ğµå·Î Á¾·á½ÃÅ°´õµµ {@link #onEnd()}¸¦ È£ÃâÇÒÁöÀÇ ¿©ºÎÀÔ´Ï´Ù.<p>
-	 * {@link Pumpkin}, {@link Feather}, {@link Gladiator}¿Í °°Àº ´É·Âµé¿¡¼­
-	 * {@link TimerBase}ÀÇ {@link #onEnd()}°¡ È£ÃâµÇÁö ¾Ê°Ô µÇ¸é »óÅÂ ÃÊ±âÈ­°¡ ÀÌ·ç¾îÁöÁö ¾Ê¾Æ
-	 * ´É·Â ¹ßµ¿ ÁßÀÇ »óÅÂ°¡ °è¼Ó À¯ÁöµÇ´Â ¹®Á¦°¡ ÀÖ¾î Ãß°¡µÈ ¼³Á¤ÀÔ´Ï´Ù.
+	 * íƒ€ì´ë¨¸ë¥¼ Silent ëª¨ë“œë¡œ ì¢…ë£Œì‹œí‚¤ë”ë„ {@link #onEnd()}ë¥¼ í˜¸ì¶œí• ì§€ì˜ ì—¬ë¶€ì…ë‹ˆë‹¤.<p>
+	 * {@link Pumpkin}, {@link Feather}, {@link Gladiator}ì™€ ê°™ì€ ëŠ¥ë ¥ë“¤ì—ì„œ
+	 * {@link TimerBase}ì˜ {@link #onEnd()}ê°€ í˜¸ì¶œë˜ì§€ ì•Šê²Œ ë˜ë©´ ìƒíƒœ ì´ˆê¸°í™”ê°€ ì´ë£¨ì–´ì§€ì§€ ì•Šì•„
+	 * ëŠ¥ë ¥ ë°œë™ ì¤‘ì˜ ìƒíƒœê°€ ê³„ì† ìœ ì§€ë˜ëŠ” ë¬¸ì œê°€ ìˆì–´ ì¶”ê°€ëœ ì„¤ì •ì…ë‹ˆë‹¤.
 	 * 
-	 * ´É·ÂÀÌ °­Á¦·Î º¯°æµÈ ÀÌÈÄ¿¡ ÃÊ±âÈ­°¡ ÇÊ¿äÇÑ ´É·Â¿¡¼­¸¸ »ç¿ëÇÒ °ÍÀ» ±ÇÀåÇÕ´Ï´Ù.
+	 * ëŠ¥ë ¥ì´ ê°•ì œë¡œ ë³€ê²½ëœ ì´í›„ì— ì´ˆê¸°í™”ê°€ í•„ìš”í•œ ëŠ¥ë ¥ì—ì„œë§Œ ì‚¬ìš©í•  ê²ƒì„ ê¶Œì¥í•©ë‹ˆë‹¤.
 	 */
 	private boolean SilentNotice = false;
 
 	/**
-	 * {@link TimerBase}°¡ ½ÇÇàµÉ ¶§ È£ÃâµË´Ï´Ù.
+	 * {@link TimerBase}ê°€ ì‹¤í–‰ë  ë•Œ í˜¸ì¶œë©ë‹ˆë‹¤.
 	 */
 	abstract protected void onStart();
 
 	/**
-	 * {@link TimerBase} ½ÇÇà ÀÌÈÄ {@link #Period}Æ½¸¶´Ù È£ÃâµË´Ï´Ù.
+	 * {@link TimerBase} ì‹¤í–‰ ì´í›„ {@link #Period}í‹±ë§ˆë‹¤ í˜¸ì¶œë©ë‹ˆë‹¤.
 	 * <pre>
-	 * ÀÏ¹İ Å¸ÀÌ¸Ó
+	 * ì¼ë°˜ íƒ€ì´ë¨¸
 	 * <pre>
-	 * Ä«¿îÆ® °ªÀÌ {@link #MaxCount}¿¡¼­ ½ÃÀÛÇÏ¿© 1±îÁö °¨¼ÒÇÕ´Ï´Ù.</pre>
-	 * ¹«ÇÑ Å¸ÀÌ¸Ó
+	 * ì¹´ìš´íŠ¸ ê°’ì´ {@link #MaxCount}ì—ì„œ ì‹œì‘í•˜ì—¬ 1ê¹Œì§€ ê°ì†Œí•©ë‹ˆë‹¤.</pre>
+	 * ë¬´í•œ íƒ€ì´ë¨¸
 	 * <pre>
-	 * Ä«¿îÆ® °ªÀÌ 1¿¡¼­ ½ÃÀÛÇÏ¿© {@link Integer#MAX_VALUE}±îÁö Áõ°¡ÇÕ´Ï´Ù.</pre>
+	 * ì¹´ìš´íŠ¸ ê°’ì´ 1ì—ì„œ ì‹œì‘í•˜ì—¬ {@link Integer#MAX_VALUE}ê¹Œì§€ ì¦ê°€í•©ë‹ˆë‹¤.</pre>
 	 * </pre>
 	 * 
 	 */
 	protected abstract void TimerProcess(Integer Count);
 
 	/**
-	 * {@link TimerBase}°¡ Á¾·áµÉ ¶§ È£ÃâµË´Ï´Ù.
+	 * {@link TimerBase}ê°€ ì¢…ë£Œë  ë•Œ í˜¸ì¶œë©ë‹ˆë‹¤.
 	 */
 	protected abstract void onEnd();
 
 	/**
-	 * {@link TimerBase}ÀÇ ½ÇÇà ¿©ºÎ¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * {@link TimerBase}ì˜ ì‹¤í–‰ ì—¬ë¶€ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public final boolean isTimerRunning() {
 		return Task != -1;
 	}
 
 	/**
-	 * {@link TimerBase}¸¦ ½ÇÇàÇÕ´Ï´Ù.
+	 * {@link TimerBase}ë¥¼ ì‹¤í–‰í•©ë‹ˆë‹¤.
 	 */
 	public final void StartTimer() {
 		if(!this.isTimerRunning()) {
@@ -108,9 +108,9 @@ abstract public class TimerBase {
 	}
 
 	/**
-	 * {@link TimerBase}¸¦ Á¾·áÇÕ´Ï´Ù.<p>
-	 * @param Silent 	trueÀÎ °æ¿ì¿¡ Å¸ÀÌ¸Ó¸¦ Silent ¸ğµå·Î Á¾·áÇÕ´Ï´Ù.
-	 * 					Silent ¸ğµå¿¡¼­´Â {@link #onEnd()}°¡ È£ÃâµÇÁö ¾Ê½À´Ï´Ù.
+	 * {@link TimerBase}ë¥¼ ì¢…ë£Œí•©ë‹ˆë‹¤.<p>
+	 * @param Silent 	trueì¸ ê²½ìš°ì— íƒ€ì´ë¨¸ë¥¼ Silent ëª¨ë“œë¡œ ì¢…ë£Œí•©ë‹ˆë‹¤.
+	 * 					Silent ëª¨ë“œì—ì„œëŠ” {@link #onEnd()}ê°€ í˜¸ì¶œë˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	 */
 	public final void StopTimer(boolean Silent) {
 		if(this.isTimerRunning()) {
@@ -151,7 +151,7 @@ abstract public class TimerBase {
 	}
 
 	/**
-	 * ÀÏ¹İ {@link TimerBase}
+	 * ì¼ë°˜ {@link TimerBase}
 	 */
 	public TimerBase(int Count) {
 		InfiniteTimer = false;
@@ -159,7 +159,7 @@ abstract public class TimerBase {
 	}
 	
 	/**
-	 * ¹«ÇÑ {@link TimerBase}
+	 * ë¬´í•œ {@link TimerBase}
 	 */
 	public TimerBase() {
 		InfiniteTimer = true;

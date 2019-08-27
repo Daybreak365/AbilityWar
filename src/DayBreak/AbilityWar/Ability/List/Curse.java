@@ -15,11 +15,11 @@ import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.EnchantLib;
 
-@AbilityManifest(Name = "ÄÃ½º", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "ì»¬ìŠ¤", Rank = Rank.C, Species = Species.HUMAN)
 public class Curse extends AbilityBase {
 
 	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 3,
-			"# ´É·Â »ç¿ëÈ½¼ö") {
+			"# ëŠ¥ë ¥ ì‚¬ìš©íšŸìˆ˜") {
 		
 		@Override
 		public boolean Condition(Integer value) {
@@ -30,8 +30,8 @@ public class Curse extends AbilityBase {
 
 	public Curse(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f»ó´ë¹æÀ» Ã¶±«·Î ¿ìÅ¬¸¯ÇÏ¸é »ó´ë¹æÀÌ Âø¿ëÇÏ°í ÀÖ´Â ¸ğµç °©¿Ê¿¡ ±Í¼ÓÀúÁÖ¸¦ °Ì´Ï´Ù."),
-				ChatColor.translateAlternateColorCodes('&', "&f" + CountConfig.getValue() + "¹ø¸¸ »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù."));
+				ChatColor.translateAlternateColorCodes('&', "&fìƒëŒ€ë°©ì„ ì² ê´´ë¡œ ìš°í´ë¦­í•˜ë©´ ìƒëŒ€ë°©ì´ ì°©ìš©í•˜ê³  ìˆëŠ” ëª¨ë“  ê°‘ì˜·ì— ê·€ì†ì €ì£¼ë¥¼ ê²ë‹ˆë‹¤."),
+				ChatColor.translateAlternateColorCodes('&', "&f" + CountConfig.getValue() + "ë²ˆë§Œ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤."));
 	}
 	
 	private int Count = CountConfig.getValue();
@@ -78,7 +78,7 @@ public class Curse extends AbilityBase {
 				}
 			} else {
 				if(Count <= 0) {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c´õ ÀÌ»ó ÀÌ ´É·ÂÀ» »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù!"));
+					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&cë” ì´ìƒ ì´ ëŠ¥ë ¥ì„ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!"));
 				}
 			}
 		}

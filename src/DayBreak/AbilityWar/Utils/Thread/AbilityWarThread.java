@@ -6,8 +6,8 @@ import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
 
 /**
- * Ability War ÇÃ·¯±×ÀÎ ¾²·¹µå
- * @author DayBreak »õº®
+ * Ability War í”ŒëŸ¬ê·¸ì¸ ì“°ë ˆë“œ
+ * @author DayBreak ìƒˆë²½
  */
 public class AbilityWarThread {
 	
@@ -16,9 +16,9 @@ public class AbilityWarThread {
 	private static AbstractGame Game = null;
 	
 	/**
-	 * °ÔÀÓÀ» ½ÃÀÛ½ÃÅµ´Ï´Ù.
-	 * ÁøÇàÁßÀÎ °ÔÀÓÀÌ ÀÖÀ» °æ¿ì ¾Æ¹« ÀÛ¾÷µµ ÇÏÁö ¾Ê½À´Ï´Ù.
-	 * @param Game ½ÃÀÛ½ÃÅ³ °ÔÀÓ
+	 * ê²Œì„ì„ ì‹œì‘ì‹œí‚µë‹ˆë‹¤.
+	 * ì§„í–‰ì¤‘ì¸ ê²Œì„ì´ ìˆì„ ê²½ìš° ì•„ë¬´ ì‘ì—…ë„ í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+	 * @param Game ì‹œì‘ì‹œí‚¬ ê²Œì„
 	 */
 	public static void StartGame(final AbstractGame Game) {
 		if(!isGameTaskRunning()) {
@@ -28,15 +28,15 @@ public class AbilityWarThread {
 	}
 	
 	/**
-	 * ÁøÇàÁßÀÎ °ÔÀÓÀ» Á¾·áÇÕ´Ï´Ù.
-	 * ÁøÇàÁßÀÎ °ÔÀÓÀÌ ¾øÀ» °æ¿ì ¾Æ¹« ÀÛ¾÷µµ ÇÏÁö ¾Ê½À´Ï´Ù.
+	 * ì§„í–‰ì¤‘ì¸ ê²Œì„ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.
+	 * ì§„í–‰ì¤‘ì¸ ê²Œì„ì´ ì—†ì„ ê²½ìš° ì•„ë¬´ ì‘ì—…ë„ í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
 	 */
 	public static void StopGame() {
 		if(isGameTaskRunning()) {
 			Game.StopTimer();
 			setGame(null);
 			
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7°ÔÀÓÀÌ ÁßÁöµÇ¾ú½À´Ï´Ù."));
+			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7ê²Œì„ì´ ì¤‘ì§€ë˜ì—ˆìŠµë‹ˆë‹¤."));
 		}
 	}
 
@@ -45,15 +45,15 @@ public class AbilityWarThread {
 	}
 	
 	/**
-	 * °ÔÀÓÀÌ ÁøÇàÁßÀÏ °æ¿ì true, ¾Æ´Ò °æ¿ì false¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	 * ê²Œì„ì´ ì§„í–‰ì¤‘ì¼ ê²½ìš° true, ì•„ë‹ ê²½ìš° falseë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public static boolean isGameTaskRunning() {
 		return Game != null && Game.isTimerRunning();
 	}
 	
 	/**
-	 * AbstractGameÀ» ¹İÈ¯ÇÕ´Ï´Ù.
-	 * ÁøÇàÁßÀÎ °ÔÀÓÀÌ ¾øÀ» °æ¿ì nullÀ» ¹İÈ¯ÇÕ´Ï´Ù.
+	 * AbstractGameì„ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * ì§„í–‰ì¤‘ì¸ ê²Œì„ì´ ì—†ì„ ê²½ìš° nullì„ ë°˜í™˜í•©ë‹ˆë‹¤.
 	 */
 	public static AbstractGame getGame() {
 		return Game;
