@@ -362,19 +362,16 @@ public class SettingWizard implements Listener {
 			Player p = (Player) e.getWhoClicked();
 			
 			if(e.getCurrentItem() != null) {
+				if(e.getSlot() >= 36) e.setCancelled(true);
 				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 					if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&a확인"))) {
-						e.setCancelled(true);
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Kit, getItemUntil(KitGUI, 35));
 						p.closeInventory();
 						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&c초기화"))) {
-						e.setCancelled(true);
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Kit, FileManager.getItemStackList());
 						p.closeInventory();
 						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
-					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&f"))) {
-						e.setCancelled(true);
 					}
 				}
 			}
