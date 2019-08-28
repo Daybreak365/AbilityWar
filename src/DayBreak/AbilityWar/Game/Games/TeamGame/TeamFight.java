@@ -354,11 +354,11 @@ public class TeamFight extends TeamGame {
 		Collections.shuffle(participants, new Random());
 		
 		List<Participant> blueMembers = new ArrayList<>(participants.subList(0, (size + 1) / 2));
-		Team blueTeam = this.newTeam("§b파란팀", blueMembers);
+		Team blueTeam = this.newTeam(ChatColor.BLUE + "파란팀", blueMembers);
 		List<Participant> redMembers = new ArrayList<>(participants.subList((size + 1) / 2, size));
-		for(Participant p : redMembers) blueTeam.addMember(p);
+		Team redTeam = this.newTeam(ChatColor.RED + "빨간팀", redMembers);
 		
-		return Arrays.asList(blueTeam);
+		return Arrays.asList(blueTeam, redTeam);
 	}
 
 	@Override

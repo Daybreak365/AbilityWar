@@ -16,7 +16,7 @@ public class InfiniteDurability implements Listener {
 	 * 내구도 Listener
 	 */
 	@EventHandler
-	public void onItemDurability(PlayerInteractEvent e) {
+	private void onItemDurability(PlayerInteractEvent e) {
 		if(e.getItem() != null) {
 			if(hasDurability(e.getItem().getType())) {
 				ItemLib.setDurability(e.getItem(), (short) 0);
@@ -28,7 +28,7 @@ public class InfiniteDurability implements Listener {
 	 * 내구도 Listener
 	 */
 	@EventHandler
-	public void onArmorDurability(EntityDamageEvent e) {
+	private void onArmorDurability(EntityDamageEvent e) {
 		if(e.getEntity() instanceof Player) {
 			Player p = (Player) e.getEntity();
 			

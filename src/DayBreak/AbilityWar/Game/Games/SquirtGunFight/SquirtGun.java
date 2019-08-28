@@ -140,8 +140,8 @@ public class SquirtGun extends AbilityBase {
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		if(e.getPlayer().equals(getPlayer())
-				&& (e.getTo().getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && e.getTo().getBlock().getType().equals(Material.valueOf("STATIONARY_WATER"))) 
-						& getPlayer().isSneaking())) {
+				&& (e.getFrom().getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && e.getTo().getBlock().getType().equals(Material.valueOf("STATIONARY_WATER")))) 
+						& getPlayer().isSneaking()) {
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.3));
 		}
 	}

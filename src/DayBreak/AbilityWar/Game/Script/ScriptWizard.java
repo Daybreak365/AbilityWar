@@ -158,7 +158,7 @@ public class ScriptWizard implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent e) {
+	private void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(ScriptGUI)) {
 			e.setCancelled(true);
 			
@@ -258,7 +258,7 @@ public class ScriptWizard implements Listener {
 	private boolean safeClose = false;
 	
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent e) {
+	private void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.ScriptGUI)) {
 			if(safeClose) {
 				safeClose = false;

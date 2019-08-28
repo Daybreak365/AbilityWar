@@ -115,7 +115,7 @@ public abstract class FallBlock implements Listener {
 	 * FallingBlock이 땅에 떨어졌을 때 블록 설치 캔슬 및 onChangeBlock() 호출을 위해 사용됩니다.
 	 */
 	@EventHandler
-	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
+	private void onEntityChangeBlock(EntityChangeBlockEvent e) {
 		if(fbList.contains(e.getEntity())) {
 			onChangeBlock((FallingBlock) e.getEntity());
 			if(!setBlock) {

@@ -175,7 +175,7 @@ public class BlackListGUI implements Listener {
 	}
 
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent e) {
+	private void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.BlackListGUI)) {
 			HandlerList.unregisterAll(this);
 			AbilityWarSettings.Save();
@@ -183,7 +183,7 @@ public class BlackListGUI implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent e) {
+	private void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(BlackListGUI)) {
 			e.setCancelled(true);
 			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {

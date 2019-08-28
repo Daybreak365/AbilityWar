@@ -348,7 +348,7 @@ public class SettingWizard implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent e) {
+	private void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.SpawnGUI) || e.getInventory().equals(this.KitGUI) || e.getInventory().equals(this.InvGUI)
 		|| e.getInventory().equals(this.GameGUI) || e.getInventory().equals(this.DeathGUI)) {
 			HandlerList.unregisterAll(this);
@@ -357,7 +357,7 @@ public class SettingWizard implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent e) {
+	private void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(this.KitGUI)) {
 			Player p = (Player) e.getWhoClicked();
 			

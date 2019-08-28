@@ -292,12 +292,12 @@ public abstract class AbstractGame extends Timer implements Listener {
 	}
 
 	@EventHandler
-	public void onWeatherChange(WeatherChangeEvent e) {
+	private void onWeatherChange(WeatherChangeEvent e) {
 		if(GameStarted && AbilityWarSettings.getClearWeather()) e.setCancelled(true);
 	}
 	
 	@EventHandler
-	public void onFoodLevelChange(FoodLevelChangeEvent e) {
+	private void onFoodLevelChange(FoodLevelChangeEvent e) {
 		if(AbilityWarSettings.getNoHunger()) {
 			e.setCancelled(true);
 			

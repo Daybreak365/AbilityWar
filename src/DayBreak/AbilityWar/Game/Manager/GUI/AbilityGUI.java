@@ -118,14 +118,14 @@ public class AbilityGUI implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent e) {
+	private void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.AbilityGUI)) {
 			HandlerList.unregisterAll(this);
 		}
 	}
 	
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent e) {
+	private void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(AbilityGUI)) {
 			Player p = (Player) e.getWhoClicked();
 			e.setCancelled(true);

@@ -132,14 +132,14 @@ public class SpectatorGUI implements Listener {
 	}
 	
 	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent e) {
+	private void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.SpectateGUI)) {
 			HandlerList.unregisterAll(this);
 		}
 	}
 	
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent e) {
+	private void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(SpectateGUI)) {
 			e.setCancelled(true);
 			Player p = (Player) e.getWhoClicked();
