@@ -1,6 +1,6 @@
 <p align="center"><img src="https://user-images.githubusercontent.com/39194432/63667961-92d56000-c810-11e9-9fb4-f62483c23ff4.png"></p>
 
-# 능력자 전쟁 ![Build Status](https://travis-ci.org/DayBreak365/AbilityWar.svg?branch=master)
+# 능력자 전쟁
 ### 개발: [DayBreak](https://github.com/DayBreak365)
 <br/>
 
