@@ -6,7 +6,7 @@
 
 **📋 License**
 
-AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/AbilityWar/blob/master/license.md)에 따라 라이선스가 부여됩니다.
+AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/AbilityWar/blob/master/LICENSE.md)에 따라 라이선스가 부여됩니다.
 
 **📎 Contribute**
 
