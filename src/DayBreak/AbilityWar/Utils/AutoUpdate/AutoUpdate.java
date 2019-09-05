@@ -31,9 +31,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import DayBreak.AbilityWar.AbilityWar;
 import DayBreak.AbilityWar.Utils.Messager;
@@ -176,6 +177,8 @@ public class AutoUpdate {
 		return "plugins/" + Jar;
 	}
 	
+	private static final JsonParser parser = new JsonParser();
+	
 	private final UpdateObject getLatestUpdate(String Branch) throws Exception {
 		URL releases = new URL("https://api.github.com/repos/" + Author + "/" + Repository + "/releases");
 		BufferedReader br = new BufferedReader(new InputStreamReader(releases.openStream(), "UTF-8"));
@@ -187,23 +190,23 @@ public class AutoUpdate {
 			result = result.concat(line);
 		}
 		
-		JSONParser parser = new JSONParser();
-		JSONArray array = (JSONArray) parser.parse(result);
+		
+		JsonArray array = parser.parse(result).getAsJsonArray();
 		
 		for(Integer i = 0; i < array.size(); i++) {
-			JSONObject object = (JSONObject) array.get(i);
+			JsonObject object = array.get(i).getAsJsonObject();
 			
-			String BranchName = (String) object.get("target_commitish");
+			String BranchName = object.get("target_commitish").getAsString();
 			if(BranchName.equalsIgnoreCase(Branch)) {
-				String Version = (String) object.get("name");
-				String Tag = (String) object.get("tag_name");
+				String Version = object.get("name").getAsString();
+				String Tag = object.get("tag_name").getAsString();
 
-				JSONArray parse_assets = (JSONArray) object.get("assets");
-				JSONObject latest = (JSONObject) parse_assets.get(0);
-				String url = (String) latest.get("browser_download_url");
+				JsonArray parse_assets = object.get("assets").getAsJsonArray();
+				JsonObject latest = parse_assets.get(0).getAsJsonObject();
+				String url = latest.get("browser_download_url").getAsString();
 				URL downloadURL = new URL(url);
 				
-				String[] patchNote = ((String) object.get("body")).split("\\n");
+				String[] patchNote = object.get("body").getAsString().split("\\n");
 				
 				return new UpdateObject(Version, Tag, downloadURL, patchNote);
 			}
