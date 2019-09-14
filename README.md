@@ -20,4 +20,3 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 - **Maven**
     - AbilityWar 디렉토리에서 `mvn clean package` 명령을 실행하세요. 빌드된 플러그인 파일은 `target` 폴더에서 찾을 수 있습니다.
     - AbilityWar를 로컬 Maven 레포지터리에 설치하려면 `mvn clean install` 명령을 실행하세요.
-<
