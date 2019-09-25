@@ -1,5 +1,5 @@
 name: AbilityWar
-main: DayBreak.AbilityWar.AbilityWar
+main: daybreak.abilitywar.AbilityWar
 version: ${project.version}
 
 commands:
