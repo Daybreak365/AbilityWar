@@ -31,7 +31,8 @@ import DayBreak.AbilityWar.Utils.AutoUpdate.AutoUpdate;
 public class ServerVersion {
 
 	private ServerVersion() {}
-	
+
+	private static final Messager messager = new Messager();
 	private static String VersionString = getVersionString();
 	private static int Version = getSimpleVersion();
 	
@@ -81,7 +82,7 @@ public class ServerVersion {
 				setAPIVersion(plugin, "1.13");
 			}
 		} else {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 지원하지 않는 버전을 이용하고 있습니다."));
+			messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 지원하지 않는 버전을 이용하고 있습니다."));
 			unload(plugin);
 		}
 	}
@@ -149,8 +150,7 @@ public class ServerVersion {
 				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
 
 			} catch (NoSuchFieldException | IllegalAccessException e) {
-				Messager.sendErrorMessage();
-				return;
+				// TODO: 처리 필요
 			}
 		}
 
@@ -207,7 +207,7 @@ public class ServerVersion {
 			try {
 				((URLClassLoader) cl).close();
 			} catch (IOException ex) {
-				Messager.sendErrorMessage();
+				// TODO: 처리 필요
 			}
 
 		}

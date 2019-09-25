@@ -54,7 +54,7 @@ public class Brewer extends AbilityBase {
 						p.getInventory().addItem(new PotionBuilder(type, PotionShape.values()[r.nextInt(PotionShape.values().length)])
 								.setExtended(r.nextBoolean()).setUpgraded(r.nextBoolean()).getItemStack(1));
 					} catch (Exception e) {}
-					Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&5오늘은 어떤 포션을 마실까..."));
+					p.sendMessage( ChatColor.translateAlternateColorCodes('&', "&5오늘은 어떤 포션을 마실까..."));
 					SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(p);
 					ParticleLib.SPELL_WITCH.spawnParticle(p.getLocation(), 2, 2, 2, 10);
 					

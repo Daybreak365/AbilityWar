@@ -130,7 +130,7 @@ public class Pumpkin extends AbilityBase {
 			ItemStack Pumpkin = new ItemStack(MaterialLib.CARVED_PUMPKIN.getMaterial());
 			ItemMeta PumpkinMeta = Pumpkin.getItemMeta();
 			PumpkinMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6호박"));
-			PumpkinMeta.setLore(Messager.getStringList(
+			PumpkinMeta.setLore(Messager.asList(
 					ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"),
 					ChatColor.translateAlternateColorCodes('&', "&f남은 시간&7: &a" + Time + "초")
 					));

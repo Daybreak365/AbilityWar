@@ -1,10 +1,10 @@
 package DayBreak.AbilityWar.Game.Manager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
-import DayBreak.AbilityWar.Utils.Messager;
 
 public class WRECK {
 
@@ -23,8 +23,8 @@ public class WRECK {
 
 	public void noticeIfEnabled() {
 		if(enabled) {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cW&6R&eE&aC&bK &f모드가 활성화되었습니다!"));
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c모든 능력의 쿨타임이 90% 감소합니다."));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cW&6R&eE&aC&bK &f모드가 활성화되었습니다!"));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c모든 능력의 쿨타임이 90% 감소합니다."));
 		}
 	}
 	

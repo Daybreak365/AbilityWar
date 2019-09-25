@@ -23,7 +23,7 @@ import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Events.ParticipantDeathEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.Data.PushingArray;
+import DayBreak.AbilityWar.Utils.Database.PushingArray;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 

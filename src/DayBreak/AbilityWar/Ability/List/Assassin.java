@@ -112,7 +112,7 @@ public class Assassin extends AbilityBase {
 						Cool.StartTimer();
 						return true;
 					} else {
-						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f" + Distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
+						getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&f" + Distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
 					}
 				}
 			}

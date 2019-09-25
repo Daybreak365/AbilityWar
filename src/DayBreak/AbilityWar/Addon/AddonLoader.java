@@ -13,17 +13,20 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
-import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.Data.FileManager;
+import DayBreak.AbilityWar.Utils.Database.FileManager;
 
 /**
  * 애드온에 직접적으로 엑세스하여 처리하는 로더입니다.
  * @author DayBreak 새벽
  */
 public class AddonLoader {
-	
+
+	private static final Logger logger = Logger.getLogger(AddonLoader.class.getName());
+
 	private AddonLoader() {}
 	
 	private static ArrayList<Addon> Addons = new ArrayList<Addon>();
@@ -52,33 +55,32 @@ public class AddonLoader {
 			try {
 				Addons.add(load(file));
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				Messager.sendDebugMessage(file.getName() + " 파일이 올바른 애드온이 아닙니다.");e.printStackTrace();
+				logger.log(Level.SEVERE, file.getName() + " 파일이 올바른 애드온이 아닙니다.");
 			} catch (IOException e) {
-				Messager.sendDebugMessage(file.getName() + " 파일을 불러올 수 없습니다.");
+				logger.log(Level.SEVERE, file.getName() + " 파일을 불러올 수 없습니다.");
 			} catch (Exception e) {
-				e.printStackTrace();
-				Messager.sendDebugMessage(file.getName() + " 애드온을 불러오는 도중 예상치 못한 오류가 발생하였습니다.");
+				logger.log(Level.SEVERE, file.getName() + " 애드온을 불러오는 도중 예상치 못한 오류가 발생하였습니다.");
 			}
 		}
 	}
 
-	public static void onEnable() {
-		try {
-			for(Addon addon : Addons) {
+	public static void enableAll() {
+		for (Addon addon : Addons) {
+			try {
 				addon.onEnable();
+			} catch (Exception ex) {
+				logger.log(Level.SEVERE, addon.getDescription().getName() + " 애드온을 활성화하는 도중 오류가 발생하였습니다.");
 			}
-		} catch(Exception ex) {
-			ex.printStackTrace();
 		}
 	}
 	
-	public static void onDisable() {
-		try {
-			for(Addon addon : Addons) {
+	public static void disableAll() {
+		for (Addon addon : Addons) {
+			try {
 				addon.onDisable();
+			} catch (Exception ex) {
+				logger.log(Level.SEVERE, addon.getDescription().getName() + " 애드온을 비활성화하는 도중 오류가 발생하였습니다.");
 			}
-		} catch(Exception ex) {
-			ex.printStackTrace();
 		}
 	}
 	

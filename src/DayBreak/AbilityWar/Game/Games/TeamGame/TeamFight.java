@@ -44,7 +44,7 @@ public class TeamFight extends TeamGame {
 		
 		@Override
 		public void onStart() {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
 		}
 		
 		@Override
@@ -65,7 +65,7 @@ public class TeamFight extends TeamGame {
 				broadcastPlayerList();
 				if(getParticipants().size() > 0 && getParticipants().size() % 2 != 0) {
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c팀 전투는 2명 이상의 짝수 인원에서만 플레이할 수 있습니다."));
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c팀 전투는 2명 이상의 짝수 인원에서만 플레이할 수 있습니다."));
 				}
 				break;
 			case 5:
@@ -89,32 +89,32 @@ public class TeamFight extends TeamGame {
 				break;
 			case 15:
 				if(AbilityWarSettings.getDrawAbility()) {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 참가자가 능력을 &b확정&f했습니다."));
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 참가자가 능력을 &b확정&f했습니다."));
 				} else {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
 				}
 				break;
 			case 17:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e잠시 후 게임이 시작됩니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e잠시 후 게임이 시작됩니다."));
 				break;
 			case 20:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 21:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 22:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 23:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 24:
-				Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 25:
@@ -136,11 +136,13 @@ public class TeamFight extends TeamGame {
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&e총 인원수 : " + Count + "명"));
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
 		
-		Messager.broadcastStringList(msg);
+		for (String m : msg) {
+			Bukkit.broadcastMessage(m);
+		}
 	}
 	
 	public void broadcastPluginDescription() {
-		ArrayList<String> msg = Messager.getStringList(
+		ArrayList<String> msg = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
 				ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
 				ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDayBreak 새벽"),
@@ -152,24 +154,30 @@ public class TeamFight extends TeamGame {
 		for(String str : event.getCreditList()) {
 			msg.add(str);
 		}
-		
-		Messager.broadcastStringList(msg);
+
+		for (String m : msg) {
+			Bukkit.broadcastMessage(m);
+		}
 	}
 	
 	public void broadcastAbilityReady() {
-		ArrayList<String> msg = Messager.getStringList(
+		ArrayList<String> msg = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &b" + AbilityList.nameValues().size() + "개&f의 능력이 등록되어 있습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&7능력을 무작위로 할당합니다..."));
-		
-		Messager.broadcastStringList(msg);
+
+		for (String m : msg) {
+			Bukkit.broadcastMessage(m);
+		}
 	}
 	
 	public void GameStart() {
-		Messager.broadcastStringList(Messager.getStringList(
+		for (String m : new String[] {
 				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
 				ChatColor.translateAlternateColorCodes('&', "&f             &cAbilityWar &f- &6능력자 전쟁  "),
 				ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
-				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")));
+				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")}) {
+			Bukkit.broadcastMessage(m);
+		}
 		
 		this.GiveDefaultKit();
 		
@@ -183,13 +191,13 @@ public class TeamFight extends TeamGame {
 			NoHunger.setPeriod(1);
 			NoHunger.StartTimer();
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 		}
 		
 		if(Invincible) {
 			getInvincibility().Start(false);
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 			for(Participant participant : this.getParticipants()) {
 				if(participant.hasAbility()) {
 					participant.getAbility().setRestricted(false);
@@ -200,7 +208,7 @@ public class TeamFight extends TeamGame {
 		if(AbilityWarSettings.getInfiniteDurability()) {
 			registerListener(infiniteDurability);
 		} else {
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
 		}
 		
 		for(World w : Bukkit.getWorlds()) {
@@ -286,19 +294,20 @@ public class TeamFight extends TeamGame {
 							participant.setAbility(abilityClass);
 							abilities.remove(abilityClass);
 							
-							Messager.sendStringList(p, Messager.getStringList(
+							p.sendMessage(new String[] {
 									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")));
+									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")});
 						} catch (Exception e) {
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+							Messager.sendConsoleErrorMessage(
+									ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
+									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}
 					}
 				} else {
 					Messager.broadcastErrorMessage("사용 가능한 능력의 수가 참가자의 수보다 적어 게임을 종료합니다.");
 					AbilityWarThread.StopGame();
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 				}
 			}
 			
@@ -320,9 +329,9 @@ public class TeamFight extends TeamGame {
 							
 							return true;
 						} catch (Exception e) {
-							e.printStackTrace();
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님의 능력을 변경하는 도중 오류가 발생하였습니다."));
-							Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+							Messager.sendConsoleErrorMessage(
+									ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
+									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}
 					}
 				} else {

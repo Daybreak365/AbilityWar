@@ -3,6 +3,7 @@ package DayBreak.AbilityWar.Game.Games.Mode;
 import static DayBreak.AbilityWar.Utils.Validate.notNull;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -385,7 +386,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 			boolean Executed = Ability.ActiveSkill(mt, ct);
 
 			if (Executed) {
-				Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
+				Ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 			}
 		}
 
@@ -405,9 +406,15 @@ public abstract class AbstractGame extends Timer implements Listener {
 		 * 플레이어에게 해당 능력을 부여합니다.
 		 * @param p            	능력을 부여할 플레이어
 		 * @param abilityClass 	부여할 능력의 종류 (능력 클래스)
+		 * @throws SecurityException 
+		 * @throws NoSuchMethodException 
+		 * @throws InvocationTargetException 
+		 * @throws IllegalArgumentException 
+		 * @throws IllegalAccessException 
+		 * @throws InstantiationException 
 		 * @throws Exception 	능력을 부여하는 도중 오류가 발생하였을 경우
 		 */
-		public void setAbility(Class<? extends AbilityBase> abilityClass) throws Exception {
+		public void setAbility(Class<? extends AbilityBase> abilityClass) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 			if(hasAbility()) removeAbility();
 			
 			Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Participant.class);
@@ -492,11 +499,13 @@ public abstract class AbstractGame extends Timer implements Listener {
 			if(count == 0) {
 				Player p = participant.getPlayer();
 
-				Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요."));
+				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요."));
 				
-				Messager.broadcastStringList(Messager.getStringList(
+				for (String m : Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."),
-						ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayersCount() + "명")));
+						ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayersCount() + "명"))) {
+					Bukkit.broadcastMessage(m);
+				}
 			}
 		}
 
@@ -531,12 +540,12 @@ public abstract class AbstractGame extends Timer implements Listener {
 					Player p = participant.getPlayer();
 					
 					if(!hasDecided(participant)) {
-						Messager.sendStringList(p, Messager.getStringList(
+						p.sendMessage(new String[] {
 								ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
 								ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
-								ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")));
+								ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")});
 					} else {
-						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
 					}
 				}
 			}
@@ -574,7 +583,7 @@ public abstract class AbstractGame extends Timer implements Listener {
 		public final void Skip(String admin) {
 			for(Participant p : getSelectors()) if(!hasDecided(p)) decideAbility(p);
 
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
 			this.StopTimer(false);
 		}
 
@@ -590,9 +599,11 @@ public abstract class AbstractGame extends Timer implements Listener {
 		public void TimerProcess(Integer Seconds) {
 			if(!isEveryoneSelected()) {
 				if(Seconds % 20 == 0) {
-					Messager.broadcastStringList(Messager.getStringList(
+					for (String m : Messager.asList(
 							ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."),
-							ChatColor.translateAlternateColorCodes('&', "&c/ability yes나 /ability no 명령어로 능력을 확정해주세요.")));
+							ChatColor.translateAlternateColorCodes('&', "&c/ability yes나 /ability no 명령어로 능력을 확정해주세요."))) {
+						Bukkit.broadcastMessage(m);
+					}
 				}
 			} else {
 				this.StopTimer(false);

@@ -61,9 +61,9 @@ public class EnergyBlocker extends AbilityBase {
 				}
 			} else if(ct.equals(ClickType.LeftClick)) {
 				if(Default) {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f1/3&7, &a근거리 &f두 배"));
+					getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f1/3&7, &a근거리 &f두 배"));
 				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f두 배&7, &a근거리 &f1/3"));
+					getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f두 배&7, &a근거리 &f1/3"));
 				}
 			}
 		}

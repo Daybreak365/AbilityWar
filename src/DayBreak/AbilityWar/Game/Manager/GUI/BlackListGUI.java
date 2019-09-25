@@ -89,7 +89,7 @@ public class BlackListGUI implements Listener {
 				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-				im.setLore(Messager.getStringList(
+				im.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7이 능력은 능력을 추첨할 때 예외됩니다."),
 						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 해제하려면 클릭하세요.")
 						));
@@ -98,7 +98,7 @@ public class BlackListGUI implements Listener {
 				is = ItemLib.WOOL.getItemStack(ItemColor.LIME);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-				im.setLore(Messager.getStringList(
+				im.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7이 능력은 능력을 추첨할 때 예외되지 않습니다."),
 						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 하려면 클릭하세요.")
 						));
@@ -139,7 +139,7 @@ public class BlackListGUI implements Listener {
 			ItemMeta RankMeta = RankItem.getItemMeta();
 			String RankName = r.getRankName();
 			RankMeta.setDisplayName(RankName);
-			RankMeta.setLore(Messager.getStringList(
+			RankMeta.setLore(Messager.asList(
 					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 하려면 좌클릭,"),
 					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 해제하려면 우클릭을 해주세요.")
 					));

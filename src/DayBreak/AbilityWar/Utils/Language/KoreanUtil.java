@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Utils;
+package DayBreak.AbilityWar.Utils.Language;
 
 public class KoreanUtil {
 

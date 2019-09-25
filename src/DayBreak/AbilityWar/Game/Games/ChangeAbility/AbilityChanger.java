@@ -23,7 +23,7 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 public class AbilityChanger {
 
 	private AbstractGame game;
-	
+
 	private final int period;
 
 	private final TimerBase timer;
@@ -120,8 +120,8 @@ public class AbilityChanger {
 			}
 		}.setPeriod(3).StartTimer();
 		
-		Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
-		Messager.sendStringList(p, Messager.formatAbilityInfo(participant.getAbility()));
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
+		p.sendMessage(Messager.formatAbilityInfo(participant.getAbility()));
 	}
 	
 	/**
@@ -130,8 +130,6 @@ public class AbilityChanger {
 	public void ChangeAbility() {
 		for(Participant participant : setupParticipants()) {
 			Random random = new Random();
-			Player p = participant.getPlayer();
-			
 			List<Class<? extends AbilityBase>> abilities = setupAbilities();
 			
 			Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
@@ -141,8 +139,9 @@ public class AbilityChanger {
 				
 				Notice(participant);
 			} catch (Exception e) {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+				//Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
+				//Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+				// TODO: 처리 필요
 			}
 		}
 	}

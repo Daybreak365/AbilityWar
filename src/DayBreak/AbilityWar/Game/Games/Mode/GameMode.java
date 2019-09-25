@@ -38,16 +38,16 @@ public class GameMode {
 						gameClass.getConstructor();
 						modeList.add(gameClass);
 					} catch (NoSuchMethodException | SecurityException e) {
-						Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 생성자가 올바르지 않아 등록되지 않았습니다."));
+						Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 생성자가 올바르지 않아 등록되지 않았습니다."));
 					}
 				} else {
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 겹치는 이름이 있어 등록되지 않았습니다."));
+					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
 			} else {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 GameManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
+				Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 GameManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
 			}
 		} else {
-			Messager.sendMessage(gameClass.getName() + " 게임모드는 겹치는 이름이 있어 등록되지 않았습니다.");
+			Messager.sendConsoleErrorMessage(gameClass.getName() + " 게임모드는 겹치는 이름이 있어 등록되지 않았습니다.");
 		}
 	}
 

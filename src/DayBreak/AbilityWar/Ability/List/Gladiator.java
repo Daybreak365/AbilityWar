@@ -54,8 +54,8 @@ public class Gladiator extends AbilityBase {
 		
 		@Override
 		public void TimerProcess(Integer Seconds) {
-			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
-			Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
+			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
+			getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
 		}
 		
 		@Override

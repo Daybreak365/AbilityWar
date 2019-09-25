@@ -92,7 +92,7 @@ public class Flora extends AbilityBase {
 					Cool.StartTimer();
 				}
 			} else if(ct.equals(ClickType.LeftClick)) {
-				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: " + type.getName()));
+				getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: " + type.getName()));
 			}
 		}
 		

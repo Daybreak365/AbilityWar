@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 
 import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.Data.FileManager;
+import DayBreak.AbilityWar.Utils.Database.FileManager;
 
 public enum ConfigNodes {
 
@@ -54,7 +54,7 @@ public enum ConfigNodes {
 			"# 초반 스폰 이동 활성화 여부"),
 	Game_VisualEffect("게임.시각효과", true,
 			"# 파티클 활성화 여부"),
-	Game_BlackList("게임.블랙리스트", Messager.getStringList(),
+	Game_BlackList("게임.블랙리스트", Messager.asList(),
 			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
 	Game_WRECK("게임.WRECK", false,
 			"# true로 설정하면",

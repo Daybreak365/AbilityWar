@@ -47,6 +47,8 @@ import DayBreak.AbilityWar.Utils.Thread.Timer;
  */
 public class AutoUpdate {
 	
+	private static final Messager messager = new Messager();
+	
 	private final String Author;
 	private final String Repository;
 	private final Plugin Plugin;
@@ -70,7 +72,7 @@ public class AutoUpdate {
 			UpdateObject Update = getLatestUpdate(PluginBranch.getName());
 			if (!isPluginLatest(Update)) {
 				this.queuedUpdate = Update;
-				List<String> updateNotice = Messager.formatUpdateNotice(queuedUpdate);
+				final String[] updateNotice = Messager.formatUpdateNotice(queuedUpdate);
 				new Timer() {
 					
 					@Override
@@ -83,17 +85,19 @@ public class AutoUpdate {
 					protected void TimerProcess(Integer Seconds) {
 						if(!AbilityWarThread.isGameTaskRunning()) {
 							for(Player p : Bukkit.getOnlinePlayers()) {
-								if(p.isOp()) Messager.sendStringList(p, updateNotice);
+								if(p.isOp()) {
+									p.sendMessage(updateNotice);
+								}
 							}
 						}
 					}
 				}.setPeriod(6000).StartTimer();
 			} else {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 최신 버전입니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 최신 버전입니다."));
 				return true;
 			}
 		} catch (Exception ex) {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인 최신 업데이트를 확인할 수 없습니다."));
+			messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인 최신 업데이트를 확인할 수 없습니다."));
 			return true;
 		}
 		
@@ -103,18 +107,19 @@ public class AutoUpdate {
 	public final boolean Update() {
 		if(queuedUpdate != null) {
 			try {
-				Messager.sendMessage(Messager.formatUpdate(queuedUpdate));
+				messager.sendConsoleMessage(Messager.formatUpdate(queuedUpdate));
 				
 				unload(Plugin);
 				
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
 				
 				Download(queuedUpdate);
 				
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
 				load(Plugin);
 			} catch(Exception ex) {
-				Messager.sendErrorMessage("업데이트 도중 오류가 발생하였습니다.");
+				//Messager.sendErrorMessage("업데이트 도중 오류가 발생하였습니다.");
+				// TODO: 처리 필요
 			}
 			return true;
 		}
@@ -124,21 +129,22 @@ public class AutoUpdate {
 	public final boolean Update(CommandSender sender) {
 		if(queuedUpdate != null) {
 			try {
-				Messager.sendMessage(Messager.formatUpdate(queuedUpdate));
+				messager.sendConsoleMessage(Messager.formatUpdate(queuedUpdate));
 				
 				unload(Plugin);
 
-				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
+				messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 시작합니다."));
 				
 				Download(queuedUpdate);
 
-				Messager.sendMessage(sender, Messager.getPrefix() + ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
+				messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f업데이트를 완료하였습니다."));
 				load(Plugin);
 			} catch(Exception ex) {
-				Messager.sendErrorMessage(sender, "업데이트 도중 오류가 발생하였습니다.");
-				Messager.sendErrorMessage("업데이트 도중 오류가 발생하였습니다.");
+				//Messager.sendErrorMessage(sender, "업데이트 도중 오류가 발생하였습니다.");
+				//Messager.sendErrorMessage("업데이트 도중 오류가 발생하였습니다.");
+				// TODO: 처리 필요
 			}
 			return true;
 		}
@@ -220,13 +226,13 @@ public class AutoUpdate {
 		private String Version;
 		private String Tag;
 		private URL downloadURL;
-		private String[] patchNote;
+		private String[] updates;
 		
-		private UpdateObject(String Version, String Tag, URL downloadURL, String... patchNote) {
+		private UpdateObject(String Version, String Tag, URL downloadURL, String... updates) {
 			this.Version = Version;
 			this.Tag = Tag;
 			this.downloadURL = downloadURL;
-			this.patchNote = patchNote;
+			this.updates = updates;
 		}
 		
 		public String getVersion() {
@@ -241,8 +247,8 @@ public class AutoUpdate {
 			return downloadURL;
 		}
 		
-		public String[] getPatchNote() {
-			return patchNote;
+		public String[] getUpdates() {
+			return updates;
 		}
 		
 		public int getFileSize() throws IOException {
@@ -308,7 +314,7 @@ public class AutoUpdate {
 							break;
 						}
 					} catch (InvalidDescriptionException e) {
-						Messager.sendErrorMessage();
+						// TODO: 처리 필요
 					}
 				}
 			}
@@ -317,9 +323,7 @@ public class AutoUpdate {
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
 		} catch (InvalidDescriptionException | InvalidPluginException e) {
-			e.printStackTrace();
-			Messager.sendErrorMessage();
-			return;
+			// TODO: 처리 필요
 		}
 
 		target.onLoad();
@@ -377,7 +381,7 @@ public class AutoUpdate {
 				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
 
 			} catch (NoSuchFieldException | IllegalAccessException e) {
-				Messager.sendErrorMessage();
+				// TODO: 처리 필요
 				return;
 			}
 		}
@@ -435,7 +439,7 @@ public class AutoUpdate {
 			try {
 				((URLClassLoader) cl).close();
 			} catch (IOException ex) {
-				Messager.sendErrorMessage();
+				// TODO: 처리 필요
 			}
 
 		}

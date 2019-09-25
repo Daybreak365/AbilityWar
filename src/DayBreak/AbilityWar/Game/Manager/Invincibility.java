@@ -16,7 +16,6 @@ import DayBreak.AbilityWar.Config.AbilityWarSettings;
 import DayBreak.AbilityWar.Game.Events.InvincibleEndEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
-import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.TItle.Title;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
@@ -53,18 +52,18 @@ public class Invincibility implements EventExecutor {
 							}
 						}
 						
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 &f" + NumberUtil.parseTimeString(Duration * 60) + "&a동안 적용됩니다."));
+						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 &f" + NumberUtil.parseTimeString(Duration * 60) + "&a동안 적용됩니다."));
 					}
 					
 					@Override
 					protected void TimerProcess(Integer Seconds) {
 						if(Seconds == (Duration * 60) / 2) {
-							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
+							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
 						}
 						
 
 						if(Seconds <= 5 && Seconds >= 1) {
-							Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
+							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
 							SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 						}
 					}
@@ -99,7 +98,7 @@ public class Invincibility implements EventExecutor {
 								ability.setRestricted(true);
 							}
 						}
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 적용되었습니다. 지금부터 무적이 해제될 때까지 데미지를 입지 않습니다."));
+						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a무적이 적용되었습니다. 지금부터 무적이 해제될 때까지 데미지를 입지 않습니다."));
 					}
 					
 					@Override

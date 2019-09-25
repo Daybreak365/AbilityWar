@@ -76,7 +76,7 @@ public class Hacker extends AbilityBase {
 				int X = (int) Target.getLocation().getX();
 				int Y = (int) Target.getLocation().getY();
 				int Z = (int) Target.getLocation().getZ();
-				Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ "+ Z + "&f에 있습니다."));
+				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ "+ Z + "&f에 있습니다."));
 
 				new Title(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0).sendTo(Target);
 				Hacker.this.getGame().getEffectManager().Stun(Target, DurationTick);
@@ -163,7 +163,7 @@ public class Hacker extends AbilityBase {
 						
 						return true;
 					} else {
-						Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
+						getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
 					}
 				}
 			}

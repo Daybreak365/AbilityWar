@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
-import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.TItle.Actionbar;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
@@ -48,9 +47,9 @@ public class CooldownTimer extends TimerBase {
 			Player target = Ability.getPlayer();
 			if(target != null) {
 				if(!AbilityName.isEmpty()) {
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
+					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
 				} else {
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
+					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
 				}
 			}
 		}
@@ -71,20 +70,20 @@ public class CooldownTimer extends TimerBase {
 				
 				if(Seconds == (getMaxCount() / 2)) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
+					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
 				} else if(Seconds <= 5 && Seconds >= 1) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
+					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + AbilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
 				}
 			} else {
 				actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 				
 				if(Seconds == (getMaxCount() / 2)) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
+					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
 				} else if(Seconds <= 5 && Seconds >= 1) {
 					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
-					Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
+					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
 				}
 			}
 
@@ -98,7 +97,7 @@ public class CooldownTimer extends TimerBase {
 		if(target != null) {
 			Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."), 0, 50, 0);
 			if(actionbarNotice) actionbar.sendTo(target);
-			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."));
+			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다."));
 		}
 	}
 	

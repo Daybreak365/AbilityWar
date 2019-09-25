@@ -27,6 +27,7 @@ import DayBreak.AbilityWar.Utils.VersionCompat.ServerVersion;
  */
 public class AbilityWar extends JavaPlugin {
 	
+	private static final Messager messager = new Messager();
 	private static AbilityWar Plugin;
 	
 	public static AbilityWar getPlugin() {
@@ -49,7 +50,7 @@ public class AbilityWar extends JavaPlugin {
 
 		au.Check();
 		
-		Messager.sendMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
+		messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 
 		
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
@@ -61,7 +62,7 @@ public class AbilityWar extends JavaPlugin {
 		AbilityList.nameValues();
 
 		AddonLoader.loadAddons();
-		AddonLoader.onEnable();
+		AddonLoader.enableAll();
 		
 		/*
 		 * 서버 부팅이 끝나면 실행
@@ -76,7 +77,7 @@ public class AbilityWar extends JavaPlugin {
 		});
 		
 		
-		Messager.sendMessage("플러그인이 활성화되었습니다.");
+		messager.sendConsoleMessage("플러그인이 활성화되었습니다.");
 	}
 	
 	@Override
@@ -84,9 +85,9 @@ public class AbilityWar extends JavaPlugin {
 		AbilityWarThread.StopGame();
 		AbilityWarSettings.Refresh();
 		AbilitySettings.Refresh();
-		AddonLoader.onDisable();
+		AddonLoader.disableAll();
 		
-		Messager.sendMessage("플러그인이 비활성화되었습니다.");
+		messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");
 	}
 	
 }

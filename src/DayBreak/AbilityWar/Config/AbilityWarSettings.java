@@ -12,8 +12,8 @@ import DayBreak.AbilityWar.Config.Enums.OnDeath;
 import DayBreak.AbilityWar.Game.Games.Default.DefaultGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Utils.Messager;
+import DayBreak.AbilityWar.Utils.Database.FileManager;
 import DayBreak.AbilityWar.Utils.ReflectionUtil.ClassUtil;
-import DayBreak.AbilityWar.Utils.Data.FileManager;
 
 public class AbilityWarSettings {
 
@@ -235,7 +235,7 @@ public class AbilityWarSettings {
 			Cache.put(node, o);
 			return o;
 		} catch (Exception e) {
-			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
+			Messager.sendConsoleErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
 			Config.set(node.getPath(), node.getDefault());
 			Config.save();
 
@@ -279,7 +279,7 @@ public class AbilityWarSettings {
 
 			return list;
 		} catch (Exception e) {
-			Messager.sendErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
+			Messager.sendConsoleErrorMessage("Config.yml, " + node.getPath() + "에서 오류가 발생하였습니다.");
 			Config.set(node.getPath(), node.getDefault());
 			Config.save();
 

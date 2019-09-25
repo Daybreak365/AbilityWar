@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Utils.Data;
+package DayBreak.AbilityWar.Utils.Database;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

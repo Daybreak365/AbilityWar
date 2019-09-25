@@ -15,8 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-import DayBreak.AbilityWar.Utils.KoreanUtil;
-import DayBreak.AbilityWar.Utils.Messager;
+import DayBreak.AbilityWar.Utils.Language.KoreanUtil;
 
 public abstract class TeamGame extends AbstractGame {
 
@@ -110,14 +109,14 @@ public abstract class TeamGame extends AbstractGame {
 		public void addMember(Participant p) {
 			if(!isMember(p)) {
 				members.add(p);
-				Messager.sendMessage(p.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + KoreanUtil.getCompleteWord(this.name, "&f으로", "&f로") + " 설정되었습니다."));
+				p.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + KoreanUtil.getCompleteWord(this.name, "&f으로", "&f로") + " 설정되었습니다."));
 			}
 		}
 
 		public void removeMember(Participant p) {
 			if(isMember(p)) {
 				members.remove(p);
-				Messager.sendMessage(p.getPlayer(), ChatColor.translateAlternateColorCodes('&', this.name + "&f 팀에서 나왔습니다."));
+				p.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', this.name + "&f 팀에서 나왔습니다."));
 			}
 		}
 		

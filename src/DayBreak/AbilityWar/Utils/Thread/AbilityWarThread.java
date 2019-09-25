@@ -1,9 +1,9 @@
 package DayBreak.AbilityWar.Utils.Thread;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
-import DayBreak.AbilityWar.Utils.Messager;
 
 /**
  * Ability War 플러그인 쓰레드
@@ -36,7 +36,7 @@ public class AbilityWarThread {
 			Game.StopTimer();
 			setGame(null);
 			
-			Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 중지되었습니다."));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 중지되었습니다."));
 		}
 	}
 

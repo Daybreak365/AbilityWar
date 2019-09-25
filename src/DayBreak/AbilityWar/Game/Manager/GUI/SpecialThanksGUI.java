@@ -18,7 +18,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.Data.MojangAPI;
+import DayBreak.AbilityWar.Utils.Database.MojangAPI;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
 
 /**
@@ -92,7 +92,7 @@ public class SpecialThanksGUI implements Listener {
 			} else {
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c오류"));
 
-				im.setLore(Messager.getStringList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
+				im.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
 			}
 			
 			is.setItemMeta(im);

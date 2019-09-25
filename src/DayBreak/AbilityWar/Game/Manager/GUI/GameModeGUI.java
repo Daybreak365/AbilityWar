@@ -1,5 +1,7 @@
 package DayBreak.AbilityWar.Game.Manager.GUI;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -57,19 +59,17 @@ public class GameModeGUI implements Listener {
 						is = MaterialLib.ENCHANTED_BOOK.getItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-						im.setLore(Messager.getStringList(
-								manifest.Description(),
-								ChatColor.translateAlternateColorCodes('&', "&7선택된 게임모드입니다.")
-								));
+						ArrayList<String> lore = Messager.asList(manifest.Description());
+						lore.add(ChatColor.translateAlternateColorCodes('&', "&7선택된 게임모드입니다."));
+						im.setLore(lore);
 						is.setItemMeta(im);
 					} else {
 						is = MaterialLib.BOOK.getItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-						im.setLore(Messager.getStringList(
-								manifest.Description(),
-								ChatColor.translateAlternateColorCodes('&', "&b» &f이 게임모드를 선택하려면 클릭하세요.")
-								));
+						ArrayList<String> lore = Messager.asList(manifest.Description());
+						lore.add(ChatColor.translateAlternateColorCodes('&', "&b» &f이 게임모드를 선택하려면 클릭하세요."));
+						im.setLore(lore);
 						is.setItemMeta(im);
 					}
 

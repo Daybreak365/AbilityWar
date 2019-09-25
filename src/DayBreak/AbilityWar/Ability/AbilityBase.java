@@ -1,10 +1,13 @@
 package DayBreak.AbilityWar.Ability;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -44,13 +47,15 @@ import DayBreak.AbilityWar.Utils.Thread.TimerBase;
  */
 public abstract class AbilityBase implements PassiveExecutor {
 
+	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
+
 	private final Participant participant;
 	private final String[] explain;
 	private final AbilityManifest manifest;
 	private final AbilityRegisteration<?> registeration;
 	private final AbstractGame game;
 
-	private boolean Restricted = true;
+	private boolean restricted = true;
 
 	/**
 	 * {@link AbilityBase}의 기본 생성자입니다.
@@ -88,13 +93,14 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	@Override
 	public void execute(Event event) {
-		if (!Restricted) {
+		if (!restricted) {
 			Class<? extends Event> eventClass = event.getClass();
 			if (eventhandlers.containsKey(eventClass)) {
+				Method method = eventhandlers.get(eventClass);
 				try {
-					eventhandlers.get(eventClass).invoke(this, event);
-				} catch (Exception ex) {
-					ex.printStackTrace();
+					method.invoke(this, event);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+					logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.");
 				}
 			}
 		}
@@ -207,14 +213,14 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 * 능력의 제한 여부를 반환합니다.
 	 */
 	public final boolean isRestricted() {
-		return Restricted;
+		return restricted;
 	}
 
 	/**
 	 * 능력의 제한 여부를 설정합니다.
 	 */
 	public final void setRestricted(boolean restricted) {
-		this.Restricted = restricted;
+		this.restricted = restricted;
 
 		if (restricted) {
 			this.stopTimers();

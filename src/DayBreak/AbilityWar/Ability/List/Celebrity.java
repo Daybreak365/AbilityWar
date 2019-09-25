@@ -1,5 +1,6 @@
 package DayBreak.AbilityWar.Ability.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class Celebrity extends AbilityBase {
 				if(!Cool.isCooldown()) {
 					
 					if(AbilityWarThread.isGameTaskRunning()) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f안녕하세요, 여러분! 전 세계적으로 &c선풍적인 &f인기를 끌고있는 &e" + getPlayer().getName() + "&f입니다! @==(^o^)@"));
+						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f안녕하세요, 여러분! 전 세계적으로 &c선풍적인 &f인기를 끌고있는 &e" + getPlayer().getName() + "&f입니다! @==(^o^)@"));
 						for(Participant participant : AbilityWarThread.getGame().getParticipants()) {
 							Player p = participant.getPlayer();
 							if(!p.equals(getPlayer())) {

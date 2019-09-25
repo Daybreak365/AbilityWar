@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
-import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.TItle.Actionbar;
 import DayBreak.AbilityWar.Utils.Math.NumberUtil;
@@ -51,7 +50,7 @@ abstract public class DurationTimer extends TimerBase {
 	
 	public boolean isDuration() {
 		if(isTimerRunning()) {
-			Messager.sendMessage(Ability.getPlayer(), ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(this.getFixedCount())));
+			Ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(this.getFixedCount())));
 		}
 		
 		return isTimerRunning();
@@ -90,11 +89,11 @@ abstract public class DurationTimer extends TimerBase {
 			
 			if(this.getFixedCount() == (Duration / 2) && !Counted.contains(this.getFixedCount())) {
 				Counted.add(this.getFixedCount());
-				Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(this.getFixedCount())));
+				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(this.getFixedCount())));
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
 			} else if(this.getFixedCount() <= 5 && this.getFixedCount() >= 1 && !Counted.contains(this.getFixedCount())) {
 				Counted.add(this.getFixedCount());
-				Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(this.getFixedCount())));
+				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f" + NumberUtil.parseTimeString(this.getFixedCount())));
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
 			}
 		}
@@ -111,7 +110,7 @@ abstract public class DurationTimer extends TimerBase {
 				CooldownTimer.StartTimer();
 			}
 			
-			Messager.sendMessage(target, ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다."));
+			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다."));
 		}
 	}
 	

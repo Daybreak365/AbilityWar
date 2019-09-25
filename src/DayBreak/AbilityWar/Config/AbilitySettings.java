@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import DayBreak.AbilityWar.Ability.AbilityBase;
 import DayBreak.AbilityWar.Ability.AbilityManifest;
-import DayBreak.AbilityWar.Utils.Data.FileManager;
+import DayBreak.AbilityWar.Utils.Database.FileManager;
 
 /**
  * 능력 세부 설정

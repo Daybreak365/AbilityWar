@@ -52,9 +52,9 @@ public class Chaser extends AbilityBase {
 					int Y = (int) target.getLocation().getY();
 					int Z = (int) target.getLocation().getZ();
 					
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
+					getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
 				} else {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f아무에게도 추적 장치를 부착하지 않았습니다. &8( &7추적 불가능 &8)"));
+					getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&f아무에게도 추적 장치를 부착하지 않았습니다. &8( &7추적 불가능 &8)"));
 				}
 			}
 		}
@@ -71,7 +71,7 @@ public class Chaser extends AbilityBase {
 						if(!Cool.isCooldown()) {
 							Player p = (Player) e.getEntity();
 							this.target = p;
-							Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 추적 장치를 부착하였습니다."));
+							getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 추적 장치를 부착하였습니다."));
 							
 							Cool.StartTimer();
 						}

@@ -1,5 +1,7 @@
 package DayBreak.AbilityWar.Game.Script.Objects.Setter.Special;
 
+import java.util.Arrays;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
@@ -11,7 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import DayBreak.AbilityWar.Game.Script.ScriptWizard;
 import DayBreak.AbilityWar.Game.Script.Objects.Setter.Setter;
-import DayBreak.AbilityWar.Utils.Messager;
 
 public class LoopCountSetter extends Setter<Integer> {
 
@@ -55,20 +56,20 @@ public class LoopCountSetter extends Setter<Integer> {
 		
 		if(getWizard().Loop.getValue()) {
 			if(getValue() > 0) {
-				loopCountMeta.setLore(Messager.getStringList(
+				loopCountMeta.setLore(Arrays.asList(
 						ChatColor.translateAlternateColorCodes('&', "&e" + getValue() + "번 &f반복 실행됩니다."),
 						ChatColor.translateAlternateColorCodes('&', "&c우클릭    &6» &e+ 1회"),
 						ChatColor.translateAlternateColorCodes('&', "&c좌클릭    &6» &e- 1회"),
 						ChatColor.translateAlternateColorCodes('&', "&cQ         &6» &e무한반복 토글")
 						));
 			} else {
-				loopCountMeta.setLore(Messager.getStringList(
+				loopCountMeta.setLore(Arrays.asList(
 						ChatColor.translateAlternateColorCodes('&', "&e무한 &f반복됩니다."),
 						ChatColor.translateAlternateColorCodes('&', "&cQ         &6» &e무한반복 토글")
 						));
 			}
 		} else {
-			loopCountMeta.setLore(Messager.getStringList(
+			loopCountMeta.setLore(Arrays.asList(
 					ChatColor.translateAlternateColorCodes('&', "&f반복 실행이 활성화되지 않아 사용할 수 없는 설정입니다.")
 					));
 		}

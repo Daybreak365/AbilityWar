@@ -12,6 +12,8 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -23,6 +25,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author dumptruckman, DayBreak 새벽
  */
 public class CommentedConfiguration extends YamlConfiguration {
+
+	private static final Logger logger = Logger.getLogger(CommentedConfiguration.class.getName());
 
 	private HashMap<String, String> Comments;
 	private File file;
@@ -190,7 +194,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 			try {
 				stringToFile(newContents.toString(), file);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.log(Level.SEVERE, "문자열을 파일에 저장하는 도중 오류가 발생하였습니다.");
 			}
 		}
 	}

@@ -3,6 +3,7 @@ package DayBreak.AbilityWar.Game.Script.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -24,9 +25,9 @@ public class LocationNoticeScript extends AbstractScript {
 		
 		msg.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "플레이어 위치"));
 		
-		for(Participant participant : game.getParticipants()) {
+		for (Participant participant : game.getParticipants()) {
 			Player player = participant.getPlayer();
-			if(!game.getDeathManager().isEliminated(player)) {
+			if (!game.getDeathManager().isEliminated(player)) {
 				Location l = player.getLocation();
 				int X = (int) l.getX();
 				int Y = (int) l.getY();
@@ -38,7 +39,9 @@ public class LocationNoticeScript extends AbstractScript {
 		
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&3-------------------------------------------------------------"));
 		
-		Messager.broadcastMessage(msg);
+		for (String m : msg) {
+			Bukkit.broadcastMessage(m);
+		}
 	}
 
 }

@@ -23,7 +23,7 @@ import DayBreak.AbilityWar.Config.AbilityWarSettings.DeathSettings;
 import DayBreak.AbilityWar.Config.Enums.ConfigNodes;
 import DayBreak.AbilityWar.Config.Enums.OnDeath;
 import DayBreak.AbilityWar.Utils.Messager;
-import DayBreak.AbilityWar.Utils.Data.FileManager;
+import DayBreak.AbilityWar.Utils.Database.FileManager;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib;
 import DayBreak.AbilityWar.Utils.Library.Item.ItemLib.ItemColor;
 import DayBreak.AbilityWar.Utils.Library.Item.MaterialLib;
@@ -97,7 +97,7 @@ public class SettingWizard implements Listener {
 				ItemStack Inv = ItemLib.WOOL.getItemStack(color);
 				ItemMeta InvMeta = Inv.getItemMeta();
 				InvMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적"));
-				InvMeta.setLore(Messager.getStringList(
+				InvMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (InvincibilityEnable ? "&a활성화" : "&c비활성화"))
 						));
 				Inv.setItemMeta(InvMeta);
@@ -107,7 +107,7 @@ public class SettingWizard implements Listener {
 				ItemStack Inv = MaterialLib.CLOCK.getItem();
 				ItemMeta InvMeta = Inv.getItemMeta();
 				InvMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적 시간"));
-				InvMeta.setLore(Messager.getStringList(
+				InvMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7지속 시간 : &a" + AbilityWarSettings.getInvincibilityDuration() + "분"),
 						" ",
 						ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1분"),
@@ -139,7 +139,7 @@ public class SettingWizard implements Listener {
 				ItemStack Food = new ItemStack(Material.COOKED_BEEF, 1);
 				ItemMeta FoodMeta = Food.getItemMeta();
 				FoodMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b배고픔 무제한"));
-				FoodMeta.setLore(Messager.getStringList(
+				FoodMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getNoHunger() ? "&a활성화" : "&c비활성화"))
 						));
 				Food.setItemMeta(FoodMeta);
@@ -149,7 +149,7 @@ public class SettingWizard implements Listener {
 				ItemStack Lev = MaterialLib.EXPERIENCE_BOTTLE.getItem();
 				ItemMeta LevMeta = Lev.getItemMeta();
 				LevMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 지급 레벨"));
-				LevMeta.setLore(Messager.getStringList(
+				LevMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7초반 지급 레벨 : &a" + AbilityWarSettings.getStartLevel() + "레벨"),
 						" ",
 						ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1레벨"),
@@ -166,7 +166,7 @@ public class SettingWizard implements Listener {
 				ItemStack Dur = new ItemStack(Material.IRON_CHESTPLATE);
 				ItemMeta DurMeta = Dur.getItemMeta();
 				DurMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b내구도 무한"));
-				DurMeta.setLore(Messager.getStringList(
+				DurMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getInfiniteDurability() ? "&a활성화" : "&c비활성화"))
 						));
 				Dur.setItemMeta(DurMeta);
@@ -176,7 +176,7 @@ public class SettingWizard implements Listener {
 				ItemStack Firewall = new ItemStack(Material.BARRIER);
 				ItemMeta FirewallMeta = Firewall.getItemMeta();
 				FirewallMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b방화벽"));
-				FirewallMeta.setLore(Messager.getStringList(
+				FirewallMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다."),
 						ChatColor.translateAlternateColorCodes('&', "&c관리자 권한&f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
 						"",
@@ -189,7 +189,7 @@ public class SettingWizard implements Listener {
 				ItemStack ClearWeather = MaterialLib.SNOWBALL.getItem();
 				ItemMeta ClearWeatherMeta = ClearWeather.getItemMeta();
 				ClearWeatherMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b맑은 날씨 고정"));
-				ClearWeatherMeta.setLore(Messager.getStringList(
+				ClearWeatherMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getClearWeather() ? "&a활성화" : "&c비활성화"))
 						));
 				ClearWeather.setItemMeta(ClearWeatherMeta);
@@ -199,7 +199,7 @@ public class SettingWizard implements Listener {
 				ItemStack VisualEffect = new ItemStack(Material.BLAZE_POWDER);
 				ItemMeta VisualEffectMeta = VisualEffect.getItemMeta();
 				VisualEffectMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b시각 효과"));
-				VisualEffectMeta.setLore(Messager.getStringList(
+				VisualEffectMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다."),
 						"",
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getVisualEffect() ? "&a활성화" : "&c비활성화"))
@@ -211,7 +211,7 @@ public class SettingWizard implements Listener {
 				ItemStack AbilityDraw = new ItemStack(Material.DISPENSER);
 				ItemMeta AbilityDrawMeta = AbilityDraw.getItemMeta();
 				AbilityDrawMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 추첨"));
-				AbilityDrawMeta.setLore(Messager.getStringList(
+				AbilityDrawMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
 						"",
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getDrawAbility() ? "&a활성화" : "&c비활성화"))
@@ -240,7 +240,7 @@ public class SettingWizard implements Listener {
 				ItemStack Spawn = new ItemStack(Material.COOKED_BEEF, 1);
 				ItemMeta SpawnMeta = Spawn.getItemMeta();
 				SpawnMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b스폰 이동"));
-				SpawnMeta.setLore(Messager.getStringList(
+				SpawnMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&f게임이 시작되면 &b스폰&f으로 이동합니다."),
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getSpawnEnable() ? "&a활성화" : "&c비활성화"))
 						));
@@ -257,7 +257,7 @@ public class SettingWizard implements Listener {
 				Double Y = SpawnLocation.getY();
 				Double Z = SpawnLocation.getZ();
 				
-				SpawnMeta.setLore(Messager.getStringList(
+				SpawnMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&f당신이 현재 서 있는 &a위치&f를 &b스폰&f으로 설정합니다."),
 						ChatColor.translateAlternateColorCodes('&', "&6» &f스폰 위치를 변경하려면 클릭하세요."),
 						"",
@@ -292,7 +292,7 @@ public class SettingWizard implements Listener {
 				ItemStack Eliminate = new ItemStack(Material.DIAMOND_SWORD);
 				ItemMeta EliminateMeta = Eliminate.getItemMeta();
 				EliminateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b작업"));
-				List<String> lore = Messager.getStringList(
+				List<String> lore = Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&f게임 진행 중 플레이어가 사망했을 때 어떤 작업을 수행할지 설정합니다."),
 						"");
 				OnDeath operation = DeathSettings.getOperation();
@@ -307,7 +307,7 @@ public class SettingWizard implements Listener {
 				ItemStack AbilityReveal = MaterialLib.ENDER_EYE.getItem();
 				ItemMeta AbilityRevealMeta = AbilityReveal.getItemMeta();
 				AbilityRevealMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 공개"));
-				AbilityRevealMeta.setLore(Messager.getStringList(
+				AbilityRevealMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다."),
 						"",
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (DeathSettings.getAbilityReveal() ? "&a활성화" : "&c비활성화"))
@@ -319,7 +319,7 @@ public class SettingWizard implements Listener {
 				ItemStack AbilityRemoval = MaterialLib.BEDROCK.getItem();
 				ItemMeta AbilityRemovalMeta = AbilityRemoval.getItemMeta();
 				AbilityRemovalMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 삭제"));
-				AbilityRemovalMeta.setLore(Messager.getStringList(
+				AbilityRemovalMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력이 삭제됩니다."),
 						"",
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (DeathSettings.getAbilityRemoval() ? "&a활성화" : "&c비활성화"))
@@ -331,7 +331,7 @@ public class SettingWizard implements Listener {
 				ItemStack ItemDrop = new ItemStack(Material.CHEST);
 				ItemMeta ItemDropMeta = ItemDrop.getItemMeta();
 				ItemDropMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b아이템 드롭"));
-				ItemDropMeta.setLore(Messager.getStringList(
+				ItemDropMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&c비활성화&f하면 게임이 시작되고 난 후 사망하였을 때 아이템을 드롭하지 않습니다."),
 						"",
 						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (DeathSettings.getItemDrop() ? "&a활성화" : "&c비활성화"))
@@ -367,11 +367,11 @@ public class SettingWizard implements Listener {
 					if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&a확인"))) {
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Kit, getItemUntil(KitGUI, 35));
 						p.closeInventory();
-						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&c초기화"))) {
 						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Kit, FileManager.getItemStackList());
 						p.closeInventory();
-						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
 					}
 				}
 			}
@@ -488,7 +488,7 @@ public class SettingWizard implements Listener {
 						if(!e.getClick().equals(ClickType.SHIFT_LEFT)) {
 							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Spawn_Location, p.getLocation());
 							p.closeInventory();
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a게임 스폰이 변경되었습니다."));
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a게임 스폰이 변경되었습니다."));
 						} else {
 							p.teleport(AbilityWarSettings.getSpawnLocation());
 							p.closeInventory();

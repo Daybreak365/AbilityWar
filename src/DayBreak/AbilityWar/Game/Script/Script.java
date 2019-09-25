@@ -22,8 +22,8 @@ import DayBreak.AbilityWar.Game.Script.ScriptException.State;
 import DayBreak.AbilityWar.Game.Script.Objects.AbstractScript;
 import DayBreak.AbilityWar.Game.Script.Objects.Setter.Setter;
 import DayBreak.AbilityWar.Utils.Messager;
+import DayBreak.AbilityWar.Utils.Database.FileManager;
 import DayBreak.AbilityWar.Utils.ReflectionUtil.ClassUtil;
-import DayBreak.AbilityWar.Utils.Data.FileManager;
 import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
 
 /**
@@ -31,7 +31,9 @@ import DayBreak.AbilityWar.Utils.Thread.AbilityWarThread;
  * @author DayBreak 새벽
  */
 abstract public class Script {
-	
+
+	private static final Messager messager = new Messager();
+
 	private static ArrayList<AbstractScript> Scripts = new ArrayList<AbstractScript>();
 	
 	/**
@@ -79,13 +81,13 @@ abstract public class Script {
 	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) {
 		for(ScriptRegisteration check : ScriptTypes) {
 			if(check.getClazz().getSimpleName().equalsIgnoreCase(clazz.getSimpleName())) {
-				Messager.sendMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
+				messager.sendConsoleMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
 				return;
 			}
 		}
 		
 		if(isRegistered(clazz)) {
-			Messager.sendMessage(clazz.getName() + " 스크립트는 이미 등록되었습니다.");
+			messager.sendConsoleMessage(clazz.getName() + " 스크립트는 이미 등록되었습니다.");
 			return;
 		}
 		
@@ -223,10 +225,10 @@ abstract public class Script {
 				gson.toJson(script, bw);
 				bw.close();
 			} else {
-				Messager.sendErrorMessage("등록되지 않은 스크립트입니다.");
+				Messager.sendConsoleErrorMessage("등록되지 않은 스크립트입니다.");
 			}
 		} catch (IOException ioException) {
-			Messager.sendErrorMessage("스크립트를 저장하는 도중 오류가 발생하였습니다.");
+			Messager.sendConsoleErrorMessage("스크립트를 저장하는 도중 오류가 발생하였습니다.");
 		}
 	}
 	
@@ -254,9 +256,8 @@ abstract public class Script {
 			} else {
 				throw new IOException();
 			}
-		} catch (IOException | NullPointerException | ClassNotFoundException Exception) {
-			Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + file.getName() + " &f스크립트를 불러오는 도중 오류가 발생하였습니다."));
-			Exception.printStackTrace();
+		} catch (IOException | NullPointerException | ClassNotFoundException e) {
+			Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + file.getName() + " &f스크립트를 불러오는 도중 오류가 발생하였습니다."));
 			throw new ScriptException(State.Not_Loaded);
 		}
 	}

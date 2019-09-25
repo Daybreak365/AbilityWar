@@ -83,7 +83,7 @@ public class SpectatorGUI implements Listener {
 				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
-				im.setLore(Messager.getStringList(
+				im.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7이 플레이어는 게임에서 예외됩니다."),
 						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 해제하려면 클릭하세요.")
 						));
@@ -92,7 +92,7 @@ public class SpectatorGUI implements Listener {
 				is = ItemLib.WOOL.getItemStack(ItemColor.LIME);
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
-				im.setLore(Messager.getStringList(
+				im.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&7이 플레이어는 게임에서 예외되지 않습니다."),
 						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 하려면 클릭하세요.")
 						));

@@ -1,7 +1,9 @@
 package DayBreak.AbilityWar.Game.Script;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -54,8 +56,8 @@ public class ScriptWizard implements Listener {
 					setterConstructor = data.getSetterClass().getConstructor(String.class, data.getClazz(), ScriptWizard.class);
 					Setter<?> setter = setterConstructor.newInstance(data.getKey(), data.getDefault(), this);
 					Setters.add(setter);
-				} catch (Exception ex) {
-					ex.printStackTrace();
+				} catch (InstantiationException | IllegalAccessException | InvocationTargetException
+						| NoSuchMethodException | SecurityException ex) {
 					throw new IllegalArgumentException();
 				}
 			}
@@ -138,7 +140,7 @@ public class ScriptWizard implements Listener {
 		ItemStack Confirm = new ItemStack(Material.PAPER, 1);
 		ItemMeta ConfirmMeta = Confirm.getItemMeta();
 		ConfirmMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a저장"));
-		ConfirmMeta.setLore(Messager.getStringList(
+		ConfirmMeta.setLore(Arrays.asList(
 				ChatColor.translateAlternateColorCodes('&', "&f저장 " + (canSave() ? "&a가능" : "&c불가능"))
 				));
 		Confirm.setItemMeta(ConfirmMeta);
@@ -216,15 +218,15 @@ public class ScriptWizard implements Listener {
 						p.closeInventory();
 						
 						if(exception == null) {
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f스크립트를 저장하였습니다."));
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f스크립트를 저장하였습니다."));
 						} else {
-							Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&c스크립트를 저장하던 도중 오류가 발생하였습니다."));
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c스크립트를 저장하던 도중 오류가 발생하였습니다."));
 
 							if(exception.getMessage() != null && !exception.getMessage().isEmpty()) {
 								if(exception instanceof NoSuchMethodException) {
-									Messager.sendErrorMessage(exception.getMessage() + " 메소드가 존재하지 않습니다.");
+									Messager.sendConsoleErrorMessage(exception.getMessage() + " 메소드가 존재하지 않습니다.");
 								} else {
-									Messager.sendErrorMessage(exception.getMessage());
+									Messager.sendConsoleErrorMessage(exception.getMessage());
 								}
 							}
 						}

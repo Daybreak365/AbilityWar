@@ -90,7 +90,7 @@ public class Feather extends AbilityBase {
 				if(p.equals(this.getPlayer())) {
 					if(e.getCause().equals(DamageCause.FALL)) {
 						e.setCancelled(true);
-						Messager.sendMessage(p, ChatColor.translateAlternateColorCodes('&', "&a낙하 데미지를 받지 않습니다."));
+						p.sendMessage( ChatColor.translateAlternateColorCodes('&', "&a낙하 데미지를 받지 않습니다."));
 						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 					}
 				}

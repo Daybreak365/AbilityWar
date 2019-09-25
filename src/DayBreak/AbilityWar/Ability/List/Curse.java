@@ -11,7 +11,6 @@ import DayBreak.AbilityWar.Ability.AbilityManifest.Rank;
 import DayBreak.AbilityWar.Ability.AbilityManifest.Species;
 import DayBreak.AbilityWar.Config.AbilitySettings.SettingObject;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
-import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Library.SoundLib;
 import DayBreak.AbilityWar.Utils.Library.Item.EnchantLib;
 
@@ -78,7 +77,7 @@ public class Curse extends AbilityBase {
 				}
 			} else {
 				if(Count <= 0) {
-					Messager.sendMessage(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&c더 이상 이 능력을 사용할 수 없습니다!"));
+					getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&c더 이상 이 능력을 사용할 수 없습니다!"));
 				}
 			}
 		}

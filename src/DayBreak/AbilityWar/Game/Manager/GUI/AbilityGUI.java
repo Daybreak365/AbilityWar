@@ -1,5 +1,6 @@
 package DayBreak.AbilityWar.Game.Manager.GUI;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -36,14 +37,14 @@ public class AbilityGUI implements Listener {
 		this.p = p;
 		this.target = null;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
-		
+
 		Values = new ArrayList<String>(AbilityList.nameValues());
 		Values.sort(new Comparator<String>() {
-			
+
 			public int compare(String obj1, String obj2) {
 				return obj1.compareToIgnoreCase(obj2);
 			}
-			
+
 		});
 	}
 
@@ -51,55 +52,56 @@ public class AbilityGUI implements Listener {
 		this.p = p;
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
-		
+
 		Values = new ArrayList<String>(AbilityList.nameValues());
 		Values.sort(new Comparator<String>() {
-			
+
 			public int compare(String obj1, String obj2) {
 				return obj1.compareToIgnoreCase(obj2);
 			}
-			
+
 		});
 	}
-	
+
 	private ArrayList<String> Values;
-	
+
 	private int PlayerPage = 1;
-	
+
 	private Inventory AbilityGUI;
-	
+
 	public void openAbilityGUI(Integer page) {
 		Integer MaxPage = ((Values.size() - 1) / 36) + 1;
-		if (MaxPage < page) page = 1;
-		if(page < 1) page = 1;
-		AbilityGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
+		if (MaxPage < page)
+			page = 1;
+		if (page < 1)
+			page = 1;
+		AbilityGUI = Bukkit.createInventory(null, 54,
+				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
 		PlayerPage = page;
 		int Count = 0;
-		
+
 		for (String name : Values) {
 			ItemStack is = new ItemStack(Material.IRON_BLOCK);
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-			im.setLore(Messager.getStringList(
-					ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요.")
-					));
+			im.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요.")));
 			is.setItemMeta(im);
-			
+
 			if (Count / 36 == page - 1) {
 				AbilityGUI.setItem(Count % 36, is);
 			}
 			Count++;
 		}
-		
-		if(page > 1) {
+
+		if (page > 1) {
 			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta previousMeta = previousPage.getItemMeta();
 			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
 			previousPage.setItemMeta(previousMeta);
 			AbilityGUI.setItem(48, previousPage);
 		}
-		
-		if(page != MaxPage) {
+
+		if (page != MaxPage) {
 			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta nextMeta = nextPage.getItemMeta();
 			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
@@ -109,71 +111,74 @@ public class AbilityGUI implements Listener {
 
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
-		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6페이지 &e" + page + " &6/ &e" + MaxPage));
+		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + MaxPage));
 		Page.setItemMeta(PageMeta);
 		AbilityGUI.setItem(49, Page);
-		
+
 		p.openInventory(AbilityGUI);
 	}
-	
+
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if(e.getInventory().equals(this.AbilityGUI)) {
+		if (e.getInventory().equals(this.AbilityGUI)) {
 			HandlerList.unregisterAll(this);
 		}
 	}
-	
+
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if(e.getInventory().equals(AbilityGUI)) {
+		if (e.getInventory().equals(AbilityGUI)) {
 			Player p = (Player) e.getWhoClicked();
 			e.setCancelled(true);
-			if(e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
+			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta()
+					&& e.getCurrentItem().getItemMeta().hasDisplayName()) {
+				if (e.getCurrentItem().getItemMeta().getDisplayName()
+						.equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
 					openAbilityGUI(PlayerPage - 1);
-				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
+				} else if (e.getCurrentItem().getItemMeta().getDisplayName()
+						.equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
 					openAbilityGUI(PlayerPage + 1);
 				}
 			}
-			
-			if(e.getCurrentItem() != null) {
-				if(e.getCurrentItem().getType().equals(Material.IRON_BLOCK)) {
-					if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
+
+			if (e.getCurrentItem() != null) {
+				if (e.getCurrentItem().getType().equals(Material.IRON_BLOCK)) {
+					if (e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 						String AbilityName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-						
+
 						Class<? extends AbilityBase> abilityClass = AbilityList.getByString(AbilityName);
 						try {
-							if(abilityClass != null) {
-								if(AbilityWarThread.isGameTaskRunning()) {
+							if (abilityClass != null) {
+								if (AbilityWarThread.isGameTaskRunning()) {
 									AbstractGame game = AbilityWarThread.getGame();
-									if(target != null) {
+									if (target != null) {
 										target.setAbility(abilityClass);
-										Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님에게 능력을 임의로 부여하였습니다."));
+										Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
+												"&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName()
+														+ "&a님에게 능력을 임의로 부여하였습니다."));
 									} else {
-										for(Participant participant : game.getParticipants()) {
+										for (Participant participant : game.getParticipants()) {
 											participant.setAbility(abilityClass);
 										}
-										Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a에게 능력을 임의로 부여하였습니다."));
+										Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
+												"&e" + p.getName() + "&a님이 &f전체 유저&a에게 능력을 임의로 부여하였습니다."));
 									}
 								}
-							} else {
-								throw new Exception("Reflection Error");
 							}
-						} catch(Exception ex) {
-							ex.printStackTrace();
-							if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+						} catch (NoSuchMethodException | SecurityException | InstantiationException
+								| IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+							if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 								Messager.sendErrorMessage(p, ex.getMessage());
 							} else {
 								Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
 							}
 						}
-						
+
 						p.closeInventory();
 					}
 				}
 			}
 		}
 	}
-	
+
 }

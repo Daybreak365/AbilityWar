@@ -1,4 +1,4 @@
-package DayBreak.AbilityWar.Utils.Data;
+package DayBreak.AbilityWar.Utils.Database;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +14,10 @@ import DayBreak.AbilityWar.Utils.Messager;
  * @author DayBreak 새벽
  */
 public class FileManager {
-	
+	// TODO: 업데이트 필요
 	private FileManager() {}
+	
+	private static final Messager messager = new Messager(null);
 	
 	private static File getDataFolder() {
 		return new File("plugins/AbilityWar");
@@ -46,7 +48,7 @@ public class FileManager {
 		
 		try {
 			if(createDataFolder()) {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f 폴더를 생성했습니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f 폴더를 생성했습니다."));
 			}
 			
 			if(!f.exists()) {
@@ -55,7 +57,7 @@ public class FileManager {
 			
 			return f;
 		} catch (IOException e) {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + f.getPath() + " 파일을 생성하지 못했습니다."));
+			messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&c" + f.getPath() + " 파일을 생성하지 못했습니다."));
 			return null;
 		}
 	}
@@ -65,7 +67,7 @@ public class FileManager {
 		File f = new File(getDataFolder().getPath() + "/" + Folder);
 
 		if(createDataFolder()) {
-			Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f 폴더를 생성했습니다."));
+			messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getDataFolder().getPath() + "&f 폴더를 생성했습니다."));
 		}
 		
 		if(!f.exists()) {

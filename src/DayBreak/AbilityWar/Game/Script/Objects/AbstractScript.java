@@ -1,9 +1,9 @@
 package DayBreak.AbilityWar.Game.Script.Objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
-import DayBreak.AbilityWar.Utils.Messager;
 import DayBreak.AbilityWar.Utils.Thread.TimerBase;
 
 public abstract class AbstractScript {
@@ -57,9 +57,9 @@ public abstract class AbstractScript {
 
 				if (!msg.equalsIgnoreCase("none")) {
 					if (Seconds == (this.getMaxCount() / 2)) {
-						Messager.broadcastMessage(msg);
+						Bukkit.broadcastMessage(msg);
 					} else if (Seconds <= 5 && Seconds >= 1) {
-						Messager.broadcastMessage(msg);
+						Bukkit.broadcastMessage(msg);
 					}
 				}
 			}
@@ -70,7 +70,7 @@ public abstract class AbstractScript {
 
 				String msg = getRunMessage();
 				if (!msg.equalsIgnoreCase("none")) {
-					Messager.broadcastMessage(msg);
+					Bukkit.broadcastMessage(msg);
 				}
 
 				if (isLoop()) {

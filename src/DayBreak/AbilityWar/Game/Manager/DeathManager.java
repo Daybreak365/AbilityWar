@@ -16,8 +16,8 @@ import DayBreak.AbilityWar.Config.AbilityWarSettings.DeathSettings;
 import DayBreak.AbilityWar.Game.Events.ParticipantDeathEvent;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame;
 import DayBreak.AbilityWar.Game.Games.Mode.AbstractGame.Participant;
-import DayBreak.AbilityWar.Utils.KoreanUtil;
 import DayBreak.AbilityWar.Utils.Messager;
+import DayBreak.AbilityWar.Utils.Language.KoreanUtil;
 
 /**
  * Death Manager
@@ -82,10 +82,10 @@ public class DeathManager implements Listener {
 				if(victim.hasAbility()) {
 					String name = victim.getAbility().getName();
 					if(name != null) {
-						Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 " + KoreanUtil.getCompleteWord("&e" + name, "&f이었", "&f였") + "습니다."));
+						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 " + KoreanUtil.getCompleteWord("&e" + name, "&f이었", "&f였") + "습니다."));
 					}
 				} else {
-					Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님은 능력이 없습니다."));
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님은 능력이 없습니다."));
 				}
 			}
 		}
@@ -117,10 +117,10 @@ public class DeathManager implements Listener {
 	public void Eliminate(Player p) {
 		Eliminated.add(p.getUniqueId());
 		p.kickPlayer(
-				Messager.getPrefix()
+				Messager.defaultPrefix
 				+ "\n"
 				+ ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
-		Messager.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + p.getName() + "&f님이 탈락하셨습니다."));
+		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + p.getName() + "&f님이 탈락하셨습니다."));
 	}
 	
 	/**

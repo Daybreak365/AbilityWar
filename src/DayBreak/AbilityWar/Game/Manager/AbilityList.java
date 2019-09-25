@@ -67,7 +67,8 @@ import DayBreak.AbilityWar.Utils.Messager;
  * {@link DefaultGame}, {@link ChangeAbilityWar} 등에서 사용하는 능력자 플러그인의 기본적인 능력 목록을 관리하는 클래스입니다.
  */
 public class AbilityList {
-	
+
+	private static final Messager messager = new Messager();
 	private static ArrayList<Class<? extends AbilityBase>> Abilities = new ArrayList<>();
 	
 	/**
@@ -95,16 +96,16 @@ public class AbilityList {
 						}
 					} catch (Exception ex) {
 						if(ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-							Messager.sendErrorMessage(ex.getMessage());
+							Messager.sendConsoleErrorMessage(ex.getMessage());
 						} else {
-							Messager.sendErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+							Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록중 오류가 발생하였습니다."));
 						}
 					}
 				} else {
-					Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
+					messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
 			} else {
-				Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
 			}
 		}
 	}

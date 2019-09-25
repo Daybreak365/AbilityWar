@@ -3,6 +3,7 @@ package DayBreak.AbilityWar.Game.Script.Objects.Setter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
@@ -54,8 +55,9 @@ public class LocationSetter extends Setter<Location> {
 	public void onClick(ClickType click) {
 		Setting = true;
 		getWizard().safeClose();
-		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f지정할 &6위치&f를 클릭해주세요. &e좌클릭&f은 클릭한 블록의 위치를 저장하고,"));
-		Messager.sendMessage(getWizard().getPlayer(), ChatColor.translateAlternateColorCodes('&', "&e우클릭&f은 클릭한 블록 위의 위치를 저장합니다."));
+		Player p = getWizard().getPlayer();
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f지정할 &6위치&f를 클릭해주세요. &e좌클릭&f은 클릭한 블록의 위치를 저장하고,"));
+		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e우클릭&f은 클릭한 블록 위의 위치를 저장합니다."));
 	}
 
 	@Override
@@ -69,14 +71,14 @@ public class LocationSetter extends Setter<Location> {
 			Double X = l.getX();
 			Double Y = l.getY();
 			Double Z = l.getZ();
-			locMeta.setLore(Messager.getStringList(
+			locMeta.setLore(Messager.asList(
 					ChatColor.translateAlternateColorCodes('&', "&a월드&f: " + world),
 					ChatColor.translateAlternateColorCodes('&', "&bX&f: " + X),
 					ChatColor.translateAlternateColorCodes('&', "&bY&f: " + Y),
 					ChatColor.translateAlternateColorCodes('&', "&bZ&f: " + Z)
 					));
 		} else {
-			locMeta.setLore(Messager.getStringList(
+			locMeta.setLore(Messager.asList(
 					ChatColor.translateAlternateColorCodes('&', "&f지정된 위치가 없습니다.")
 					));
 		}
