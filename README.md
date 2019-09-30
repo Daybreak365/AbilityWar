@@ -4,7 +4,7 @@
 <img src="https://img.shields.io/github/v/release/DayBreak365/AbilityWar?style=flat-square"></img>
 <img src="https://img.shields.io/github/downloads/DayBreak365/AbilityWar/total?style=flat-square"></img>
 <img src="https://img.shields.io/github/last-commit/DayBreak365/AbilityWar?style=flat-square"></img>
-### 개발: [DayBreak](https://github.com/DayBreak365)
+### 개발: [Daybreak](https://github.com/DayBreak365)
 <br/>
 
 **📋 License**
