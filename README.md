@@ -1,6 +1,4 @@
-<p align="center"><img src="https://user-images.githubusercontent.com/39194432/63667961-92d56000-c810-11e9-9fb4-f62483c23ff4.png"></p>
-
-# 능력자 전쟁
+# <img src="https://user-images.githubusercontent.com/39194432/63667961-92d56000-c810-11e9-9fb4-f62483c23ff4.png">
 <img src="https://img.shields.io/github/v/release/DayBreak365/AbilityWar?style=flat-square"></img>
 <img src="https://img.shields.io/github/downloads/DayBreak365/AbilityWar/total?style=flat-square"></img>
 <img src="https://img.shields.io/github/last-commit/DayBreak365/AbilityWar?style=flat-square"></img>
