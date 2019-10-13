@@ -37,7 +37,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityBase.MaterialType;
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.events.GameEndEvent;
 import daybreak.abilitywar.game.events.GameReadyEvent;
 import daybreak.abilitywar.game.events.GameStartEvent;
@@ -294,12 +294,12 @@ public abstract class AbstractGame extends Timer implements Listener {
 
 	@EventHandler
 	private void onWeatherChange(WeatherChangeEvent e) {
-		if(GameStarted && AbilityWarSettings.getClearWeather()) e.setCancelled(true);
+		if(GameStarted && Settings.getClearWeather()) e.setCancelled(true);
 	}
 	
 	@EventHandler
 	private void onFoodLevelChange(FoodLevelChangeEvent e) {
-		if(AbilityWarSettings.getNoHunger()) {
+		if(Settings.getNoHunger()) {
 			e.setCancelled(true);
 			
 			Player p = (Player) e.getEntity();

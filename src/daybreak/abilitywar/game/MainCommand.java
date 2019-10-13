@@ -19,13 +19,11 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.ability.timer.DurationTimer;
-import daybreak.abilitywar.config.AbilitySettings;
-import daybreak.abilitywar.config.AbilityWarSettings;
 import daybreak.abilitywar.config.SettingWizard;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.GameMode;
 import daybreak.abilitywar.game.games.mode.AbstractGame.AbilitySelect;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.GameMode;
 import daybreak.abilitywar.game.manager.Invincibility;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
 import daybreak.abilitywar.game.manager.gui.BlackListGUI;
@@ -94,18 +92,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 					}
-				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
-				}
-			} else if(split[0].equalsIgnoreCase("reload")) {
-				if(sender.isOp()) {
-					AbilityWarSettings.Refresh();
-					AbilitySettings.Refresh();
-					
-					AbilityWarSettings.Setup();
-					AbilitySettings.Setup();
-					Script.LoadAll();
-					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 전쟁 &b콘피그가 리로드되었습니다!"));
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 				}

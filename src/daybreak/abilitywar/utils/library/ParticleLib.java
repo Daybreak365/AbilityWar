@@ -29,7 +29,7 @@ import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 
 /**
@@ -144,7 +144,7 @@ public class ParticleLib {
 		}
 
 		public <T> void spawnParticle(Player p, Location l, float offsetX, float offsetY, float offsetZ, int Count, T t) {
-			if (AbilityWarSettings.getVisualEffect()) {
+			if (Settings.getVisualEffect()) {
 				if (particle != null) {
 					if(p != null) {
 						p.spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ, t);

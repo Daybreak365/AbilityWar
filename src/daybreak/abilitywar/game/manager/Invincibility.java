@@ -12,7 +12,7 @@ import org.bukkit.plugin.EventExecutor;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.events.InvincibleEndEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -27,7 +27,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
  */
 public class Invincibility implements EventExecutor {
 	
-	private final Integer Duration = AbilityWarSettings.getInvincibilityDuration();
+	private final Integer Duration = Settings.getInvincibilityDuration();
 	private final AbstractGame game;
 	
 	public Invincibility(AbstractGame game) {

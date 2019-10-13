@@ -1,10 +1,14 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -17,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
@@ -25,6 +30,8 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 
 public class GameModeGUI implements Listener {
+
+	private static final Logger logger = Logger.getLogger(GameModeGUI.class.getName());
 
 	private final Player p;
 	
@@ -45,7 +52,7 @@ public class GameModeGUI implements Listener {
 		PlayerPage = page;
 		int Count = 0;
 		
-		Class<? extends AbstractGame> gameClass = AbilityWarSettings.getGameMode();
+		Class<? extends AbstractGame> gameClass = Settings.getGameMode();
 		
 		for(String name : GameMode.nameValues()) {
 			Class<? extends AbstractGame> mode = GameMode.getByString(name);
@@ -109,9 +116,13 @@ public class GameModeGUI implements Listener {
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if(e.getInventory().equals(this.GameModeGUI)) {
+		if (e.getInventory().equals(this.GameModeGUI)) {
 			HandlerList.unregisterAll(this);
-			AbilityWarSettings.Save();
+			try {
+				AbilityWarSettings.update();
+			} catch (IOException | InvalidConfigurationException e1) {
+				logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
+			}
 		}
 	}
 	
@@ -132,7 +143,7 @@ public class GameModeGUI implements Listener {
 						
 						Class<? extends AbstractGame> abilityClass = GameMode.getByString(modeName);
 						if(abilityClass != null) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.GameMode, abilityClass.getName());
+							AbilityWarSettings.modifyProperty(ConfigNodes.GameMode, abilityClass.getName());
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + modeName + " &f클래스는 등록되지 않았습니다."));
 						}

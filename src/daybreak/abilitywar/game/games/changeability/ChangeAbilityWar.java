@@ -17,9 +17,9 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.ChangeAbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.DeathSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.ChangeAbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
@@ -58,7 +58,7 @@ public class ChangeAbilityWar extends WinnableGame {
 	
 	private final AbilityChanger changer = new AbilityChanger(this);
 	
-	private final boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
+	private final boolean Invincible = Settings.getInvincibilityEnable();
 	
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 	
@@ -290,12 +290,12 @@ public class ChangeAbilityWar extends WinnableGame {
 		this.GiveDefaultKit();
 		
 		for(Participant p : getParticipants()) {
-			if(AbilityWarSettings.getSpawnEnable()) {
-				p.getPlayer().teleport(AbilityWarSettings.getSpawnLocation());
+			if(Settings.getSpawnEnable()) {
+				p.getPlayer().teleport(Settings.getSpawnLocation());
 			}
 		}
 		
-		if(AbilityWarSettings.getNoHunger()) {
+		if(Settings.getNoHunger()) {
 			NoHunger.setPeriod(1);
 			NoHunger.StartTimer();
 		} else {
@@ -313,14 +313,14 @@ public class ChangeAbilityWar extends WinnableGame {
 			}
 		}
 		
-		if(AbilityWarSettings.getInfiniteDurability()) {
+		if(Settings.getInfiniteDurability()) {
 			registerListener(infiniteDurability);
 		} else {
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
 		}
 		
 		for(World w : Bukkit.getWorlds()) {
-			if(AbilityWarSettings.getClearWeather()) {
+			if(Settings.getClearWeather()) {
 				w.setStorm(false);
 			}
 		}
@@ -335,9 +335,9 @@ public class ChangeAbilityWar extends WinnableGame {
 	 */
 	@Override
 	public void GiveDefaultKit(Player p) {
-		List<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
+		List<ItemStack> DefaultKit = Settings.getDefaultKit();
 
-		if(AbilityWarSettings.getInventoryClear()) {
+		if(Settings.getInventoryClear()) {
 			p.getInventory().clear();
 		}
 		
@@ -346,8 +346,8 @@ public class ChangeAbilityWar extends WinnableGame {
 		}
 		
 		p.setLevel(0);
-		if(AbilityWarSettings.getStartLevel() > 0) {
-			p.giveExpLevels(AbilityWarSettings.getStartLevel());
+		if(Settings.getStartLevel() > 0) {
+			p.giveExpLevels(Settings.getStartLevel());
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
 		}
 	}

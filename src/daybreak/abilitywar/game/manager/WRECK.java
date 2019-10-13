@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.manager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 
 public class WRECK {
@@ -15,7 +15,7 @@ public class WRECK {
 		this.game = game;
 	}
 	
-	private final boolean enabled = AbilityWarSettings.getWRECKEnable();
+	private final boolean enabled = Settings.isWRECKEnabled();
 	
 	public boolean isEnabled() {
 		return enabled;

@@ -21,9 +21,9 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.DeathSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.SummerVacationSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.SummerVacationSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
@@ -54,7 +54,7 @@ public class SummerVacation extends WinnableGame {
 		this.MaxKill = SummerVacationSettings.getMaxKill();
 	}
 	
-	private final boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
+	private final boolean Invincible = Settings.getInvincibilityEnable();
 
 	@SuppressWarnings("deprecation")
 	private final Objective killObjective = ServerVersion.getVersion() >= 13 ?
@@ -296,8 +296,8 @@ public class SummerVacation extends WinnableGame {
 		this.GiveDefaultKit();
 		
 		for(Participant p : getParticipants()) {
-			if(AbilityWarSettings.getSpawnEnable()) {
-				p.getPlayer().teleport(AbilityWarSettings.getSpawnLocation());
+			if(Settings.getSpawnEnable()) {
+				p.getPlayer().teleport(Settings.getSpawnLocation());
 			}
 		}
 
@@ -316,7 +316,7 @@ public class SummerVacation extends WinnableGame {
 		registerListener(infiniteDurability);
 		
 		for(World w : Bukkit.getWorlds()) {
-			if(AbilityWarSettings.getClearWeather()) {
+			if(Settings.getClearWeather()) {
 				w.setStorm(false);
 			}
 		}
@@ -336,7 +336,7 @@ public class SummerVacation extends WinnableGame {
 		bow.setItemMeta(bowMeta);
 		List<ItemStack> DefaultKit = Arrays.asList(bow, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
 
-		if(AbilityWarSettings.getInventoryClear()) {
+		if(Settings.getInventoryClear()) {
 			p.getInventory().clear();
 		}
 		

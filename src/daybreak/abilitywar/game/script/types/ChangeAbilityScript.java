@@ -11,7 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -51,7 +51,7 @@ public class ChangeAbilityScript extends AbstractScript {
 	private List<Class<? extends AbilityBase>> setupAbilities() {
 		List<Class<? extends AbilityBase>> list = new ArrayList<>();
 		for(String abilityName : AbilityList.nameValues()) {
-			if(!AbilityWarSettings.isBlackListed(abilityName)) {
+			if(!Settings.isBlackListed(abilityName)) {
 				list.add(AbilityList.getByString(abilityName));
 			}
 		}

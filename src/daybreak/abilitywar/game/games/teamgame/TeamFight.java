@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.mode.TeamGame;
@@ -36,7 +36,7 @@ public class TeamFight extends TeamGame {
 		setRestricted(Invincible);
 	}
 	
-	private boolean Invincible = AbilityWarSettings.getInvincibilityEnable();
+	private boolean Invincible = Settings.getInvincibilityEnable();
 	
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 	
@@ -75,20 +75,20 @@ public class TeamFight extends TeamGame {
 				this.initializeTeam();
 				break;
 			case 10:
-				if(AbilityWarSettings.getDrawAbility()) {
+				if(Settings.getDrawAbility()) {
 					broadcastAbilityReady();
 				} else {
 					this.setSeconds(this.getSeconds() + 4);
 				}
 				break;
 			case 13:
-				if(AbilityWarSettings.getDrawAbility()) {
+				if(Settings.getDrawAbility()) {
 					//능력 할당 시작
 					this.startAbilitySelect();
 				}
 				break;
 			case 15:
-				if(AbilityWarSettings.getDrawAbility()) {
+				if(Settings.getDrawAbility()) {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 참가자가 능력을 &b확정&f했습니다."));
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
@@ -182,12 +182,12 @@ public class TeamFight extends TeamGame {
 		this.GiveDefaultKit();
 		
 		for(Participant p : getParticipants()) {
-			if(AbilityWarSettings.getSpawnEnable()) {
-				p.getPlayer().teleport(AbilityWarSettings.getSpawnLocation());
+			if(Settings.getSpawnEnable()) {
+				p.getPlayer().teleport(Settings.getSpawnLocation());
 			}
 		}
 		
-		if(AbilityWarSettings.getNoHunger()) {
+		if(Settings.getNoHunger()) {
 			NoHunger.setPeriod(1);
 			NoHunger.StartTimer();
 		} else {
@@ -205,14 +205,14 @@ public class TeamFight extends TeamGame {
 			}
 		}
 		
-		if(AbilityWarSettings.getInfiniteDurability()) {
+		if(Settings.getInfiniteDurability()) {
 			registerListener(infiniteDurability);
 		} else {
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
 		}
 		
 		for(World w : Bukkit.getWorlds()) {
-			if(AbilityWarSettings.getClearWeather()) {
+			if(Settings.getClearWeather()) {
 				w.setStorm(false);
 			}
 		}
@@ -227,9 +227,9 @@ public class TeamFight extends TeamGame {
 	 */
 	@Override
 	public void GiveDefaultKit(Player p) {
-		List<ItemStack> DefaultKit = AbilityWarSettings.getDefaultKit();
+		List<ItemStack> DefaultKit = Settings.getDefaultKit();
 
-		if(AbilityWarSettings.getInventoryClear()) {
+		if(Settings.getInventoryClear()) {
 			p.getInventory().clear();
 		}
 		
@@ -238,8 +238,8 @@ public class TeamFight extends TeamGame {
 		}
 		
 		p.setLevel(0);
-		if(AbilityWarSettings.getStartLevel() > 0) {
-			p.giveExpLevels(AbilityWarSettings.getStartLevel());
+		if(Settings.getStartLevel() > 0) {
+			p.giveExpLevels(Settings.getStartLevel());
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
 		}
 	}
@@ -269,7 +269,7 @@ public class TeamFight extends TeamGame {
 			private List<Class<? extends AbilityBase>> setupAbilities() {
 				List<Class<? extends AbilityBase>> list = new ArrayList<>();
 				for(String abilityName : AbilityList.nameValues()) {
-					if(!AbilityWarSettings.isBlackListed(abilityName)) {
+					if(!Settings.isBlackListed(abilityName)) {
 						list.add(AbilityList.getByString(abilityName));
 					}
 				}

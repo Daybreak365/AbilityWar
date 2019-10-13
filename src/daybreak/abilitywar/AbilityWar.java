@@ -1,7 +1,12 @@
 package daybreak.abilitywar;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import daybreak.abilitywar.addon.AddonLoader;
@@ -27,11 +32,15 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
  */
 public class AbilityWar extends JavaPlugin {
 	
+	private static final Logger logger = Logger.getLogger(AbilityWar.class.getName());
 	private static final Messager messager = new Messager();
-	private static AbilityWar Plugin;
+	private static AbilityWar plugin;
 	
 	public static AbilityWar getPlugin() {
-		return AbilityWar.Plugin;
+		if (plugin != null) {
+			return plugin;
+		}
+		throw new IllegalStateException("플러그인이 아직 초기화되지 않았습니다.");
 	}
 	
 	private final AutoUpdate au = new AutoUpdate("DayBreak365", "AbilityWar", this, Branch.Master);
@@ -41,7 +50,7 @@ public class AbilityWar extends JavaPlugin {
 	}
 
 	public AbilityWar() {
-		AbilityWar.Plugin = this;
+		plugin = this;
 	}
 	
 	@Override
@@ -70,23 +79,29 @@ public class AbilityWar extends JavaPlugin {
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			@Override
 			public void run() {
-				AbilityWarSettings.Setup();
-				AbilitySettings.Setup();
+				try {
+					AbilityWarSettings.load();
+					AbilitySettings.load();
+				} catch (IOException | InvalidConfigurationException e) {
+					logger.log(Level.SEVERE, "콘피그를 불러오는 도중 오류가 발생하였습니다.");
+					Bukkit.getPluginManager().disablePlugin(plugin);
+				}
 				Script.LoadAll();
 			}
 		});
-		
-		
 		messager.sendConsoleMessage("플러그인이 활성화되었습니다.");
 	}
 	
 	@Override
 	public void onDisable() {
 		AbilityWarThread.StopGame();
-		AbilityWarSettings.Refresh();
-		AbilitySettings.Refresh();
+		try {
+			AbilityWarSettings.update();
+		} catch (IOException | InvalidConfigurationException e1) {
+			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
+		}
+		AbilitySettings.Update();
 		AddonLoader.disableAll();
-		
 		messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");
 	}
 	

@@ -7,8 +7,4 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SubscribeEvent {
-	
-	boolean ignoreCancelled() default false;
-	
-}
+public @interface SubscribeEvent {}

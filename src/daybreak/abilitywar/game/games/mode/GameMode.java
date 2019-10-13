@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 
 import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.games.defaultgame.DefaultGame;
@@ -92,10 +93,10 @@ public class GameMode {
 	
 	public static boolean startGame() {
 		try {
-			AbilityWarThread.StartGame(AbilityWarSettings.getGameMode().newInstance());
+			AbilityWarThread.StartGame(Settings.getGameMode().newInstance());
 			return true;
 		} catch (InstantiationException | IllegalAccessException e) {
-			AbilityWarSettings.setNewProperty(ConfigNodes.GameMode, DefaultGame.class.getName());
+			AbilityWarSettings.modifyProperty(ConfigNodes.GameMode, DefaultGame.class.getName());
 			AbilityWarThread.StartGame(new DefaultGame());
 			return false;
 		}

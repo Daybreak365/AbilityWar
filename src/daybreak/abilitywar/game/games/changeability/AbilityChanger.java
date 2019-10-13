@@ -10,8 +10,8 @@ import org.bukkit.Note.Tone;
 import org.bukkit.entity.Player;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.ChangeAbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.ChangeAbilityWarSettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -49,7 +49,7 @@ public class AbilityChanger {
 	private List<Class<? extends AbilityBase>> setupAbilities() {
 		List<Class<? extends AbilityBase>> list = new ArrayList<>();
 		for(String abilityName : AbilityList.nameValues()) {
-			if(!AbilityWarSettings.isBlackListed(abilityName)) {
+			if(!Settings.isBlackListed(abilityName)) {
 				list.add(AbilityList.getByString(abilityName));
 			}
 		}

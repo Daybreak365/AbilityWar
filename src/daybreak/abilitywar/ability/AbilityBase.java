@@ -3,7 +3,6 @@ package daybreak.abilitywar.ability;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -25,6 +24,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveExecutor;
+import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.thread.TimerBase;
 
@@ -52,8 +52,9 @@ public abstract class AbilityBase implements PassiveExecutor {
 	private final Participant participant;
 	private final String[] explain;
 	private final AbilityManifest manifest;
-	private final AbilityRegisteration<?> registeration;
 	private final AbstractGame game;
+	private final Map<Class<? extends Event>, Method> eventhandlers;
+	private final List<Field> timers;
 
 	private boolean restricted = true;
 
@@ -63,45 +64,39 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 * @param participant 능력을 소유하는 참가자
 	 * @param explain     능력 설명
 	 * 
-	 * @throws IllegalStateException 게임이 진행중이지 않은 경우, {@link AbilityFactory}에 등록되지
-	 *                               않은 능력일 경우
+	 * @throws IllegalStateException 게임이 진행중이지 않거나 능력이 {@link AbilityFactory}에 등록되지
+	 *                               않았을 경우 예외가 발생합니다.
 	 */
 	public AbilityBase(Participant participant, String... explain) {
 		this.participant = participant;
 		this.explain = explain;
-
-		if (AbilityWarThread.isGameTaskRunning()) {
-			this.game = AbilityWarThread.getGame();
-		} else {
-			throw new IllegalStateException("게임이 진행중일 때 AbilityBase 클래스가 객체화되어야 합니다.");
-		}
-
-		if (AbilityFactory.isRegistered(this.getClass())) {
-			AbilityRegisteration<?> ar = AbilityFactory.getRegisteration(this.getClass());
-			this.registeration = ar;
-			this.manifest = ar.getManifest();
-			this.eventhandlers = ar.getEventhandlers();
-
-			for (Class<? extends Event> eventClass : eventhandlers.keySet())
-				game.getPassiveManager().register(eventClass, this);
-		} else {
+		if (!AbilityWarThread.isGameTaskRunning())
+			throw new IllegalStateException("게임이 진행되고 있지 않습니다.");
+		this.game = AbilityWarThread.getGame();
+		if (!AbilityFactory.isRegistered(getClass()))
 			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
-		}
-	}
+		AbilityRegisteration<?> registry = AbilityFactory.getRegisteration(getClass());
+		this.manifest = registry.getManifest();
+		this.eventhandlers = registry.getEventhandlers();
+		this.timers = registry.getTimers();
 
-	private final Map<Class<? extends Event>, Method> eventhandlers;
+		PassiveManager passiveManager = game.getPassiveManager();
+		for (Class<? extends Event> eventClass : eventhandlers.keySet())
+			passiveManager.register(eventClass, this);
+	}
 
 	@Override
 	public void execute(Event event) {
-		if (!restricted) {
-			Class<? extends Event> eventClass = event.getClass();
-			if (eventhandlers.containsKey(eventClass)) {
-				Method method = eventhandlers.get(eventClass);
-				try {
-					method.invoke(this, event);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-					logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.");
-				}
+		if (restricted)
+			return;
+		Class<? extends Event> eventClass = event.getClass();
+		if (eventhandlers.containsKey(eventClass)) {
+			Method method = eventhandlers.get(eventClass);
+			try {
+				method.invoke(this, event);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+				logger.log(Level.SEVERE,
+						method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.");
 			}
 		}
 	}
@@ -129,7 +124,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 	protected abstract void onRestrictClear();
 
 	/**
-	 * 더 이상 사용되지 않는 {@link AbilityBase}를 제거할 때 사용됩니다.<p>
+	 * 더 이상 사용되지 않는 {@link AbilityBase}를 제거할 때 사용됩니다.
+	 * <p>
 	 * {@link Participant#removeAbility()}를 통해 {@link Participant}의 능력을 제거할 때 호출됩니다.
 	 * 절대 임의로 호출하지 마십시오.
 	 */
@@ -139,25 +135,14 @@ public abstract class AbilityBase implements PassiveExecutor {
 	}
 
 	private final void stopTimers() {
-		for (TimerBase timer : getTimers()) {
-			timer.StopTimer(true);
-		}
-	}
-
-	/**
-	 * 능력에 사용되는 모든 타이머를 반환합니다.
-	 */
-	private final List<TimerBase> getTimers() {
-		List<TimerBase> timers = new ArrayList<>();
-		for (Field f : registeration.getTimers()) {
+		for (Field field : timers) {
 			try {
-				f.setAccessible(true);
-				timers.add((TimerBase) f.get(this));
-				f.setAccessible(false);
-			} catch (Exception ex) {}
+				field.setAccessible(true);
+				((TimerBase) field.get(this)).StopTimer(true);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				logger.log(Level.SEVERE, "Reflection Error: stopTimers()");
+			}
 		}
-
-		return timers;
 	}
 
 	/**

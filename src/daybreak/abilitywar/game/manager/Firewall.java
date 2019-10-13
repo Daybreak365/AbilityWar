@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.plugin.EventExecutor;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.DeathSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -40,7 +40,7 @@ public class Firewall implements EventExecutor {
 			
 			Player p = e.getPlayer();
 			
-			if(AbilityWarSettings.getFirewall()) {
+			if(Settings.getFirewall()) {
 				
 				if(p.isOp()) {
 					canLogin = true;

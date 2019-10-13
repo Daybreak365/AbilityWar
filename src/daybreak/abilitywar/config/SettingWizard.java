@@ -1,12 +1,16 @@
 package daybreak.abilitywar.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -19,34 +23,37 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import daybreak.abilitywar.config.AbilityWarSettings.DeathSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.database.FileManager;
 import daybreak.abilitywar.utils.library.item.ItemLib;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
+import daybreak.abilitywar.utils.library.item.MaterialLib;
 
 /**
  * 콘피그 설정 마법사
  * @author DayBreak 새벽
  */
 public class SettingWizard implements Listener {
-	
+
+	private static final Logger logger = Logger.getLogger(SettingWizard.class.getName());
+
 	private final Player p;
-	
+
 	public SettingWizard(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
-	
+
 	private Inventory KitGUI;
 	private Inventory InvGUI;
 	private Inventory GameGUI;
 	private Inventory SpawnGUI;
 	private Inventory DeathGUI;
-	
+
 	public void openKitGUI() {
 		KitGUI = Bukkit.createInventory(p, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 킷 설정"));
 		
@@ -75,7 +82,7 @@ public class SettingWizard implements Listener {
 		KitGUI.setItem(43, Deco);
 		KitGUI.setItem(44, Deco);
 		
-		for(ItemStack is : AbilityWarSettings.getDefaultKit()) {
+		for(ItemStack is : Settings.getDefaultKit()) {
 			KitGUI.addItem(is);
 		}
 		
@@ -92,7 +99,7 @@ public class SettingWizard implements Listener {
 		
 		for(Integer i = 0; i < 27; i++) {
 			if(i.equals(11)) {
-				boolean InvincibilityEnable = AbilityWarSettings.getInvincibilityEnable();
+				boolean InvincibilityEnable = Settings.getInvincibilityEnable();
 				ItemColor color = InvincibilityEnable ? ItemColor.LIME : ItemColor.RED;
 				ItemStack Inv = ItemLib.WOOL.getItemStack(color);
 				ItemMeta InvMeta = Inv.getItemMeta();
@@ -108,7 +115,7 @@ public class SettingWizard implements Listener {
 				ItemMeta InvMeta = Inv.getItemMeta();
 				InvMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적 시간"));
 				InvMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7지속 시간 : &a" + AbilityWarSettings.getInvincibilityDuration() + "분"),
+						ChatColor.translateAlternateColorCodes('&', "&7지속 시간 : &a" + Settings.getInvincibilityDuration() + "분"),
 						" ",
 						ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1분"),
 						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 5분"),
@@ -125,7 +132,7 @@ public class SettingWizard implements Listener {
 		
 		p.openInventory(InvGUI);
 	}
-	
+
 	public void openGameGUI() {
 		GameGUI = Bukkit.createInventory(p, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 진행 설정"));
 
@@ -140,7 +147,7 @@ public class SettingWizard implements Listener {
 				ItemMeta FoodMeta = Food.getItemMeta();
 				FoodMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b배고픔 무제한"));
 				FoodMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getNoHunger() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getNoHunger() ? "&a활성화" : "&c비활성화"))
 						));
 				Food.setItemMeta(FoodMeta);
 				
@@ -150,7 +157,7 @@ public class SettingWizard implements Listener {
 				ItemMeta LevMeta = Lev.getItemMeta();
 				LevMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 지급 레벨"));
 				LevMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7초반 지급 레벨 : &a" + AbilityWarSettings.getStartLevel() + "레벨"),
+						ChatColor.translateAlternateColorCodes('&', "&7초반 지급 레벨 : &a" + Settings.getStartLevel() + "레벨"),
 						" ",
 						ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1레벨"),
 						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 5레벨"),
@@ -167,7 +174,7 @@ public class SettingWizard implements Listener {
 				ItemMeta DurMeta = Dur.getItemMeta();
 				DurMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b내구도 무한"));
 				DurMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getInfiniteDurability() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getInfiniteDurability() ? "&a활성화" : "&c비활성화"))
 						));
 				Dur.setItemMeta(DurMeta);
 				
@@ -180,7 +187,7 @@ public class SettingWizard implements Listener {
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다."),
 						ChatColor.translateAlternateColorCodes('&', "&c관리자 권한&f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
 						"",
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getFirewall() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getFirewall() ? "&a활성화" : "&c비활성화"))
 						));
 				Firewall.setItemMeta(FirewallMeta);
 				
@@ -190,7 +197,7 @@ public class SettingWizard implements Listener {
 				ItemMeta ClearWeatherMeta = ClearWeather.getItemMeta();
 				ClearWeatherMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b맑은 날씨 고정"));
 				ClearWeatherMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getClearWeather() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getClearWeather() ? "&a활성화" : "&c비활성화"))
 						));
 				ClearWeather.setItemMeta(ClearWeatherMeta);
 				
@@ -202,7 +209,7 @@ public class SettingWizard implements Listener {
 				VisualEffectMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다."),
 						"",
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getVisualEffect() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getVisualEffect() ? "&a활성화" : "&c비활성화"))
 						));
 				VisualEffect.setItemMeta(VisualEffectMeta);
 				
@@ -214,7 +221,7 @@ public class SettingWizard implements Listener {
 				AbilityDrawMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
 						"",
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getDrawAbility() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getDrawAbility() ? "&a활성화" : "&c비활성화"))
 						));
 				AbilityDraw.setItemMeta(AbilityDrawMeta);
 				
@@ -242,7 +249,7 @@ public class SettingWizard implements Listener {
 				SpawnMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b스폰 이동"));
 				SpawnMeta.setLore(Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&f게임이 시작되면 &b스폰&f으로 이동합니다."),
-						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (AbilityWarSettings.getSpawnEnable() ? "&a활성화" : "&c비활성화"))
+						ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getSpawnEnable() ? "&a활성화" : "&c비활성화"))
 						));
 				Spawn.setItemMeta(SpawnMeta);
 				
@@ -252,7 +259,7 @@ public class SettingWizard implements Listener {
 				ItemMeta SpawnMeta = Spawn.getItemMeta();
 				SpawnMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b스폰 설정"));
 				
-				Location SpawnLocation = AbilityWarSettings.getSpawnLocation();
+				Location SpawnLocation = Settings.getSpawnLocation();
 				Double X = SpawnLocation.getX();
 				Double Y = SpawnLocation.getY();
 				Double Z = SpawnLocation.getZ();
@@ -278,7 +285,7 @@ public class SettingWizard implements Listener {
 		
 		p.openInventory(SpawnGUI);
 	}
-	
+
 	public void openDeathGUI() {
 		DeathGUI = Bukkit.createInventory(p, 27, ChatColor.translateAlternateColorCodes('&', "&2&l플레이어 사망 설정"));
 
@@ -346,16 +353,20 @@ public class SettingWizard implements Listener {
 		
 		p.openInventory(DeathGUI);
 	}
-	
+
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if(e.getInventory().equals(this.SpawnGUI) || e.getInventory().equals(this.KitGUI) || e.getInventory().equals(this.InvGUI)
 		|| e.getInventory().equals(this.GameGUI) || e.getInventory().equals(this.DeathGUI)) {
 			HandlerList.unregisterAll(this);
-			AbilityWarSettings.Save();
+			try {
+				AbilityWarSettings.update();
+			} catch (IOException | InvalidConfigurationException e1) {
+				logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
+			}
 		}
 	}
-	
+
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
 		if(e.getInventory().equals(this.KitGUI)) {
@@ -365,11 +376,11 @@ public class SettingWizard implements Listener {
 				if(e.getSlot() >= 36) e.setCancelled(true);
 				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 					if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&a확인"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Kit, getItemUntil(KitGUI, 35));
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Kit, getItemUntil(KitGUI, 35));
 						p.closeInventory();
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&c초기화"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Kit, FileManager.getItemStackList());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Kit, FileManager.getItemStackList());
 						p.closeInventory();
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
 					}
@@ -381,30 +392,30 @@ public class SettingWizard implements Listener {
 			if(e.getCurrentItem() != null) {
 				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 					if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b초반 무적"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Enable, !AbilityWarSettings.getInvincibilityEnable());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Enable, !Settings.getInvincibilityEnable());
 						openInvincibilityGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b초반 무적 시간"))) {
-						Integer InvincibilityDuration = AbilityWarSettings.getInvincibilityDuration();
+						Integer InvincibilityDuration = Settings.getInvincibilityDuration();
 						if(e.getClick().equals(ClickType.RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration + 1);
+							AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration + 1);
 							openInvincibilityGUI();
 						} else if(e.getClick().equals(ClickType.SHIFT_RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration + 5);
+							AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration + 5);
 							openInvincibilityGUI();
 						} else if(e.getClick().equals(ClickType.LEFT)) {
 							if(InvincibilityDuration >= 2) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration - 1);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration - 1);
 								openInvincibilityGUI();
 							} else {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, 1);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, 1);
 								openInvincibilityGUI();
 							}
 						} else if(e.getClick().equals(ClickType.SHIFT_LEFT)) {
 							if(InvincibilityDuration >= 6) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration - 5);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, InvincibilityDuration - 5);
 								openInvincibilityGUI();
 							} else {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_Invincibility_Duration, 1);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, 1);
 								openInvincibilityGUI();
 							}
 						}
@@ -417,59 +428,59 @@ public class SettingWizard implements Listener {
 			if(e.getCurrentItem() != null) {
 				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 					if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b배고픔 무제한"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_NoHunger, !AbilityWarSettings.getNoHunger());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_NoHunger, !Settings.getNoHunger());
 						openGameGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b초반 지급 레벨"))) {
-						Integer StartLevel = AbilityWarSettings.getStartLevel();
+						Integer StartLevel = Settings.getStartLevel();
 						
 						if(e.getClick().equals(ClickType.RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel + 1);
+							AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, StartLevel + 1);
 							openGameGUI();
 						} else if(e.getClick().equals(ClickType.SHIFT_RIGHT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel + 5);
+							AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, StartLevel + 5);
 							openGameGUI();
 						} else if(e.getClick().equals(ClickType.LEFT)) {
 							if(StartLevel >= 1) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel - 1);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, StartLevel - 1);
 								openGameGUI();
 							} else {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, 0);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, 0);
 								openGameGUI();
 							}
 						} else if(e.getClick().equals(ClickType.SHIFT_LEFT)) {
 							if(StartLevel >= 5) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel - 5);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, StartLevel - 5);
 								openGameGUI();
 							} else {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, 0);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, 0);
 								openGameGUI();
 							}
 						} else if(e.getClick().equals(ClickType.MIDDLE)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel + 10000);
+							AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, StartLevel + 10000);
 							openGameGUI();
 						} else if(e.getClick().equals(ClickType.DROP)) {
 							if(StartLevel >= 10000) {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, StartLevel - 10000);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, StartLevel - 10000);
 								openGameGUI();
 							} else {
-								AbilityWarSettings.setNewProperty(ConfigNodes.Game_StartLevel, 0);
+								AbilityWarSettings.modifyProperty(ConfigNodes.Game_StartLevel, 0);
 								openGameGUI();
 							}
 						}
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b내구도 무한"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_InfiniteDurability, !AbilityWarSettings.getInfiniteDurability());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_InfiniteDurability, !Settings.getInfiniteDurability());
 						openGameGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b방화벽"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Firewall, !AbilityWarSettings.getFirewall());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Firewall, !Settings.getFirewall());
 						openGameGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b맑은 날씨 고정"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_ClearWeather, !AbilityWarSettings.getClearWeather());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_ClearWeather, !Settings.getClearWeather());
 						openGameGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b시각 효과"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_VisualEffect, !AbilityWarSettings.getVisualEffect());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_VisualEffect, !Settings.getVisualEffect());
 						openGameGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b능력 추첨"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_DrawAbility, !AbilityWarSettings.getDrawAbility());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_DrawAbility, !Settings.getDrawAbility());
 						openGameGUI();
 					}
 				}
@@ -482,15 +493,15 @@ public class SettingWizard implements Listener {
 			if(e.getCurrentItem() != null) {
 				if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 					if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b스폰 이동"))) {
-						AbilityWarSettings.setNewProperty(ConfigNodes.Game_Spawn_Enable, !AbilityWarSettings.getSpawnEnable());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Spawn_Enable, !Settings.getSpawnEnable());
 						openSpawnGUI();
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b스폰 설정"))) {
 						if(!e.getClick().equals(ClickType.SHIFT_LEFT)) {
-							AbilityWarSettings.setNewProperty(ConfigNodes.Game_Spawn_Location, p.getLocation());
+							AbilityWarSettings.modifyProperty(ConfigNodes.Game_Spawn_Location, p.getLocation());
 							p.closeInventory();
 							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a게임 스폰이 변경되었습니다."));
 						} else {
-							p.teleport(AbilityWarSettings.getSpawnLocation());
+							p.teleport(Settings.getSpawnLocation());
 							p.closeInventory();
 							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a스폰 &f위치로 이동되었습니다."));
 						}
@@ -505,20 +516,20 @@ public class SettingWizard implements Listener {
 					DeathSettings.nextOperation();
 					openDeathGUI();
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b능력 공개"))) {
-					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Death_AbilityReveal, !DeathSettings.getAbilityReveal());
+					AbilityWarSettings.modifyProperty(ConfigNodes.Game_Death_AbilityReveal, !DeathSettings.getAbilityReveal());
 					openDeathGUI();
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b능력 삭제"))) {
-					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Death_AbilityRemoval, !DeathSettings.getAbilityRemoval());
+					AbilityWarSettings.modifyProperty(ConfigNodes.Game_Death_AbilityRemoval, !DeathSettings.getAbilityRemoval());
 					openDeathGUI();
 				} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b아이템 드롭"))) {
-					AbilityWarSettings.setNewProperty(ConfigNodes.Game_Death_ItemDrop, !DeathSettings.getItemDrop());
+					AbilityWarSettings.modifyProperty(ConfigNodes.Game_Death_ItemDrop, !DeathSettings.getItemDrop());
 					openDeathGUI();
 				}
 			}
 		}
 	}
-	
-	public ArrayList<ItemStack> getItemUntil(Inventory inv, int Count) {
+
+	private ArrayList<ItemStack> getItemUntil(Inventory inv, int Count) {
 		ArrayList<ItemStack> List = new ArrayList<ItemStack>();
 		
 		for(int i = 0; i <= Count; i++) {
@@ -529,5 +540,5 @@ public class SettingWizard implements Listener {
 		
 		return List;
 	}
-	
+
 }

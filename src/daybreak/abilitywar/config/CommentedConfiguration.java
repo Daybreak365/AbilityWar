@@ -3,6 +3,7 @@ package daybreak.abilitywar.config;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,87 +16,63 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.YamlConstructor;
+import org.bukkit.configuration.file.YamlRepresenter;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 /**
- * Configuration 패치를 진행하여 하위 버전에서도 콘피그가 깨지지 않습니다.
- * 
- * 주석 콘피그
- * @author dumptruckman, DayBreak 새벽
+ * @author Developed by dumptruckman, LlmDL & Articdive, and modified by
+ *         Daybreak 새벽
  */
 public class CommentedConfiguration extends YamlConfiguration {
 
 	private static final Logger logger = Logger.getLogger(CommentedConfiguration.class.getName());
 
-	private HashMap<String, String> Comments;
-	private File file;
+	private final DumperOptions yamlOptions = new DumperOptions();
+	private final Representer yamlRepresenter = new YamlRepresenter();
+	private final Yaml yaml = new Yaml(new YamlConstructor(), yamlRepresenter, yamlOptions);
+	private final HashMap<String, String> comments = new HashMap<>();
+	private final File file;
 
-	public CommentedConfiguration(File file) {
-		this.Comments = new HashMap<String, String>();
+	public CommentedConfiguration(File file) throws IOException, InvalidConfigurationException {
+		super.load(file);
 		this.file = file;
-		load();
 	}
 
-	public boolean load() {
-
-		boolean loaded = true;
-
-		try {
-			this.load(file);
-		} catch (InvalidConfigurationException | IOException e) {
-			loaded = false;
-		}
-
-		return loaded;
+	public void load() throws FileNotFoundException, IOException, InvalidConfigurationException {
+		super.load(file);
 	}
-	
-	public void save() {
 
-		boolean saved = true;
+	public void save() throws IOException {
+		this.save(file);
+		if (!comments.isEmpty()) {
+			String[] yamlContents = convertFileToString(file).split("[" + System.lineSeparator() + "]");
 
-		// Save the config just like normal
-		try {
-			this.save(file);
-
-		} catch (Exception e) {
-			saved = false;
-		}
-
-		// if there's Comments to add and it saved fine, we need to add Comments
-		if (!Comments.isEmpty() && saved) {
-			// String array of each line in the config file
-			String[] yamlContents = convertFileToString(file).split("[" + System.getProperty("line.separator") + "]");
-
-			// This will hold the newly formatted line
 			StringBuilder newContents = new StringBuilder();
-			// This holds the current path the lines are at in the config
 			String currentPath = "";
-			// This flags if the line is a node or unknown text.
 			boolean node;
-			// The depth of the path. (number of words separated by periods - 1)
 			int depth = 0;
 
-			// Loop through the config lines
 			for (String line : yamlContents) {
-				// If the line is a node (and not something like a list value)
 				if (line.contains(": ") || (line.length() > 1 && line.charAt(line.length() - 1) == ':')) {
-
-					// This is a node so flag it as one
 					node = true;
 
-					// Grab the index of the end of the node name
 					int index;
 					index = line.indexOf(": ");
 					if (index < 0) {
 						index = line.length() - 1;
 					}
-					// If currentPath is empty, store the node name as the currentPath. (this is
-					// only on the first iteration, i think)
 					if (currentPath.isEmpty()) {
 						currentPath = line.substring(0, index);
 					} else {
-						// Calculate the whitespace preceding the node name
 						int whiteSpace = 0;
 						for (int n = 0; n < line.length(); n++) {
 							if (line.charAt(n) == ' ') {
@@ -104,98 +81,61 @@ public class CommentedConfiguration extends YamlConfiguration {
 								break;
 							}
 						}
-						// Find out if the current depth (whitespace * 2) is greater/lesser/equal to the
-						// previous depth
 						if (whiteSpace / 2 > depth) {
-							// Path is deeper. Add a . and the node name
 							currentPath += "." + line.substring(whiteSpace, index);
 							depth++;
 						} else if (whiteSpace / 2 < depth) {
-							// Path is shallower, calculate current depth from whitespace (whitespace / 2)
-							// and subtract that many levels from the currentPath
 							int newDepth = whiteSpace / 2;
 							for (int i = 0; i < depth - newDepth; i++) {
-								int lastIndex = currentPath.lastIndexOf(".");
-								if(lastIndex > -1) {
-									currentPath = currentPath.replace(currentPath.substring(lastIndex), "");
-								}
+								currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")),
+										"");
 							}
-							// Grab the index of the final period
 							int lastIndex = currentPath.lastIndexOf(".");
 							if (lastIndex < 0) {
-								// if there isn't a final period, set the current path to nothing because we're
-								// at root
 								currentPath = "";
 							} else {
-								// If there is a final period, replace everything after it with nothing
 								currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")),
 										"");
 								currentPath += ".";
 							}
-							// Add the new node name to the path
 							currentPath += line.substring(whiteSpace, index);
-							// Reset the depth
 							depth = newDepth;
 						} else {
-							// Path is same depth, replace the last path node name to the current node name
 							int lastIndex = currentPath.lastIndexOf(".");
 							if (lastIndex < 0) {
-								// if there isn't a final period, set the current path to nothing because we're
-								// at root
 								currentPath = "";
 							} else {
-								// If there is a final period, replace everything after it with nothing
 								currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")),
 										"");
 								currentPath += ".";
 							}
-							// currentPath =
-							// currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")), "");
 							currentPath += line.substring(whiteSpace, index);
 
 						}
 
 					}
 
-				} else {
+				} else
 					node = false;
-				}
 
 				if (node) {
-					// If there's a comment for the current path, retrieve it and flag that path as
-					// already commented
-					String comment = Comments.get(currentPath);
-
+					String comment;
+					comment = comments.get(currentPath);
 					if (comment != null) {
-						// Add the comment to the beginning of the current line
 						line = comment + System.getProperty("line.separator") + line
 								+ System.getProperty("line.separator");
 					} else {
-						// Add a new line as it is a node, but has no comment
 						line += System.getProperty("line.separator");
 					}
 				}
-				// Add the (modified) line to the total config String
-				if (!node) {
-					newContents.append(line).append(System.getProperty("line.separator"));
-				} else {
-					newContents.append(line);
-				}
-			}
+				newContents.append(line).append((!node) ? System.getProperty("line.separator") : "");
 
-			/*
-			 * Due to a Bukkit Bug with the Configuration we just need to remove any extra
-			 * Comments at the start of a file.
-			 */
-			while (newContents.toString().startsWith(" " + System.getProperty("line.separator"))) {
+			}
+			while (newContents.toString().startsWith(System.getProperty("line.separator")))
 				newContents = new StringBuilder(
-						newContents.toString().replaceFirst(" " + System.getProperty("line.separator"), ""));
-			}
-			try {
-				stringToFile(newContents.toString(), file);
-			} catch (IOException e) {
-				logger.log(Level.SEVERE, "문자열을 파일에 저장하는 도중 오류가 발생하였습니다.");
-			}
+						newContents.toString().replaceFirst(System.getProperty("line.separator"), ""));
+
+			stringToFile(newContents.toString(), file);
 		}
 	}
 
@@ -207,8 +147,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 	 * @param commentLines Comments to add. One String per line.
 	 */
 	public void addComment(String path, String... commentLines) {
-
-		StringBuilder Commentstring = new StringBuilder();
+		StringBuilder commentstring = new StringBuilder();
 		StringBuilder leadingSpaces = new StringBuilder();
 		for (int n = 0; n < path.length(); n++) {
 			if (path.charAt(n) == '.') {
@@ -219,30 +158,56 @@ public class CommentedConfiguration extends YamlConfiguration {
 			if (!line.isEmpty()) {
 				line = leadingSpaces + line;
 			} else {
-				line = " ";
+				line = "";
 			}
-			if (Commentstring.length() > 0) {
-				Commentstring.append(System.getProperty("line.separator"));
+			if (commentstring.length() > 0) {
+				commentstring.append(System.getProperty("line.separator"));
 			}
-			Commentstring.append(line);
+			commentstring.append(line);
 		}
-		Comments.put(path, Commentstring.toString());
+		comments.put(path, commentstring.toString());
+	}
+
+	public void save(File file) throws IOException {
+		Validate.notNull(file, "File cannot be null");
+
+		Files.createParentDirs(file);
+
+		String data = this.saveToString();
+
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
+			writer.write(data);
+		}
+	}
+
+	@Override
+	public String saveToString() {
+		yamlOptions.setIndent(options().indent());
+		yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+		yamlOptions.setWidth(10000);
+		yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
+		String dump = yaml.dump(getValues(false));
+
+		if (dump.equals(BLANK_CONFIG)) {
+			dump = "";
+		}
+
+		return dump;
 	}
 
 	/**
 	 * Pass a file and it will return it's contents as a string.
-	 * 
+	 *
 	 * @param file File to read.
 	 * @return Contents of file. String will be empty in case of any errors.
 	 */
-	private String convertFileToString(File file) {
+	public static String convertFileToString(File file) {
 		if (file != null && file.exists() && file.canRead() && !file.isDirectory()) {
 			Writer writer = new StringWriter();
-			InputStream is = null;
 
 			char[] buffer = new char[1024];
-			try {
-				is = new FileInputStream(file);
+			try (InputStream is = new FileInputStream(file)) {
 				Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				int n;
 				while ((n = reader.read(buffer)) != -1) {
@@ -250,14 +215,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 				}
 				reader.close();
 			} catch (IOException e) {
-				System.out.println("Exception ");
-			} finally {
-				if (is != null) {
-					try {
-						is.close();
-					} catch (IOException ignore) {
-					}
-				}
+				logger.log(Level.SEVERE, "An error has occurred while converting the File into String.");
 			}
 			return writer.toString();
 		} else {
@@ -267,25 +225,20 @@ public class CommentedConfiguration extends YamlConfiguration {
 
 	/**
 	 * Writes the contents of a string to a file.
-	 * 
+	 *
 	 * @param source String to write.
 	 * @param file   File to write to.
 	 * @return True on success.
 	 * @throws IOException
 	 */
-	private boolean stringToFile(String source, File file) throws IOException {
+	public static void stringToFile(String source, File file) {
 		try {
 			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
 
-			source.replaceAll("\n", System.getProperty("line.separator"));
-
 			out.write(source);
 			out.close();
-			return true;
 		} catch (IOException e) {
-			System.out.println("Exception ");
-			return false;
+			logger.log(Level.SEVERE, "An error has occurred while writing the String to the File.");
 		}
 	}
-	
 }
