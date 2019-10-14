@@ -19,10 +19,10 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.ability.timer.DurationTimer;
+import daybreak.abilitywar.config.wizard.DeathWizard;
 import daybreak.abilitywar.config.wizard.GameWizard;
 import daybreak.abilitywar.config.wizard.InvincibilityWizard;
 import daybreak.abilitywar.config.wizard.KitWizard;
-import daybreak.abilitywar.config.wizard.SettingWizard1;
 import daybreak.abilitywar.config.wizard.SpawnWizard;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.AbilitySelect;
@@ -304,7 +304,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void parseConfigCommand(Player p, String label, String[] args) {
-		SettingWizard1 wizard = new SettingWizard1(p, plugin);
 		if(args[0].equalsIgnoreCase("kit")) {
 			new KitWizard(p, plugin).Show();
 		} else if(args[0].equalsIgnoreCase("spawn")) {
@@ -314,7 +313,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		} else if(args[0].equalsIgnoreCase("game")) {
 			new GameWizard(p, plugin).Show();
 		} else if(args[0].equalsIgnoreCase("death")) {
-			wizard.openDeathGUI();
+			new DeathWizard(p, plugin).Show();
 		} else {
 			if(NumberUtil.isInt(args[0])) {
 				sendHelpConfigCommand(p, label, Integer.valueOf(args[0]));
