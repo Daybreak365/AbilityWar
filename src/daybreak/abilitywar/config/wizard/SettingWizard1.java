@@ -1,7 +1,8 @@
-package daybreak.abilitywar.config;
+package daybreak.abilitywar.config.wizard;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,12 +24,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import daybreak.abilitywar.config.AbilityWarSettings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.database.FileManager;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
@@ -37,13 +38,14 @@ import daybreak.abilitywar.utils.library.item.MaterialLib;
  * 콘피그 설정 마법사
  * @author DayBreak 새벽
  */
-public class SettingWizard implements Listener {
+@Deprecated
+public class SettingWizard1 implements Listener {
 
-	private static final Logger logger = Logger.getLogger(SettingWizard.class.getName());
+	private static final Logger logger = Logger.getLogger(SettingWizard1.class.getName());
 
 	private final Player p;
 
-	public SettingWizard(Player p, Plugin Plugin) {
+	public SettingWizard1(Player p, Plugin Plugin) {
 		this.p = p;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
@@ -380,7 +382,7 @@ public class SettingWizard implements Listener {
 						p.closeInventory();
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
 					} else if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&c초기화"))) {
-						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Kit, FileManager.getItemStackList());
+						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Kit, Arrays.asList());
 						p.closeInventory();
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
 					}

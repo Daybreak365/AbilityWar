@@ -1,10 +1,11 @@
 package daybreak.abilitywar.config.enums;
 
+import java.util.Arrays;
+
 import org.bukkit.Bukkit;
 
 import daybreak.abilitywar.game.games.defaultgame.DefaultGame;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.database.FileManager;
 
 public enum ConfigNodes {
 
@@ -17,7 +18,7 @@ public enum ConfigNodes {
 			"# 초반 무적 활성화 여부"),
 	Game_Invincibility_Duration("게임.초반무적.지속시간", 5,
 			"# 초반 무적 활성화 지속 시간 (단위: 분)"),
-	Game_Kit("게임.기본템", FileManager.getItemStackList(),
+	Game_Kit("게임.기본템", Arrays.asList(),
 			"# 기본템 설정"),
 	Game_InventoryClear("게임.인벤토리초기화", true,
 			"# 게임 시작시 인벤토리 초기화 여부"),
@@ -77,27 +78,27 @@ public enum ConfigNodes {
 			"# 우승하기 위해 필요한 킬 횟수"),
 	GameMode("게임모드", DefaultGame.class.getName(),
 			"# 게임 모드 클래스");
-	
-	private final String Path;
-	private final Object Default;
-	private final String[] Comments;
-	
-	private ConfigNodes(final String Path, final Object Default, final String... Comments) {
-		this.Path = Path;
-		this.Default = Default;
-		this.Comments = Comments;
+
+	private final String path;
+	private final Object defaultValue;
+	private final String[] comments;
+
+	private ConfigNodes(String path, Object defaultValue, String... comments) {
+		this.path = path;
+		this.defaultValue = defaultValue;
+		this.comments = comments;
 	}
-	
+
 	public String getPath() {
-		return Path;
+		return path;
 	}
-	
+
 	public Object getDefault() {
-		return Default;
+		return defaultValue;
 	}
-	
+
 	public String[] getComments() {
-		return Comments;
+		return comments;
 	}
-	
+
 }

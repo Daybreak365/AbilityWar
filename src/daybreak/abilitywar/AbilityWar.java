@@ -17,9 +17,9 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.Script;
 import daybreak.abilitywar.game.script.Script.RequiredData;
 import daybreak.abilitywar.game.script.types.ChangeAbilityScript;
+import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
 import daybreak.abilitywar.game.script.types.LocationNoticeScript;
 import daybreak.abilitywar.game.script.types.TeleportScript;
-import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.autoupdate.AutoUpdate;
 import daybreak.abilitywar.utils.autoupdate.AutoUpdate.Branch;
@@ -62,7 +62,7 @@ public class AbilityWar extends JavaPlugin {
 		messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 
 		
-		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand());
+		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand(this));
 
 		Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
 		Script.registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("능력 변경 대상", ChangeTarget.class));

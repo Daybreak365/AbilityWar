@@ -19,7 +19,11 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.ability.timer.DurationTimer;
-import daybreak.abilitywar.config.SettingWizard;
+import daybreak.abilitywar.config.wizard.GameWizard;
+import daybreak.abilitywar.config.wizard.InvincibilityWizard;
+import daybreak.abilitywar.config.wizard.KitWizard;
+import daybreak.abilitywar.config.wizard.SettingWizard1;
+import daybreak.abilitywar.config.wizard.SpawnWizard;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.AbilitySelect;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -44,18 +48,24 @@ import daybreak.abilitywar.utils.thread.AbilityWarThread;
  * @author DayBreak 새벽
  */
 public class MainCommand implements CommandExecutor, TabCompleter {
-	
+
+	private final AbilityWar plugin;
+
+	public MainCommand(AbilityWar plugin) {
+		this.plugin = plugin;
+	}
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		parseCommand(sender, label, args);
 		return true;
 	}
-	
+
 	private void parseCommand(CommandSender sender, String label, String[] split) {
 		if(split.length == 0) {
 			sender.sendMessage(new String[] {
 					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
-					ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
+					ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + plugin.getDescription().getVersion()),
 					ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDayBreak 새벽"),
 					ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &fDayBreak&7#5908"),
 					ChatColor.translateAlternateColorCodes('&', "&3&o/" + label + " help &7&o로 명령어 도움말을 확인하세요.")});
@@ -231,9 +241,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							try {
 								Class<? extends AbstractScript> scriptClass = Script.getScriptClass(split[1]);
 								if(Pattern.compile("^[가-힣a-zA-Z0-9_]+$").matcher(split[2]).find() && split[2].length() <= 10) {
-									File file = new File("plugins/" + AbilityWar.getPlugin().getName() + "/Script/" + split[2] + ".yml");
+									File file = new File("plugins/" + plugin.getName() + "/Script/" + split[2] + ".yml");
 									if(!file.exists()) {
-										ScriptWizard wizard = new ScriptWizard(p, AbilityWar.getPlugin(), scriptClass, split[2]);
+										ScriptWizard wizard = new ScriptWizard(p, plugin, scriptClass, split[2]);
 										wizard.openScriptWizard(1);
 									} else {
 										p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + ".yml &f스크립트 파일이 이미 존재합니다."));
@@ -262,7 +272,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
 					if(p.isOp()) {
-						GameModeGUI gui = new GameModeGUI(p, AbilityWar.getPlugin());
+						GameModeGUI gui = new GameModeGUI(p, plugin);
 						gui.openGameModeGUI(1);
 					} else {
 						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
@@ -272,8 +282,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				}
 			} else if(split[0].equalsIgnoreCase("update")) {
 				if(sender.isOp()) {
-					if(!AbilityWar.getPlugin().getAutoUpdate().Update(sender)) {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f플러그인이 &3최신 버전 &7(" + AbilityWar.getPlugin().getDescription().getVersion() + ") &f입니다."));
+					if(!plugin.getAutoUpdate().Update(sender)) {
+						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f플러그인이 &3최신 버전 &7(" + plugin.getDescription().getVersion() + ") &f입니다."));
 					}
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
@@ -281,7 +291,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else if(split[0].equalsIgnoreCase("specialthanks")) {
 				if(sender instanceof Player) {
 					Player p = (Player) sender;
-					SpecialThanksGUI gui = new SpecialThanksGUI(p, AbilityWar.getPlugin());
+					SpecialThanksGUI gui = new SpecialThanksGUI(p, plugin);
 					gui.openGUI(1);
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
@@ -294,15 +304,15 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void parseConfigCommand(Player p, String label, String[] args) {
-		SettingWizard wizard = new SettingWizard(p, AbilityWar.getPlugin());
+		SettingWizard1 wizard = new SettingWizard1(p, plugin);
 		if(args[0].equalsIgnoreCase("kit")) {
-			wizard.openKitGUI();
+			new KitWizard(p, plugin).Show();
 		} else if(args[0].equalsIgnoreCase("spawn")) {
-			wizard.openSpawnGUI();
+			new SpawnWizard(p, plugin).Show();
 		} else if(args[0].equalsIgnoreCase("inv")) {
-			wizard.openInvincibilityGUI();
+			new InvincibilityWizard(p, plugin).Show();
 		} else if(args[0].equalsIgnoreCase("game")) {
-			wizard.openGameGUI();
+			new GameWizard(p, plugin).Show();
 		} else if(args[0].equalsIgnoreCase("death")) {
 			wizard.openDeathGUI();
 		} else {
@@ -321,7 +331,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " util abi <대상>"));
 				} else {
 					if(args[1].equalsIgnoreCase("@a")) {
-						AbilityGUI gui = new AbilityGUI(p, AbilityWar.getPlugin());
+						AbilityGUI gui = new AbilityGUI(p, plugin);
 						gui.openAbilityGUI(1);
 					} else {
 						if(Bukkit.getPlayerExact(args[1]) != null) {
@@ -329,7 +339,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							Player targetPlayer = Bukkit.getPlayerExact(args[1]);
 							if(game.isParticipating(targetPlayer)) {
 								Participant target = game.getParticipant(targetPlayer);
-								AbilityGUI gui = new AbilityGUI(p, target, AbilityWar.getPlugin());
+								AbilityGUI gui = new AbilityGUI(p, target, plugin);
 								gui.openAbilityGUI(1);
 							} else {
 								Messager.sendErrorMessage(p, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
@@ -343,7 +353,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 			}
 		} else if(args[0].equalsIgnoreCase("spec")) {
-			SpectatorGUI gui = new SpectatorGUI(p, AbilityWar.getPlugin());
+			SpectatorGUI gui = new SpectatorGUI(p, plugin);
 			gui.openSpectateGUI(1);
 		} else if(args[0].equalsIgnoreCase("ablist")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
@@ -375,7 +385,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 			}
 		} else if(args[0].equalsIgnoreCase("blacklist")) {
-			BlackListGUI gui = new BlackListGUI(p, AbilityWar.getPlugin());
+			BlackListGUI gui = new BlackListGUI(p, plugin);
 			gui.openBlackListGUI(1);
 		} else if(args[0].equalsIgnoreCase("resetcool")) {
 			if(AbilityWarThread.isGameTaskRunning()) {
