@@ -40,11 +40,14 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		Bukkit.getPluginManager().callEvent(new GameReadyEvent(this));
 		registerListener(this);
 	}
-	
+
+	private int seconds = 0;
+
 	@Override
 	protected void TimerProcess(Integer count) {
 		if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
-			progressGame(count);
+			seconds++;
+			progressGame(seconds);
 		}
 	}
 
