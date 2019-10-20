@@ -58,8 +58,7 @@ public class InstallGUI implements Listener {
 						ChatColor.translateAlternateColorCodes('&', "&b태그&f: " + update.getTag()),
 						ChatColor.translateAlternateColorCodes('&', "&b버전&f: " + update.getVersion()),
 						ChatColor.translateAlternateColorCodes('&', "&b파일 크기&f: " + (update.getFileSize() / 1024) + "KB"),
-						ChatColor.translateAlternateColorCodes('&', "&b다운로드 횟수&f: " + update.getDownloadCount())
-						));
+						ChatColor.translateAlternateColorCodes('&', "&b다운로드 횟수&f: " + update.getDownloadCount())));
 				is.setItemMeta(im);
 			} else {
 				is = MaterialLib.BOOK.getItem();
@@ -68,10 +67,9 @@ public class InstallGUI implements Listener {
 				im.setLore(Arrays.asList(
 						ChatColor.translateAlternateColorCodes('&', "&b» &f이 버전을 설치하려면 클릭하세요."),
 						ChatColor.translateAlternateColorCodes('&', "&b태그&f: " + update.getTag()),
-						ChatColor.translateAlternateColorCodes('&', "&b버전&f: " + update.getVersion()),
+						ChatColor.translateAlternateColorCodes('&', "&b버전&f: " + (update.isPrerelease() ? "&3PRE-RELEASE&f " : "") + update.getVersion()),
 						ChatColor.translateAlternateColorCodes('&', "&b파일 크기&f: " + (update.getFileSize() / 1024) + "KB"),
-						ChatColor.translateAlternateColorCodes('&', "&b다운로드 횟수&f: " + update.getDownloadCount())
-						));
+						ChatColor.translateAlternateColorCodes('&', "&b다운로드 횟수&f: " + update.getDownloadCount())));
 				is.setItemMeta(im);
 			}
 

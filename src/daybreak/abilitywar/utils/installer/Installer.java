@@ -152,6 +152,7 @@ public class Installer {
 	public final class UpdateObject {
 
 		private final String version;
+		private final boolean prerelease;
 		private final String tag;
 		private final URLConnection connection;
 		private final int fileSize;
@@ -160,6 +161,7 @@ public class Installer {
 
 		private UpdateObject(JsonObject json) throws IOException {
 			this.version = json.get("name").getAsString();
+			this.prerelease = json.get("prerelease").getAsBoolean();
 			this.tag = json.get("tag_name").getAsString();
 			JsonObject asset = json.get("assets").getAsJsonArray().get(0).getAsJsonObject();
 			this.connection = new URL(asset.get("browser_download_url").getAsString()).openConnection();
@@ -171,6 +173,10 @@ public class Installer {
 
 		public String getVersion() {
 			return version;
+		}
+
+		public boolean isPrerelease() {
+			return prerelease;
 		}
 
 		public String getTag() {
