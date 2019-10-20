@@ -3,20 +3,20 @@ package daybreak.abilitywar.game.events;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.defaultgame.Game;
 
 /**
- * {@link AbstractGame} 관련 이벤트
+ * {@link Game} 관련 이벤트
  */
 public abstract class GameEvent extends Event {
 
-	private final AbstractGame game;
+	private final Game game;
 	
-	protected GameEvent(AbstractGame game) {
+	protected GameEvent(Game game) {
 		this.game = game;
 	}
 
-	public AbstractGame getGame() {
+	public Game getGame() {
 		return game;
 	}
 

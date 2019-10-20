@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.ChangeAbilityWarSettings;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
@@ -22,13 +22,13 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 
 public class AbilityChanger {
 
-	private AbstractGame game;
+	private Game game;
 
 	private final int period;
 
 	private final TimerBase timer;
 	
-	public AbilityChanger(AbstractGame game) {
+	public AbilityChanger(Game game) {
 		this.game = game;
 		this.period = ChangeAbilityWarSettings.getPeriod();
 		this.timer = new TimerBase() {

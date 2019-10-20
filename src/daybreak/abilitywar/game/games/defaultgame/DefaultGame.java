@@ -16,9 +16,11 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
+import daybreak.abilitywar.game.games.mode.PlayerStrategy;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.AbilitySelect;
+import daybreak.abilitywar.game.manager.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.InfiniteDurability;
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import daybreak.abilitywar.game.script.Script;
@@ -32,9 +34,19 @@ import daybreak.abilitywar.utils.thread.TimerBase;
  * @author DayBreak 새벽
  */
 @GameManifest(Name = "게임", Description = { "§f능력자 전쟁 플러그인의 기본 게임입니다." })
-public class DefaultGame extends AbstractGame {
+public class DefaultGame extends Game implements DefaultKitHandler {
 
 	public DefaultGame() {
+		super(new PlayerStrategy() {
+			@Override
+			public Collection<Player> getPlayers() {
+				List<Player> players = new ArrayList<Player>();
+				for(Player p : Bukkit.getOnlinePlayers()) {
+					if(!SpectatorManager.isSpectator(p.getName())) players.add(p);
+				}
+				return players;
+			}
+		});
 		setRestricted(Invincible);
 	}
 	
@@ -76,14 +88,11 @@ public class DefaultGame extends AbstractGame {
 			case 10:
 				if(Settings.getDrawAbility()) {
 					broadcastAbilityReady();
-				} else {
-					this.setSeconds(this.getSeconds() + 4);
 				}
 				break;
 			case 13:
 				if(Settings.getDrawAbility()) {
-					//능력 할당 시작
-					this.startAbilitySelect();
+					startAbilitySelect();
 				}
 				break;
 			case 15:
@@ -176,7 +185,7 @@ public class DefaultGame extends AbstractGame {
 			Bukkit.broadcastMessage(m);
 		}
 		
-		this.GiveDefaultKit();
+		giveDefaultKit(getParticipants());
 		
 		for(Participant p : getParticipants()) {
 			if(Settings.getSpawnEnable()) {
@@ -223,38 +232,24 @@ public class DefaultGame extends AbstractGame {
 	 * 기본 킷 유저 지급
 	 */
 	@Override
-	public void GiveDefaultKit(Player p) {
+	public void giveDefaultKit(Player p) {
 		List<ItemStack> DefaultKit = Settings.getDefaultKit();
-
 		if(Settings.getInventoryClear()) {
 			p.getInventory().clear();
 		}
-		
 		for(ItemStack is : DefaultKit) {
 			p.getInventory().addItem(is);
 		}
-		
 		p.setLevel(0);
 		if(Settings.getStartLevel() > 0) {
 			p.giveExpLevels(Settings.getStartLevel());
 			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
 		}
 	}
-	
-	@Override
-	protected List<Player> initPlayers() {
-		List<Player> Players = new ArrayList<Player>();
-		
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!SpectatorManager.isSpectator(p.getName())) Players.add(p);
-		}
-		
-		return Players;
-	}
-	
+
 	@Override
 	protected AbilitySelect setupAbilitySelect() {
-		return new AbilitySelect() {
+		return new AbilitySelect(1) {
 			
 			@Override
 			protected Collection<Participant> initSelectors() {
@@ -338,11 +333,6 @@ public class DefaultGame extends AbstractGame {
 
 			@Override
 			protected void onSelectEnd() {}
-
-			@Override
-			protected int initChangeCount() {
-				return 1;
-			}
 
 		};
 	}

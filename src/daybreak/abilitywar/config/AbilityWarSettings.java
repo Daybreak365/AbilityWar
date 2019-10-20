@@ -34,7 +34,7 @@ public class AbilityWarSettings {
 
 	public static void load() throws IOException, InvalidConfigurationException {
 		if (!isLoaded()) {
-			file = FileManager.getFile("Config.yml");
+			file = FileManager.createFile("Config.yml");
 			lastModified = file.lastModified();
 			config = new CommentedConfiguration(file);
 			update();

@@ -140,10 +140,9 @@ public class GameModeGUI implements Listener {
 				if(e.getCurrentItem().getType().equals(Material.BOOK)) {
 					if(e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 						String modeName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-						
-						Class<? extends AbstractGame> abilityClass = GameMode.getByString(modeName);
-						if(abilityClass != null) {
-							AbilityWarSettings.modifyProperty(ConfigNodes.GameMode, abilityClass.getName());
+						Class<? extends AbstractGame> gameMode = GameMode.getByString(modeName);
+						if(gameMode != null) {
+							AbilityWarSettings.modifyProperty(ConfigNodes.GameMode, gameMode.getName());
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + modeName + " &f클래스는 등록되지 않았습니다."));
 						}

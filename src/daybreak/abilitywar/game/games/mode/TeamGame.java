@@ -15,11 +15,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
+import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.utils.language.KoreanUtil;
 
-public abstract class TeamGame extends AbstractGame {
+public abstract class TeamGame extends Game {
 
-	public TeamGame() {
+	public TeamGame(PlayerStrategy strategy) {
+		super(strategy);
 		registerListener(new Listener() {
 			@EventHandler
 			private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

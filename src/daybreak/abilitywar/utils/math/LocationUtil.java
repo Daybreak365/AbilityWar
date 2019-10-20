@@ -14,52 +14,58 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.TeamGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.TeamGame;
+import daybreak.abilitywar.game.manager.DeathManager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 
 /**
  * Location Util
+ * 
  * @author DayBreak 새벽
  */
 public class LocationUtil {
 
-	private LocationUtil() {}
-	
+	private LocationUtil() {
+	}
+
 	/**
 	 * Location이 원 안에 위치하는지 확인합니다.
-	 * @param c 원의 중심
-	 * @param l Location
-	 * @param radius 원의 반지름
-	 * @param flatsurface
-	 *        true:  Y 좌표를 따로 계산하지 않습니다.
-	 *        false: Y 좌표 또한 포함하여 계산합니다.
+	 * 
+	 * @param c           원의 중심
+	 * @param l           Location
+	 * @param radius      원의 반지름
+	 * @param flatsurface true: Y 좌표를 따로 계산하지 않습니다. false: Y 좌표 또한 포함하여 계산합니다.
 	 */
-	public static boolean isInCircle(final Location c, final Location l, final double radius, final boolean flatsurface) {
+	public static boolean isInCircle(final Location c, final Location l, final double radius,
+			final boolean flatsurface) {
 		final Location center = c.clone();
 		final Location location = l.clone();
-		
-		if(flatsurface) {center.setY(0); location.setY(0);}
-		if(center.getWorld().equals(location.getWorld())) {
+
+		if (flatsurface) {
+			center.setY(0);
+			location.setY(0);
+		}
+		if (center.getWorld().equals(location.getWorld())) {
 			double distance = center.distance(location);
 			return (distance <= radius);
 		} else {
 			return false;
 		}
 	}
-	
+
 	public static Vector getRandomVector(int Max, int Y) {
 		Random r = new Random();
 		return new Vector(r.nextInt(Max), Y, r.nextInt(Max));
 	}
-	
+
 	/**
 	 * 범위 안에 있는 블록들을 List로 반환합니다.
+	 * 
 	 * @param center 중심
 	 * @param radius 반지름
 	 */
-	public static List<Block> getBlocks(Location center, Integer radius, boolean hollow, boolean top,
-			boolean alsoAir) {
+	public static List<Block> getBlocks(Location center, Integer radius, boolean hollow, boolean top, boolean alsoAir) {
 		List<Block> Blocks = new ArrayList<Block>();
 
 		Integer X = center.getBlockX();
@@ -119,6 +125,7 @@ public class LocationUtil {
 
 	/**
 	 * 범위 안에서 같은 Y 좌표에 있는 블록들을 List로 반환합니다.
+	 * 
 	 * @param center 중심
 	 * @param radius 반지름
 	 */
@@ -166,8 +173,8 @@ public class LocationUtil {
 
 	public static List<Location> getSphere(Location center, double r, int Amount) {
 		List<Location> locations = new ArrayList<Location>();
-		
-		if(Amount > 0) {
+
+		if (Amount > 0) {
 			for (double i = 0; i <= Math.PI; i += Math.PI / Amount) {
 				double radius = Math.sin(i) * r;
 				double y = Math.cos(i) * r;
@@ -178,30 +185,34 @@ public class LocationUtil {
 				}
 			}
 		}
-		
+
 		return locations;
 	}
-	
+
 	public static <E extends Entity> E getNearestEntity(Class<E> clazz, Location center, Entity exception) {
 		double distance = Double.MAX_VALUE;
 		E entity = null;
-		
-		for(Entity e : center.getWorld().getEntities()) {
-			if(clazz.isAssignableFrom(e.getClass())) {
-				if(!e.equals(exception)) {
+
+		for (Entity e : center.getWorld().getEntities()) {
+			if (clazz.isAssignableFrom(e.getClass())) {
+				if (!e.equals(exception)) {
 					if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player p = (Player) e;
-						if(game.isParticipating(p)) {
-							if(game.getDeathManager().isEliminated(p)) continue;
+						if (game.isParticipating(p)) {
+							if (game instanceof DeathManager.Handler
+									&& ((DeathManager.Handler) game).getDeathManager().isEliminated(p))
+								continue;
 							Participant part = game.getParticipant(p);
 
 							if (game instanceof TeamGame && exception instanceof Player) {
 								TeamGame tgame = (TeamGame) game;
 								Player ex = (Player) exception;
-								if(game.isParticipating(ex)) {
+								if (game.isParticipating(ex)) {
 									Participant expart = game.getParticipant(ex);
-									if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
+									if (tgame.hasTeam(part) && tgame.hasTeam(expart)
+											&& (tgame.getTeam(part).equals(tgame.getTeam(expart))))
+										continue;
 								}
 							}
 						} else {
@@ -209,39 +220,44 @@ public class LocationUtil {
 						}
 					}
 					double compare = center.distance(e.getLocation());
-					if(compare < distance) {
+					if (compare < distance) {
 						distance = compare;
 						entity = clazz.cast(e);
 					}
 				}
 			}
 		}
-		
+
 		return entity;
 	}
 
 	public static Player getNearestPlayer(Player p) {
 		return getNearestEntity(Player.class, p.getLocation(), p);
 	}
-	
-	public static <E extends Entity> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis, Entity exception) {
+
+	public static <E extends Entity> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis,
+			int VerticalDis, Entity exception) {
 		List<E> entities = new ArrayList<E>();
 		for (Entity e : center.getWorld().getNearbyEntities(center, HorizontalDis, VerticalDis, HorizontalDis)) {
 			if (clazz.isAssignableFrom(e.getClass())) {
-				if(!e.equals(exception)) {
+				if (!e.equals(exception)) {
 					if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player p = (Player) e;
-						if(game.isParticipating(p)) {
-							if(game.getDeathManager().isEliminated(p)) continue;
+						if (game.isParticipating(p)) {
+							if (game instanceof DeathManager.Handler
+									&& ((DeathManager.Handler) game).getDeathManager().isEliminated(p))
+								continue;
 							Participant part = game.getParticipant(p);
 
 							if (game instanceof TeamGame && exception instanceof Player) {
 								TeamGame tgame = (TeamGame) game;
 								Player ex = (Player) exception;
-								if(game.isParticipating(ex)) {
+								if (game.isParticipating(ex)) {
 									Participant expart = game.getParticipant(ex);
-									if(tgame.hasTeam(part) && tgame.hasTeam(expart) && (tgame.getTeam(part).equals(tgame.getTeam(expart)))) continue;
+									if (tgame.hasTeam(part) && tgame.hasTeam(expart)
+											&& (tgame.getTeam(part).equals(tgame.getTeam(expart))))
+										continue;
 								}
 							}
 						} else {
@@ -252,14 +268,15 @@ public class LocationUtil {
 				}
 			}
 		}
-		
+
 		return entities;
 	}
 
-	public static <E extends Entity> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis, int VerticalDis) {
+	public static <E extends Entity> List<E> getNearbyEntities(Class<E> clazz, Location center, int HorizontalDis,
+			int VerticalDis) {
 		return getNearbyEntities(clazz, center, HorizontalDis, VerticalDis, null);
 	}
-	
+
 	public static List<Damageable> getNearbyDamageableEntities(Player p, int HorizontalDis, int VerticalDis) {
 		return getNearbyEntities(Damageable.class, p.getLocation(), HorizontalDis, VerticalDis, p);
 	}
@@ -267,7 +284,7 @@ public class LocationUtil {
 	public static List<Damageable> getNearbyDamageableEntities(Location l, int HorizontalDis, int VerticalDis) {
 		return getNearbyEntities(Damageable.class, l, HorizontalDis, VerticalDis);
 	}
-	
+
 	public static List<Player> getNearbyPlayers(Player p, int HorizontalDis, int VerticalDis) {
 		return getNearbyEntities(Player.class, p.getLocation(), HorizontalDis, VerticalDis, p);
 	}

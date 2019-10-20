@@ -18,11 +18,11 @@ abstract public class Timer {
 	private int Count;
 	private int Period = 20;
 
-	abstract protected void onStart();
+	protected abstract void onStart();
 
-	abstract protected void TimerProcess(Integer Seconds);
+	protected abstract void TimerProcess(Integer Seconds);
 
-	abstract protected void onEnd();
+	protected abstract void onEnd();
 
 	public boolean isTimerRunning() {
 		return Task != -1;

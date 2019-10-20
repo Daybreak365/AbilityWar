@@ -8,7 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.utils.Messager;
@@ -20,7 +20,7 @@ public class LocationNoticeScript extends AbstractScript {
 	}
 
 	@Override
-	protected void Execute(AbstractGame game) {
+	protected void Execute(Game game) {
 		List<String> msg = new ArrayList<String>();
 		
 		msg.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "플레이어 위치"));

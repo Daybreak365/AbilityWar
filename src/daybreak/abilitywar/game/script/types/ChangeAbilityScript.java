@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
@@ -31,20 +31,20 @@ public class ChangeAbilityScript extends AbstractScript {
 		
 		모든_플레이어 {
 			@Override
-			public Collection<Participant> getParticipant(AbstractGame game) {
+			public Collection<Participant> getParticipant(Game game) {
 				return game.getParticipants();
 			}
 		},
 		랜덤_플레이어 {
 			@Override
-			public Collection<Participant> getParticipant(AbstractGame game) {
+			public Collection<Participant> getParticipant(Game game) {
 				Random random = new Random();
 				List<Participant> participants = new ArrayList<>(game.getParticipants());
 				return Arrays.asList(participants.get(random.nextInt(participants.size())));
 			}
 		};
 		
-		public abstract Collection<Participant> getParticipant(AbstractGame game);
+		public abstract Collection<Participant> getParticipant(Game game);
 		
 	}
 
@@ -60,7 +60,7 @@ public class ChangeAbilityScript extends AbstractScript {
 	}
 	
 	@Override
-	protected void Execute(AbstractGame game) {
+	protected void Execute(Game game) {
 		for(Participant participant : target.getParticipant(game)) {
 			Random random = new Random();
 			Player p = participant.getPlayer();

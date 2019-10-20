@@ -40,7 +40,7 @@ public class AbilitySettings {
 
 	public static void load() throws IOException, InvalidConfigurationException {
 		if (!isLoaded()) {
-			file = FileManager.getFile("abilitysettings.yml");
+			file = FileManager.createFile("abilitysettings.yml");
 			lastModified = file.lastModified();
 			config = new CommentedConfiguration(file);
 			update();

@@ -1,6 +1,6 @@
 package daybreak.abilitywar.game.events;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.game.manager.Invincibility;
 
 /**
@@ -8,7 +8,7 @@ import daybreak.abilitywar.game.manager.Invincibility;
  */
 public class InvincibleEndEvent extends GameEvent {
 
-	public InvincibleEndEvent(AbstractGame game) {
+	public InvincibleEndEvent(Game game) {
 		super(game);
 	}
 

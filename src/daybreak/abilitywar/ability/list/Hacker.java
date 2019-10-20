@@ -79,7 +79,7 @@ public class Hacker extends AbilityBase {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ "+ Z + "&f에 있습니다."));
 
 				new Title(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0).sendTo(Target);
-				Hacker.this.getGame().getEffectManager().Stun(Target, DurationTick);
+				getGame().getEffectManager().Stun(Target, DurationTick);
 				Particle.StartTimer();
 			}
 		}

@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.games.changeability;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -23,9 +24,12 @@ import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
+import daybreak.abilitywar.game.games.mode.PlayerStrategy;
 import daybreak.abilitywar.game.games.mode.WinnableGame;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.AbilitySelect;
 import daybreak.abilitywar.game.manager.DeathManager;
+import daybreak.abilitywar.game.manager.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.InfiniteDurability;
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import daybreak.abilitywar.utils.FireworkUtil;
@@ -44,9 +48,21 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
  */
 @GameManifest(Name = "체인지 능력 전쟁 (Beta)", Description = { "§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.", "§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.", "§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
 														"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f체인지 능력전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
-public class ChangeAbilityWar extends WinnableGame {
+public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler {
 
 	public ChangeAbilityWar() {
+		super(new PlayerStrategy() {
+			@Override
+			public Collection<Player> getPlayers() {
+				List<Player> players = new ArrayList<Player>();
+				for(Player p : Bukkit.getOnlinePlayers()) {
+					if(!SpectatorManager.isSpectator(p.getName())) {
+						players.add(p);
+					}
+				}
+				return players;
+			}
+		});
 		setRestricted(Invincible);
 		this.maxLife = ChangeAbilityWarSettings.getLife();
 	}
@@ -287,7 +303,7 @@ public class ChangeAbilityWar extends WinnableGame {
 		}
 		SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
 		
-		this.GiveDefaultKit();
+		giveDefaultKit(getParticipants());
 		
 		for(Participant p : getParticipants()) {
 			if(Settings.getSpawnEnable()) {
@@ -334,7 +350,7 @@ public class ChangeAbilityWar extends WinnableGame {
 	 * 기본 킷 유저 지급
 	 */
 	@Override
-	public void GiveDefaultKit(Player p) {
+	public void giveDefaultKit(Player p) {
 		List<ItemStack> DefaultKit = Settings.getDefaultKit();
 
 		if(Settings.getInventoryClear()) {
@@ -382,19 +398,6 @@ public class ChangeAbilityWar extends WinnableGame {
 		Bukkit.broadcastMessage(builder.toString());
 	}
 
-	@Override
-	protected List<Player> initPlayers() {
-		List<Player> Players = new ArrayList<Player>();
-		
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!SpectatorManager.isSpectator(p.getName())) {
-				Players.add(p);
-			}
-		}
-		
-		return Players;
-	}
-	
 	@Override
 	protected AbilitySelect setupAbilitySelect() {
 		return null;

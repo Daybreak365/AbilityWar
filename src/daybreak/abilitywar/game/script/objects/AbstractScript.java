@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.script.objects;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.utils.thread.TimerBase;
 
 public abstract class AbstractScript {
@@ -26,9 +26,9 @@ public abstract class AbstractScript {
 		this.Timer = newTimer();
 	}
 
-	private transient AbstractGame game;
+	private transient Game game;
 
-	public void Start(AbstractGame game) {
+	public void Start(Game game) {
 		this.game = game;
 
 		if (Timer != null) {
@@ -112,6 +112,6 @@ public abstract class AbstractScript {
 		return ChatColor.translateAlternateColorCodes('&', runMessage.replaceAll("%ScriptName%", name));
 	}
 
-	protected abstract void Execute(AbstractGame game);
+	protected abstract void Execute(Game game);
 
 }

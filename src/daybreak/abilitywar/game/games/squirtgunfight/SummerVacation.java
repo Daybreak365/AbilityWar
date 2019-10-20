@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.games.squirtgunfight;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -27,8 +28,11 @@ import daybreak.abilitywar.config.AbilityWarSettings.Settings.SummerVacationSett
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
+import daybreak.abilitywar.game.games.mode.PlayerStrategy;
 import daybreak.abilitywar.game.games.mode.WinnableGame;
+import daybreak.abilitywar.game.manager.AbilitySelect;
 import daybreak.abilitywar.game.manager.DeathManager;
+import daybreak.abilitywar.game.manager.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.InfiniteDurability;
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import daybreak.abilitywar.utils.FireworkUtil;
@@ -47,9 +51,21 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
  */
 @GameManifest(Name = "신나는 여름 휴가", Description = { "§f신나는 물총싸움 뿌슝빠슝! 지금 바로 즐겨보세요!", "", "§a● §f스크립트가 적용되지 않습니다.",
 														"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f신나는 여름 휴가 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
-public class SummerVacation extends WinnableGame {
+public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 	
 	public SummerVacation() {
+		super(new PlayerStrategy() {
+			@Override
+			public Collection<Player> getPlayers() {
+				List<Player> players = new ArrayList<Player>();
+				for(Player p : Bukkit.getOnlinePlayers()) {
+					if(!SpectatorManager.isSpectator(p.getName())) {
+						players.add(p);
+					}
+				}
+				return players;
+			}
+		});
 		setRestricted(Invincible);
 		this.MaxKill = SummerVacationSettings.getMaxKill();
 	}
@@ -293,7 +309,7 @@ public class SummerVacation extends WinnableGame {
 		}
 		SoundLib.ENTITY_PLAYER_SPLASH.broadcastSound();
 		
-		this.GiveDefaultKit();
+		giveDefaultKit(getParticipants());
 		
 		for(Participant p : getParticipants()) {
 			if(Settings.getSpawnEnable()) {
@@ -328,7 +344,7 @@ public class SummerVacation extends WinnableGame {
 	 * 기본 킷 유저 지급
 	 */
 	@Override
-	public void GiveDefaultKit(Player p) {
+	public void giveDefaultKit(Player p) {
 		ItemStack bow = new ItemStack(Material.BOW);
 		ItemMeta bowMeta = bow.getItemMeta();
 		bowMeta.setUnbreakable(true);
@@ -393,19 +409,6 @@ public class SummerVacation extends WinnableGame {
 		Bukkit.broadcastMessage(builder.toString());
 	}
 
-	@Override
-	protected List<Player> initPlayers() {
-		List<Player> Players = new ArrayList<Player>();
-		
-		for(Player p : Bukkit.getOnlinePlayers()) {
-			if(!SpectatorManager.isSpectator(p.getName())) {
-				Players.add(p);
-			}
-		}
-		
-		return Players;
-	}
-	
 	@Override
 	protected AbilitySelect setupAbilitySelect() {
 		return null;

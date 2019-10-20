@@ -14,7 +14,7 @@ public abstract class Addon {
 	private DescriptionFile description;
 
 	private ClassLoader classLoader;
-	
+
 	abstract public void onEnable();
 
 	abstract public void onDisable();

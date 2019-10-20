@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.game.manager.WRECK;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.NumberUtil;
@@ -28,7 +29,7 @@ public class CooldownTimer extends TimerBase {
 	private boolean actionbarNotice = true;
 
 	public CooldownTimer(AbilityBase Ability, Integer Cool) {
-		super((AbilityWarThread.isGameTaskRunning() && AbilityWarThread.getGame().getWRECK().isEnabled()) ? (int)(Cool / 10) : Cool);
+		super((AbilityWarThread.isGameTaskRunning() && (AbilityWarThread.getGame() instanceof WRECK.Handler && ((WRECK.Handler) AbilityWarThread.getGame()).isWRECKEnabled())) ? (int)(Cool / 10) : Cool);
 		this.Ability = Ability;
 	}
 

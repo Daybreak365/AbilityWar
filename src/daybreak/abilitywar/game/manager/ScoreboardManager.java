@@ -14,7 +14,7 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.scoreboard.Scoreboard;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.defaultgame.Game;
 
 public class ScoreboardManager implements EventExecutor {
 
@@ -41,7 +41,7 @@ public class ScoreboardManager implements EventExecutor {
 		}
 	}
 	
-	public ScoreboardManager(AbstractGame game) {
+	public ScoreboardManager(Game game) {
 		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
 	}
 
