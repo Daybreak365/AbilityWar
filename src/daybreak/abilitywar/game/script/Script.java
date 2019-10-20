@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -22,10 +21,6 @@ import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.game.script.ScriptException.State;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.game.script.objects.setter.Setter;
-import daybreak.abilitywar.game.script.types.ChangeAbilityScript;
-import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
-import daybreak.abilitywar.game.script.types.LocationNoticeScript;
-import daybreak.abilitywar.game.script.types.TeleportScript;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
 import daybreak.abilitywar.utils.database.FileManager;
@@ -40,13 +35,7 @@ public class Script {
 
 	private static final Messager messager = new Messager();
 
-	private static ArrayList<AbstractScript> scripts = new ArrayList<AbstractScript>();
-
-	static {
-		registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
-		registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("능력 변경 대상", ChangeTarget.class));
-		registerScript(LocationNoticeScript.class);
-	}
+	private static final ArrayList<AbstractScript> scripts = new ArrayList<AbstractScript>();
 
 	/**
 	 * 모든 스크립트를 시작시킵니다.
@@ -72,7 +61,7 @@ public class Script {
 	 * 스크립트 폴더 안에 있는 모든 스크립트를 불러옵니다.
 	 */
 	public static void LoadAll() {
-		scripts = new ArrayList<>();
+		scripts.clear();
 
 		for (File file : FileManager.createDirectory("Script").listFiles()) {
 			try {

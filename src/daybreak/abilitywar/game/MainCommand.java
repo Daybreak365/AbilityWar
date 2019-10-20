@@ -33,6 +33,7 @@ import daybreak.abilitywar.game.manager.Invincibility;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
 import daybreak.abilitywar.game.manager.gui.BlackListGUI;
 import daybreak.abilitywar.game.manager.gui.GameModeGUI;
+import daybreak.abilitywar.game.manager.gui.InstallGUI;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
 import daybreak.abilitywar.game.script.Script;
@@ -277,13 +278,20 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
 				}
-			} else if(split[0].equalsIgnoreCase("update")) {
-				if(sender.isOp()) {
-					if(!plugin.getAutoUpdate().Update(sender)) {
-						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f플러그인이 &3최신 버전 &7(" + plugin.getDescription().getVersion() + ") &f입니다."));
+			} else if(split[0].equalsIgnoreCase("install")) {
+				if(sender instanceof Player) {
+					Player p = (Player) sender;
+					if(p.isOp()) {
+						try {
+							new InstallGUI(p, plugin, plugin.getInstaller()).openGUI(1);
+						} catch (IllegalStateException e) {
+							Messager.sendErrorMessage(p, "아직 버전 목록이 불러와지지 않았습니다.");
+						}
+					} else {
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 					}
 				} else {
-					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
 				}
 			} else if(split[0].equalsIgnoreCase("specialthanks")) {
 				if(sender instanceof Player) {
@@ -493,7 +501,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage
 									+ " 페이지 &7)"),
 					Messager.formatCommand(label, "gamemode", "능력자 전쟁 게임 모드를 설정합니다.", true),
-					Messager.formatCommand(label, "update", "최신버전으로 업데이트를 시도합니다.", true),
+					Messager.formatCommand(label, "install", "새로운 버전의 다운로드를 시도합니다.", true),
 					Messager.formatCommand(label, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false) });
 			break;
 		default:
@@ -564,7 +572,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			switch (args.length) {
 			case 1:
 				ArrayList<String> Complete = Messager.asList("start", "stop", "check", "yes", "no", "skip", "reload",
-						"config", "util", "script", "gamemode", "update", "specialthanks");
+						"config", "util", "script", "gamemode", "install", "specialthanks");
 
 				if (args[0].isEmpty()) {
 					return Complete;

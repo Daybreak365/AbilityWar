@@ -22,7 +22,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.autoupdate.AutoUpdate;
+import daybreak.abilitywar.utils.installer.Installer;
 
 /**
  * Server Version
@@ -201,7 +201,7 @@ public class ServerVersion {
 				pluginInitField.set(cl, null);
 
 			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-				Logger.getLogger(AutoUpdate.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(Installer.class.getName()).log(Level.SEVERE, null, ex);
 			}
 
 			try {

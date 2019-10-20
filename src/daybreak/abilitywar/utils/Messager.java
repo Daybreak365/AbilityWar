@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.utils.autoupdate.AutoUpdate.UpdateObject;
+import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 
 public class Messager {
 
@@ -54,10 +54,10 @@ public class Messager {
 	}
 
 	/**
-	 * 업데이트 설명을 구성합니다.
+	 * 설치 설명을 구성합니다.
 	 * @throws IOException 
 	 */
-	public static String[] formatUpdate(UpdateObject update) throws IOException {
+	public static String[] formatInstall(UpdateObject update) throws IOException {
 		ArrayList<String> info = new ArrayList<String>();
 		info.add(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "업데이트"));
 		info.add(ChatColor.translateAlternateColorCodes('&', "&b" + update.getTag() + " &f업데이트 &f(&7v" + update.getVersion() + "&f) " + "(&7" + (update.getFileSize() / 1024) + "KB&f)"));

@@ -1,10 +1,13 @@
 package daybreak.abilitywar;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,9 +17,14 @@ import daybreak.abilitywar.config.AbilityWarSettings;
 import daybreak.abilitywar.game.MainCommand;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.Script;
+import daybreak.abilitywar.game.script.Script.RequiredData;
+import daybreak.abilitywar.game.script.types.ChangeAbilityScript;
+import daybreak.abilitywar.game.script.types.LocationNoticeScript;
+import daybreak.abilitywar.game.script.types.TeleportScript;
+import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.autoupdate.AutoUpdate;
-import daybreak.abilitywar.utils.autoupdate.AutoUpdate.Branch;
+import daybreak.abilitywar.utils.installer.Branch;
+import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 
@@ -37,22 +45,38 @@ public class AbilityWar extends JavaPlugin {
 		throw new IllegalStateException("플러그인이 아직 초기화되지 않았습니다.");
 	}
 
+	private Installer installer = null;
+
 	public AbilityWar() {
 		plugin = this;
+		CompletableFuture.runAsync(new Runnable() {
+			@Override
+			public void run() {
+				Installer installer = null;
+				try {
+					installer = new Installer("DayBreak365", "AbilityWar", plugin, Branch.Master);
+					messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
+				} catch (IOException | InterruptedException | ExecutionException e) {}
+				AbilityWar.this.installer = installer;
+			}
+		});
 	}
 
-	private final AutoUpdate autoUpdate = new AutoUpdate("DayBreak365", "AbilityWar", this, Branch.Master);
-
-	public AutoUpdate getAutoUpdate() {
-		return autoUpdate;
+	public Installer getInstaller() throws IllegalStateException {
+		if (installer != null) {
+			return installer;
+		}
+		throw new IllegalStateException("버전 목록이 아직 불러와지지 않았습니다.");
 	}
 
 	@Override
 	public void onEnable() {
 		ServerVersion.VersionCompat(this);
-		autoUpdate.Check();
 		messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand(this));
+		Script.registerScript(TeleportScript.class, new RequiredData<Location>("텔레포트 위치", Location.class));
+		Script.registerScript(ChangeAbilityScript.class, new RequiredData<ChangeTarget>("능력 변경 대상", ChangeTarget.class));
+		Script.registerScript(LocationNoticeScript.class);
 
 		AbilityList.nameValues();
 
