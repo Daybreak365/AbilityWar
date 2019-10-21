@@ -49,17 +49,6 @@ public class AbilityWar extends JavaPlugin {
 
 	public AbilityWar() {
 		plugin = this;
-		CompletableFuture.runAsync(new Runnable() {
-			@Override
-			public void run() {
-				Installer installer = null;
-				try {
-					installer = new Installer("DayBreak365", "AbilityWar", plugin, Branch.Master);
-					messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
-				} catch (IOException | InterruptedException | ExecutionException e) {}
-				AbilityWar.this.installer = installer;
-			}
-		});
 	}
 
 	public Installer getInstaller() throws IllegalStateException {
@@ -71,6 +60,17 @@ public class AbilityWar extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		CompletableFuture.runAsync(new Runnable() {
+			@Override
+			public void run() {
+				Installer installer = null;
+				try {
+					installer = new Installer("DayBreak365", "AbilityWar", plugin, Branch.Master);
+					messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
+				} catch (IOException | InterruptedException | ExecutionException e) {}
+				AbilityWar.this.installer = installer;
+			}
+		});
 		ServerVersion.VersionCompat(this);
 		messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand(this));
