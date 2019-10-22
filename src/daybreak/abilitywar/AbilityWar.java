@@ -49,6 +49,7 @@ public class AbilityWar extends JavaPlugin {
 
 	public AbilityWar() {
 		plugin = this;
+		
 	}
 
 	public Installer getInstaller() throws IllegalStateException {
@@ -83,9 +84,6 @@ public class AbilityWar extends JavaPlugin {
 		AddonLoader.loadAddons();
 		AddonLoader.enableAll();
 
-		/*
-		 * 서버 부팅이 끝나면 실행
-		 */
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			@Override
 			public void run() {
