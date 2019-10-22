@@ -15,9 +15,9 @@ public abstract class Addon {
 
 	private ClassLoader classLoader;
 
-	abstract public void onEnable();
+	public abstract void onEnable();
 
-	abstract public void onDisable();
+	public abstract void onDisable();
 
 	/**
 	 * AbilityWar 플러그인을 받아옵니다.

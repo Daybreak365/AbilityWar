@@ -27,9 +27,7 @@ public class BombArrow extends AbilityBase {
 			"# 50은 50%를 의미합니다.") {
 		
 		@Override
-		public boolean Condition(Integer value) {
-			return value >= 1 && value <= 100;
-		}
+		public boolean Condition(Integer value) { return value >= 1 && value <= 100; }
 		
 	};
 

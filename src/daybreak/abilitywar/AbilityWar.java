@@ -66,7 +66,7 @@ public class AbilityWar extends JavaPlugin {
 			public void run() {
 				Installer installer = null;
 				try {
-					installer = new Installer("DayBreak365", "AbilityWar", plugin, Branch.Master);
+					installer = new Installer("DayBreak365", "AbilityWar", AbilityWar.this);
 					messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
 				} catch (IOException | InterruptedException | ExecutionException e) {}
 				AbilityWar.this.installer = installer;

@@ -2,9 +2,9 @@ package daybreak.abilitywar.utils.installer;
 
 public enum Branch {
 
-	Master("master");
+	MASTER("master");
 
-	String Name;
+	private final String Name;
 
 	private Branch(String Name) {
 		this.Name = Name;
@@ -19,7 +19,7 @@ public enum Branch {
 		case 12:
 		case 13:
 		case 14: {
-			return Branch.Master;
+			return Branch.MASTER;
 		}
 		default: {
 			return null;

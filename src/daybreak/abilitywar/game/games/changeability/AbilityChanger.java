@@ -3,6 +3,8 @@ package daybreak.abilitywar.game.games.changeability;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
@@ -22,13 +24,13 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 
 public class AbilityChanger {
 
-	private Game game;
+	private static final Logger logger = Logger.getLogger(AbilityChanger.class.getName());
 
+	private final Game game;
 	private final int period;
-
 	private final TimerBase timer;
 	
-	public AbilityChanger(Game game) {
+	AbilityChanger(Game game) {
 		this.game = game;
 		this.period = ChangeAbilityWarSettings.getPeriod();
 		this.timer = new TimerBase() {
@@ -45,7 +47,7 @@ public class AbilityChanger {
 			}
 		}.setPeriod(period * 20);
 	}
-	
+
 	private List<Class<? extends AbilityBase>> setupAbilities() {
 		List<Class<? extends AbilityBase>> list = new ArrayList<>();
 		for(String abilityName : AbilityList.nameValues()) {
@@ -53,10 +55,10 @@ public class AbilityChanger {
 				list.add(AbilityList.getByString(abilityName));
 			}
 		}
-		
+
 		return list;
 	}
-	
+
 	private List<Participant> setupParticipants() {
 		List<Participant> list = new ArrayList<>();
 		for(Participant p : game.getParticipants()) {
@@ -64,7 +66,7 @@ public class AbilityChanger {
 				list.add(p);
 			}
 		}
-		
+
 		return list;
 	}
 	
@@ -104,14 +106,14 @@ public class AbilityChanger {
 			@Override
 			protected void TimerProcess(Integer Seconds) {
 				int TitleCount = 12 - Seconds;
-				String[] strs = {"", "", "능", "력", " ", "체", "인", "지", "!", "", ""};
+				String[] strings = {"", "", "능", "력", " ", "체", "인", "지", "!", "", ""};
 				
 				StringBuilder builder = new StringBuilder();
 				for(int i = 0; i < 11; i++) {
-					if(i == (TitleCount - 1) || i == TitleCount || i == (TitleCount + 1)) {
-						builder.append(ChatColor.LIGHT_PURPLE + strs[i]);
+					if(i >= TitleCount - 1 && i <= TitleCount + 1) {
+						builder.append(ChatColor.LIGHT_PURPLE + strings[i]);
 					} else {
-						builder.append(ChatColor.WHITE + strs[i]);
+						builder.append(ChatColor.WHITE + strings[i]);
 					}
 				}
 				
@@ -139,9 +141,7 @@ public class AbilityChanger {
 				
 				Notice(participant);
 			} catch (Exception e) {
-				//Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."));
-				//Messager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
-				// TODO: 처리 필요
+			    logger.log(Level.SEVERE, participant.getPlayer().getName() + "님에게 능력을 할당하는 도중 오류가 발생하였습니다: " + abilityClass.getName());
 			}
 		}
 	}

@@ -1,33 +1,10 @@
 package daybreak.abilitywar.utils.installer;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.utils.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -42,20 +19,36 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredListener;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.utils.Messager;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 깃헙 자동 업데이트
- * 
  * @author DayBreak 새벽
  */
 public class Installer {
 
+    private static final Logger logger = Logger.getLogger(Installer.class.getName());
 	private static final JsonParser parser = new JsonParser();
 	private static final Messager messager = new Messager();
 
@@ -77,22 +70,22 @@ public class Installer {
 
 	private final Plugin plugin;
 
-	public Installer(String author, String repository, Plugin plugin, Branch pluginBranch) throws UnsupportedEncodingException, MalformedURLException, IOException, InterruptedException, ExecutionException {
+	public Installer(String author, String repository, Plugin plugin) throws IOException, InterruptedException, ExecutionException {
 		this.pluginVersion = new Version(plugin.getDescription().getVersion());
 		this.plugin = plugin;
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(
 				new URL("https://api.github.com/repos/" + author + "/" + repository + "/releases").openStream(),
-				"UTF-8"));
+				StandardCharsets.UTF_8));
 		String result = "";
 		String line;
 		while ((line = br.readLine()) != null) {
 			result = result.concat(line);
 		}
 		
-		HashMap<ScheduledExecutorService, Future<UpdateObject>> tasks = new HashMap<>();
+		HashMap<ExecutorService, Future<UpdateObject>> tasks = new HashMap<>();
 		for (JsonElement element : parser.parse(result).getAsJsonArray()) {
-			ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+			ExecutorService service = Executors.newSingleThreadExecutor();
 			tasks.put(service, service.submit(new Callable<Installer.UpdateObject>() {
 				@Override
 				public UpdateObject call() throws Exception {
@@ -101,19 +94,17 @@ public class Installer {
 			}));
 		}
 		TreeMap<Version, UpdateObject> versions = new TreeMap<>(Version.comparator);
-		for (Future<UpdateObject> future : tasks.values()) {
-			UpdateObject update = future.get();
+		for (Map.Entry<ExecutorService, Future<UpdateObject>> entry : tasks.entrySet()) {
+			UpdateObject update = entry.getValue().get();
+			entry.getKey().shutdown();
 			Version version = new Version(update.getVersion());
 			versions.put((pluginVersion.equals(version) ? pluginVersion : version), update);
 			versionCache.put(version.getVersionString(), version);
 		}
 		this.versions = Collections.unmodifiableMap(versions);
-		for (ScheduledExecutorService service : tasks.keySet()) {
-			service.shutdown();
-		}
 	}
 
-	public boolean Install(CommandSender sender, UpdateObject update) {
+	public void Install(CommandSender sender, UpdateObject update) {
 		try {
 			messager.sendConsoleMessage(Messager.formatInstall(update));
 			unload(plugin);
@@ -140,12 +131,8 @@ public class Installer {
 			}
 			messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
 			load(plugin);
-			return true;
 		} catch (IOException ex) {
-			return false;
-			// Messager.sendErrorMessage(sender, "업데이트 도중 오류가 발생하였습니다.");
-			// Messager.sendErrorMessage("업데이트 도중 오류가 발생하였습니다.");
-			// TODO: 처리 필요
+		    logger.log(Level.SEVERE, "설치 도중 오류가 발생하였습니다.");
 		}
 	}
 
@@ -229,18 +216,14 @@ public class Installer {
 							pluginFile = f;
 							break;
 						}
-					} catch (InvalidDescriptionException e) {
-						// TODO: 처리 필요
-					}
+					} catch (InvalidDescriptionException e) {}
 				}
 			}
 		}
 
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
-		} catch (InvalidDescriptionException | InvalidPluginException e) {
-			// TODO: 처리 필요
-		}
+		} catch (InvalidDescriptionException | InvalidPluginException e) {}
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
@@ -297,7 +280,6 @@ public class Installer {
 				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
 
 			} catch (NoSuchFieldException | IllegalAccessException e) {
-				// TODO: 처리 필요
 				return;
 			}
 		}
@@ -354,9 +336,7 @@ public class Installer {
 
 			try {
 				((URLClassLoader) cl).close();
-			} catch (IOException ex) {
-				// TODO: 처리 필요
-			}
+			} catch (IOException ex) {}
 
 		}
 	}
