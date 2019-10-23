@@ -85,7 +85,7 @@ public class Hacker extends AbilityBase {
 		}
 		
 		@Override
-		protected void TimerProcess(Integer Seconds) {
+		protected void onProcess(int Seconds) {
 			if(Target != null) {
 				StringBuilder sb = new StringBuilder();
 				int all = 20;
@@ -119,7 +119,7 @@ public class Hacker extends AbilityBase {
 		private final Circle bottom = new Circle(getPlayer().getLocation(), 1).setAmount(amount);
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			if(Target != null) {
 				if(add && y >= 2.0) {
 					add = false;

@@ -44,7 +44,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	private int seconds = 0;
 
 	@Override
-	protected void TimerProcess(Integer count) {
+	protected void onProcess(Integer count) {
 		if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
 			seconds++;
 			progressGame(seconds);

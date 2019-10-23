@@ -72,7 +72,7 @@ public class Pumpkin extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			if(Count.equals(1)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.D));
 				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
@@ -116,8 +116,8 @@ public class Pumpkin extends AbilityBase {
 		}
 		
 		@Override
-		public void DurationProcess(Integer Seconds) {
-			ItemStack Pumpkin = getPumpkin(Seconds);
+		public void onDurationProcess(int seconds) {
+			ItemStack Pumpkin = getPumpkin(seconds);
 			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Pumpkin));
 		}
 		

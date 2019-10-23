@@ -151,7 +151,7 @@ public abstract class AbilitySelect extends TimerBase {
 	}
 
 	@Override
-	public void TimerProcess(Integer Seconds) {
+	public void onProcess(int Seconds) {
 		if (!isEveryoneSelected()) {
 			if (Seconds % 20 == 0) {
 				for (String m : Messager.asList(

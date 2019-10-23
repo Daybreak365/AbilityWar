@@ -63,7 +63,7 @@ public class Clown extends AbilityBase {
 		}
 
 		@Override
-		protected void DurationProcess(Integer Seconds) {}
+		protected void onDurationProcess(int seconds) {}
 
 		@Override
 		protected void onDurationEnd() {}

@@ -38,7 +38,7 @@ public class FastRegeneration extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			if(!isRestricted()) {
 				Player p = getPlayer();
 				if(!p.isDead()) {

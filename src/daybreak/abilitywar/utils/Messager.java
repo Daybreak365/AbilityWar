@@ -95,7 +95,7 @@ public class Messager {
 		
 		if(name != null && rank != null) {
 			String restricted = Ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]";
-			info.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + restricted + " " + rank.getRankName() + " " + species.getName()));
+			info.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + restricted + " " + rank.getRankName() + " " + species.getSpeciesName()));
 			for(String s : Ability.getExplain()) {
 				info.add(ChatColor.translateAlternateColorCodes('&', "&f" + s));
 			}

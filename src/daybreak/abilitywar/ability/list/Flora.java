@@ -51,7 +51,7 @@ public class Flora extends AbilityBase {
 		private final Circle circle = new Circle(getPlayer().getLocation(), 6).setAmount(20).setHighestLocation(true);
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			center = getPlayer().getLocation();
 			for(Location l : circle.setCenter(center).getLocations()) {
 				ParticleLib.SPELL.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);

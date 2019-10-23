@@ -42,7 +42,7 @@ public class AbilityChanger {
 			protected void onEnd() {}
 			
 			@Override
-			protected void TimerProcess(Integer Seconds) {
+			protected void onProcess(int Seconds) {
 				ChangeAbility();
 			}
 		}.setPeriod(period * 20);
@@ -82,7 +82,7 @@ public class AbilityChanger {
 			protected void onEnd() {}
 			
 			@Override
-			protected void TimerProcess(Integer Seconds) {
+			protected void onProcess(int Seconds) {
 				SoundLib.ENTITY_ITEM_PICKUP.playSound(p);
 				if(Seconds == 3 || Seconds == 7) {
 					SoundLib.PIANO.playInstrument(p, Note.natural(1, Tone.D));
@@ -104,7 +104,7 @@ public class AbilityChanger {
 			}
 			
 			@Override
-			protected void TimerProcess(Integer Seconds) {
+			protected void onProcess(int Seconds) {
 				int TitleCount = 12 - Seconds;
 				String[] strings = {"", "", "능", "력", " ", "체", "인", "지", "!", "", ""};
 				

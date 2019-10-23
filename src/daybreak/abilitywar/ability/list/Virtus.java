@@ -59,7 +59,7 @@ public class Virtus extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
 			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 3, 3, 3, 10);
 		}

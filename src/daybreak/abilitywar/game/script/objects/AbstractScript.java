@@ -52,7 +52,7 @@ public abstract class AbstractScript {
 			}
 
 			@Override
-			public void TimerProcess(Integer Seconds) {
+			public void onProcess(int Seconds) {
 				String msg = getPreRunMessage(Seconds);
 
 				if (!msg.equalsIgnoreCase("none")) {

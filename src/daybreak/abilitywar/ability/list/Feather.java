@@ -55,7 +55,7 @@ public class Feather extends AbilityBase {
 		public void onDurationStart() {}
 		
 		@Override
-		public void DurationProcess(Integer Seconds) {
+		public void onDurationProcess(int seconds) {
 			getPlayer().setAllowFlight(true);
 			getPlayer().setFlying(true);
 		}

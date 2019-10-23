@@ -18,9 +18,9 @@ public class AbilityWarThread {
 
 	/**
 	 * 게임을 시작시킵니다. 진행중인 게임이 있을 경우 아무 작업도 하지 않습니다.
-	 * @param Game 시작시킬 게임
+	 * @param game 시작시킬 게임
 	 */
-	public static void StartGame(final AbstractGame game) {
+	public static void StartGame(AbstractGame game) {
 		if (!isGameTaskRunning()) {
 			setGame(game);
 			game.StartTimer();
@@ -47,11 +47,11 @@ public class AbilityWarThread {
 	 * 게임이 진행중일 경우 true, 아닐 경우 false를 반환합니다.
 	 */
 	public static boolean isGameTaskRunning() {
-		return currentGame != null && currentGame.isTimerRunning();
+		return currentGame != null && currentGame.isRunning();
 	}
 
 	public static boolean isGameOf(Class<?> clazz) {
-		return currentGame != null ? clazz.isAssignableFrom(currentGame.getClass()) : false;
+		return currentGame != null && clazz.isAssignableFrom(currentGame.getClass());
 	}
 
 	/**

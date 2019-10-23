@@ -30,7 +30,7 @@ public class Zombie extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			Random r = new Random();
 			Integer random = r.nextInt(100) + 1;
 			

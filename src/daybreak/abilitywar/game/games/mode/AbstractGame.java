@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,11 +37,10 @@ import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.AbilityBase.MaterialType;
 import daybreak.abilitywar.game.manager.EffectManager;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
-import daybreak.abilitywar.utils.thread.Timer;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 
-public abstract class AbstractGame extends Timer implements Listener, EffectManager.Handler {
+public abstract class AbstractGame extends OverallTimer implements Listener, EffectManager.Handler {
 
 	private final List<Listener> registeredListeners = new ArrayList<>();
 
@@ -112,7 +112,7 @@ public abstract class AbstractGame extends Timer implements Listener, EffectMana
 	/**
 	 * 해당 {@link UUID}를 가지고 있는 {@link Player}를 기반으로 하는 {@link Participant}를 탐색합니다.
 	 * 
-	 * @param player 탐색할 플레이어
+	 * @param uuid 탐색할 플레이어의 UUID
 	 * @return 존재할 경우 {@link Participant}를 반환합니다. 존재하지 않을 경우 null을 반환합니다.
 	 * @Nullable
 	 */
@@ -126,7 +126,7 @@ public abstract class AbstractGame extends Timer implements Listener, EffectMana
 	/**
 	 * 대상 플레이어의 참여 여부를 반환합니다.
 	 * 
-	 * @param p 대상 플레이어
+	 * @param player 대상 플레이어
 	 * @return 대상 플레이어의 참여 여부
 	 */
 	public boolean isParticipating(Player player) {
@@ -269,16 +269,14 @@ public abstract class AbstractGame extends Timer implements Listener, EffectMana
 
 		/**
 		 * 플레이어에게 해당 능력을 부여합니다.
-		 * 
-		 * @param p            능력을 부여할 플레이어
+		 *
 		 * @param abilityClass 부여할 능력의 종류 (능력 클래스)
 		 * @throws SecurityException
 		 * @throws NoSuchMethodException
 		 * @throws InvocationTargetException
 		 * @throws IllegalArgumentException
 		 * @throws IllegalAccessException
-		 * @throws InstantiationException
-		 * @throws Exception                 능력을 부여하는 도중 오류가 발생하였을 경우
+		 * @throws InstantiationException 능력을 부여하는 도중 오류가 발생하였을 경우
 		 */
 		public void setAbility(Class<? extends AbilityBase> abilityClass)
 				throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,

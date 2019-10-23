@@ -40,7 +40,7 @@ public class TheEmperor extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			EffectLib.SLOW.addPotionEffect(getPlayer(), 30, 1, true);
 		}
 		

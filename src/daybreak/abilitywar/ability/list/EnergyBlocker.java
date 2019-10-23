@@ -77,7 +77,7 @@ public class EnergyBlocker extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			if(Default) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(116, 237, 167), 0);
 			} else {

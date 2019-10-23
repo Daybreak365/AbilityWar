@@ -95,7 +95,7 @@ public class Nex extends AbilityBase {
 		}
 
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 		}
 
 		@Override
@@ -168,7 +168,7 @@ public class Nex extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			Integer Distance = 6 - Seconds;
 			
 			for(Block block : LocationUtil.getBlocks(center, Distance, true, true, false)) {

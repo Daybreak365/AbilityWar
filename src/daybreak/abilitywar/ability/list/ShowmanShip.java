@@ -37,7 +37,7 @@ public class ShowmanShip extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			circle.setCenter(getPlayer().getLocation());
 			final int Count = LocationUtil.getNearbyPlayers(getPlayer(), 10, 10).size();
 			

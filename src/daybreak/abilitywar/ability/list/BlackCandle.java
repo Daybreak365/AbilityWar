@@ -46,7 +46,7 @@ public class BlackCandle extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			EffectLib.BAD_OMEN.removePotionEffect(getPlayer());
 			EffectLib.BLINDNESS.removePotionEffect(getPlayer());
 			EffectLib.CONFUSION.removePotionEffect(getPlayer());

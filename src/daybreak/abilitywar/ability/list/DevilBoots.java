@@ -39,7 +39,7 @@ public class DevilBoots extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void TimerProcess(Integer Seconds) {
+		protected void onProcess(int Seconds) {
 			EffectLib.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
 		}
 	};

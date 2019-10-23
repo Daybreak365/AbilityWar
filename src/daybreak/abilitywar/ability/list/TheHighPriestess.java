@@ -80,7 +80,7 @@ public class TheHighPriestess extends AbilityBase {
 		}
 
 		@Override
-		public void DurationProcess(Integer Seconds) {
+		public void onDurationProcess(int seconds) {
 			for(Location l : new Circle(center, Range).setAmount(Range * 8).setHighestLocation(true).getLocations()) {
 				ParticleLib.SPELL_INSTANT.spawnParticle(l, 0, 0, 0, 1);
 			}

@@ -54,7 +54,7 @@ public class Yeti extends AbilityBase {
 		}
 
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
@@ -84,7 +84,7 @@ public class Yeti extends AbilityBase {
 		}
 
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true, true)) {
 				Block db = b.getLocation().subtract(0, 1, 0).getBlock();
 				Material type = db.getType();

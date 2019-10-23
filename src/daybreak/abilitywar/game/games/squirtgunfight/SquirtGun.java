@@ -100,7 +100,7 @@ public class SquirtGun extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void TimerProcess(Integer Seconds) {
+		protected void onProcess(int Seconds) {
 			for(Arrow a : arrows) {
 				ParticleLib.DRIP_WATER.spawnParticle(a.getLocation(), 10, 1, 1, 1);
 			}

@@ -62,7 +62,7 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			for(Participant p : getParticipants()) {
 				p.getPlayer().setFoodLevel(19);
 			}

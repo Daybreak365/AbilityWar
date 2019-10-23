@@ -40,7 +40,7 @@ public class Invincibility implements EventExecutor {
 	private TimerBase invincibilityTimer;
 
 	public boolean Start(boolean Infinite) {
-		if (this.invincibilityTimer == null || !this.invincibilityTimer.isTimerRunning()) {
+		if (this.invincibilityTimer == null || !this.invincibilityTimer.isRunning()) {
 			if (!Infinite) {
 				this.invincibilityTimer = new TimerBase(Duration * 60) {
 
@@ -59,7 +59,7 @@ public class Invincibility implements EventExecutor {
 					}
 
 					@Override
-					protected void TimerProcess(Integer Seconds) {
+					protected void onProcess(int Seconds) {
 						if (Seconds == (Duration * 60) / 2) {
 							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
 									"&a무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
@@ -107,7 +107,7 @@ public class Invincibility implements EventExecutor {
 					}
 
 					@Override
-					protected void TimerProcess(Integer Seconds) {}
+					protected void onProcess(int Seconds) {}
 
 					@Override
 					protected void onEnd() {
@@ -137,7 +137,7 @@ public class Invincibility implements EventExecutor {
 	}
 
 	public boolean Stop() {
-		if (this.invincibilityTimer != null && this.invincibilityTimer.isTimerRunning()) {
+		if (this.invincibilityTimer != null && this.invincibilityTimer.isRunning()) {
 			this.invincibilityTimer.StopTimer(false);
 			return true;
 		}
@@ -146,7 +146,7 @@ public class Invincibility implements EventExecutor {
 	}
 
 	public boolean isInvincible() {
-		return this.invincibilityTimer != null && this.invincibilityTimer.isTimerRunning();
+		return this.invincibilityTimer != null && this.invincibilityTimer.isRunning();
 	}
 
 	@Override

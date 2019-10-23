@@ -61,7 +61,7 @@ public class EffectManager implements EventExecutor {
 				}
 
 				@Override
-				protected void TimerProcess(Integer Seconds) {
+				protected void onProcess(int Seconds) {
 				}
 			}.setPeriod(1).StartTimer();
 		}

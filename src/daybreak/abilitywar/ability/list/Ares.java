@@ -80,7 +80,7 @@ public class Ares extends AbilityBase {
 		}
 		
 		@Override
-		public void DurationProcess(Integer Seconds) {
+		public void onDurationProcess(int seconds) {
 			Player p = getPlayer();
 			
 			ParticleLib.LAVA.spawnParticle(p.getLocation(), 4, 4, 4, 40);

@@ -52,7 +52,7 @@ public class Sniper extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void TimerProcess(Integer Seconds) {
+		protected void onProcess(int Seconds) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInMainHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW)) {
@@ -71,7 +71,7 @@ public class Sniper extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void TimerProcess(Integer Seconds) {
+		protected void onProcess(int Seconds) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInMainHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW) || main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)) {
@@ -112,7 +112,7 @@ public class Sniper extends AbilityBase {
 					}
 					
 					@Override
-					protected void TimerProcess(Integer Seconds) {}
+					protected void onProcess(int Seconds) {}
 				}.StartTimer();
 			}
 		}

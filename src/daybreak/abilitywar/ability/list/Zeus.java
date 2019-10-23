@@ -56,7 +56,7 @@ public class Zeus extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			Circle circle = new Circle(center, 2 * (5 - getCount())).setAmount(7).setHighestLocation(true);
 			for(Location l : circle.getLocations()) {
 				l.getWorld().strikeLightningEffect(l);

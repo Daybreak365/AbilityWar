@@ -52,7 +52,7 @@ public class Void extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {}
+		public void onProcess(int Seconds) {}
 		
 		@Override
 		public void onEnd() {

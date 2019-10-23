@@ -69,7 +69,7 @@ public class Berserker extends AbilityBase {
 		}
 		
 		@Override
-		public void DurationProcess(Integer Seconds) {}
+		public void onDurationProcess(int seconds) {}
 		
 		@Override
 		public void onDurationEnd() {

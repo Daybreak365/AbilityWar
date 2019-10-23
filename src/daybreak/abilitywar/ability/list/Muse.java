@@ -62,7 +62,7 @@ public class Muse extends AbilityBase {
 		}
 		
 		@Override
-		public void DurationProcess(Integer Seconds) {
+		public void onDurationProcess(int seconds) {
 			Circle circle = new Circle(center, Count).setAmount(Count * 6).setHighestLocation(true);
 			if(Count <= 10) {
 				for(Location l : circle.getLocations()) {

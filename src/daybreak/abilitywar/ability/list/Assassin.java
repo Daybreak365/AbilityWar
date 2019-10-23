@@ -81,7 +81,7 @@ public class Assassin extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			if(Entities != null) {
 				if(Entities.size() >= 1) {
 					Damageable e = Entities.get(0);

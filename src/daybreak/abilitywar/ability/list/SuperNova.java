@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability.list;
 
+import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -14,7 +15,6 @@ import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.Timer;
 
 @AbilityManifest(Name = "초신성", Rank = Rank.B, Species = Species.OTHERS)
 public class SuperNova extends AbilityBase {
@@ -41,7 +41,7 @@ public class SuperNova extends AbilityBase {
 	
 	private final int Size = SizeConfig.getValue();
 	
-	private Timer Explosion = new Timer(Size) {
+	private OverallTimer Explosion = new OverallTimer(Size) {
 		
 		Location center;
 		
@@ -51,7 +51,7 @@ public class SuperNova extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(Integer Seconds) {
 			double Count = ((Size + 1) - Seconds) / 1.2;
 			for(Location l : LocationUtil.getSphere(center, Count, 5)) {
 				l.getWorld().createExplosion(l, 2);

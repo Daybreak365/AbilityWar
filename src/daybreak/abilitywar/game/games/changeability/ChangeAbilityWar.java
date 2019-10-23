@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
+import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -38,7 +39,6 @@ import daybreak.abilitywar.utils.language.KoreanUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.Timer;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 
@@ -86,7 +86,7 @@ public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler 
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			for(Participant p : getParticipants()) {
 				p.getPlayer().setFoodLevel(19);
 			}
@@ -379,7 +379,7 @@ public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler 
 			Player p = participant.getPlayer();
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
 			joiner.add(p.getName());
-			new Timer(5) {
+			new OverallTimer(5) {
 				
 				@Override
 				protected void onStart() {}
@@ -388,7 +388,7 @@ public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler 
 				protected void onEnd() {}
 				
 				@Override
-				protected void TimerProcess(Integer Seconds) {
+				protected void onProcess(Integer Seconds) {
 					FireworkUtil.spawnWinnerFirework(p.getEyeLocation().add(0, 1, 0));
 				}
 			}.setPeriod(8).StartTimer();

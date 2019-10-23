@@ -110,8 +110,8 @@ public class TimeRewind extends AbilityBase {
 		}
 		
 		@Override
-		public void DurationProcess(Integer Seconds) {
-			PlayerData data = list.get((Time * 10 - Seconds));
+		public void onDurationProcess(int seconds) {
+			PlayerData data = list.get((Time * 10 - seconds));
 			if(data != null && data.getHealth() > 0) {
 				getPlayer().teleport(data.getLocation());
 				if(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() >= data.getHealth()) getPlayer().setHealth(data.getHealth());
@@ -134,7 +134,7 @@ public class TimeRewind extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			array.add(new PlayerData(getPlayer()));
 		}
 

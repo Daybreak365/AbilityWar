@@ -53,7 +53,7 @@ public class Gladiator extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
 			getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
 		}
@@ -88,7 +88,7 @@ public class Gladiator extends AbilityBase {
 		}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			if(TotalCount <= 10) {
 				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, false, false)) {
 					Saves.putIfAbsent(b, b.getState());

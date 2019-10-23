@@ -39,7 +39,7 @@ public class DarkVision extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			EffectLib.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
 			EffectLib.SPEED.addPotionEffect(getPlayer(), 40, 5, true);
 			EffectLib.JUMP.addPotionEffect(getPlayer(), 40, 1, true);
@@ -58,7 +58,7 @@ public class DarkVision extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void TimerProcess(Integer Seconds) {
+		public void onProcess(int Seconds) {
 			for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), Distance, Distance)) {
 				EffectLib.GLOWING.addPotionEffect(p, 10, 0, true);
 			}

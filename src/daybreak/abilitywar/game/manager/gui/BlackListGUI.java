@@ -237,7 +237,7 @@ public class BlackListGUI implements Listener {
 						}
 
 						for (Species s : Species.values()) {
-							if (ItemName.equals(s.getName())) {
+							if (ItemName.equals(s.getSpeciesName())) {
 								if (e.getClick().equals(ClickType.LEFT)) {
 									for (String name : AbilityList.getAbilityNames(s)) {
 										Settings.addBlackList(name);
