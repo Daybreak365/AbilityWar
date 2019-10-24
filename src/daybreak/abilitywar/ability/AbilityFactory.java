@@ -133,9 +133,6 @@ public class AbilityFactory {
 		return false;
 	}
 
-	/**
-	 * 플러그인 기본 능력 등록
-	 */
 	static {
 		// 초창기 능력자
 		registerAbility(Assassin.class);
@@ -197,7 +194,7 @@ public class AbilityFactory {
 	 * 등록된 능력들의 이름을 String List로 반환합니다. AbilityManifest가 존재하지 않는 능력은 포함되지 않습니다.
 	 */
 	public static List<String> nameValues() {
-		ArrayList<String> Values = new ArrayList<String>();
+		ArrayList<String> Values = new ArrayList<>();
 
 		for (AbilityRegisteration<?> r : registeredAbilities.values()) {
 			AbilityManifest manifest = r.getManifest();
@@ -226,7 +223,7 @@ public class AbilityFactory {
 	}
 
 	public static List<String> getAbilityNames(Rank r) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (String name : AbilityList.nameValues()) {
 			Class<? extends AbilityBase> clazz = AbilityList.getByString(name);
@@ -242,7 +239,7 @@ public class AbilityFactory {
 	}
 
 	public static List<String> getAbilityNames(Species s) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (String name : AbilityList.nameValues()) {
 			Class<? extends AbilityBase> clazz = AbilityList.getByString(name);

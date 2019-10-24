@@ -25,11 +25,11 @@ public class ReflectionUtil {
 		public static Class<?> forName(String name) throws ClassNotFoundException {
 			try {
 				return Class.forName(name);
-			} catch (ClassNotFoundException exceptionOne) {
-				for(Addon addon : AddonLoader.getAddons()) {
+			} catch (ClassNotFoundException first) {
+				for(ClassLoader classLoader : AddonLoader.getClassLoaders()) {
 					try {
-						return Class.forName(name, true, addon.getClassLoader());
-					} catch (ClassNotFoundException exceptionTwo) {}
+						return Class.forName(name, true, classLoader);
+					} catch (ClassNotFoundException ignore) {}
 				}
 			}
 			
@@ -46,7 +46,7 @@ public class ReflectionUtil {
 		private FieldUtil() {}
 		
 		public static List<Field> getDeclaredInheritedFields(Class<?> clazz) {
-			final List<Field> result = new ArrayList<Field>();
+			final List<Field> result = new ArrayList<>();
 
 		    Class<?> finding = clazz;
 		    while (finding != null && finding != Object.class) {

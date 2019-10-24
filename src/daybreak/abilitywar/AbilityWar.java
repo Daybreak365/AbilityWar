@@ -67,7 +67,7 @@ public class AbilityWar extends JavaPlugin {
 				try {
 					installer = new Installer("DayBreak365", "AbilityWar", AbilityWar.this);
 					messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
-				} catch (IOException | InterruptedException | ExecutionException e) {}
+				} catch (IOException | InterruptedException | ExecutionException ignore) {}
 				AbilityWar.this.installer = installer;
 			}
 		});
@@ -80,7 +80,7 @@ public class AbilityWar extends JavaPlugin {
 
 		AbilityList.nameValues();
 
-		AddonLoader.loadAddons();
+		AddonLoader.loadAll();
 		AddonLoader.enableAll();
 
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {

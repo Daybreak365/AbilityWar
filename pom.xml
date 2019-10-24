@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>DayBreak.AbilityWar</groupId>
 	<artifactId>AbilityWar</artifactId>
-	<version>2.0.2</version>
+	<version>2.0.3</version>
 	<packaging>jar</packaging>
 	<repositories>
 		<repository>
@@ -21,7 +21,9 @@
 		</dependency>
 	</dependencies>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<encoding>UTF-8</encoding>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
