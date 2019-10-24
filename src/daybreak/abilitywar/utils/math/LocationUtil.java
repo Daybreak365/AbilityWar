@@ -72,9 +72,9 @@ public class LocationUtil {
 		Integer Y = center.getBlockY();
 		Integer Z = center.getBlockZ();
 
-		for (Integer x = X - radius; x <= X + radius; x++) {
-			for (Integer y = Y - radius; y <= Y + radius; y++) {
-				for (Integer z = Z - radius; z <= Z + radius; z++) {
+		for (int x = X - radius; x <= X + radius; x++) {
+			for (int y = Y - radius; y <= Y + radius; y++) {
+				for (int z = Z - radius; z <= Z + radius; z++) {
 					Location l = new Location(center.getWorld(), x, y, z);
 					double distance = center.distanceSquared(l);
 					if (distance < (radius * radius) && !(hollow && distance < ((radius - 1) * (radius - 1)))) {
@@ -133,11 +133,11 @@ public class LocationUtil {
 		List<Block> blocks = new ArrayList<Block>();
 
 		Integer X = center.getBlockX();
-		Integer Y = center.getBlockY();
+		int Y = center.getBlockY();
 		Integer Z = center.getBlockZ();
 
-		for (Integer x = X - radius; x <= X + radius; x++) {
-			for (Integer z = Z - radius; z <= Z + radius; z++) {
+		for (int x = X - radius; x <= X + radius; x++) {
+			for (int z = Z - radius; z <= Z + radius; z++) {
 				Location l = new Location(center.getWorld(), x, Y, z);
 				double distance = center.distance(l);
 				if (distance <= radius && !(hollow && distance < (radius - 1))) {

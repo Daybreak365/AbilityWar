@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface GameManifest {
 
-	public String Name();
+	String Name();
 	
-	public String[] Description();
+	String[] Description();
 	
 }

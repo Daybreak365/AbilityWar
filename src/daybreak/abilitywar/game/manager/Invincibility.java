@@ -150,7 +150,7 @@ public class Invincibility implements EventExecutor {
 	}
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
+	public void execute(Listener listener, Event event) {
 		if (event instanceof EntityDamageEvent) {
 			if (this.isInvincible()) {
 				EntityDamageEvent e = (EntityDamageEvent) event;
@@ -164,7 +164,7 @@ public class Invincibility implements EventExecutor {
 		}
 	}
 
-	public static interface Handler {
+	public interface Handler {
 		Invincibility getInvincibility();
 	}
 

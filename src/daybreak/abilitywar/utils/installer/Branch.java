@@ -6,7 +6,7 @@ public enum Branch {
 
 	private final String Name;
 
-	private Branch(String Name) {
+	Branch(String Name) {
 		this.Name = Name;
 	}
 

@@ -46,7 +46,7 @@ public class ScoreboardManager implements EventExecutor {
 	}
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
+	public void execute(Listener listener, Event event) {
 		if(event instanceof PlayerJoinEvent) {
 			PlayerJoinEvent e = (PlayerJoinEvent) event;
 			Player p = e.getPlayer();

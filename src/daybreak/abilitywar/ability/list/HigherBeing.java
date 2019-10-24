@@ -17,7 +17,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @AbilityManifest(Name = "상위존재", Rank = Rank.B, Species = Species.OTHERS)
 public class HigherBeing extends AbilityBase {
 
-	public static SettingObject<Double> DamageConfig = new SettingObject<Double>(HigherBeing.class, "DamageMultiple", 2.0,
+	public static final SettingObject<Double> DamageConfig = new SettingObject<Double>(HigherBeing.class, "DamageMultiple", 2.0,
 			"# 공격 배수") {
 		
 		@Override
@@ -39,7 +39,7 @@ public class HigherBeing extends AbilityBase {
 		return false;
 	}
 
-	private double Multiple = DamageConfig.getValue();
+	private final double Multiple = DamageConfig.getValue();
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

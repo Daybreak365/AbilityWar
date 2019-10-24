@@ -117,7 +117,7 @@ public class BlackListGUI implements Listener {
 			Count++;
 		}
 
-		Integer RankCount = 38;
+		int rankCount = 38;
 		Rank[] forEach = Rank.values();
 		ArrayUtils.reverse(forEach);
 		for (Rank r : forEach) {
@@ -149,8 +149,8 @@ public class BlackListGUI implements Listener {
 					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 하려면 좌클릭,"),
 					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 해제하려면 우클릭을 해주세요.")));
 			RankItem.setItemMeta(RankMeta);
-			BlackListGUI.setItem(RankCount, RankItem);
-			RankCount++;
+			BlackListGUI.setItem(rankCount, RankItem);
+			rankCount++;
 		}
 
 		if (page > 1) {

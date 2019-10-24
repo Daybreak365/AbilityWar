@@ -8,13 +8,6 @@ import daybreak.abilitywar.game.games.defaultgame.Game;
 
 public class WRECK {
 
-	@SuppressWarnings("unused")
-	private final Game game;
-
-	public WRECK(Game game) {
-		this.game = game;
-	}
-
 	private final boolean enabled = Settings.isWRECKEnabled();
 
 	public boolean isEnabled() {
@@ -28,7 +21,7 @@ public class WRECK {
 		}
 	}
 
-	public static interface Handler {
+	public interface Handler {
 		WRECK getWRECK();
 		boolean isWRECKEnabled();
 	}

@@ -30,7 +30,7 @@ public class DevilBoots extends AbilityBase {
 		return false;
 	}
 	
-	private TimerBase speed = new TimerBase() {
+	private final TimerBase speed = new TimerBase() {
 		
 		@Override
 		protected void onStart() {}

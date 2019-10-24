@@ -20,7 +20,7 @@ import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 @AbilityManifest(Name = "추적자", Rank = Rank.D, Species = Species.HUMAN)
 public class Chaser extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaser.class, "Cooldown", 120,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaser.class, "Cooldown", 120,
 			"# 쿨타임") {
 		
 		@Override
@@ -37,16 +37,16 @@ public class Chaser extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f추적 장치는 한명에게만 부착할 수 있습니다."));
 	}
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	private Player target = null;
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.LeftClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.LEFT_CLICK)) {
 				Cool.isCooldown();
-			} else if(ct.equals(ClickType.RightClick)) {
+			} else if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(target != null) {
 					int X = (int) target.getLocation().getX();
 					int Y = (int) target.getLocation().getY();

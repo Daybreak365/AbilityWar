@@ -17,7 +17,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "황제", Rank = Rank.A, Species = Species.HUMAN)
 public class TheEmperor extends AbilityBase {
 
-	public static SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>(TheEmperor.class, "DamageDecrease", 20, 
+	public static final SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>(TheEmperor.class, "DamageDecrease", 20,
 			"# 공격 피해 감소량",
 			"# 10으로 설정하면 공격을 받았을 때 전체 대미지의 90%를 받습니다.") {
 		
@@ -34,7 +34,7 @@ public class TheEmperor extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 반 이하일 때 공격 피해를 받지 않습니다."));
 	}
 	
-	private TimerBase Passive = new TimerBase() {
+	private final TimerBase Passive = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -54,15 +54,15 @@ public class TheEmperor extends AbilityBase {
 		return false;
 	}
 	
-	private int DamageDecrease = DamageDecreaseConfig.getValue();
+	private final int DamageDecrease = DamageDecreaseConfig.getValue();
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
-			Double damage = (e.getDamage() / 100) * (100 - DamageDecrease);
+			double damage = (e.getDamage() / 100) * (100 - DamageDecrease);
 			e.setDamage(damage);
 			
-			Integer Health = (int) getPlayer().getHealth();
+			int Health = (int) getPlayer().getHealth();
 			if(Health <= 2) {
 				e.setCancelled(true);
 			}

@@ -3,6 +3,7 @@ package daybreak.abilitywar.utils.database;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -20,7 +21,7 @@ public class MojangAPI {
 	
 	public static String getNickname(String UUID) throws Exception {
 		URL nicknames = new URL("https://api.mojang.com/user/profiles/" + UUID + "/names");
-		BufferedReader br = new BufferedReader(new InputStreamReader(nicknames.openStream(), "UTF-8"));
+		BufferedReader br = new BufferedReader(new InputStreamReader(nicknames.openStream(), StandardCharsets.UTF_8));
 		
 		String result = "";
 

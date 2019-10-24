@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "베르투스", Rank = Rank.A, Species = Species.HUMAN)
 public class Virtus extends AbilityBase {
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 5,
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 5,
 			"# 능력 지속시간") {
 		
 		@Override
@@ -32,7 +32,7 @@ public class Virtus extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Virtus.class, "Cooldown", 70,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Virtus.class, "Cooldown", 70,
 			"# 쿨타임") {
 		
 		@Override
@@ -47,11 +47,11 @@ public class Virtus extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 데미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	private boolean Activated = false;
 	
-	private TimerBase Activate = new TimerBase(DurationConfig.getValue()) {
+	private final TimerBase Activate = new TimerBase(DurationConfig.getValue()) {
 		
 		@Override
 		public void onStart() {
@@ -73,8 +73,8 @@ public class Virtus extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Activate.StartTimer();
 					

@@ -34,13 +34,13 @@ import daybreak.abilitywar.utils.thread.TimerBase;
  * 만들어진 <strong>모든 능력은 반드시 {@link AbilityFactory}에 등록되어야 합니다.</strong>
  * <p>
  * <ul>
- * {@link AbilityFactory#registerAbility(clazz)}
+ * {@link AbilityFactory#registerAbility}
  * </ul>
  * {@link DefaultGame}, {@link ChangeAbilityWar} 등에서 사용할 능력은 추가적으로
  * {@link AbilityList}에 등록해야 합니다.
  * <p>
  * <ul>
- * {@link AbilityList#registerAbility(clazz)}
+ * {@link AbilityList#registerAbility}
  * </ul>
  * 
  * @author DayBreak 새벽
@@ -104,8 +104,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 	/**
 	 * 액티브 스킬 발동을 위해 사용됩니다.
 	 * 
-	 * @param materialType 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
-	 * @param clickType    클릭의 종류
+	 * @param mt 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
+	 * @param ct 클릭의 종류
 	 * @return 능력 발동 여부
 	 */
 	public abstract boolean ActiveSkill(MaterialType mt, ClickType ct);
@@ -113,7 +113,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	/**
 	 * 타겟팅 스킬 발동을 위해 사용됩니다.
 	 * 
-	 * @param materialType 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
+	 * @param mt 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
 	 * @param entity       타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 될 수 있습니다. null 체크가 필요합니다.
 	 */
 	public abstract void TargetSkill(MaterialType mt, LivingEntity entity);
@@ -134,7 +134,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		stopTimers();
 	}
 
-	private final void stopTimers() {
+	private void stopTimers() {
 		for (Field field : timers) {
 			try {
 				field.setAccessible(true);
@@ -214,17 +214,15 @@ public abstract class AbilityBase implements PassiveExecutor {
 		}
 	}
 
-	public enum ClickType {
-		LeftClick, RightClick;
-	}
+	public enum ClickType {LEFT_CLICK, RIGHT_CLICK}
 
 	public enum MaterialType {
 
-		Iron_Ingot(Material.IRON_INGOT), Gold_Ingot(Material.GOLD_INGOT);
+		IRON_INGOT(Material.IRON_INGOT), GOLD_INGOT(Material.GOLD_INGOT);
 
-		private Material material;
+		private final Material material;
 
-		private MaterialType(Material material) {
+		MaterialType(Material material) {
 			this.material = material;
 		}
 

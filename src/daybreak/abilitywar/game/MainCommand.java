@@ -513,9 +513,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	private void sendHelpConfigCommand(CommandSender sender, String label, Integer Page) {
 		int AllPage = 1;
 
-		switch (Page) {
-		case 1:
-			sender.sendMessage(new String[] { Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
+		if (Page == 1) {
+			sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
 					ChatColor.translateAlternateColorCodes('&',
 							"&b/" + label + " config <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + Page + " 페이지 &7/ &b" + AllPage
 									+ " 페이지 &7)"),
@@ -523,11 +522,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Messager.formatCommand(label + " config", "spawn", "능력자 전쟁 스폰을 설정합니다.", true),
 					Messager.formatCommand(label + " config", "inv", "초반 무적을 설정합니다.", true),
 					Messager.formatCommand(label + " config", "game", "게임의 전반적인 부분들을 설정합니다.", true),
-					Messager.formatCommand(label + " config", "death", "플레이어 사망에 관련된 콘피그를 설정합니다.", true) });
-			break;
-		default:
+					Messager.formatCommand(label + " config", "death", "플레이어 사망에 관련된 콘피그를 설정합니다.", true)});
+		} else {
 			Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
-			break;
 		}
 	}
 

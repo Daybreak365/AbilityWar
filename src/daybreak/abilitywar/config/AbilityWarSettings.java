@@ -41,7 +41,7 @@ public class AbilityWarSettings {
 		}
 	}
 
-	public static void update() throws FileNotFoundException, IOException, InvalidConfigurationException {
+	public static void update() throws IOException, InvalidConfigurationException {
 		config.load();
 
 		for (Entry<ConfigNodes, Cache> entry : cache.entrySet()) {
@@ -68,7 +68,7 @@ public class AbilityWarSettings {
 		lastModified = file.lastModified();
 	}
 
-	private static EnumMap<ConfigNodes, Cache> cache = new EnumMap<>(ConfigNodes.class);
+	private static final EnumMap<ConfigNodes, Cache> cache = new EnumMap<>(ConfigNodes.class);
 
 	@SuppressWarnings("unchecked") // Private only method
 	private static <T> T get(ConfigNodes configNode, Class<T> clazz) throws IllegalStateException {

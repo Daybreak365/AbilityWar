@@ -50,9 +50,9 @@ public class SpawnWizard extends SettingWizard {
 				spawnMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b스폰 설정"));
 
 				Location spawnLocation = Settings.getSpawnLocation();
-				Double X = spawnLocation.getX();
-				Double Y = spawnLocation.getY();
-				Double Z = spawnLocation.getZ();
+				double X = spawnLocation.getX();
+				double Y = spawnLocation.getY();
+				double Z = spawnLocation.getZ();
 
 				spawnMeta.setLore(Arrays.asList(
 						ChatColor.translateAlternateColorCodes('&', "&f당신이 현재 서 있는 &a위치&f를 &b스폰&f으로 설정합니다."),

@@ -28,7 +28,7 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 @AbilityManifest(Name = "여제", Rank = Rank.B, Species = Species.HUMAN)
 public class TheEmpress extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheEmpress.class, "Cooldown", 70, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheEmpress.class, "Cooldown", 70,
 			"# 쿨타임") {
 		
 		@Override
@@ -38,7 +38,7 @@ public class TheEmpress extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Boolean> EasterEggConfig = new SettingObject<Boolean>(TheEmpress.class, "EasterEgg", true, 
+	public static final SettingObject<Boolean> EasterEggConfig = new SettingObject<Boolean>(TheEmpress.class, "EasterEgg", true,
 			"# 이스터에그 활성화 여부",
 			"# false로 설정하면 이스터에그가 발동되지 않습니다.") {
 		
@@ -60,12 +60,12 @@ public class TheEmpress extends AbilityBase {
 	
 	private boolean EasterEgg = !EasterEggConfig.getValue();
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Location l = getPlayer().getLocation();
 					

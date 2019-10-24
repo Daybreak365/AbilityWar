@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import daybreak.abilitywar.game.games.defaultgame.DefaultGame;
 import org.bukkit.ChatColor;
 
 import daybreak.abilitywar.ability.AbilityBase;
@@ -69,7 +70,7 @@ import daybreak.abilitywar.utils.Messager;
 public class AbilityList {
 
 	private static final Messager messager = new Messager();
-	private static ArrayList<Class<? extends AbilityBase>> Abilities = new ArrayList<>();
+	private static final ArrayList<Class<? extends AbilityBase>> abilities = new ArrayList<>();
 	
 	/**
 	 * 능력을 등록합니다.
@@ -78,15 +79,15 @@ public class AbilityList {
 	 * 겹치는 이름은 없는지, 생성자는 올바른지 확인해주시길 바랍니다.
 	 * 
 	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
-	 * @param Ability		능력 클래스
+	 * @param abilityClass		능력 클래스
 	 */
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
-		if(!Abilities.contains(abilityClass)) {
+		if(!abilities.contains(abilityClass)) {
 			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
 			
 			if(manifest != null) {
 				if(!containsName(manifest.Name())) {
-					Abilities.add(abilityClass);
+					abilities.add(abilityClass);
 					
 					try {
 						for(Field field : abilityClass.getFields()) {
@@ -111,7 +112,7 @@ public class AbilityList {
 	}
 	
 	private static boolean containsName(String name) {
-		for(Class<? extends AbilityBase> abilityClass : Abilities) {
+		for(Class<? extends AbilityBase> abilityClass : abilities) {
 			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
 			if(manifest != null) {
 				if(manifest.Name().equalsIgnoreCase(name)) {
@@ -187,7 +188,7 @@ public class AbilityList {
 	public static List<String> nameValues() {
 		ArrayList<String> Values = new ArrayList<String>();
 		
-		for(Class<? extends AbilityBase> abilityClass : Abilities) {
+		for(Class<? extends AbilityBase> abilityClass : abilities) {
 			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
 			if(manifest != null) {
 				Values.add(manifest.Name());
@@ -204,7 +205,7 @@ public class AbilityList {
 	 * @return		능력 Class
 	 */
 	public static Class<? extends AbilityBase> getByString(String name) {
-		for(Class<? extends AbilityBase> abilityClass : Abilities) {
+		for(Class<? extends AbilityBase> abilityClass : abilities) {
 			AbilityManifest manifest = abilityClass.getAnnotation(AbilityManifest.class);
 			if(manifest != null) {
 				if(manifest.Name().equalsIgnoreCase(name)) {

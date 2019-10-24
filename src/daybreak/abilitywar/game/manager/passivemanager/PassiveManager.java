@@ -70,7 +70,7 @@ public class PassiveManager implements Listener, EventExecutor {
 	}
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
+	public void execute(Listener listener, Event event) {
 		Class<? extends Event> eventClass = event.getClass();
 		if (passiveExecutors.containsKey(eventClass)) {
 			for (PassiveExecutor pe : new ArrayList<>(passiveExecutors.get(eventClass))) {

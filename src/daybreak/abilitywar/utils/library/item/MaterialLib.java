@@ -898,7 +898,7 @@ public enum MaterialLib {
 		if(!isNewVersion()) try { setData = Block.class.getDeclaredMethod("setData", byte.class); } catch (Exception e) {}
 	}
 	
-	private MaterialLib(int data, String... m){
+	MaterialLib(int data, String... m){
 		this.m = m;
 		this.data = data;
 	}
@@ -960,9 +960,7 @@ public enum MaterialLib {
 		}
 		MaterialLib xmat = fromMaterial(comp.getType());
 		if(isDamageable(xmat)){
-			if(this.getMaterial() == comp.getType()){
-				return true;
-			}
+			return this.getMaterial() == comp.getType();
 		}
 		return false;
 	}

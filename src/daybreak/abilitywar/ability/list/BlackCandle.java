@@ -24,7 +24,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "검은 양초", Rank = Rank.A, Species = Species.OTHERS)
 public class BlackCandle extends AbilityBase {
 
-	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 35,
+	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 35,
 			"# 데미지를 받았을 시 체력을 회복할 확률") {
 		
 		@Override
@@ -40,7 +40,7 @@ public class BlackCandle extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f또한, 데미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
 	}
 
-	private TimerBase NoDebuff = new TimerBase() {
+	private final TimerBase NoDebuff = new TimerBase() {
 		
 		@Override
 		public void onStart() {}

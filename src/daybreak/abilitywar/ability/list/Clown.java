@@ -21,7 +21,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 @AbilityManifest(Name = "광대", Rank = Rank.B, Species = Species.HUMAN)
 public class Clown extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Clown.class, "Cooldown", 60, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Clown.class, "Cooldown", 60,
 			"# 쿨타임") {
 		
 		@Override
@@ -31,7 +31,7 @@ public class Clown extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Clown.class, "Range", 10, 
+	public static final SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Clown.class, "Range", 10,
 			"# 스킬 범위") {
 		
 		@Override
@@ -50,9 +50,9 @@ public class Clown extends AbilityBase {
 
 	private Location OriginalPoint = null;
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
-	private DurationTimer Duration = new  DurationTimer(this, 10, Cool) {
+	private final DurationTimer Duration = new  DurationTimer(this, 10, Cool) {
 
 		@Override
 		protected void onDurationStart() {
@@ -72,8 +72,8 @@ public class Clown extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration()) {
 					if(!Cool.isCooldown()) {
 						Duration.StartTimer();

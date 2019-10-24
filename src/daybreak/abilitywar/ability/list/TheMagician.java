@@ -26,7 +26,7 @@ import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 @AbilityManifest(Name = "마술사", Rank = Rank.A, Species = Species.HUMAN)
 public class TheMagician extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 3, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 3,
 			"# 쿨타임") {
 		
 		@Override
@@ -47,7 +47,7 @@ public class TheMagician extends AbilityBase {
 		return false;
 	}
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {

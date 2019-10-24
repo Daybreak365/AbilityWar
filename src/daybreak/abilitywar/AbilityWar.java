@@ -23,7 +23,6 @@ import daybreak.abilitywar.game.script.types.LocationNoticeScript;
 import daybreak.abilitywar.game.script.types.TeleportScript;
 import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.installer.Branch;
 import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;

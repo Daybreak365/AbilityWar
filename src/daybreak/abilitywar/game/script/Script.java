@@ -72,7 +72,7 @@ public class Script {
 		}
 	}
 
-	private static ArrayList<ScriptRegisteration> ScriptTypes = new ArrayList<ScriptRegisteration>();
+	private static ArrayList<ScriptRegisteration> scriptTypes = new ArrayList<>();
 
 	/**
 	 * 스크립트 등록
@@ -81,7 +81,7 @@ public class Script {
 	 *                                  이름일 경우, 이미 등록된 스크립트 클래스일 경우
 	 */
 	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) {
-		for (ScriptRegisteration check : ScriptTypes) {
+		for (ScriptRegisteration check : scriptTypes) {
 			if (check.getClazz().getSimpleName().equalsIgnoreCase(clazz.getSimpleName())) {
 				messager.sendConsoleMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
 				return;
@@ -93,13 +93,13 @@ public class Script {
 			return;
 		}
 
-		ScriptTypes.add(new ScriptRegisteration(clazz, requiredDatas));
+		scriptTypes.add(new ScriptRegisteration(clazz, requiredDatas));
 	}
 
 	public static ScriptRegisteration getRegisteration(Class<? extends AbstractScript> clazz)
 			throws IllegalArgumentException, ScriptException {
 		if (isRegistered(clazz)) {
-			for (ScriptRegisteration sr : ScriptTypes) {
+			for (ScriptRegisteration sr : scriptTypes) {
 				if (sr.getClazz().equals(clazz)) {
 					return sr;
 				}
@@ -112,7 +112,7 @@ public class Script {
 	}
 
 	public static Class<? extends AbstractScript> getScriptClass(String className) throws ClassNotFoundException {
-		for (ScriptRegisteration reg : ScriptTypes) {
+		for (ScriptRegisteration reg : scriptTypes) {
 			if (reg.getClazz().getSimpleName().equalsIgnoreCase(className)) {
 				return reg.getClazz();
 			}
@@ -123,7 +123,7 @@ public class Script {
 
 	public static List<String> getRegisteredScripts() {
 		List<String> list = new ArrayList<String>();
-		for (ScriptRegisteration reg : ScriptTypes) {
+		for (ScriptRegisteration reg : scriptTypes) {
 			list.add(reg.getClazz().getSimpleName());
 		}
 
@@ -131,7 +131,7 @@ public class Script {
 	}
 
 	public static boolean isRegistered(Class<? extends AbstractScript> clazz) {
-		for (ScriptRegisteration check : ScriptTypes) {
+		for (ScriptRegisteration check : scriptTypes) {
 			if (check.getClazz().equals(clazz)) {
 				return true;
 			}

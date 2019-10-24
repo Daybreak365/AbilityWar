@@ -24,7 +24,7 @@ public class Zombie extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f에임이 종종 튑니다."));
 	}
 
-	private TimerBase Aim = new TimerBase() {
+	private final TimerBase Aim = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -32,7 +32,7 @@ public class Zombie extends AbilityBase {
 		@Override
 		public void onProcess(int Seconds) {
 			Random r = new Random();
-			Integer random = r.nextInt(100) + 1;
+			int random = r.nextInt(100) + 1;
 			
 			if(random <= 10) {
 				Location l = getPlayer().getLocation();

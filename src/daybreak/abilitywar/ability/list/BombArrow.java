@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @AbilityManifest(Name = "폭발화살", Rank = Rank.S, Species = Species.HUMAN)
 public class BombArrow extends AbilityBase {
 
-	public static SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BombArrow.class, "Chance", 50,
+	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BombArrow.class, "Chance", 50,
 			"# 화살을 맞췄을 때 몇 퍼센트 확률로 폭발을 일으킬지 설정합니다.",
 			"# 50은 50%를 의미합니다.") {
 		
@@ -31,7 +31,7 @@ public class BombArrow extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 2,
+	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 2,
 			"# 화살을 맞췄을 때 얼마나 큰 폭발을 일으킬지 설정합니다.") {
 		
 		@Override
@@ -54,7 +54,7 @@ public class BombArrow extends AbilityBase {
 	private final int Chance = ChanceConfig.getValue();
 	private final int Size = SizeConfig.getValue();
 	
-	private ArrayList<Arrow> ArrowList = new ArrayList<>();
+	private final ArrayList<Arrow> ArrowList = new ArrayList<>();
 	
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {

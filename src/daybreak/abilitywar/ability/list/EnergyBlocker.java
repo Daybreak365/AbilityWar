@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "에너지 블로커", Rank = Rank.A, Species = Species.HUMAN)
 public class EnergyBlocker extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(EnergyBlocker.class, "Cooldown", 3, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(EnergyBlocker.class, "Cooldown", 3,
 			"# 쿨타임") {
 		
 		@Override
@@ -42,12 +42,12 @@ public class EnergyBlocker extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Default = !Default;
 					Player p = getPlayer();
@@ -59,7 +59,7 @@ public class EnergyBlocker extends AbilityBase {
 					
 					Cool.StartTimer();
 				}
-			} else if(ct.equals(ClickType.LeftClick)) {
+			} else if(ct.equals(ClickType.LEFT_CLICK)) {
 				if(Default) {
 					getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f1/3&7, &a근거리 &f두 배"));
 				} else {
@@ -71,7 +71,7 @@ public class EnergyBlocker extends AbilityBase {
 		return false;
 	}
 
-	private TimerBase Particle = new TimerBase() {
+	private final TimerBase Particle = new TimerBase() {
 
 		@Override
 		public void onStart() {}

@@ -27,7 +27,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "글래디에이터", Rank = Rank.S, Species = Species.HUMAN)
 public class Gladiator extends AbilityBase {
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
 			"# 쿨타임") {
 		
 		@Override
@@ -43,11 +43,11 @@ public class Gladiator extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
+	private final HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
 	
-	private TimerBase FieldClear = new TimerBase(20) {
+	private final TimerBase FieldClear = new TimerBase(20) {
 		
 		@Override
 		public void onStart() {}
@@ -72,7 +72,7 @@ public class Gladiator extends AbilityBase {
 	
 	private Player target = null;
 	
-	private TimerBase Field = new TimerBase(26) {
+	private final TimerBase Field = new TimerBase(26) {
 		
 		Integer Count;
 		Integer TotalCount;
@@ -161,7 +161,7 @@ public class Gladiator extends AbilityBase {
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(entity != null) {
 				if(entity instanceof Player) {
 					if(!Cool.isCooldown()) {

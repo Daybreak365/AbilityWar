@@ -25,7 +25,7 @@ public class LocationSetter extends Setter<Location> {
 	}
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
+	public void execute(Listener listener, Event event) {
 		if(event instanceof PlayerInteractEvent) {
 			PlayerInteractEvent e = (PlayerInteractEvent) event;
 			if(e.getPlayer().equals(getWizard().getPlayer())) {
@@ -68,9 +68,9 @@ public class LocationSetter extends Setter<Location> {
 		if(this.getValue() != null) {
 			Location l = this.getValue();
 			String world = l.getWorld().getName();
-			Double X = l.getX();
-			Double Y = l.getY();
-			Double Z = l.getZ();
+			double X = l.getX();
+			double Y = l.getY();
+			double Z = l.getZ();
 			locMeta.setLore(Messager.asList(
 					ChatColor.translateAlternateColorCodes('&', "&a월드&f: " + world),
 					ChatColor.translateAlternateColorCodes('&', "&bX&f: " + X),

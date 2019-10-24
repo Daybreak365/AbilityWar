@@ -75,7 +75,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
  */
 public class AbilityFactory {
 
-	private static Map<Class<? extends AbilityBase>, AbilityRegisteration<? extends AbilityBase>> RegisteredAbilities = new HashMap<>();
+	private static final Map<Class<? extends AbilityBase>, AbilityRegisteration<? extends AbilityBase>> registeredAbilities = new HashMap<>();
 
 	/**
 	 * 능력을 등록합니다.
@@ -85,14 +85,14 @@ public class AbilityFactory {
 	 * 
 	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
 	 * 
-	 * @param Ability 능력 클래스
+	 * @param abilityClass 능력 클래스
 	 */
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
-		if (!RegisteredAbilities.containsKey(abilityClass)) {
+		if (!registeredAbilities.containsKey(abilityClass)) {
 			try {
 				AbilityRegisteration<?> registeration = new AbilityRegisteration<>(abilityClass);
 				if (!containsName(registeration.getManifest().Name())) {
-					RegisteredAbilities.put(abilityClass, registeration);
+					registeredAbilities.put(abilityClass, registeration);
 
 					for (Field field : abilityClass.getFields()) {
 						if (field.getType().equals(SettingObject.class) && Modifier.isStatic(field.getModifiers())) {
@@ -115,15 +115,15 @@ public class AbilityFactory {
 	}
 
 	public static AbilityRegisteration<?> getRegisteration(Class<? extends AbilityBase> clazz) {
-		return RegisteredAbilities.get(clazz);
+		return registeredAbilities.get(clazz);
 	}
 
 	public static boolean isRegistered(Class<? extends AbilityBase> clazz) {
-		return RegisteredAbilities.containsKey(clazz);
+		return registeredAbilities.containsKey(clazz);
 	}
 
 	private static boolean containsName(String name) {
-		for (AbilityRegisteration<?> r : RegisteredAbilities.values()) {
+		for (AbilityRegisteration<?> r : registeredAbilities.values()) {
 			AbilityManifest manifest = r.getManifest();
 			if (manifest.Name().equalsIgnoreCase(name)) {
 				return true;
@@ -199,7 +199,7 @@ public class AbilityFactory {
 	public static List<String> nameValues() {
 		ArrayList<String> Values = new ArrayList<String>();
 
-		for (AbilityRegisteration<?> r : RegisteredAbilities.values()) {
+		for (AbilityRegisteration<?> r : registeredAbilities.values()) {
 			AbilityManifest manifest = r.getManifest();
 			Values.add(manifest.Name());
 		}
@@ -209,13 +209,13 @@ public class AbilityFactory {
 
 	/**
 	 * 등록된 능력 중 해당 이름의 능력을 반환합니다. AbilityManifest가 존재하지 않는 능력이거나 존재하지 않는 능력일 경우
-	 * null을 반환합니다.
+	 * null을 반환할 수 있습니다.
 	 * 
 	 * @param name 능력의 이름
 	 * @return 능력 Class
 	 */
 	public static Class<? extends AbilityBase> getByString(String name) {
-		for (AbilityRegisteration<?> r : RegisteredAbilities.values()) {
+		for (AbilityRegisteration<?> r : registeredAbilities.values()) {
 			AbilityManifest manifest = r.getManifest();
 			if (manifest.Name().equalsIgnoreCase(name)) {
 				return r.getAbilityClass();

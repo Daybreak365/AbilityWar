@@ -17,7 +17,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "심안", Rank = Rank.C, Species = Species.HUMAN)
 public class DarkVision extends AbilityBase {
 	
-	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
+	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
 			"# 거리 설정") {
 		
 		@Override
@@ -33,7 +33,7 @@ public class DarkVision extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다. 또한, 빠르게 달리고 높게 점프할 수 있습니다."));
 	}
 
-	private TimerBase Dark = new TimerBase() {
+	private final TimerBase Dark = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -50,9 +50,9 @@ public class DarkVision extends AbilityBase {
 		
 	}.setPeriod(2);
 	
-	private TimerBase Vision = new TimerBase() {
+	private final TimerBase Vision = new TimerBase() {
 		
-		Integer Distance = DistanceConfig.getValue();
+		final Integer Distance = DistanceConfig.getValue();
 		
 		@Override
 		public void onStart() {}

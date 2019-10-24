@@ -27,9 +27,9 @@ public class NumberUtil {
 	}
 
 	public static String parseTimeString(Integer Second) {
-		Integer Hour = Second / 3600;
+		int Hour = Second / 3600;
 		Second -= Hour * 3600;
-		Integer Minute = Second / 60;
+		int Minute = Second / 60;
 		Second -= Minute * 60;
 
 		return (Hour != 0 ? Hour + "시간 " : "") + (Minute != 0 ? Minute + "분 " : "") + (Second >= 0 ? Second + "초" : "");
@@ -45,7 +45,7 @@ public class NumberUtil {
 		}
 	}
 
-	public static enum NumberStatus {
+	public enum NumberStatus {
 
 		Minus, Zero, Plus;
 

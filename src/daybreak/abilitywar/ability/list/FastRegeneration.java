@@ -16,7 +16,7 @@ import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 @AbilityManifest(Name = "빠른 회복", Rank = Rank.A, Species = Species.HUMAN)
 public class FastRegeneration extends AbilityBase {
 	
-	public static SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>(FastRegeneration.class, "RegenSpeed", 20,
+	public static final SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>(FastRegeneration.class, "RegenSpeed", 20,
 			"# 회복 속도를 설정합니다.",
 			"# 숫자가 낮을수록 회복이 더욱 빨라집니다.") {
 		
@@ -32,7 +32,7 @@ public class FastRegeneration extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다."));
 	}
 	
-	private TimerBase Passive = new TimerBase() {
+	private final TimerBase Passive = new TimerBase() {
 		
 		@Override
 		public void onStart() {}

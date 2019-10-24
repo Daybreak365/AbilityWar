@@ -38,8 +38,8 @@ public class AbilityGUI implements Listener {
 		this.target = null;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 
-		Values = new ArrayList<String>(AbilityList.nameValues());
-		Values.sort(new Comparator<String>() {
+		values = new ArrayList<String>(AbilityList.nameValues());
+		values.sort(new Comparator<String>() {
 
 			public int compare(String obj1, String obj2) {
 				return obj1.compareToIgnoreCase(obj2);
@@ -53,8 +53,8 @@ public class AbilityGUI implements Listener {
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 
-		Values = new ArrayList<String>(AbilityList.nameValues());
-		Values.sort(new Comparator<String>() {
+		values = new ArrayList<String>(AbilityList.nameValues());
+		values.sort(new Comparator<String>() {
 
 			public int compare(String obj1, String obj2) {
 				return obj1.compareToIgnoreCase(obj2);
@@ -63,14 +63,14 @@ public class AbilityGUI implements Listener {
 		});
 	}
 
-	private ArrayList<String> Values;
+	private final ArrayList<String> values;
 
 	private int PlayerPage = 1;
 
 	private Inventory AbilityGUI;
 
 	public void openAbilityGUI(Integer page) {
-		Integer MaxPage = ((Values.size() - 1) / 36) + 1;
+		Integer MaxPage = ((values.size() - 1) / 36) + 1;
 		if (MaxPage < page)
 			page = 1;
 		if (page < 1)
@@ -80,7 +80,7 @@ public class AbilityGUI implements Listener {
 		PlayerPage = page;
 		int Count = 0;
 
-		for (String name : Values) {
+		for (String name : values) {
 			ItemStack is = new ItemStack(Material.IRON_BLOCK);
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));

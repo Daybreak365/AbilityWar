@@ -20,13 +20,13 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 @AbilityManifest(Name = "구속", Rank = Rank.B, Species = Species.HUMAN)
 public class Imprison extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig=new SettingObject<Integer>(Imprison.class,"Cooldown",25,"# 쿨타임"){
+	public static final SettingObject<Integer> CooldownConfig=new SettingObject<Integer>(Imprison.class,"Cooldown",25,"# 쿨타임"){
 
 	@Override public boolean Condition(Integer value){return value>=0;}
 
 	};
 
-	public static SettingObject<Integer> SizeConfig=new SettingObject<Integer>(Imprison.class,"Size",3,"# 스킬 크기"){
+	public static final SettingObject<Integer> SizeConfig=new SettingObject<Integer>(Imprison.class,"Size",3,"# 스킬 크기"){
 
 	@Override public boolean Condition(Integer value){return value>=0;}
 
@@ -37,7 +37,7 @@ public class Imprison extends AbilityBase {
 				"&f상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	private final int size = SizeConfig.getValue();
 
@@ -51,7 +51,7 @@ public class Imprison extends AbilityBase {
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
-		if (mt.equals(MaterialType.Iron_Ingot)) {
+		if (mt.equals(MaterialType.IRON_INGOT)) {
 			if (entity != null) {
 				if (!Cool.isCooldown()) {
 					List<Block> blocks = LocationUtil.getBlocks(entity.getLocation(), size, true, false, true);

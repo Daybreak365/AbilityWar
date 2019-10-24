@@ -25,7 +25,7 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 @AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Sniper.class, "Duration", 2, 
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Sniper.class, "Duration", 2,
 			"# 능력 지속시간") {
 		
 		@Override
@@ -42,7 +42,7 @@ public class Sniper extends AbilityBase {
 
 	private final int Duration = DurationConfig.getValue();
 	
-	private TimerBase Snipe = ServerVersion.getVersion() < 14 ?
+	private final TimerBase Snipe = ServerVersion.getVersion() < 14 ?
 	new TimerBase() {
 		
 		@Override
@@ -87,7 +87,7 @@ public class Sniper extends AbilityBase {
 		return false;
 	}
 
-	private List<Arrow> arrows = new ArrayList<Arrow>();
+	private final List<Arrow> arrows = new ArrayList<Arrow>();
 	
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {

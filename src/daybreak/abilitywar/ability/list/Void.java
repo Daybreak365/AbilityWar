@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "보이드", Rank = Rank.A, Species = Species.OTHERS)
 public class Void extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Void.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Void.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -42,9 +42,9 @@ public class Void extends AbilityBase {
 
 	private boolean Inv = false;
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private TimerBase Invincibility = new TimerBase(5) {
+	private final TimerBase Invincibility = new TimerBase(5) {
 		
 		@Override
 		public void onStart() {
@@ -63,8 +63,8 @@ public class Void extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 

@@ -29,7 +29,7 @@ import daybreak.abilitywar.utils.math.geometry.Circle;
 @AbilityManifest(Name = "뮤즈", Rank = Rank.S, Species = Species.OTHERS)
 public class Muse extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Muse.class, "Cooldown", 80, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Muse.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -45,11 +45,11 @@ public class Muse extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f모두가 데미지를 받지 않는 지역을 만들어냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	private Location center = null;
 	
-	private DurationTimer Skill = new DurationTimer(this, 90, Cool) {
+	private final DurationTimer Skill = new DurationTimer(this, 90, Cool) {
 		
 		private Integer Count;
 		private int SoundCount;
@@ -142,8 +142,8 @@ public class Muse extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Skill.isDuration() && !Cool.isCooldown()) {
 					Skill.StartTimer();
 					

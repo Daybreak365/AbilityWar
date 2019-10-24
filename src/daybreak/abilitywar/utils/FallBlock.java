@@ -1,8 +1,7 @@
 package daybreak.abilitywar.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,8 +15,9 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * FallingBlock을 더욱 편하게 사용하기 위해 만든 유틸입니다.
@@ -26,7 +26,6 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 @SuppressWarnings("deprecation")
 public abstract class FallBlock implements Listener {
 
-	private Class<?> mdClass = null;
 	private Object Data = null;
 	private Byte byteData = null;
 	private Location location;
@@ -43,9 +42,8 @@ public abstract class FallBlock implements Listener {
 			this.Data = Data.createBlockData();
 		} else {
 			try {
-				this.mdClass = Class.forName("org.bukkit.material.MaterialData");
-				this.Data = mdClass.getConstructor(Material.class).newInstance(Data);
-			} catch(Exception ex) {}
+				this.Data = Class.forName("org.bukkit.material.MaterialData").getConstructor(Material.class).newInstance(Data);
+			} catch(ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {}
 		}
 		this.location = location;
 		this.world = location.getWorld();

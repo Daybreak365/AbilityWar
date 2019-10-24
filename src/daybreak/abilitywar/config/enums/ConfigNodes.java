@@ -83,7 +83,7 @@ public enum ConfigNodes {
 	private final Object defaultValue;
 	private final String[] comments;
 
-	private ConfigNodes(String path, Object defaultValue, String... comments) {
+	ConfigNodes(String path, Object defaultValue, String... comments) {
 		this.path = path;
 		this.defaultValue = defaultValue;
 		this.comments = comments;

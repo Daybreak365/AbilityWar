@@ -4,6 +4,6 @@ import org.bukkit.event.Event;
 
 public interface PassiveExecutor {
 
-	public void execute(Event event);
+	void execute(Event event);
 	
 }

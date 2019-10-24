@@ -29,9 +29,9 @@ public class ShowmanShip extends AbilityBase {
 	private final RGB POWER = new RGB(255, 184, 150);
 	private final RGB POWERFUL = new RGB(255, 59, 59);
 	
-	private TimerBase Passive = new TimerBase() {
+	private final TimerBase Passive = new TimerBase() {
 
-		private Circle circle = new Circle(getPlayer().getLocation(), 10).setAmount(100).setHighestLocation(true);
+		private final Circle circle = new Circle(getPlayer().getLocation(), 10).setAmount(100).setHighestLocation(true);
 		
 		@Override
 		public void onStart() {}
@@ -46,7 +46,7 @@ public class ShowmanShip extends AbilityBase {
 				for(Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, WEAK, 0);
 				}
-			} else if(Count > 1 && Count <= 2) {
+			} else if(Count == 2) {
 				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 1, true);
 				for(Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWER, 0);

@@ -27,7 +27,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 @AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase {
 	
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 55, 
+	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 55,
 			"# 스킬 데미지") {
 		
 		@Override
@@ -37,7 +37,7 @@ public class Ares extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Ares.class, "Cooldown", 60, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Ares.class, "Cooldown", 60,
 			"# 쿨타임") {
 		
 		@Override
@@ -47,7 +47,7 @@ public class Ares extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Boolean> DashConfig = new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false, 
+	public static final SettingObject<Boolean> DashConfig = new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false,
 			"# true로 설정하면 아레스 능력 사용 시 공중으로 돌진 할 수 있습니다.") {
 		
 		@Override
@@ -64,12 +64,12 @@ public class Ares extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 밀쳐냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private DurationTimer Duration = new DurationTimer(this, 20, Cool) {
+	private final DurationTimer Duration = new DurationTimer(this, 20, Cool) {
 		
-		private boolean DashIntoTheAir = DashConfig.getValue();
-		private int DamagePercent = DamageConfig.getValue();
+		private final boolean DashIntoTheAir = DashConfig.getValue();
+		private final int DamagePercent = DamageConfig.getValue();
 		private ArrayList<Damageable> Attacked;
 		
 		@Override
@@ -112,8 +112,8 @@ public class Ares extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.StartTimer();
 					

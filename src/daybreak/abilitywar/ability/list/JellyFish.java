@@ -18,7 +18,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @AbilityManifest(Name = "해파리", Rank = Rank.A, Species = Species.ANIMAL)
 public class JellyFish extends AbilityBase {
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(JellyFish.class, "Duration", 4, 
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(JellyFish.class, "Duration", 4,
 			"# 지속 시간 (틱 단위)") {
 		
 		@Override

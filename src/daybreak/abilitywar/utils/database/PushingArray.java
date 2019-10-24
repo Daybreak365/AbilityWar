@@ -3,6 +3,7 @@ package daybreak.abilitywar.utils.database;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -10,8 +11,8 @@ import java.util.List;
  * @author DayBreak 새벽
  */
 public class PushingArray<T> {
-	
-	private T[] array;
+	// TODO: 최적화
+	private final T[] array;
 	
 	@SuppressWarnings("unchecked")
 	public PushingArray(Class<T> clazz, int Size) {
@@ -19,23 +20,22 @@ public class PushingArray<T> {
 	}
 	
 	public void add(T t) {
-		T tempLast = null;
-		T Last = null;
+		T tempLast;
+		T last = null;
 		
 		for(int i = 0; i < array.length; i++) {
 			tempLast = array[i];
 			if(i == 0) {
 				array[i] = t;
 			} else {
-				array[i] = Last;
+				array[i] = last;
 			}
-			Last = tempLast;
+			last = tempLast;
 		}
 	}
 	
 	public List<T> toList() {
-		List<T> list = new ArrayList<>(Arrays.asList(array));
-		return list;
+		return new ArrayList<>(Arrays.asList(array));
 	}
 	
 }

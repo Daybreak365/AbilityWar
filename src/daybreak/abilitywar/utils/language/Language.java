@@ -3,6 +3,7 @@ package daybreak.abilitywar.utils.language;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public class Language {
@@ -19,20 +20,20 @@ public class Language {
 	private final Properties language = new Properties();
 
 	Language(String fileName) throws IOException {
-		language.load(new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/" + fileName), "UTF-8")));
+		language.load(new BufferedReader(new InputStreamReader(Language.class.getResourceAsStream("/" + fileName), StandardCharsets.UTF_8)));
 	}
 
 	public String get(LanguageNode node) {
 		return language.getProperty(node.key, "");
 	}
 
-	public static enum LanguageNode {
+	public enum LanguageNode {
 
 		;
 
 		private final String key;
 
-		private LanguageNode(String key) {
+		LanguageNode(String key) {
 			this.key = key;
 		}
 

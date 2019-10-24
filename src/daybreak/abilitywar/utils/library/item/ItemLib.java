@@ -60,7 +60,7 @@ public class ItemLib {
 		
 	}
 
-	public static enum ItemColor {
+	public enum ItemColor {
 
 		/**
 		 * 하얀색
@@ -328,20 +328,7 @@ public class ItemLib {
 			}
 		}
 		
-		public enum PotionShape {
-			/**
-			 * 일반 물약
-			 */
-			NORMAL,
-			/**
-			 * 투척용 물약
-			 */
-			SPLASH,
-			/**
-			 * 잔류형 물약
-			 */
-			LINGERING;
-		}
+		public enum PotionShape { NORMAL, SPLASH, LINGERING }
 		
 	}
 	

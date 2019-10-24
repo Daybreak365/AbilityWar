@@ -18,7 +18,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 @AbilityManifest(Name = "헤르밋", Rank = Rank.C, Species = Species.HUMAN)
 public class Hermit extends AbilityBase {
 
-	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Hermit.class, "Distance", 15, 
+	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Hermit.class, "Distance", 15,
 			"# 몇칸 이내에 플레이어가 들어왔을 때 알림을 띄울지 설정합니다.") {
 		
 		@Override

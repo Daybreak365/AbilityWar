@@ -16,7 +16,7 @@ public class ScriptException extends Exception {
 		
 		String Message;
 		
-		private State(String msg) {
+		State(String msg) {
 			this.Message = msg;
 		}
 		

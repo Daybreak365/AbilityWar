@@ -44,14 +44,14 @@ public class SquirtGun extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f시원한 &e여름 &f보내세요!"));
 	}
 
-	private CooldownTimer bombCool = new CooldownTimer(this, 30, "물폭탄").setActionbarNotice(false);
+	private final CooldownTimer bombCool = new CooldownTimer(this, 30, "물폭탄").setActionbarNotice(false);
 
-	private CooldownTimer spongeCool = new CooldownTimer(this, 15, "스펀지").setActionbarNotice(false);
+	private final CooldownTimer spongeCool = new CooldownTimer(this, 15, "스펀지").setActionbarNotice(false);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!bombCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
 					for(int i = 2; i > 0; i--)
@@ -87,11 +87,11 @@ public class SquirtGun extends AbilityBase {
 		return false;
 	}
 
-	CooldownTimer gunCool = new CooldownTimer(this, 3, "물총");
+	final CooldownTimer gunCool = new CooldownTimer(this, 3, "물총");
 	
-	List<Arrow> arrows = new ArrayList<Arrow>();
+	final List<Arrow> arrows = new ArrayList<Arrow>();
 	
-	TimerBase passive = new TimerBase() {
+	final TimerBase passive = new TimerBase() {
 		
 		@Override
 		protected void onStart() {}

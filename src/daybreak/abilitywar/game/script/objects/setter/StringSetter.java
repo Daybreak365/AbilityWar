@@ -22,7 +22,7 @@ public class StringSetter extends Setter<String> {
 	}
 	
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
+	public void execute(Listener listener, Event event) {
 		if(event instanceof AsyncPlayerChatEvent) {
 			AsyncPlayerChatEvent e = (AsyncPlayerChatEvent) event;
 			if(e.getPlayer().equals(getWizard().getPlayer())) {

@@ -144,7 +144,7 @@ public class DeathManager implements Listener {
 		return Eliminated.contains(p.getUniqueId());
 	}
 
-	public static interface Handler {
+	public interface Handler {
 		DeathManager getDeathManager();
 	}
 

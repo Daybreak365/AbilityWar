@@ -47,7 +47,7 @@ public class AbilitySettings {
 		}
 	}
 
-	private static HashMap<SettingObject<?>, Object> cache = new HashMap<>();
+	private static final HashMap<SettingObject<?>, Object> cache = new HashMap<>();
 
 	public static void Update() {
 		try {
@@ -57,7 +57,7 @@ public class AbilitySettings {
 		}
 	}
 
-	private static void update() throws FileNotFoundException, IOException, InvalidConfigurationException {
+	private static void update() throws IOException, InvalidConfigurationException {
 		config.load();
 		cache.clear();
 		lastModified = file.lastModified();

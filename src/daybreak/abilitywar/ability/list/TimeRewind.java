@@ -30,7 +30,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "시간 역행", Rank = Rank.S, Species = Species.HUMAN)
 public class TimeRewind extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
 			"# 쿨타임") {
 		
 		@Override
@@ -40,7 +40,7 @@ public class TimeRewind extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> TimeConfig = new SettingObject<Integer>(TimeRewind.class, "Time", 5, 
+	public static final SettingObject<Integer> TimeConfig = new SettingObject<Integer>(TimeRewind.class, "Time", 5,
 			"# 능력을 사용했을 때 몇초 전으로 돌아갈지 설정합니다.") {
 		
 		@Override
@@ -55,14 +55,14 @@ public class TimeRewind extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 시간을 역행해 " + TimeConfig.getValue() + "초 전으로 돌아갑니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private int Time = TimeConfig.getValue();
+	private final int Time = TimeConfig.getValue();
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Skill.StartTimer();
 					
@@ -99,7 +99,7 @@ public class TimeRewind extends AbilityBase {
 	
 	private PushingArray<PlayerData> array = new PushingArray<>(PlayerData.class, Time * 20);
 	
-	private DurationTimer Skill = new DurationTimer(this, Time * 10, Cool) {
+	private final DurationTimer Skill = new DurationTimer(this, Time * 10, Cool) {
 		
 		private List<PlayerData> list;
 		
@@ -128,7 +128,7 @@ public class TimeRewind extends AbilityBase {
 		
 	}.setPeriod(1);
 	
-	private TimerBase Save = new TimerBase() {
+	private final TimerBase Save = new TimerBase() {
 		
 		@Override
 		public void onStart() {}
@@ -150,8 +150,8 @@ public class TimeRewind extends AbilityBase {
 	
 	private class PlayerData {
 		
-		Location location;
-		Double Health;
+		final Location location;
+		final Double Health;
 		
 		public PlayerData(Player p) {
 			this.location = p.getLocation();

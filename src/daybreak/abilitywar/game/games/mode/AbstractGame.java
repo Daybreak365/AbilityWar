@@ -71,7 +71,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	/**
 	 * PassiveManager을 반환합니다.
 	 * 
-	 * @NotNull
+	 * null을 반환하지 않습니다.
 	 */
 	public PassiveManager getPassiveManager() {
 		return passiveManager;
@@ -80,7 +80,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	/**
 	 * EffectManager를 반환합니다.
 	 * 
-	 * @NotNull
+	 * null을 반환하지 않습니다.
 	 */
 	public EffectManager getEffectManager() {
 		return effectManager;
@@ -100,7 +100,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	 * 
 	 * @param player 탐색할 플레이어
 	 * @return 존재할 경우 {@link Participant}를 반환합니다. 존재하지 않을 경우 null을 반환합니다.
-	 * @Nullable
+	 * null을 반환할 수 있습니다.
 	 */
 	public final Participant getParticipant(Player player) {
 		String key = player.getUniqueId().toString();
@@ -114,7 +114,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	 * 
 	 * @param uuid 탐색할 플레이어의 UUID
 	 * @return 존재할 경우 {@link Participant}를 반환합니다. 존재하지 않을 경우 null을 반환합니다.
-	 * @Nullable
+	 * null을 반환할 수 있습니다.
 	 */
 	public final Participant getParticipant(UUID uuid) {
 		String key = uuid.toString();
@@ -185,7 +185,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		private Instant lastClick = Instant.now();
 
 		@Override
-		public void execute(Listener listener, Event event) throws EventException {
+		public void execute(Listener listener, Event event) {
 			if (event instanceof PlayerLoginEvent) {
 				PlayerLoginEvent e = (PlayerLoginEvent) event;
 				if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
@@ -198,8 +198,8 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 				if (p.equals(getPlayer())) {
 					MaterialType mt = parseMaterialType(VersionUtil.getItemInHand(p).getType());
 					ClickType ct = e.getAction().equals(Action.RIGHT_CLICK_AIR)
-							|| e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RightClick
-									: ClickType.LeftClick;
+							|| e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK
+									: ClickType.LEFT_CLICK;
 					if (mt != null) {
 						if (hasAbility()) {
 							AbilityBase Ability = this.getAbility();
@@ -270,13 +270,14 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		/**
 		 * 플레이어에게 해당 능력을 부여합니다.
 		 *
+		 * 능력을 부여하는 도중 오류가 발생하였을 경우 Exception을 throw합니다.
 		 * @param abilityClass 부여할 능력의 종류 (능력 클래스)
 		 * @throws SecurityException
 		 * @throws NoSuchMethodException
 		 * @throws InvocationTargetException
 		 * @throws IllegalArgumentException
 		 * @throws IllegalAccessException
-		 * @throws InstantiationException 능력을 부여하는 도중 오류가 발생하였을 경우
+		 * @throws InstantiationException
 		 */
 		public void setAbility(Class<? extends AbilityBase> abilityClass)
 				throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,

@@ -20,7 +20,7 @@ public class LoopSetter extends Setter<Boolean> {
 	}
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {}
+	public void execute(Listener listener, Event event) {}
 
 	@Override
 	public void onClick(ClickType click) {

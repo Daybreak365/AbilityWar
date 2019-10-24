@@ -27,7 +27,7 @@ public enum OnDeath {
 	
 	private final String description;
 	
-	private OnDeath(final String description) {
+	OnDeath(final String description) {
 		this.description = description;
 	}
 	

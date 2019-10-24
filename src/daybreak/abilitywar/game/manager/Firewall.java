@@ -35,7 +35,7 @@ public class Firewall implements EventExecutor {
 	}
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
+	public void execute(Listener listener, Event event) {
 		if (event instanceof PlayerLoginEvent) {
 			PlayerLoginEvent e = (PlayerLoginEvent) event;
 			Player p = e.getPlayer();

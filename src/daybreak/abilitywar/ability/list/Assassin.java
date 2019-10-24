@@ -21,17 +21,17 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "암살자", Rank = Rank.A, Species = Species.HUMAN)
 public class Assassin extends AbilityBase {
 
-	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 6, 
+	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 6,
 			"# 스킬 데미지") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value > 0;
 		}
-		
+
 	};
 	
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 12, 
+	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 12,
 			"# 스킬 데미지") {
 		
 		@Override
@@ -41,7 +41,7 @@ public class Assassin extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Assassin.class, "Cooldown", 25,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Assassin.class, "Cooldown", 25,
 			"# 쿨타임") {
 		
 		@Override
@@ -51,7 +51,7 @@ public class Assassin extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Integer> TeleportCountConfig = new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
+	public static final SettingObject<Integer> TeleportCountConfig = new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
 			"# 능력 사용 시 텔레포트 횟수") {
 		
 		@Override
@@ -67,15 +67,15 @@ public class Assassin extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	private List<Damageable> Entities = null;
 	
 	private final int Distance = DistanceConfig.getValue();
 	
-	private TimerBase Duration = new TimerBase(TeleportCountConfig.getValue()) {
+	private final TimerBase Duration = new TimerBase(TeleportCountConfig.getValue()) {
 		
-		Integer Damage = DamageConfig.getValue();
+		final Integer Damage = DamageConfig.getValue();
 		
 		@Override
 		public void onStart() {}
@@ -100,11 +100,11 @@ public class Assassin extends AbilityBase {
 		public void onEnd() {}
 		
 	}.setPeriod(3);
-	
+
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					this.Entities = LocationUtil.getNearbyDamageableEntities(getPlayer(), Distance, 5);
 					if(Entities.size() > 0) {

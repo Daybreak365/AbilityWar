@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.math.geometry.Circle;
 @AbilityManifest(Name = "교황", Rank = Rank.A, Species = Species.HUMAN)
 public class TheHighPriestess extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheHighPriestess.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheHighPriestess.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -33,7 +33,7 @@ public class TheHighPriestess extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(TheHighPriestess.class, "Duration", 6,
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(TheHighPriestess.class, "Duration", 6,
 			"# 스킬 지속시간") {
 		
 		@Override
@@ -43,7 +43,7 @@ public class TheHighPriestess extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(TheHighPriestess.class, "Range", 8,
+	public static final SettingObject<Integer> RangeConfig = new SettingObject<Integer>(TheHighPriestess.class, "Range", 8,
 			"# 스킬 사용 시 자신의 영지로 선포할 범위") {
 		
 		@Override
@@ -62,9 +62,9 @@ public class TheHighPriestess extends AbilityBase {
 	private final Integer Duration = DurationConfig.getValue();
 	private final Integer Range = RangeConfig.getValue();
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private DurationTimer Skill = new DurationTimer(this, Duration * 20, Cool) {
+	private final DurationTimer Skill = new DurationTimer(this, Duration * 20, Cool) {
 		
 		private Location center;
 		
@@ -103,8 +103,8 @@ public class TheHighPriestess extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if (mt.equals(MaterialType.Iron_Ingot)) {
-			if (ct.equals(ClickType.RightClick)) {
+		if (mt.equals(MaterialType.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Skill.isDuration() && !Cool.isCooldown()) {
 					
 					Skill.StartTimer();

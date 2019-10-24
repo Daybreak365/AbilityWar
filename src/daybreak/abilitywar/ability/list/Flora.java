@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "플로라", Rank = Rank.C, Species = Species.GOD)
 public class Flora extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 3, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 3,
 			"# 쿨타임") {
 		
 		@Override
@@ -41,7 +41,7 @@ public class Flora extends AbilityBase {
 	
 	private EffectType type = EffectType.Speed;
 	
-	private TimerBase Passive = new TimerBase() {
+	private final TimerBase Passive = new TimerBase() {
 		
 		private Location center;
 		
@@ -73,12 +73,12 @@ public class Flora extends AbilityBase {
 		
 	}.setPeriod(1);
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Player p = getPlayer();
 					if(type.equals(EffectType.Speed)) {
@@ -91,7 +91,7 @@ public class Flora extends AbilityBase {
 					
 					Cool.StartTimer();
 				}
-			} else if(ct.equals(ClickType.LeftClick)) {
+			} else if(ct.equals(ClickType.LEFT_CLICK)) {
 				getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: " + type.getName()));
 			}
 		}
@@ -109,9 +109,9 @@ public class Flora extends AbilityBase {
 		Regeneration(ChatColor.translateAlternateColorCodes('&', "&c재생")),
 		Speed(ChatColor.translateAlternateColorCodes('&', "&b신속"));
 		
-		String name;
+		final String name;
 		
-		private EffectType(String name) {
+		EffectType(String name) {
 			this.name = name;
 		}
 		

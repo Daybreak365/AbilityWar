@@ -21,7 +21,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 @AbilityManifest(Name = "깃털", Rank = Rank.A, Species = Species.HUMAN)
 public class Feather extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -31,7 +31,7 @@ public class Feather extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Feather.class, "Duration", 10, 
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Feather.class, "Duration", 10,
 			"# 지속시간") {
 		
 		@Override
@@ -47,9 +47,9 @@ public class Feather extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f낙하 데미지를 무시합니다."));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
+	private final DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
 		@Override
 		public void onDurationStart() {}
@@ -69,8 +69,8 @@ public class Feather extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.StartTimer();
 					

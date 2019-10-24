@@ -30,10 +30,8 @@ public class EffectManager implements EventExecutor {
 		registerCondition(new EffectCondition() {
 			@Override
 			protected boolean checkCondition(Participant p, EffectType type) {
-				if (type.equals(EffectType.STUN) && p.hasAbility()
-						&& p.getAbility().getClass().equals(BlackCandle.class))
-					return false;
-				return true;
+				return !type.equals(EffectType.STUN) || !p.hasAbility()
+						|| !p.getAbility().getClass().equals(BlackCandle.class);
 			}
 		});
 	}
@@ -80,14 +78,10 @@ public class EffectManager implements EventExecutor {
 
 	}
 
-	private enum EffectType {
-
-		STUN;
-
-	}
+	private enum EffectType { STUN }
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {
+	public void execute(Listener listener, Event event) {
 		if (event instanceof PlayerMoveEvent) {
 			PlayerMoveEvent e = (PlayerMoveEvent) event;
 			Player p = e.getPlayer();
@@ -100,7 +94,7 @@ public class EffectManager implements EventExecutor {
 		}
 	}
 
-	public static interface Handler {
+	public interface Handler {
 		EffectManager getEffectManager();
 	}
 

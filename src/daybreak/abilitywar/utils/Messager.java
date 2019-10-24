@@ -55,9 +55,8 @@ public class Messager {
 
 	/**
 	 * 설치 설명을 구성합니다.
-	 * @throws IOException 
-	 */
-	public static String[] formatInstall(UpdateObject update) throws IOException {
+     */
+	public static String[] formatInstall(UpdateObject update) {
 		ArrayList<String> info = new ArrayList<String>();
 		info.add(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "업데이트"));
 		info.add(ChatColor.translateAlternateColorCodes('&', "&b" + update.getTag() + " &f업데이트 &f(&7v" + update.getVersion() + "&f) " + "(&7" + (update.getFileSize() / 1024) + "KB&f)"));
@@ -71,9 +70,8 @@ public class Messager {
 
 	/**
 	 * 업데이트 공지를 구성합니다.
-	 * @throws IOException 
-	 */
-	public static String[] formatUpdateNotice(UpdateObject update) throws IOException {
+     */
+	public static String[] formatUpdateNotice(UpdateObject update) {
 		return new String[] {
 				Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "업데이트"),
 				ChatColor.translateAlternateColorCodes('&', "&f적용 가능한 &3업데이트&f가 있습니다: &b" + update.getTag() + " &f업데이트 &f(&7v" + update.getVersion() + "&f) " + "(&7" + (update.getFileSize() / 1024) + "KB&f)"),

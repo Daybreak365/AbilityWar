@@ -17,7 +17,7 @@ import daybreak.abilitywar.utils.library.item.EnchantLib;
 @AbilityManifest(Name = "컬스", Rank = Rank.C, Species = Species.HUMAN)
 public class Curse extends AbilityBase {
 
-	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 3,
+	public static final SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 3,
 			"# 능력 사용횟수") {
 		
 		@Override
@@ -45,7 +45,7 @@ public class Curse extends AbilityBase {
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(entity != null) {
 				if(entity instanceof Player) {
 					Player p = (Player) entity;

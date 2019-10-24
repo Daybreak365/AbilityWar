@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 @AbilityManifest(Name = "카쟈드", Rank = Rank.A, Species = Species.GOD)
 public class Khazhad extends AbilityBase {
 
-	private static SettingObject<Integer> LeftCooldownConfig = new SettingObject<Integer>(Khazhad.class, "LeftCooldown", 4, "# 좌클릭 쿨타임") {
+	private static final SettingObject<Integer> LeftCooldownConfig = new SettingObject<Integer>(Khazhad.class, "LeftCooldown", 4, "# 좌클릭 쿨타임") {
 		
 		@Override
 		public boolean Condition(Integer arg0) {
@@ -31,7 +31,7 @@ public class Khazhad extends AbilityBase {
 
 	};
 
-	private static SettingObject<Integer> RightCooldownConfig = new SettingObject<Integer>(Khazhad.class, "RightCooldown", 10, "# 우클릭 쿨타임") {
+	private static final SettingObject<Integer> RightCooldownConfig = new SettingObject<Integer>(Khazhad.class, "RightCooldown", 10, "# 우클릭 쿨타임") {
 		
 		@Override
 		public boolean Condition(Integer arg0) {
@@ -47,13 +47,13 @@ public class Khazhad extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(RightCooldownConfig.getValue())));
 	}
 
-	private CooldownTimer LeftCool = new CooldownTimer(this, LeftCooldownConfig.getValue(), "좌클릭");
-	private CooldownTimer RightCool = new CooldownTimer(this, RightCooldownConfig.getValue(), "우클릭").setActionbarNotice(false);
+	private final CooldownTimer LeftCool = new CooldownTimer(this, LeftCooldownConfig.getValue(), "좌클릭");
+	private final CooldownTimer RightCool = new CooldownTimer(this, RightCooldownConfig.getValue(), "우클릭").setActionbarNotice(false);
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.LeftClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.LEFT_CLICK)) {
 				if(!LeftCool.isCooldown()) {
 					FallBlock fall = new FallBlock(Material.PACKED_ICE, getPlayer().getEyeLocation(), getPlayer().getLocation().getDirection().multiply(1.7)) {
 						
@@ -76,7 +76,7 @@ public class Khazhad extends AbilityBase {
 					LeftCool.StartTimer();
 					return true;
 				}
-			} else if(ct.equals(ClickType.RightClick)) {
+			} else if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!RightCool.isCooldown()) {
 					for(Block b : LocationUtil.getBlocks(getPlayer().getTargetBlock(null, 30).getLocation(), 5, false, false, false)) {
 						if(b.getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && b.getType().equals(Material.valueOf("STATIONARY_WATER")))) {

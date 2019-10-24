@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +27,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 /**
  * @author Developed by dumptruckman, LlmDL & Articdive, and modified by
@@ -47,7 +47,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 		this.file = file;
 	}
 
-	public void load() throws FileNotFoundException, IOException, InvalidConfigurationException {
+	public void load() throws IOException, InvalidConfigurationException {
 		super.load(file);
 	}
 
@@ -171,8 +171,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 	public void save(File file) throws IOException {
 		Validate.notNull(file, "File cannot be null");
 
-		Files.createParentDirs(file);
-
+		file.mkdirs();
 		String data = this.saveToString();
 
 		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
@@ -208,7 +207,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 
 			char[] buffer = new char[1024];
 			try (InputStream is = new FileInputStream(file)) {
-				Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				Reader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 				int n;
 				while ((n = reader.read(buffer)) != -1) {
 					writer.write(buffer, 0, n);
@@ -228,12 +227,10 @@ public class CommentedConfiguration extends YamlConfiguration {
 	 *
 	 * @param source String to write.
 	 * @param file   File to write to.
-	 * @return True on success.
-	 * @throws IOException
 	 */
 	public static void stringToFile(String source, File file) {
 		try {
-			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
 
 			out.write(source);
 			out.close();

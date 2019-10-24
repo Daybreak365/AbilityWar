@@ -872,11 +872,8 @@ public class SoundLib {
 				sound = getSound();
 				break;
 			case 8:
-				soundName = Name8;
-				sound = getSound();
-				break;
-			case 7:
-				soundName = Name8;
+				case 7:
+					soundName = Name8;
 				sound = getSound();
 				break;
 			}
@@ -927,82 +924,82 @@ public class SoundLib {
 	}
 
 	/**
-	 * @version 마인크래프트 1.14 ↑
+	 * 마인크래프트 버전 1.14 ↑
 	 */
 	public static Instruments BANJO = new Instruments("BANJO", "", "");
 
 	/**
-	 * @version 마인크래프트 1.9 ↑
+	 * 마인크래프트 버전 1.9 ↑
 	 */
 	public static Instruments BASS_DRUM = new Instruments("BASS_DRUM", "BASS_DRUM", "BASS_DRUM");
 
 	/**
-	 * @version 마인크래프트 1.9 ↑
+	 * 마인크래프트 버전 1.9 ↑
 	 */
 	public static Instruments BASS_GUITAR = new Instruments("BASS_GUITAR", "BASS_GUITAR", "BASS_GUITAR");
 
 	/**
-	 * @version 마인크래프트 1.12 ↑
+	 * 마인크래프트 버전 1.12 ↑
 	 */
 	public static Instruments BELL = new Instruments("BELL", "BELL", "");
 
 	/**
-	 * @version 마인크래프트 1.14 ↑
+	 * 마인크래프트 버전 1.14 ↑
 	 */
 	public static Instruments BIT = new Instruments("BIT", "", "");
 
 	/**
-	 * @version 마인크래프트 1.12 ↑
+	 * 마인크래프트 버전 1.12 ↑
 	 */
 	public static Instruments CHIME = new Instruments("CHIME", "CHIME", "");
 
 	/**
-	 * @version 마인크래프트 1.14 ↑
+	 * 마인크래프트 버전 1.14 ↑
 	 */
 	public static Instruments COW_BELL = new Instruments("COW_BELL", "", "");
 
 	/**
-	 * @version 마인크래프트 1.14 ↑
+	 * 마인크래프트 버전 1.14 ↑
 	 */
 	public static Instruments DIDGERIDOO = new Instruments("DIDGERIDOO", "", "");
 
 	/**
-	 * @version 마인크래프트 1.12 ↑
+	 * 마인크래프트 버전 1.12 ↑
 	 */
 	public static Instruments FLUTE = new Instruments("FLUTE", "FLUTE", "");
 
 	/**
-	 * @version 마인크래프트 1.12 ↑
+	 * 마인크래프트 버전 1.12 ↑
 	 */
 	public static Instruments GUITAR = new Instruments("GUITAR", "GUITAR", "");
 
 	/**
-	 * @version 마인크래프트 1.14 ↑
+	 * 마인크래프트 버전 1.14 ↑
 	 */
 	public static Instruments IRON_XYLOPHONE = new Instruments("IRON_XYLOPHONE", "", "");
 
 	/**
-	 * @version 마인크래프트 1.9 ↑
+	 * 마인크래프트 버전 1.9 ↑
 	 */
 	public static Instruments PIANO = new Instruments("PIANO", "PIANO", "PIANO");
 	
 	/**
-	 * @version 마인크래프트 1.14 ↑
+	 * 마인크래프트 버전 1.14 ↑
 	 */
 	public static Instruments PLING = new Instruments("PLING", "", "");
 
 	/**
-	 * @version 마인크래프트 1.9 ↑
+	 * 마인크래프트 버전 1.9 ↑
 	 */
 	public static Instruments SNARE_DRUM = new Instruments("SNARE_DRUM", "SNARE_DRUM", "SNARE_DRUM");
 
 	/**
-	 * @version 마인크래프트 1.9 ↑
+	 * 마인크래프트 버전 1.9 ↑
 	 */
 	public static Instruments STICKS = new Instruments("STICKS", "STICKS", "STICKS");
 
 	/**
-	 * @version 마인크래프트 1.12 ↑
+	 * 마인크래프트 버전 1.12 ↑
 	 */
 	public static Instruments XYLOPHONE = new Instruments("XYLOPHONE", "XYLOPHONE", "");
 

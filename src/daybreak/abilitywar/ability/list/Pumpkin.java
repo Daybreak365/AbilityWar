@@ -29,7 +29,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.HUMAN)
 public class Pumpkin extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -39,7 +39,7 @@ public class Pumpkin extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Pumpkin.class, "Duration", 15, 
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Pumpkin.class, "Duration", 15,
 			"# 지속 시간") {
 		
 		@Override
@@ -56,9 +56,9 @@ public class Pumpkin extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private TimerBase Song = new TimerBase(13) {
+	private final TimerBase Song = new TimerBase(13) {
 		
 		private ArrayList<Player> Players;
 		
@@ -106,7 +106,7 @@ public class Pumpkin extends AbilityBase {
 
 	private HashMap<Player, ItemStack> Players;
 	
-	private DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
+	private final DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
 		
 		@Override
 		public void onDurationStart() {
@@ -143,8 +143,8 @@ public class Pumpkin extends AbilityBase {
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.StartTimer();
 					

@@ -21,7 +21,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 @AbilityManifest(Name = "카오스", Rank = Rank.S, Species = Species.GOD)
 public class Chaos extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -31,7 +31,7 @@ public class Chaos extends AbilityBase {
 		
 	};
 	
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Chaos.class, "Duration", 5,
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Chaos.class, "Duration", 5,
 			"# 능력 지속 시간") {
 		
 		@Override
@@ -41,7 +41,7 @@ public class Chaos extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Chaos.class, "Distance", 5,
+	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Chaos.class, "Distance", 5,
 			"# 거리 설정") {
 		
 		@Override
@@ -58,11 +58,11 @@ public class Chaos extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	private final int Distance = DistanceConfig.getValue();
 	
-	private DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
+	private final DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
 
 		private Location center;
 		
@@ -88,8 +88,8 @@ public class Chaos extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.StartTimer();
 					

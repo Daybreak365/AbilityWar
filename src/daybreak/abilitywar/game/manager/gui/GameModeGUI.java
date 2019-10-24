@@ -45,7 +45,7 @@ public class GameModeGUI implements Listener {
 	private Inventory GameModeGUI;
 	
 	public void openGameModeGUI(int page) {
-		Integer MaxPage = ((GameMode.nameValues().size() - 1) / 18) + 1;
+		int MaxPage = ((GameMode.nameValues().size() - 1) / 18) + 1;
 		if (MaxPage < page) page = 1;
 		if(page < 1) page = 1;
 		GameModeGUI = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &8게임 모드"));

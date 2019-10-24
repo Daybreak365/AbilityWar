@@ -34,7 +34,7 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 @AbilityManifest(Name = "넥스", Rank = Rank.B, Species = Species.GOD)
 public class Nex extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -43,7 +43,7 @@ public class Nex extends AbilityBase {
 
 	};
 
-	public static SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# 데미지") {
+	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# 데미지") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -58,12 +58,12 @@ public class Nex extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if (mt.equals(MaterialType.Iron_Ingot)) {
-			if (ct.equals(ClickType.RightClick)) {
+		if (mt.equals(MaterialType.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
@@ -84,7 +84,7 @@ public class Nex extends AbilityBase {
 	private boolean NoFall = false;
 	private boolean RunSkill = false;
 
-	private TimerBase Skill = new TimerBase(4) {
+	private final TimerBase Skill = new TimerBase(4) {
 
 		@Override
 		public void onStart() {
@@ -108,7 +108,7 @@ public class Nex extends AbilityBase {
 
 	}.setPeriod(10);
 	
-	private int Damage = DamageConfig.getValue();
+	private final int Damage = DamageConfig.getValue();
 	
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
@@ -158,7 +158,7 @@ public class Nex extends AbilityBase {
 		}
 	}
 	
-	private TimerBase FallBlock = new TimerBase(5) {
+	private final TimerBase FallBlock = new TimerBase(5) {
 		
 		Location center;
 		

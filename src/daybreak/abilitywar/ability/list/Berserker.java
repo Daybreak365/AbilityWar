@@ -19,7 +19,7 @@ import daybreak.abilitywar.utils.library.EffectLib;
 @AbilityManifest(Name = "버서커", Rank = Rank.B, Species = Species.HUMAN)
 public class Berserker extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
 			"# 쿨타임") {
 		
 		@Override
@@ -29,7 +29,7 @@ public class Berserker extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> StrengthConfig = new SettingObject<Integer>(Berserker.class, "Strength", 4,
+	public static final SettingObject<Integer> StrengthConfig = new SettingObject<Integer>(Berserker.class, "Strength", 4,
 			"# 공격 강화 배수") {
 		
 		@Override
@@ -39,7 +39,7 @@ public class Berserker extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DebuffConfig = new SettingObject<Integer>(Berserker.class, "Debuff", 10,
+	public static final SettingObject<Integer> DebuffConfig = new SettingObject<Integer>(Berserker.class, "Debuff", 10,
 			"# 능력 사용 후 디버프를 받는 시간",
 			"# 단위 : 초") {
 		
@@ -59,9 +59,9 @@ public class Berserker extends AbilityBase {
 
 	private final int Strength = StrengthConfig.getValue();
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
-	private DurationTimer Duration = new DurationTimer(this, 5, Cool) {
+	private final DurationTimer Duration = new DurationTimer(this, 5, Cool) {
 		
 		@Override
 		public void onDurationStart() {
@@ -82,8 +82,8 @@ public class Berserker extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.StartTimer();
 					
@@ -95,7 +95,7 @@ public class Berserker extends AbilityBase {
 		return false;
 	}
 
-	private int DebuffTime = DebuffConfig.getValue();
+	private final int DebuffTime = DebuffConfig.getValue();
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

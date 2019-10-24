@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "설인", Rank = Rank.S, Species = Species.HUMAN)
 public class Yeti extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -31,7 +31,7 @@ public class Yeti extends AbilityBase {
 
 	};
 
-	public static SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Yeti.class, "Range", 15,
+	public static final SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Yeti.class, "Range", 15,
 			"# 스킬 사용 시 눈 지형으로 바꿀 범위") {
 
 		@Override
@@ -47,7 +47,7 @@ public class Yeti extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private TimerBase Buff = new TimerBase() {
+	private final TimerBase Buff = new TimerBase() {
 
 		@Override
 		public void onStart() {
@@ -70,7 +70,7 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(1);
 
-	private TimerBase Ice = new TimerBase(RangeConfig.getValue()) {
+	private final TimerBase Ice = new TimerBase(RangeConfig.getValue()) {
 
 		private int Count;
 		private Location center;
@@ -120,12 +120,12 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(3);
 
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if (mt.equals(MaterialType.Iron_Ingot)) {
-			if (ct.equals(ClickType.RightClick)) {
+		if (mt.equals(MaterialType.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!Cool.isCooldown()) {
 					Ice.StartTimer();
 

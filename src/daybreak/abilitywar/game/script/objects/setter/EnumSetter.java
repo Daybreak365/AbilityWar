@@ -38,7 +38,7 @@ public class EnumSetter extends Setter<Object> {
 	}
 
 	@Override
-	public void execute(Listener listener, Event event) throws EventException {}
+	public void execute(Listener listener, Event event) {}
 
 	@Override
 	public void onClick(ClickType click) {

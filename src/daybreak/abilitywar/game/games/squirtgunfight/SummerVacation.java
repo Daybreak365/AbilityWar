@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
+import daybreak.abilitywar.config.AbilityWarSettings;
 import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -66,11 +67,10 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 				return players;
 			}
 		});
-		setRestricted(Invincible);
+		boolean invincible = Settings.getInvincibilityEnable();
+		setRestricted(invincible);
 		this.MaxKill = SummerVacationSettings.getMaxKill();
 	}
-	
-	private final boolean Invincible = Settings.getInvincibilityEnable();
 
 	@SuppressWarnings("deprecation")
 	private final Objective killObjective = ServerVersion.getVersion() >= 13 ?

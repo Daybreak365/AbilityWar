@@ -26,7 +26,7 @@ import daybreak.abilitywar.utils.thread.TimerBase;
 @AbilityManifest(Name = "해커", Rank = Rank.A, Species = Species.HUMAN)
 public class Hacker extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
 			"# 쿨타임") {
 		
 		@Override
@@ -36,7 +36,7 @@ public class Hacker extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Hacker.class, "Duration", 5, 
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Hacker.class, "Duration", 5,
 			"# 능력 지속시간") {
 		
 		@Override
@@ -55,11 +55,11 @@ public class Hacker extends AbilityBase {
 
 	private Player Target = null;
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	private final int DurationTick = DurationConfig.getValue() * 20;
 	
-	private TimerBase Skill = new TimerBase(100) {
+	private final TimerBase Skill = new TimerBase(100) {
 
 		private int Count;
 		
@@ -103,7 +103,7 @@ public class Hacker extends AbilityBase {
 		}
 	}.setPeriod(1).setSilentNotice(true);
 	
-	private TimerBase Particle = new TimerBase(DurationTick) {
+	private final TimerBase Particle = new TimerBase(DurationTick) {
 
 		private double y;
 		private boolean add;
@@ -150,8 +150,8 @@ public class Hacker extends AbilityBase {
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 					

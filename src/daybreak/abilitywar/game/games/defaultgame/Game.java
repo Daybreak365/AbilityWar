@@ -29,7 +29,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	private final DeathManager deathManager = notNull(setupDeathManager());
 	private final Invincibility invincibility = new Invincibility(this);
-	private final WRECK wreck = new WRECK(this);
+	private final WRECK wreck = new WRECK();
 	private final ScoreboardManager scoreboardManager = new ScoreboardManager(this);
 	@SuppressWarnings("unused")
 	private final Firewall fireWall = new Firewall(this, this);
@@ -67,13 +67,13 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	
 	/**
 	 * AbilitySelect 초깃값 설정
-	 * @Nullable 능력 할당이 필요하지 않을 경우 null을 반환하세요.
+	 * null을 반환할 수 있습니다. 능력 할당이 필요하지 않을 경우 null을 반환하세요.
 	 */
 	protected abstract AbilitySelect setupAbilitySelect();
 
 	/**
 	 * DeathManager 초깃값 설정
-	 * @NotNull
+	 * null을 반환하지 않습니다.
 	 */
 	protected DeathManager setupDeathManager() {
 		return new DeathManager(this);
@@ -85,7 +85,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	/**
 	 * DeathManager를 반환합니다.
-	 * @NotNull
+	 * null을 반환하지 않습니다.
 	 */
 	@Override
 	public DeathManager getDeathManager() {
@@ -94,7 +94,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	/**
 	 * WRECK을 반환합니다.
-	 * @NotNull
+	 * null을 반환하지 않습니다.
 	 */
 	@Override
 	public WRECK getWRECK() {
@@ -108,7 +108,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	/**
 	 * AbilitySelect를 반환합니다.
-	 * @Nullable 능력 할당 전이거나 능력 할당 기능을 사용하지 않을 경우 null을 반환합니다.
+	 * null을 반환할 수 있습니다. 능력 할당 전이거나 능력 할당 기능을 사용하지 않을 경우 null을 반환합니다.
 	 */
 	@Override
 	public AbilitySelect getAbilitySelect() {
@@ -117,7 +117,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	
 	/**
 	 * Invincibility를 반환합니다.
-	 * @NotNull
+	 * null을 반환하지 않습니다.
 	 */
 	@Override
 	public Invincibility getInvincibility() {

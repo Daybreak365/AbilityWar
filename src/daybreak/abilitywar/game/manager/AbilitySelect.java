@@ -29,8 +29,8 @@ public abstract class AbilitySelect extends TimerBase {
 
 	/**
 	 * 능력을 선택할 {@link Participant} 목록을 설정합니다.
-	 * 
-	 * @NotNull
+	 *
+	 * null을 반환하지 않습니다.
 	 */
 	protected abstract Collection<Participant> initSelectors();
 
@@ -44,7 +44,7 @@ public abstract class AbilitySelect extends TimerBase {
 	/**
 	 * {@link Participant}에게 남은 능력 변경 횟수를 설정합니다.
 	 */
-	private final void setRemainingChangeCount(Participant participant, int count) {
+	private void setRemainingChangeCount(Participant participant, int count) {
 		selectors.put(participant, count);
 
 		if (count == 0) {
@@ -63,7 +63,7 @@ public abstract class AbilitySelect extends TimerBase {
 	/**
 	 * 능력을 아직 결정하지 않은 참가자의 수를 반환합니다.
 	 */
-	private final int getLeftPlayersCount() {
+	private int getLeftPlayersCount() {
 		int count = 0;
 		for (Participant p : getSelectors())
 			if (!hasDecided(p))
@@ -75,7 +75,7 @@ public abstract class AbilitySelect extends TimerBase {
 	 * {@link Participant}의 능력 선택 여부를 반환합니다. 능력을 선택중인 {@link Participant}가 아닐 경우
 	 * false를 반환합니다.
 	 */
-	public final boolean hasDecided(final Participant participant) {
+	public final boolean hasDecided(Participant participant) {
 		if (selectors.containsKey(participant)) {
 			return selectors.get(participant) <= 0;
 		} else {
@@ -168,7 +168,7 @@ public abstract class AbilitySelect extends TimerBase {
 	/**
 	 * 능력을 선택중인 모든 참가자가 능력을 결정했는지의 여부를 반환합니다.
 	 */
-	private final boolean isEveryoneSelected() {
+	private boolean isEveryoneSelected() {
 		for (Participant Key : getSelectors())
 			if (!hasDecided(Key))
 				return false;
@@ -189,7 +189,7 @@ public abstract class AbilitySelect extends TimerBase {
 		return Ended;
 	}
 
-	public static interface Handler {
+	public interface Handler {
 		AbilitySelect getAbilitySelect();
 	}
 

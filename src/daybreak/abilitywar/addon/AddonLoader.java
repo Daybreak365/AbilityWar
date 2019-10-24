@@ -28,13 +28,12 @@ public class AddonLoader {
 
 	private static final Logger logger = Logger.getLogger(AddonLoader.class.getName());
 
-	private AddonLoader() {
-	}
+	private AddonLoader() {}
 
-	private static ArrayList<Addon> Addons = new ArrayList<Addon>();
+	private static final ArrayList<Addon> addons = new ArrayList<Addon>();
 
 	public static List<Addon> getAddons() {
-		return Addons;
+		return addons;
 	}
 
 	/**
@@ -42,7 +41,7 @@ public class AddonLoader {
 	 */
 	public static List<DescriptionFile> getDescriptions() {
 		List<DescriptionFile> desc = new ArrayList<DescriptionFile>();
-		for (Addon addon : Addons) {
+		for (Addon addon : addons) {
 			desc.add(addon.getDescription());
 		}
 
@@ -55,7 +54,7 @@ public class AddonLoader {
 	public static void loadAddons() {
 		for (File file : FileManager.createDirectory("Addon").listFiles()) {
 			try {
-				Addons.add(load(file));
+				addons.add(load(file));
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				logger.log(Level.SEVERE, file.getName() + " 파일이 올바른 애드온이 아닙니다.");
 			} catch (IOException e) {
@@ -67,7 +66,7 @@ public class AddonLoader {
 	}
 
 	public static void enableAll() {
-		for (Addon addon : Addons) {
+		for (Addon addon : addons) {
 			try {
 				addon.onEnable();
 			} catch (Exception ex) {
@@ -77,7 +76,7 @@ public class AddonLoader {
 	}
 
 	public static void disableAll() {
-		for (Addon addon : Addons) {
+		for (Addon addon : addons) {
 			try {
 				addon.onDisable();
 			} catch (Exception ex) {

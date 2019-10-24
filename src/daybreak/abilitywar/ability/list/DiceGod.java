@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 @AbilityManifest(Name = "다이스 갓", Rank = Rank.A, Species = Species.GOD)
 public class DiceGod extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 60, 
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 60,
 			"# 쿨타임") {
 		
 		@Override
@@ -39,12 +39,12 @@ public class DiceGod extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f공격을 받았을 때 1/6 확률로 데미지를 받는 대신 데미지만큼 체력을 회복합니다."));
 	}
 	
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Player p = getPlayer();
 					
@@ -86,10 +86,10 @@ public class DiceGod extends AbilityBase {
 		if(e.getEntity().equals(getPlayer())) {
 			Random r = new Random();
 			if(r.nextInt(6) == 0) {
-				Double damage = e.getDamage();
+				double damage = e.getDamage();
 				e.setDamage(0);
 				
-				Double health = getPlayer().getHealth() + damage;
+				double health = getPlayer().getHealth() + damage;
 				
 				if(health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
 				

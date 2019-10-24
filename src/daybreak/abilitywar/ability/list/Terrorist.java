@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.math.geometry.Circle;
 @AbilityManifest(Name = "테러리스트", Rank = Rank.A, Species = Species.HUMAN)
 public class Terrorist extends AbilityBase {
 
-	public static SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
 			"# 쿨타임") {
 		
 		@Override
@@ -33,7 +33,7 @@ public class Terrorist extends AbilityBase {
 		
 	};
 
-	public static SettingObject<Integer> CountConfig = new SettingObject<Integer>(Terrorist.class, "Count", 15,
+	public static final SettingObject<Integer> CountConfig = new SettingObject<Integer>(Terrorist.class, "Count", 15,
 			"# TNT 개수") {
 		
 		@Override
@@ -50,12 +50,12 @@ public class Terrorist extends AbilityBase {
 	}
 
 	private final int count = CountConfig.getValue();
-	private CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.Iron_Ingot)) {
-			if(ct.equals(ClickType.RightClick)) {
+		if(mt.equals(MaterialType.IRON_INGOT)) {
+			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Location center = getPlayer().getLocation();
 					for(int i = 0; i < 10; i++) {

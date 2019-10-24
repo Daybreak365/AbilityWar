@@ -19,7 +19,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 @AbilityManifest(Name = "초신성", Rank = Rank.B, Species = Species.OTHERS)
 public class SuperNova extends AbilityBase {
 
-	public static SettingObject<Integer> SizeConfig = new SettingObject<Integer>(SuperNova.class, "Size", 10,
+	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(SuperNova.class, "Size", 10,
 			"# 초신성이 사망할 때 일어날 폭발의 크기") {
 		
 		@Override
@@ -41,7 +41,7 @@ public class SuperNova extends AbilityBase {
 	
 	private final int Size = SizeConfig.getValue();
 	
-	private OverallTimer Explosion = new OverallTimer(Size) {
+	private final OverallTimer Explosion = new OverallTimer(Size) {
 		
 		Location center;
 		
