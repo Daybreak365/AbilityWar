@@ -1,18 +1,14 @@
 package daybreak.abilitywar.game.script.types;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.game.games.defaultgame.Game;
+import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
@@ -40,7 +36,7 @@ public class ChangeAbilityScript extends AbstractScript {
 			public Collection<Participant> getParticipant(Game game) {
 				Random random = new Random();
 				List<Participant> participants = new ArrayList<>(game.getParticipants());
-				return Arrays.asList(participants.get(random.nextInt(participants.size())));
+				return Collections.singletonList(participants.get(random.nextInt(participants.size())));
 			}
 		};
 		

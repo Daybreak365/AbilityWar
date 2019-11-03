@@ -404,7 +404,8 @@ public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler 
 	}
 	
 	@Override
-	protected void onGameEnd() {
+	protected void onEnd() {
+		super.onEnd();
 		lifeObjective.unregister();
 	}
 

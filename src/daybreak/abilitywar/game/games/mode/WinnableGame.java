@@ -1,6 +1,5 @@
 package daybreak.abilitywar.game.games.mode;
 
-import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 
 public abstract class WinnableGame extends Game {

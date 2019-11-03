@@ -11,13 +11,12 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.list.Feather;
 import daybreak.abilitywar.ability.list.Gladiator;
 import daybreak.abilitywar.ability.list.Pumpkin;
-import org.bukkit.entity.Creeper;
 
 /**
  * 게임 진행 중 실행되는 타이머
  * @author DayBreak 새벽
  */
-abstract public class TimerBase {
+public abstract class TimerBase {
 
     private static List<TimerBase> Tasks = new ArrayList<>();
 

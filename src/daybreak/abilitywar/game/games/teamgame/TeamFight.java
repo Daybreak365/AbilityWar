@@ -358,9 +358,6 @@ public class TeamFight extends TeamGame implements DefaultKitHandler {
 	}
 
 	@Override
-	protected void onGameEnd() {}
-
-	@Override
 	protected List<Team> setupTeams() {
 		List<Participant> participants = new ArrayList<>(getParticipants());
 		int size = participants.size();

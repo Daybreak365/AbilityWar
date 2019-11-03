@@ -15,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-import daybreak.abilitywar.game.games.defaultgame.Game;
 import daybreak.abilitywar.utils.language.KoreanUtil;
 
 public abstract class TeamGame extends Game {

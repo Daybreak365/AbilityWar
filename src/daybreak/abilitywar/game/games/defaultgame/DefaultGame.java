@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import daybreak.abilitywar.game.games.mode.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -336,8 +337,5 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 
 		};
 	}
-	
-	@Override
-	protected void onGameEnd() {}
 	
 }

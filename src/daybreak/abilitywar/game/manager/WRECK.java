@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.game.games.defaultgame.Game;
 
 public class WRECK {
 

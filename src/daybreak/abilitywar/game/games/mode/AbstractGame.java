@@ -163,8 +163,9 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	protected void onEnd() {
 		TimerBase.ResetTasks();
 		HandlerList.unregisterAll(this);
-		for (Listener lis : registeredListeners)
-			HandlerList.unregisterAll(lis);
+		for (Listener listener : registeredListeners){
+			HandlerList.unregisterAll(listener);
+		}
 	}
 
 	public class Participant implements EventExecutor {
@@ -267,18 +268,6 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 		private AbilityBase ability;
 
-		/**
-		 * 플레이어에게 해당 능력을 부여합니다.
-		 *
-		 * 능력을 부여하는 도중 오류가 발생하였을 경우 Exception을 throw합니다.
-		 * @param abilityClass 부여할 능력의 종류 (능력 클래스)
-		 * @throws SecurityException
-		 * @throws NoSuchMethodException
-		 * @throws InvocationTargetException
-		 * @throws IllegalArgumentException
-		 * @throws IllegalAccessException
-		 * @throws InstantiationException
-		 */
 		public void setAbility(Class<? extends AbilityBase> abilityClass)
 				throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
 				IllegalArgumentException, InvocationTargetException {

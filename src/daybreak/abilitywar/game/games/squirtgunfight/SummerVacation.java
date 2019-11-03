@@ -415,7 +415,8 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 	}
 	
 	@Override
-	protected void onGameEnd() {
+	protected void onEnd() {
+		super.onEnd();
 		killObjective.unregister();
 	}
 

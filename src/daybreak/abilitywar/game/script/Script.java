@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import daybreak.abilitywar.game.games.defaultgame.Game;
+import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.game.script.ScriptException.State;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.game.script.objects.setter.Setter;

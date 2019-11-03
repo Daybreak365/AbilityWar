@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.events;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-import daybreak.abilitywar.game.games.defaultgame.Game;
+import daybreak.abilitywar.game.games.mode.Game;
 
 /**
  * {@link Game} 관련 이벤트

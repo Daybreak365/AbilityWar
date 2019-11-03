@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.ChangeAbilityWarSettings;
-import daybreak.abilitywar.game.games.defaultgame.Game;
+import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;

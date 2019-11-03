@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.script.objects;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import daybreak.abilitywar.game.games.defaultgame.Game;
+import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.utils.thread.TimerBase;
 
 public abstract class AbstractScript {

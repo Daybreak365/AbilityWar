@@ -14,7 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
-import daybreak.abilitywar.game.games.defaultgame.Game;
+import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.language.KoreanUtil;
