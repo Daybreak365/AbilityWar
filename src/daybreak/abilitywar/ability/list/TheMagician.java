@@ -1,18 +1,10 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.ProjectileHitEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -22,6 +14,13 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.ProjectileHitEvent;
 
 @AbilityManifest(Name = "마술사", Rank = Rank.A, Species = Species.HUMAN)
 public class TheMagician extends AbilityBase {
@@ -72,7 +71,7 @@ public class TheMagician extends AbilityBase {
 					}
 					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 				}
 			}
 		}

@@ -1,26 +1,24 @@
 package daybreak.abilitywar.game.games.changeability;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.ChangeAbilityWarSettings;
-import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bukkit.ChatColor;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.Player;
 
 public class AbilityChanger {
 
@@ -42,7 +40,7 @@ public class AbilityChanger {
 			protected void onEnd() {}
 			
 			@Override
-			protected void onProcess(int Seconds) {
+			protected void onProcess(int count) {
 				ChangeAbility();
 			}
 		}.setPeriod(period * 20);
@@ -82,15 +80,15 @@ public class AbilityChanger {
 			protected void onEnd() {}
 			
 			@Override
-			protected void onProcess(int Seconds) {
+			protected void onProcess(int count) {
 				SoundLib.ENTITY_ITEM_PICKUP.playSound(p);
-				if(Seconds == 3 || Seconds == 7) {
+				if(count == 3 || count == 7) {
 					SoundLib.PIANO.playInstrument(p, Note.natural(1, Tone.D));
 					SoundLib.PIANO.playInstrument(p, Note.flat(1, Tone.F));
 					SoundLib.PIANO.playInstrument(p, Note.natural(1, Tone.A));
 				}
 			}
-		}.setPeriod(2).StartTimer();
+		}.setPeriod(2).startTimer();
 		
 		new TimerBase(11) {
 			
@@ -104,8 +102,8 @@ public class AbilityChanger {
 			}
 			
 			@Override
-			protected void onProcess(int Seconds) {
-				int TitleCount = 12 - Seconds;
+			protected void onProcess(int count) {
+				int TitleCount = 12 - count;
 				String[] strings = {"", "", "능", "력", " ", "체", "인", "지", "!", "", ""};
 				
 				StringBuilder builder = new StringBuilder();
@@ -120,7 +118,7 @@ public class AbilityChanger {
 				Title packet = new Title(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
 				packet.sendTo(p);
 			}
-		}.setPeriod(3).StartTimer();
+		}.setPeriod(3).startTimer();
 		
 		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
 		p.sendMessage(Messager.formatAbilityInfo(participant.getAbility()));
@@ -151,7 +149,7 @@ public class AbilityChanger {
 	}
 	
 	public void StartTimer() {
-		this.timer.StartTimer();
+		this.timer.startTimer();
 	}
 	
 }

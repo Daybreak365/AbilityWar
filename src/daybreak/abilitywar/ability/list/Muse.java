@@ -1,20 +1,10 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
@@ -25,6 +15,15 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 @AbilityManifest(Name = "뮤즈", Rank = Rank.S, Species = Species.OTHERS)
 public class Muse extends AbilityBase {
@@ -145,7 +144,7 @@ public class Muse extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Skill.isDuration() && !Cool.isCooldown()) {
-					Skill.StartTimer();
+					Skill.startTimer();
 					
 					return true;
 				}

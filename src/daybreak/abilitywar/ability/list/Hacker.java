@@ -1,13 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -22,6 +14,12 @@ import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "해커", Rank = Rank.A, Species = Species.HUMAN)
 public class Hacker extends AbilityBase {
@@ -80,12 +78,12 @@ public class Hacker extends AbilityBase {
 
 				new Title(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0).sendTo(Target);
 				getGame().getEffectManager().Stun(Target, DurationTick);
-				Particle.StartTimer();
+				Particle.startTimer();
 			}
 		}
 		
 		@Override
-		protected void onProcess(int Seconds) {
+		protected void onProcess(int count) {
 			if(Target != null) {
 				StringBuilder sb = new StringBuilder();
 				int all = 20;
@@ -119,7 +117,7 @@ public class Hacker extends AbilityBase {
 		private final Circle bottom = new Circle(getPlayer().getLocation(), 1).setAmount(amount);
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			if(Target != null) {
 				if(add && y >= 2.0) {
 					add = false;
@@ -157,9 +155,9 @@ public class Hacker extends AbilityBase {
 					
 					if(target != null) {
 						Target = target;
-						Skill.StartTimer();
+						Skill.startTimer();
 						
-						Cool.StartTimer();
+						Cool.startTimer();
 						
 						return true;
 					} else {

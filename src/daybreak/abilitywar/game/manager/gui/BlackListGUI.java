@@ -1,12 +1,21 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.ItemLib;
+import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
+import daybreak.abilitywar.utils.library.item.MaterialLib;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,17 +32,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.item.ItemLib;
-import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
 
 /**
  * 능력 금지 GUI
@@ -220,43 +218,34 @@ public class BlackListGUI implements Listener {
 					} else {
 						for (Rank r : Rank.values()) {
 							if (ItemName.equals(r.getRankName())) {
-								if (e.getClick().equals(ClickType.LEFT)) {
-									for (String name : AbilityList.getAbilityNames(r)) {
-										Settings.addBlackList(name);
-									}
-									SoundLib.BLOCK_ANVIL_LAND.playSound(p);
-									openBlackListGUI(PlayerPage);
-								} else if (e.getClick().equals(ClickType.RIGHT)) {
-									for (String name : AbilityList.getAbilityNames(r)) {
-										Settings.removeBlackList(name);
-									}
-									SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
-									openBlackListGUI(PlayerPage);
-								}
+								blacklist(e.getClick(), AbilityList.nameValues(r));
 							}
 						}
 
 						for (Species s : Species.values()) {
 							if (ItemName.equals(s.getSpeciesName())) {
-								if (e.getClick().equals(ClickType.LEFT)) {
-									for (String name : AbilityList.getAbilityNames(s)) {
-										Settings.addBlackList(name);
-									}
-									SoundLib.BLOCK_ANVIL_LAND.playSound(p);
-									openBlackListGUI(PlayerPage);
-								} else if (e.getClick().equals(ClickType.RIGHT)) {
-									for (String name : AbilityList.getAbilityNames(s)) {
-										Settings.removeBlackList(name);
-									}
-									SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
-									openBlackListGUI(PlayerPage);
-								}
+								blacklist(e.getClick(), AbilityList.nameValues(s));
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private void blacklist(ClickType clickType, ArrayList<String> abilityNames) {
+		if (clickType.equals(ClickType.LEFT)) {
+			for (String name : abilityNames) {
+				Settings.addBlackList(name);
+			}
+			SoundLib.BLOCK_ANVIL_LAND.playSound(p);
+		} else if (clickType.equals(ClickType.RIGHT)) {
+			for (String name : abilityNames) {
+				Settings.removeBlackList(name);
+			}
+			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+		}
+		openBlackListGUI(PlayerPage);
 	}
 
 }

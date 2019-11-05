@@ -1,22 +1,19 @@
 package daybreak.abilitywar.game.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.plugin.EventExecutor;
-
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.list.BlackCandle;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.plugin.EventExecutor;
 
 public class EffectManager implements EventExecutor {
 
@@ -59,9 +56,9 @@ public class EffectManager implements EventExecutor {
 				}
 
 				@Override
-				protected void onProcess(int Seconds) {
+				protected void onProcess(int count) {
 				}
-			}.setPeriod(1).StartTimer();
+			}.setPeriod(1).startTimer();
 		}
 	}
 

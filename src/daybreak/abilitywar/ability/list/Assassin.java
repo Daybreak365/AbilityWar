@@ -1,11 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -17,6 +11,10 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "암살자", Rank = Rank.A, Species = Species.HUMAN)
 public class Assassin extends AbilityBase {
@@ -81,7 +79,7 @@ public class Assassin extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			if(Entities != null) {
 				if(Entities.size() >= 1) {
 					Damageable e = Entities.get(0);
@@ -91,7 +89,7 @@ public class Assassin extends AbilityBase {
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 				} else {
-					this.StopTimer(false);
+					this.stopTimer(false);
 				}
 			}
 		}
@@ -108,8 +106,8 @@ public class Assassin extends AbilityBase {
 				if(!Cool.isCooldown()) {
 					this.Entities = LocationUtil.getNearbyDamageableEntities(getPlayer(), Distance, 5);
 					if(Entities.size() > 0) {
-						Duration.StartTimer();
-						Cool.StartTimer();
+						Duration.startTimer();
+						Cool.startTimer();
 						return true;
 					} else {
 						getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&f" + Distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));

@@ -1,15 +1,13 @@
 package daybreak.abilitywar.ability.timer;
 
-import java.util.ArrayList;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.ArrayList;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 /**
  * Duration TimerBase (지속시간 타이머)
@@ -22,7 +20,7 @@ abstract public class DurationTimer extends TimerBase {
      * 지속시간 초기화
      */
     public static void ResetDuration() {
-        TimerBase.StopTasks(DurationTimer.class);
+        TimerBase.stopTasks(DurationTimer.class);
     }
 
     private final AbilityBase ability;
@@ -76,10 +74,10 @@ abstract public class DurationTimer extends TimerBase {
     private ArrayList<Integer> Counted;
 
     @Override
-    protected void onProcess(int Seconds) {
+    protected void onProcess(int count) {
         Player target = ability.getPlayer();
         if (target != null) {
-            this.onDurationProcess(Seconds);
+            this.onDurationProcess(count);
 
             Actionbar actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&6지속 시간 &f: &e" + NumberUtil.parseTimeString(this.getFixedCount())), 0, 25, 0);
             actionbar.sendTo(target);
@@ -103,7 +101,7 @@ abstract public class DurationTimer extends TimerBase {
             onDurationEnd();
 
             if (cooldownTimer != null) {
-                cooldownTimer.StartTimer();
+                cooldownTimer.startTimer();
             }
 
             target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다."));

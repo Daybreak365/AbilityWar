@@ -1,22 +1,8 @@
 package daybreak.abilitywar.game.script;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.game.script.ScriptException.State;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
@@ -25,17 +11,30 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
 import daybreak.abilitywar.utils.database.FileManager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.ChatColor;
+
+
+import static daybreak.abilitywar.utils.Validate.notNull;
 
 /**
- * 스크립트
- * 
+ * 스크립트 관리 클래스
  * @author DayBreak 새벽
  */
 public class Script {
 
+	private Script() {}
+
 	private static final Messager messager = new Messager();
 
-	private static final ArrayList<AbstractScript> scripts = new ArrayList<AbstractScript>();
+	private static final ArrayList<AbstractScript> scripts = new ArrayList<>();
 
 	/**
 	 * 모든 스크립트를 시작시킵니다.
@@ -67,8 +66,7 @@ public class Script {
 			try {
 				AbstractScript script = Load(file);
 				scripts.add(script);
-			} catch (ScriptException e) {
-			}
+			} catch (ScriptException ignore) {}
 		}
 	}
 
@@ -122,7 +120,7 @@ public class Script {
 	}
 
 	public static List<String> getRegisteredScripts() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (ScriptRegisteration reg : scriptTypes) {
 			list.add(reg.getClazz().getSimpleName());
 		}

@@ -1,5 +1,17 @@
 package daybreak.abilitywar.ability.list;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.timer.CooldownTimer;
+import daybreak.abilitywar.config.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.math.LocationUtil;
+import daybreak.abilitywar.utils.math.geometry.Circle;
+import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
@@ -9,19 +21,6 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.thread.TimerBase;
 
 @AbilityManifest(Name = "제우스", Rank = Rank.S, Species = Species.GOD)
 public class Zeus extends AbilityBase {
@@ -56,7 +55,7 @@ public class Zeus extends AbilityBase {
 		}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			Circle circle = new Circle(center, 2 * (5 - getCount())).setAmount(7).setHighestLocation(true);
 			for(Location l : circle.getLocations()) {
 				l.getWorld().strikeLightningEffect(l);
@@ -82,9 +81,9 @@ public class Zeus extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
-					Skill.StartTimer();
+					Skill.startTimer();
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 					
 					return true;
 				}

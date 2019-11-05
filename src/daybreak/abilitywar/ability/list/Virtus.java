@@ -1,16 +1,10 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -18,6 +12,11 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 @AbilityManifest(Name = "베르투스", Rank = Rank.A, Species = Species.HUMAN)
 public class Virtus extends AbilityBase {
@@ -59,7 +58,7 @@ public class Virtus extends AbilityBase {
 		}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
 			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 3, 3, 3, 10);
 		}
@@ -76,9 +75,9 @@ public class Virtus extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
-					Activate.StartTimer();
+					Activate.startTimer();
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 					
 					return true;
 				}

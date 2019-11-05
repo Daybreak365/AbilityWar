@@ -1,9 +1,8 @@
 package daybreak.abilitywar.utils.thread;
 
+import daybreak.abilitywar.game.games.mode.AbstractGame;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-
-import daybreak.abilitywar.game.games.mode.AbstractGame;
 
 /**
  * Ability War 플러그인 쓰레드
@@ -23,7 +22,7 @@ public class AbilityWarThread {
 	public static void StartGame(AbstractGame game) {
 		if (!isGameTaskRunning()) {
 			setGame(game);
-			game.StartTimer();
+			game.startTimer();
 		}
 	}
 
@@ -32,7 +31,7 @@ public class AbilityWarThread {
 	 */
 	public static void StopGame() {
 		if (isGameTaskRunning()) {
-			currentGame.StopTimer();
+			currentGame.stopTimer();
 			setGame(null);
 
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 중지되었습니다."));

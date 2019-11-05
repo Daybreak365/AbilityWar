@@ -1,18 +1,20 @@
 package daybreak.abilitywar.game.manager;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
-
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.thread.TimerBase;
+
+import static daybreak.abilitywar.utils.Validate.notNull;
 
 public abstract class AbilitySelect extends TimerBase {
 
@@ -24,7 +26,7 @@ public abstract class AbilitySelect extends TimerBase {
 			selectors.put(p, changeCount);
 		this.selectors = selectors;
 		drawAbility(getSelectors());
-		StartTimer();
+		startTimer();
 	}
 
 	/**
@@ -143,7 +145,7 @@ public abstract class AbilitySelect extends TimerBase {
 
 		Bukkit.broadcastMessage(
 				ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
-		this.StopTimer(false);
+		this.stopTimer(false);
 	}
 
 	@Override
@@ -151,9 +153,9 @@ public abstract class AbilitySelect extends TimerBase {
 	}
 
 	@Override
-	public void onProcess(int Seconds) {
+	public void onProcess(int count) {
 		if (!isEveryoneSelected()) {
-			if (Seconds % 20 == 0) {
+			if (count % 20 == 0) {
 				for (String m : Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."),
 						ChatColor.translateAlternateColorCodes('&', "&c/ability yes나 /ability no 명령어로 능력을 확정해주세요."))) {
@@ -161,7 +163,7 @@ public abstract class AbilitySelect extends TimerBase {
 				}
 			}
 		} else {
-			this.StopTimer(false);
+			this.stopTimer(false);
 		}
 	}
 
@@ -191,6 +193,23 @@ public abstract class AbilitySelect extends TimerBase {
 
 	public interface Handler {
 		AbilitySelect getAbilitySelect();
+	}
+
+	public interface AbilitySelectStrategy {
+		AbilitySelectStrategy EVERY_ABILITY_EXCLUDING_BLACKLISTED = new AbilitySelectStrategy() {
+			@Override
+			public ArrayList<Class<? extends AbilityBase>> getAbilities() {
+				ArrayList<Class<? extends AbilityBase>> abilities = new ArrayList<>();
+				for(String name : AbilityList.nameValues()) {
+					if(!AbilityWarSettings.Settings.isBlackListed(name)) {
+						abilities.add(AbilityList.getByString(name));
+					}
+				}
+				return abilities;
+			}
+		};
+
+		ArrayList<Class<? extends AbilityBase>> getAbilities();
 	}
 
 }

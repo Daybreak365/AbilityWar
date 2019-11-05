@@ -1,16 +1,10 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -18,6 +12,11 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(Name = "에너지 블로커", Rank = Rank.A, Species = Species.HUMAN)
 public class EnergyBlocker extends AbilityBase {
@@ -57,7 +56,7 @@ public class EnergyBlocker extends AbilityBase {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3로 변경되었습니다."));
 					}
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 				}
 			} else if(ct.equals(ClickType.LEFT_CLICK)) {
 				if(Default) {
@@ -77,7 +76,7 @@ public class EnergyBlocker extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			if(Default) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(116, 237, 167), 0);
 			} else {
@@ -114,7 +113,7 @@ public class EnergyBlocker extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {
-		Particle.StartTimer();
+		Particle.startTimer();
 	}
 
 	@Override

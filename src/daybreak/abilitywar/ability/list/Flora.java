@@ -1,10 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -18,6 +13,10 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "플로라", Rank = Rank.C, Species = Species.GOD)
 public class Flora extends AbilityBase {
@@ -51,7 +50,7 @@ public class Flora extends AbilityBase {
 		private final Circle circle = new Circle(getPlayer().getLocation(), 6).setAmount(20).setHighestLocation(true);
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			center = getPlayer().getLocation();
 			for(Location l : circle.setCenter(center).getLocations()) {
 				ParticleLib.SPELL.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
@@ -89,7 +88,7 @@ public class Flora extends AbilityBase {
 					
 					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.getName() + "&f으로 변경되었습니다."));
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 				}
 			} else if(ct.equals(ClickType.LEFT_CLICK)) {
 				getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: " + type.getName()));
@@ -101,7 +100,7 @@ public class Flora extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {
-		Passive.StartTimer();
+		Passive.startTimer();
 	}
 
 	private enum EffectType {

@@ -1,23 +1,21 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.Random;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
+import java.util.Random;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(Name = "다이스 갓", Rank = Rank.A, Species = Species.GOD)
 public class DiceGod extends AbilityBase {
@@ -71,7 +69,7 @@ public class DiceGod extends AbilityBase {
 						EffectLib.WEAKNESS.addPotionEffect(p, 200, 1, true);
 					}
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 					
 					return true;
 				}

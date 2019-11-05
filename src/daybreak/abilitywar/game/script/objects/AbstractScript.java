@@ -1,10 +1,9 @@
 package daybreak.abilitywar.game.script.objects;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
 import daybreak.abilitywar.game.games.mode.Game;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 public abstract class AbstractScript {
 
@@ -32,10 +31,10 @@ public abstract class AbstractScript {
 		this.game = game;
 
 		if (Timer != null) {
-			Timer.StartTimer();
+			Timer.startTimer();
 		} else {
 			Timer = newTimer();
-			Timer.StartTimer();
+			Timer.startTimer();
 		}
 	}
 
@@ -52,13 +51,13 @@ public abstract class AbstractScript {
 			}
 
 			@Override
-			public void onProcess(int Seconds) {
-				String msg = getPreRunMessage(Seconds);
+			public void onProcess(int count) {
+				String msg = getPreRunMessage(count);
 
 				if (!msg.equalsIgnoreCase("none")) {
-					if (Seconds == (this.getMaxCount() / 2)) {
+					if (count == (this.getMaxCount() / 2)) {
 						Bukkit.broadcastMessage(msg);
-					} else if (Seconds <= 5 && Seconds >= 1) {
+					} else if (count <= 5 && count >= 1) {
 						Bukkit.broadcastMessage(msg);
 					}
 				}
@@ -76,10 +75,10 @@ public abstract class AbstractScript {
 				if (isLoop()) {
 					if(count > -1) {
 						if(count > 0) {
-							this.StartTimer();
+							this.startTimer();
 						}
 					} else {
-						this.StartTimer();
+						this.startTimer();
 					}
 				}
 			}

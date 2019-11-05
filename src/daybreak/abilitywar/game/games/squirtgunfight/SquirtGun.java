@@ -1,21 +1,5 @@
 package daybreak.abilitywar.game.games.squirtgunfight;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -30,6 +14,20 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 @AbilityManifest(Name = "물총", Rank = Rank.SPECIAL, Species = Species.SPECIAL)
 public class SquirtGun extends AbilityBase {
@@ -66,7 +64,7 @@ public class SquirtGun extends AbilityBase {
 					
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 					
-					bombCool.StartTimer();
+					bombCool.startTimer();
 				}
 			} else {
 				if(!spongeCool.isCooldown()) {
@@ -80,7 +78,7 @@ public class SquirtGun extends AbilityBase {
 					
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 					
-					spongeCool.StartTimer();
+					spongeCool.startTimer();
 				}
 			}
 		}
@@ -100,7 +98,7 @@ public class SquirtGun extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void onProcess(int Seconds) {
+		protected void onProcess(int count) {
 			for(Arrow a : arrows) {
 				ParticleLib.DRIP_WATER.spawnParticle(a.getLocation(), 10, 1, 1, 1);
 			}
@@ -131,7 +129,7 @@ public class SquirtGun extends AbilityBase {
 						l.getBlock().setType(Material.WATER);
 					}
 					
-					gunCool.StartTimer();
+					gunCool.startTimer();
 				}
 			}
 		}
@@ -158,7 +156,7 @@ public class SquirtGun extends AbilityBase {
 
 	@Override
 	protected void onRestrictClear() {
-		passive.StartTimer();
+		passive.startTimer();
 	}
 
 }

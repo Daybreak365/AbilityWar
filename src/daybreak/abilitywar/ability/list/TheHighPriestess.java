@@ -1,10 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -19,6 +14,10 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "교황", Rank = Rank.A, Species = Species.HUMAN)
 public class TheHighPriestess extends AbilityBase {
@@ -107,7 +106,7 @@ public class TheHighPriestess extends AbilityBase {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Skill.isDuration() && !Cool.isCooldown()) {
 					
-					Skill.StartTimer();
+					Skill.startTimer();
 					
 					return true;
 				}

@@ -1,20 +1,10 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.HashMap;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -23,6 +13,14 @@ import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.HashMap;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 
 @AbilityManifest(Name = "글래디에이터", Rank = Rank.S, Species = Species.HUMAN)
 public class Gladiator extends AbilityBase {
@@ -53,9 +51,9 @@ public class Gladiator extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
-			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
-			getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + Seconds + "초 후에 투기장이 삭제됩니다."));
+		public void onProcess(int count) {
+			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
+			getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
 		}
 		
 		@Override
@@ -88,7 +86,7 @@ public class Gladiator extends AbilityBase {
 		}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			if(TotalCount <= 10) {
 				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, false, false)) {
 					Saves.putIfAbsent(b, b.getState());
@@ -137,7 +135,7 @@ public class Gladiator extends AbilityBase {
 			target.teleport(teleport);
 			
 			Gladiator.this.target = target;
-			FieldClear.StartTimer();
+			FieldClear.startTimer();
 		}
 		
 	}.setPeriod(1);
@@ -166,9 +164,9 @@ public class Gladiator extends AbilityBase {
 				if(entity instanceof Player) {
 					if(!Cool.isCooldown()) {
 						this.target = (Player) entity;
-						Field.StartTimer();
+						Field.startTimer();
 						
-						Cool.StartTimer();
+						Cool.startTimer();
 					}
 				}
 			} else {

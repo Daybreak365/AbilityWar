@@ -1,7 +1,14 @@
 package daybreak.abilitywar.game.games.mode;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
-
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityBase.ClickType;
+import daybreak.abilitywar.ability.AbilityBase.MaterialType;
+import daybreak.abilitywar.game.manager.EffectManager;
+import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
+import daybreak.abilitywar.utils.thread.OverallTimer;
+import daybreak.abilitywar.utils.thread.TimerBase;
+import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
@@ -12,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,7 +26,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -31,14 +35,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.EventExecutor;
 
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityBase.ClickType;
-import daybreak.abilitywar.ability.AbilityBase.MaterialType;
-import daybreak.abilitywar.game.manager.EffectManager;
-import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
-import daybreak.abilitywar.utils.thread.TimerBase;
-import daybreak.abilitywar.utils.versioncompat.VersionUtil;
+
+import static daybreak.abilitywar.utils.Validate.notNull;
 
 public abstract class AbstractGame extends OverallTimer implements Listener, EffectManager.Handler {
 
@@ -52,7 +50,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		registeredListeners.add(listener);
 	}
 
-	protected final Map<String, Participant> participants;
+	private final Map<String, Participant> participants;
 
 	private boolean restricted = true;
 	private boolean gameStarted = false;
@@ -161,7 +159,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 	@Override
 	protected void onEnd() {
-		TimerBase.ResetTasks();
+		TimerBase.resetTasks();
 		HandlerList.unregisterAll(this);
 		for (Listener listener : registeredListeners){
 			HandlerList.unregisterAll(listener);

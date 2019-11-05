@@ -1,8 +1,5 @@
 package daybreak.abilitywar.ability.timer;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.manager.WRECK;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -10,6 +7,8 @@ import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 /**
  * Cooldown Timer (쿨타임 타이머)
@@ -22,7 +21,7 @@ public class CooldownTimer extends TimerBase {
      * 쿨타임 초기화
      */
     public static void ResetCool() {
-        TimerBase.StopTasks(CooldownTimer.class);
+        TimerBase.stopTasks(CooldownTimer.class);
     }
 
     private final AbilityBase ability;
@@ -64,27 +63,27 @@ public class CooldownTimer extends TimerBase {
     }
 
     @Override
-    public void onProcess(int Seconds) {
+    public void onProcess(int count) {
         Player target = ability.getPlayer();
         if (target != null) {
             Actionbar actionbar;
             if (!abilityName.isEmpty()) {
                 actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&c" + abilityName + " 쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 
-                if (Seconds == (getMaxCount() / 2)) {
+                if (count == (getMaxCount() / 2)) {
                     SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
                     target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + abilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
-                } else if (Seconds <= 5 && Seconds >= 1) {
+                } else if (count <= 5 && count >= 1) {
                     SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
                     target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + abilityName + " 쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
                 }
             } else {
                 actionbar = new Actionbar(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f: &6" + NumberUtil.parseTimeString(this.getCount())), 0, 25, 0);
 
-                if (Seconds == (getMaxCount() / 2)) {
+                if (count == (getMaxCount() / 2)) {
                     SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
                     target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
-                } else if (Seconds <= 5 && Seconds >= 1) {
+                } else if (count <= 5 && count >= 1) {
                     SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
                     target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &f" + NumberUtil.parseTimeString(this.getCount())));
                 }

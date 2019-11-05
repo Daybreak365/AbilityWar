@@ -1,12 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -18,6 +11,12 @@ import daybreak.abilitywar.utils.FallBlock;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "카쟈드", Rank = Rank.A, Species = Species.GOD)
 public class Khazhad extends AbilityBase {
@@ -73,7 +72,7 @@ public class Khazhad extends AbilityBase {
 					
 					fall.toggleGlowing(true).toggleSetBlock(true).Spawn();
 					
-					LeftCool.StartTimer();
+					LeftCool.startTimer();
 					return true;
 				}
 			} else if(ct.equals(ClickType.RIGHT_CLICK)) {
@@ -84,7 +83,7 @@ public class Khazhad extends AbilityBase {
 						}
 					}
 					
-					RightCool.StartTimer();
+					RightCool.startTimer();
 					return true;
 				}
 			}

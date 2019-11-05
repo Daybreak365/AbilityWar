@@ -1,12 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -16,6 +9,11 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.math.LocationUtil;
+import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "구속", Rank = Rank.B, Species = Species.HUMAN)
 public class Imprison extends AbilityBase {
@@ -59,7 +57,7 @@ public class Imprison extends AbilityBase {
 						b.setType(Material.GLASS);
 					}
 
-					Cool.StartTimer();
+					Cool.startTimer();
 				}
 			} else {
 				Cool.isCooldown();

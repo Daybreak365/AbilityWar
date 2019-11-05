@@ -1,5 +1,13 @@
 package daybreak.abilitywar.ability.list;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -7,15 +15,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
-import daybreak.abilitywar.utils.thread.TimerBase;
 
 @AbilityManifest(Name = "악마의 부츠", Rank = Rank.B, Species = Species.HUMAN)
 public class DevilBoots extends AbilityBase {
@@ -39,7 +38,7 @@ public class DevilBoots extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void onProcess(int Seconds) {
+		protected void onProcess(int count) {
 			EffectLib.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
 		}
 	};
@@ -66,7 +65,7 @@ public class DevilBoots extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {
-		speed.StartTimer();
+		speed.startTimer();
 	}
 
 	@Override

@@ -1,11 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -18,6 +12,11 @@ import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "설인", Rank = Rank.S, Species = Species.HUMAN)
 public class Yeti extends AbilityBase {
@@ -54,7 +53,7 @@ public class Yeti extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
@@ -84,7 +83,7 @@ public class Yeti extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true, true)) {
 				Block db = b.getLocation().subtract(0, 1, 0).getBlock();
 				Material type = db.getType();
@@ -127,9 +126,9 @@ public class Yeti extends AbilityBase {
 		if (mt.equals(MaterialType.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!Cool.isCooldown()) {
-					Ice.StartTimer();
+					Ice.startTimer();
 
-					Cool.StartTimer();
+					Cool.startTimer();
 
 					return true;
 				}
@@ -141,7 +140,7 @@ public class Yeti extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {
-		Buff.StartTimer();
+		Buff.startTimer();
 	}
 
 	@Override

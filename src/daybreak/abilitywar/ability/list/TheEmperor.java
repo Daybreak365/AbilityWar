@@ -1,18 +1,17 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(Name = "황제", Rank = Rank.A, Species = Species.HUMAN)
 public class TheEmperor extends AbilityBase {
@@ -40,7 +39,7 @@ public class TheEmperor extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			EffectLib.SLOW.addPotionEffect(getPlayer(), 30, 1, true);
 		}
 		
@@ -71,7 +70,7 @@ public class TheEmperor extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {
-		Passive.StartTimer();
+		Passive.startTimer();
 	}
 
 	@Override

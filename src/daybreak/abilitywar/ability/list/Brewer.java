@@ -1,12 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.Random;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionType;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -19,6 +12,11 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.PotionBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib.PotionBuilder.PotionShape;
+import java.util.Random;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionType;
 
 @AbilityManifest(Name = "양조사", Rank = Rank.B, Species = Species.HUMAN)
 public class Brewer extends AbilityBase {
@@ -58,7 +56,7 @@ public class Brewer extends AbilityBase {
 					SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(p);
 					ParticleLib.SPELL_WITCH.spawnParticle(p.getLocation(), 2, 2, 2, 10);
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 					
 					return true;
 				}

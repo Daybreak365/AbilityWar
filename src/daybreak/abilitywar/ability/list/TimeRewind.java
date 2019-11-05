@@ -1,22 +1,10 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
@@ -26,6 +14,16 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.database.PushingArray;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 @AbilityManifest(Name = "시간 역행", Rank = Rank.S, Species = Species.HUMAN)
 public class TimeRewind extends AbilityBase {
@@ -64,7 +62,7 @@ public class TimeRewind extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
-					Skill.StartTimer();
+					Skill.startTimer();
 					
 					return true;
 				}
@@ -134,7 +132,7 @@ public class TimeRewind extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			array.add(new PlayerData(getPlayer()));
 		}
 
@@ -145,7 +143,7 @@ public class TimeRewind extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {
-		Save.StartTimer();
+		Save.startTimer();
 	}
 	
 	private class PlayerData {

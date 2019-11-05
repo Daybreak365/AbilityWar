@@ -1,11 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -15,6 +9,11 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 @AbilityManifest(Name = "유명 인사", Rank = Rank.D, Species = Species.HUMAN)
 public class Celebrity extends AbilityBase {
@@ -53,7 +52,7 @@ public class Celebrity extends AbilityBase {
 						}
 					}
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 					
 					return true;
 				}

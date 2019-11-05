@@ -1,15 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -23,6 +13,14 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase {
@@ -115,7 +113,7 @@ public class Ares extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
-					Duration.StartTimer();
+					Duration.startTimer();
 					
 					return true;
 				}

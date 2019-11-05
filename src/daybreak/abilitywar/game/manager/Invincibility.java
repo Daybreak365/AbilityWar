@@ -1,5 +1,15 @@
 package daybreak.abilitywar.game.manager;
 
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.game.events.InvincibleEndEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.Game;
+import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.tItle.Title;
+import daybreak.abilitywar.utils.math.NumberUtil;
+import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -8,17 +18,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.EventExecutor;
-
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.game.events.InvincibleEndEvent;
-import daybreak.abilitywar.game.games.mode.Game;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.tItle.Title;
-import daybreak.abilitywar.utils.math.NumberUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 
 /**
  * 무적
@@ -58,15 +57,15 @@ public class Invincibility implements EventExecutor {
 					}
 
 					@Override
-					protected void onProcess(int Seconds) {
-						if (Seconds == (Duration * 60) / 2) {
+					protected void onProcess(int count) {
+						if (count == (Duration * 60) / 2) {
 							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-									"&a무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
+									"&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
 						}
 
-						if (Seconds <= 5 && Seconds >= 1) {
+						if (count <= 5 && count >= 1) {
 							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-									"&a무적이 &f" + NumberUtil.parseTimeString(Seconds) + " &a후에 해제됩니다."));
+									"&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
 							SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 						}
 					}
@@ -106,7 +105,7 @@ public class Invincibility implements EventExecutor {
 					}
 
 					@Override
-					protected void onProcess(int Seconds) {}
+					protected void onProcess(int count) {}
 
 					@Override
 					protected void onEnd() {
@@ -128,7 +127,7 @@ public class Invincibility implements EventExecutor {
 				};
 			}
 
-			this.invincibilityTimer.StartTimer();
+			this.invincibilityTimer.startTimer();
 			return true;
 		}
 
@@ -137,7 +136,7 @@ public class Invincibility implements EventExecutor {
 
 	public boolean Stop() {
 		if (this.invincibilityTimer != null && this.invincibilityTimer.isRunning()) {
-			this.invincibilityTimer.StopTimer(false);
+			this.invincibilityTimer.stopTimer(false);
 			return true;
 		}
 

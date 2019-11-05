@@ -1,18 +1,5 @@
 package daybreak.abilitywar.game.games.teamgame;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
@@ -25,29 +12,28 @@ import daybreak.abilitywar.game.manager.AbilitySelect;
 import daybreak.abilitywar.game.manager.DeathManager;
 import daybreak.abilitywar.game.manager.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.InfiniteDurability;
-import daybreak.abilitywar.game.manager.SpectatorManager;
 import daybreak.abilitywar.game.script.Script;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 @GameManifest(Name = "팀 전투", Description = { "§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다." })
 public class TeamFight extends TeamGame implements DefaultKitHandler {
 
 	public TeamFight() {
-		super(new PlayerStrategy() {
-			@Override
-			public Collection<Player> getPlayers() {
-				List<Player> players = new ArrayList<Player>();
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					if (!SpectatorManager.isSpectator(p.getName())) {
-						players.add(p);
-					}
-				}
-				return players;
-			}
-		});
+		super(PlayerStrategy.EVERY_PLAYER_EXCLUDING_SPECTATORS);
 		setRestricted(Invincible);
 	}
 
@@ -63,7 +49,7 @@ public class TeamFight extends TeamGame implements DefaultKitHandler {
 		}
 
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			for (Participant p : getParticipants()) {
 				p.getPlayer().setFoodLevel(19);
 			}
@@ -204,7 +190,7 @@ public class TeamFight extends TeamGame implements DefaultKitHandler {
 
 		if (Settings.getNoHunger()) {
 			NoHunger.setPeriod(1);
-			NoHunger.StartTimer();
+			NoHunger.startTimer();
 		} else {
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 		}
@@ -268,22 +254,11 @@ public class TeamFight extends TeamGame implements DefaultKitHandler {
 				return TeamFight.this.getParticipants();
 			}
 
-			private List<Class<? extends AbilityBase>> setupAbilities() {
-				List<Class<? extends AbilityBase>> list = new ArrayList<>();
-				for (String abilityName : AbilityList.nameValues()) {
-					if (!Settings.isBlackListed(abilityName)) {
-						list.add(AbilityList.getByString(abilityName));
-					}
-				}
-
-				return list;
-			}
-
-			private List<Class<? extends AbilityBase>> abilities;
+			private ArrayList<Class<? extends AbilityBase>> abilities;
 
 			@Override
 			protected void drawAbility(Collection<Participant> selectors) {
-				abilities = setupAbilities();
+				abilities = AbilitySelectStrategy.EVERY_ABILITY_EXCLUDING_BLACKLISTED.getAbilities();
 
 				if (getSelectors().size() <= abilities.size()) {
 					Random random = new Random();

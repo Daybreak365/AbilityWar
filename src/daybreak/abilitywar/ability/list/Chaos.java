@@ -1,11 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.Vector;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -17,6 +11,11 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.util.Vector;
 
 @AbilityManifest(Name = "카오스", Rank = Rank.S, Species = Species.GOD)
 public class Chaos extends AbilityBase {
@@ -91,7 +90,7 @@ public class Chaos extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
-					Duration.StartTimer();
+					Duration.startTimer();
 					
 					return true;
 				}

@@ -1,16 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -25,6 +14,15 @@ import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.bukkit.ChatColor;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 @AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.HUMAN)
 public class Pumpkin extends AbilityBase {
@@ -72,7 +70,7 @@ public class Pumpkin extends AbilityBase {
 		}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			if(Count.equals(1)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.D));
 				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
@@ -112,7 +110,7 @@ public class Pumpkin extends AbilityBase {
 		public void onDurationStart() {
 			Players = new HashMap<Player, ItemStack>();
 			LocationUtil.getNearbyPlayers(getPlayer(), 30, 30).stream().forEach(p -> Players.put(p, p.getInventory().getHelmet()));
-			Song.StartTimer();
+			Song.startTimer();
 		}
 		
 		@Override
@@ -146,7 +144,7 @@ public class Pumpkin extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
-					Duration.StartTimer();
+					Duration.startTimer();
 					
 					return true;
 				}

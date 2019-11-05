@@ -1,7 +1,16 @@
 package daybreak.abilitywar.ability.list;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.Random;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -9,17 +18,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
-import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.TimerBase;
 
 @AbilityManifest(Name = "검은 양초", Rank = Rank.A, Species = Species.OTHERS)
 public class BlackCandle extends AbilityBase {
@@ -46,7 +44,7 @@ public class BlackCandle extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			EffectLib.BAD_OMEN.removePotionEffect(getPlayer());
 			EffectLib.BLINDNESS.removePotionEffect(getPlayer());
 			EffectLib.CONFUSION.removePotionEffect(getPlayer());
@@ -123,7 +121,7 @@ public class BlackCandle extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {
-		NoDebuff.StartTimer();
+		NoDebuff.startTimer();
 	}
 
 	@Override

@@ -1,19 +1,17 @@
 package daybreak.abilitywar.ability.list;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.Random;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.thread.TimerBase;
 
 @AbilityManifest(Name = "좀비", Rank = Rank.B, Species = Species.OTHERS)
 public class Zombie extends AbilityBase {
@@ -30,7 +28,7 @@ public class Zombie extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			Random r = new Random();
 			int random = r.nextInt(100) + 1;
 			
@@ -61,7 +59,7 @@ public class Zombie extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {
-		Aim.StartTimer();
+		Aim.startTimer();
 	}
 
 	@Override

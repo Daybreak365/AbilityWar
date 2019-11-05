@@ -1,9 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -15,6 +11,9 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "쇼맨쉽", Rank = Rank.A, Species = Species.HUMAN)
 public class ShowmanShip extends AbilityBase {
@@ -37,7 +36,7 @@ public class ShowmanShip extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			circle.setCenter(getPlayer().getLocation());
 			final int Count = LocationUtil.getNearbyPlayers(getPlayer(), 10, 10).size();
 			
@@ -71,7 +70,7 @@ public class ShowmanShip extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {
-		Passive.StartTimer();
+		Passive.startTimer();
 	}
 
 	@Override

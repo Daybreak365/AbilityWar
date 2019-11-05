@@ -1,17 +1,10 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -19,6 +12,12 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(Name = "테러리스트", Rank = Rank.A, Species = Species.HUMAN)
 public class Terrorist extends AbilityBase {
@@ -67,7 +66,7 @@ public class Terrorist extends AbilityBase {
 					for(Location l : LocationUtil.getRandomLocations(center, 9, count)) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 					for(Location l : new Circle(center, 10).setAmount(count).setHighestLocation(true).getLocations()) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 					
 					return true;
 				}

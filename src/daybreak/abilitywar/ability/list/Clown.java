@@ -1,10 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -17,6 +12,10 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "광대", Rank = Rank.B, Species = Species.HUMAN)
 public class Clown extends AbilityBase {
@@ -76,14 +75,14 @@ public class Clown extends AbilityBase {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration()) {
 					if(!Cool.isCooldown()) {
-						Duration.StartTimer();
+						Duration.startTimer();
 						
 						return true;
 					}
 				} else {
 					if(OriginalPoint != null) getPlayer().teleport(OriginalPoint);
 					SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer());
-					Duration.StopTimer(false);
+					Duration.stopTimer(false);
 					
 					for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), RangeConfig.getValue(), 250)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(p);

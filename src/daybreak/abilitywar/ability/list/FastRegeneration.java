@@ -1,9 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -12,6 +8,9 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "빠른 회복", Rank = Rank.A, Species = Species.HUMAN)
 public class FastRegeneration extends AbilityBase {
@@ -38,7 +37,7 @@ public class FastRegeneration extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			if(!isRestricted()) {
 				Player p = getPlayer();
 				if(!p.isDead()) {
@@ -63,7 +62,7 @@ public class FastRegeneration extends AbilityBase {
 	
 	@Override
 	public void onRestrictClear() {
-		Passive.StartTimer();
+		Passive.startTimer();
 	}
 
 	@Override

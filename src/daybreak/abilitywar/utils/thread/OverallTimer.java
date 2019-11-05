@@ -1,8 +1,7 @@
 package daybreak.abilitywar.utils.thread;
 
-import org.bukkit.Bukkit;
-
 import daybreak.abilitywar.AbilityWar;
+import org.bukkit.Bukkit;
 
 /**
  * 전역 타이머
@@ -10,13 +9,13 @@ import daybreak.abilitywar.AbilityWar;
  */
 abstract public class OverallTimer {
 
-	private int Task = -1;
+	private int task = -1;
 
-	private boolean InfiniteTimer;
+	private boolean isInfinite;
 	
-	private int MaxCount;
-	private int Count;
-	private int Period = 20;
+	private int maxCount;
+	private int count;
+	private int period = 20;
 
 	protected abstract void onStart();
 
@@ -25,16 +24,16 @@ abstract public class OverallTimer {
 	protected abstract void onEnd();
 
 	public boolean isRunning() {
-		return Task != -1;
+		return task != -1;
 	}
 
 	/**
 	 * 타이머를 시작합니다.
 	 */
-	public void StartTimer() {
+	public void startTimer() {
 		if(!isRunning()) {
-			Count = MaxCount;
-			this.Task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, Period);
+			count = maxCount;
+			this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, period);
 			onStart();
 		}
 	}
@@ -42,29 +41,29 @@ abstract public class OverallTimer {
 	/**
 	 * 타이머를 종료합니다.
 	 */
-	public void StopTimer() {
+	public void stopTimer() {
 		if(isRunning()) {
-			Bukkit.getScheduler().cancelTask(Task);
-			Count = MaxCount;
-			this.Task = -1;
+			Bukkit.getScheduler().cancelTask(task);
+			count = maxCount;
+			this.task = -1;
 			onEnd();
 		}
 	}
 	
 	public int getMaxCount() {
-		return MaxCount;
+		return maxCount;
 	}
 	
 	public int getCount() {
-		return Count;
+		return count;
 	}
 
 	public int getFixedCount() {
-		return Count / (20 / Period);
+		return count / (20 / period);
 	}
 	
 	public OverallTimer setPeriod(int Period) {
-		this.Period = Period;
+		this.period = Period;
 		return this;
 	}
 	
@@ -72,36 +71,31 @@ abstract public class OverallTimer {
 	 * 일반 타이머
 	 */
 	public OverallTimer(int Count) {
-		InfiniteTimer = false;
-		this.MaxCount = Count;
+		isInfinite = false;
+		this.maxCount = Count;
 	}
 	
 	/**
 	 * 무한 타이머
 	 */
 	public OverallTimer() {
-		InfiniteTimer = true;
-		this.MaxCount = 0;
+		isInfinite = true;
+		this.maxCount = 0;
 	}
 	
 	private final class TimerTask extends Thread {
 
 		@Override
 		public void run() {
-			if (InfiniteTimer) {
-				onProcess(Count);
-				Count++;
+			if (isInfinite) {
+				onProcess(count);
+				count++;
 			} else {
-				if (Count > 0) {
-					onProcess(Count);
-
-					if (Count <= 0) {
-						StopTimer();
-					}
-
-					Count--;
+				if (count > 0) {
+					onProcess(count);
+					count--;
 				} else {
-					StopTimer();
+					stopTimer();
 				}
 			}
 		}

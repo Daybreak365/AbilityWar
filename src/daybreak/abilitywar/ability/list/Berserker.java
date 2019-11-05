@@ -1,20 +1,19 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.EffectLib;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(Name = "버서커", Rank = Rank.B, Species = Species.HUMAN)
 public class Berserker extends AbilityBase {
@@ -85,7 +84,7 @@ public class Berserker extends AbilityBase {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
-					Duration.StartTimer();
+					Duration.startTimer();
 					
 					return true;
 				}
@@ -101,7 +100,7 @@ public class Berserker extends AbilityBase {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if(e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
 			if(Strengthen) {
-				if(Duration.isDuration()) Duration.StopTimer(false);
+				if(Duration.isDuration()) Duration.stopTimer(false);
 				e.setDamage(e.getDamage() * Strength);
 				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), DebuffTime * 20, 1, true);
 			}

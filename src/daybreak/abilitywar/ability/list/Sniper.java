@@ -1,26 +1,24 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 @AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
@@ -52,7 +50,7 @@ public class Sniper extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void onProcess(int Seconds) {
+		protected void onProcess(int count) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInMainHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW)) {
@@ -71,7 +69,7 @@ public class Sniper extends AbilityBase {
 		protected void onEnd() {}
 		
 		@Override
-		protected void onProcess(int Seconds) {
+		protected void onProcess(int count) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInMainHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW) || main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)) {
@@ -112,8 +110,8 @@ public class Sniper extends AbilityBase {
 					}
 					
 					@Override
-					protected void onProcess(int Seconds) {}
-				}.StartTimer();
+					protected void onProcess(int count) {}
+				}.startTimer();
 			}
 		}
 	}
@@ -130,7 +128,7 @@ public class Sniper extends AbilityBase {
 
 	@Override
 	protected void onRestrictClear() {
-		Snipe.StartTimer();
+		Snipe.startTimer();
 	}
 
 }

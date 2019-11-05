@@ -1,5 +1,20 @@
 package daybreak.abilitywar.ability.list;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.timer.CooldownTimer;
+import daybreak.abilitywar.config.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.FallBlock;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.math.LocationUtil;
+import daybreak.abilitywar.utils.thread.TimerBase;
+import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,22 +28,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.FallBlock;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 
 @SuppressWarnings("deprecation")
 @AbilityManifest(Name = "넥스", Rank = Rank.B, Species = Species.GOD)
@@ -69,9 +68,9 @@ public class Nex extends AbilityBase {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
 					}
 					SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
-					Skill.StartTimer();
+					Skill.startTimer();
 					
-					Cool.StartTimer();
+					Cool.startTimer();
 					
 					return true;
 				}
@@ -95,7 +94,7 @@ public class Nex extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 		}
 
 		@Override
@@ -152,7 +151,7 @@ public class Nex extends AbilityBase {
 						ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(particleMat));
 					}
 					
-					FallBlock.StartTimer();
+					FallBlock.startTimer();
 				}
 			}
 		}
@@ -168,8 +167,8 @@ public class Nex extends AbilityBase {
 		}
 		
 		@Override
-		public void onProcess(int Seconds) {
-			Integer Distance = 6 - Seconds;
+		public void onProcess(int count) {
+			Integer Distance = 6 - count;
 			
 			for(Block block : LocationUtil.getBlocks(center, Distance, true, true, false)) {
 				FallBlock fb = new FallBlock(block.getType(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0)) {

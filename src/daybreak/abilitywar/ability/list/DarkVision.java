@@ -1,9 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -13,6 +9,9 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "심안", Rank = Rank.C, Species = Species.HUMAN)
 public class DarkVision extends AbilityBase {
@@ -39,7 +38,7 @@ public class DarkVision extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			EffectLib.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
 			EffectLib.SPEED.addPotionEffect(getPlayer(), 40, 5, true);
 			EffectLib.JUMP.addPotionEffect(getPlayer(), 40, 1, true);
@@ -58,7 +57,7 @@ public class DarkVision extends AbilityBase {
 		public void onStart() {}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), Distance, Distance)) {
 				EffectLib.GLOWING.addPotionEffect(p, 10, 0, true);
 			}
@@ -76,8 +75,8 @@ public class DarkVision extends AbilityBase {
 
 	@Override
 	public void onRestrictClear() {
-		Dark.StartTimer();
-		Vision.StartTimer();
+		Dark.startTimer();
+		Vision.startTimer();
 	}
 
 	@Override

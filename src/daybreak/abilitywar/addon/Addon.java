@@ -1,17 +1,11 @@
 package daybreak.abilitywar.addon;
 
-import daybreak.abilitywar.addon.exception.InvalidAddonException;
-import org.bukkit.plugin.Plugin;
-
 import daybreak.abilitywar.AbilityWar;
-
-import java.io.BufferedReader;
+import daybreak.abilitywar.addon.exception.InvalidAddonException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,12 +13,11 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
+import org.bukkit.plugin.Plugin;
 
 /**
  * 애드온
- *
  * @author DayBreak 새벽
  */
 public abstract class Addon {

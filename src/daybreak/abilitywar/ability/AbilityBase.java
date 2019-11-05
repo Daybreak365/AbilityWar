@@ -1,21 +1,7 @@
 package daybreak.abilitywar.ability;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.inventory.MainHand;
-
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityFactory.AbilityRegisteration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
@@ -27,6 +13,18 @@ import daybreak.abilitywar.game.manager.passivemanager.PassiveExecutor;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.inventory.MainHand;
 
 /**
  * {@link AbilityWar} 플러그인에서 사용하는 <strong>모든 능력</strong>의 기반이 되는 클래스입니다.
@@ -67,22 +65,25 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 * @throws IllegalStateException 게임이 진행중이지 않거나 능력이 {@link AbilityFactory}에 등록되지
 	 *                               않았을 경우 예외가 발생합니다.
 	 */
-	public AbilityBase(Participant participant, String... explain) {
+	public AbilityBase(Participant participant, String... explain) throws IllegalStateException {
 		this.participant = participant;
 		this.explain = explain;
-		if (!AbilityWarThread.isGameTaskRunning())
+		if (!AbilityWarThread.isGameTaskRunning()) {
 			throw new IllegalStateException("게임이 진행되고 있지 않습니다.");
+		}
 		this.game = AbilityWarThread.getGame();
-		if (!AbilityFactory.isRegistered(getClass()))
+		if (!AbilityFactory.isRegistered(getClass())) {
 			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
-		AbilityRegisteration<?> registry = AbilityFactory.getRegisteration(getClass());
+		}
+		AbilityRegistration<?> registry = AbilityFactory.getRegisteration(getClass());
 		this.manifest = registry.getManifest();
 		this.eventhandlers = registry.getEventhandlers();
 		this.timers = registry.getTimers();
 
 		PassiveManager passiveManager = game.getPassiveManager();
-		for (Class<? extends Event> eventClass : eventhandlers.keySet())
+		for (Class<? extends Event> eventClass : eventhandlers.keySet()) {
 			passiveManager.register(eventClass, this);
+		}
 	}
 
 	@Override
@@ -138,7 +139,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		for (Field field : timers) {
 			try {
 				field.setAccessible(true);
-				((TimerBase) field.get(this)).StopTimer(true);
+				((TimerBase) field.get(this)).stopTimer(true);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				logger.log(Level.SEVERE, "Reflection Error: stopTimers()");
 			}

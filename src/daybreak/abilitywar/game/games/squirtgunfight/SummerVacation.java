@@ -1,13 +1,31 @@
 package daybreak.abilitywar.game.games.squirtgunfight;
 
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.SummerVacationSettings;
+import daybreak.abilitywar.game.events.GameCreditEvent;
+import daybreak.abilitywar.game.events.ParticipantDeathEvent;
+import daybreak.abilitywar.game.games.mode.GameManifest;
+import daybreak.abilitywar.game.games.mode.PlayerStrategy;
+import daybreak.abilitywar.game.games.mode.WinnableGame;
+import daybreak.abilitywar.game.manager.AbilitySelect;
+import daybreak.abilitywar.game.manager.DeathManager;
+import daybreak.abilitywar.game.manager.DefaultKitHandler;
+import daybreak.abilitywar.game.manager.InfiniteDurability;
+import daybreak.abilitywar.utils.FireworkUtil;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.language.KoreanUtil;
+import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import daybreak.abilitywar.utils.thread.OverallTimer;
+import daybreak.abilitywar.utils.thread.TimerBase;
+import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
-
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,29 +41,6 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.SummerVacationSettings;
-import daybreak.abilitywar.game.events.GameCreditEvent;
-import daybreak.abilitywar.game.events.ParticipantDeathEvent;
-import daybreak.abilitywar.game.games.mode.GameManifest;
-import daybreak.abilitywar.game.games.mode.PlayerStrategy;
-import daybreak.abilitywar.game.games.mode.WinnableGame;
-import daybreak.abilitywar.game.manager.AbilitySelect;
-import daybreak.abilitywar.game.manager.DeathManager;
-import daybreak.abilitywar.game.manager.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.InfiniteDurability;
-import daybreak.abilitywar.game.manager.SpectatorManager;
-import daybreak.abilitywar.utils.FireworkUtil;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.language.KoreanUtil;
-import daybreak.abilitywar.utils.library.EffectLib;
-import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.TimerBase;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-
 /**
  * 체인지 능력 전쟁
  * @author DayBreak 새벽
@@ -55,18 +50,7 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 	
 	public SummerVacation() {
-		super(new PlayerStrategy() {
-			@Override
-			public Collection<Player> getPlayers() {
-				List<Player> players = new ArrayList<Player>();
-				for(Player p : Bukkit.getOnlinePlayers()) {
-					if(!SpectatorManager.isSpectator(p.getName())) {
-						players.add(p);
-					}
-				}
-				return players;
-			}
-		});
+		super(PlayerStrategy.EVERY_PLAYER_EXCLUDING_SPECTATORS);
 		boolean invincible = Settings.getInvincibilityEnable();
 		setRestricted(invincible);
 		this.MaxKill = SummerVacationSettings.getMaxKill();
@@ -87,7 +71,7 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 		}
 		
 		@Override
-		public void onProcess(int Seconds) {
+		public void onProcess(int count) {
 			for(Participant p : getParticipants()) {
 				p.getPlayer().setFoodLevel(19);
 			}
@@ -169,7 +153,7 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 		protected void onEnd() {}
 		
 		@Override
-		protected void onProcess(int Seconds) {
+		protected void onProcess(int count) {
 			for(Participant p : Killers) {
 				EffectLib.GLOWING.addPotionEffect(p.getPlayer(), 20, 0, true);
 			}
@@ -318,9 +302,9 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 		}
 
 		NoHunger.setPeriod(1);
-		NoHunger.StartTimer();
+		NoHunger.startTimer();
 		
-		Glow.StartTimer();
+		Glow.startTimer();
 
 		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 		for(Participant participant : this.getParticipants()) {
@@ -402,7 +386,7 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 				protected void onProcess(Integer Seconds) {
 					FireworkUtil.spawnWinnerFirework(p.getEyeLocation().add(0, 1, 0));
 				}
-			}.setPeriod(8).StartTimer();
+			}.setPeriod(8).startTimer();
 		}
 		
 		builder.append(joiner.toString());
