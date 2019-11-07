@@ -1,11 +1,9 @@
 package daybreak.abilitywar.config.enums;
 
-import java.util.Arrays;
-
-import org.bukkit.Bukkit;
-
-import daybreak.abilitywar.game.games.defaultgame.DefaultGame;
+import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.utils.Messager;
+import java.util.Arrays;
+import org.bukkit.Bukkit;
 
 public enum ConfigNodes {
 

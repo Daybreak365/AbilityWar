@@ -1,7 +1,12 @@
 package daybreak.abilitywar.config;
 
+import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.enums.OnDeath;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.standard.DefaultGame;
+import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
+import daybreak.abilitywar.utils.database.FileManager;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -9,17 +14,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
-
-import daybreak.abilitywar.config.enums.ConfigNodes;
-import daybreak.abilitywar.config.enums.OnDeath;
-import daybreak.abilitywar.game.games.defaultgame.DefaultGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
-import daybreak.abilitywar.utils.database.FileManager;
 
 public class AbilityWarSettings {
 

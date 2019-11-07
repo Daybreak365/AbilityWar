@@ -8,7 +8,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
-import daybreak.abilitywar.game.games.defaultgame.DefaultGame;
+import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.utils.Messager;
 import java.util.ArrayList;
 import java.util.HashMap;

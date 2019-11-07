@@ -1,17 +1,15 @@
 package daybreak.abilitywar.game.script.types;
 
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.game.script.objects.AbstractScript;
+import daybreak.abilitywar.utils.Messager;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-
-import daybreak.abilitywar.game.games.mode.Game;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.script.objects.AbstractScript;
-import daybreak.abilitywar.utils.Messager;
 
 public class LocationNoticeScript extends AbstractScript {
 

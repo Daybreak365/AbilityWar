@@ -1,30 +1,30 @@
-package daybreak.abilitywar.game.games.mode;
-
-import static daybreak.abilitywar.utils.Validate.notNull;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.weather.WeatherChangeEvent;
+package daybreak.abilitywar.game.games.standard;
 
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.events.GameEndEvent;
 import daybreak.abilitywar.game.events.GameReadyEvent;
 import daybreak.abilitywar.game.events.GameStartEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.PlayerStrategy;
-import daybreak.abilitywar.game.manager.AbilitySelect;
-import daybreak.abilitywar.game.manager.DeathManager;
-import daybreak.abilitywar.game.manager.Firewall;
-import daybreak.abilitywar.game.manager.Invincibility;
-import daybreak.abilitywar.game.manager.ScoreboardManager;
-import daybreak.abilitywar.game.manager.WRECK;
+import daybreak.abilitywar.game.manager.object.AbilitySelect;
+import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.manager.object.Firewall;
+import daybreak.abilitywar.game.manager.object.Invincibility;
+import daybreak.abilitywar.game.manager.object.ScoreboardManager;
+import daybreak.abilitywar.game.manager.object.WRECK;
+import java.util.Collection;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
+
+
+import static daybreak.abilitywar.utils.Validate.notNull;
 
 public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler {
 
-	public Game(PlayerStrategy strategy) {
-		super(strategy);
+	public Game(Collection<Player> players) {
+		super(players);
 	}
 
 	private final DeathManager deathManager = notNull(setupDeathManager());
@@ -44,10 +44,10 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	private int seconds = 0;
 
 	@Override
-	protected void onProcess(Integer count) {
+	protected void onProcess(int seconds) {
 		if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
-			seconds++;
-			progressGame(seconds);
+			this.seconds++;
+			progressGame(this.seconds);
 		}
 	}
 

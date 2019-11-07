@@ -1,7 +1,7 @@
 package daybreak.abilitywar.ability.timer;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.game.manager.WRECK;
+import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.NumberUtil;

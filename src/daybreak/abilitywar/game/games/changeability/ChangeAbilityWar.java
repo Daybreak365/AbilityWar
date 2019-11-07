@@ -7,25 +7,22 @@ import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
-import daybreak.abilitywar.game.games.mode.PlayerStrategy;
-import daybreak.abilitywar.game.games.mode.WinnableGame;
+import daybreak.abilitywar.game.games.mode.decorator.Winnable;
+import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.AbilitySelect;
-import daybreak.abilitywar.game.manager.DeathManager;
-import daybreak.abilitywar.game.manager.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.InfiniteDurability;
-import daybreak.abilitywar.utils.FireworkUtil;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.game.manager.object.AbilitySelect;
+import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.manager.object.InfiniteDurability;
+import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.language.KoreanUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.OverallTimer;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -45,10 +42,10 @@ import org.bukkit.scoreboard.Score;
  */
 @GameManifest(Name = "체인지 능력 전쟁 (Beta)", Description = {"§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.", "§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.", "§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
         "§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f체인지 능력전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
-public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler {
+public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler {
 
     public ChangeAbilityWar() {
-        super(PlayerStrategy.EVERY_PLAYER_EXCLUDING_SPECTATORS);
+        super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
         setRestricted(Invincible);
         this.maxLife = ChangeAbilityWarSettings.getLife();
     }
@@ -226,7 +223,7 @@ public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler 
                             }
 
                             if (count == 1 && hasLife != null) {
-                                Victory(hasLife);
+                                Win(hasLife);
                             }
                         }
                     }
@@ -354,38 +351,6 @@ public class ChangeAbilityWar extends WinnableGame implements DefaultKitHandler 
             p.giveExpLevels(Settings.getStartLevel());
             SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
         }
-    }
-
-    @Override
-    protected void onVictory(Participant... participants) {
-        Messager.clearChat();
-        StringBuilder builder = new StringBuilder();
-        builder.append(ChatColor.translateAlternateColorCodes('&', "&5&l우승자&f: "));
-
-        StringJoiner joiner = new StringJoiner("§f, §d", "§d", "§f.");
-        for (Participant participant : participants) {
-            Player p = participant.getPlayer();
-            SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
-            joiner.add(p.getName());
-            new OverallTimer(5) {
-
-                @Override
-                protected void onStart() {
-                }
-
-                @Override
-                protected void onEnd() {
-                }
-
-                @Override
-                protected void onProcess(Integer Seconds) {
-                    FireworkUtil.spawnWinnerFirework(p.getEyeLocation().add(0, 1, 0));
-                }
-            }.setPeriod(8).startTimer();
-        }
-
-        builder.append(joiner.toString());
-        Bukkit.broadcastMessage(builder.toString());
     }
 
     @Override

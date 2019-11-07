@@ -1,10 +1,14 @@
 package daybreak.abilitywar.utils.math;
 
+import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,12 +16,6 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.mode.TeamGame;
-import daybreak.abilitywar.game.manager.DeathManager;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 
 /**
  * Location Util

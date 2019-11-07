@@ -53,8 +53,8 @@ abstract public class DurationTimer extends TimerBase {
     }
 
     @Override
-    public DurationTimer setPeriod(int Period) {
-        super.setPeriod(Period);
+    public DurationTimer setPeriod(int period) {
+        super.setPeriod(period);
         return this;
     }
 

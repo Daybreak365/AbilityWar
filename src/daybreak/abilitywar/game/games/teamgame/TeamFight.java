@@ -5,15 +5,15 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
-import daybreak.abilitywar.game.games.mode.PlayerStrategy;
 import daybreak.abilitywar.game.games.mode.TeamGame;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.AbilitySelect;
-import daybreak.abilitywar.game.manager.DeathManager;
-import daybreak.abilitywar.game.manager.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.InfiniteDurability;
+import daybreak.abilitywar.game.manager.object.AbilitySelect;
+import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.Script;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.thread.TimerBase;
@@ -33,7 +33,7 @@ import org.bukkit.inventory.ItemStack;
 public class TeamFight extends TeamGame implements DefaultKitHandler {
 
 	public TeamFight() {
-		super(PlayerStrategy.EVERY_PLAYER_EXCLUDING_SPECTATORS);
+		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(Invincible);
 	}
 

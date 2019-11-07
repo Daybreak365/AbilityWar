@@ -7,25 +7,23 @@ import daybreak.abilitywar.config.AbilityWarSettings.Settings.SummerVacationSett
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
-import daybreak.abilitywar.game.games.mode.PlayerStrategy;
-import daybreak.abilitywar.game.games.mode.WinnableGame;
-import daybreak.abilitywar.game.manager.AbilitySelect;
-import daybreak.abilitywar.game.manager.DeathManager;
-import daybreak.abilitywar.game.manager.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.InfiniteDurability;
-import daybreak.abilitywar.utils.FireworkUtil;
+import daybreak.abilitywar.game.games.mode.decorator.Winnable;
+import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.game.manager.object.AbilitySelect;
+import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.language.KoreanUtil;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.OverallTimer;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -47,10 +45,10 @@ import org.bukkit.scoreboard.Score;
  */
 @GameManifest(Name = "신나는 여름 휴가", Description = { "§f신나는 물총싸움 뿌슝빠슝! 지금 바로 즐겨보세요!", "", "§a● §f스크립트가 적용되지 않습니다.",
 														"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f신나는 여름 휴가 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
-public class SummerVacation extends WinnableGame implements DefaultKitHandler {
+public class SummerVacation extends Game implements Winnable, DefaultKitHandler {
 	
 	public SummerVacation() {
-		super(PlayerStrategy.EVERY_PLAYER_EXCLUDING_SPECTATORS);
+		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		boolean invincible = Settings.getInvincibilityEnable();
 		setRestricted(invincible);
 		this.MaxKill = SummerVacationSettings.getMaxKill();
@@ -233,7 +231,7 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 						if(score.isScoreSet()) {
 							score.setScore(score.getScore() + 1);
 							if(score.getScore() >= MaxKill) {
-								Victory(Killer);
+								Win(Killer);
 							}
 						}
 					}
@@ -361,36 +359,6 @@ public class SummerVacation extends WinnableGame implements DefaultKitHandler {
 
 		p.getInventory().setHelmet(helmet);
 		p.getInventory().setBoots(boots);
-	}
-
-	@Override
-	protected void onVictory(Participant... participants) {
-		Messager.clearChat();
-		StringBuilder builder = new StringBuilder();
-		builder.append(ChatColor.translateAlternateColorCodes('&', "&5&l우승자&f: "));
-		
-		StringJoiner joiner = new StringJoiner("§f, §d", "§d", "§f.");
-		for(Participant participant : participants) {
-			Player p = participant.getPlayer();
-			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
-			joiner.add(p.getName());
-			new OverallTimer(5) {
-				
-				@Override
-				protected void onStart() {}
-				
-				@Override
-				protected void onEnd() {}
-				
-				@Override
-				protected void onProcess(Integer Seconds) {
-					FireworkUtil.spawnWinnerFirework(p.getEyeLocation().add(0, 1, 0));
-				}
-			}.setPeriod(8).startTimer();
-		}
-		
-		builder.append(joiner.toString());
-		Bukkit.broadcastMessage(builder.toString());
 	}
 
 	@Override

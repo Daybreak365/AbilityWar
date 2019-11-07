@@ -1,10 +1,17 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.GameManifest;
+import daybreak.abilitywar.game.manager.GameMode;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.library.item.MaterialLib;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,15 +26,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.config.enums.ConfigNodes;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.GameManifest;
-import daybreak.abilitywar.game.games.mode.GameMode;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
 
 public class GameModeGUI implements Listener {
 

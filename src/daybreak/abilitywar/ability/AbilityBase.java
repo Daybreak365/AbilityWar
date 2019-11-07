@@ -5,9 +5,9 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
-import daybreak.abilitywar.game.games.defaultgame.DefaultGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveExecutor;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
@@ -207,11 +207,10 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 */
 	public final void setRestricted(boolean restricted) {
 		this.restricted = restricted;
-
 		if (restricted) {
-			this.stopTimers();
+			stopTimers();
 		} else {
-			this.onRestrictClear();
+			onRestrictClear();
 		}
 	}
 
@@ -229,6 +228,15 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 		public Material getMaterial() {
 			return material;
+		}
+
+		public static MaterialType valueOf(Material material) {
+			for (MaterialType type : values()) {
+				if (type.material.equals(material)) {
+					return type;
+				}
+			}
+			return null;
 		}
 
 	}

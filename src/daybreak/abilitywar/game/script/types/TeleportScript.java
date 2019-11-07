@@ -1,13 +1,13 @@
 package daybreak.abilitywar.game.script.types;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
-
+import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.game.script.objects.AbstractScript;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import daybreak.abilitywar.game.games.mode.Game;
-import daybreak.abilitywar.game.script.objects.AbstractScript;
+
+import static daybreak.abilitywar.utils.Validate.notNull;
 
 public class TeleportScript extends AbstractScript {
 

@@ -1,6 +1,6 @@
 package daybreak.abilitywar.game.script.objects;
 
-import daybreak.abilitywar.game.games.mode.Game;
+import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
