@@ -145,12 +145,18 @@ public class AbilityWarSettings {
 			return getInt(ConfigNodes.Game_StartLevel);
 		}
 
-		public static boolean getInvincibilityEnable() {
-			return getBoolean(ConfigNodes.Game_Invincibility_Enable);
-		}
+		public static class InvincibilitySettings {
+			public static boolean isEnabled() {
+				return getBoolean(ConfigNodes.Game_Invincibility_Enable);
+			}
 
-		public static int getInvincibilityDuration() {
-			return getInt(ConfigNodes.Game_Invincibility_Duration);
+			public static int getDuration() {
+				return getInt(ConfigNodes.Game_Invincibility_Duration);
+			}
+
+			public static boolean isBossbarEnabled() { return getBoolean(ConfigNodes.Game_Invincibility_BossBar_Enable); }
+			public static String getBossbarMessage() { return getString(ConfigNodes.Game_Invincibility_BossBar_Message); }
+			public static String getBossbarInfiniteMessage() { return getString(ConfigNodes.Game_Invincibility_BossBar_InfiniteMessage); }
 		}
 
 		public static boolean getInventoryClear() {

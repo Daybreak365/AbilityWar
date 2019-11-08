@@ -2,7 +2,7 @@ package daybreak.abilitywar.utils.math;
 
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.mode.TeamGame;
+import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import java.util.ArrayList;
@@ -201,15 +201,15 @@ public class LocationUtil {
 							if (game instanceof DeathManager.Handler
 									&& ((DeathManager.Handler) game).getDeathManager().isEliminated(p))
 								continue;
-							Participant part = game.getParticipant(p);
+							Participant participant = game.getParticipant(p);
 
 							if (game instanceof TeamGame && exception instanceof Player) {
-								TeamGame tgame = (TeamGame) game;
-								Player ex = (Player) exception;
-								if (game.isParticipating(ex)) {
-									Participant expart = game.getParticipant(ex);
-									if (tgame.hasTeam(part) && tgame.hasTeam(expart)
-											&& (tgame.getTeam(part).equals(tgame.getTeam(expart))))
+								TeamGame teamGame = (TeamGame) game;
+								Player excluded = (Player) exception;
+								if (game.isParticipating(excluded)) {
+									Participant excludedParticipant = game.getParticipant(excluded);
+									if (teamGame.hasTeam(participant) && teamGame.hasTeam(excludedParticipant)
+											&& (teamGame.getTeam(participant).equals(teamGame.getTeam(excludedParticipant))))
 										continue;
 								}
 							}
@@ -246,15 +246,15 @@ public class LocationUtil {
 							if (game instanceof DeathManager.Handler
 									&& ((DeathManager.Handler) game).getDeathManager().isEliminated(p))
 								continue;
-							Participant part = game.getParticipant(p);
+							Participant participant = game.getParticipant(p);
 
 							if (game instanceof TeamGame && exception instanceof Player) {
-								TeamGame tgame = (TeamGame) game;
-								Player ex = (Player) exception;
-								if (game.isParticipating(ex)) {
-									Participant expart = game.getParticipant(ex);
-									if (tgame.hasTeam(part) && tgame.hasTeam(expart)
-											&& (tgame.getTeam(part).equals(tgame.getTeam(expart))))
+								TeamGame teamGame = (TeamGame) game;
+								Player excluded = (Player) exception;
+								if (game.isParticipating(excluded)) {
+									Participant excludedParticipant = game.getParticipant(excluded);
+									if (teamGame.hasTeam(participant) && teamGame.hasTeam(excludedParticipant)
+											&& (teamGame.getTeam(participant).equals(teamGame.getTeam(excludedParticipant))))
 										continue;
 								}
 							}

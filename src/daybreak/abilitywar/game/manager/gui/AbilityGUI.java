@@ -1,9 +1,14 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,13 +22,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 
 /**
  * 능력 부여 GUI
@@ -69,8 +67,8 @@ public class AbilityGUI implements Listener {
 
 	private Inventory AbilityGUI;
 
-	public void openAbilityGUI(Integer page) {
-		Integer MaxPage = ((values.size() - 1) / 36) + 1;
+	public void openAbilityGUI(int page) {
+		int MaxPage = ((values.size() - 1) / 36) + 1;
 		if (MaxPage < page)
 			page = 1;
 		if (page < 1)

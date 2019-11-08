@@ -137,6 +137,11 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
     public void setRestricted(boolean restricted) {
         this.restricted = restricted;
+        for (Participant participant : getParticipants()) {
+            if (participant.hasAbility()) {
+                participant.ability.setRestricted(restricted);
+            }
+        }
     }
 
     public boolean isGameStarted() {

@@ -4,6 +4,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.FireworkUtil;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.thread.OverallTimer;
 import java.util.StringJoiner;
 import org.bukkit.Bukkit;
@@ -29,6 +30,7 @@ public interface Winnable {
         }
         builder.append(joiner.toString());
         Bukkit.broadcastMessage(builder.toString());
+        AbilityWarThread.StopGame();
     }
 
 }

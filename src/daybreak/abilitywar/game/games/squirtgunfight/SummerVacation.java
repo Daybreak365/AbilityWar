@@ -49,7 +49,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	
 	public SummerVacation() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		boolean invincible = Settings.getInvincibilityEnable();
+		boolean invincible = Settings.InvincibilitySettings.isEnabled();
 		setRestricted(invincible);
 		this.MaxKill = SummerVacationSettings.getMaxKill();
 	}
@@ -80,7 +80,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	};
 	
 	@Override
-	protected void progressGame(Integer Seconds) {
+	protected void progressGame(int Seconds) {
 		switch(Seconds) {
 			case 1:
 				broadcastPlayerList();

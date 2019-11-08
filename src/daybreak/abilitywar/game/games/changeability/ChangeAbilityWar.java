@@ -3,9 +3,7 @@ package daybreak.abilitywar.game.games.changeability;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.ChangeAbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
-import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.mode.decorator.Winnable;
 import daybreak.abilitywar.game.games.standard.Game;
@@ -14,8 +12,8 @@ import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
+import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
-import daybreak.abilitywar.utils.language.KoreanUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -27,9 +25,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -57,7 +52,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
     private final AbilityChanger changer = new AbilityChanger(this);
 
-    private final boolean Invincible = Settings.getInvincibilityEnable();
+    private final boolean Invincible = Settings.InvincibilitySettings.isEnabled();
 
     private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
@@ -81,7 +76,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
     };
 
     @Override
-    protected void progressGame(Integer Seconds) {
+    protected void progressGame(int Seconds) {
         switch (Seconds) {
             case 1:
                 broadcastPlayerList();
@@ -90,38 +85,38 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
                     Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&72명&8)"));
                 }
                 break;
-            case 5:
+            case 3:
                 broadcastPluginDescription();
                 break;
-            case 10:
+            case 5:
                 broadcastAbilityReady();
                 break;
-            case 13:
+            case 7:
                 scoreboardSetup();
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7스코어보드 &f설정중..."));
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&d잠시 후 &f게임이 시작됩니다."));
                 break;
-            case 16:
+            case 9:
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &55&f초 후에 시작됩니다."));
                 SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
                 break;
-            case 17:
+            case 10:
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &54&f초 후에 시작됩니다."));
                 SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
                 break;
-            case 18:
+            case 11:
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &53&f초 후에 시작됩니다."));
                 SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
                 break;
-            case 19:
+            case 12:
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &52&f초 후에 시작됩니다."));
                 SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
                 break;
-            case 20:
+            case 13:
                 Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &51&f초 후에 시작됩니다."));
                 SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
                 break;
-            case 21:
+            case 14:
                 GameStart();
                 break;
         }
@@ -139,92 +134,34 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
         }
     }
 
-    private final boolean Eliminate = ChangeAbilityWarSettings.getEliminate();
-
-    private final List<Participant> NoLife = new ArrayList<Participant>();
+    private final ArrayList<Participant> noLife = new ArrayList<>();
 
     @Override
     protected DeathManager setupDeathManager() {
         return new DeathManager(this) {
-            @EventHandler
-            protected void onDeath(PlayerDeathEvent e) {
-                Player victimPlayer = e.getEntity();
-                Player killerPlayer = victimPlayer.getKiller();
-                if (victimPlayer.getLastDamageCause() != null) {
-                    DamageCause Cause = victimPlayer.getLastDamageCause().getCause();
-
-                    if (killerPlayer != null) {
-                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&f님이 &c" + victimPlayer.getName() + "&f님을 죽였습니다."));
-                    } else {
-                        if (Cause.equals(DamageCause.CONTACT)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 찔려 죽었습니다."));
-                        } else if (Cause.equals(DamageCause.FALL)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어져 죽었습니다."));
-                        } else if (Cause.equals(DamageCause.FALLING_BLOCK)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어지는 블록에 맞아 죽었습니다."));
-                        } else if (Cause.equals(DamageCause.SUFFOCATION)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 끼여 죽었습니다."));
-                        } else if (Cause.equals(DamageCause.DROWNING)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 익사했습니다."));
-                        } else if (Cause.equals(DamageCause.ENTITY_EXPLOSION)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 폭발했습니다."));
-                        } else if (Cause.equals(DamageCause.LAVA)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 용암에 빠져 죽었습니다."));
-                        } else if (Cause.equals(DamageCause.FIRE) || Cause.equals(DamageCause.FIRE_TICK)) {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 노릇노릇하게 구워졌습니다."));
-                        } else {
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
-                        }
+            @Override
+            protected void Operation(Participant victim) {
+                Player victimPlayer = victim.getPlayer();
+                Score score = lifeObjective.getScore(victimPlayer.getName());
+                if (score.isScoreSet()) {
+                    if (score.getScore() >= 1) {
+                        score.setScore(score.getScore() - 1);
                     }
-                } else {
-                    e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
-                }
+                    if (score.getScore() <= 0) {
+                        noLife.add(victim);
+                        super.Operation(victim);
 
-                if (DeathSettings.getItemDrop()) {
-                    e.setKeepInventory(false);
-                    victimPlayer.getInventory().clear();
-                } else {
-                    e.setKeepInventory(true);
-                }
-
-                if (isParticipating(victimPlayer)) {
-                    Participant victim = getParticipant(victimPlayer);
-
-                    Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
-
-                    if (DeathSettings.getAbilityReveal()) {
-                        if (victim.hasAbility()) {
-                            String name = victim.getAbility().getName();
-                            if (name != null) {
-                                Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 " + KoreanUtil.getCompleteWord("&e" + name, "&f이었", "&f였") + "습니다."));
+                        Participant winner = null;
+                        int count = 0;
+                        for (Participant participant : getParticipants()) {
+                            if (!noLife.contains(participant)) {
+                                count++;
+                                winner = participant;
                             }
-                        } else {
-                            Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님은 능력이 없습니다."));
                         }
-                    }
-                }
 
-                Participant VictimPart = getParticipant(victimPlayer);
-                if (VictimPart != null) {
-                    Score score = lifeObjective.getScore(victimPlayer.getName());
-                    if (score.isScoreSet()) {
-                        if (score.getScore() >= 1) score.setScore(score.getScore() - 1);
-                        if (score.getScore() <= 0) {
-                            NoLife.add(VictimPart);
-                            if (Eliminate) getDeathManager().Eliminate(victimPlayer);
-
-                            Participant hasLife = null;
-                            int count = 0;
-                            for (Participant p : getParticipants()) {
-                                if (!NoLife.contains(p)) {
-                                    hasLife = p;
-                                    count++;
-                                }
-                            }
-
-                            if (count == 1 && hasLife != null) {
-                                Win(hasLife);
-                            }
+                        if (count == 1) {
+                            Win(winner);
                         }
                     }
                 }
@@ -233,20 +170,17 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
     }
 
     public void broadcastPlayerList() {
-        int Count = 0;
-
-        ArrayList<String> msg = new ArrayList<String>();
-
-        msg.add(ChatColor.translateAlternateColorCodes('&', "&d==== &f게임 참여자 목록 &d===="));
+        ArrayList<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&d==== &f게임 참여자 목록 &d===="));
+        int count = 0;
         for (Participant p : getParticipants()) {
-            Count++;
-            msg.add(ChatColor.translateAlternateColorCodes('&', "&5" + Count + ". &f" + p.getPlayer().getName()));
+            count++;
+            lines.add(ChatColor.translateAlternateColorCodes('&', "&5" + count + ". &f" + p.getPlayer().getName()));
         }
-        msg.add(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &5: &d" + Count + "명"));
-        msg.add(ChatColor.translateAlternateColorCodes('&', "&d=========================="));
+        lines.add(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &5: &d" + count + "명"));
+        lines.add(ChatColor.translateAlternateColorCodes('&', "&d=========================="));
 
-        for (String m : msg) {
-            Bukkit.broadcastMessage(m);
+        for (String line : lines) {
+            Bukkit.broadcastMessage(line);
         }
     }
 

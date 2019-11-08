@@ -31,15 +31,13 @@ public abstract class ParticipantStrategy {
 
     public static class DEFAULT_MANAGEMENT extends ParticipantStrategy {
 
-        private final HashMap<String, AbstractGame.Participant> participants;
+        private final HashMap<String, AbstractGame.Participant> participants = new HashMap<>();
 
         public DEFAULT_MANAGEMENT(AbstractGame game, Collection<Player> players) {
             super(game);
-            HashMap<String, AbstractGame.Participant> participants = new HashMap<>();
             for (Player player : players) {
                 participants.put(player.getUniqueId().toString(), buildParticipant(player));
             }
-            this.participants = participants;
         }
 
         @Override
