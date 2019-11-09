@@ -54,6 +54,7 @@ public class AbilityWarSettings {
 		cache.clear();
 		for (ConfigNodes node : ConfigNodes.values()) {
 			Object value = config.get(node.getPath());
+			config.addComment(node.getPath(), node.getComments());
 			if (value != null) {
 				cache.put(node, new Cache(false, value));
 			} else {

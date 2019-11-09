@@ -57,6 +57,7 @@ public class Invincibility implements EventExecutor {
 	public boolean Start(final int duration) {
         if (timer == null || !timer.isRunning()) {
             this.timer = new InvincibilityTimer(duration);
+			timer.startTimer();
             return true;
         }
         return false;
