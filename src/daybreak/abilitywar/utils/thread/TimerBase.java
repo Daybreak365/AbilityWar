@@ -134,6 +134,13 @@ public abstract class TimerBase {
     }
 
     /**
+     * @return 타이머가 무한 타이머인지의 여부를 반환합니다.
+     */
+    public final boolean isInfinite() {
+        return isInfinite;
+    }
+
+    /**
      * @return Period에 따라 변할 수 있는 실행 주기를 계산하여 Count를 반환합니다.
      * 1틱마다 실행되는 타이머가 count 20만큼 남았을 때 1을 반환합니다.
      */

@@ -26,6 +26,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @GameManifest(Name = "팀 전투", Description = { "§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다." })
 public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
@@ -202,15 +205,13 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 	public void setTeam(Participant participant, Team team) {
 		Player player = participant.getPlayer();
 		if (hasTeam(participant)) {
-			Team oldTeam = getTeam(participant);
-			oldTeam.removeMember(participant);
+				Team oldTeam = getTeam(participant);
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', oldTeam.getDisplayName() + "&f 팀에서 나왔습니다."));
 		}
 		if (team == null) {
 			team = newTeam(UUID.randomUUID().toString(), ChatColor.translateAlternateColorCodes('&', "&a개인팀"));
 		}
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + KoreanUtil.getCompleteWord(team.getDisplayName(), "&f으로", "&f로") + " 설정되었습니다."));
-		team.addMember(participant);
 		participantTeamMap.put(participant, team);
 	}
 
@@ -238,4 +239,23 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 		teams.put(name, newTeam);
 		return newTeam;
 	}
+
+	@EventHandler
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getEntity() instanceof Player) {
+			Participant entity = getParticipant((Player) e.getEntity());
+			Participant damager = null;
+			if (e.getDamager() instanceof Player) {
+				damager = getParticipant((Player) e.getDamager());
+			} else if (e.getDamager() instanceof Projectile && ((Projectile) e.getDamager()).getShooter() instanceof Player) {
+				damager = getParticipant((Player) ((Projectile) e.getDamager()).getShooter());
+			}
+			if (entity != null && damager != null) {
+				if (hasTeam(entity) && hasTeam(damager) && getTeam(entity).equals(getTeam(damager))) {
+					e.setCancelled(true);
+				}
+			}
+		}
+	}
+
 }

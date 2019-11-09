@@ -1,9 +1,7 @@
 package daybreak.abilitywar.game.games.mode.decorator;
 
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public interface TeamGame {
 
@@ -21,7 +19,6 @@ public interface TeamGame {
 
         private final String name;
         private final String displayName;
-        private final ArrayList<AbstractGame.Participant> members = new ArrayList<>();
 
         public Team(String name, String displayName) {
             this.name = name;
@@ -34,26 +31,6 @@ public interface TeamGame {
 
         public String getDisplayName() {
             return displayName;
-        }
-
-        public Collection<AbstractGame.Participant> getMembers() {
-            return Collections.unmodifiableCollection(members);
-        }
-
-        public void addMember(AbstractGame.Participant participant) {
-            if (!isMember(participant)) {
-                members.add(participant);
-            }
-        }
-
-        public void removeMember(AbstractGame.Participant participant) {
-            if (isMember(participant)) {
-                members.remove(participant);
-            }
-        }
-
-        public boolean isMember(AbstractGame.Participant participant) {
-            return members.contains(participant);
         }
 
         @Override

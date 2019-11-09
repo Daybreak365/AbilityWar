@@ -18,7 +18,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.ChatColor;
 
 
@@ -119,13 +118,12 @@ public class Script {
 		throw new ClassNotFoundException();
 	}
 
-	public static List<String> getRegisteredScripts() {
-		List<String> list = new ArrayList<>();
+	public static ArrayList<String> getRegisteredScriptNames() {
+		ArrayList<String> scriptNames = new ArrayList<>();
 		for (ScriptRegisteration reg : scriptTypes) {
-			list.add(reg.getClazz().getSimpleName());
+			scriptNames.add(reg.getClazz().getSimpleName());
 		}
-
-		return list;
+		return scriptNames;
 	}
 
 	public static boolean isRegistered(Class<? extends AbstractScript> clazz) {
