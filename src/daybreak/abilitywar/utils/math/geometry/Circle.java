@@ -1,42 +1,46 @@
 package daybreak.abilitywar.utils.math.geometry;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Location;
+
+
+import static daybreak.abilitywar.utils.Validate.notNull;
 
 public class Circle {
 
 	private Location center;
-	private final double radius;
+	private double radius;
 	private int amount = 10;
 	private boolean highestLocation = false;
 
-	public Circle(final Location center, final double radius) {
+	public Circle(Location center, double radius) {
 		this.center = notNull(center).clone();
 		this.radius = radius;
 	}
 
-	public Circle setCenter(final Location center) {
+	public Circle setCenter(Location center) {
 		this.center = notNull(center);
 		return this;
 	}
 
-	public Circle setAmount(final int amount) {
+	public Circle setRadius(double radius) {
+		this.radius = radius;
+		return this;
+	}
+
+	public Circle setAmount(int amount) {
 		this.amount = amount;
 		return this;
 	}
 
-	public Circle setHighestLocation(final boolean highestLocation) {
+	public Circle setHighestLocation(boolean highestLocation) {
 		this.highestLocation = highestLocation;
 		return this;
 	}
 
-	public List<Location> getLocations() {
-		List<Location> locations = new ArrayList<Location>();
-		for (double degree = 0; degree < 360; degree += (360 / amount)) {
+	public ArrayList<Location> getLocations() {
+		ArrayList<Location> locations = new ArrayList<>();
+		for (double degree = 0; degree < 360; degree += (360.0 / amount)) {
 			double radians = Math.toRadians(degree);
 			double X = Math.cos(radians) * radius;
 			double Z = Math.sin(radians) * radius;

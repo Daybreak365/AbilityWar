@@ -2,6 +2,7 @@ package daybreak.abilitywar.utils;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,12 +16,9 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * FallingBlock을 더욱 편하게 사용하기 위해 만든 유틸입니다.
+ *
  * @author DayBreak 새벽
  */
 @SuppressWarnings("deprecation")
@@ -34,16 +32,18 @@ public abstract class FallBlock implements Listener {
 
 	/**
 	 * Fallblock의 기본 생성자입니다.
-	 * @param Data		생성할 FallingBlock의 종류
-	 * @param location	생성할 위치
+	 *
+	 * @param Data     생성할 FallingBlock의 종류
+	 * @param location 생성할 위치
 	 */
 	public FallBlock(Material Data, Location location) {
-		if(ServerVersion.getVersion() >= 13) {
+		if (ServerVersion.getVersion() >= 13) {
 			this.Data = Data.createBlockData();
 		} else {
 			try {
 				this.Data = Class.forName("org.bukkit.material.MaterialData").getConstructor(Material.class).newInstance(Data);
-			} catch(ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {}
+			} catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+			}
 		}
 		this.location = location;
 		this.world = location.getWorld();
@@ -51,9 +51,10 @@ public abstract class FallBlock implements Listener {
 
 	/**
 	 * Fallblock의 기본 생성자입니다.
-	 * @param Data		생성할 FallingBlock의 종류
-	 * @param location	생성할 위치
-	 * @param vector	생성할 때 적용할 벡터
+	 *
+	 * @param Data     생성할 FallingBlock의 종류
+	 * @param location 생성할 위치
+	 * @param vector   생성할 때 적용할 벡터
 	 */
 	public FallBlock(Material Data, Location location, Vector vector) {
 		this(Data, location);
@@ -62,34 +63,35 @@ public abstract class FallBlock implements Listener {
 
 	/**
 	 * FallinBlock을 스폰합니다.
-	 * @return 			스폰한 FallingBlock
-	 * 					FallingBlock를 스폰하지 못했을 경우 null 반환
+	 *
+	 * @return 스폰한 FallingBlock
+	 * FallingBlock를 스폰하지 못했을 경우 null 반환
 	 */
 	public FallingBlock Spawn() {
-		final FallingBlock fb;
-		if(ServerVersion.getVersion() >= 13) {
+		final FallingBlock fallingBlock;
+		if (ServerVersion.getVersion() >= 13) {
 			BlockData bd = (BlockData) Data;
-			fb = world.spawnFallingBlock(location, bd);
+			fallingBlock = world.spawnFallingBlock(location, bd);
 		} else {
-			if(byteData != null) {
-				fb = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), byteData);
+			if (byteData != null) {
+				fallingBlock = world.spawnFallingBlock(location, ((MaterialData) Data).getItemType(), byteData);
 			} else {
-				fb = world.spawnFallingBlock(location, (MaterialData) Data);
+				fallingBlock = world.spawnFallingBlock(location, (MaterialData) Data);
 			}
 		}
-		
+
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		
-		fb.setGlowing(glowing);
-		fb.setInvulnerable(true);
-		fb.setDropItem(false);
-		fb.setVelocity(vector);
-		
-		fbList.add(fb);
-		
-		return fb;
+
+		fallingBlock.setGlowing(glowing);
+		fallingBlock.setInvulnerable(true);
+		fallingBlock.setDropItem(false);
+		fallingBlock.setVelocity(vector);
+
+		this.fallingBlock = fallingBlock;
+
+		return fallingBlock;
 	}
-	
+
 	public FallBlock toggleSetBlock(boolean bool) {
 		this.setBlock = bool;
 		return this;
@@ -99,30 +101,30 @@ public abstract class FallBlock implements Listener {
 		this.glowing = bool;
 		return this;
 	}
- 	
+
 	private boolean glowing = false;
 	private boolean setBlock = false;
-	private final List<FallingBlock> fbList = new ArrayList<>();
-	
+	private FallingBlock fallingBlock = null;
+
 	/**
 	 * 스폰한 FallingBlock 엔티티가 땅에 떨어져 블록으로 변환되었을 때 호출됩니다.
 	 */
 	public abstract void onChangeBlock(FallingBlock block);
-	
+
 	/**
 	 * FallingBlock이 땅에 떨어졌을 때 블록 설치 캔슬 및 onChangeBlock() 호출을 위해 사용됩니다.
 	 */
 	@EventHandler
-	private void onEntityChangeBlock(EntityChangeBlockEvent e) {
-		if(fbList.contains(e.getEntity())) {
+	public void onEntityChangeBlock(EntityChangeBlockEvent e) {
+		if (e.getEntity().equals(fallingBlock)) {
 			onChangeBlock((FallingBlock) e.getEntity());
-			if(!setBlock) {
+			if (!setBlock) {
 				e.setCancelled(true);
 				e.getEntity().remove();
 			}
-			
+
 			HandlerList.unregisterAll(this);
 		}
 	}
-	
+
 }

@@ -102,6 +102,8 @@ public class AbilityList {
         registerAbility(Khazhad.class);
         registerAbility(Sniper.class);
         registerAbility(JellyFish.class);
+
+        registerAbility(Lazyness.class);
     }
 
     /**

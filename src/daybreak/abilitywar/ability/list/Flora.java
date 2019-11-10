@@ -13,88 +13,116 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.thread.TimerBase;
+import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(Name = "플로라", Rank = Rank.C, Species = Species.GOD)
+@AbilityManifest(Name = "플로라", Rank = Rank.B, Species = Species.GOD)
 public class Flora extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 3,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
-	
+
 	public Flora(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f꽃과 풍요의 여신."),
-				ChatColor.translateAlternateColorCodes('&', "&f주변에 있는 모든 플레이어에게 재생 효과를 주거나 신속 효과를 줍니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 효과를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f주변에 있는 모든 플레이어를 재생시키거나 신속 효과를 줍니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 효과를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 범위를 변경합니다."));
 	}
-	
-	private EffectType type = EffectType.Speed;
-	
+
+	private final Circle circle = new Circle(getPlayer().getLocation(), 6).setAmount(50).setHighestLocation(true);
+	private EffectType type = EffectType.SPEED;
+	private Radius radius = Radius.BIG;
+	private final ParticleLib.RGB REGENERATION_COLOR = new ParticleLib.RGB(255, 93, 82);
+	private final ParticleLib.RGB SPEED_COLOR = new ParticleLib.RGB(46, 219, 202);
+
 	private final TimerBase Passive = new TimerBase() {
-		
-		private Location center;
-		
+
+		private double y;
+		private boolean add;
+
 		@Override
-		public void onStart() {}
-		
-		private final Circle circle = new Circle(getPlayer().getLocation(), 6).setAmount(20).setHighestLocation(true);
-		
+		public void onStart() {
+			y = 1.0;
+		}
+
 		@Override
 		public void onProcess(int count) {
-			center = getPlayer().getLocation();
-			for(Location l : circle.setCenter(center).getLocations()) {
-				ParticleLib.SPELL.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
+			if (add && y >= 1.0) {
+				add = false;
+			} else if (!add && y <= 0) {
+				add = true;
 			}
-			
-			for(Player p : LocationUtil.getNearbyPlayers(center, 6, 200)) {
-				if(LocationUtil.isInCircle(center, p.getLocation(), 6.0, true)) {
-					if(type.equals(EffectType.Speed)) {
-						EffectLib.SPEED.addPotionEffect(p, 40, 1, true);
-					} else if(type.equals(EffectType.Regeneration)) {
-						EffectLib.REGENERATION.addPotionEffect(p, 100, 0, false);
+
+			if (add) {
+				y += 0.2;
+			} else {
+				y -= 0.2;
+			}
+
+			Location center = getPlayer().getLocation();
+			for (Location l : circle.setCenter(center).getLocations()) {
+				if (type.equals(EffectType.SPEED)) {
+					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), SPEED_COLOR, 0);
+				} else {
+					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), REGENERATION_COLOR, 0);
+				}
+			}
+
+			for (Player p : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {
+				if (LocationUtil.isInCircle(center, p.getLocation(), radius.radius, true)) {
+					if (type.equals(EffectType.SPEED)) {
+						EffectLib.SPEED.addPotionEffect(p, 20, 2, true);
+					} else {
+						if(!p.isDead()) {
+							double maxHealth = VersionUtil.getMaxHealth(p);
+
+							if(p.getHealth() < maxHealth) {
+								p.setHealth(Math.min(p.getHealth() + 0.05, 20.0));
+							}
+						}
 					}
 				}
 			}
 		}
-		
-		@Override
-		public void onEnd() {}
-		
+
 	}.setPeriod(1);
-	
+
 	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
-	
+
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Cool.isCooldown()) {
+		if (mt.equals(MaterialType.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!Cool.isCooldown()) {
 					Player p = getPlayer();
-					if(type.equals(EffectType.Speed)) {
-						type = EffectType.Regeneration;
+					if (type.equals(EffectType.SPEED)) {
+						type = EffectType.REGENERATION;
 					} else {
-						type = EffectType.Speed;
+						type = EffectType.SPEED;
 					}
-					
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.getName() + "&f으로 변경되었습니다."));
-					
+
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.name + "&f으로 변경되었습니다."));
+
 					Cool.startTimer();
 				}
-			} else if(ct.equals(ClickType.LEFT_CLICK)) {
-				getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: " + type.getName()));
+			} else if (ct.equals(ClickType.LEFT_CLICK)) {
+				radius = radius.next();
+				circle.setRadius(radius.radius);
+				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6범위 설정&f: " + radius.radius));
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -104,23 +132,48 @@ public class Flora extends AbilityBase {
 	}
 
 	private enum EffectType {
-		
-		Regeneration(ChatColor.translateAlternateColorCodes('&', "&c재생")),
-		Speed(ChatColor.translateAlternateColorCodes('&', "&b신속"));
-		
-		final String name;
-		
+
+		REGENERATION(ChatColor.translateAlternateColorCodes('&', "&c재생")),
+		SPEED(ChatColor.translateAlternateColorCodes('&', "&b신속"));
+
+		private final String name;
+
 		EffectType(String name) {
 			this.name = name;
 		}
-		
-		public String getName() {
-			return name;
+
+	}
+
+	private enum Radius {
+
+		BIG(6) {
+			protected Radius next() {
+				return Radius.MIDIUM;
+			}
+		},
+		MIDIUM(4) {
+			protected Radius next() {
+				return Radius.SMALL;
+			}
+		},
+		SMALL(2) {
+			protected Radius next() {
+				return Radius.BIG;
+			}
+		};
+
+		private final int radius;
+
+		Radius(int radius) {
+			this.radius = radius;
 		}
-		
+
+		protected abstract Radius next();
+
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
-	
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	}
+
 }

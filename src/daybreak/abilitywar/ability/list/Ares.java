@@ -25,7 +25,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 @AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase {
 	
-	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 55,
+	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
 			"# 스킬 데미지") {
 		
 		@Override

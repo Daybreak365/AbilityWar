@@ -144,6 +144,8 @@ public class AbilityFactory {
 
         // 즐거운 여름휴가 게임모드
         registerAbility(SquirtGun.class);
+
+        registerAbility(Lazyness.class);
     }
 
     /**

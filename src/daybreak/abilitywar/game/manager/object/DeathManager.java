@@ -1,6 +1,5 @@
 package daybreak.abilitywar.game.manager.object;
 
-import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -13,24 +12,95 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.plugin.EventExecutor;
 
 /**
  * Death Manager
  * @author DayBreak 새벽
  */
-public class DeathManager implements Listener, EventExecutor {
+public class DeathManager implements Listener {
 
     private final Game game;
 
     public DeathManager(Game game) {
         this.game = game;
         game.registerListener(this);
-        Bukkit.getPluginManager().registerEvent(PlayerDeathEvent.class, this, EventPriority.HIGH, this, AbilityWar.getPlugin());
+    }
+
+    @EventHandler
+    public final void onPlayerDeath(PlayerDeathEvent e) {
+        Player victimPlayer = e.getEntity();
+        Player killerPlayer = victimPlayer.getKiller();
+        if (victimPlayer.getLastDamageCause() != null) {
+            if (killerPlayer != null) {
+                e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&f님이 &c" + victimPlayer.getName() + "&f님을 죽였습니다."));
+            } else {
+                switch (victimPlayer.getLastDamageCause().getCause()) {
+                    case CONTACT:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 찔려 죽었습니다."));
+                        break;
+                    case FALL:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어져 죽었습니다."));
+                        break;
+                    case FALLING_BLOCK:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어지는 블록에 맞아 죽었습니다."));
+                        break;
+                    case SUFFOCATION:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 끼여 죽었습니다."));
+                        break;
+                    case DROWNING:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 익사했습니다."));
+                        break;
+                    case ENTITY_EXPLOSION:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 폭발했습니다."));
+                        break;
+                    case LAVA:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 용암에 빠져 죽었습니다."));
+                        break;
+                    case FIRE:
+                    case FIRE_TICK:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 노릇노릇하게 구워졌습니다."));
+                        break;
+                    default:
+                        e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
+                        break;
+                }
+            }
+        } else {
+            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
+        }
+
+        if (game.isParticipating(victimPlayer)) {
+            Participant victim = game.getParticipant(victimPlayer);
+
+            if (DeathSettings.getItemDrop()) {
+                e.setKeepInventory(false);
+                victimPlayer.getInventory().clear();
+            } else {
+                e.setKeepInventory(true);
+            }
+
+            Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
+
+            if (DeathSettings.getAbilityReveal()) {
+                if (victim.hasAbility()) {
+                    String name = victim.getAbility().getName();
+                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
+                            "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 "
+                                    + KoreanUtil.getCompleteWord("&e" + name, "&f이었", "&f였") + "습니다."));
+                } else {
+                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
+                            "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님은 능력이 없습니다."));
+                }
+            }
+            if (DeathSettings.getAbilityRemoval()) {
+                victim.removeAbility();
+            }
+
+            Operation(victim);
+        }
     }
 
     protected void Operation(Participant victim) {
@@ -43,83 +113,6 @@ public class DeathManager implements Listener, EventExecutor {
                 break;
             case 없음:
                 break;
-        }
-    }
-
-    @Override
-    public final void execute(Listener listener, Event event) {
-        if (event instanceof PlayerDeathEvent) {
-            PlayerDeathEvent e = (PlayerDeathEvent) event;
-            Player victimPlayer = e.getEntity();
-            Player killerPlayer = victimPlayer.getKiller();
-            if (victimPlayer.getLastDamageCause() != null) {
-                if (killerPlayer != null) {
-                    e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&f님이 &c" + victimPlayer.getName() + "&f님을 죽였습니다."));
-                } else {
-                    switch (victimPlayer.getLastDamageCause().getCause()) {
-                        case CONTACT:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 찔려 죽었습니다."));
-                            break;
-                        case FALL:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어져 죽었습니다."));
-                            break;
-                        case FALLING_BLOCK:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어지는 블록에 맞아 죽었습니다."));
-                            break;
-                        case SUFFOCATION:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 끼여 죽었습니다."));
-                            break;
-                        case DROWNING:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 익사했습니다."));
-                            break;
-                        case ENTITY_EXPLOSION:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 폭발했습니다."));
-                            break;
-                        case LAVA:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 용암에 빠져 죽었습니다."));
-                            break;
-                        case FIRE:
-                        case FIRE_TICK:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 노릇노릇하게 구워졌습니다."));
-                            break;
-                        default:
-                            e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
-                            break;
-                    }
-                }
-            } else {
-                e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
-            }
-
-            if (game.isParticipating(victimPlayer)) {
-                Participant victim = game.getParticipant(victimPlayer);
-
-                if (DeathSettings.getItemDrop()) {
-                    e.setKeepInventory(false);
-                    victimPlayer.getInventory().clear();
-                } else {
-                    e.setKeepInventory(true);
-                }
-
-                Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
-
-                if (DeathSettings.getAbilityReveal()) {
-                    if (victim.hasAbility()) {
-                        String name = victim.getAbility().getName();
-                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-                                "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 "
-                                        + KoreanUtil.getCompleteWord("&e" + name, "&f이었", "&f였") + "습니다."));
-                    } else {
-                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-                                "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님은 능력이 없습니다."));
-                    }
-                }
-                if (DeathSettings.getAbilityRemoval()) {
-                    victim.removeAbility();
-                }
-
-                Operation(victim);
-            }
         }
     }
 

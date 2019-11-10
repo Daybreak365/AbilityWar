@@ -93,6 +93,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		Class<? extends Event> eventClass = event.getClass();
 		if (eventhandlers.containsKey(eventClass)) {
 			Method method = eventhandlers.get(eventClass);
+			method.setAccessible(true);
 			try {
 				method.invoke(this, event);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {

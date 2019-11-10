@@ -19,7 +19,7 @@ import org.bukkit.entity.LivingEntity;
 @AbilityManifest(Name = "암살자", Rank = Rank.A, Species = Species.HUMAN)
 public class Assassin extends AbilityBase {
 
-	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 6,
+	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 10,
 			"# 스킬 데미지") {
 
 		@Override
@@ -29,7 +29,7 @@ public class Assassin extends AbilityBase {
 
 	};
 	
-	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 12,
+	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 9,
 			"# 스킬 데미지") {
 		
 		@Override

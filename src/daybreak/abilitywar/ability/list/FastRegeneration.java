@@ -44,7 +44,7 @@ public class FastRegeneration extends AbilityBase {
 					double MaxHealth = VersionUtil.getMaxHealth(p);
 					
 					if(p.getHealth() < MaxHealth) {
-						p.setHealth((int) p.getHealth() + 1);
+						p.setHealth(Math.min(p.getHealth() + 1.5, 20.0));
 					}
 				}
 			}
