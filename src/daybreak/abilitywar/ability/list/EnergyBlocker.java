@@ -5,13 +5,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -41,7 +39,7 @@ public class EnergyBlocker extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."));
 	}
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -70,7 +68,7 @@ public class EnergyBlocker extends AbilityBase {
 		return false;
 	}
 
-	private final TimerBase Particle = new TimerBase() {
+	private final Timer Particle = new Timer() {
 
 		@Override
 		public void onStart() {}

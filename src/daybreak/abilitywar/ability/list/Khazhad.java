@@ -4,13 +4,12 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.FallBlock;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.ProjectileHitEvent;
 
 @AbilityManifest(Name = "카쟈드", Rank = Rank.A, Species = Species.GOD)
 public class Khazhad extends AbilityBase {
@@ -47,8 +47,7 @@ public class Khazhad extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(RightCooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer LeftCool = new CooldownTimer(this, LeftCooldownConfig.getValue(), "좌클릭");
-	private final CooldownTimer RightCool = new CooldownTimer(this, RightCooldownConfig.getValue(), "우클릭").setActionbarNotice(false);
+	private final CooldownTimer LeftCool = new CooldownTimer(LeftCooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -81,20 +80,44 @@ public class Khazhad extends AbilityBase {
 		return false;
 	}
 
-	private final ArrayList<Projectile> projectiles = new ArrayList<>();
+	private final ArrayList<Projectile> projectiles = new ArrayList<Projectile>() {
+		@Override
+		public boolean add(Projectile projectile) {
+			if (size() >= 15) clear();
+			return super.add(projectile);
+		}
+	};
 
-	TimerBase passive = new TimerBase() {
+	private final Timer passive = new Timer() {
 		@Override
 		protected void onProcess(int count) {
-			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 7, 7)) {
-				if (!projectile.isOnGround() && !projectiles.contains(projectile)) {
+			Location center = getPlayer().getLocation();
+			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, center, 7, 7)) {
+				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7, false)) {
 					projectiles.add(projectile);
 					projectile.setGravity(true);
 					projectile.setVelocity(projectile.getVelocity().multiply(0.1));
+					new Timer(3) {
+						@Override
+						protected void onStart() {
+							projectile.getLocation().getBlock().setType(Material.ICE);
+						}
+						@Override
+						protected void onProcess(int count) {}
+						@Override
+						protected void onEnd() {
+							projectile.getLocation().getBlock().setType(Material.AIR);
+						}
+					}.startTimer();
 				}
 			}
 		}
 	}.setPeriod(1);
+
+	@SubscribeEvent
+	private void onProjectileHit(ProjectileHitEvent e) {
+		projectiles.remove(e.getEntity());
+	}
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}

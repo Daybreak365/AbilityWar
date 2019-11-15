@@ -9,7 +9,6 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
@@ -38,7 +37,7 @@ public class BlackCandle extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f또한, 데미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
 	}
 
-	private final TimerBase NoDebuff = new TimerBase() {
+	private final Timer NoDebuff = new Timer() {
 		
 		@Override
 		public void onStart() {}

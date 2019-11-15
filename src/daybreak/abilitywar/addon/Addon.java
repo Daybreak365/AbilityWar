@@ -18,7 +18,7 @@ import org.bukkit.plugin.Plugin;
 
 /**
  * 애드온
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public abstract class Addon {
 

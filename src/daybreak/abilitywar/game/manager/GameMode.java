@@ -18,7 +18,7 @@ import org.bukkit.ChatColor;
 /**
  * 게임 모드
  * 
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class GameMode {
 

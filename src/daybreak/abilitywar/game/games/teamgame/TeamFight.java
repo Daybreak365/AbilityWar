@@ -15,7 +15,6 @@ import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.language.KoreanUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -66,7 +65,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 				lines = Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
 						ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-						ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDayBreak 새벽"),
+						ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
 						ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908")
 				);
 

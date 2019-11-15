@@ -6,7 +6,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -22,7 +21,7 @@ public class Zombie extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f에임이 종종 튑니다."));
 	}
 
-	private final TimerBase Aim = new TimerBase() {
+	private final Timer Aim = new Timer() {
 		
 		@Override
 		public void onStart() {}

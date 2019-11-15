@@ -5,13 +5,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -41,9 +39,9 @@ public class Void extends AbilityBase {
 
 	private boolean Inv = false;
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
-	private final TimerBase Invincibility = new TimerBase(5) {
+	private final Timer Invincibility = new Timer(5) {
 		
 		@Override
 		public void onStart() {

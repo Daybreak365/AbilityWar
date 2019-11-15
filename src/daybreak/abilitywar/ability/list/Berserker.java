@@ -5,8 +5,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -58,9 +56,9 @@ public class Berserker extends AbilityBase {
 
 	private final int Strength = StrengthConfig.getValue();
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
-	private final DurationTimer Duration = new DurationTimer(this, 5, Cool) {
+	private final DurationTimer Duration = new DurationTimer(5, Cool) {
 		
 		@Override
 		public void onDurationStart() {
@@ -94,7 +92,7 @@ public class Berserker extends AbilityBase {
 		return false;
 	}
 
-	private final int DebuffTime = DebuffConfig.getValue();
+	private final int debuffTime = DebuffConfig.getValue();
 	
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -102,7 +100,7 @@ public class Berserker extends AbilityBase {
 			if(Strengthen) {
 				if(Duration.isDuration()) Duration.stopTimer(false);
 				e.setDamage(e.getDamage() * Strength);
-				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), DebuffTime * 20, 1, true);
+				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
 			}
 		}
 	}

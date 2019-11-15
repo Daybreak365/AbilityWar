@@ -2,10 +2,10 @@ package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,11 +17,12 @@ import org.bukkit.entity.Player;
 
 import static daybreak.abilitywar.utils.Validate.notNull;
 
-public abstract class AbilitySelect extends TimerBase {
+public abstract class AbilitySelect extends AbstractGame.TimerBase {
 
 	private final Map<Participant, Integer> selectors;
 
-	public AbilitySelect(int changeCount) {
+	public AbilitySelect(AbstractGame game, int changeCount) {
+		game.super();
 		Map<Participant, Integer> selectors = new HashMap<>();
 		for (Participant p : notNull(initSelectors()))
 			selectors.put(p, changeCount);
@@ -150,10 +151,6 @@ public abstract class AbilitySelect extends TimerBase {
 	}
 
 	@Override
-	public void onStart() {
-	}
-
-	@Override
 	public void onProcess(int count) {
 		if (!isEveryoneSelected()) {
 			if (count % 20 == 0) {
@@ -180,16 +177,16 @@ public abstract class AbilitySelect extends TimerBase {
 
 	@Override
 	public void onEnd() {
-		Ended = true;
+		ended = true;
 		onSelectEnd();
 	}
 
 	protected abstract void onSelectEnd();
 
-	private boolean Ended = false;
+	private boolean ended = false;
 
 	public boolean isEnded() {
-		return Ended;
+		return ended;
 	}
 
 	public interface Handler {

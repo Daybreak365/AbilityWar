@@ -8,7 +8,6 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -32,7 +31,7 @@ public class DarkVision extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다. 또한, 빠르게 달리고 높게 점프할 수 있습니다."));
 	}
 
-	private final TimerBase Dark = new TimerBase() {
+	private final Timer Dark = new Timer() {
 		
 		@Override
 		public void onStart() {}
@@ -49,7 +48,7 @@ public class DarkVision extends AbilityBase {
 		
 	}.setPeriod(2);
 	
-	private final TimerBase Vision = new TimerBase() {
+	private final Timer Vision = new Timer() {
 		
 		final Integer Distance = DistanceConfig.getValue();
 		

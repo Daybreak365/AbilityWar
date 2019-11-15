@@ -8,7 +8,6 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,7 +15,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
@@ -193,7 +191,6 @@ public class AbilityFactory {
         private final Class<T> clazz;
         private final Constructor<T> constructor;
         private final AbilityManifest manifest;
-        private final List<Field> timers;
         private final Map<Class<? extends Event>, Method> eventhandlers;
 
         @SuppressWarnings("unchecked")
@@ -205,16 +202,6 @@ public class AbilityFactory {
             if (!clazz.isAnnotationPresent(AbilityManifest.class))
                 throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
             this.manifest = clazz.getAnnotation(AbilityManifest.class);
-
-            List<Field> timers = new ArrayList<>();
-            for (Field field : clazz.getDeclaredFields()) {
-                Class<?> type = field.getType();
-                Class<?> superClass = type.getSuperclass();
-                if (type.equals(TimerBase.class) || (superClass != null && superClass.equals(TimerBase.class))) {
-                    timers.add(field);
-                }
-            }
-            this.timers = Collections.unmodifiableList(timers);
 
             Map<Class<? extends Event>, Method> eventhandlers = new HashMap<>();
             for (Method method : clazz.getDeclaredMethods()) {
@@ -238,10 +225,6 @@ public class AbilityFactory {
 
         public AbilityManifest getManifest() {
             return manifest;
-        }
-
-        public List<Field> getTimers() {
-            return timers;
         }
 
         public Map<Class<? extends Event>, Method> getEventhandlers() {

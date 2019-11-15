@@ -5,13 +5,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
@@ -43,9 +41,9 @@ public class Zeus extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f번개 데미지와 폭발 데미지를 받지 않습니다."));
 	}
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
-	private final TimerBase Skill = new TimerBase(3) {
+	private final Timer Skill = new Timer(3) {
 
 		Location center;
 		

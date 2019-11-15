@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -58,7 +57,7 @@ public class TheEmpress extends AbilityBase {
 	
 	private boolean EasterEgg = !EasterEggConfig.getValue();
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -111,8 +110,8 @@ public class TheEmpress extends AbilityBase {
 							title.Broadcast();
 							
 							SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
-							
-							CooldownTimer.ResetCool();
+
+							getGame().stopTimers(CooldownTimer.class);
 						}
 					}
 					

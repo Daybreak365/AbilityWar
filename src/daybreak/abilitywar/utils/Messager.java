@@ -1,18 +1,15 @@
 package daybreak.abilitywar.utils;
 
-import java.io.IOException;
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 import java.util.ArrayList;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 
 public class Messager {
 
@@ -28,11 +25,11 @@ public class Messager {
 	 * @return 제목 포맷
 	 */
 	public static String formatTitle(ChatColor bracketColor, ChatColor titleColor, String title) {
-		String Base = "_________________________________________________________";
-		int Pivot = Base.length() / 2;
+		String base = "_________________________________________________________";
+		int pivot = base.length() / 2;
 		String center = ChatColor.translateAlternateColorCodes('&', "[ " + titleColor + title + bracketColor + " ]&m&l");
-		String result = ChatColor.translateAlternateColorCodes('&', bracketColor + "&m&l" + Base.substring(0, Math.max(0, (Pivot - center.length() / 2))) + "&r" + bracketColor);
-		result += center + Base.substring(Pivot + center.length() / 2);
+		String result = ChatColor.translateAlternateColorCodes('&', bracketColor + "&m&l" + base.substring(0, Math.max(0, (pivot - center.length() / 2))) + "&r" + bracketColor);
+		result += center + base.substring(pivot + center.length() / 2);
 		return result;
 	}
 
@@ -45,11 +42,11 @@ public class Messager {
 	 * @return 제목 포맷
 	 */
 	public static String formatShortTitle(ChatColor bracketColor, ChatColor titleColor, String title) {
-		String Base = "________________________________";
-		int Pivot = Base.length() / 2;
+		String base = "________________________________";
+		int pivot = base.length() / 2;
 		String center = ChatColor.translateAlternateColorCodes('&', "[ " + titleColor + title + bracketColor + " ]&m&l");
-		String result = ChatColor.translateAlternateColorCodes('&', bracketColor + "&m&l" + Base.substring(0, Math.max(0, (Pivot - center.length() / 2))) + "&r" + bracketColor);
-		result += center + Base.substring(Pivot + center.length() / 2);
+		String result = ChatColor.translateAlternateColorCodes('&', bracketColor + "&m&l" + base.substring(0, Math.max(0, (pivot - center.length() / 2))) + "&r" + bracketColor);
+		result += center + base.substring(pivot + center.length() / 2);
 		return result;
 	}
 
@@ -66,18 +63,6 @@ public class Messager {
 		info.add(ChatColor.translateAlternateColorCodes('&', "&2-----------------------------------------------------"));
 		
 		return info.toArray(new String[info.size()]);
-	}
-
-	/**
-	 * 업데이트 공지를 구성합니다.
-     */
-	public static String[] formatUpdateNotice(UpdateObject update) {
-		return new String[] {
-				Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "업데이트"),
-				ChatColor.translateAlternateColorCodes('&', "&f적용 가능한 &3업데이트&f가 있습니다: &b" + update.getTag() + " &f업데이트 &f(&7v" + update.getVersion() + "&f) " + "(&7" + (update.getFileSize() / 1024) + "KB&f)"),
-				ChatColor.translateAlternateColorCodes('&', "&3업데이트&f를 진행하려면 &e/aw update &f명령어를 사용하세요."),
-				ChatColor.translateAlternateColorCodes('&', "&3---------------------------------------------------------")
-		};
 	}
 
 	/**
@@ -102,7 +87,7 @@ public class Messager {
 			info.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
 		}
 		
-		info.add(ChatColor.translateAlternateColorCodes('&', "&a------------------------------"));
+		info.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
 		
 		return info.toArray(new String[info.size()]);
 	}

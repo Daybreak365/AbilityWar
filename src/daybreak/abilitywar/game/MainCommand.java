@@ -2,8 +2,6 @@ package daybreak.abilitywar.game;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.wizard.DeathWizard;
 import daybreak.abilitywar.config.wizard.GameWizard;
 import daybreak.abilitywar.config.wizard.InvincibilityWizard;
@@ -46,7 +44,7 @@ import org.bukkit.entity.Player;
 /**
  * 메인 명령어
  *
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class MainCommand implements CommandExecutor, TabCompleter {
 
@@ -62,7 +60,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			sender.sendMessage(new String[]{
 					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 					ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + plugin.getDescription().getVersion()),
-					ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDayBreak 새벽"),
+					ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
 					ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &fDayBreak&7#5908"),
 					ChatColor.translateAlternateColorCodes('&', "&3&o/" + label + " help &7&o로 명령어 도움말을 확인하세요.")});
 		} else {
@@ -394,7 +392,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			gui.openBlackListGUI(1);
 		} else if (args[0].equalsIgnoreCase("resetcool")) {
 			if (AbilityWarThread.isGameTaskRunning()) {
-				CooldownTimer.ResetCool();
+				AbilityWarThread.getGame().stopTimers(AbilityBase.CooldownTimer.class);
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
 						"&f" + p.getName() + "&a님이 플레이어들의 능력 쿨타임을 초기화하였습니다."));
 			} else {
@@ -402,7 +400,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			}
 		} else if (args[0].equalsIgnoreCase("resetduration")) {
 			if (AbilityWarThread.isGameTaskRunning()) {
-				DurationTimer.ResetDuration();
+				AbilityWarThread.getGame().stopTimers(AbilityBase.DurationTimer.class);
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
 						"&f" + p.getName() + "&a님이 플레이어들의 능력 지속시간을 초기화하였습니다."));
 			} else {

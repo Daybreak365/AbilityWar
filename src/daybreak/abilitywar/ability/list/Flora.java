@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -12,7 +11,6 @@ import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -46,7 +44,7 @@ public class Flora extends AbilityBase {
 	private final ParticleLib.RGB REGENERATION_COLOR = new ParticleLib.RGB(255, 93, 82);
 	private final ParticleLib.RGB SPEED_COLOR = new ParticleLib.RGB(46, 219, 202);
 
-	private final TimerBase Passive = new TimerBase() {
+	private final Timer Passive = new Timer() {
 
 		private double y;
 		private boolean add;
@@ -98,7 +96,7 @@ public class Flora extends AbilityBase {
 
 	}.setPeriod(1);
 
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {

@@ -1,14 +1,13 @@
 package daybreak.abilitywar.utils.library.item;
 
+import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-
 /**
  * 인첸트 라이브러리
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  * @version 1.2 (Minecraft 1.14)
  */
 public class EnchantLib {

@@ -4,14 +4,12 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
-import java.util.List;
+import java.util.LinkedList;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
@@ -65,52 +63,44 @@ public class Assassin extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	private List<Damageable> Entities = null;
+	private LinkedList<Damageable> entities = null;
 	
-	private final int Distance = DistanceConfig.getValue();
+	private final int distance = DistanceConfig.getValue();
+	private final int damage = DamageConfig.getValue();
 	
-	private final TimerBase Duration = new TimerBase(TeleportCountConfig.getValue()) {
-		
-		final Integer Damage = DamageConfig.getValue();
-		
-		@Override
-		public void onStart() {}
-		
+	private final Timer durationTimer = new Timer(TeleportCountConfig.getValue()) {
+
 		@Override
 		public void onProcess(int count) {
-			if(Entities != null) {
-				if(Entities.size() >= 1) {
-					Damageable e = Entities.get(0);
-					Entities.remove(e);
+			if(entities != null) {
+				if(!entities.isEmpty()) {
+					Damageable e = entities.remove();
 					getPlayer().teleport(e);
-					e.damage(Damage, getPlayer());
+					e.damage(damage, getPlayer());
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 				} else {
-					this.stopTimer(false);
+					stopTimer(false);
 				}
 			}
 		}
-		
-		@Override
-		public void onEnd() {}
-		
+
 	}.setPeriod(3);
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		if(mt.equals(MaterialType.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Cool.isCooldown()) {
-					this.Entities = LocationUtil.getNearbyDamageableEntities(getPlayer(), Distance, 5);
-					if(Entities.size() > 0) {
-						Duration.startTimer();
-						Cool.startTimer();
+				if(!cooldownTimer.isCooldown()) {
+					this.entities = new LinkedList<>(LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, 5));
+					if(entities.size() > 0) {
+						durationTimer.startTimer();
+						cooldownTimer.startTimer();
 						return true;
 					} else {
-						getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&f" + Distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
+						getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&f" + distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
 					}
 				}
 			}

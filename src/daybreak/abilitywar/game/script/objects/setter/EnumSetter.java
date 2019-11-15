@@ -1,22 +1,19 @@
 package daybreak.abilitywar.game.script.objects.setter;
 
+import daybreak.abilitywar.game.script.ScriptWizard;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import daybreak.abilitywar.game.script.ScriptWizard;
-
 /**
  * Enum Setter
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class EnumSetter extends Setter<Object> {
 

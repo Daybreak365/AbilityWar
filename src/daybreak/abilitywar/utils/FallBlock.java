@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 /**
  * FallingBlock을 더욱 편하게 사용하기 위해 만든 유틸입니다.
  *
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 @SuppressWarnings("deprecation")
 public abstract class FallBlock implements Listener {

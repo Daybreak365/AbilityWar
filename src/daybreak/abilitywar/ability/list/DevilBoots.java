@@ -7,7 +7,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,7 +28,7 @@ public class DevilBoots extends AbilityBase {
 		return false;
 	}
 	
-	private final TimerBase speed = new TimerBase() {
+	private final Timer speed = new Timer() {
 		
 		@Override
 		protected void onStart() {}

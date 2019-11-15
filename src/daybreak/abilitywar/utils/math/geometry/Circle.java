@@ -42,10 +42,10 @@ public class Circle {
 		ArrayList<Location> locations = new ArrayList<>();
 		for (double degree = 0; degree < 360; degree += (360.0 / amount)) {
 			double radians = Math.toRadians(degree);
-			double X = Math.cos(radians) * radius;
-			double Z = Math.sin(radians) * radius;
+			double x = Math.cos(radians) * radius;
+			double z = Math.sin(radians) * radius;
 
-			Location location = center.clone().add(X, 0, Z);
+			Location location = center.clone().add(x, 0, z);
 			if (highestLocation)
 				location.setY(location.getWorld().getHighestBlockYAt(location) + 1);
 			locations.add(location);

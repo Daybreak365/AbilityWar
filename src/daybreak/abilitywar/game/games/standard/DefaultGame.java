@@ -12,7 +12,6 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,7 +20,7 @@ import org.bukkit.World;
 
 /**
  * 게임 관리 클래스
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 @GameManifest(Name = "게임", Description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
 public class DefaultGame extends Game implements DefaultKitHandler {
@@ -59,7 +58,7 @@ public class DefaultGame extends Game implements DefaultKitHandler {
                 lines = Messager.asList(
                         ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
                         ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-                        ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDayBreak 새벽"),
+                        ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
                         ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908")
                 );
 

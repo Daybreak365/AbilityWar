@@ -5,8 +5,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -46,9 +44,9 @@ public class Feather extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f낙하 데미지를 무시합니다."));
 	}
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
-	private final DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue(), Cool) {
+	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue(), Cool) {
 		
 		@Override
 		public void onDurationStart() {}

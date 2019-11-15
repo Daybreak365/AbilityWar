@@ -2,7 +2,7 @@ package daybreak.abilitywar.utils.math;
 
 /**
  * Number Util
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class NumberUtil {
 
@@ -18,12 +18,8 @@ public class NumberUtil {
 		return isInt;
 	}
 
-	public static double Subtract(Double one, Double two) {
-		if (one > two) {
-			return one - two;
-		} else {
-			return two - one;
-		}
+	public static double subtract(double d1, double d2) {
+		return d1 > d2 ? d1 - d2 : d2 - d1;
 	}
 
 	public static String parseTimeString(int seconds) {

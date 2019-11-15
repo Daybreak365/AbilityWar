@@ -1,15 +1,13 @@
 package daybreak.abilitywar.utils.library.tItle;
 
-import java.lang.reflect.Constructor;
-
-import org.bukkit.entity.Player;
-
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import java.lang.reflect.Constructor;
+import org.bukkit.entity.Player;
 
 /**
  * 액션바 메시지
  *
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class Actionbar extends AbstractTitle {
 

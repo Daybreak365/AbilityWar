@@ -4,8 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -49,9 +47,9 @@ public class Clown extends AbilityBase {
 
 	private Location OriginalPoint = null;
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
-	private final DurationTimer Duration = new  DurationTimer(this, 10, Cool) {
+	private final DurationTimer Duration = new  DurationTimer(10, Cool) {
 
 		@Override
 		protected void onDurationStart() {

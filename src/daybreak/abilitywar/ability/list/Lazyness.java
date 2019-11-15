@@ -5,7 +5,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -23,7 +22,7 @@ public class Lazyness extends AbilityBase {
 	@SubscribeEvent
 	private void onPlayerDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			new DamageTimer(e.getDamage());
+			new DamageTimer(e.getFinalDamage());
 			getPlayer().setNoDamageTicks(getPlayer().getMaximumNoDamageTicks());
 			e.setCancelled(true);
 		}
@@ -32,7 +31,7 @@ public class Lazyness extends AbilityBase {
 	@SubscribeEvent
 	private void onPlayerDamage(EntityDamageByEntityEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			new DamageTimer(e.getDamage());
+			new DamageTimer(e.getFinalDamage());
 			getPlayer().setNoDamageTicks(getPlayer().getMaximumNoDamageTicks());
 			e.setCancelled(true);
 		}
@@ -41,7 +40,7 @@ public class Lazyness extends AbilityBase {
 	@SubscribeEvent
 	private void onPlayerDamage(EntityDamageByBlockEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			new DamageTimer(e.getDamage());
+			new DamageTimer(e.getFinalDamage());
 			getPlayer().setNoDamageTicks(getPlayer().getMaximumNoDamageTicks());
 			e.setCancelled(true);
 		}
@@ -58,7 +57,7 @@ public class Lazyness extends AbilityBase {
 	@Override
 	protected void onRestrictClear() {}
 
-	private class DamageTimer extends TimerBase {
+	private class DamageTimer extends Timer {
 
 		private final double damage;
 
@@ -74,7 +73,9 @@ public class Lazyness extends AbilityBase {
 		@Override
 		protected void onEnd() {
 			SoundLib.ENTITY_PLAYER_HURT.playSound(getPlayer());
-			getPlayer().setHealth(Math.max(getPlayer().getHealth() - damage, 0.0));
+			if (!getPlayer().isDead()) {
+				getPlayer().setHealth(Math.max(getPlayer().getHealth() - damage, 0.0));
+			}
 		}
 
 	}

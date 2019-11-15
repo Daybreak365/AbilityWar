@@ -1,15 +1,13 @@
 package daybreak.abilitywar.utils;
 
+import daybreak.abilitywar.addon.AddonLoader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import daybreak.abilitywar.addon.Addon;
-import daybreak.abilitywar.addon.AddonLoader;
-
 /**
  * Reflection Util
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class ReflectionUtil {
 

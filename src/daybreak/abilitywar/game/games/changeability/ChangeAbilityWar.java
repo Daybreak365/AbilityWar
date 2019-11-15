@@ -17,7 +17,6 @@ import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ import org.bukkit.scoreboard.Score;
 /**
  * 체인지 능력 전쟁
  *
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 @GameManifest(Name = "체인지 능력 전쟁 (Beta)", Description = {"§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.", "§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.", "§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
         "§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f체인지 능력전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
@@ -41,7 +40,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
     public ChangeAbilityWar() {
         super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-        setRestricted(Invincible);
+        setRestricted(invincible);
         this.maxLife = ChangeAbilityWarSettings.getLife();
     }
 
@@ -52,7 +51,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
     private final AbilityChanger changer = new AbilityChanger(this);
 
-    private final boolean Invincible = Settings.InvincibilitySettings.isEnabled();
+    private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
     private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
@@ -188,7 +187,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
         ArrayList<String> msg = new ArrayList<>();
         msg.add(ChatColor.translateAlternateColorCodes('&', "&5&l체인지! &d&l능력 &f&l전쟁"));
         msg.add(ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()));
-        msg.add(ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDayBreak 새벽"));
+        msg.add(ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"));
         msg.add(ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &fDayBreak&7#5908"));
 
         GameCreditEvent event = new GameCreditEvent();
@@ -237,7 +236,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
             Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
         }
 
-        if (Invincible) {
+        if (invincible) {
             getInvincibility().Start(false);
         } else {
             Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));

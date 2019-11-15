@@ -1,23 +1,20 @@
 package daybreak.abilitywar.config;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.utils.database.FileManager;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.bukkit.configuration.InvalidConfigurationException;
-
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.utils.database.FileManager;
 
 /**
  * 능력 세부 설정
  * 
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class AbilitySettings {
 

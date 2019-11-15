@@ -8,7 +8,6 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -33,7 +32,7 @@ public class TheEmperor extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 반 이하일 때 공격 피해를 받지 않습니다."));
 	}
 	
-	private final TimerBase Passive = new TimerBase() {
+	private final Timer Passive = new Timer() {
 		
 		@Override
 		public void onStart() {}

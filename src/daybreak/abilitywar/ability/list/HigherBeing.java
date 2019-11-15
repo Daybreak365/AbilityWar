@@ -32,7 +32,8 @@ public class HigherBeing extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f자신보다 낮은 위치에 있는 생명체를 공격 할 때"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + DamageConfig.getValue() + "배 강력하게 공격합니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f자신보다 높은 위치에 있는 생명체는 공격으로 데미지를 입힐 수 없습니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f자신보다 높은 위치에 있는 생명체는 공격으로 데미지를 입힐 수 없고,"),
+				ChatColor.translateAlternateColorCodes('&', "&f같은 높이에 있는 생명체는 추가 데미지 없이 공격할 수 있습니다."));
 	}
 
 	@Override
@@ -46,13 +47,13 @@ public class HigherBeing extends AbilityBase {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		Entity damager = e.getDamager();
 		if (damager.equals(getPlayer()) || (damager instanceof Projectile && getPlayer().equals(((Projectile) damager).getShooter()))) {
-			double damagerLocationY = damager.getLocation().getY();
-			double playerLocationY = getPlayer().getLocation().getY();
-			if (damagerLocationY < playerLocationY) {
+			double victimLocationY = e.getEntity().getLocation().getY();
+			double damagerLocationY = getPlayer().getLocation().getY();
+			if (victimLocationY < damagerLocationY) {
 				e.setDamage(e.getDamage() * multiple);
 				SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 				ParticleLib.LAVA.spawnParticle(e.getEntity().getLocation(), 1, 1, 1, 5);
-			} else if (damagerLocationY != playerLocationY) {
+			} else if (victimLocationY != damagerLocationY) {
 				e.setCancelled(true);
 				SoundLib.BLOCK_ANVIL_BREAK.playSound(getPlayer());
 			}

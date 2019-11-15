@@ -2,7 +2,7 @@ package daybreak.abilitywar.utils;
 
 /**
  * Validate
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class Validate {
 

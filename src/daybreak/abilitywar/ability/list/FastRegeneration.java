@@ -6,7 +6,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
@@ -31,7 +30,7 @@ public class FastRegeneration extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다."));
 	}
 	
-	private final TimerBase Passive = new TimerBase() {
+	private final Timer Passive = new Timer() {
 		
 		@Override
 		public void onStart() {}

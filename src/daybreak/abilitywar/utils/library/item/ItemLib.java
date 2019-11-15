@@ -1,8 +1,8 @@
 package daybreak.abilitywar.utils.library.item;
 
+import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.Map;
 import java.util.UUID;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -14,11 +14,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-
 /**
  * Item 라이브러리
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class ItemLib {
 	

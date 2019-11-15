@@ -4,14 +4,12 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +44,7 @@ public class Yeti extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final TimerBase Buff = new TimerBase() {
+	private final Timer Buff = new Timer() {
 
 		@Override
 		public void onStart() {
@@ -69,7 +67,7 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(1);
 
-	private final TimerBase Ice = new TimerBase(RangeConfig.getValue()) {
+	private final Timer Ice = new Timer(RangeConfig.getValue()) {
 
 		private int Count;
 		private Location center;
@@ -119,7 +117,7 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(3);
 
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {

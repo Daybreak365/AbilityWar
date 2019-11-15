@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 
 /**
  * 전역 타이머
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 abstract public class OverallTimer {
 

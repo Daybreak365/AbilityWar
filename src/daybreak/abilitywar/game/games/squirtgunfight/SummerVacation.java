@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.language.KoreanUtil;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +40,7 @@ import org.bukkit.scoreboard.Score;
 
 /**
  * 체인지 능력 전쟁
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 @GameManifest(Name = "신나는 여름 휴가", Description = { "§f신나는 물총싸움 뿌슝빠슝! 지금 바로 즐겨보세요!", "", "§a● §f스크립트가 적용되지 않습니다.",
 														"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f신나는 여름 휴가 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
@@ -262,7 +261,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		ArrayList<String> msg = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&eSummer Vacation &f- &c여름 휴가"),
 				ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-				ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDayBreak 새벽"),
+				ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"),
 				ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &fDayBreak&7#5908"));
 		
 		GameCreditEvent event = new GameCreditEvent();

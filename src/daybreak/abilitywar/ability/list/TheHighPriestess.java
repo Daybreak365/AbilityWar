@@ -4,8 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -61,9 +59,9 @@ public class TheHighPriestess extends AbilityBase {
 	private final Integer Duration = DurationConfig.getValue();
 	private final Integer Range = RangeConfig.getValue();
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
-	private final DurationTimer Skill = new DurationTimer(this, Duration * 20, Cool) {
+	private final DurationTimer Skill = new DurationTimer(Duration * 20, Cool) {
 		
 		private Location center;
 		

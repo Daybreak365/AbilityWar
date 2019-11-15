@@ -5,7 +5,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.FallBlock;
@@ -13,7 +12,6 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -57,7 +55,7 @@ public class Nex extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -83,7 +81,7 @@ public class Nex extends AbilityBase {
 	private boolean NoFall = false;
 	private boolean RunSkill = false;
 
-	private final TimerBase Skill = new TimerBase(4) {
+	private final Timer Skill = new Timer(4) {
 
 		@Override
 		public void onStart() {
@@ -132,7 +130,7 @@ public class Nex extends AbilityBase {
 				
 				if(!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
 					RunSkill = false;
-					for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, getPlayer())) {
+					for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), 5, 5)) {
 						if(d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
 						d.damage(Damage, getPlayer());
 					}
@@ -157,7 +155,7 @@ public class Nex extends AbilityBase {
 		}
 	}
 	
-	private final TimerBase FallBlock = new TimerBase(5) {
+	private final Timer FallBlock = new Timer(5) {
 		
 		Location center;
 		

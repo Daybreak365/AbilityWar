@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 
 /**
  * 제목 메시지
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class Title extends AbstractTitle {
 	

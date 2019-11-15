@@ -5,17 +5,14 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,9 +39,8 @@ public class SquirtGun extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f시원한 &e여름 &f보내세요!"));
 	}
 
-	private final CooldownTimer bombCool = new CooldownTimer(this, 30, "물폭탄").setActionbarNotice(false);
-
-	private final CooldownTimer spongeCool = new CooldownTimer(this, 15, "스펀지").setActionbarNotice(false);
+	private final CooldownTimer bombCool = new CooldownTimer(30, "물폭탄");
+	private final CooldownTimer spongeCool = new CooldownTimer(15, "스펀지");
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
@@ -85,18 +81,11 @@ public class SquirtGun extends AbilityBase {
 		return false;
 	}
 
-	final CooldownTimer gunCool = new CooldownTimer(this, 3, "물총");
+	private final CooldownTimer gunCool = new CooldownTimer(3, "물총");
 	
-	final List<Arrow> arrows = new ArrayList<Arrow>();
+	private final ArrayList<Arrow> arrows = new ArrayList<>();
 	
-	final TimerBase passive = new TimerBase() {
-		
-		@Override
-		protected void onStart() {}
-		
-		@Override
-		protected void onEnd() {}
-		
+	private final Timer passive = new Timer() {
 		@Override
 		protected void onProcess(int count) {
 			for(Arrow a : arrows) {

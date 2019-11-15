@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 /**
  * File 유틸
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class FileManager {
 

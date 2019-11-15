@@ -25,7 +25,7 @@ import static daybreak.abilitywar.utils.Validate.notNull;
 
 /**
  * 스크립트 관리 클래스
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class Script {
 

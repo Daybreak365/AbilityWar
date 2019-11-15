@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -13,7 +12,6 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.ChatColor;
@@ -53,11 +51,11 @@ public class Hacker extends AbilityBase {
 
 	private Player Target = null;
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
 	private final int DurationTick = DurationConfig.getValue() * 20;
 	
-	private final TimerBase Skill = new TimerBase(100) {
+	private final Timer Skill = new Timer(100) {
 
 		private int Count;
 		
@@ -102,7 +100,7 @@ public class Hacker extends AbilityBase {
 		}
 	}.setPeriod(1).setSilentNotice(true);
 	
-	private final TimerBase Particle = new TimerBase(DurationTick) {
+	private final Timer Particle = new Timer(DurationTick) {
 
 		private double y;
 		private boolean add;

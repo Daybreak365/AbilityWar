@@ -1,10 +1,19 @@
 package daybreak.abilitywar.game.script;
 
+import daybreak.abilitywar.game.script.Script.RequiredData;
+import daybreak.abilitywar.game.script.Script.ScriptRegisteration;
+import daybreak.abilitywar.game.script.objects.AbstractScript;
+import daybreak.abilitywar.game.script.objects.setter.Setter;
+import daybreak.abilitywar.game.script.objects.setter.special.LoopCountSetter;
+import daybreak.abilitywar.game.script.objects.setter.special.LoopSetter;
+import daybreak.abilitywar.game.script.objects.setter.special.MessageSetter;
+import daybreak.abilitywar.game.script.objects.setter.special.TimeSetter;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.library.item.MaterialLib;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,20 +28,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import daybreak.abilitywar.game.script.Script.RequiredData;
-import daybreak.abilitywar.game.script.Script.ScriptRegisteration;
-import daybreak.abilitywar.game.script.objects.AbstractScript;
-import daybreak.abilitywar.game.script.objects.setter.Setter;
-import daybreak.abilitywar.game.script.objects.setter.special.LoopCountSetter;
-import daybreak.abilitywar.game.script.objects.setter.special.LoopSetter;
-import daybreak.abilitywar.game.script.objects.setter.special.MessageSetter;
-import daybreak.abilitywar.game.script.objects.setter.special.TimeSetter;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
-
 /**
  * Script Wizard
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class ScriptWizard implements Listener {
 	

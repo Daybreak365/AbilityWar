@@ -9,17 +9,21 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveExecutor;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
+import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.tItle.Actionbar;
+import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.TimerBase;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -40,8 +44,8 @@ import org.bukkit.inventory.MainHand;
  * <ul>
  * {@link AbilityList#registerAbility}
  * </ul>
- * 
- * @author DayBreak 새벽
+ *
+ * @author Daybreak 새벽
  */
 public abstract class AbilityBase implements PassiveExecutor {
 
@@ -52,16 +56,15 @@ public abstract class AbilityBase implements PassiveExecutor {
 	private final AbilityManifest manifest;
 	private final AbstractGame game;
 	private final Map<Class<? extends Event>, Method> eventhandlers;
-	private final List<Field> timers;
+	private final HashSet<AbstractGame.TimerBase> timers = new HashSet<>();
 
 	private boolean restricted = true;
 
 	/**
 	 * {@link AbilityBase}의 기본 생성자입니다.
-	 * 
+	 *
 	 * @param participant 능력을 소유하는 참가자
 	 * @param explain     능력 설명
-	 * 
 	 * @throws IllegalStateException 게임이 진행중이지 않거나 능력이 {@link AbilityFactory}에 등록되지
 	 *                               않았을 경우 예외가 발생합니다.
 	 */
@@ -78,7 +81,6 @@ public abstract class AbilityBase implements PassiveExecutor {
 		AbilityRegistration<?> registry = AbilityFactory.getRegisteration(getClass());
 		this.manifest = registry.getManifest();
 		this.eventhandlers = registry.getEventhandlers();
-		this.timers = registry.getTimers();
 
 		PassiveManager passiveManager = game.getPassiveManager();
 		for (Class<? extends Event> eventClass : eventhandlers.keySet()) {
@@ -105,7 +107,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	/**
 	 * 액티브 스킬 발동을 위해 사용됩니다.
-	 * 
+	 *
 	 * @param mt 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
 	 * @param ct 클릭의 종류
 	 * @return 능력 발동 여부
@@ -114,9 +116,9 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	/**
 	 * 타겟팅 스킬 발동을 위해 사용됩니다.
-	 * 
-	 * @param mt 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
-	 * @param entity       타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 될 수 있습니다. null 체크가 필요합니다.
+	 *
+	 * @param mt     플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
+	 * @param entity 타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 될 수 있습니다. null 체크가 필요합니다.
 	 */
 	public abstract void TargetSkill(MaterialType mt, LivingEntity entity);
 
@@ -133,18 +135,13 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 */
 	public final void destroy() {
 		game.getPassiveManager().unregisterAll(this);
-		stopTimers();
+		for (AbstractGame.TimerBase timer : timers) {
+			timer.stopTimer(true);
+		}
 	}
 
-	private void stopTimers() {
-		for (Field field : timers) {
-			try {
-				field.setAccessible(true);
-				((TimerBase) field.get(this)).stopTimer(true);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				logger.log(Level.SEVERE, "Reflection Error: stopTimers()");
-			}
-		}
+	protected final void registerTimer(AbstractGame.TimerBase timer) {
+		timers.add(timer);
 	}
 
 	/**
@@ -209,7 +206,9 @@ public abstract class AbilityBase implements PassiveExecutor {
 	public final void setRestricted(boolean restricted) {
 		this.restricted = restricted;
 		if (restricted) {
-			stopTimers();
+			for (AbstractGame.TimerBase timer : timers) {
+				timer.stopTimer(true);
+			}
 		} else {
 			onRestrictClear();
 		}
@@ -238,6 +237,235 @@ public abstract class AbilityBase implements PassiveExecutor {
 				}
 			}
 			return null;
+		}
+
+	}
+
+	/**
+	 * 쿨타임 타이머
+	 * 능력의 쿨타임을 관리하기 위해 만들어진 타이머입니다.
+	 *
+	 * @author Daybreak 새벽
+	 */
+	public final class CooldownTimer extends AbstractGame.TimerBase {
+
+		private final String abilityName;
+		private boolean sendActionbar = true;
+
+		public CooldownTimer(int cooldown, String abilityName) {
+			game.super((AbilityWarThread.getGame() instanceof WRECK.Handler && ((WRECK.Handler) AbilityWarThread.getGame()).isWRECKEnabled()) ? (cooldown / 10) : cooldown);
+			this.abilityName = abilityName;
+			registerTimer(this);
+		}
+
+		public CooldownTimer(int cooldown) {
+			this(cooldown, "");
+		}
+
+		public boolean isCooldown() {
+			if (isRunning()) {
+				Player player = getPlayer();
+				if (player != null) {
+					player.sendMessage(toString(ChatColor.WHITE));
+				}
+			}
+
+			return isRunning();
+		}
+
+		@Override
+		public void onProcess(int count) {
+			if (sendActionbar) {
+				new Actionbar(toString(), 0, 20, 0).sendTo(getPlayer());
+			}
+			if (count == (getMaxCount() / 2) || (count <= 5 && count >= 1)) {
+				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
+				getPlayer().sendMessage(toString(ChatColor.WHITE));
+			}
+		}
+
+		@Override
+		public void onEnd() {
+			Player player = getPlayer();
+			if (player != null) {
+				String message = ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다.");
+				player.sendMessage(message);
+				if (sendActionbar) {
+					new Actionbar(message, 0, 20, 0).sendTo(getPlayer());
+				}
+			}
+		}
+
+		@Override
+		public String toString() {
+			return toString(ChatColor.GOLD);
+		}
+
+		public String toString(ChatColor timeColor) {
+			if (!abilityName.isEmpty()) {
+				return ChatColor.RED.toString() + abilityName + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getCount());
+			} else {
+				return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getCount());
+			}
+		}
+
+		@Override
+		public CooldownTimer setPeriod(int period) {
+			return this;
+		}
+
+		@Override
+		public CooldownTimer setSilentNotice(boolean bool) {
+			return this;
+		}
+
+		public CooldownTimer setSendActionbar(boolean sendActionbar) {
+			this.sendActionbar = sendActionbar;
+			return this;
+		}
+
+	}
+
+	/**
+	 * Duration TimerBase (지속시간 타이머)
+	 * 능력의 지속시간을 관리하고 능력을 발동시키기 위해 만들어진 타이머입니다.
+	 *
+	 * @author Daybreak 새벽
+	 */
+	public abstract class DurationTimer extends AbstractGame.TimerBase {
+
+		private final int duration;
+		private final String abilityName;
+		private final CooldownTimer cooldownTimer;
+		private boolean sendActionbar = true;
+
+		public DurationTimer(int duration, String abilityName, CooldownTimer cooldownTimer) {
+			game.super(duration);
+			this.duration = duration;
+			this.abilityName = abilityName;
+			this.cooldownTimer = cooldownTimer;
+			registerTimer(this);
+		}
+		public DurationTimer(int duration, String abilityName) {
+			this(duration, "", null);
+		}
+		public DurationTimer(int duration, CooldownTimer cooldownTimer) {
+			this(duration, "", cooldownTimer);
+		}
+		public DurationTimer(int duration) {
+			this(duration, "", null);
+		}
+
+		protected void onDurationStart() {}
+		protected abstract void onDurationProcess(int seconds);
+		protected void onDurationEnd() {}
+
+		public final boolean isDuration() {
+			if (isRunning()) {
+				Player player = getPlayer();
+				if (player != null) {
+					player.sendMessage(toString(ChatColor.WHITE));
+				}
+			}
+
+			return isRunning();
+		}
+
+		@Override
+		public final DurationTimer setPeriod(int period) {
+			super.setPeriod(period);
+			return this;
+		}
+
+		@Override
+		public final DurationTimer setSilentNotice(boolean forcedStopNotice) {
+			super.setSilentNotice(forcedStopNotice);
+			return this;
+		}
+
+		public final DurationTimer setSendActionbar(boolean sendActionbar) {
+			this.sendActionbar = sendActionbar;
+			return this;
+		}
+
+		@Override
+		protected final void onStart() {
+			counted = new ArrayList<>();
+			onDurationStart();
+		}
+
+		private ArrayList<Integer> counted = new ArrayList<>();
+
+		@Override
+		protected final void onProcess(int count) {
+			onDurationProcess(count);
+			Player target = getPlayer();
+			if (sendActionbar) {
+				new Actionbar(toString(), 0, 20, 0).sendTo(target);
+			}
+			final int fixedCount = getFixedCount();
+			if ((fixedCount == (duration / 2) && !counted.contains(fixedCount)) || (fixedCount <= 5 && fixedCount >= 1 && !counted.contains(fixedCount))) {
+				counted.add(fixedCount);
+				target.sendMessage(toString(ChatColor.WHITE));
+				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
+			}
+		}
+
+		@Override
+		protected final void onEnd() {
+			Player player = getPlayer();
+			if (player != null) {
+				onDurationEnd();
+
+				String message = ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다.");
+				player.sendMessage(message);
+				if (sendActionbar) {
+					new Actionbar(message, 0, 20, 0).sendTo(getPlayer());
+				}
+
+				if (cooldownTimer != null) {
+					cooldownTimer.startTimer();
+				}
+			}
+		}
+
+		@Override
+		public final String toString() {
+			return toString(ChatColor.YELLOW);
+		}
+
+		public final String toString(ChatColor timeColor) {
+			if (!abilityName.isEmpty()) {
+				return ChatColor.GOLD.toString() + abilityName + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getFixedCount());
+			} else {
+				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getFixedCount());
+			}
+		}
+
+	}
+
+	public abstract class Timer extends AbstractGame.TimerBase {
+
+		public Timer(int duration) {
+			game.super(duration);
+			registerTimer(this);
+		}
+
+		public Timer() {
+			game.super();
+			registerTimer(this);
+		}
+
+		@Override
+		public final Timer setPeriod(int period) {
+			super.setPeriod(period);
+			return this;
+		}
+
+		@Override
+		public final Timer setSilentNotice(boolean forcedStopNotice) {
+			super.setSilentNotice(forcedStopNotice);
+			return this;
 		}
 
 	}

@@ -9,7 +9,6 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +39,8 @@ public class Sniper extends AbilityBase {
 
 	private final int Duration = DurationConfig.getValue();
 	
-	private final TimerBase Snipe = ServerVersion.getVersion() < 14 ?
-	new TimerBase() {
+	private final Timer Snipe = ServerVersion.getVersion() < 14 ?
+	new Timer() {
 		
 		@Override
 		protected void onStart() {}
@@ -60,7 +59,7 @@ public class Sniper extends AbilityBase {
 		}
 	}.setPeriod(3)
 	:
-	new TimerBase() {
+	new Timer() {
 		
 		@Override
 		protected void onStart() {}
@@ -92,7 +91,7 @@ public class Sniper extends AbilityBase {
 		if(e.getEntity().getShooter().equals(getPlayer())) {
 			if(e.getEntity() instanceof Arrow) {
 				Arrow a = (Arrow) e.getEntity();
-				new TimerBase(Duration) {
+				new Timer(Duration) {
 					
 					@Override
 					protected void onStart() {

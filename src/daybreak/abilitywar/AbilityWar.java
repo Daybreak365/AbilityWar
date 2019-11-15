@@ -1,16 +1,5 @@
 package daybreak.abilitywar;
 
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.config.AbilityWarSettings;
@@ -19,17 +8,26 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.Script;
 import daybreak.abilitywar.game.script.Script.RequiredData;
 import daybreak.abilitywar.game.script.types.ChangeAbilityScript;
+import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
 import daybreak.abilitywar.game.script.types.LocationNoticeScript;
 import daybreak.abilitywar.game.script.types.TeleportScript;
-import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Ability War 능력자 전쟁 플러그인
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class AbilityWar extends JavaPlugin {
 

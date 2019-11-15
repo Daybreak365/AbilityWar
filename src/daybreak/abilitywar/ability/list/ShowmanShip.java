@@ -10,7 +10,6 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -28,7 +27,7 @@ public class ShowmanShip extends AbilityBase {
 	private final RGB POWER = new RGB(255, 184, 150);
 	private final RGB POWERFUL = new RGB(255, 59, 59);
 	
-	private final TimerBase Passive = new TimerBase() {
+	private final Timer Passive = new Timer() {
 
 		private final Circle circle = new Circle(getPlayer().getLocation(), 10).setAmount(100).setHighestLocation(true);
 		

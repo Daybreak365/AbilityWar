@@ -1,9 +1,11 @@
 package daybreak.abilitywar.game.script.objects.setter;
 
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.game.script.ScriptWizard;
+import daybreak.abilitywar.utils.Validate;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
@@ -12,13 +14,9 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.EventExecutor;
 
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.game.script.ScriptWizard;
-import daybreak.abilitywar.utils.Validate;
-
 /**
  * Setter
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 abstract public class Setter<T> implements EventExecutor {
 	

@@ -18,7 +18,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 /**
  * Death Manager
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class DeathManager implements Listener {
 

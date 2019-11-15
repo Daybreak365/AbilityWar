@@ -75,7 +75,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	 * null을 반환할 수 있습니다. 능력 할당이 필요하지 않을 경우 null을 반환하세요.
 	 */
 	protected AbilitySelect setupAbilitySelect() {
-		return new AbilitySelect(1) {
+		return new AbilitySelect(this, 1) {
 			@Override
 			protected Collection<Participant> initSelectors() {
 				return getParticipants();

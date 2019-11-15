@@ -1,16 +1,15 @@
 package daybreak.abilitywar.utils.versioncompat;
 
 import daybreak.abilitywar.utils.Messager;
+import java.lang.reflect.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-import java.lang.reflect.Field;
-
 /**
  * Server Version
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class ServerVersion {
 

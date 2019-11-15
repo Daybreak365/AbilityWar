@@ -5,8 +5,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -14,7 +12,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
@@ -62,9 +60,9 @@ public class Ares extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 밀쳐냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
-	private final DurationTimer Duration = new DurationTimer(this, 20, Cool) {
+	private final DurationTimer Duration = new DurationTimer(20, Cool) {
 		
 		private final boolean DashIntoTheAir = DashConfig.getValue();
 		private final int DamagePercent = DamageConfig.getValue();
@@ -73,7 +71,7 @@ public class Ares extends AbilityBase {
 		@Override
 		protected void onDurationStart() {
 			Attacked = new ArrayList<Damageable>();
-			List<Player> nearby = LocationUtil.getNearbyPlayers(getPlayer().getLocation(), 10, 10);
+			Collection<Player> nearby = LocationUtil.getNearbyPlayers(getPlayer().getLocation(), 10, 10);
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(nearby);
 		}
 		

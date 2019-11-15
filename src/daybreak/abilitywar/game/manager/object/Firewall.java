@@ -19,7 +19,7 @@ import org.bukkit.plugin.EventExecutor;
 /**
  * 방화벽
  * 
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class Firewall implements EventExecutor {
 

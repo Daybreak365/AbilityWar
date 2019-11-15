@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 /**
  * Ability War 플러그인 쓰레드
  * 
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class AbilityWarThread {
 

@@ -3,11 +3,11 @@ package daybreak.abilitywar.game.manager.object;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.game.events.InvincibleEndEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.Bar;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -22,7 +22,7 @@ import org.bukkit.plugin.EventExecutor;
 /**
  * 무적
  *
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class Invincibility implements EventExecutor {
 
@@ -39,7 +39,7 @@ public class Invincibility implements EventExecutor {
 				AbilityWar.getPlugin());
 	}
 
-	private TimerBase timer;
+	private AbstractGame.TimerBase timer;
 
 	public boolean Start(boolean isInfinite) {
 		if (timer == null || !timer.isRunning()) {
@@ -90,13 +90,13 @@ public class Invincibility implements EventExecutor {
 		Invincibility getInvincibility();
 	}
 
-	private class InvincibilityTimer extends TimerBase {
+	private class InvincibilityTimer extends AbstractGame.TimerBase {
 
 		private Bar bar = null;
 		private final String startMessage;
 
 		private InvincibilityTimer(int duration) {
-			super(duration);
+			game.super(duration);
 			this.startMessage = ChatColor.GREEN + "무적이 " + ChatColor.WHITE + NumberUtil.parseTimeString(duration) + ChatColor.GREEN + "동안 적용됩니다.";
 			if (isBossbarEnabled) {
 				int[] time = NumberUtil.parseTime(duration);
@@ -105,7 +105,7 @@ public class Invincibility implements EventExecutor {
 		}
 
 		private InvincibilityTimer() {
-			super();
+			game.super();
 			this.startMessage = ChatColor.GREEN + "무적이 적용되었습니다. 지금부터 무적이 해제될 때까지 데미지를 입지 않습니다.";
 			if (isBossbarEnabled) {
 				bar = new Bar(bossbarInfiniteMessage, BarColor.GREEN, BarStyle.SEGMENTED_10);
@@ -129,14 +129,10 @@ public class Invincibility implements EventExecutor {
                     int[] time = NumberUtil.parseTime(count);
                     bar.setTitle(String.format(bossbarMessage, time[0], time[1])).setProgress(Math.min(count / (double) getMaxCount(), 1.0));
                 }
-                if (count == (getMaxCount()) / 2) {
+                if (count == (getMaxCount()) / 2 || (count <= 5 && count >= 1)) {
                     Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
                             "&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
-                }
-                if (count <= 5 && count >= 1) {
-                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-                            "&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
-                    SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
+					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
                 }
             }
 		}

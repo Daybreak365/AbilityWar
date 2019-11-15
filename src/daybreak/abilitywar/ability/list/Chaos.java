@@ -4,8 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
-import daybreak.abilitywar.ability.timer.DurationTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -57,11 +55,11 @@ public class Chaos extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
-	private final int Distance = DistanceConfig.getValue();
+	private final int distance = DistanceConfig.getValue();
 	
-	private final DurationTimer Duration = new DurationTimer(this, DurationConfig.getValue() * 20, Cool) {
+	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue() * 20, Cool) {
 
 		private Location center;
 		
@@ -73,16 +71,13 @@ public class Chaos extends AbilityBase {
 		@Override
 		public void onDurationProcess(int seconds) {
 			ParticleLib.SMOKE_LARGE.spawnParticle(center, 0, 0, 0, 100);
-			for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, center, Distance, Distance, getPlayer())) {
+			for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), distance, distance)) {
 				d.damage(1);
 				Vector vector = center.toVector().subtract(d.getLocation().toVector()).multiply(0.7);
 				d.setVelocity(vector);
 			}
 		}
 
-		@Override
-		protected void onDurationEnd() {}
-		
 	}.setPeriod(1);
 	
 	@Override

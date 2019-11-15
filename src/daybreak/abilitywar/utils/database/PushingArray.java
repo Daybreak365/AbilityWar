@@ -3,12 +3,10 @@ package daybreak.abilitywar.utils.database;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Advanced Array
- * @author DayBreak 새벽
+ * @author Daybreak 새벽
  */
 public class PushingArray<T> {
 	// TODO: 최적화
@@ -34,7 +32,7 @@ public class PushingArray<T> {
 		}
 	}
 	
-	public List<T> toList() {
+	public ArrayList<T> toList() {
 		return new ArrayList<>(Arrays.asList(array));
 	}
 	

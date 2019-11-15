@@ -5,14 +5,12 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.timer.CooldownTimer;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.TimerBase;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -41,11 +39,11 @@ public class Gladiator extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
-	private final CooldownTimer Cool = new CooldownTimer(this, CooldownConfig.getValue());
+	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
 	private final HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
 	
-	private final TimerBase FieldClear = new TimerBase(20) {
+	private final Timer FieldClear = new Timer(20) {
 		
 		@Override
 		public void onStart() {}
@@ -70,7 +68,7 @@ public class Gladiator extends AbilityBase {
 	
 	private Player target = null;
 	
-	private final TimerBase Field = new TimerBase(26) {
+	private final Timer Field = new Timer(26) {
 		
 		Integer Count;
 		Integer TotalCount;
