@@ -15,7 +15,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 @AbilityManifest(Name = "좀비", Rank = Rank.B, Species = Species.OTHERS)
@@ -62,6 +64,20 @@ public class Zombie extends AbilityBase {
 			playerLocation.setPitch(random.nextInt(360) - 179);
 			playerLocation.setYaw(random.nextInt(180) - 89);
 			player.teleport(playerLocation);
+		}
+	}
+
+	@SubscribeEvent
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer())) {
+			e.setDamage((e.getDamage() / 100) * (100 - decrease));
+		}
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		if (e.getEntity().equals(getPlayer())) {
+			e.setDamage((e.getDamage() / 100) * (100 - decrease));
 		}
 	}
 

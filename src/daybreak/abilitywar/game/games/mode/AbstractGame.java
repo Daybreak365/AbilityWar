@@ -363,6 +363,11 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
         protected void onEnd() {}
 
         /**
+         * {@link TimerBase}가 Silent로 종료될 때 호출됩니다.
+         */
+        protected void onSilentEnd() {}
+
+        /**
          * {@link TimerBase}의 실행 여부를 반환합니다.
          */
         public final boolean isRunning() {
@@ -373,7 +378,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
          * {@link TimerBase}를 실행합니다.
          */
         public final void startTimer() {
-            if (!isRunning()) {
+            if (AbstractGame.this.isRunning() && !isRunning()) {
                 count = maxCount;
                 this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerBase.TimerTask(), 0, period);
                 timerTasks.add(this);
@@ -393,8 +398,11 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
                 timerTasks.remove(this);
                 count = maxCount;
                 this.task = -1;
-                if (!silent || isSilentNotice) {
+                if (!silent) {
                     onEnd();
+                } else {
+                    if (isSilentNotice) onEnd();
+                    onSilentEnd();
                 }
             }
         }
@@ -433,6 +441,11 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
             return this;
         }
 
+        /**
+         * @deprecated
+         * {@link #onSilentEnd()}를 사용해주세요.
+         */
+        @Deprecated
         public TimerBase setSilentNotice(boolean silentNotice) {
             isSilentNotice = silentNotice;
             return this;

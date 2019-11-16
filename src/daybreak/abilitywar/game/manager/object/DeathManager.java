@@ -5,7 +5,7 @@ import daybreak.abilitywar.game.events.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.language.KoreanUtil;
+import daybreak.abilitywar.utils.message.KoreanUtil;
 import java.util.ArrayList;
 import java.util.UUID;
 import org.bukkit.Bukkit;

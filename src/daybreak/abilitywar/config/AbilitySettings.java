@@ -12,21 +12,20 @@ import java.util.logging.Logger;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 /**
- * 능력 세부 설정
- * 
+ * 능력 콘피그
  * @author Daybreak 새벽
  */
 public class AbilitySettings {
 
 	private static final Logger logger = Logger.getLogger(AbilityWarSettings.class.getName());
-	private static final ArrayList<SettingObject<?>> settings = new ArrayList<SettingObject<?>>();
+	private static final ArrayList<SettingObject<?>> settings = new ArrayList<>();
 
 	private static void registerSetting(SettingObject<?> object) {
 		if (!settings.contains(object)) {
 			settings.add(object);
 		}
 	}
-	
+
 	private static File file = null;
 	private static long lastModified;
 	private static CommentedConfiguration config = null;
@@ -86,7 +85,6 @@ public class AbilitySettings {
 
 			this.defaultValue = defaultValue;
 			this.comments = comments;
-
 			registerSetting(this);
 		}
 
@@ -117,7 +115,7 @@ public class AbilitySettings {
 					logger.log(Level.SEVERE, "콘피그를 다시 불러오는 도중 오류가 발생하였습니다.");
 				}
 			}
-			
+
 			Object object = cache.get(this);
 
 			if (object != null && object.getClass().isAssignableFrom(getDefault().getClass())) {

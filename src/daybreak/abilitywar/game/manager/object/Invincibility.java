@@ -112,10 +112,6 @@ public class Invincibility implements EventExecutor {
 			}
 		}
 
-		{
-			setSilentNotice(true);
-		}
-
 		@Override
 		protected void onStart() {
 			game.setRestricted(true);
@@ -147,6 +143,14 @@ public class Invincibility implements EventExecutor {
 			SoundLib.ENTITY_ENDER_DRAGON_GROWL.broadcastSound();
 			Bukkit.getPluginManager().callEvent(new InvincibleEndEvent(game));
 		}
+
+		@Override
+		protected void onSilentEnd() {
+			if (bar != null) {
+				bar.remove();
+			}
+		}
+
 	}
 
 }
