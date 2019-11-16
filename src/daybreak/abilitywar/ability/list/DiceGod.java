@@ -19,7 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 @AbilityManifest(Name = "다이스 갓", Rank = Rank.A, Species = Species.GOD)
 public class DiceGod extends AbilityBase {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 60,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 25,
 			"# 쿨타임") {
 		
 		@Override

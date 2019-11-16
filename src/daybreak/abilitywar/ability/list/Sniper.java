@@ -11,7 +11,6 @@ import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -84,7 +83,7 @@ public class Sniper extends AbilityBase {
 		return false;
 	}
 
-	private final List<Arrow> arrows = new ArrayList<Arrow>();
+	private final ArrayList<Arrow> arrows = new ArrayList<>();
 	
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
@@ -95,7 +94,7 @@ public class Sniper extends AbilityBase {
 					
 					@Override
 					protected void onStart() {
-						a.setVelocity(a.getVelocity().multiply(2.5));
+						a.setVelocity(a.getVelocity().multiply(1.5));
 						a.setGlowing(true);
 						a.setGravity(false);
 						arrows.add(a);

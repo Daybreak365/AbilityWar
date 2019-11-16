@@ -15,7 +15,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 @AbilityManifest(Name = "황제", Rank = Rank.A, Species = Species.HUMAN)
 public class TheEmperor extends AbilityBase {
 
-	public static final SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>(TheEmperor.class, "DamageDecrease", 20,
+	public static final SettingObject<Integer> DamageDecreaseConfig = new SettingObject<Integer>(TheEmperor.class, "DamageDecrease", 35,
 			"# 공격 피해 감소량",
 			"# 10으로 설정하면 공격을 받았을 때 전체 대미지의 90%를 받습니다.") {
 		
@@ -28,8 +28,7 @@ public class TheEmperor extends AbilityBase {
 	
 	public TheEmperor(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f느리고 품위있게 걸어가며 공격 피해가 일정량 감소합니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f체력이 한칸 반 이하일 때 공격 피해를 받지 않습니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f느리고 품위있게 걸어가며 공격 피해가 " + DamageDecreaseConfig.getValue() + "% 감소합니다."));
 	}
 	
 	private final Timer Passive = new Timer() {
@@ -59,9 +58,8 @@ public class TheEmperor extends AbilityBase {
 		if(e.getEntity().equals(getPlayer())) {
 			double damage = (e.getDamage() / 100) * (100 - DamageDecrease);
 			e.setDamage(damage);
-			
-			int Health = (int) getPlayer().getHealth();
-			if(Health <= 2) {
+
+			if(getPlayer().getHealth() <= 2.0) {
 				e.setCancelled(true);
 			}
 		}

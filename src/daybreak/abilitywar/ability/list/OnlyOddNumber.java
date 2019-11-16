@@ -1,19 +1,18 @@
 package daybreak.abilitywar.ability.list;
 
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.versioncompat.VersionUtil;
-
-@AbilityManifest(Name = "홀수강박증", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(Name = "홀수강박증", Rank = Rank.A, Species = Species.HUMAN)
 public class OnlyOddNumber extends AbilityBase {
 
 	public static final SettingObject<Integer> PercentageConfig = new SettingObject<Integer>(OnlyOddNumber.class, "Percentage", 79,
@@ -27,7 +26,7 @@ public class OnlyOddNumber extends AbilityBase {
 		
 	};
 
-	public static final SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 39,
+	public static final SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 59,
 			"# 체력이 홀수일 때 데미지를 몇 퍼센트 줄여 받을지 설정합니다.",
 			"# 60으로 설정하면 원래 데미지의 40%를 받습니다.") {
 		
