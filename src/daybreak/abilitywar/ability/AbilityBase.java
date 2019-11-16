@@ -136,7 +136,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	public final void destroy() {
 		game.getPassiveManager().unregisterAll(this);
 		for (AbstractGame.TimerBase timer : timers) {
-			timer.shutdownTimer();
+			timer.stopTimer(true);
 		}
 	}
 
@@ -207,7 +207,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		this.restricted = restricted;
 		if (restricted) {
 			for (AbstractGame.TimerBase timer : timers) {
-				timer.shutdownTimer();
+				timer.stopTimer(true);
 			}
 		} else {
 			onRestrictClear();

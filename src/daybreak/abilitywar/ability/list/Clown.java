@@ -80,7 +80,7 @@ public class Clown extends AbilityBase {
 				} else {
 					if(OriginalPoint != null) getPlayer().teleport(OriginalPoint);
 					SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer());
-					Duration.stopTimer();
+					Duration.stopTimer(false);
 					
 					for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), RangeConfig.getValue(), 250)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(p);

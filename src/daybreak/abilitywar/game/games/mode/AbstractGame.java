@@ -154,7 +154,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
     @Override
     protected void onEnd() {
-        shutdownTimers();
+        stopTimers();
         HandlerList.unregisterAll(this);
         for (Listener listener : registeredListeners) {
             HandlerList.unregisterAll(listener);
@@ -302,10 +302,10 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
      *
      * @param timerType 종료할 타이머 타입
      */
-    public void shutdownTimers(Class<? extends TimerBase> timerType) {
+    public void stopTimers(Class<? extends TimerBase> timerType) {
         for (TimerBase timer : getTimers()) {
             if (timerType.isAssignableFrom(timer.getClass())) {
-                timer.stopTimer();
+                timer.stopTimer(false);
             }
         }
     }
@@ -313,9 +313,9 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
     /**
      * 현재 실행중인 {@link TimerBase}를 모두 SHUTDOWN합니다.
      */
-    public void shutdownTimers() {
+    public void stopTimers() {
         for (TimerBase timer : getTimers()) {
-            timer.shutdownTimer();
+            timer.stopTimer(true);
         }
         timerTasks.clear();
     }
@@ -323,7 +323,6 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
     public abstract class TimerBase {
 
         private int task = -1;
-        private boolean alive = true;
 
         private boolean isInfinite;
 
@@ -357,7 +356,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
         /**
          * {@link TimerBase}가 Silent로 종료될 때 호출됩니다.
          */
-        protected void onShutdown() {}
+        protected void onSilentEnd() {}
 
         /**
          * {@link TimerBase}의 실행 여부를 반환합니다.
@@ -370,41 +369,27 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
          * {@link TimerBase}를 실행합니다.
          */
         public final void startTimer() {
-            if (alive) {
-                if (AbstractGame.this.isRunning() && !isRunning()) {
-                    count = maxCount;
-                    this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, period);
-                    timerTasks.add(this);
-                    onStart();
+            if (AbstractGame.this.isRunning() && !isRunning()) {
+                count = maxCount;
+                this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, period);
+                timerTasks.add(this);
+                onStart();
+            }
+        }
+
+        /**
+         * {@link TimerBase}를 종료합니다.<p>
+         */
+        public final void stopTimer(boolean silent) {
+            if (isRunning()) {
+                Bukkit.getScheduler().cancelTask(task);
+                timerTasks.remove(this);
+                this.task = -1;
+                if (!silent) {
+                    onEnd();
+                } else {
+                    onSilentEnd();
                 }
-            } else {
-                throw new IllegalStateException("SHUTDOWN 상태의 타이머입니다. 더이상 사용할 수 없습니다.");
-            }
-        }
-
-        /**
-         * {@link TimerBase}를 종료합니다.<p>
-         */
-        public final void stopTimer() {
-            if (isRunning()) {
-                Bukkit.getScheduler().cancelTask(task);
-                timerTasks.remove(this);
-                this.task = -1;
-                onEnd();
-            }
-        }
-
-        /**
-         * {@link TimerBase}를 종료합니다.<p>
-         * Shutdown으로 종료된 {@link TimerBase}는 다시 실행될 수 없습니다.
-         */
-        public final void shutdownTimer() {
-            if (isRunning()) {
-                Bukkit.getScheduler().cancelTask(task);
-                timerTasks.remove(this);
-                this.task = -1;
-                this.alive = false;
-                onShutdown();
             }
         }
 
@@ -469,7 +454,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
                         onProcess(count);
                         count--;
                     } else {
-                        stopTimer();
+                        stopTimer(false);
                     }
                 }
             }

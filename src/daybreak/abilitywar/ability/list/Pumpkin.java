@@ -122,7 +122,7 @@ public class Pumpkin extends AbilityBase {
 		}
 
 		@Override
-		public void onShutdown() {
+		public void onSilentEnd() {
 			Players.keySet().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
 		}
 

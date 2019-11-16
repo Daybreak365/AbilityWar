@@ -65,7 +65,7 @@ public class Gladiator extends AbilityBase {
 		}
 
 		@Override
-		public void onShutdown() {
+		public void onSilentEnd() {
 			for(Block b : Saves.keySet()) {
 				BlockState state = Saves.get(b);
 				b.setType(state.getType());

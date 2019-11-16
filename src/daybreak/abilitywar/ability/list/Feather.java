@@ -63,7 +63,7 @@ public class Feather extends AbilityBase {
 		}
 
 		@Override
-		protected void onShutdown() {
+		protected void onSilentEnd() {
 			getPlayer().setAllowFlight(false);
 		}
 

@@ -65,7 +65,7 @@ public class Invincibility implements EventExecutor {
 
 	public boolean Stop() {
 		if (timer != null && timer.isRunning()) {
-			timer.stopTimer();
+			timer.stopTimer(false);
 			timer = null;
 			return true;
 		}
@@ -145,7 +145,7 @@ public class Invincibility implements EventExecutor {
 		}
 
 		@Override
-		protected void onShutdown() {
+		protected void onSilentEnd() {
 			if (bar != null) {
 				bar.remove();
 			}

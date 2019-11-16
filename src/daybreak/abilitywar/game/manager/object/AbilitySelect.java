@@ -147,7 +147,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 
 		Bukkit.broadcastMessage(
 				ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
-		this.stopTimer();
+		this.stopTimer(false);
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 				}
 			}
 		} else {
-			this.stopTimer();
+			this.stopTimer(false);
 		}
 	}
 
