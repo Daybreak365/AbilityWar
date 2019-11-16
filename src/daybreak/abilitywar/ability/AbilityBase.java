@@ -125,7 +125,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	/**
 	 * 능력 제한이 해제될 경우 호출됩니다.
 	 */
-	protected abstract void onRestrictClear();
+	protected void onRestrictClear() {}
 
 	/**
 	 * 더 이상 사용되지 않는 {@link AbilityBase}를 제거할 때 사용됩니다.
