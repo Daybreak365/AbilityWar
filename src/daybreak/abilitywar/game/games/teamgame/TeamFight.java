@@ -214,7 +214,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 		if (team == null) {
 			team = newTeam(UUID.randomUUID().toString(), ChatColor.GREEN + player.getName());
 		}
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + KoreanUtil.getCompleteWord(team.getDisplayName(), "&f으로", "&f로") + " 설정되었습니다."));
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + KoreanUtil.getJosaModifiedString(team.getDisplayName(), KoreanUtil.Josa.이었였) + " 설정되었습니다."));
 		teamParticipantMap.add(team, participant);
 		participantTeamMap.put(participant, team);
 	}
@@ -255,7 +255,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 		if (isParticipating(player)) {
 			Participant participant = getParticipant(e.getPlayer());
 			if (participant.attributes().TEAM_CHAT.getValue()) {
-				e.setFormat(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &f" + player.getName() + ": &r" + e.getMessage()));
+				e.setFormat(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &e" + player.getName() + "&f: &r" + e.getMessage()));
 				Set<Player> recipients = e.getRecipients();
 				recipients.clear();
 				if (hasTeam(participant)) {

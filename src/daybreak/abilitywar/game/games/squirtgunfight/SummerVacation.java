@@ -212,7 +212,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 						if(victim.hasAbility()) {
 							String name = victim.getAbility().getName();
 							if(name != null) {
-								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 " + KoreanUtil.getCompleteWord("&e" + name, "&f이었", "&f였") + "습니다."));
+								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 " + KoreanUtil.getJosaModifiedString("&e" + name, KoreanUtil.Josa.이었였)));
 							}
 						} else {
 							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f?님은 능력이 없습니다."));
