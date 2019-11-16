@@ -25,7 +25,7 @@ public class KoreanUtil {
 							: josa.withoutJongsung);
 			}
 		}
-		return target + josa.withJongsung + "(" + josa.withoutJongsung + ")";
+		return target + josa.unknown;
 	}
 
 	public static String getNeededJosa(String target, Josa josa) {
@@ -37,7 +37,7 @@ public class KoreanUtil {
 					return (jongSungDetector.getJongSungType(readText) > 0 ? josa.withJongsung : josa.withoutJongsung);
 			}
 		}
-		return josa.withJongsung + "(" + josa.withoutJongsung + ")";
+		return josa.unknown;
 	}
 
 	private static boolean isEndSkipText(char ch) {
@@ -372,19 +372,21 @@ public class KoreanUtil {
 
 	public static enum Josa {
 
-		은는("은", "는"),
-		이가("이", "가"),
-		을를("을", "를"),
-		과와("과", "와"),
-		으로로("으로", "로"),
-		이었였("이었", "였");
+		은는("은", "는", "은(는)"),
+		이가("이", "가", "(이)가"),
+		을를("을", "를", "을(를)"),
+		과와("과", "와", "과(와)"),
+		으로로("으로", "로", "(으)로"),
+		이었였("이었", "였", "이었(였)");
 
 		private final String withJongsung;
 		private final String withoutJongsung;
+		private final String unknown;
 
-		private Josa(String withJongsung, String withoutJongsung) {
+		private Josa(String withJongsung, String withoutJongsung, String unknown) {
 			this.withJongsung = withJongsung;
 			this.withoutJongsung = withoutJongsung;
+			this.unknown = unknown;
 		}
 
 	}

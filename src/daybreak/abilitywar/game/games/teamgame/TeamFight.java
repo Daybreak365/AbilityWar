@@ -214,7 +214,8 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 		if (team == null) {
 			team = newTeam(UUID.randomUUID().toString(), ChatColor.GREEN + player.getName());
 		}
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + KoreanUtil.getJosaModifiedString(team.getDisplayName(), KoreanUtil.Josa.이었였) + " 설정되었습니다."));
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + team.getDisplayName() +
+				KoreanUtil.getNeededJosa(team.getDisplayName().replaceAll("_", ""), KoreanUtil.Josa.으로로) + " &f설정되었습니다."));
 		teamParticipantMap.add(team, participant);
 		participantTeamMap.put(participant, team);
 	}

@@ -66,8 +66,8 @@ public class TheEmpress extends AbilityBase {
 				if(!Cool.isCooldown()) {
 					Location l = getPlayer().getLocation();
 					
-					NumberStatus X = NumberUtil.getNumberStatus(l.getX());
-					NumberStatus Z = NumberUtil.getNumberStatus(l.getZ());
+					NumberStatus X = NumberUtil.getNumberStatus((int) l.getX());
+					NumberStatus Z = NumberUtil.getNumberStatus((int) l.getZ());
 					
 					Random random = new Random();
 					boolean bool = random.nextBoolean();
