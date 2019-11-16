@@ -46,7 +46,7 @@ public class Firewall implements EventExecutor {
 				}
 			}
 			if (DeathSettings.getOperation().equals(OnDeath.탈락)) {
-				if (handler.getDeathManager().isEliminated(p) && !p.isOp()) {
+				if (handler.getDeathManager().isDead(p) && !p.isOp()) {
 					e.disallow(Result.KICK_OTHER, ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
 							+ "\n" + ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
 				}

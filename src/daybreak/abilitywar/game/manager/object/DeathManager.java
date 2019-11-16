@@ -107,9 +107,11 @@ public class DeathManager implements Listener {
         switch (DeathSettings.getOperation()) {
             case 탈락:
                 Eliminate(victim);
+                deadPlayers.add(victim.getPlayer().getUniqueId());
                 break;
             case 관전모드:
                 victim.getPlayer().setGameMode(GameMode.SPECTATOR);
+                deadPlayers.add(victim.getPlayer().getUniqueId());
                 break;
             case 없음:
                 break;
@@ -117,27 +119,32 @@ public class DeathManager implements Listener {
     }
 
     /**
-     * 탈락된 유저 UUID 목록
+     * 사망한 유저 UUID 목록
      */
-    private final ArrayList<UUID> eliminated = new ArrayList<>();
+    protected final ArrayList<UUID> deadPlayers = new ArrayList<>();
 
     /**
      * Operation 콘피그에 따라 탈락, 관전모드 설정 또는 아무 행동도 하지 않을 수 있습니다.
-     *
      * @param participant 작업을 처리할 참가자
      */
     public final void Eliminate(Participant participant) {
         Player player = participant.getPlayer();
-        eliminated.add(player.getUniqueId());
         player.kickPlayer(Messager.defaultPrefix + "\n" + ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
         Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName() + "&f님이 탈락하셨습니다."));
     }
 
     /**
-     * 플레이어의 탈락 여부를 확인합니다.
+     * 플레이어의 사망 여부를 확인합니다.
      */
-    public final boolean isEliminated(Player p) {
-        return eliminated.contains(p.getUniqueId());
+    public final boolean isDead(Player player) {
+        return deadPlayers.contains(player.getUniqueId());
+    }
+
+    /**
+     * 플레이어의 사망 여부를 확인합니다.
+     */
+    public final boolean isDead(UUID uuid) {
+        return deadPlayers.contains(uuid);
     }
 
     public interface Handler {

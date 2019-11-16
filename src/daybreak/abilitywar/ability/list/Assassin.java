@@ -59,8 +59,8 @@ public class Assassin extends AbilityBase {
 	
 	public Assassin(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 6칸 이내에 있는 적 " + TeleportCountConfig.getValue() + "명에게 이동하며"),
-				ChatColor.translateAlternateColorCodes('&', "&f데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DistanceConfig.getValue() + "칸 이내에 있는 엔티티 " + TeleportCountConfig.getValue() + "명(마리)에게 이동하며"),
+				ChatColor.translateAlternateColorCodes('&', "&f각각 " + DamageConfig.getValue() + "의 데미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 	
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

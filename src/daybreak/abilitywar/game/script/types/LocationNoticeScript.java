@@ -25,7 +25,7 @@ public class LocationNoticeScript extends AbstractScript {
 		
 		for (Participant participant : game.getParticipants()) {
 			Player player = participant.getPlayer();
-			if (!game.getDeathManager().isEliminated(player)) {
+			if (!game.getDeathManager().isDead(player)) {
 				Location l = player.getLocation();
 				int X = (int) l.getX();
 				int Y = (int) l.getY();
