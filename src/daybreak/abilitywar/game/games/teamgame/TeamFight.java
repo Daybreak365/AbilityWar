@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,8 +29,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-@GameManifest(Name = "팀 전투", Description = { "§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다." })
+@GameManifest(Name = "팀 전투", Description = {"§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다."})
 public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 
 	public TeamFight() {
@@ -189,6 +191,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 
 	private final HashMap<String, Team> teams = new HashMap<>();
 	private final HashMap<Participant, Team> participantTeamMap = new HashMap<>();
+	private final TeamParticipantMap teamParticipantMap = new TeamParticipantMap();
 
 	@Override
 	public boolean hasTeam(Participant participant) {
@@ -204,13 +207,15 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 	public void setTeam(Participant participant, Team team) {
 		Player player = participant.getPlayer();
 		if (hasTeam(participant)) {
-				Team oldTeam = getTeam(participant);
+			Team oldTeam = getTeam(participant);
+			teamParticipantMap.remove(oldTeam, participant);
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', oldTeam.getDisplayName() + "&f 팀에서 나왔습니다."));
 		}
 		if (team == null) {
-			team = newTeam(UUID.randomUUID().toString(), ChatColor.translateAlternateColorCodes('&', "&a개인팀"));
+			team = newTeam(UUID.randomUUID().toString(), ChatColor.GREEN + player.getName());
 		}
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + KoreanUtil.getCompleteWord(team.getDisplayName(), "&f으로", "&f로") + " 설정되었습니다."));
+		teamParticipantMap.add(team, participant);
 		participantTeamMap.put(participant, team);
 	}
 
@@ -230,6 +235,11 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 	}
 
 	@Override
+	public Collection<Participant> getParticipants(Team team) {
+		return Collections.unmodifiableCollection(teamParticipantMap.get(team));
+	}
+
+	@Override
 	public Team newTeam(String name, String displayName) throws IllegalStateException {
 		if (teamExists(name)) {
 			throw new IllegalStateException(name + " 팀은 이미 등록된 팀입니다.");
@@ -237,6 +247,26 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 		Team newTeam = new Team(name, displayName);
 		teams.put(name, newTeam);
 		return newTeam;
+	}
+
+	@EventHandler
+	private void onChat(AsyncPlayerChatEvent e) {
+		Player player = e.getPlayer();
+		if (isParticipating(player)) {
+			Participant participant = getParticipant(e.getPlayer());
+			if (participant.attributes().TEAM_CHAT.getValue()) {
+				e.setFormat(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &f" + player.getName() + ": &r" + e.getMessage()));
+				Set<Player> recipients = e.getRecipients();
+				recipients.clear();
+				if (hasTeam(participant)) {
+					for (Participant p : getParticipants(getTeam(participant))) {
+						recipients.add(p.getPlayer());
+					}
+				} else {
+					recipients.add(participant.getPlayer());
+				}
+			}
+		}
 	}
 
 	@EventHandler
@@ -255,6 +285,30 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 				}
 			}
 		}
+	}
+
+	class TeamParticipantMap extends HashMap<Team, ArrayList<Participant>> {
+
+		void add(Team team, Participant participant) {
+			if (get(team) == null) {
+				put(team, new ArrayList<>());
+			}
+			get(team).add(participant);
+		}
+
+		void remove(Team team, Participant participant) {
+			if (get(team) != null) {
+				get(team).remove(participant);
+			}
+		}
+
+		boolean contains(Team team, Participant participant) {
+			if (get(team) != null) {
+				return get(team).contains(participant);
+			}
+			return false;
+		}
+
 	}
 
 }

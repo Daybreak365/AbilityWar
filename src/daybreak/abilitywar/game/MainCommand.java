@@ -289,6 +289,27 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
 				}
+			} else if (split[0].equalsIgnoreCase("team")) {
+				if (sender instanceof Player) {
+					Player p = (Player) sender;
+					if (AbilityWarThread.isGameOf(TeamGame.class)) {
+						AbstractGame game = AbilityWarThread.getGame();
+						if (game.isParticipating(p)) {
+							Participant participant = game.getParticipant(p);
+							if (split.length > 1) {
+								parseTeamCommand(AbilityWarThread.getGame(), (TeamGame) AbilityWarThread.getGame(), participant, label, Messager.removeArgs(split, 1));
+							} else {
+								sendHelpTeamCommand(p, label, 1);
+							}
+						} else {
+							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c게임에 참가하고 있지 않습니다."));
+						}
+					} else {
+						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않거나 팀 기능을 사용할 수 있는 게임이 아닙니다."));
+					}
+				} else {
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
+				}
 			} else if (split[0].equalsIgnoreCase("specialthanks")) {
 				if (sender instanceof Player) {
 					Player p = (Player) sender;
@@ -320,6 +341,23 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				sendHelpConfigCommand(p, label, Integer.parseInt(args[0]));
 			} else {
 				Messager.sendErrorMessage(p, "존재하지 않는 콘피그입니다.");
+			}
+		}
+	}
+
+	private void parseTeamCommand(AbstractGame game, TeamGame teamGame, Participant p, String label, String[] args) {
+		Player player = p.getPlayer();
+		if (args[0].equalsIgnoreCase("chat")) {
+			if (p.attributes().TEAM_CHAT.setValue(!p.attributes().TEAM_CHAT.getValue())) {
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &f팀 채팅이 비활성화되었습니다."));
+			} else {
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &f팀 채팅이 활성화되었습니다."));
+			}
+		} else {
+			if (NumberUtil.isInt(args[0])) {
+				sendHelpTeamCommand(player, label, Integer.parseInt(args[0]));
+			} else {
+				Messager.sendErrorMessage(player, "존재하지 않는 팀 명령어입니다.");
 			}
 		}
 	}
@@ -470,9 +508,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		} else if (args[0].equalsIgnoreCase("team")) {
 			if (AbilityWarThread.isGameTaskRunning() && AbilityWarThread.isGameOf(TeamGame.class)) {
 				if (args.length > 1) {
-					parseTeamCommand(AbilityWarThread.getGame(), (TeamGame) AbilityWarThread.getGame(), p, label, Messager.removeArgs(args, 1));
+					parseTeamUtilCommand(AbilityWarThread.getGame(), (TeamGame) AbilityWarThread.getGame(), p, label, Messager.removeArgs(args, 1));
 				} else {
-					sendHelpTeamCommand(p, label, 1);
+					sendHelpTeamUtilCommand(p, label, 1);
 				}
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않거나 팀 기능을 사용할 수 있는 게임이 아닙니다."));
@@ -486,7 +524,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	private void parseTeamCommand(AbstractGame game, TeamGame teamGame, Player p, String label, String[] args) {
+	private void parseTeamUtilCommand(AbstractGame game, TeamGame teamGame, Player p, String label, String[] args) {
 		if (args[0].equalsIgnoreCase("list")) {
 			ArrayList<TeamGame.Team> teams = new ArrayList<>(teamGame.getTeams());
 			final int maxPage = (teams.size() / 8) + (teams.size() % 8 == 0 ? 0 : 1);
@@ -556,7 +594,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 모든 플레이어를 각각 하나의 팀으로 나누었습니다."));
 		} else {
 			if (NumberUtil.isInt(args[0])) {
-				sendHelpTeamCommand(p, label, Integer.parseInt(args[0]));
+				sendHelpTeamUtilCommand(p, label, Integer.parseInt(args[0]));
 			} else {
 				Messager.sendErrorMessage(p, "존재하지 않는 팀 유틸입니다.");
 			}
@@ -594,6 +632,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						ChatColor.translateAlternateColorCodes('&',
 								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage
 										+ " 페이지 &7)"),
+						Messager.formatCommand(label, "team", "팀 게임의 명령어 목록을 확인합니다.", false),
 						Messager.formatCommand(label, "install", "새로운 버전의 다운로드를 시도합니다.", true),
 						Messager.formatCommand(label, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false)});
 				break;
@@ -616,6 +655,21 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Messager.formatCommand(label + " config", "inv", "초반 무적을 설정합니다.", true),
 					Messager.formatCommand(label + " config", "game", "게임의 전반적인 부분들을 설정합니다.", true),
 					Messager.formatCommand(label + " config", "death", "플레이어 사망에 관련된 콘피그를 설정합니다.", true)});
+		} else {
+			Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
+		}
+	}
+
+	private void sendHelpTeamCommand(CommandSender sender, String label, int page) {
+		int AllPage = 1;
+
+		if (page == 1) {
+			sender.sendMessage(new String[]{
+					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 팀 명령어"),
+					ChatColor.translateAlternateColorCodes('&', "&b/" + label + " team <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
+					Messager.formatCommand(label + " team", "chat", "팀 채팅을 토글합니다.", false),
+					Messager.formatCommand(label + " team", "divide", "모든 플레이어를 각각 하나의 팀으로 나눕니다.", false)
+			});
 		} else {
 			Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
 		}
@@ -652,7 +706,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	private void sendHelpTeamCommand(CommandSender sender, String label, int page) {
+	private void sendHelpTeamUtilCommand(CommandSender sender, String label, int page) {
 		int AllPage = 1;
 
 		if (page == 1) {
@@ -676,7 +730,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			switch (args.length) {
 				case 1:
 					ArrayList<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "skip",
-							"config", "util", "script", "gamemode", "install", "specialthanks");
+							"config", "util", "script", "gamemode", "install", "team", "specialthanks");
 					if (args[0].isEmpty()) {
 						return subCommands;
 					} else {
@@ -708,6 +762,14 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						} else {
 							scripts.removeIf(script -> !script.toLowerCase().startsWith(args[1].toLowerCase()));
 							return scripts;
+						}
+					} else if (args[0].equalsIgnoreCase("team")) {
+						ArrayList<String> commands = Messager.asList("chat");
+						if (args[1].isEmpty()) {
+							return commands;
+						} else {
+							commands.removeIf(util -> !util.toLowerCase().startsWith(args[1].toLowerCase()));
+							return commands;
 						}
 					}
 					break;

@@ -12,6 +12,7 @@ public interface TeamGame {
     boolean teamExists(String name);
     Team getTeam(String name);
     Collection<Team> getTeams();
+    Collection<AbstractGame.Participant> getParticipants(Team team);
     Team newTeam(String name, String displayName) throws IllegalStateException;
 
 
