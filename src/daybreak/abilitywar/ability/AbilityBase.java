@@ -136,7 +136,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	public final void destroy() {
 		game.getPassiveManager().unregisterAll(this);
 		for (AbstractGame.TimerBase timer : timers) {
-			timer.stopTimer(true);
+			timer.shutdownTimer();
 		}
 	}
 
@@ -207,7 +207,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		this.restricted = restricted;
 		if (restricted) {
 			for (AbstractGame.TimerBase timer : timers) {
-				timer.stopTimer(true);
+				timer.shutdownTimer();
 			}
 		} else {
 			onRestrictClear();
@@ -314,11 +314,6 @@ public abstract class AbilityBase implements PassiveExecutor {
 			return this;
 		}
 
-		@Override
-		public CooldownTimer setSilentNotice(boolean bool) {
-			return this;
-		}
-
 		public CooldownTimer setSendActionbar(boolean sendActionbar) {
 			this.sendActionbar = sendActionbar;
 			return this;
@@ -374,12 +369,6 @@ public abstract class AbilityBase implements PassiveExecutor {
 		@Override
 		public final DurationTimer setPeriod(int period) {
 			super.setPeriod(period);
-			return this;
-		}
-
-		@Override
-		public final DurationTimer setSilentNotice(boolean forcedStopNotice) {
-			super.setSilentNotice(forcedStopNotice);
 			return this;
 		}
 
@@ -459,12 +448,6 @@ public abstract class AbilityBase implements PassiveExecutor {
 		@Override
 		public final Timer setPeriod(int period) {
 			super.setPeriod(period);
-			return this;
-		}
-
-		@Override
-		public final Timer setSilentNotice(boolean forcedStopNotice) {
-			super.setSilentNotice(forcedStopNotice);
 			return this;
 		}
 

@@ -98,7 +98,7 @@ public class Berserker extends AbilityBase {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if(e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
 			if(Strengthen) {
-				if(Duration.isDuration()) Duration.stopTimer(false);
+				if(Duration.isDuration()) Duration.stopTimer();
 				e.setDamage(e.getDamage() * Strength);
 				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
 			}

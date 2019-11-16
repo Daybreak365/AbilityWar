@@ -111,7 +111,7 @@ public class TheEmpress extends AbilityBase {
 							
 							SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
 
-							getGame().stopTimers(CooldownTimer.class);
+							getGame().shutdownTimers(CooldownTimer.class);
 						}
 					}
 					

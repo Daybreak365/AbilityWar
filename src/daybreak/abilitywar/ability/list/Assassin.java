@@ -82,7 +82,7 @@ public class Assassin extends AbilityBase {
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 				} else {
-					stopTimer(false);
+					stopTimer();
 				}
 			}
 		}

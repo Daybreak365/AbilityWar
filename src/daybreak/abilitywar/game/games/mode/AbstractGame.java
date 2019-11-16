@@ -154,7 +154,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
     @Override
     protected void onEnd() {
-        stopTimers();
+        shutdownTimers();
         HandlerList.unregisterAll(this);
         for (Listener listener : registeredListeners) {
             HandlerList.unregisterAll(listener);
@@ -302,20 +302,20 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
      *
      * @param timerType 종료할 타이머 타입
      */
-    public void stopTimers(Class<? extends TimerBase> timerType) {
+    public void shutdownTimers(Class<? extends TimerBase> timerType) {
         for (TimerBase timer : getTimers()) {
             if (timerType.isAssignableFrom(timer.getClass())) {
-                timer.stopTimer(false);
+                timer.stopTimer();
             }
         }
     }
 
     /**
-     * 현재 실행중인 {@link TimerBase}를 모두 종료합니다.
+     * 현재 실행중인 {@link TimerBase}를 모두 SHUTDOWN합니다.
      */
-    public void stopTimers() {
+    public void shutdownTimers() {
         for (TimerBase timer : getTimers()) {
-            timer.stopTimer(true);
+            timer.shutdownTimer();
         }
         timerTasks.clear();
     }
@@ -323,21 +323,13 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
     public abstract class TimerBase {
 
         private int task = -1;
+        private boolean alive = true;
 
         private boolean isInfinite;
 
         private int maxCount;
         private int count;
         private int period = 20;
-
-        /**
-         * 타이머를 Silent 모드로 종료시키더도 {@link #onEnd()}를 호출할지의 여부입니다.<p>
-         * 일부 능력들에서 {@link #onEnd()}가 호출되지 않게 되면 상태 초기화가 이루어지지 않아
-         * 능력 발동 중의 상태가 계속 유지되는 문제가 있어 추가된 설정입니다.
-         * <p>
-         * 능력이 강제로 변경된 이후에 초기화가 필요한 능력에서만 사용할 것을 권장합니다.
-         */
-        private boolean isSilentNotice = false;
 
         /**
          * {@link TimerBase}가 실행될 때 호출됩니다.
@@ -365,7 +357,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
         /**
          * {@link TimerBase}가 Silent로 종료될 때 호출됩니다.
          */
-        protected void onSilentEnd() {}
+        protected void onShutdown() {}
 
         /**
          * {@link TimerBase}의 실행 여부를 반환합니다.
@@ -378,32 +370,41 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
          * {@link TimerBase}를 실행합니다.
          */
         public final void startTimer() {
-            if (AbstractGame.this.isRunning() && !isRunning()) {
-                count = maxCount;
-                this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerBase.TimerTask(), 0, period);
-                timerTasks.add(this);
-                onStart();
+            if (alive) {
+                if (AbstractGame.this.isRunning() && !isRunning()) {
+                    count = maxCount;
+                    this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, period);
+                    timerTasks.add(this);
+                    onStart();
+                }
+            } else {
+                throw new IllegalStateException("SHUTDOWN 상태의 타이머입니다. 더이상 사용할 수 없습니다.");
             }
         }
 
         /**
          * {@link TimerBase}를 종료합니다.<p>
-         *
-         * @param silent true인 경우에 타이머를 silent 모드로 종료합니다.
-         *               silent 모드에서는 {@link #onEnd()}가 호출되지 않습니다.
          */
-        public final void stopTimer(boolean silent) {
+        public final void stopTimer() {
             if (isRunning()) {
                 Bukkit.getScheduler().cancelTask(task);
                 timerTasks.remove(this);
-                count = maxCount;
                 this.task = -1;
-                if (!silent) {
-                    onEnd();
-                } else {
-                    if (isSilentNotice) onEnd();
-                    onSilentEnd();
-                }
+                onEnd();
+            }
+        }
+
+        /**
+         * {@link TimerBase}를 종료합니다.<p>
+         * Shutdown으로 종료된 {@link TimerBase}는 다시 실행될 수 없습니다.
+         */
+        public final void shutdownTimer() {
+            if (isRunning()) {
+                Bukkit.getScheduler().cancelTask(task);
+                timerTasks.remove(this);
+                this.task = -1;
+                this.alive = false;
+                onShutdown();
             }
         }
 
@@ -442,16 +443,6 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
         }
 
         /**
-         * @deprecated
-         * {@link #onSilentEnd()}를 사용해주세요.
-         */
-        @Deprecated
-        public TimerBase setSilentNotice(boolean silentNotice) {
-            isSilentNotice = silentNotice;
-            return this;
-        }
-
-        /**
          * maxCount 이후 종료되는 일반 {@link TimerBase}를 만듭니다.
          */
         public TimerBase(int maxCount) {
@@ -478,7 +469,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
                         onProcess(count);
                         count--;
                     } else {
-                        stopTimer(false);
+                        stopTimer();
                     }
                 }
             }

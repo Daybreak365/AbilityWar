@@ -53,18 +53,28 @@ public class Gladiator extends AbilityBase {
 			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
 			getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
 		}
-		
+
 		@Override
 		public void onEnd() {
 			for(Block b : Saves.keySet()) {
 				BlockState state = Saves.get(b);
 				b.setType(state.getType());
 			}
-			
+
 			Saves.clear();
 		}
-		
-	}.setSilentNotice(true);
+
+		@Override
+		public void onShutdown() {
+			for(Block b : Saves.keySet()) {
+				BlockState state = Saves.get(b);
+				b.setType(state.getType());
+			}
+
+			Saves.clear();
+		}
+
+	};
 	
 	private Player target = null;
 	

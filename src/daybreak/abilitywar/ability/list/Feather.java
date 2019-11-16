@@ -56,13 +56,18 @@ public class Feather extends AbilityBase {
 			getPlayer().setAllowFlight(true);
 			getPlayer().setFlying(true);
 		}
-		
+
 		@Override
 		public void onDurationEnd() {
 			getPlayer().setAllowFlight(false);
 		}
-		
-	}.setSilentNotice(true);
+
+		@Override
+		protected void onShutdown() {
+			getPlayer().setAllowFlight(false);
+		}
+
+	};
 	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {

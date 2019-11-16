@@ -63,7 +63,7 @@ public class Hacker extends AbilityBase {
 		protected void onStart() {
 			this.Count = 1;
 		}
-		
+
 		@Override
 		protected void onEnd() {
 			if(Target != null) {
@@ -80,7 +80,7 @@ public class Hacker extends AbilityBase {
 				Particle.startTimer();
 			}
 		}
-		
+
 		@Override
 		protected void onProcess(int count) {
 			if(Target != null) {
@@ -98,7 +98,7 @@ public class Hacker extends AbilityBase {
 				Count++;
 			}
 		}
-	}.setPeriod(1).setSilentNotice(true);
+	}.setPeriod(1);
 	
 	private final Timer Particle = new Timer(DurationTick) {
 

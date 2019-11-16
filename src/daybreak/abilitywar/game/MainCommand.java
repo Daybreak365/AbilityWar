@@ -392,7 +392,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			gui.openBlackListGUI(1);
 		} else if (args[0].equalsIgnoreCase("resetcool")) {
 			if (AbilityWarThread.isGameTaskRunning()) {
-				AbilityWarThread.getGame().stopTimers(AbilityBase.CooldownTimer.class);
+				AbilityWarThread.getGame().shutdownTimers(AbilityBase.CooldownTimer.class);
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
 						"&f" + p.getName() + "&a님이 플레이어들의 능력 쿨타임을 초기화하였습니다."));
 			} else {
@@ -400,7 +400,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			}
 		} else if (args[0].equalsIgnoreCase("resetduration")) {
 			if (AbilityWarThread.isGameTaskRunning()) {
-				AbilityWarThread.getGame().stopTimers(AbilityBase.DurationTimer.class);
+				AbilityWarThread.getGame().shutdownTimers(AbilityBase.DurationTimer.class);
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
 						"&f" + p.getName() + "&a님이 플레이어들의 능력 지속시간을 초기화하였습니다."));
 			} else {

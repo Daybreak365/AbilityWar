@@ -115,12 +115,17 @@ public class Pumpkin extends AbilityBase {
 			ItemStack Pumpkin = getPumpkin(seconds);
 			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Pumpkin));
 		}
-		
+
 		@Override
 		public void onDurationEnd() {
-			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
+			Players.keySet().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
 		}
-		
+
+		@Override
+		public void onShutdown() {
+			Players.keySet().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
+		}
+
 		private ItemStack getPumpkin(Integer Time) {
 			ItemStack Pumpkin = new ItemStack(MaterialLib.CARVED_PUMPKIN.getMaterial());
 			ItemMeta PumpkinMeta = Pumpkin.getItemMeta();
@@ -134,7 +139,7 @@ public class Pumpkin extends AbilityBase {
 			return Pumpkin;
 		}
 		
-	}.setSilentNotice(true);
+	};
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
