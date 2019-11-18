@@ -50,7 +50,7 @@ public class Sniper extends AbilityBase {
 		@Override
 		protected void onProcess(int count) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
-			Material off = getPlayer().getInventory().getItemInMainHand().getType();
+			Material off = getPlayer().getInventory().getItemInOffHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW)) {
 				EffectLib.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
 				EffectLib.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
@@ -69,7 +69,7 @@ public class Sniper extends AbilityBase {
 		@Override
 		protected void onProcess(int count) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
-			Material off = getPlayer().getInventory().getItemInMainHand().getType();
+			Material off = getPlayer().getInventory().getItemInOffHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW) || main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)) {
 				EffectLib.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
 				EffectLib.JUMP.addPotionEffect(getPlayer(), 5, 200, true);

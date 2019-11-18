@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-@AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.OTHERS)
 public class Pumpkin extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80,

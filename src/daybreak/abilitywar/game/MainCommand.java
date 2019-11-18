@@ -61,7 +61,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 					ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + plugin.getDescription().getVersion()),
 					ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
-					ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &fDayBreak&7#5908"),
+					ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908"),
 					ChatColor.translateAlternateColorCodes('&', "&3&o/" + label + " help &7&o로 명령어 도움말을 확인하세요.")});
 		} else {
 			if (split[0].equalsIgnoreCase("help")) {
@@ -353,6 +353,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &f팀 채팅이 활성화되었습니다."));
 			}
+		} else if (args[0].equalsIgnoreCase("info")) {
+			if (teamGame.hasTeam(p)) {
+				player.sendMessage(Messager.formatTeamInfo(teamGame, teamGame.getTeam(p)));
+			} else {
+				Messager.sendErrorMessage(player, "팀에 소속되지 않았습니다.");
+			}
 		} else {
 			if (NumberUtil.isInt(args[0])) {
 				sendHelpTeamCommand(player, label, Integer.parseInt(args[0]));
@@ -587,6 +593,18 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " util team new <팀 이름> <팀 별명>"));
 			}
+		} else if (args[0].equalsIgnoreCase("remove")) {
+			if (args.length >= 2) {
+				if (teamGame.teamExists(args[1])) {
+					TeamGame.Team team = teamGame.getTeam(args[1]);
+					teamGame.removeTeam(team);
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 " + team.getName() + "&f(" + team.getDisplayName() + "&f) 팀을 삭제했습니다."));
+				} else {
+					Messager.sendErrorMessage(p, args[1] + "은(는) 존재하지 않는 팀입니다.");
+				}
+			} else {
+				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " util team remove <팀 이름>"));
+			}
 		} else if (args[0].equalsIgnoreCase("divide")) {
 			for (Participant participant : game.getParticipants()) {
 				teamGame.setTeam(participant, null);
@@ -668,7 +686,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 팀 명령어"),
 					ChatColor.translateAlternateColorCodes('&', "&b/" + label + " team <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
 					Messager.formatCommand(label + " team", "chat", "팀 채팅을 토글합니다.", false),
-					Messager.formatCommand(label + " team", "divide", "모든 플레이어를 각각 하나의 팀으로 나눕니다.", false)
+					Messager.formatCommand(label + " team", "info", "속해있는 팀 정보를 확인합니다.", false)
 			});
 		} else {
 			Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -716,6 +734,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Messager.formatCommand(label + " util team", "list [페이지]", "팀 목록을 확인합니다.", true),
 					Messager.formatCommand(label + " util team", "set <대상> <팀 이름>", "대상의 팀을 설정합니다.", true),
 					Messager.formatCommand(label + " util team", "new <팀 이름> <팀 별명>", "새로운 팀을 만듭니다.", true),
+					Messager.formatCommand(label + " util team", "remove <팀 이름>", "팀을 삭제합니다.", true),
 					Messager.formatCommand(label + " util team", "divide", "모든 플레이어를 각각 하나의 팀으로 나눕니다.", true)
 			});
 		} else {
@@ -764,7 +783,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							return scripts;
 						}
 					} else if (args[0].equalsIgnoreCase("team")) {
-						ArrayList<String> commands = Messager.asList("chat");
+						ArrayList<String> commands = Messager.asList("chat", "info");
 						if (args[1].isEmpty()) {
 							return commands;
 						} else {
@@ -786,7 +805,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 								return players;
 							}
 						} else if (args[1].equalsIgnoreCase("team")) {
-							ArrayList<String> teamUtils = Messager.asList("list", "set", "new", "divide");
+							ArrayList<String> teamUtils = Messager.asList("list", "set", "new", "remove", "divide");
 							if (args[2].isEmpty()) {
 								return teamUtils;
 							} else {
@@ -798,14 +817,21 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					break;
 				case 4:
 					if (args[0].equalsIgnoreCase("util")) {
-						if (args[1].equalsIgnoreCase("team") && args[2].equalsIgnoreCase("set")) {
-							List<String> players = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
-							players.sort(String::compareToIgnoreCase);
-							if (args[3].isEmpty()) {
-								return players;
-							} else {
-								players.removeIf(name -> !name.toLowerCase().startsWith(args[3].toLowerCase()));
-								return players;
+						if (args[1].equalsIgnoreCase("team")) {
+							if (args[2].equalsIgnoreCase("set")) {
+								List<String> players = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+								players.sort(String::compareToIgnoreCase);
+								if (args[3].isEmpty()) {
+									return players;
+								} else {
+									players.removeIf(name -> !name.toLowerCase().startsWith(args[3].toLowerCase()));
+									return players;
+								}
+							} else if (args[2].equalsIgnoreCase("remove")) {
+								if (AbilityWarThread.isGameOf(TeamGame.class)) {
+									TeamGame teamGame = (TeamGame) AbilityWarThread.getGame();
+									return teamGame.getTeams().stream().map(TeamGame.Team::getName).collect(Collectors.toList());
+								}
 							}
 						}
 					}

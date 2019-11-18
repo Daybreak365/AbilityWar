@@ -14,6 +14,7 @@ public interface TeamGame {
     Collection<Team> getTeams();
     Collection<AbstractGame.Participant> getParticipants(Team team);
     Team newTeam(String name, String displayName) throws IllegalStateException;
+    void removeTeam(Team team);
 
 
     class Team {

@@ -3,8 +3,11 @@ package daybreak.abilitywar.utils;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 import java.util.ArrayList;
+import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -71,11 +74,11 @@ public class Messager {
 	public static String[] formatAbilityInfo(AbilityBase Ability) {
 		ArrayList<String> info = new ArrayList<String>();
 		info.add(formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"));
-		
+
 		String name = Ability.getName();
 		Rank rank = Ability.getRank();
 		Species species = Ability.getSpecies();
-		
+
 		if(name != null && rank != null) {
 			String restricted = Ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]";
 			info.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + restricted + " " + rank.getRankName() + " " + species.getSpeciesName()));
@@ -86,10 +89,26 @@ public class Messager {
 			info.add(ChatColor.translateAlternateColorCodes('&', "&c능력 설명을 불러오는 도중 오류가 발생하였습니다."));
 			info.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
 		}
-		
+
 		info.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
-		
+
 		return info.toArray(new String[info.size()]);
+	}
+
+	/**
+	 * 팀 설명을 구성합니다.
+	 */
+	public static String[] formatTeamInfo(TeamGame teamGame, TeamGame.Team team) {
+		ArrayList<String> info = new ArrayList<>();
+		info.add(formatShortTitle(ChatColor.DARK_PURPLE, ChatColor.WHITE, "팀 정보"));
+		info.add(ChatColor.translateAlternateColorCodes('&', "&5팀 이름&f: &r" + team.getDisplayName() + " &r(" + team.getName() + ")"));
+		StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ", ChatColor.DARK_PURPLE + "팀원" + ChatColor.WHITE + ": " + ChatColor.RESET, ChatColor.WHITE + ".");
+		for (AbstractGame.Participant participant : teamGame.getParticipants(team)) {
+			joiner.add(ChatColor.YELLOW + participant.getPlayer().getName());
+		}
+		info.add(joiner.toString());
+		info.add(ChatColor.translateAlternateColorCodes('&', "&5-------------------------------"));
+		return info.toArray(new String[0]);
 	}
 
 	/**

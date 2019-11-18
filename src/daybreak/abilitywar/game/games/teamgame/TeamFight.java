@@ -214,8 +214,8 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 		if (team == null) {
 			team = newTeam(UUID.randomUUID().toString(), ChatColor.GREEN + player.getName());
 		}
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + team.getDisplayName() +
-				KoreanUtil.getNeededJosa(team.getDisplayName().replaceAll("_", ""), KoreanUtil.Josa.으로로) + " &f설정되었습니다."));
+		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + team.getDisplayName() + "&f" +
+				KoreanUtil.getNeededJosa(team.getDisplayName().replaceAll("_", ""), KoreanUtil.Josa.으로로) + " 설정되었습니다."));
 		teamParticipantMap.add(team, participant);
 		participantTeamMap.put(participant, team);
 	}
@@ -248,6 +248,14 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 		Team newTeam = new Team(name, displayName);
 		teams.put(name, newTeam);
 		return newTeam;
+	}
+
+	@Override
+	public void removeTeam(Team team) {
+		teams.remove(team.getName());
+		for (Participant participant : new ArrayList<>(getParticipants(team))) {
+			setTeam(participant, null);
+		}
 	}
 
 	@EventHandler
@@ -308,6 +316,13 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 				return get(team).contains(participant);
 			}
 			return false;
+		}
+
+		ArrayList<Participant> get(Team team) {
+			if (super.get(team) == null) {
+				put(team, new ArrayList<>());
+			}
+			return super.get(team);
 		}
 
 	}

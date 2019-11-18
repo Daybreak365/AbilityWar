@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-@AbilityManifest(Name = "깃털", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "깃털", Rank = Rank.A, Species = Species.OTHERS)
 public class Feather extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80,
