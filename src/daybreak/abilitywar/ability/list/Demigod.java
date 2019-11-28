@@ -14,7 +14,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 
 @AbilityManifest(Name = "데미갓", Rank = Rank.S, Species = Species.DEMIGOD)
 public class Demigod extends AbilityBase {
@@ -54,11 +54,11 @@ public class Demigod extends AbilityBase {
 					if((r.nextInt(100) + 1) <= Chance) {
 						Integer Buff = r.nextInt(3);
 						if(Buff.equals(0)) {
-							EffectLib.ABSORPTION.addPotionEffect(p, 100, 1, true);
+							PotionEffects.ABSORPTION.addPotionEffect(p, 100, 1, true);
 						} else if(Buff.equals(1)) {
-							EffectLib.REGENERATION.addPotionEffect(p, 100, 0, true);
+							PotionEffects.REGENERATION.addPotionEffect(p, 100, 0, true);
 						} else if(Buff.equals(2)) {
-							EffectLib.DAMAGE_RESISTANCE.addPotionEffect(p, 100, 1, true);
+							PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(p, 100, 1, true);
 						}
 					}
 				}

@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -82,10 +82,10 @@ public class TheHighPriestess extends AbilityBase {
 				ParticleLib.SPELL_INSTANT.spawnParticle(l, 0, 0, 0, 1);
 			}
 			for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), range, range)) {
-				EffectLib.WITHER.addPotionEffect(p, 60, 1, true);
+				PotionEffects.WITHER.addPotionEffect(p, 60, 1, true);
 			}
 			if (LocationUtil.isInCircle(center, getPlayer().getLocation(), range, true)) {
-				EffectLib.REGENERATION.addPotionEffect(getPlayer(), 100, 2, false);
+				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 100, 2, false);
 			}
 		}
 

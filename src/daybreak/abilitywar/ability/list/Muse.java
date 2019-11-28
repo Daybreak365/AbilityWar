@@ -8,8 +8,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
@@ -118,7 +118,7 @@ public class Muse extends AbilityBase {
 				}
 
 				for (Player p : LocationUtil.getNearbyPlayers(center, 11, 200)) {
-					EffectLib.GLOWING.addPotionEffect(p, 4, 0, true);
+					PotionEffects.GLOWING.addPotionEffect(p, 4, 0, true);
 
 					if (soundCount % 5 == 0) {
 						soundCount = 1;

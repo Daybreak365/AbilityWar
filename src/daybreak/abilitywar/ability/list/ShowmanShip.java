@@ -5,7 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -40,17 +40,17 @@ public class ShowmanShip extends AbilityBase {
 			final int Count = LocationUtil.getNearbyPlayers(getPlayer(), 10, 10).size();
 			
 			if(Count <= 1) {
-				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), 20, 0, true);
+				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), 20, 0, true);
 				for(Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, WEAK, 0);
 				}
 			} else if(Count == 2) {
-				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 1, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 1, true);
 				for(Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWER, 0);
 				}
 			} else {
-				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 2, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 2, true);
 				for(Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWERFUL, 0);
 				}

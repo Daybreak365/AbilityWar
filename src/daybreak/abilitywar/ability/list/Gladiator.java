@@ -8,11 +8,12 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import java.util.HashMap;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -102,19 +103,19 @@ public class Gladiator extends AbilityBase {
 				}
 				
 				Count++;
-			} else if(TotalCount > 10 && TotalCount <= 15) {
+			} else if(TotalCount <= 15) {
 				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 2, true, false)) {
-					Location l = b.getLocation();
-					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
-					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
+					Location bLocation = b.getLocation();
+					Saves.putIfAbsent(bLocation.clone().add(0, TotalCount - 10, 0).getBlock(), bLocation.clone().add(0, TotalCount - 10, 0).getBlock().getState());
+					bLocation.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
 				
 				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 1, true, false)) {
-					Location l = b.getLocation();
-					Saves.putIfAbsent(l.clone().add(0, TotalCount - 10, 0).getBlock(), l.clone().add(0, TotalCount - 10, 0).getBlock().getState());
-					l.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
+					Location bLocation = b.getLocation();
+					Saves.putIfAbsent(bLocation.clone().add(0, TotalCount - 10, 0).getBlock(), bLocation.clone().add(0, TotalCount - 10, 0).getBlock().getState());
+					bLocation.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
-			} else if(TotalCount > 15 && TotalCount <= 26) {
+			} else if(TotalCount <= 26) {
 				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true, false)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
@@ -138,11 +139,10 @@ public class Gladiator extends AbilityBase {
 			Location teleport = center.clone().add(0, 1, 0);
 			
 			getPlayer().teleport(teleport);
-			EffectLib.ABSORPTION.addPotionEffect(getPlayer(), 400, 4, true);
-			EffectLib.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);
+			PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 400, 4, true);
+			PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);
 			target.teleport(teleport);
-			
-			Gladiator.this.target = target;
+
 			FieldClear.startTimer();
 		}
 		

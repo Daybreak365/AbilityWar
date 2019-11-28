@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -38,7 +38,7 @@ public class TheEmperor extends AbilityBase {
 		
 		@Override
 		public void onProcess(int count) {
-			EffectLib.SLOW.addPotionEffect(getPlayer(), 30, 1, true);
+			PotionEffects.SLOW.addPotionEffect(getPlayer(), 30, 1, true);
 		}
 		
 		@Override

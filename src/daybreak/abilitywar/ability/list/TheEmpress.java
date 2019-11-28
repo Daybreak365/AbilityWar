@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
@@ -74,14 +74,14 @@ public class TheEmpress extends AbilityBase {
 					
 					if(X.isPlus() && Z.isPlus()) {
 						if(bool) {
-							EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 200, 1, true);
+							PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 200, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.DIAMOND_SWORD);
 							getPlayer().getInventory().addItem(EnchantLib.DAMAGE_ALL.addEnchantment(is, 2));
 						}
 					} else if(X.isPlus() && Z.isMinus()) {
 						if(bool) {
-							EffectLib.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 1, true);
+							PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 1, true);
 						} else {
 							if(ServerVersion.getVersion() >= 9) {
 								getPlayer().getInventory().addItem(new ItemStack(Material.SHIELD));
@@ -91,14 +91,14 @@ public class TheEmpress extends AbilityBase {
 						}
 					} else if(X.isMinus() && Z.isPlus()) {
 						if(bool) {
-							EffectLib.SPEED.addPotionEffect(getPlayer(), 600, 1, true);
+							PotionEffects.SPEED.addPotionEffect(getPlayer(), 600, 1, true);
 						} else {
 							ItemStack is = new ItemStack(Material.BOW);
 							getPlayer().getInventory().addItem(EnchantLib.ARROW_INFINITE.addEnchantment(is, 1));
 						}
 					} else if(X.isMinus() && Z.isMinus()) {
 						if(bool) {
-							EffectLib.REGENERATION.addPotionEffect(getPlayer(), 400, 1, true);
+							PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 400, 1, true);
 						} else {
 							getPlayer().getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
 						}

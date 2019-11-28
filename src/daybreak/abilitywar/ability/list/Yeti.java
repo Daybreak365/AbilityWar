@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -55,9 +55,9 @@ public class Yeti extends AbilityBase {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
-				EffectLib.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
-				EffectLib.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
-				EffectLib.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
+				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
 			}
 		}
 

@@ -11,7 +11,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.LocationUtil;
 
@@ -50,8 +50,8 @@ public class Hermit extends AbilityBase {
 				Title title = new Title(ChatColor.translateAlternateColorCodes('&', "&8헤르밋"),
 						ChatColor.translateAlternateColorCodes('&', "&e" + p.getPlayer().getName() + " &f접근중"), 5, 30, 5);
 				title.sendTo(getPlayer());
-				EffectLib.SPEED.addPotionEffect(getPlayer(), 100, 3, true);
-				EffectLib.INVISIBILITY.addPotionEffect(getPlayer(), 100, 0, true);
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), 100, 3, true);
+				PotionEffects.INVISIBILITY.addPotionEffect(getPlayer(), 100, 0, true);
 			}
 		}
 	}

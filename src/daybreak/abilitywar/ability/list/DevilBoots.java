@@ -6,7 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.LinkedList;
 import org.bukkit.ChatColor;
@@ -33,7 +33,7 @@ public class DevilBoots extends AbilityBase {
 	private final Timer SPEED = new Timer() {
 		@Override
 		protected void onProcess(int count) {
-			EffectLib.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
+			PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
 		}
 	};
 

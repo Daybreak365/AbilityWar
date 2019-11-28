@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -84,7 +84,7 @@ public class Clown extends AbilityBase {
 					
 					for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), RangeConfig.getValue(), 250)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(p);
-						EffectLib.BLINDNESS.addPotionEffect(p, 200, 2, true);
+						PotionEffects.BLINDNESS.addPotionEffect(p, 200, 2, true);
 					}
 				}
 			}

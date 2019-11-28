@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Random;
 import org.bukkit.ChatColor;
@@ -17,6 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 
 @AbilityManifest(Name = "검은 양초", Rank = Rank.A, Species = Species.OTHERS)
 public class BlackCandle extends AbilityBase {
@@ -37,38 +38,22 @@ public class BlackCandle extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f또한, 데미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
 	}
 
-	private final Timer NoDebuff = new Timer() {
-		
-		@Override
-		public void onStart() {}
-		
-		@Override
-		public void onProcess(int count) {
-			EffectLib.BAD_OMEN.removePotionEffect(getPlayer());
-			EffectLib.BLINDNESS.removePotionEffect(getPlayer());
-			EffectLib.CONFUSION.removePotionEffect(getPlayer());
-			EffectLib.GLOWING.removePotionEffect(getPlayer());
-			EffectLib.HARM.removePotionEffect(getPlayer());
-			EffectLib.HUNGER.removePotionEffect(getPlayer());
-			EffectLib.POISON.removePotionEffect(getPlayer());
-			EffectLib.SLOW.removePotionEffect(getPlayer());
-			EffectLib.SLOW_DIGGING.removePotionEffect(getPlayer());
-			EffectLib.UNLUCK.removePotionEffect(getPlayer());
-			EffectLib.WEAKNESS.removePotionEffect(getPlayer());
-			EffectLib.WITHER.removePotionEffect(getPlayer());
-		}
-		
-		@Override
-		public void onEnd() {}
-		
-	}.setPeriod(1);
-	
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
 
 	private final int Chance = ChanceConfig.getValue();
+
+	@SubscribeEvent
+	public void onPotionEffect(EntityPotionEffectEvent e) {
+		if (e.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
+			PotionEffects effect = PotionEffects.valueOf(e.getModifiedType());
+			if (effect != null && effect.isNegative()) {
+				e.setCancelled(true);
+			}
+		}
+	}
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
@@ -118,11 +103,6 @@ public class BlackCandle extends AbilityBase {
 		}
 	}
 	
-	@Override
-	public void onRestrictClear() {
-		NoDebuff.startTimer();
-	}
-
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	

@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import java.util.ArrayList;
@@ -52,8 +52,8 @@ public class Sniper extends AbilityBase {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInOffHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW)) {
-				EffectLib.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
-				EffectLib.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
+				PotionEffects.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
+				PotionEffects.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
 			}
 		}
 	}.setPeriod(3)
@@ -71,8 +71,8 @@ public class Sniper extends AbilityBase {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInOffHand().getType();
 			if(main.equals(Material.BOW) || off.equals(Material.BOW) || main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)) {
-				EffectLib.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
-				EffectLib.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
+				PotionEffects.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
+				PotionEffects.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
 			}
 		}
 	}.setPeriod(3);

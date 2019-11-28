@@ -6,7 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
@@ -38,9 +38,9 @@ public class DarkVision extends AbilityBase {
 		
 		@Override
 		public void onProcess(int count) {
-			EffectLib.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
-			EffectLib.SPEED.addPotionEffect(getPlayer(), 40, 5, true);
-			EffectLib.JUMP.addPotionEffect(getPlayer(), 40, 1, true);
+			PotionEffects.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
+			PotionEffects.SPEED.addPotionEffect(getPlayer(), 40, 5, true);
+			PotionEffects.JUMP.addPotionEffect(getPlayer(), 40, 1, true);
 		}
 		
 		@Override
@@ -58,7 +58,7 @@ public class DarkVision extends AbilityBase {
 		@Override
 		public void onProcess(int count) {
 			for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), Distance, Distance)) {
-				EffectLib.GLOWING.addPotionEffect(p, 10, 0, true);
+				PotionEffects.GLOWING.addPotionEffect(p, 10, 0, true);
 			}
 		}
 		

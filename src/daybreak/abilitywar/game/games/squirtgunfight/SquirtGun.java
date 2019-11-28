@@ -7,8 +7,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
@@ -91,7 +91,7 @@ public class SquirtGun extends AbilityBase {
 			for(Arrow a : arrows) {
 				ParticleLib.DRIP_WATER.spawnParticle(a.getLocation(), 10, 1, 1, 1);
 			}
-			EffectLib.NIGHT_VISION.addPotionEffect(getPlayer(), 400, 0, true);
+			PotionEffects.NIGHT_VISION.addPotionEffect(getPlayer(), 400, 0, true);
 		}
 	}.setPeriod(3);
 	

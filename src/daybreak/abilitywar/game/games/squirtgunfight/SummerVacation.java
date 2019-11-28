@@ -15,7 +15,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.message.KoreanUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -152,7 +152,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		@Override
 		protected void onProcess(int count) {
 			for(Participant p : Killers) {
-				EffectLib.GLOWING.addPotionEffect(p.getPlayer(), 20, 0, true);
+				PotionEffects.GLOWING.addPotionEffect(p.getPlayer(), 20, 0, true);
 			}
 		}
 	}.setPeriod(10);

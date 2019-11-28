@@ -8,7 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import java.util.Random;
 import org.bukkit.ChatColor;
@@ -50,22 +50,22 @@ public class DiceGod extends AbilityBase {
 					
 					if(random.equals(0)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c재생 &f효과를 받았습니다."));
-						EffectLib.REGENERATION.addPotionEffect(p, 200, 2, true);
+						PotionEffects.REGENERATION.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(1)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b신속 &f효과를 받았습니다."));
-						EffectLib.SPEED.addPotionEffect(p, 200, 2, true);
+						PotionEffects.SPEED.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(2)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6힘 &f효과를 받았습니다."));
-						EffectLib.INCREASE_DAMAGE.addPotionEffect(p, 200, 2, true);
+						PotionEffects.INCREASE_DAMAGE.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(3)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3저항 &f효과를 받았습니다."));
-						EffectLib.DAMAGE_RESISTANCE.addPotionEffect(p, 200, 2, true);
+						PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(p, 200, 2, true);
 					} else if(random.equals(4)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8구속 &f효과를 받았습니다."));
-						EffectLib.SLOW.addPotionEffect(p, 200, 1, true);
+						PotionEffects.SLOW.addPotionEffect(p, 200, 1, true);
 					} else if(random.equals(5)) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7나약함 &f효과를 받았습니다."));
-						EffectLib.WEAKNESS.addPotionEffect(p, 200, 1, true);
+						PotionEffects.WEAKNESS.addPotionEffect(p, 200, 1, true);
 					}
 					
 					Cool.startTimer();

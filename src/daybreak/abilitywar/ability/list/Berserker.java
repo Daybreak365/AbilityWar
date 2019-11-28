@@ -8,7 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.EffectLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -100,7 +100,7 @@ public class Berserker extends AbilityBase {
 			if(Strengthen) {
 				if(Duration.isDuration()) Duration.stopTimer(false);
 				e.setDamage(e.getDamage() * Strength);
-				EffectLib.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
+				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
 			}
 		}
 	}
