@@ -7,8 +7,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
@@ -78,7 +78,7 @@ public class Flora extends AbilityBase {
 			}
 
 			for (Player p : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {
-				if (LocationUtil.isInCircle(center, p.getLocation(), radius.radius, true)) {
+				if (LocationUtil.isInCircle(center, p.getLocation(), radius.radius)) {
 					if (type.equals(EffectType.SPEED)) {
 						PotionEffects.SPEED.addPotionEffect(p, 20, 2, true);
 					} else {

@@ -10,13 +10,14 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+
+import java.util.ArrayList;
 
 @AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
@@ -125,7 +126,7 @@ public class Sniper extends AbilityBase {
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
 	@Override
-	protected void onRestrictClear() {
+	public void onRestrictClear() {
 		Snipe.startTimer();
 	}
 

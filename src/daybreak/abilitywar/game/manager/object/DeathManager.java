@@ -6,8 +6,6 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.message.KoreanUtil;
-import java.util.ArrayList;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -15,6 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Death Manager
@@ -75,12 +76,7 @@ public class DeathManager implements Listener {
         if (game.isParticipating(victimPlayer)) {
             Participant victim = game.getParticipant(victimPlayer);
 
-            if (DeathSettings.getItemDrop()) {
-                e.setKeepInventory(false);
-                victimPlayer.getInventory().clear();
-            } else {
-                e.setKeepInventory(true);
-            }
+            e.setKeepInventory(!DeathSettings.getItemDrop());
 
             Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
 

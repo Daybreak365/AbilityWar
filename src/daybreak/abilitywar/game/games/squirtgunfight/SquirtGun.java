@@ -12,7 +12,6 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +24,8 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+
+import java.util.ArrayList;
 
 @AbilityManifest(Name = "물총", Rank = Rank.SPECIAL, Species = Species.SPECIAL)
 public class SquirtGun extends AbilityBase {
@@ -144,7 +145,7 @@ public class SquirtGun extends AbilityBase {
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
 	@Override
-	protected void onRestrictClear() {
+	public void onRestrictClear() {
 		passive.startTimer();
 	}
 

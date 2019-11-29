@@ -156,7 +156,7 @@ public class Muse extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11, true)) {
+			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
 			}
@@ -166,7 +166,7 @@ public class Muse extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
 		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11, true)) {
+			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
 			}
@@ -176,7 +176,7 @@ public class Muse extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
 		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11, true)) {
+			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
 			}

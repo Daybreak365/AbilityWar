@@ -10,7 +10,6 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.FallBlock;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +17,8 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
+
+import java.util.ArrayList;
 
 @AbilityManifest(Name = "카쟈드", Rank = Rank.A, Species = Species.GOD)
 public class Khazhad extends AbilityBase {
@@ -93,7 +94,7 @@ public class Khazhad extends AbilityBase {
 		protected void onProcess(int count) {
 			Location center = getPlayer().getLocation();
 			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, center, 7, 7)) {
-				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7, false)) {
+				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7)) {
 					projectiles.add(projectile);
 					projectile.setGravity(true);
 					projectile.setVelocity(projectile.getVelocity().multiply(0.1));
@@ -123,7 +124,7 @@ public class Khazhad extends AbilityBase {
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
 	@Override
-	protected void onRestrictClear() {
+	public void onRestrictClear() {
 		passive.startTimer();
 	}
 

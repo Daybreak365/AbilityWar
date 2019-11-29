@@ -9,7 +9,6 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.FallBlock;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
@@ -24,10 +23,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-@SuppressWarnings("deprecation")
 @AbilityManifest(Name = "넥스", Rank = Rank.B, Species = Species.GOD)
 public class Nex extends AbilityBase {
 
@@ -48,47 +45,43 @@ public class Nex extends AbilityBase {
 		}
 
 	};
-	
+
 	public Nex(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다가 바닥으로 내려 찍으며"),
 				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		if (mt.equals(MaterialType.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Cool.isCooldown()) {
-					for(Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
+				if (!cooldownTimer.isCooldown()) {
+					for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
 					}
 					SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
 					Skill.startTimer();
-					
-					Cool.startTimer();
-					
+					cooldownTimer.startTimer();
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
-	private boolean NoFall = false;
-	private boolean RunSkill = false;
+	private boolean noFallDamage = false;
+	private boolean skillEnabled = false;
 
 	private final Timer Skill = new Timer(4) {
 
 		@Override
 		public void onStart() {
-			NoFall = true;
-			Vector v = new Vector(0, 4, 0);
-
-			getPlayer().setVelocity(getPlayer().getVelocity().add(v));
+			noFallDamage = true;
+			getPlayer().setVelocity(getPlayer().getVelocity().add(new Vector(0, 4, 0)));
 		}
 
 		@Override
@@ -97,104 +90,118 @@ public class Nex extends AbilityBase {
 
 		@Override
 		public void onEnd() {
-			RunSkill = true;
-			Vector v = new Vector(0, -4, 0);
-
-			getPlayer().setVelocity(getPlayer().getVelocity().add(v));
+			skillEnabled = true;
+			getPlayer().setVelocity(getPlayer().getVelocity().add(new Vector(0, -4, 0)));
 		}
 
 	}.setPeriod(10);
-	
-	private final int Damage = DamageConfig.getValue();
-	
+
+	private final int damage = DamageConfig.getValue();
+
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
-			if(e.getEntity().equals(getPlayer())) {
-				if (NoFall) {
+			if (e.getEntity().equals(getPlayer())) {
+				if (noFallDamage) {
 					if (e.getCause().equals(DamageCause.FALL)) {
 						e.setCancelled(true);
-						NoFall = false;
+						noFallDamage = false;
 					}
 				}
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if(e.getPlayer().equals(getPlayer())) {
-			if(RunSkill) {
+		if (e.getPlayer().equals(getPlayer())) {
+			if (skillEnabled) {
 				Block b = getPlayer().getLocation().getBlock();
 				Block db = getPlayer().getLocation().subtract(0, 1, 0).getBlock();
-				
-				if(!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
-					RunSkill = false;
-					for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), 5, 5)) {
-						if(d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
-						d.damage(Damage, getPlayer());
+
+				if (!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
+					skillEnabled = false;
+					for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), 5, 5)) {
+						if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
+						d.damage(damage, getPlayer());
 					}
 					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
-					
-					Material particleMat;
-					if(!db.getType().equals(Material.AIR)) {
-						particleMat = db.getType();
-					} else {
-						particleMat = b.getType();
-					}
 
-					if(ServerVersion.getVersion() >= 13) {
-						ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 2, 2, 2, 30, particleMat.createBlockData());
-					} else {
-						ParticleLib.BLOCK_CRACK.spawnParticle(getPlayer().getLocation(), 30, 2, 2, 2, new MaterialData(particleMat));
-					}
-					
-					FallBlock.startTimer();
+					fallBlockTimer.startTimer();
 				}
 			}
 		}
 	}
-	
-	private final Timer FallBlock = new Timer(5) {
-		
+
+	private final Timer fallBlockTimer = ServerVersion.getVersion() >= 13 ? new Timer(5) {
+
 		Location center;
-		
+
 		@Override
 		public void onStart() {
 			this.center = getPlayer().getLocation();
 		}
-		
+
+		@SuppressWarnings("deprecation")
 		@Override
 		public void onProcess(int count) {
-			Integer Distance = 6 - count;
-			
-			for(Block block : LocationUtil.getBlocks(center, Distance, true, true, false)) {
-				FallBlock fb = new FallBlock(block.getType(), block.getLocation().add(0, 1, 0), new Vector(0, 0.5, 0)) {
-					
+			int distance = 6 - count;
+
+			for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+				Location location = block.getLocation().add(0, 1, 0);
+				new FallBlock(block.getType(), location, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random())) {
 					@Override
-					public void onChangeBlock(FallingBlock block) {}
-					
-				};
-				
-				fb.Spawn();
+					public void onChangeBlock(FallingBlock block) {
+					}
+				}.Spawn();
 			}
-			
-			for(Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
-				if(!e.equals(getPlayer())) {
+
+			for (Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+				if (!e.equals(getPlayer())) {
 					e.setVelocity(center.toVector().subtract(e.getLocation().toVector()).multiply(-1).setY(1.2));
 				}
 			}
 		}
-		
+
+	}.setPeriod(4) :
+	new Timer(5) {
+
+		Location center;
+
 		@Override
-		public void onEnd() {}
-		
+		public void onStart() {
+			this.center = getPlayer().getLocation();
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public void onProcess(int count) {
+			int distance = 6 - count;
+
+			for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+				Location location = block.getLocation().add(0, 1, 0);
+				new FallBlock(block.getType(), location, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random())) {
+					@Override
+					public void onChangeBlock(FallingBlock block) {
+					}
+				}.setByteData(block.getData()).Spawn();
+			}
+
+			for (Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+				if (!e.equals(getPlayer())) {
+					e.setVelocity(center.toVector().subtract(e.getLocation().toVector()).multiply(-1).setY(1.2));
+				}
+			}
+		}
+
 	}.setPeriod(4);
-	
-	@Override
-	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
-	
+	public void onRestrictClear() {
+	}
+
+	@Override
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	}
+
 }

@@ -82,15 +82,15 @@ public class Yeti extends AbilityBase {
 
 		@Override
 		public void onProcess(int count) {
-			for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true, true)) {
+			for (Block b : LocationUtil.getBlocks2D(center, Count, true, true)) {
 				Block db = b.getLocation().subtract(0, 1, 0).getBlock();
 				Material type = db.getType();
 				if (type.equals(Material.WATER)) {
 					db.setType(Material.PACKED_ICE);
-				} else if(type.equals(Material.LAVA)) {
+				} else if (type.equals(Material.LAVA)) {
 					db.setType(Material.OBSIDIAN);
-				} else if(type.equals(MaterialLib.ACACIA_LEAVES.getMaterial()) || type.equals(MaterialLib.BIRCH_LEAVES.getMaterial()) || type.equals(MaterialLib.DARK_OAK_LEAVES.getMaterial())
-						||type.equals(MaterialLib.JUNGLE_LEAVES.getMaterial()) || type.equals(MaterialLib.OAK_LEAVES.getMaterial()) || type.equals(MaterialLib.SPRUCE_LEAVES.getMaterial())) {
+				} else if (type.equals(MaterialLib.ACACIA_LEAVES.getMaterial()) || type.equals(MaterialLib.BIRCH_LEAVES.getMaterial()) || type.equals(MaterialLib.DARK_OAK_LEAVES.getMaterial())
+						|| type.equals(MaterialLib.JUNGLE_LEAVES.getMaterial()) || type.equals(MaterialLib.OAK_LEAVES.getMaterial()) || type.equals(MaterialLib.SPRUCE_LEAVES.getMaterial())) {
 					MaterialLib.GREEN_WOOL.setType(db);
 				} else {
 					db.setType(Material.SNOW_BLOCK);
@@ -113,7 +113,8 @@ public class Yeti extends AbilityBase {
 		}
 
 		@Override
-		public void onEnd() {}
+		public void onEnd() {
+		}
 
 	}.setPeriod(3);
 
@@ -142,6 +143,7 @@ public class Yeti extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
-	
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	}
+
 }

@@ -1,18 +1,18 @@
 package daybreak.abilitywar.utils;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
-import java.util.ArrayList;
-import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.StringJoiner;
 
 public class Messager {
 
@@ -21,7 +21,7 @@ public class Messager {
 
 	/**
 	 * 제목 포맷을 만듭니다.
-	 * 
+	 *
 	 * @param bracketColor 괄호 색
 	 * @param titleColor   제목 색
 	 * @param title        제목
@@ -38,7 +38,7 @@ public class Messager {
 
 	/**
 	 * 제목 포맷을 만듭니다.
-	 * 
+	 *
 	 * @param bracketColor 괄호 색
 	 * @param titleColor   제목 색
 	 * @param title        제목
@@ -55,7 +55,7 @@ public class Messager {
 
 	/**
 	 * 설치 설명을 구성합니다.
-     */
+	 */
 	public static String[] formatInstall(UpdateObject update) {
 		ArrayList<String> info = new ArrayList<String>();
 		info.add(Messager.formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "업데이트"));
@@ -64,35 +64,20 @@ public class Messager {
 			info.add(msg);
 		}
 		info.add(ChatColor.translateAlternateColorCodes('&', "&2-----------------------------------------------------"));
-		
+
 		return info.toArray(new String[info.size()]);
 	}
 
 	/**
 	 * 능력 설명을 구성합니다.
 	 */
-	public static String[] formatAbilityInfo(AbilityBase Ability) {
-		ArrayList<String> info = new ArrayList<String>();
-		info.add(formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"));
-
-		String name = Ability.getName();
-		Rank rank = Ability.getRank();
-		Species species = Ability.getSpecies();
-
-		if(name != null && rank != null) {
-			String restricted = Ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]";
-			info.add(ChatColor.translateAlternateColorCodes('&', "&b" + name + " " + restricted + " " + rank.getRankName() + " " + species.getSpeciesName()));
-			for(String s : Ability.getExplain()) {
-				info.add(ChatColor.translateAlternateColorCodes('&', "&f" + s));
-			}
-		} else {
-			info.add(ChatColor.translateAlternateColorCodes('&', "&c능력 설명을 불러오는 도중 오류가 발생하였습니다."));
-			info.add(ChatColor.translateAlternateColorCodes('&', "&cAbility Class : " + Ability.getClass().getName()));
-		}
-
-		info.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
-
-		return info.toArray(new String[info.size()]);
+	public static String[] formatAbilityInfo(AbilityBase ability) {
+		ArrayList<String> list = Messager.asList(
+				Messager.formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
+				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + (ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
+		list.addAll(ability.getExplain());
+		list.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
+		return list.toArray(new String[0]);
 	}
 
 	/**
@@ -114,52 +99,45 @@ public class Messager {
 	/**
 	 * 쿨타임 설명을 구성합니다.
 	 */
-	public static String formatCooldown(Integer Cool) {
-		return ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &7: &f" + Cool + "초");
+	public static String formatCooldown(int cool) {
+		return ChatColor.translateAlternateColorCodes('&', "&c쿨타임 &7: &f" + cool + "초");
 	}
 
 	/**
 	 * 명령어 도움말을 구성합니다.
 	 */
 	public static String formatCommand(String label, String command, String help, boolean admin) {
-		if(admin) {
+		if (admin) {
 			return ChatColor.translateAlternateColorCodes('&', "&c관리자: &6/" + label + " &e" + command + " &7: &f" + help);
 		} else {
 			return ChatColor.translateAlternateColorCodes('&', "&a유  저: &6/" + label + " &e" + command + " &7: &f" + help);
 		}
 	}
 
-	public static ArrayList<String> asList(String... strs) {
-		return new ArrayList<String>() {
-			
-			private static final long serialVersionUID = 1L;
-
-			{
-				for (String s : strs) {
-					add(s);
-				}
-			}
-			
-		};
+	public static ArrayList<String> asList(String... strings) {
+		return new ArrayList<>(Arrays.asList(strings));
 	}
 
 	/**
 	 * 채팅창을 청소합니다.
 	 */
 	public static void clearChat() {
-		for(int c = 0; c < 100; c++) {
-			for(Player p : Bukkit.getOnlinePlayers()) {
+		for (int c = 0; c < 100; c++) {
+			for (Player p : Bukkit.getOnlinePlayers()) {
 				p.sendMessage("");
 			}
 		}
 	}
 
-	/**
-	 * 플레이어의 채팅창을 청소합니다.
-	 */
-	public static void clearChat(CommandSender cs) {
-		for(int i = 0; i < 100; i++) {
-			cs.sendMessage("");
+	public static String[] removeArgs(String[] args, int startIndex) {
+		if (args.length == 0)
+			return args;
+		else if (args.length < startIndex)
+			return new String[0];
+		else {
+			String[] newArgs = new String[args.length - startIndex];
+			System.arraycopy(args, startIndex, newArgs, 0, args.length - startIndex);
+			return newArgs;
 		}
 	}
 
@@ -180,22 +158,7 @@ public class Messager {
 
 	public static void broadcastErrorMessage(String str) {
 		Bukkit.broadcastMessage(ChatColor.WHITE + "[" + ChatColor.RED + "!" + ChatColor.WHITE + "] " + ChatColor.RED + str);
-		
-	}
 
-	/**
-	 * String 배열에서 인수를 삭제합니다.
-	 */
-	public static String[] removeArgs(String[] args, int startIndex) {
-		if (args.length == 0)
-			return args;
-		else if (args.length < startIndex)
-			return new String[0];
-		else {
-			String[] newArgs = new String[args.length - startIndex];
-			System.arraycopy(args, startIndex, newArgs, 0, args.length - startIndex);
-			return newArgs;
-		}
 	}
 
 	private final String prefix;
@@ -212,30 +175,28 @@ public class Messager {
 		this.prefix = defaultPrefix;
 	}
 
-	public void sendConsoleMessage(String str) {
-		console.sendMessage(prefix + str);
+	public void sendConsoleMessage(String string) {
+		console.sendMessage(prefix + string);
 	}
 
-	public void sendConsoleMessage(String[] strs) {
-		for (int c = 0; c < strs.length; c++) {
-			strs[c] = prefix + strs[c];
+	public void sendConsoleMessage(String[] strings) {
+		for (String string : strings) {
+			console.sendMessage(prefix + string);
 		}
-		console.sendMessage(strs);
 	}
 
-	public void broadcastMessage(String str) {
-		Bukkit.broadcastMessage(prefix + str);
+	public void broadcastMessage(String string) {
+		Bukkit.broadcastMessage(prefix + string);
 	}
 
-	public void sendMessage(CommandSender cs, String str) {
-		cs.sendMessage(prefix + str);
+	public void sendMessage(CommandSender cs, String string) {
+		cs.sendMessage(prefix + string);
 	}
 
-	public void sendMessages(CommandSender cs, String... strs) {
-		for (int c = 0; c < strs.length; c++) {
-			strs[c] = prefix + strs[c];
+	public void sendMessages(CommandSender cs, String... strings) {
+		for (String string : strings) {
+			cs.sendMessage(prefix + string);
 		}
-		cs.sendMessage(strs);
 	}
 
 }

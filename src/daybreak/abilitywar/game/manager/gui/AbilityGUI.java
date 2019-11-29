@@ -6,9 +6,6 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,6 +20,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 /**
  * 능력 부여 GUI
  */
@@ -36,14 +36,8 @@ public class AbilityGUI implements Listener {
 		this.target = null;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 
-		values = new ArrayList<String>(AbilityList.nameValues());
-		values.sort(new Comparator<String>() {
-
-			public int compare(String obj1, String obj2) {
-				return obj1.compareToIgnoreCase(obj2);
-			}
-
-		});
+		values = new ArrayList<>(AbilityList.nameValues());
+		values.sort(String::compareToIgnoreCase);
 	}
 
 	public AbilityGUI(Player p, Participant target, Plugin Plugin) {
@@ -51,14 +45,8 @@ public class AbilityGUI implements Listener {
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 
-		values = new ArrayList<String>(AbilityList.nameValues());
-		values.sort(new Comparator<String>() {
-
-			public int compare(String obj1, String obj2) {
-				return obj1.compareToIgnoreCase(obj2);
-			}
-
-		});
+		values = new ArrayList<>(AbilityList.nameValues());
+		values.sort(String::compareToIgnoreCase);
 	}
 
 	private final ArrayList<String> values;

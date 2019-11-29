@@ -11,13 +11,13 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.GameMode;
-import daybreak.abilitywar.game.manager.gui.AbilityGUI;
 import daybreak.abilitywar.game.manager.gui.BlackListGUI;
 import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
+import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.game.script.Script;
@@ -28,11 +28,6 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -40,6 +35,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 메인 명령어
@@ -375,24 +376,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Messager.sendErrorMessage(p,
 							ChatColor.translateAlternateColorCodes('&', "사용법 &7: &f/" + label + " util abi <대상>"));
 				} else {
-					if (args[1].equalsIgnoreCase("@a")) {
-						AbilityGUI gui = new AbilityGUI(p, plugin);
-						gui.openAbilityGUI(1);
-					} else {
-						Player targetPlayer = Bukkit.getPlayerExact(args[1]);
-						if (targetPlayer != null) {
-							AbstractGame game = AbilityWarThread.getGame();
-							if (game.isParticipating(targetPlayer)) {
-								Participant target = game.getParticipant(targetPlayer);
-								AbilityGUI gui = new AbilityGUI(p, target, plugin);
-								gui.openAbilityGUI(1);
-							} else {
-								Messager.sendErrorMessage(p, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
-							}
-						} else {
-							Messager.sendErrorMessage(p, args[1] + "은(는) 존재하지 않는 플레이어입니다.");
-						}
-					}
+					AbilityWarThread.getGame().executeCommand(CommandHandler.CommandType.ABI, p, Messager.removeArgs(args, 1), plugin);
 				}
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
@@ -402,32 +386,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			gui.openSpectateGUI(1);
 		} else if (args[0].equalsIgnoreCase("ablist")) {
 			if (AbilityWarThread.isGameTaskRunning()) {
-				ArrayList<String> msg = new ArrayList<>();
-				msg.add(ChatColor.translateAlternateColorCodes('&', "&2===== &a능력자 목록 &2====="));
-
-				Integer Count = 0;
-				for (Participant participant : AbilityWarThread.getGame().getParticipants()) {
-					if (participant.hasAbility()) {
-						Count++;
-						AbilityBase Ability = participant.getAbility();
-						String name = Ability.getName();
-						if (name != null) {
-							msg.add(ChatColor.translateAlternateColorCodes('&',
-									"&e" + Count + ". &f" + participant.getPlayer().getName() + " &7: &c" + name));
-						}
-					}
-				}
-
-				if (Count.equals(0)) {
-					msg.add(ChatColor.translateAlternateColorCodes('&', "&f능력자가 발견되지 않았습니다."));
-				}
-
-				msg.add(ChatColor.translateAlternateColorCodes('&', "&2========================"));
-
-				Bukkit.broadcastMessage(
-						ChatColor.translateAlternateColorCodes('&', "&f" + p.getName() + "&a님이 플레이어들의 능력을 확인하였습니다."));
-
-				p.sendMessage(msg.toArray(new String[msg.size()]));
+				AbilityWarThread.getGame().executeCommand(CommandHandler.CommandType.ABLIST, p, Messager.removeArgs(args, 1), plugin);
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않습니다."));
 			}

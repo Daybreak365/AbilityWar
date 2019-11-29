@@ -55,7 +55,7 @@ public class Lazyness extends AbilityBase {
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
 	@Override
-	protected void onRestrictClear() {}
+	public void onRestrictClear() {}
 
 	private class DamageTimer extends Timer {
 

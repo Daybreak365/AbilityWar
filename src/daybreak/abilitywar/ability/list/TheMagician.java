@@ -26,12 +26,12 @@ public class TheMagician extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 3,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public TheMagician(Participant participant) {
@@ -46,40 +46,42 @@ public class TheMagician extends AbilityBase {
 	}
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
-	
+
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
-		if(e.getEntity() instanceof Arrow) {
-			if(e.getEntity().getShooter().equals(getPlayer())) {
-				if(!Cool.isCooldown()) {
+		if (e.getEntity() instanceof Arrow) {
+			if (e.getEntity().getShooter().equals(getPlayer())) {
+				if (!Cool.isCooldown()) {
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 					Location center = e.getEntity().getLocation();
-					for(Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
-						if(!d.equals(getPlayer())) {
-							if(LocationUtil.isInCircle(center, d.getLocation(), 5.0, false)) {
+					for (Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+						if (!d.equals(getPlayer())) {
+							if (LocationUtil.isInCircle(center, d.getLocation(), 5)) {
 								d.damage(VersionUtil.getMaxHealth(d) / 5, getPlayer());
-								if(d instanceof Player) {
+								if (d instanceof Player) {
 									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
 								}
 							}
 						}
 					}
-					
-					for(Location l : new Circle(center, 5).setAmount(30).setHighestLocation(true).getLocations()) {
+
+					for (Location l : new Circle(center, 5).setAmount(30).setHighestLocation(true).getLocations()) {
 						ParticleLib.SPELL_WITCH.spawnParticle(l, 0, 0, 0, 1);
 					}
 					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);
-					
+
 					Cool.startTimer();
 				}
 			}
 		}
 	}
-	
-	@Override
-	public void onRestrictClear() {}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
-	
+	public void onRestrictClear() {
+	}
+
+	@Override
+	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	}
+
 }

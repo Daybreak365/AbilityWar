@@ -18,8 +18,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -28,6 +26,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 체인지 능력 전쟁
@@ -188,7 +189,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
         msg.add(ChatColor.translateAlternateColorCodes('&', "&5&l체인지! &d&l능력 &f&l전쟁"));
         msg.add(ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()));
         msg.add(ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"));
-        msg.add(ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &fDayBreak&7#5908"));
+        msg.add(ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908"));
 
         GameCreditEvent event = new GameCreditEvent();
         Bukkit.getPluginManager().callEvent(event);

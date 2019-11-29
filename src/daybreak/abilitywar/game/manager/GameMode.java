@@ -4,6 +4,7 @@ import daybreak.abilitywar.config.AbilityWarSettings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
+import daybreak.abilitywar.game.games.mixability.MixAbility;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.squirtgunfight.SummerVacation;
@@ -11,9 +12,10 @@ import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.games.teamgame.TeamFight;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import org.bukkit.ChatColor;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.ChatColor;
 
 /**
  * 게임 모드
@@ -31,6 +33,7 @@ public class GameMode {
 		registerGameMode(ChangeAbilityWar.class);
 		registerGameMode(SummerVacation.class);
 		registerGameMode(TeamFight.class);
+		registerGameMode(MixAbility.class);
 	}
 
 	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {

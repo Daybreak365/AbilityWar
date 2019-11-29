@@ -11,9 +11,7 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import java.util.HashMap;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -21,17 +19,19 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.util.HashMap;
+
 @AbilityManifest(Name = "글래디에이터", Rank = Rank.S, Species = Species.HUMAN)
 public class Gladiator extends AbilityBase {
-	
+
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public Gladiator(Participant participant) {
@@ -39,25 +39,26 @@ public class Gladiator extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 우클릭하면 투기장이 생성되며 그 안에서"),
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
-	
+
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
-	
+
 	private final HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
-	
+
 	private final Timer FieldClear = new Timer(20) {
-		
+
 		@Override
-		public void onStart() {}
-		
+		public void onStart() {
+		}
+
 		@Override
 		public void onProcess(int count) {
 			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
-			getPlayer().sendMessage( ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
+			getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
 		}
 
 		@Override
 		public void onEnd() {
-			for(Block b : Saves.keySet()) {
+			for (Block b : Saves.keySet()) {
 				BlockState state = Saves.get(b);
 				b.setType(state.getType());
 			}
@@ -67,7 +68,7 @@ public class Gladiator extends AbilityBase {
 
 		@Override
 		public void onSilentEnd() {
-			for(Block b : Saves.keySet()) {
+			for (Block b : Saves.keySet()) {
 				BlockState state = Saves.get(b);
 				b.setType(state.getType());
 			}
@@ -76,68 +77,68 @@ public class Gladiator extends AbilityBase {
 		}
 
 	};
-	
+
 	private Player target = null;
-	
+
 	private final Timer Field = new Timer(26) {
-		
-		Integer Count;
-		Integer TotalCount;
+
+		int buildCount;
+		int TotalCount;
 		Location center;
-		
+
 		@Override
 		public void onStart() {
-			Count = 1;
+			buildCount = 1;
 			TotalCount = 1;
 			center = getPlayer().getLocation();
 			Saves.putIfAbsent(center.clone().subtract(0, 1, 0).getBlock(), center.clone().subtract(0, 1, 0).getBlock().getState());
 			center.subtract(0, 1, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 		}
-		
+
 		@Override
 		public void onProcess(int count) {
-			if(TotalCount <= 10) {
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, false, false)) {
+			if (TotalCount <= 10) {
+				for (Block b : LocationUtil.getBlocks2D(center, buildCount, false, false)) {
 					Saves.putIfAbsent(b, b.getState());
 					b.setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
-				
-				Count++;
-			} else if(TotalCount <= 15) {
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 2, true, false)) {
+
+				buildCount++;
+			} else if (TotalCount <= 15) {
+				for (Block b : LocationUtil.getBlocks2D(center, buildCount - 2, true, false)) {
 					Location bLocation = b.getLocation();
 					Saves.putIfAbsent(bLocation.clone().add(0, TotalCount - 10, 0).getBlock(), bLocation.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					bLocation.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
-				
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count - 1, true, false)) {
+
+				for (Block b : LocationUtil.getBlocks2D(center, buildCount - 1, true, false)) {
 					Location bLocation = b.getLocation();
 					Saves.putIfAbsent(bLocation.clone().add(0, TotalCount - 10, 0).getBlock(), bLocation.clone().add(0, TotalCount - 10, 0).getBlock().getState());
 					bLocation.add(0, TotalCount - 10, 0).getBlock().setType(MaterialLib.IRON_BARS.getMaterial());
 				}
-			} else if(TotalCount <= 26) {
-				for(Block b : LocationUtil.getBlocksAtSameY(center, Count, true, false)) {
+			} else if (TotalCount <= 26) {
+				for (Block b : LocationUtil.getBlocks2D(center, buildCount, true, false)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
 					l.add(0, 6, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 				}
-				
-				Count--;
+
+				buildCount--;
 			}
 			TotalCount++;
 		}
-		
+
 		@Override
 		public void onEnd() {
 			Location check = center.clone().add(0, 6, 0);
-			
-			if(!check.getBlock().getType().equals(MaterialLib.STONE_BRICKS.getMaterial())) {
+
+			if (!check.getBlock().getType().equals(MaterialLib.STONE_BRICKS.getMaterial())) {
 				Saves.putIfAbsent(check.getBlock(), check.getBlock().getState());
 				check.getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
 			}
-			
+
 			Location teleport = center.clone().add(0, 1, 0);
-			
+
 			getPlayer().teleport(teleport);
 			PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 400, 4, true);
 			PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);
@@ -145,9 +146,9 @@ public class Gladiator extends AbilityBase {
 
 			FieldClear.startTimer();
 		}
-		
+
 	}.setPeriod(1);
-	
+
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
@@ -155,25 +156,26 @@ public class Gladiator extends AbilityBase {
 
 	@SubscribeEvent
 	public void onBlockBreak(BlockBreakEvent e) {
-		if(Saves.keySet().contains(e.getBlock())) {
+		if (Saves.keySet().contains(e.getBlock())) {
 			e.setCancelled(true);
 			Player p = e.getPlayer();
 			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c투기장&f은 부술 수 없습니다!"));
 		}
 	}
-	
+
 	@Override
-	public void onRestrictClear() {}
+	public void onRestrictClear() {
+	}
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
-		if(mt.equals(MaterialType.IRON_INGOT)) {
-			if(entity != null) {
-				if(entity instanceof Player) {
-					if(!Cool.isCooldown()) {
+		if (mt.equals(MaterialType.IRON_INGOT)) {
+			if (entity != null) {
+				if (entity instanceof Player) {
+					if (!Cool.isCooldown()) {
 						this.target = (Player) entity;
 						Field.startTimer();
-						
+
 						Cool.startTimer();
 					}
 				}
@@ -182,5 +184,5 @@ public class Gladiator extends AbilityBase {
 			}
 		}
 	}
-	
+
 }

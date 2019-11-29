@@ -8,7 +8,6 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,7 +33,7 @@ public class Imprison extends AbilityBase {
 				"&f상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private final int size = SizeConfig.getValue();
 
@@ -50,16 +49,15 @@ public class Imprison extends AbilityBase {
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
 		if (mt.equals(MaterialType.IRON_INGOT)) {
 			if (entity != null) {
-				if (!Cool.isCooldown()) {
-					List<Block> blocks = LocationUtil.getBlocks(entity.getLocation(), size, true, false, true);
-					for (Block b : blocks) {
+				if (!cooldownTimer.isCooldown()) {
+					for (Block b : LocationUtil.getBlocks3D(entity.getLocation(), size, true, true)) {
 						b.setType(Material.GLASS);
 					}
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 				}
 			} else {
-				Cool.isCooldown();
+				cooldownTimer.isCooldown();
 			}
 		}
 	}

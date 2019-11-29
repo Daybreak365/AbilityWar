@@ -7,8 +7,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
@@ -70,7 +70,7 @@ public class TheHighPriestess extends AbilityBase {
 			center = getPlayer().getLocation();
 
 			for (Player p : LocationUtil.getNearbyPlayers(center, range, range)) {
-				if (LocationUtil.isInCircle(center, p.getLocation(), range, true)) {
+				if (LocationUtil.isInCircle(center, p.getLocation(), range)) {
 					SoundLib.ENTITY_EVOKER_CAST_SPELL.playSound(p);
 				}
 			}
@@ -84,7 +84,7 @@ public class TheHighPriestess extends AbilityBase {
 			for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), range, range)) {
 				PotionEffects.WITHER.addPotionEffect(p, 60, 1, true);
 			}
-			if (LocationUtil.isInCircle(center, getPlayer().getLocation(), range, true)) {
+			if (LocationUtil.isInCircle(center, getPlayer().getLocation(), range)) {
 				PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 100, 2, false);
 			}
 		}

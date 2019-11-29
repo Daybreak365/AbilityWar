@@ -7,9 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -17,7 +15,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
+
+import java.util.Random;
 
 @AbilityManifest(Name = "검은 양초", Rank = Rank.A, Species = Species.OTHERS)
 public class BlackCandle extends AbilityBase {
@@ -34,8 +33,8 @@ public class BlackCandle extends AbilityBase {
 
 	public BlackCandle(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f디버프를 받지 않으며, 스턴 공격을 받지 않습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f또한, 데미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f독 데미지와 시듦 데미지를 받지 않으며, 스턴 공격을 받지 않습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
 	}
 
 	@Override
@@ -43,23 +42,16 @@ public class BlackCandle extends AbilityBase {
 		return false;
 	}
 
-	private final int Chance = ChanceConfig.getValue();
-
-	@SubscribeEvent
-	public void onPotionEffect(EntityPotionEffectEvent e) {
-		if (e.getAction().equals(EntityPotionEffectEvent.Action.ADDED)) {
-			PotionEffects effect = PotionEffects.valueOf(e.getModifiedType());
-			if (effect != null && effect.isNegative()) {
-				e.setCancelled(true);
-			}
-		}
-	}
+	private final int chance = ChanceConfig.getValue();
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
+			if (e.getCause().equals(EntityDamageEvent.DamageCause.WITHER) || e.getCause().equals(EntityDamageEvent.DamageCause.POISON)) {
+				e.setCancelled(true);
+			}
 			Random r = new Random();
-			if(r.nextInt(100) + 1 <= Chance) {
+			if(r.nextInt(100) + 1 <= chance) {
 				double Health = getPlayer().getHealth() + 1.5;
 				if(Health > 20.0) Health = 20.0;
 				
@@ -75,7 +67,7 @@ public class BlackCandle extends AbilityBase {
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
 			Random r = new Random();
-			if(r.nextInt(100) + 1 <= Chance) {
+			if(r.nextInt(100) + 1 <= chance) {
 				double Health = getPlayer().getHealth() + 1.5;
 				if(Health > 20.0) Health = 20.0;
 				
@@ -91,7 +83,7 @@ public class BlackCandle extends AbilityBase {
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
 		if(e.getEntity().equals(getPlayer())) {
 			Random r = new Random();
-			if(r.nextInt(100) + 1 <= Chance) {
+			if(r.nextInt(100) + 1 <= chance) {
 				double Health = getPlayer().getHealth() + 1.5;
 				if(Health > 20.0) Health = 20.0;
 				
@@ -102,7 +94,7 @@ public class BlackCandle extends AbilityBase {
 			}
 		}
 	}
-	
+
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	

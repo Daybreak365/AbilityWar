@@ -20,9 +20,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.message.KoreanUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,6 +34,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 체인지 능력 전쟁
@@ -97,7 +99,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					for(Participant p : getParticipants()) {
 						p.setAbility(SquirtGun.class);
 					}
-				} catch (Exception e) {}
+				} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ignored) {}
 				break;
 			case 13:
 				scoreboardSetup();
