@@ -100,7 +100,7 @@ public class LocationUtil {
 		for (int x = blockX - horizontal; x <= blockX + horizontal; x++) {
 			for (int z = blockZ - horizontal; z <= blockZ + horizontal; z++) {
 				Block block = highestBlocks ? center.getWorld().getHighestBlockAt(x, z) : center.getWorld().getBlockAt(x, center.getBlockY(), z);
-				//if (block.isEmpty()) block = block.getRelative(0, -1, 0);
+				if (highestBlocks && block.isEmpty()) block = block.getRelative(0, -1, 0);
 				double distance = center.distanceSquared(block.getLocation());
 				if (!block.isEmpty() && distance <= (horizontal * horizontal) && !(hollow && distance < ((horizontal - 1) * (horizontal - 1)))) {
 					blocks.add(block);
