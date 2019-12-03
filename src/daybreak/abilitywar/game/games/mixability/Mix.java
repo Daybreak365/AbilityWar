@@ -71,14 +71,10 @@ public class Mix extends AbilityBase {
 	@Override
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		if (hasAbility()) {
-			boolean bool = false;
-			if (first.ActiveSkill(mt, ct)) {
-				bool = true;
-			}
-			if (second.ActiveSkill(mt, ct)) {
-				bool = true;
-			}
-			return bool;
+			boolean abilityUsed = false;
+			if (first.ActiveSkill(mt, ct)) abilityUsed = true;
+			if (second.ActiveSkill(mt, ct)) abilityUsed = true;
+			return abilityUsed;
 		} else {
 			return false;
 		}
@@ -98,6 +94,10 @@ public class Mix extends AbilityBase {
 			first.onRestrictClear();
 			second.onRestrictClear();
 		}
+	}
+
+	private enum MODE {
+		;
 	}
 
 }

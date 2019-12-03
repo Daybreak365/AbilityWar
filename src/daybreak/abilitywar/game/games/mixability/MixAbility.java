@@ -1,19 +1,20 @@
 package daybreak.abilitywar.game.games.mixability;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.AbilityWarSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.Script;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.message.KoreanUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -197,14 +198,11 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2===== &a능력자 목록 &2====="));
 				int count = 0;
 				for (AbstractGame.Participant participant : AbilityWarThread.getGame().getParticipants()) {
-					if (participant.hasAbility()) {
+					Mix mix = (Mix) participant.getAbility();
+					if (mix.hasAbility()) {
 						count++;
-						AbilityBase ability = participant.getAbility();
-						String name = ability.getName();
-						if (name != null) {
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-									"&e" + count + ". &f" + participant.getPlayer().getName() + " &7: &c" + name));
-						}
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+								"&e" + count + ". &f" + participant.getPlayer().getName() + " &7: &c" + mix.getFirst().getName() + " &f+ &c" + mix.getSecond().getName()));
 					}
 				}
 				if (count == 0) {
@@ -223,5 +221,23 @@ public class MixAbility extends Game implements DefaultKitHandler {
     protected AbilitySelect setupAbilitySelect() {
         return null;
     }
+
+    @Override
+	protected DeathManager setupDeathManager() {
+		return new DeathManager(this) {
+			@Override
+			protected String AbilityReveal(Participant victim) {
+				Mix mix = (Mix) victim.getAbility();
+				if (mix.hasAbility()) {
+					String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+					return ChatColor.translateAlternateColorCodes('&',
+							"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getNeededJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+				} else {
+					return ChatColor.translateAlternateColorCodes('&',
+							"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님은 능력이 없습니다.");
+				}
+			}
+		};
+	}
 
 }
