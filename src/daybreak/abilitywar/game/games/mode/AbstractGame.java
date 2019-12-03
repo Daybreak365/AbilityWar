@@ -34,14 +34,18 @@ import static daybreak.abilitywar.utils.Validate.notNull;
 
 public abstract class AbstractGame extends OverallTimer implements Listener, EffectManager.Handler, CommandHandler {
 
-	private final ArrayList<Listener> registeredListeners = new ArrayList<>();
+	public interface Observer { void update(GAME_UPDATE update); }
+	public enum GAME_UPDATE { START, END }
+
+	private final ArrayList<Observer> observers = new ArrayList<>();
 
 	/**
 	 * 게임이 종료될 때 등록 해제되어야 하는 {@link Listener}를 등록합니다.
 	 */
-	public final void registerListener(Listener listener) {
-		Bukkit.getPluginManager().registerEvents(notNull(listener), AbilityWar.getPlugin());
-		registeredListeners.add(listener);
+	public final void attachObserver(Observer observer) {
+		if (!observers.contains(notNull(observer))) {
+			observers.add(observer);
+		}
 	}
 
 	private boolean restricted = true;
@@ -157,19 +161,25 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	protected void onEnd() {
 		stopTimers();
 		HandlerList.unregisterAll(this);
-		for (Listener listener : registeredListeners) {
-			HandlerList.unregisterAll(listener);
-		}
+		observers.forEach(observer -> observer.update(GAME_UPDATE.END));
 	}
 
-	public class Participant implements Listener {
+	public class Participant implements Listener, Observer {
 
 	    private final Attributes attributes = new Attributes();
 		private Player player;
 
-		Participant(Player player) {
+		protected Participant(Player player) {
 			this.player = player;
-			registerListener(this);
+			attachObserver(this);
+			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+		}
+
+		@Override
+		public void update(GAME_UPDATE update) {
+			if (update.equals(GAME_UPDATE.END)) {
+				HandlerList.unregisterAll(this);
+			}
 		}
 
 		private Instant lastClick = Instant.now();
@@ -292,7 +302,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		    return attributes;
         }
 
-        public class Attributes {
+		public class Attributes {
 		    public final Attribute<Boolean> TEAM_CHAT = new Attribute<>(false);
         }
 
@@ -350,7 +360,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	}
 
 	/**
-	 * 현재 실행중인 {@link TimerBase}를 모두 SHUTDOWN합니다.
+	 * 현재 실행중인 {@link TimerBase}를 모두 종료합니다.
 	 */
 	public void stopTimers() {
 		for (TimerBase timer : getTimers()) {

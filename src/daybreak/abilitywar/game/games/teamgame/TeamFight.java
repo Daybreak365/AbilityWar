@@ -15,12 +15,6 @@ import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.message.KoreanUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -30,6 +24,13 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
 
 @GameManifest(Name = "팀 전투", Description = {"§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다."})
 public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
@@ -160,7 +161,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 				}
 
 				if (Settings.getInfiniteDurability()) {
-					registerListener(new InfiniteDurability());
+					attachObserver(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
 				}

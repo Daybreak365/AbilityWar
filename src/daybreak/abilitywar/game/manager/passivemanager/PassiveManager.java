@@ -1,27 +1,25 @@
 package daybreak.abilitywar.game.manager.passivemanager;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.utils.ReflectionUtil;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class PassiveManager implements Listener, EventExecutor {
+public class PassiveManager implements Listener, EventExecutor, AbstractGame.Observer {
 
 	public PassiveManager(AbstractGame game) {
-		game.registerListener(this);
+		game.attachObserver(this);
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	private final HashMap<Class<? extends Event>, ArrayList<PassiveExecutor>> passiveExecutors = new HashMap<>();
@@ -76,4 +74,10 @@ public class PassiveManager implements Listener, EventExecutor {
 		}
 	}
 
+	@Override
+	public void update(AbstractGame.GAME_UPDATE update) {
+		if (update.equals(AbstractGame.GAME_UPDATE.END)) {
+			HandlerList.unregisterAll(this);
+		}
+	}
 }

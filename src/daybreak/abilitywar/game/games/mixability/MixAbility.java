@@ -146,7 +146,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				}
 
 				if (AbilityWarSettings.Settings.getInfiniteDurability()) {
-					registerListener(new InfiniteDurability());
+					attachObserver(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
 				}

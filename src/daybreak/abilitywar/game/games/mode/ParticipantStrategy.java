@@ -1,19 +1,12 @@
 package daybreak.abilitywar.game.games.mode;
 
+import org.bukkit.entity.Player;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
-import org.bukkit.entity.Player;
 
 public abstract class ParticipantStrategy {
-
-    protected final AbstractGame.Participant buildParticipant(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (isParticipating(uuid)) {
-            return getParticipant(uuid);
-        }
-        return game.new Participant(player);
-    }
 
     private final AbstractGame game;
 
@@ -36,7 +29,7 @@ public abstract class ParticipantStrategy {
         public DEFAULT_MANAGEMENT(AbstractGame game, Collection<Player> players) {
             super(game);
             for (Player player : players) {
-                participants.put(player.getUniqueId().toString(), buildParticipant(player));
+                participants.put(player.getUniqueId().toString(), game.new Participant(player));
             }
         }
 

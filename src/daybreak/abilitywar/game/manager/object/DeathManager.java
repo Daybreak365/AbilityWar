@@ -1,7 +1,9 @@
 package daybreak.abilitywar.game.manager.object;
 
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.ParticipantDeathEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.Messager;
@@ -11,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
@@ -22,13 +25,14 @@ import java.util.UUID;
  *
  * @author Daybreak 새벽
  */
-public class DeathManager implements Listener {
+public class DeathManager implements Listener, AbstractGame.Observer {
 
 	private final Game game;
 
 	public DeathManager(Game game) {
 		this.game = game;
-		game.registerListener(this);
+		game.attachObserver(this);
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	@EventHandler
@@ -146,6 +150,13 @@ public class DeathManager implements Listener {
 	 */
 	public final boolean isDead(UUID uuid) {
 		return deadPlayers.contains(uuid);
+	}
+
+	@Override
+	public void update(AbstractGame.GAME_UPDATE update) {
+		if (update.equals(AbstractGame.GAME_UPDATE.END)) {
+			HandlerList.unregisterAll(this);
+		}
 	}
 
 	public interface Handler {

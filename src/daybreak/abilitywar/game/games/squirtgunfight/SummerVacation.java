@@ -312,7 +312,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 			}
 		}
 
-		registerListener(infiniteDurability);
+		attachObserver(infiniteDurability);
 		
 		for(World w : Bukkit.getWorlds()) {
 			if(Settings.getClearWeather()) {

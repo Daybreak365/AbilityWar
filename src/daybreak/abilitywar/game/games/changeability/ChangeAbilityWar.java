@@ -249,7 +249,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
         }
 
         if (Settings.getInfiniteDurability()) {
-            registerListener(infiniteDurability);
+            attachObserver(infiniteDurability);
         } else {
             Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
         }

@@ -14,10 +14,6 @@ import daybreak.abilitywar.game.manager.object.ScoreboardManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,6 +21,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
 
 import static daybreak.abilitywar.utils.Validate.notNull;
 
@@ -45,14 +45,13 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	@Override
 	protected void onStart() {
 		Bukkit.getPluginManager().callEvent(new GameReadyEvent(this));
-		registerListener(this);
 	}
 
 	private int seconds = 0;
 
 	@Override
 	protected void onProcess(int seconds) {
-		if(getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
+		if (getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
 			this.seconds++;
 			progressGame(this.seconds);
 		}
@@ -69,7 +68,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	 * 게임 진행
 	 */
 	protected abstract void progressGame(int Seconds);
-	
+
 	/**
 	 * AbilitySelect 초깃값 설정
 	 * null을 반환할 수 있습니다. 능력 할당이 필요하지 않을 경우 null을 반환하세요.
@@ -82,6 +81,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 			}
 
 			private ArrayList<Class<? extends AbilityBase>> abilities;
+
 			@Override
 			protected void drawAbility(Collection<Participant> selectors) {
 				abilities = AbilitySelectStrategy.EVERY_ABILITY_EXCLUDING_BLACKLISTED.getAbilities();
@@ -113,6 +113,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 				}
 			}
+
 			@Override
 			protected boolean changeAbility(Participant participant) {
 				Player p = participant.getPlayer();
@@ -141,8 +142,10 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 				return false;
 			}
+
 			@Override
-			protected void onSelectEnd() {}
+			protected void onSelectEnd() {
+			}
 		};
 	}
 
@@ -189,7 +192,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	public AbilitySelect getAbilitySelect() {
 		return abilitySelect;
 	}
-	
+
 	/**
 	 * Invincibility를 반환합니다.
 	 * null을 반환하지 않습니다.
@@ -202,7 +205,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	protected void startAbilitySelect() {
 		this.abilitySelect = setupAbilitySelect();
 	}
-	
+
 	@Override
 	protected void startGame() {
 		super.startGame();
@@ -212,15 +215,15 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	}
 
 	@EventHandler
-	private void onWeatherChange(WeatherChangeEvent e) {
-		if(isGameStarted() && Settings.getClearWeather()) e.setCancelled(true);
+	public final void onWeatherChange(WeatherChangeEvent e) {
+		if (isGameStarted() && Settings.getClearWeather()) e.setCancelled(true);
 	}
-	
+
 	@EventHandler
-	private void onFoodLevelChange(FoodLevelChangeEvent e) {
-		if(Settings.getNoHunger()) {
+	public final void onFoodLevelChange(FoodLevelChangeEvent e) {
+		if (Settings.getNoHunger()) {
 			e.setCancelled(true);
-			
+
 			Player p = (Player) e.getEntity();
 			p.setFoodLevel(19);
 		}

@@ -12,11 +12,12 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import java.util.ArrayList;
 
 /**
  * 게임 관리 클래스
@@ -151,7 +152,7 @@ public class DefaultGame extends Game implements DefaultKitHandler {
                 }
 
                 if (Settings.getInfiniteDurability()) {
-                    registerListener(new InfiniteDurability());
+                    attachObserver(new InfiniteDurability());
                 } else {
                     Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
                 }
