@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
  * 전역 타이머
  * @author Daybreak 새벽
  */
-abstract public class OverallTimer {
+public abstract class OverallTimer {
 
     private int task = -1;
 

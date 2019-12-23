@@ -3,9 +3,6 @@ package daybreak.abilitywar.game.script.objects.setter;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.utils.Validate;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
@@ -14,11 +11,15 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.EventExecutor;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+
 /**
  * Setter
  * @author Daybreak 새벽
  */
-abstract public class Setter<T> implements EventExecutor {
+public abstract class Setter<T> implements EventExecutor {
 	
 	private final String Key;
 	private T Value;
@@ -63,9 +64,9 @@ abstract public class Setter<T> implements EventExecutor {
 		Wizard.openScriptWizard(Wizard.getPlayerPage());
 	}
 	
-	abstract public void onClick(ClickType click);
+	public abstract void onClick(ClickType click);
 	
-	abstract public ItemStack getItem();
+	public abstract ItemStack getItem();
 	
 	private static HashMap<Class<?>, Class<? extends Setter<?>>> SetterMap = new HashMap<Class<?>, Class<? extends Setter<?>>>();
 	
@@ -88,7 +89,7 @@ abstract public class Setter<T> implements EventExecutor {
 					return constructor.newInstance(Key, Default, Wizard);
 				}
 			} else {
-				Validate.MinimumConstant(clazz, 1);
+				Validate.minimumConstant(clazz, 1);
 				return new EnumSetter(Key, clazz.getEnumConstants()[0], Wizard);
 			}
 		} catch (NoSuchMethodException | SecurityException | InstantiationException

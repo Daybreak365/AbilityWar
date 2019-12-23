@@ -262,6 +262,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 			ability.setRestricted(isRestricted() || !isGameStarted());
 
 			this.ability = ability;
+			Bukkit.broadcastMessage(getPlayer().getName() + " ability set " + ability.getName());
 		}
 
 		/**

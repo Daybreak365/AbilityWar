@@ -25,16 +25,19 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @GameManifest(Name = "믹스 능력자 전쟁 (BETA)", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
 public class MixAbility extends Game implements DefaultKitHandler {
 
+	private static final Logger logger = Logger.getLogger(MixAbility.class.getName());
+
 	public MixAbility() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		setRestricted(invincible);
 	}
 
-    private boolean invincible = AbilityWarSettings.Settings.InvincibilitySettings.isEnabled();
+	private boolean invincible = AbilityWarSettings.Settings.InvincibilitySettings.isEnabled();
 
 	@Override
 	protected void progressGame(int seconds) {
@@ -56,6 +59,14 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				if (getParticipants().size() < 1) {
 					AbilityWarThread.StopGame();
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
+				} else {
+					for (Participant participant : getParticipants()) {
+						try {
+							participant.setAbility(Mix.class);
+						} catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ignored) {
+							logger.log(Level.SEVERE, participant.getPlayer().getName() + "님에게 " + Mix.class.getName() + " 능력을 부여하는 도중 오류가 발생하였습니다.");
+						}
+					}
 				}
 				break;
 			case 3:
@@ -75,13 +86,6 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				}
 				break;
 			case 5:
-				try {
-					for(Participant p : getParticipants()) {
-						p.setAbility(Mix.class);
-					}
-				} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ignored) {}
-				break;
-			case 6:
 				if (AbilityWarSettings.Settings.getDrawAbility()) {
 					startAbilitySelect();
 				}
@@ -217,12 +221,12 @@ public class MixAbility extends Game implements DefaultKitHandler {
 		}
 	}
 
-    @Override
-    protected AbilitySelect setupAbilitySelect() {
-        return null;
-    }
+	@Override
+	protected AbilitySelect setupAbilitySelect() {
+		return null;
+	}
 
-    @Override
+	@Override
 	protected DeathManager setupDeathManager() {
 		return new DeathManager(this) {
 			@Override

@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PassiveManager implements Listener, EventExecutor, AbstractGame.Observer {
 
@@ -22,7 +23,7 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final HashMap<Class<? extends Event>, ArrayList<PassiveExecutor>> passiveExecutors = new HashMap<>();
+	private final HashMap<Class<? extends Event>, CopyOnWriteArrayList<PassiveExecutor>> passiveExecutors = new HashMap<>();
 	private final EventPriority priority = EventPriority.HIGHEST;
 	private final ArrayList<Class<? extends Event>> registeredEvents = new ArrayList<>();
 
@@ -30,10 +31,9 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 	private Class<? extends Event> getHandlerListDeclaringClass(Class<? extends Event> eventClass) {
 		Class<? extends Event> handlerClass = null;
 		try {
-			for (Field f : ReflectionUtil.FieldUtil.getDeclaredInheritedFields(eventClass)) {
-				if (f.getType().equals(HandlerList.class)) {
-					handlerClass = (Class<? extends Event>) f.getDeclaringClass();
-				}
+			for (Field field : ReflectionUtil.FieldUtil.getExistingFields(eventClass, HandlerList.class)) {
+				handlerClass = (Class<? extends Event>) field.getDeclaringClass();
+				break;
 			}
 		} catch (Exception ignored) {}
 		return handlerClass;
@@ -41,7 +41,7 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 
 	public void register(Class<? extends Event> eventClass, PassiveExecutor executor) {
 		if (!passiveExecutors.containsKey(eventClass)) {
-			passiveExecutors.put(eventClass, new ArrayList<>());
+			passiveExecutors.put(eventClass, new CopyOnWriteArrayList<>());
 		}
 
 		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);

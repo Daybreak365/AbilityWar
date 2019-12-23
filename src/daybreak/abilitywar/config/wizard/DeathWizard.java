@@ -1,7 +1,11 @@
 package daybreak.abilitywar.config.wizard;
 
-import java.util.List;
-
+import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
+import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.enums.OnDeath;
+import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.library.item.MaterialLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,12 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
-import daybreak.abilitywar.config.enums.ConfigNodes;
-import daybreak.abilitywar.config.enums.OnDeath;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import java.util.List;
 
 public class DeathWizard extends SettingWizard {
 
@@ -114,17 +113,17 @@ public class DeathWizard extends SettingWizard {
 				Show();
 				break;
 			case "§b능력 공개":
-				AbilityWarSettings.modifyProperty(ConfigNodes.Game_Death_AbilityReveal,
+				AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REVEAL,
 						!DeathSettings.getAbilityReveal());
 				Show();
 				break;
 			case "§b능력 삭제":
-				AbilityWarSettings.modifyProperty(ConfigNodes.Game_Death_AbilityRemoval,
+				AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REMOVAL,
 						!DeathSettings.getAbilityRemoval());
 				Show();
 				break;
 			case "§b아이템 드롭":
-				AbilityWarSettings.modifyProperty(ConfigNodes.Game_Death_ItemDrop, !DeathSettings.getItemDrop());
+				AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DEATH_ITEM_DROP, !DeathSettings.getItemDrop());
 				Show();
 				break;
 			}

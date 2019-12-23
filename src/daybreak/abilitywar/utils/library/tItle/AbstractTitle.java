@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
  * 추상 타이틀
  * @author Daybreak 새벽
  */
-abstract public class AbstractTitle {
+public abstract class AbstractTitle {
 	
 	public abstract void sendTo(Player p);
 	

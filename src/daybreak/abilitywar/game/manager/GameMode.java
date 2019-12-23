@@ -106,7 +106,7 @@ public class GameMode {
 			return true;
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
-			AbilityWarSettings.modifyProperty(ConfigNodes.GameMode, DefaultGame.class.getName());
+			AbilityWarSettings.modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());
 			AbilityWarThread.StartGame(new DefaultGame());
 			return false;
 		}

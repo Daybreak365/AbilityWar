@@ -70,7 +70,7 @@ public class InvincibilityWizard extends SettingWizard {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
 				case "§b초반 무적":
-					AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Enable,
+					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_ENABLE,
 							!Settings.InvincibilitySettings.isEnabled());
 					Show();
 					break;
@@ -78,17 +78,17 @@ public class InvincibilityWizard extends SettingWizard {
 					int duration = Settings.InvincibilitySettings.getDuration();
 					switch (e.getClick()) {
 					case RIGHT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, duration + 1);
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 1);
 						break;
 					case SHIFT_RIGHT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration, duration + 5);
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 5);
 						break;
 					case LEFT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration,
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
 								duration >= 2 ? duration - 1 : 1);
 						break;
 					case SHIFT_LEFT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.Game_Invincibility_Duration,
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
 								duration >= 6 ? duration - 5 : 1);
 						break;
 					default:

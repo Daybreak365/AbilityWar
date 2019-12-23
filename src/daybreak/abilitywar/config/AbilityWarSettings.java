@@ -6,6 +6,10 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
 import daybreak.abilitywar.utils.database.FileManager;
+import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,9 +18,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.inventory.ItemStack;
 
 public class AbilityWarSettings {
 
@@ -44,7 +45,7 @@ public class AbilityWarSettings {
 		for (Entry<ConfigNodes, Cache> entry : cache.entrySet()) {
 			Cache cache = entry.getValue();
 			if (cache.isModifiedValue()) {
-				if (entry.getKey().equals(ConfigNodes.Game_Death_AbilityReveal)) {
+				if (entry.getKey().equals(ConfigNodes.GAME_DEATH_ABILITY_REVEAL)) {
 					logger.log(Level.SEVERE, "");
 				}
 				config.set(entry.getKey().getPath(), cache.getValue());
@@ -139,85 +140,85 @@ public class AbilityWarSettings {
 		}
 
 		public static boolean getNoHunger() {
-			return getBoolean(ConfigNodes.Game_NoHunger);
+			return getBoolean(ConfigNodes.GAME_NO_HUNGER);
 		}
 
 		public static int getStartLevel() {
-			return getInt(ConfigNodes.Game_StartLevel);
+			return getInt(ConfigNodes.GAME_START_LEVEL);
 		}
 
 		public static class InvincibilitySettings {
 			public static boolean isEnabled() {
-				return getBoolean(ConfigNodes.Game_Invincibility_Enable);
+				return getBoolean(ConfigNodes.GAME_INVINCIBILITY_ENABLE);
 			}
 
 			public static int getDuration() {
-				return getInt(ConfigNodes.Game_Invincibility_Duration);
+				return getInt(ConfigNodes.GAME_INVINCIBILITY_DURATION);
 			}
 
-			public static boolean isBossbarEnabled() { return getBoolean(ConfigNodes.Game_Invincibility_BossBar_Enable); }
-			public static String getBossbarMessage() { return getString(ConfigNodes.Game_Invincibility_BossBar_Message); }
-			public static String getBossbarInfiniteMessage() { return getString(ConfigNodes.Game_Invincibility_BossBar_InfiniteMessage); }
+			public static boolean isBossbarEnabled() { return getBoolean(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_ENABLE); }
+			public static String getBossbarMessage() { return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_MESSAGE); }
+			public static String getBossbarInfiniteMessage() { return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_INFINITE_MESSAGE); }
 		}
 
 		public static boolean getInventoryClear() {
-			return getBoolean(ConfigNodes.Game_InventoryClear);
+			return getBoolean(ConfigNodes.GAME_INVENTORY_CLEAR);
 		}
 
 		public static boolean getDrawAbility() {
-			return getBoolean(ConfigNodes.Game_DrawAbility);
+			return getBoolean(ConfigNodes.GAME_DRAW_ABILITY);
 		}
 
 		public static boolean getInfiniteDurability() {
-			return getBoolean(ConfigNodes.Game_InfiniteDurability);
+			return getBoolean(ConfigNodes.GAME_INFINITE_DURABILITY);
 		}
 
 		public static boolean getFirewall() {
-			return getBoolean(ConfigNodes.Game_Firewall);
+			return getBoolean(ConfigNodes.GAME_FIREWALL);
 		}
 
 		public static class DeathSettings {
 
 			public static OnDeath getOperation() {
-				return OnDeath.getIfPresent(getString(ConfigNodes.Game_Death_Operation));
+				return OnDeath.getIfPresent(getString(ConfigNodes.GAME_DEATH_OPERATION));
 			}
 
 			public static void nextOperation() {
-				modifyProperty(ConfigNodes.Game_Death_Operation, getOperation().Next().name());
+				modifyProperty(ConfigNodes.GAME_DEATH_OPERATION, getOperation().Next().name());
 			}
 
 			public static boolean getItemDrop() {
-				return getBoolean(ConfigNodes.Game_Death_ItemDrop);
+				return getBoolean(ConfigNodes.GAME_DEATH_ITEM_DROP);
 			}
 
 			public static boolean getAbilityReveal() {
-				return getBoolean(ConfigNodes.Game_Death_AbilityReveal);
+				return getBoolean(ConfigNodes.GAME_DEATH_ABILITY_REVEAL);
 			}
 
 			public static boolean getAbilityRemoval() {
-				return getBoolean(ConfigNodes.Game_Death_AbilityRemoval);
+				return getBoolean(ConfigNodes.GAME_DEATH_ABILITY_REMOVAL);
 			}
 
 		}
 
 		public static boolean getClearWeather() {
-			return getBoolean(ConfigNodes.Game_ClearWeather);
+			return getBoolean(ConfigNodes.GAME_CLEAR_WEATHER);
 		}
 
 		public static List<ItemStack> getDefaultKit() {
-			return getItemStackList(ConfigNodes.Game_Kit);
+			return getItemStackList(ConfigNodes.GAME_KIT);
 		}
 
 		public static Location getSpawnLocation() {
-			return getLocation(ConfigNodes.Game_Spawn_Location);
+			return getLocation(ConfigNodes.GAME_SPAWN_LOCATION);
 		}
 
 		public static boolean getSpawnEnable() {
-			return getBoolean(ConfigNodes.Game_Spawn_Enable);
+			return getBoolean(ConfigNodes.GAME_SPAWN_ENABLE);
 		}
 
 		public static boolean getVisualEffect() {
-			return getBoolean(ConfigNodes.Game_VisualEffect);
+			return getBoolean(ConfigNodes.GAME_VISUAL_EFFECT);
 		}
 
 		public static boolean isBlackListed(String abilityName) {
@@ -225,37 +226,37 @@ public class AbilityWarSettings {
 		}
 
 		public static List<String> getBlackList() {
-			return getStringList(ConfigNodes.Game_BlackList);
+			return getStringList(ConfigNodes.GAME_BLACKLIST);
 		}
 
 		public static void addBlackList(String abilityName) {
-			List<String> list = getStringList(ConfigNodes.Game_BlackList);
+			List<String> list = getStringList(ConfigNodes.GAME_BLACKLIST);
 			if (!list.contains(abilityName)) {
 				list.add(abilityName);
-				modifyProperty(ConfigNodes.Game_BlackList, list);
+				modifyProperty(ConfigNodes.GAME_BLACKLIST, list);
 			}
 		}
 
 		public static void removeBlackList(String abilityName) {
-			List<String> list = getStringList(ConfigNodes.Game_BlackList);
+			List<String> list = getStringList(ConfigNodes.GAME_BLACKLIST);
 			if (list.contains(abilityName)) {
 				list.remove(abilityName);
-				modifyProperty(ConfigNodes.Game_BlackList, list);
+				modifyProperty(ConfigNodes.GAME_BLACKLIST, list);
 			}
 		}
 
 		public static class ChangeAbilityWarSettings {
 
 			public static int getPeriod() {
-				return getInt(ConfigNodes.AbilityChangeGame_Period);
+				return getInt(ConfigNodes.ABILITY_CHANGE_GAME_PERIOD);
 			}
 
 			public static int getLife() {
-				return getInt(ConfigNodes.AbilityChangeGame_Life);
+				return getInt(ConfigNodes.ABILITY_CHANGE_GAME_LIFE);
 			}
 
 			public static boolean getEliminate() {
-				return getBoolean(ConfigNodes.AbilityChangeGame_Eliminate);
+				return getBoolean(ConfigNodes.ABILITY_CHANGE_GAME_ELIMINATE);
 			}
 
 		}
@@ -263,7 +264,7 @@ public class AbilityWarSettings {
 		public static class SummerVacationSettings {
 
 			public static int getMaxKill() {
-				return getInt(ConfigNodes.SummerVacation_Kill);
+				return getInt(ConfigNodes.SUMMER_VACATION_KILL);
 			}
 
 		}
@@ -271,19 +272,19 @@ public class AbilityWarSettings {
 		@SuppressWarnings("unchecked")
 		public static Class<? extends AbstractGame> getGameMode() {
 			try {
-				Class<?> clazz = ClassUtil.forName(getString(ConfigNodes.GameMode));
+				Class<?> clazz = ClassUtil.forName(getString(ConfigNodes.GAME_MODE));
 				if (AbstractGame.class.isAssignableFrom(clazz)) {
 					return (Class<? extends AbstractGame>) clazz;
 				}
 			} catch (ClassNotFoundException e) {
 			}
 
-			modifyProperty(ConfigNodes.GameMode, DefaultGame.class.getName());
+			modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());
 			return DefaultGame.class;
 		}
 
 		public static boolean isWRECKEnabled() {
-			return getBoolean(ConfigNodes.Game_WRECK);
+			return getBoolean(ConfigNodes.GAME_WRECK);
 		}
 
 	}

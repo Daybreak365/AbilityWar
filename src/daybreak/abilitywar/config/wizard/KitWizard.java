@@ -1,8 +1,11 @@
 package daybreak.abilitywar.config.wizard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.utils.library.item.ItemLib;
+import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
+import daybreak.abilitywar.utils.library.item.MaterialLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,12 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.config.enums.ConfigNodes;
-import daybreak.abilitywar.utils.library.item.ItemLib;
-import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class KitWizard extends SettingWizard {
 
@@ -79,12 +78,12 @@ public class KitWizard extends SettingWizard {
 							itemstacks.add(gui.getItem(i));
 						}
 					}
-					AbilityWarSettings.modifyProperty(ConfigNodes.Game_Kit, itemstacks);
+					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, itemstacks);
 					p.closeInventory();
 					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
 					break;
 				case "§c초기화":
-					AbilityWarSettings.modifyProperty(ConfigNodes.Game_Kit, Arrays.asList());
+					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, Arrays.asList());
 					p.closeInventory();
 					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
 					break;

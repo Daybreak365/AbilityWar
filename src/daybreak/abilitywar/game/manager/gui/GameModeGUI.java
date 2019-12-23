@@ -8,10 +8,6 @@ import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.manager.GameMode;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -26,6 +22,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameModeGUI implements Listener {
 
@@ -140,7 +141,7 @@ public class GameModeGUI implements Listener {
 						String modeName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 						Class<? extends AbstractGame> gameMode = GameMode.getByString(modeName);
 						if(gameMode != null) {
-							AbilityWarSettings.modifyProperty(ConfigNodes.GameMode, gameMode.getName());
+							AbilityWarSettings.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getName());
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + modeName + " &f클래스는 등록되지 않았습니다."));
 						}
