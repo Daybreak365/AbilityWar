@@ -140,38 +140,27 @@ public class LocationUtil {
 		return locations;
 	}
 
+	/**
+	 * 중점에서 가장 가까이에 있는 특정 타입의 엔티티를 반환합니다.
+	 * 가장 가까이에 있는 특정 타입의 엔티티를 찾을 수 없을 경우 null을 반환합니다.
+	 * @param entityType	탐색할 엔티티 타입
+	 * @param center		중점
+	 * @param predicate		커스텀 조건
+	 * @return				중점에서 가장 가까이에 있는 특정 타입의 엔티티
+	 */
 	@SuppressWarnings("unchecked")
-	public static <E extends Entity> E getNearestEntity(Class<E> entityType, Entity center) {
+	public static <T extends Entity> T getNearestEntity(Class<T> entityType, Location center, Predicate<T> predicate) {
 		double distance = Double.MAX_VALUE;
-		E current = null;
+		T current = null;
 
-		final Location centerLocation = center.getLocation().clone();
+		final Location centerLocation = center.clone();
 		for (Entity e : center.getWorld().getEntities()) {
-			if (!e.equals(center)) {
-				if (entityType.isAssignableFrom(e.getClass())) {
-					if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
-						AbstractGame game = AbilityWarThread.getGame();
-						Player p = (Player) e;
-						if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p))) {
-							continue;
-						}
-						if (game instanceof TeamGame && center instanceof Player) {
-							Participant participant = game.getParticipant(p);
-							TeamGame teamGame = (TeamGame) game;
-							Participant centerParticipant = game.getParticipant((Player) center);
-							if (centerParticipant != null) {
-								if (teamGame.hasTeam(participant) && teamGame.hasTeam(centerParticipant) && (teamGame.getTeam(participant).equals(teamGame.getTeam(centerParticipant)))) {
-									continue;
-								}
-							}
-						}
-					}
-
-					double compare = centerLocation.distanceSquared(e.getLocation());
-					if (compare < distance) {
-						distance = compare;
-						current = (E) e;
-					}
+			if (entityType.isAssignableFrom(e.getClass())) {
+				@SuppressWarnings("unchecked") T entity = (T) e;
+				double compare = centerLocation.distanceSquared(entity.getLocation());
+				if (compare < distance && (predicate == null || predicate.test(entity))) {
+					distance = compare;
+					current = entity;
 				}
 			}
 		}
@@ -179,11 +168,73 @@ public class LocationUtil {
 		return current;
 	}
 
+	/**
+	 * 중점에서 가장 가까이에 있는 특정 타입의 엔티티를 반환합니다.
+	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
+	 * 만약 게임모드 종류가 팀 게임이고 중심 엔티티와 탐색된 엔티티가 플레이어일 경우 둘이 동일한 팀에 소속되었다면 포함하지 않습니다.
+	 * 가장 가까이에 있는 특정 타입의 엔티티를 찾을 수 없을 경우 null을 반환합니다.
+	 * @param entityType	탐색할 엔티티 타입
+	 * @param center		중심 엔티티 (엔티티의 위치가 중점)
+	 * @return				중점에서 가장 가까이에 있는 특정 타입의 엔티티
+	 */
+	public static <E extends Entity> E getNearestEntity(Class<E> entityType, Entity center) {
+		return getNearestEntity(entityType, center.getLocation(), e -> {
+			if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
+				AbstractGame game = AbilityWarThread.getGame();
+				Player p = (Player) e;
+				if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p))  || !game.getParticipant(p).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (game instanceof TeamGame && center instanceof Player) {
+					Participant participant = game.getParticipant(p);
+					Participant centerParticipant = game.getParticipant((Player) center);
+					TeamGame teamGame = (TeamGame) game;
+					if (centerParticipant != null) {
+						if (teamGame.hasTeam(participant) && teamGame.hasTeam(centerParticipant) && (teamGame.getTeam(participant).equals(teamGame.getTeam(centerParticipant)))) {
+							return false;
+						}
+					}
+				}
+			}
+			return true;
+		});
+	}
+
+	/**
+	 * 중심 플레이어에게서 가장 가까이에 있는 플레이어를 반환합니다.
+	 * 만약 탐색된 플레이어가 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
+	 * 만약 게임모드 종류가 팀 게임일 경우 탐색된 플레이어와 중심 플레이어가 동일한 팀에 소속되었다면 포함하지 않습니다.
+	 * 가장 가까이에 있는 플레이어를 찾을 수 없을 경우 null을 반환합니다.
+	 * @param center		중심 플레이어 (플레이어의 위치가 중점)
+	 * @return				중점에서 가장 가까이에 있는 플레이어
+	 */
 	public static Player getNearestPlayer(Player center) {
 		return getNearestEntity(Player.class, center);
 	}
 
 
+	private static Collection<Entity> collectEntities(Location location, double horizontal) {
+		ArrayList<Entity> entities = new ArrayList<>();
+		World world = location.getWorld();
+		Chunk leftTop = location.clone().add(horizontal, 0, -horizontal).getChunk();
+		Chunk rightBottom = location.clone().add(-horizontal, 0, horizontal).getChunk();
+		for (int x = rightBottom.getX(); x <= leftTop.getX(); x++) {
+			for (int z = leftTop.getZ(); z <= rightBottom.getZ(); z++) {
+				entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
+			}
+		}
+		return entities;
+	}
+
+	/**
+	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
+	 * @param entityType	탐색할 엔티티 타입
+	 * @param location		중점
+	 * @param horizontal	수평 거리
+	 * @param vertical		수직 거리
+	 * @param predicate		커스텀 조건
+	 * @return				주변에 있는 특정 타입의 엔티티 목록
+	 */
 	public static <T extends Entity> Collection<T> getNearbyEntities(Class<T> entityType, Location location, double horizontal, double vertical, Predicate<T> predicate) {
 		ArrayList<T> entities = new ArrayList<>();
 		for (Entity e : collectEntities(location, horizontal)) {
@@ -198,27 +249,25 @@ public class LocationUtil {
 		return entities;
 	}
 
-	public static Collection<Entity> collectEntities(Location location, double horizontal) {
-		ArrayList<Entity> entities = new ArrayList<>();
-		World world = location.getWorld();
-		Chunk leftTop = location.clone().add(horizontal, 0, -horizontal).getChunk();
-		Chunk rightBottom = location.clone().add(-horizontal, 0, horizontal).getChunk();
-		for (int x = rightBottom.getX(); x <= leftTop.getX(); x++) {
-			for (int z = leftTop.getZ(); z <= rightBottom.getZ(); z++) {
-				entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
-			}
-		}
-		return entities;
-	}
-
-	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> clazz, Entity center, double horizontal, double vertical) {
-		return getNearbyEntities(clazz, center.getLocation(), horizontal, vertical, e -> {
+	/**
+	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
+	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
+	 * 만약 게임모드 종류가 팀 게임이고 중심 엔티티와 탐색된 엔티티가 플레이어일 경우 둘이 동일한 팀에 소속되었다면 포함하지 않습니다.
+	 * @param entityType	탐색할 엔티티 타입
+	 * @param center		중심 엔티티 (엔티티의 위치가 중점)
+	 * @param horizontal	수평 거리
+	 * @param vertical		수직 거리
+	 * @return				주변에 있는 특정 타입의 엔티티 목록
+	 */
+	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> entityType, Entity center, double horizontal, double vertical) {
+		return getNearbyEntities(entityType, center.getLocation(), horizontal, vertical, e -> {
 			if (e.equals(center)) return false;
 			if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 				AbstractGame game = AbilityWarThread.getGame();
 				Player p = (Player) e;
-				if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p)))
+				if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p)) || !game.getParticipant(p).attributes().TARGETABLE.getValue()) {
 					return false;
+				}
 				if (game instanceof TeamGame && center instanceof Player) {
 					Participant participant = game.getParticipant(p);
 					TeamGame teamGame = (TeamGame) game;
@@ -232,12 +281,21 @@ public class LocationUtil {
 		});
 	}
 
-	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> clazz, Location center, double horizontal, double vertical) {
-		return getNearbyEntities(clazz, center, horizontal, vertical, e -> {
+	/**
+	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
+	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
+	 * @param entityType	탐색할 엔티티 타입
+	 * @param center		중점
+	 * @param horizontal	수평 거리
+	 * @param vertical		수직 거리
+	 * @return				주변에 있는 특정 타입의 엔티티 목록
+	 */
+	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> entityType, Location center, double horizontal, double vertical) {
+		return getNearbyEntities(entityType, center, horizontal, vertical, e -> {
 			if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 				AbstractGame game = AbilityWarThread.getGame();
 				Player p = (Player) e;
-				return game.isParticipating(p) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(p));
+				return game.isParticipating(p) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(p)) && game.getParticipant(p).attributes().TARGETABLE.getValue();
 			}
 			return true;
 		});

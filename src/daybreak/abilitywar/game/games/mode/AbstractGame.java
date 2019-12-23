@@ -304,7 +304,8 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
         }
 
 		public class Attributes {
-		    public final Attribute<Boolean> TEAM_CHAT = new Attribute<>(false);
+			public final Attribute<Boolean> TEAM_CHAT = new Attribute<>(false);
+			public final Attribute<Boolean> TARGETABLE = new Attribute<>(true);
         }
 
         public class Attribute<T> {
