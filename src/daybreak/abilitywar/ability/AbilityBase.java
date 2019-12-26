@@ -119,7 +119,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 			SubscribeEvent subscribeEvent = pair.getRight();
 			if (subscribeEvent.onlyRelevant() && ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
 					|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
-					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer())))) return;
+					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))))
+				return;
 			Method method = pair.getLeft();
 			method.setAccessible(true);
 			try {
@@ -135,7 +136,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 * 액티브 스킬 발동을 위해 사용됩니다.
 	 *
 	 * @param materialType 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
-	 * @param ct 클릭의 종류
+	 * @param ct           클릭의 종류
 	 * @return 능력 발동 여부
 	 */
 	public abstract boolean ActiveSkill(Material materialType, ClickType ct);
@@ -143,8 +144,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 	/**
 	 * 타겟팅 스킬 발동을 위해 사용됩니다.
 	 *
-	 * @param materialType     플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
-	 * @param entity 타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 될 수 있습니다. null 체크가 필요합니다.
+	 * @param materialType 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
+	 * @param entity       타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 될 수 있습니다. null 체크가 필요합니다.
 	 */
 	public abstract void TargetSkill(Material materialType, LivingEntity entity);
 
@@ -270,7 +271,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	}
 
-	public enum ClickType { LEFT_CLICK, RIGHT_CLICK }
+	public enum ClickType {LEFT_CLICK, RIGHT_CLICK}
 
 	/**
 	 * 쿨타임 타이머
