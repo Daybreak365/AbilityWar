@@ -10,7 +10,7 @@ import org.bukkit.event.HandlerList;
 public abstract class GameEvent extends Event {
 
 	private final Game game;
-	
+
 	protected GameEvent(Game game) {
 		this.game = game;
 	}

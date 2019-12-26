@@ -7,13 +7,15 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * 인첸트 라이브러리
+ *
  * @author Daybreak 새벽
  * @version 1.2 (Minecraft 1.14)
  */
 public class EnchantLib {
-	
-	private EnchantLib() {}
-	
+
+	private EnchantLib() {
+	}
+
 	public static Enchants ARROW_DAMAGE = new Enchants("ARROW_DAMAGE", "power", 5);
 	public static Enchants ARROW_FIRE = new Enchants("ARROW_FIRE", "flame", 5);
 	public static Enchants ARROW_INFINITE = new Enchants("ARROW_INFINITE", "infinity", 5);
@@ -51,14 +53,14 @@ public class EnchantLib {
 	public static Enchants THORNS = new Enchants("THORNS", "thorns", 5);
 	public static Enchants VANISHING_CURSE = new Enchants("VANISHING_CURSE", "vanishing_curse", 11);
 	public static Enchants WATER_WORKER = new Enchants("WATER_WORKER", "aqua_affinity", 5);
-	
+
 	public static class Enchants {
 
 		private Enchantment enchantment = null;
-		
+
 		@SuppressWarnings("deprecation")
 		private Enchants(String enchantName, String key, Integer version) {
-			if(ServerVersion.getVersion() >= version) {
+			if (ServerVersion.getVersion() >= version) {
 				if (ServerVersion.getVersion() >= 13) {
 					enchantment = Enchantment.getByKey(NamespacedKey.minecraft(key));
 				} else {
@@ -66,58 +68,62 @@ public class EnchantLib {
 				}
 			}
 		}
-		
+
 		/**
 		 * 아이템에 인첸트를 추가합니다.
-		 * @param item		인첸트를 추가할 아이템
-		 * @param level		인첸트 레벨
+		 *
+		 * @param item  인첸트를 추가할 아이템
+		 * @param level 인첸트 레벨
 		 */
 		public ItemStack addEnchantment(ItemStack item, int level) {
-			if(enchantment != null) {
+			if (enchantment != null) {
 				item.addEnchantment(enchantment, level);
 			}
-			
+
 			return item;
 		}
-		
+
 		/**
 		 * 아이템에 인첸트를 추가합니다.
-		 * @param item		인첸트를 추가할 아이템
-		 * @param level		인첸트 레벨
+		 *
+		 * @param item  인첸트를 추가할 아이템
+		 * @param level 인첸트 레벨
 		 */
 		public ItemStack addUnsafeEnchantment(ItemStack item, int level) {
-			if(enchantment != null) {
+			if (enchantment != null) {
 				item.addUnsafeEnchantment(enchantment, level);
 			}
-			
+
 			return item;
 		}
 
 		/**
 		 * 아이템에서 인첸트를 제거합니다.
-		 * @param item		인첸트를 제거할 아이템
+		 *
+		 * @param item 인첸트를 제거할 아이템
 		 */
 		public ItemStack removeEnchantment(ItemStack item) {
-			if(enchantment != null) {
+			if (enchantment != null) {
 				item.removeEnchantment(enchantment);
 			}
-			
+
 			return item;
 		}
 
 		/**
 		 * 아이템에 부여된 인첸트의 레벨을 확인합니다.
 		 * 현재 서버 버전에서 사용할 수 없는 인첸트일 경우 -1을 반환합니다.
-		 * @param item		인첸트 레벨을 확인할 아이템
+		 *
+		 * @param item 인첸트 레벨을 확인할 아이템
 		 */
 		public int getEnchantmentLevel(ItemStack item) {
-			if(enchantment != null) {
+			if (enchantment != null) {
 				return item.getEnchantmentLevel(enchantment);
 			} else {
 				return -1;
 			}
 		}
-		
+
 	}
 
 }

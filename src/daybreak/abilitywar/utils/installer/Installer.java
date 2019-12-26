@@ -5,6 +5,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.Messager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredListener;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,27 +45,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.event.Event;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredListener;
 
 /**
  * 깃헙 자동 업데이트
+ *
  * @author Daybreak 새벽
  */
 public class Installer {
 
-    private static final Logger logger = Logger.getLogger(Installer.class.getName());
+	private static final Logger logger = Logger.getLogger(Installer.class.getName());
 	private static final JsonParser parser = new JsonParser();
 	private static final Messager messager = new Messager();
 
@@ -76,7 +78,7 @@ public class Installer {
 	public Installer(String author, String repository, Plugin plugin) throws IOException, InterruptedException, ExecutionException {
 		this.pluginVersion = new Version(plugin.getDescription().getVersion());
 		this.plugin = plugin;
-		
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(
 				new URL("https://api.github.com/repos/" + author + "/" + repository + "/releases").openStream(),
 				StandardCharsets.UTF_8));
@@ -85,7 +87,7 @@ public class Installer {
 		while ((line = br.readLine()) != null) {
 			result = result.concat(line);
 		}
-		
+
 		HashMap<ExecutorService, Future<UpdateObject>> tasks = new HashMap<>();
 		for (JsonElement element : parser.parse(result).getAsJsonArray()) {
 			ExecutorService service = Executors.newSingleThreadExecutor();
@@ -126,16 +128,16 @@ public class Installer {
 			while ((Count = input.read(data)) >= 0) {
 				output.write(data, 0, Count);
 			}
-			
+
 			output.close();
-			
+
 			if (!sender.equals(Bukkit.getConsoleSender())) {
 				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
 			}
 			messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
 			load(plugin);
 		} catch (IOException ex) {
-		    logger.log(Level.SEVERE, "설치 도중 오류가 발생하였습니다.");
+			logger.log(Level.SEVERE, "설치 도중 오류가 발생하였습니다.");
 		}
 	}
 
@@ -219,14 +221,16 @@ public class Installer {
 							pluginFile = f;
 							break;
 						}
-					} catch (InvalidDescriptionException e) {}
+					} catch (InvalidDescriptionException e) {
+					}
 				}
 			}
 		}
 
 		try {
 			target = Bukkit.getPluginManager().loadPlugin(pluginFile);
-		} catch (InvalidDescriptionException | InvalidPluginException e) {}
+		} catch (InvalidDescriptionException | InvalidPluginException e) {
+		}
 
 		target.onLoad();
 		Bukkit.getPluginManager().enablePlugin(target);
@@ -297,7 +301,7 @@ public class Installer {
 
 		if (listeners != null && reloadlisteners) {
 			for (SortedSet<RegisteredListener> set : listeners.values()) {
-				for (Iterator<RegisteredListener> it = set.iterator(); it.hasNext();) {
+				for (Iterator<RegisteredListener> it = set.iterator(); it.hasNext(); ) {
 					RegisteredListener value = it.next();
 					if (value.getPlugin() == plugin) {
 						it.remove();
@@ -307,7 +311,7 @@ public class Installer {
 		}
 
 		if (commandMap != null) {
-			for (Iterator<Map.Entry<String, Command>> it = commands.entrySet().iterator(); it.hasNext();) {
+			for (Iterator<Map.Entry<String, Command>> it = commands.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry<String, Command> entry = it.next();
 				if (entry.getValue() instanceof PluginCommand) {
 					PluginCommand c = (PluginCommand) entry.getValue();
@@ -339,7 +343,8 @@ public class Installer {
 
 			try {
 				((URLClassLoader) cl).close();
-			} catch (IOException ex) {}
+			} catch (IOException ex) {
+			}
 
 		}
 	}

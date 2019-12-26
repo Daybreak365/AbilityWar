@@ -3,6 +3,7 @@ package daybreak.abilitywar.utils.database;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * 모장 API Wrapper
+ *
  * @author Daybreak 새벽
  */
 public class MojangAPI {

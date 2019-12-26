@@ -19,12 +19,13 @@ import java.util.List;
 
 /**
  * 게임 모드
- * 
+ *
  * @author Daybreak 새벽
  */
 public class GameMode {
 
-	private GameMode() {}
+	private GameMode() {
+	}
 
 	private static ArrayList<Class<? extends AbstractGame>> modeList = new ArrayList<>();
 

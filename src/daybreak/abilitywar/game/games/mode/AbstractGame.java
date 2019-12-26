@@ -36,8 +36,11 @@ import static daybreak.abilitywar.utils.Validate.notNull;
 
 public abstract class AbstractGame extends OverallTimer implements Listener, EffectManager.Handler, CommandHandler {
 
-	public interface Observer { void update(GAME_UPDATE update); }
-	public enum GAME_UPDATE { START, END }
+	public interface Observer {
+		void update(GAME_UPDATE update);
+	}
+
+	public enum GAME_UPDATE {START, END}
 
 	private final ArrayList<Observer> observers = new ArrayList<>();
 
@@ -168,7 +171,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 	public class Participant implements Listener, Observer {
 
-	    private final Attributes attributes = new Attributes();
+		private final Attributes attributes = new Attributes();
 		private Player player;
 
 		protected Participant(Player player) {
@@ -301,14 +304,14 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		}
 
 		public Attributes attributes() {
-		    return attributes;
-        }
+			return attributes;
+		}
 
 		public class Attributes {
 			public final Attribute<Boolean> TEAM_CHAT = new Attribute<>(false);
 			public final Attribute<Boolean> TARGETABLE = new Attribute<>(true);
 			public final SetAttribute<Material> SKILL_MATERIALS = new SetAttribute<>(Material.IRON_INGOT, Material.GOLD_INGOT);
-        }
+		}
 
 		public class Attribute<T> {
 
@@ -360,7 +363,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 		}
 
-    }
+	}
 
 	private final ArrayList<TimerBase> timerTasks = new ArrayList<>();
 

@@ -10,15 +10,16 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.tItle.Title;
+import org.bukkit.ChatColor;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.ChatColor;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
-import org.bukkit.entity.Player;
 
 public class AbilityChanger {
 
@@ -94,6 +95,7 @@ public class AbilityChanger {
 				Title packet = new Title(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
 				packet.sendTo(p);
 			}
+
 			@Override
 			protected void onEnd() {
 				Title packet = new Title("", "", 0, 1, 0);

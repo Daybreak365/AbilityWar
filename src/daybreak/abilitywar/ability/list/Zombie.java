@@ -91,6 +91,7 @@ public class Zombie extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
 
 }

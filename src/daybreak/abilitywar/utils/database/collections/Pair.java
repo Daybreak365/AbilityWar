@@ -2,8 +2,9 @@ package daybreak.abilitywar.utils.database.collections;
 
 /**
  * 두 개의 자료를 동시에 가지고 있는 구조
- * @param <L>	첫 번째 자료
- * @param <R>	두 번째 자료
+ *
+ * @param <L> 첫 번째 자료
+ * @param <R> 두 번째 자료
  */
 public class Pair<L, R> {
 

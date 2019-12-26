@@ -20,12 +20,12 @@ public class Hermit extends AbilityBase {
 
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Hermit.class, "Distance", 15,
 			"# 몇칸 이내에 플레이어가 들어왔을 때 알림을 띄울지 설정합니다.") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 1;
 		}
-		
+
 	};
 
 	public Hermit(Participant participant) {
@@ -40,12 +40,12 @@ public class Hermit extends AbilityBase {
 	}
 
 	private final int distance = DistanceConfig.getValue();
-	
+
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		Participant p = getGame().getParticipant(e.getPlayer());
-		if(p != null && !getParticipant().equals(p) && getPlayer().getWorld().equals(p.getPlayer().getWorld())) {
-			if(!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), distance) &&
+		if (p != null && !getParticipant().equals(p) && getPlayer().getWorld().equals(p.getPlayer().getWorld())) {
+			if (!LocationUtil.isInCircle(getPlayer().getLocation(), e.getFrom(), distance) &&
 					LocationUtil.isInCircle(getPlayer().getLocation(), e.getTo(), distance)) {
 				Title title = new Title(ChatColor.translateAlternateColorCodes('&', "&8헤르밋"),
 						ChatColor.translateAlternateColorCodes('&', "&e" + p.getPlayer().getName() + " &f접근중"), 5, 30, 5);
@@ -57,6 +57,7 @@ public class Hermit extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

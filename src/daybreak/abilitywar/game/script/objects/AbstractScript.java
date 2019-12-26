@@ -28,10 +28,12 @@ public abstract class AbstractScript {
 		if (timer == null || !timer.isRunning()) {
 			timer = game.new TimerBase() {
 				int count = loopCount;
+
 				@Override
 				public void onStart() {
-					if(count > 0) count--;
+					if (count > 0) count--;
 				}
+
 				@Override
 				protected void onProcess(int count) {
 					String msg = getPreRunMessage(count);
@@ -44,6 +46,7 @@ public abstract class AbstractScript {
 						}
 					}
 				}
+
 				@Override
 				public void onEnd() {
 					Execute(game);
@@ -54,8 +57,8 @@ public abstract class AbstractScript {
 					}
 
 					if (isLoop()) {
-						if(count > -1) {
-							if(count > 0) {
+						if (count > -1) {
+							if (count > 0) {
 								this.startTimer();
 							}
 						} else {

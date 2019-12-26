@@ -43,39 +43,39 @@ public class SquirtGun extends AbilityBase {
 
 	private final CooldownTimer bombCool = new CooldownTimer(30, "물폭탄");
 	private final CooldownTimer spongeCool = new CooldownTimer(15, "스펀지");
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if(materialType.equals(Material.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!bombCool.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!bombCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
-					for(int i = 2; i > 0; i--)
-					for(Location l : LocationUtil.getSphere(center, i, 40)) {
-						l.getBlock().setType(Material.WATER);
-					}
-					for(Player p : LocationUtil.getNearbyPlayers(center, 5, 5)) {
-						if(!p.equals(getPlayer())) {
+					for (int i = 2; i > 0; i--)
+						for (Location l : LocationUtil.getSphere(center, i, 40)) {
+							l.getBlock().setType(Material.WATER);
+						}
+					for (Player p : LocationUtil.getNearbyPlayers(center, 5, 5)) {
+						if (!p.equals(getPlayer())) {
 							p.damage(20, getPlayer());
 						}
 					}
-					
+
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
-					
+
 					bombCool.startTimer();
 				}
 			} else {
-				if(!spongeCool.isCooldown()) {
+				if (!spongeCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
-					for(int i = 10; i > 0; i--)
-					for(Location l : LocationUtil.getSphere(center, i, 40)) {
-						if(l.getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && l.getBlock().getType().equals(Material.valueOf("STATIONARY_WATER")))) {
-							l.getBlock().setType(Material.AIR);
+					for (int i = 10; i > 0; i--)
+						for (Location l : LocationUtil.getSphere(center, i, 40)) {
+							if (l.getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && l.getBlock().getType().equals(Material.valueOf("STATIONARY_WATER")))) {
+								l.getBlock().setType(Material.AIR);
+							}
 						}
-					}
-					
+
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
-					
+
 					spongeCool.startTimer();
 				}
 			}
@@ -84,66 +84,67 @@ public class SquirtGun extends AbilityBase {
 	}
 
 	private final CooldownTimer gunCool = new CooldownTimer(3, "물총");
-	
+
 	private final ArrayList<Arrow> arrows = new ArrayList<>();
-	
+
 	private final Timer passive = new Timer() {
 		@Override
 		protected void onProcess(int count) {
-			for(Arrow a : arrows) {
+			for (Arrow a : arrows) {
 				ParticleLib.DRIP_WATER.spawnParticle(a.getLocation(), 10, 1, 1, 1);
 			}
 			PotionEffects.NIGHT_VISION.addPotionEffect(getPlayer(), 400, 0, true);
 		}
 	}.setPeriod(3);
-	
+
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if(e.getEntity().getShooter().equals(getPlayer()) && e.getEntity() instanceof Arrow) {
+		if (e.getEntity().getShooter().equals(getPlayer()) && e.getEntity() instanceof Arrow) {
 			Arrow a = (Arrow) e.getEntity();
 			arrows.add(a);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
-		if(e.getEntity() instanceof Arrow) {
+		if (e.getEntity() instanceof Arrow) {
 			arrows.remove(e.getEntity());
-			if(e.getEntity().getShooter().equals(getPlayer())) {
-				if(!gunCool.isCooldown()) {
-					if(e.getHitEntity() != null && e.getHitEntity() instanceof Damageable) {
+			if (e.getEntity().getShooter().equals(getPlayer())) {
+				if (!gunCool.isCooldown()) {
+					if (e.getHitEntity() != null && e.getHitEntity() instanceof Damageable) {
 						((Damageable) e.getHitEntity()).damage(200, getPlayer());
 					}
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 					Location center = e.getHitEntity() != null ? e.getHitEntity().getLocation() : e.getHitBlock().getLocation();
-					for(Location l : LocationUtil.getRandomLocations(center, 10, 20)) {
+					for (Location l : LocationUtil.getRandomLocations(center, 10, 20)) {
 						l.getBlock().setType(Material.WATER);
 					}
-					
+
 					gunCool.startTimer();
 				}
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if(e.getPlayer().equals(getPlayer())
-				&& (e.getFrom().getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && e.getTo().getBlock().getType().equals(Material.valueOf("STATIONARY_WATER")))) 
-						& getPlayer().isSneaking()) {
+		if (e.getPlayer().equals(getPlayer())
+				&& (e.getFrom().getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && e.getTo().getBlock().getType().equals(Material.valueOf("STATIONARY_WATER"))))
+				& getPlayer().isSneaking()) {
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.3));
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if(e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL)) {
+		if (e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL)) {
 			e.setDamage(e.getDamage() / 5);
 		}
 	}
-	
+
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
 
 	@SubscribeEvent(onlyRelevant = true)
 	public void onRestrictionClear(AbilityRestrictionClearEvent e) {

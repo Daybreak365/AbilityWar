@@ -1,35 +1,37 @@
-/** MIT 라이선스
-* 
-* Copyright ⓒ 2019 DayBreak
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"),
-* to deal in the Software without restriction, including without limitation 
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-* and/or sell copies of the Software, and to permit persons to whom the 
-* Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included 
-* in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-* OF * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-* DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-* ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-* DEALINGS IN THE SOFTWARE.
-**/
+/**
+ * MIT 라이선스
+ * <p>
+ * Copyright ⓒ 2019 DayBreak
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * <p>
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ **/
 
 package daybreak.abilitywar.utils.library;
 
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Instrument;
 import org.bukkit.Note;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * 소리 라이브러리
@@ -39,7 +41,8 @@ import org.bukkit.entity.Player;
  */
 public class SoundLib {
 
-	private SoundLib() {}
+	private SoundLib() {
+	}
 
 	public static final Sounds AMBIENT_CAVE = new Sounds("AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENT_CAVE", "AMBIENCE_CAVE");
 	public static final Sounds AMBIENT_UNDERWATER_ENTER = new Sounds("AMBIENT_UNDERWATER_ENTER", "AMBIENT_UNDERWATER_ENTER", "", "", "", "", "");
@@ -836,44 +839,44 @@ public class SoundLib {
 	public static final Sounds UI_LOOM_TAKE_RESULT = new Sounds("UI_LOOM_TAKE_RESULT", "", "", "", "", "", "");
 	public static final Sounds UI_STONECUTTER_SELECT_RECIPE = new Sounds("UI_STONECUTTER_SELECT_RECIPE", "", "", "", "", "", "");
 	public static final Sounds UI_STONECUTTER_TAKE_RESULT = new Sounds("UI_STONECUTTER_TAKE_RESULT", "", "", "", "", "", "");
-	
+
 	public static class Sounds {
 
 		private String soundName = "";
 		private Sound sound = null;
 
 		private Sounds(String Name14, String Name13, String Name12, String Name11, String Name10, String Name9,
-				String Name8) {
+					   String Name8) {
 			switch (ServerVersion.getVersion()) {
-			case 14:
-				soundName = Name14;
-				sound = getSound();
-				break;
-			case 13:
-				soundName = Name13;
-				sound = getSound();
-				break;
-			case 12:
-				soundName = Name12;
-				sound = getSound();
-				break;
-			case 11:
-				soundName = Name11;
-				sound = getSound();
-				break;
-			case 10:
-				soundName = Name10;
-				sound = getSound();
-				break;
-			case 9:
-				soundName = Name9;
-				sound = getSound();
-				break;
-			case 8:
+				case 14:
+					soundName = Name14;
+					sound = getSound();
+					break;
+				case 13:
+					soundName = Name13;
+					sound = getSound();
+					break;
+				case 12:
+					soundName = Name12;
+					sound = getSound();
+					break;
+				case 11:
+					soundName = Name11;
+					sound = getSound();
+					break;
+				case 10:
+					soundName = Name10;
+					sound = getSound();
+					break;
+				case 9:
+					soundName = Name9;
+					sound = getSound();
+					break;
+				case 8:
 				case 7:
 					soundName = Name8;
-				sound = getSound();
-				break;
+					sound = getSound();
+					break;
 			}
 		}
 
@@ -899,7 +902,7 @@ public class SoundLib {
 		}
 
 		public void playSound(Iterable<Player> players, float volume, float pitch) {
-			for(Player p : players) {
+			for (Player p : players) {
 				playSound(p, volume, pitch);
 			}
 		}
@@ -975,7 +978,7 @@ public class SoundLib {
 	 * 마인크래프트 버전 1.9 ↑
 	 */
 	public static final Instruments PIANO = new Instruments("PIANO", "PIANO", "PIANO");
-	
+
 	/**
 	 * 마인크래프트 버전 1.14 ↑
 	 */
@@ -1003,18 +1006,23 @@ public class SoundLib {
 
 		private Instruments(String Name14, String highVersionName, String lowVersionName) {
 			switch (ServerVersion.getVersion()) {
-			case 14:
-				instrumentName = Name14;
-				instrument = getInstrument();
-				break;
-			case 13: case 12:
-				instrumentName = highVersionName;
-				instrument = getInstrument();
-				break;
-			case 11: case 10: case 9: case 8: case 7:
-				instrumentName = lowVersionName;
-				instrument = getInstrument();
-				break;
+				case 14:
+					instrumentName = Name14;
+					instrument = getInstrument();
+					break;
+				case 13:
+				case 12:
+					instrumentName = highVersionName;
+					instrument = getInstrument();
+					break;
+				case 11:
+				case 10:
+				case 9:
+				case 8:
+				case 7:
+					instrumentName = lowVersionName;
+					instrument = getInstrument();
+					break;
 			}
 		}
 

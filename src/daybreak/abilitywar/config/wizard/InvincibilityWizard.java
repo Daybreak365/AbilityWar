@@ -69,33 +69,33 @@ public class InvincibilityWizard extends SettingWizard {
 		if (currentItem != null) {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
-				case "§b초반 무적":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_ENABLE,
-							!Settings.InvincibilitySettings.isEnabled());
-					Show();
-					break;
-				case "§b초반 무적 시간":
-					int duration = Settings.InvincibilitySettings.getDuration();
-					switch (e.getClick()) {
-					case RIGHT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 1);
+					case "§b초반 무적":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_ENABLE,
+								!Settings.InvincibilitySettings.isEnabled());
+						Show();
 						break;
-					case SHIFT_RIGHT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 5);
+					case "§b초반 무적 시간":
+						int duration = Settings.InvincibilitySettings.getDuration();
+						switch (e.getClick()) {
+							case RIGHT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 1);
+								break;
+							case SHIFT_RIGHT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 5);
+								break;
+							case LEFT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
+										duration >= 2 ? duration - 1 : 1);
+								break;
+							case SHIFT_LEFT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
+										duration >= 6 ? duration - 5 : 1);
+								break;
+							default:
+								break;
+						}
+						Show();
 						break;
-					case LEFT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
-								duration >= 2 ? duration - 1 : 1);
-						break;
-					case SHIFT_LEFT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
-								duration >= 6 ? duration - 5 : 1);
-						break;
-					default:
-						break;
-					}
-					Show();
-					break;
 				}
 			}
 		}

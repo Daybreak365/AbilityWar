@@ -85,10 +85,10 @@ public class Flora extends AbilityBase {
 					if (type.equals(EffectType.SPEED)) {
 						PotionEffects.SPEED.addPotionEffect(p, 20, 2, true);
 					} else {
-						if(!p.isDead()) {
+						if (!p.isDead()) {
 							double maxHealth = VersionUtil.getMaxHealth(p);
 
-							if(p.getHealth() < maxHealth) {
+							if (p.getHealth() < maxHealth) {
 								p.setHealth(Math.min(p.getHealth() + 0.05, 20.0));
 							}
 						}

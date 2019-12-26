@@ -1,9 +1,9 @@
 package daybreak.abilitywar.game.manager.gui;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import daybreak.abilitywar.utils.installer.Installer;
+import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
+import daybreak.abilitywar.utils.installer.Version;
+import daybreak.abilitywar.utils.library.item.MaterialLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,10 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import daybreak.abilitywar.utils.installer.Installer;
-import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
-import daybreak.abilitywar.utils.installer.Version;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class InstallGUI implements Listener {
 
@@ -49,7 +48,7 @@ public class InstallGUI implements Listener {
 			Version version = entry.getKey();
 			UpdateObject update = entry.getValue();
 			ItemStack is;
-			if(installer.getPluginVersion().equals(version)) {
+			if (installer.getPluginVersion().equals(version)) {
 				is = MaterialLib.ENCHANTED_BOOK.getItem();
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + version.getVersionString()));
@@ -117,22 +116,22 @@ public class InstallGUI implements Listener {
 					&& e.getCurrentItem().getItemMeta().hasDisplayName()) {
 				String displayName = e.getCurrentItem().getItemMeta().getDisplayName();
 				switch (displayName) {
-				case "§b이전 페이지":
-					openGUI(playerPage - 1);
-					break;
-				case "§b다음 페이지":
-					openGUI(playerPage + 1);
-					break;
-				default:
-					if (e.getCurrentItem().getType().equals(Material.BOOK)) {
-						String strip = ChatColor.stripColor(displayName);
-						Version version = installer.getVersion(strip);
-						if (version != null) {
-							p.closeInventory();
-							installer.Install(p, versions.get(version));
+					case "§b이전 페이지":
+						openGUI(playerPage - 1);
+						break;
+					case "§b다음 페이지":
+						openGUI(playerPage + 1);
+						break;
+					default:
+						if (e.getCurrentItem().getType().equals(Material.BOOK)) {
+							String strip = ChatColor.stripColor(displayName);
+							Version version = installer.getVersion(strip);
+							if (version != null) {
+								p.closeInventory();
+								installer.Install(p, versions.get(version));
+							}
 						}
-					}
-					break;
+						break;
 				}
 			}
 		}

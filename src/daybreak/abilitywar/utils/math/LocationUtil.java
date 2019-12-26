@@ -26,14 +26,15 @@ import java.util.function.Predicate;
  */
 public class LocationUtil {
 
-	private LocationUtil() {}
+	private LocationUtil() {
+	}
 
 	/**
 	 * {@link Location}이 범위 안에 있는지 확인합니다.
 	 *
-	 * @param center      중심
-	 * @param location    확인할 위치
-	 * @param radius      원의 반지름
+	 * @param center   중심
+	 * @param location 확인할 위치
+	 * @param radius   원의 반지름
 	 */
 	public static boolean isInCircle(Location center, Location location, double radius) {
 		return center.getWorld().equals(location.getWorld()) && center.distanceSquared(location) <= (radius * radius);
@@ -42,9 +43,9 @@ public class LocationUtil {
 	/**
 	 * {@link Location}이 범위 안에 있는지 확인합니다.
 	 *
-	 * @param center      중심
-	 * @param location    확인할 위치
-	 * @param radius      원의 반지름
+	 * @param center   중심
+	 * @param location 확인할 위치
+	 * @param radius   원의 반지름
 	 */
 	public static boolean isInCircle(Location center, Location location, int radius) {
 		return center.getWorld().equals(location.getWorld()) && center.distanceSquared(location) <= (radius * radius);
@@ -53,10 +54,10 @@ public class LocationUtil {
 	/**
 	 * 3차원 공간에서 범위 안에 있는 블록들을 {@link ArrayList}로  반환합니다.
 	 *
-	 * @param center        중심
-	 * @param radius    	범위
-	 * @param hollow        참일 경우 바깥 부분의 블록들만 가져옵니다.
-	 * @param alsoAir 		참일 경우 블록이 비어있어도 가져옵니다.
+	 * @param center  중심
+	 * @param radius  범위
+	 * @param hollow  참일 경우 바깥 부분의 블록들만 가져옵니다.
+	 * @param alsoAir 참일 경우 블록이 비어있어도 가져옵니다.
 	 */
 	public static ArrayList<Block> getBlocks3D(Location center, int radius, boolean hollow, boolean alsoAir) {
 		ArrayList<Block> blocks = new ArrayList<>();
@@ -143,10 +144,11 @@ public class LocationUtil {
 	/**
 	 * 중점에서 가장 가까이에 있는 특정 타입의 엔티티를 반환합니다.
 	 * 가장 가까이에 있는 특정 타입의 엔티티를 찾을 수 없을 경우 null을 반환합니다.
-	 * @param entityType	탐색할 엔티티 타입
-	 * @param center		중점
-	 * @param predicate		커스텀 조건
-	 * @return				중점에서 가장 가까이에 있는 특정 타입의 엔티티
+	 *
+	 * @param entityType 탐색할 엔티티 타입
+	 * @param center     중점
+	 * @param predicate  커스텀 조건
+	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Entity> T getNearestEntity(Class<T> entityType, Location center, Predicate<T> predicate) {
@@ -173,9 +175,10 @@ public class LocationUtil {
 	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
 	 * 만약 게임모드 종류가 팀 게임이고 중심 엔티티와 탐색된 엔티티가 플레이어일 경우 둘이 동일한 팀에 소속되었다면 포함하지 않습니다.
 	 * 가장 가까이에 있는 특정 타입의 엔티티를 찾을 수 없을 경우 null을 반환합니다.
-	 * @param entityType	탐색할 엔티티 타입
-	 * @param center		중심 엔티티 (엔티티의 위치가 중점)
-	 * @return				중점에서 가장 가까이에 있는 특정 타입의 엔티티
+	 *
+	 * @param entityType 탐색할 엔티티 타입
+	 * @param center     중심 엔티티 (엔티티의 위치가 중점)
+	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
 	 */
 	public static <E extends Entity> E getNearestEntity(Class<E> entityType, Entity center) {
 		return getNearestEntity(entityType, center.getLocation(), e -> {
@@ -183,7 +186,7 @@ public class LocationUtil {
 			if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 				AbstractGame game = AbilityWarThread.getGame();
 				Player p = (Player) e;
-				if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p))  || !game.getParticipant(p).attributes().TARGETABLE.getValue()) {
+				if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p)) || !game.getParticipant(p).attributes().TARGETABLE.getValue()) {
 					return false;
 				}
 				if (game instanceof TeamGame && center instanceof Player) {
@@ -206,8 +209,9 @@ public class LocationUtil {
 	 * 만약 탐색된 플레이어가 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
 	 * 만약 게임모드 종류가 팀 게임일 경우 탐색된 플레이어와 중심 플레이어가 동일한 팀에 소속되었다면 포함하지 않습니다.
 	 * 가장 가까이에 있는 플레이어를 찾을 수 없을 경우 null을 반환합니다.
-	 * @param center		중심 플레이어 (플레이어의 위치가 중점)
-	 * @return				중점에서 가장 가까이에 있는 플레이어
+	 *
+	 * @param center 중심 플레이어 (플레이어의 위치가 중점)
+	 * @return 중점에서 가장 가까이에 있는 플레이어
 	 */
 	public static Player getNearestPlayer(Player center) {
 		return getNearestEntity(Player.class, center);
@@ -229,12 +233,13 @@ public class LocationUtil {
 
 	/**
 	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
-	 * @param entityType	탐색할 엔티티 타입
-	 * @param location		중점
-	 * @param horizontal	수평 거리
-	 * @param vertical		수직 거리
-	 * @param predicate		커스텀 조건
-	 * @return				주변에 있는 특정 타입의 엔티티 목록
+	 *
+	 * @param entityType 탐색할 엔티티 타입
+	 * @param location   중점
+	 * @param horizontal 수평 거리
+	 * @param vertical   수직 거리
+	 * @param predicate  커스텀 조건
+	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
 	public static <T extends Entity> Collection<T> getNearbyEntities(Class<T> entityType, Location location, double horizontal, double vertical, Predicate<T> predicate) {
 		ArrayList<T> entities = new ArrayList<>();
@@ -254,11 +259,12 @@ public class LocationUtil {
 	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
 	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
 	 * 만약 게임모드 종류가 팀 게임이고 중심 엔티티와 탐색된 엔티티가 플레이어일 경우 둘이 동일한 팀에 소속되었다면 포함하지 않습니다.
-	 * @param entityType	탐색할 엔티티 타입
-	 * @param center		중심 엔티티 (엔티티의 위치가 중점)
-	 * @param horizontal	수평 거리
-	 * @param vertical		수직 거리
-	 * @return				주변에 있는 특정 타입의 엔티티 목록
+	 *
+	 * @param entityType 탐색할 엔티티 타입
+	 * @param center     중심 엔티티 (엔티티의 위치가 중점)
+	 * @param horizontal 수평 거리
+	 * @param vertical   수직 거리
+	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
 	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> entityType, Entity center, double horizontal, double vertical) {
 		return getNearbyEntities(entityType, center.getLocation(), horizontal, vertical, e -> {
@@ -285,11 +291,12 @@ public class LocationUtil {
 	/**
 	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
 	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
-	 * @param entityType	탐색할 엔티티 타입
-	 * @param center		중점
-	 * @param horizontal	수평 거리
-	 * @param vertical		수직 거리
-	 * @return				주변에 있는 특정 타입의 엔티티 목록
+	 *
+	 * @param entityType 탐색할 엔티티 타입
+	 * @param center     중점
+	 * @param horizontal 수평 거리
+	 * @param vertical   수직 거리
+	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
 	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> entityType, Location center, double horizontal, double vertical) {
 		return getNearbyEntities(entityType, center, horizontal, vertical, e -> {

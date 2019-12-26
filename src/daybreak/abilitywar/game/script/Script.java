@@ -11,6 +11,8 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
 import daybreak.abilitywar.utils.database.FileManager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import org.bukkit.ChatColor;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,18 +20,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.bukkit.ChatColor;
-
 
 import static daybreak.abilitywar.utils.Validate.notNull;
 
 /**
  * 스크립트 관리 클래스
+ *
  * @author Daybreak 새벽
  */
 public class Script {
 
-	private Script() {}
+	private Script() {
+	}
 
 	private static final Messager messager = new Messager();
 
@@ -65,7 +67,8 @@ public class Script {
 			try {
 				AbstractScript script = Load(file);
 				scripts.add(script);
-			} catch (ScriptException ignore) {}
+			} catch (ScriptException ignore) {
+			}
 		}
 	}
 
@@ -73,7 +76,7 @@ public class Script {
 
 	/**
 	 * 스크립트 등록
-	 * 
+	 *
 	 * @throws IllegalArgumentException 등록하려는 스크립트 클래스의 이름이 다른 스크립트 클래스가 이미 사용하고 있는
 	 *                                  이름일 경우, 이미 등록된 스크립트 클래스일 경우
 	 */

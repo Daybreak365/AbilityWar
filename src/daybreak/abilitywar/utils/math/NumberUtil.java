@@ -2,12 +2,14 @@ package daybreak.abilitywar.utils.math;
 
 /**
  * Number Util
+ *
  * @author Daybreak 새벽
  */
 public class NumberUtil {
 
-	private NumberUtil() {}
-	
+	private NumberUtil() {
+	}
+
 	public static boolean isInt(String s) {
 		boolean isInt = true;
 		try {
@@ -32,7 +34,7 @@ public class NumberUtil {
 	}
 
 	public static int[] parseTime(int seconds) {
-        int[] time = new int[2];
+		int[] time = new int[2];
 		time[0] = seconds / 60;
 		seconds -= time[0] * 60;
 		time[1] = seconds;

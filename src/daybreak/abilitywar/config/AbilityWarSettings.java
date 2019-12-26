@@ -156,9 +156,17 @@ public class AbilityWarSettings {
 				return getInt(ConfigNodes.GAME_INVINCIBILITY_DURATION);
 			}
 
-			public static boolean isBossbarEnabled() { return getBoolean(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_ENABLE); }
-			public static String getBossbarMessage() { return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_MESSAGE); }
-			public static String getBossbarInfiniteMessage() { return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_INFINITE_MESSAGE); }
+			public static boolean isBossbarEnabled() {
+				return getBoolean(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_ENABLE);
+			}
+
+			public static String getBossbarMessage() {
+				return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_MESSAGE);
+			}
+
+			public static String getBossbarInfiniteMessage() {
+				return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_INFINITE_MESSAGE);
+			}
 		}
 
 		public static boolean getInventoryClear() {

@@ -1,6 +1,5 @@
 package daybreak.abilitywar.utils;
 
-import java.util.Random;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -9,9 +8,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
+import java.util.Random;
+
 public class FireworkUtil {
 
-	private FireworkUtil() {}
+	private FireworkUtil() {
+	}
 
 	private static final Random random = new Random();
 
@@ -45,42 +47,42 @@ public class FireworkUtil {
 
 	private static Color getColor(int color) {
 		switch (color) {
-		case 0:
-			return Color.AQUA;
-		case 1:
-			return Color.BLACK;
-		case 2:
-			return Color.BLUE;
-		case 3:
-			return Color.FUCHSIA;
-		case 4:
-			return Color.GRAY;
-		case 5:
-			return Color.GREEN;
-		case 6:
-			return Color.LIME;
-		case 7:
-			return Color.MAROON;
-		case 8:
-			return Color.NAVY;
-		case 9:
-			return Color.OLIVE;
-		case 10:
-			return Color.ORANGE;
-		case 11:
-			return Color.PURPLE;
-		case 12:
-			return Color.RED;
-		case 13:
-			return Color.SILVER;
-		case 14:
-			return Color.TEAL;
-		case 15:
-			return Color.WHITE;
-		case 16:
-			return Color.YELLOW;
-		default:
-			return null;
+			case 0:
+				return Color.AQUA;
+			case 1:
+				return Color.BLACK;
+			case 2:
+				return Color.BLUE;
+			case 3:
+				return Color.FUCHSIA;
+			case 4:
+				return Color.GRAY;
+			case 5:
+				return Color.GREEN;
+			case 6:
+				return Color.LIME;
+			case 7:
+				return Color.MAROON;
+			case 8:
+				return Color.NAVY;
+			case 9:
+				return Color.OLIVE;
+			case 10:
+				return Color.ORANGE;
+			case 11:
+				return Color.PURPLE;
+			case 12:
+				return Color.RED;
+			case 13:
+				return Color.SILVER;
+			case 14:
+				return Color.TEAL;
+			case 15:
+				return Color.WHITE;
+			case 16:
+				return Color.YELLOW;
+			default:
+				return null;
 		}
 	}
 }

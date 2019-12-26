@@ -20,12 +20,12 @@ public class JellyFish extends AbilityBase {
 
 	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(JellyFish.class, "Duration", 2,
 			"# 지속 시간 (틱 단위)") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public JellyFish(Participant participant) {
@@ -34,7 +34,7 @@ public class JellyFish extends AbilityBase {
 	}
 
 	private final int duration = DurationConfig.getValue();
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
@@ -42,9 +42,9 @@ public class JellyFish extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if(e.getDamager().equals(getPlayer())) {
+		if (e.getDamager().equals(getPlayer())) {
 			Entity entity = e.getEntity();
-			if(entity instanceof Player) {
+			if (entity instanceof Player) {
 				Player p = (Player) entity;
 				SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
 				SoundLib.ENTITY_ITEM_PICKUP.playSound(p);
@@ -52,8 +52,9 @@ public class JellyFish extends AbilityBase {
 			}
 		}
 	}
-	
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
 
+	@Override
+	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
+
+}

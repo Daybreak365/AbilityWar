@@ -21,22 +21,22 @@ public class Clown extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Clown.class, "Cooldown", 60,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public static final SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Clown.class, "Range", 10,
 			"# 스킬 범위") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public Clown(Participant participant) {
@@ -47,54 +47,57 @@ public class Clown extends AbilityBase {
 	}
 
 	private Location OriginalPoint = null;
-	
+
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
-	private final DurationTimer Duration = new  DurationTimer(10, Cool) {
+	private final DurationTimer Duration = new DurationTimer(10, Cool) {
 
 		@Override
 		protected void onDurationStart() {
 			OriginalPoint = getPlayer().getLocation();
 			Location Spawn = getPlayer().getWorld().getSpawnLocation();
-			
+
 			getPlayer().teleport(Spawn);
 		}
 
 		@Override
-		protected void onDurationProcess(int seconds) {}
+		protected void onDurationProcess(int seconds) {
+		}
 
 		@Override
-		protected void onDurationEnd() {}
-		
+		protected void onDurationEnd() {
+		}
+
 	};
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if(materialType.equals(Material.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Duration.isDuration()) {
-					if(!Cool.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!Duration.isDuration()) {
+					if (!Cool.isCooldown()) {
 						Duration.startTimer();
-						
+
 						return true;
 					}
 				} else {
-					if(OriginalPoint != null) getPlayer().teleport(OriginalPoint);
+					if (OriginalPoint != null) getPlayer().teleport(OriginalPoint);
 					SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer());
 					Duration.stopTimer(false);
-					
-					for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), RangeConfig.getValue(), 250)) {
+
+					for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), RangeConfig.getValue(), 250)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(p);
 						PotionEffects.BLINDNESS.addPotionEffect(p, 200, 2, true);
 					}
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

@@ -17,17 +17,17 @@ import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "심안", Rank = Rank.C, Species = Species.HUMAN)
 public class DarkVision extends AbilityBase {
-	
+
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
 			"# 거리 설정") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 1;
 		}
-		
+
 	};
-	
+
 	public DarkVision(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f앞이 보이지 않는 대신, 플레이어의 " + DistanceConfig.getValue() + "칸 안에 있는 플레이어들은"),
@@ -35,41 +35,45 @@ public class DarkVision extends AbilityBase {
 	}
 
 	private final Timer Dark = new Timer() {
-		
+
 		@Override
-		public void onStart() {}
-		
+		public void onStart() {
+		}
+
 		@Override
 		public void onProcess(int count) {
 			PotionEffects.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), 40, 5, true);
 			PotionEffects.JUMP.addPotionEffect(getPlayer(), 40, 1, true);
 		}
-		
+
 		@Override
-		public void onEnd() {}
-		
+		public void onEnd() {
+		}
+
 	}.setPeriod(2);
-	
+
 	private final Timer Vision = new Timer() {
-		
+
 		final Integer Distance = DistanceConfig.getValue();
-		
+
 		@Override
-		public void onStart() {}
-		
+		public void onStart() {
+		}
+
 		@Override
 		public void onProcess(int count) {
-			for(Player p : LocationUtil.getNearbyPlayers(getPlayer(), Distance, Distance)) {
+			for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), Distance, Distance)) {
 				PotionEffects.GLOWING.addPotionEffect(p, 10, 0, true);
 			}
 		}
-		
+
 		@Override
-		public void onEnd() {}
-		
+		public void onEnd() {
+		}
+
 	}.setPeriod(2);
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
@@ -82,6 +86,7 @@ public class DarkVision extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
 
 }

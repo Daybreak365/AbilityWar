@@ -21,6 +21,7 @@ public class WRECK {
 
 	public interface Handler {
 		WRECK getWRECK();
+
 		boolean isWRECKEnabled();
 	}
 

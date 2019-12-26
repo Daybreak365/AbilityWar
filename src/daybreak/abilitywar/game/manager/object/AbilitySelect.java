@@ -6,14 +6,14 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static daybreak.abilitywar.utils.Validate.notNull;
 
@@ -33,7 +33,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 
 	/**
 	 * 능력을 선택할 {@link Participant} 목록을 설정합니다.
-	 *
+	 * <p>
 	 * null을 반환하지 않습니다.
 	 */
 	protected abstract Collection<Participant> initSelectors();
@@ -97,11 +97,11 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 				Player p = participant.getPlayer();
 
 				if (!hasDecided(participant)) {
-					p.sendMessage(new String[] {
+					p.sendMessage(new String[]{
 							ChatColor.translateAlternateColorCodes('&',
 									"&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
 							ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
-							ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.") });
+							ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")});
 				} else {
 					p.sendMessage(ChatColor.translateAlternateColorCodes('&',
 							"&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
@@ -137,7 +137,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 
 	/**
 	 * 모든 참가자의 능력을 강제로 결정합니다.
-	 * 
+	 *
 	 * @param admin 출력할 관리자의 이름
 	 */
 	public final void Skip(String admin) {
@@ -198,8 +198,8 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 			@Override
 			public ArrayList<Class<? extends AbilityBase>> getAbilities() {
 				ArrayList<Class<? extends AbilityBase>> abilities = new ArrayList<>();
-				for(String name : AbilityList.nameValues()) {
-					if(!AbilityWarSettings.Settings.isBlackListed(name)) {
+				for (String name : AbilityList.nameValues()) {
+					if (!AbilityWarSettings.Settings.isBlackListed(name)) {
 						abilities.add(AbilityList.getByString(name));
 					}
 				}

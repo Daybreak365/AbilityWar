@@ -55,12 +55,12 @@ public class Invincibility implements EventExecutor {
 	}
 
 	public boolean Start(final int duration) {
-        if (timer == null || !timer.isRunning()) {
-            this.timer = new InvincibilityTimer(duration);
+		if (timer == null || !timer.isRunning()) {
+			this.timer = new InvincibilityTimer(duration);
 			timer.startTimer();
-            return true;
-        }
-        return false;
+			return true;
+		}
+		return false;
 	}
 
 	public boolean Stop() {
@@ -120,17 +120,17 @@ public class Invincibility implements EventExecutor {
 
 		@Override
 		protected void onProcess(int count) {
-		    if (!isInfinite()) {
-                if (bar != null) {
-                    int[] time = NumberUtil.parseTime(count);
-                    bar.setTitle(String.format(bossbarMessage, time[0], time[1])).setProgress(Math.min(count / (double) getMaxCount(), 1.0));
-                }
-                if (count == (getMaxCount()) / 2 || (count <= 5 && count >= 1)) {
-                    Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-                            "&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
+			if (!isInfinite()) {
+				if (bar != null) {
+					int[] time = NumberUtil.parseTime(count);
+					bar.setTitle(String.format(bossbarMessage, time[0], time[1])).setProgress(Math.min(count / (double) getMaxCount(), 1.0));
+				}
+				if (count == (getMaxCount()) / 2 || (count <= 5 && count >= 1)) {
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
+							"&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
-                }
-            }
+				}
+			}
 		}
 
 		@Override

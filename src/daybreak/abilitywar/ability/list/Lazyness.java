@@ -53,7 +53,8 @@ public class Lazyness extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
 
 	private class DamageTimer extends Timer {
 
@@ -66,7 +67,8 @@ public class Lazyness extends AbilityBase {
 		}
 
 		@Override
-		protected void onProcess(int count) {}
+		protected void onProcess(int count) {
+		}
 
 		@Override
 		protected void onEnd() {

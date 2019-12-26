@@ -23,12 +23,12 @@ public class Void extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Void.class, "Cooldown", 100,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public Void(Participant participant) {
@@ -39,28 +39,29 @@ public class Void extends AbilityBase {
 	}
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
-	
+
 	private final Timer invincibilityTimer = new Timer(2) {
 
 		@Override
-		public void onProcess(int count) {}
+		public void onProcess(int count) {
+		}
 
 	};
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if(materialType.equals(Material.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Cool.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!Cool.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 
-					if(target != null) {
+					if (target != null) {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님에게 텔레포트합니다."));
 						getPlayer().teleport(target);
 						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
-						
+
 						invincibilityTimer.startTimer();
-						
+
 						Cool.startTimer();
 					} else {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
@@ -68,14 +69,14 @@ public class Void extends AbilityBase {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(invincibilityTimer.isRunning()) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (invincibilityTimer.isRunning()) {
 				e.setCancelled(true);
 				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 			}
@@ -84,25 +85,26 @@ public class Void extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(invincibilityTimer.isRunning()) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (invincibilityTimer.isRunning()) {
 				e.setCancelled(true);
 				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(invincibilityTimer.isRunning()) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (invincibilityTimer.isRunning()) {
 				e.setCancelled(true);
 				ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 			}
 		}
 	}
-	
+
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

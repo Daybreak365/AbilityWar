@@ -29,16 +29,17 @@ public class ExpertOfFall extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(e.getCause().equals(DamageCause.FALL)) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getCause().equals(DamageCause.FALL)) {
 				e.setCancelled(true);
 				getPlayer().getLocation().getBlock().setType(Material.WATER);
 				SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 			}
 		}
 	}
-	
+
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

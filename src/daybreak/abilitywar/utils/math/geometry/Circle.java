@@ -1,9 +1,9 @@
 package daybreak.abilitywar.utils.math.geometry;
 
-import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 
 import static daybreak.abilitywar.utils.Validate.notNull;
 

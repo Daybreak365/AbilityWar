@@ -1,61 +1,62 @@
 package daybreak.abilitywar.ability;
 
+import org.bukkit.ChatColor;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.bukkit.ChatColor;
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface AbilityManifest {
 
-    String Name();
-    Rank Rank();
+	String Name();
 
-    enum Rank {
+	Rank Rank();
 
-        SPECIAL(ChatColor.translateAlternateColorCodes('&', "&cSPECIAL 등급")),
-        S(ChatColor.translateAlternateColorCodes('&', "&dS 등급")),
-        A(ChatColor.translateAlternateColorCodes('&', "&aA 등급")),
-        B(ChatColor.translateAlternateColorCodes('&', "&bB 등급")),
-        C(ChatColor.translateAlternateColorCodes('&', "&eC 등급")),
-        D(ChatColor.translateAlternateColorCodes('&', "&7D 등급"));
+	enum Rank {
 
-        private final String rankName;
+		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&cSPECIAL 등급")),
+		S(ChatColor.translateAlternateColorCodes('&', "&dS 등급")),
+		A(ChatColor.translateAlternateColorCodes('&', "&aA 등급")),
+		B(ChatColor.translateAlternateColorCodes('&', "&bB 등급")),
+		C(ChatColor.translateAlternateColorCodes('&', "&eC 등급")),
+		D(ChatColor.translateAlternateColorCodes('&', "&7D 등급"));
 
-        Rank(String rankName) {
-            this.rankName = rankName;
-        }
+		private final String rankName;
 
-        public String getRankName() {
-            return rankName;
-        }
+		Rank(String rankName) {
+			this.rankName = rankName;
+		}
 
-    }
+		public String getRankName() {
+			return rankName;
+		}
 
-    Species Species();
+	}
 
-    enum Species {
+	Species Species();
 
-        SPECIAL(ChatColor.translateAlternateColorCodes('&', "&e특별 능력")),
-        HUMAN(ChatColor.translateAlternateColorCodes('&', "&f인간")),
-        GOD(ChatColor.translateAlternateColorCodes('&', "&c신")),
-        DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7데미&c갓")),
-        ANIMAL(ChatColor.translateAlternateColorCodes('&', "&2동물")),
-        OTHERS(ChatColor.translateAlternateColorCodes('&', "&8기타"));
+	enum Species {
 
-        private final String speciesName;
+		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&e특별 능력")),
+		HUMAN(ChatColor.translateAlternateColorCodes('&', "&f인간")),
+		GOD(ChatColor.translateAlternateColorCodes('&', "&c신")),
+		DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7데미&c갓")),
+		ANIMAL(ChatColor.translateAlternateColorCodes('&', "&2동물")),
+		OTHERS(ChatColor.translateAlternateColorCodes('&', "&8기타"));
 
-        Species(String speciesName) {
-            this.speciesName = speciesName;
-        }
+		private final String speciesName;
 
-        public String getSpeciesName() {
-            return speciesName;
-        }
+		Species(String speciesName) {
+			this.speciesName = speciesName;
+		}
 
-    }
+		public String getSpeciesName() {
+			return speciesName;
+		}
+
+	}
 
 }

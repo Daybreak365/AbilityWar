@@ -104,8 +104,11 @@ public class Khazhad extends AbilityBase {
 						protected void onStart() {
 							projectile.getLocation().getBlock().setType(Material.ICE);
 						}
+
 						@Override
-						protected void onProcess(int count) {}
+						protected void onProcess(int count) {
+						}
+
 						@Override
 						protected void onEnd() {
 							projectile.getLocation().getBlock().setType(Material.AIR);
@@ -122,7 +125,8 @@ public class Khazhad extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
 
 	@SubscribeEvent(onlyRelevant = true)
 	public void onRestrictionClear(AbilityRestrictionClearEvent e) {

@@ -4,8 +4,6 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.list.BlackCandle;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -13,6 +11,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.EventExecutor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EffectManager implements EventExecutor {
 
@@ -48,12 +49,15 @@ public class EffectManager implements EventExecutor {
 				protected void onStart() {
 					STUN.add(part);
 				}
+
 				@Override
 				protected void onEnd() {
 					STUN.remove(part);
 				}
+
 				@Override
-				protected void onProcess(int count) {}
+				protected void onProcess(int count) {
+				}
 			}.setPeriod(1).startTimer();
 		}
 	}
@@ -71,7 +75,7 @@ public class EffectManager implements EventExecutor {
 
 	}
 
-	private enum EffectType { STUN }
+	private enum EffectType {STUN}
 
 	@Override
 	public void execute(Listener listener, Event event) {

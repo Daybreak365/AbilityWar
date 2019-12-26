@@ -44,15 +44,15 @@ public class KitWizard extends SettingWizard {
 	void openGUI(Inventory gui) {
 		for (int c = 36; c <= 44; c++) {
 			switch (c) {
-			case 39:
-				gui.setItem(c, reset);
-				break;
-			case 40:
-				gui.setItem(c, confirm);
-				break;
-			default:
-				gui.setItem(c, deco);
-				break;
+				case 39:
+					gui.setItem(c, reset);
+					break;
+				case 40:
+					gui.setItem(c, confirm);
+					break;
+				default:
+					gui.setItem(c, deco);
+					break;
 			}
 		}
 
@@ -71,22 +71,22 @@ public class KitWizard extends SettingWizard {
 				e.setCancelled(true);
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
-				case "§a확인":
-					ArrayList<ItemStack> itemstacks = new ArrayList<ItemStack>();
-					for (int i = 0; i <= 35; i++) {
-						if (gui.getItem(i) != null && !gui.getItem(i).getType().equals(Material.AIR)) {
-							itemstacks.add(gui.getItem(i));
+					case "§a확인":
+						ArrayList<ItemStack> itemstacks = new ArrayList<ItemStack>();
+						for (int i = 0; i <= 35; i++) {
+							if (gui.getItem(i) != null && !gui.getItem(i).getType().equals(Material.AIR)) {
+								itemstacks.add(gui.getItem(i));
+							}
 						}
-					}
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, itemstacks);
-					p.closeInventory();
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
-					break;
-				case "§c초기화":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, Arrays.asList());
-					p.closeInventory();
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
-					break;
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, itemstacks);
+						p.closeInventory();
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
+						break;
+					case "§c초기화":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, Arrays.asList());
+						p.closeInventory();
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
+						break;
 				}
 			}
 		}

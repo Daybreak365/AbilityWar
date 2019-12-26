@@ -34,7 +34,8 @@ public class Virus extends AbilityBase {
 			if (killer != null && AbilityWarThread.getGame().isParticipating(killer)) {
 				try {
 					getGame().getParticipant(killer).setAbility(Virus.class);
-				} catch (Exception ignored) {}
+				} catch (Exception ignored) {
+				}
 			}
 		}
 	}

@@ -164,37 +164,37 @@ public class Nex extends AbilityBase {
 		}
 
 	}.setPeriod(4) :
-	new Timer(5) {
+			new Timer(5) {
 
-		Location center;
+				Location center;
 
-		@Override
-		public void onStart() {
-			this.center = getPlayer().getLocation();
-		}
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public void onProcess(int count) {
-			int distance = 6 - count;
-
-			for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
-				Location location = block.getLocation().add(0, 1, 0);
-				new FallBlock(block.getType(), location, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random())) {
-					@Override
-					public void onChangeBlock(FallingBlock block) {
-					}
-				}.setByteData(block.getData()).Spawn();
-			}
-
-			for (Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
-				if (!e.equals(getPlayer())) {
-					e.setVelocity(center.toVector().subtract(e.getLocation().toVector()).multiply(-1).setY(1.2));
+				@Override
+				public void onStart() {
+					this.center = getPlayer().getLocation();
 				}
-			}
-		}
 
-	}.setPeriod(4);
+				@SuppressWarnings("deprecation")
+				@Override
+				public void onProcess(int count) {
+					int distance = 6 - count;
+
+					for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+						Location location = block.getLocation().add(0, 1, 0);
+						new FallBlock(block.getType(), location, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random())) {
+							@Override
+							public void onChangeBlock(FallingBlock block) {
+							}
+						}.setByteData(block.getData()).Spawn();
+					}
+
+					for (Damageable e : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+						if (!e.equals(getPlayer())) {
+							e.setVelocity(center.toVector().subtract(e.getLocation().toVector()).multiply(-1).setY(1.2));
+						}
+					}
+				}
+
+			}.setPeriod(4);
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {

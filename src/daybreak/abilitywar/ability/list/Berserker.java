@@ -19,35 +19,35 @@ public class Berserker extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public static final SettingObject<Integer> StrengthConfig = new SettingObject<Integer>(Berserker.class, "Strength", 4,
 			"# 공격 강화 배수") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 2;
 		}
-		
+
 	};
 
 	public static final SettingObject<Integer> DebuffConfig = new SettingObject<Integer>(Berserker.class, "Debuff", 10,
 			"# 능력 사용 후 디버프를 받는 시간",
 			"# 단위 : 초") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 1;
 		}
-		
+
 	};
-	
+
 	public Berserker(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭한 후 5초 안에 하는 다음 근접 공격이 강화됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
@@ -56,57 +56,59 @@ public class Berserker extends AbilityBase {
 	}
 
 	private final int Strength = StrengthConfig.getValue();
-	
+
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
-	
+
 	private final DurationTimer Duration = new DurationTimer(5, Cool) {
-		
+
 		@Override
 		public void onDurationStart() {
 			Strengthen = true;
 		}
-		
+
 		@Override
-		public void onDurationProcess(int seconds) {}
-		
+		public void onDurationProcess(int seconds) {
+		}
+
 		@Override
 		public void onDurationEnd() {
 			Strengthen = false;
 		}
-		
+
 	};
-	
+
 	private boolean Strengthen = false;
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if(materialType.equals(Material.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Duration.isDuration() && !Cool.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.startTimer();
-					
+
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
 	private final int debuffTime = DebuffConfig.getValue();
-	
+
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if(e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
-			if(Strengthen) {
-				if(Duration.isDuration()) Duration.stopTimer(false);
+		if (e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
+			if (Strengthen) {
+				if (Duration.isDuration()) Duration.stopTimer(false);
 				e.setDamage(e.getDamage() * Strength);
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
 			}
 		}
 	}
-	
+
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

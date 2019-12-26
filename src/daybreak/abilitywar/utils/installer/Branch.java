@@ -16,14 +16,14 @@ public enum Branch {
 
 	public static Branch getBranch(Integer Version) {
 		switch (Version) {
-		case 12:
-		case 13:
-		case 14: {
-			return Branch.MASTER;
-		}
-		default: {
-			return null;
-		}
+			case 12:
+			case 13:
+			case 14: {
+				return Branch.MASTER;
+			}
+			default: {
+				return null;
+			}
 		}
 	}
 

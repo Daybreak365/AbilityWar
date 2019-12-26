@@ -1,34 +1,34 @@
 package daybreak.abilitywar.utils.library.item;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-
+import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 
 //TODO: MaterialLib 1.14버전 지원 업데이트 필요
 
 /**
  * Material 라이브러리
+ *
  * @author Originally developed by Hex_27 and edited by Daybreak 새벽
- *
- *  MIT License (MIT)
- *
+ * <p>
+ * MIT License (MIT)
+ * <p>
  * Copyright (c) 2018 Hex_27
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -38,10 +38,10 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
  * DEALINGS IN THE SOFTWARE.
  **/
 public enum MaterialLib {
-	
+
 	ACACIA_BOAT(0, "BOAT_ACACIA"),
 	ACACIA_BUTTON(0, "WOOD_BUTTON"),
-	ACACIA_DOOR(0, "ACACIA_DOOR","ACACIA_DOOR_ITEM"),
+	ACACIA_DOOR(0, "ACACIA_DOOR", "ACACIA_DOOR_ITEM"),
 	ACACIA_FENCE(0, "ACACIA_FENCE"),
 	ACACIA_FENCE_GATE(0, "ACACIA_FENCE_GATE"),
 	ACACIA_LEAVES(0, "LEAVES_2"),
@@ -49,7 +49,7 @@ public enum MaterialLib {
 	ACACIA_PLANKS(4, "WOOD"),
 	ACACIA_PRESSURE_PLATE(0, "WOOD_PLATE"),
 	ACACIA_SAPLING(4, "SAPLING"),
-	ACACIA_SLAB(4,"WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
+	ACACIA_SLAB(4, "WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
 	ACACIA_STAIRS(4, "ACACIA_STAIRS"),
 	ACACIA_TRAPDOOR(0, "TRAP_DOOR"),
 	ACACIA_WOOD(0, "LOG_2"),
@@ -84,7 +84,7 @@ public enum MaterialLib {
 	BIRCH_PLANKS(2, "WOOD"),
 	BIRCH_PRESSURE_PLATE(0, "WOOD_PLATE"),
 	BIRCH_SAPLING(2, "SAPLING"),
-	BIRCH_SLAB(2,"WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
+	BIRCH_SLAB(2, "WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
 	BIRCH_STAIRS(0, "BIRCH_WOOD_STAIRS"),
 	BIRCH_TRAPDOOR(0, "TRAP_DOOR"),
 	BIRCH_WOOD(2, "LOG"),
@@ -213,9 +213,9 @@ public enum MaterialLib {
 	COW_SPAWN_EGG(0, "MONSTER_EGG"),
 	CRACKED_STONE_BRICKS(2, "SMOOTH_BRICK"),
 	CRAFTING_TABLE(0, "WORKBENCH"),
-	CREEPER_HEAD(0, "SKULL","SKULL_ITEM"),
+	CREEPER_HEAD(0, "SKULL", "SKULL_ITEM"),
 	CREEPER_SPAWN_EGG(0, "MONSTER_EGG"),
-	CREEPER_WALL_HEAD(0, "SKULL","SKULL_ITEM"),
+	CREEPER_WALL_HEAD(0, "SKULL", "SKULL_ITEM"),
 	CUT_RED_SANDSTONE(0, "STONE"),
 	CUT_SANDSTONE(0, "STONE"),
 	CYAN_BANNER(6, "BANNER", "STANDING_BANNER"),
@@ -244,7 +244,7 @@ public enum MaterialLib {
 	DARK_OAK_PLANKS(5, "WOOD"),
 	DARK_OAK_PRESSURE_PLATE(0, "WOOD_PLATE"),
 	DARK_OAK_SAPLING(5, "SAPLING"),
-	DARK_OAK_SLAB(0,"WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
+	DARK_OAK_SLAB(0, "WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
 	DARK_OAK_STAIRS(0, "DARK_OAK_STAIRS"),
 	DARK_OAK_TRAPDOOR(0, "TRAP_DOOR"),
 	DARK_OAK_WOOD(1, "LOG_2"),
@@ -280,8 +280,8 @@ public enum MaterialLib {
 	DONKEY_SPAWN_EGG(0, "MONSTER_EGG"),
 	DRAGON_BREATH(0, "DRAGONS_BREATH"),
 	DRAGON_EGG(0, "DRAGON_EGG"),
-	DRAGON_HEAD(5, "SKULL","SKULL_ITEM"),
-	DRAGON_WALL_HEAD(0, "SKULL","SKULL_ITEM"),
+	DRAGON_HEAD(5, "SKULL", "SKULL_ITEM"),
+	DRAGON_WALL_HEAD(0, "SKULL", "SKULL_ITEM"),
 	DRIED_KELP(0, "STONE"),
 	DRIED_KELP_BLOCK(0, "STONE"),
 	DROPPER(0, "DROPPER"),
@@ -324,7 +324,7 @@ public enum MaterialLib {
 	FISHING_ROD(0, "FISHING_ROD"),
 	FLINT(0, "FLINT"),
 	FLINT_AND_STEEL(0, "FLINT_AND_STEEL"),
-	FLOWER_POT(0, "FLOWER_POT","FLOWER_POT_ITEM"),
+	FLOWER_POT(0, "FLOWER_POT", "FLOWER_POT_ITEM"),
 	FROSTED_ICE(0, "FROSTED_ICE"),
 	FURNACE(0, "FURNACE", "BURNING_FURNACE"),
 	FURNACE_MINECART(0, "POWERED_MINECART"),
@@ -432,7 +432,7 @@ public enum MaterialLib {
 	JUNGLE_PLANKS(3, "WOOD"),
 	JUNGLE_PRESSURE_PLATE(0, "WOOD_PLATE"),
 	JUNGLE_SAPLING(3, "SAPLING"),
-	JUNGLE_SLAB(3,"WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
+	JUNGLE_SLAB(3, "WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
 	JUNGLE_STAIRS(0, "JUNGLE_WOOD_STAIRS"),
 	JUNGLE_TRAPDOOR(0, "TRAP_DOOR"),
 	JUNGLE_WOOD(3, "LOG"),
@@ -566,7 +566,7 @@ public enum MaterialLib {
 	OAK_PLANKS(0, "WOOD"),
 	OAK_PRESSURE_PLATE(0, "WOOD_PLATE"),
 	OAK_SAPLING(0, "SAPLING"),
-	OAK_SLAB(0,"WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
+	OAK_SLAB(0, "WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
 	OAK_STAIRS(0, "WOOD_STAIRS"),
 	OAK_TRAPDOOR(0, "TRAP_DOOR"),
 	OAK_WOOD(0, "LOG"),
@@ -613,8 +613,8 @@ public enum MaterialLib {
 	PINK_WOOL(6, "WOOL"),
 	PISTON(0, "PISTON_BASE"),
 	PISTON_HEAD(0, "PISTON_EXTENSION"),
-	PLAYER_HEAD(3, "SKULL_ITEM","SKULL_ITEM"),
-	PLAYER_WALL_HEAD(0, "SKULL","SKULL_ITEM"),
+	PLAYER_HEAD(3, "SKULL_ITEM", "SKULL_ITEM"),
+	PLAYER_WALL_HEAD(0, "SKULL", "SKULL_ITEM"),
 	PODZOL(2, "DIRT"),
 	POISONOUS_POTATO(0, "POISONOUS_POTATO"),
 	POLAR_BEAR_SPAWN_EGG(0, "MONSTER_EGG"),
@@ -695,9 +695,9 @@ public enum MaterialLib {
 	REDSTONE(0, "REDSTONE"),
 	REDSTONE_BLOCK(0, "REDSTONE_BLOCK"),
 	REDSTONE_LAMP(0, "REDSTONE_LAMP_ON", "REDSTONE_LAMP_OFF"),
-    REDSTONE_ORE(0, "REDSTONE_ORE", "GLOWING_REDSTONE_ORE"),
-    REDSTONE_TORCH(0, "REDSTONE_TORCH_ON", "REDSTONE_TORCH_OFF"),
-    REDSTONE_WALL_TORCH(1, "REDSTONE_TORCH_ON", "REDSTONE_TORCH_OFF"),
+	REDSTONE_ORE(0, "REDSTONE_ORE", "GLOWING_REDSTONE_ORE"),
+	REDSTONE_TORCH(0, "REDSTONE_TORCH_ON", "REDSTONE_TORCH_OFF"),
+	REDSTONE_WALL_TORCH(1, "REDSTONE_TORCH_ON", "REDSTONE_TORCH_OFF"),
 	REDSTONE_WIRE(0, "REDSTONE_WIRE"),
 	RED_BANNER(1, "BANNER", "STANDING_BANNER"),
 	RED_BED(14, "BED", "BED_BLOCK"),
@@ -745,9 +745,9 @@ public enum MaterialLib {
 	SIGN(0, "SIGN"),
 	SILVERFISH_SPAWN_EGG(0, "MONSTER_EGG"),
 	SKELETON_HORSE_SPAWN_EGG(0, "MONSTER_EGG"),
-	SKELETON_SKULL(0, "SKULL","SKULL_ITEM"),
+	SKELETON_SKULL(0, "SKULL", "SKULL_ITEM"),
 	SKELETON_SPAWN_EGG(0, "MONSTER_EGG"),
-	SKELETON_WALL_SKULL(0, "SKULL","SKULL_ITEM"),
+	SKELETON_WALL_SKULL(0, "SKULL", "SKULL_ITEM"),
 	SLIME_BALL(0, "SLIME_BALL"),
 	SLIME_BLOCK(0, "SLIME_BLOCK"),
 	SLIME_SPAWN_EGG(0, "MONSTER_EGG"),
@@ -775,7 +775,7 @@ public enum MaterialLib {
 	SPRUCE_PLANKS(1, "WOOD"),
 	SPRUCE_PRESSURE_PLATE(0, "WOOD_PLATE"),
 	SPRUCE_SAPLING(1, "SAPLING"),
-	SPRUCE_SLAB(1,"WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
+	SPRUCE_SLAB(1, "WOODEN_SLAB", "WOOD_STEP", "WOOD_DOUBLE_STEP"),
 	SPRUCE_STAIRS(0, "SPRUCE_WOOD_STAIRS"),
 	SPRUCE_TRAPDOOR(0, "TRAP_DOOR"),
 	SPRUCE_WOOD(1, "LOG"),
@@ -860,9 +860,9 @@ public enum MaterialLib {
 	WHITE_WALL_BANNER(0, "WALL_BANNER"),
 	WHITE_WOOL(0, "WOOL"),
 	WITCH_SPAWN_EGG(0, "MONSTER_EGG"),
-	WITHER_SKELETON_SKULL(0, "SKULL","SKULL_ITEM"),
+	WITHER_SKELETON_SKULL(0, "SKULL", "SKULL_ITEM"),
 	WITHER_SKELETON_SPAWN_EGG(0, "MONSTER_EGG"),
-	WITHER_SKELETON_WALL_SKULL(0, "SKULL","SKULL_ITEM"),
+	WITHER_SKELETON_WALL_SKULL(0, "SKULL", "SKULL_ITEM"),
 	WOLF_SPAWN_EGG(0, "MONSTER_EGG"),
 	WOODEN_AXE(0, "WOOD_AXE"),
 	WOODEN_HOE(0, "WOOD_HOE"),
@@ -883,116 +883,121 @@ public enum MaterialLib {
 	YELLOW_TERRACOTTA(4, "STAINED_CLAY"),
 	YELLOW_WALL_BANNER(0, "WALL_BANNER"),
 	YELLOW_WOOL(4, "WOOL"),
-	ZOMBIE_HEAD(0, "SKULL","SKULL_ITEM"),
+	ZOMBIE_HEAD(0, "SKULL", "SKULL_ITEM"),
 	ZOMBIE_HORSE_SPAWN_EGG(0, "MONSTER_EGG"),
 	ZOMBIE_PIGMAN_SPAWN_EGG(0, "MONSTER_EGG"),
 	ZOMBIE_SPAWN_EGG(0, "MONSTER_EGG"),
 	ZOMBIE_VILLAGER_SPAWN_EGG(0, "MONSTER_EGG"),
-	ZOMBIE_WALL_HEAD(0, "SKULL","SKULL_ITEM");
-	
+	ZOMBIE_WALL_HEAD(0, "SKULL", "SKULL_ITEM");
+
 	private String[] m;
 	private int data;
-	
+
 	private static Method setData = null;
+
 	static {
-		if(!isNewVersion()) try { setData = Block.class.getDeclaredMethod("setData", byte.class); } catch (Exception e) {}
+		if (!isNewVersion()) try {
+			setData = Block.class.getDeclaredMethod("setData", byte.class);
+		} catch (Exception e) {
+		}
 	}
-	
-	MaterialLib(int data, String... m){
+
+	MaterialLib(int data, String... m) {
 		this.m = m;
 		this.data = data;
 	}
-	
+
 	/**
 	 * Material을 기반으로 하는 ItemStack을 반환합니다.
 	 */
 	@SuppressWarnings("deprecation")
-	public ItemStack getItem(){
+	public ItemStack getItem() {
 		Material mat = getMaterial();
-		if(isNewVersion()){
+		if (isNewVersion()) {
 			return new ItemStack(mat);
 		}
-		
+
 		return new ItemStack(mat, 1, (short) data);
 	}
 
 	/**
 	 * Material을 반환합니다.
 	 */
-	public Material getMaterial(){
-        Material mat = Material.matchMaterial(this.toString());
-        if(mat != null){
-            return mat;
-        }
-        return Material.matchMaterial(m[0]);
-    }
+	public Material getMaterial() {
+		Material mat = Material.matchMaterial(this.toString());
+		if (mat != null) {
+			return mat;
+		}
+		return Material.matchMaterial(m[0]);
+	}
 
 	/**
 	 * Material을 반환합니다.
 	 */
-	public Material getMaterialForBlock(){
-        Material mat = Material.matchMaterial(this.toString());
-        if(mat != null)  return mat;
-        if(m.length >= 2) return Material.matchMaterial(m[1]);
-        return Material.matchMaterial(m[0]);
-    }
+	public Material getMaterialForBlock() {
+		Material mat = Material.matchMaterial(this.toString());
+		if (mat != null) return mat;
+		if (m.length >= 2) return Material.matchMaterial(m[1]);
+		return Material.matchMaterial(m[0]);
+	}
 
 	public void setType(Block block) {
 		block.setType(getMaterialForBlock());
-		if(!isNewVersion()) {
+		if (!isNewVersion()) {
 			try {
 				setData.invoke(block, (byte) data);
-			} catch(Exception ex) {}
+			} catch (Exception ex) {
+			}
 		}
 	}
-	
+
 	/**
 	 * Material을 비교합니다.
 	 */
 	@SuppressWarnings("deprecation")
-	public boolean compareMaterial(ItemStack comp){
-		if(isNewVersion()){
+	public boolean compareMaterial(ItemStack comp) {
+		if (isNewVersion()) {
 			return comp.getType() == this.getMaterial();
 		}
-		if(comp.getType() == this.getMaterial() &&
-				(int) comp.getDurability() == (int) this.data){
+		if (comp.getType() == this.getMaterial() &&
+				(int) comp.getDurability() == (int) this.data) {
 			return true;
 		}
 		MaterialLib xmat = fromMaterial(comp.getType());
-		if(isDamageable(xmat)){
+		if (isDamageable(xmat)) {
 			return this.getMaterial() == comp.getType();
 		}
 		return false;
 	}
-	
-	private static boolean isNewVersion(){
+
+	private static boolean isNewVersion() {
 		return ServerVersion.getVersion() >= 13;
 	}
-	
+
 	private static HashMap<String, MaterialLib> cachedSearch = new HashMap<>();
-	
-	public static MaterialLib requestMaterialLib(String name, byte data){
-		if(cachedSearch.containsKey(name.toUpperCase()+","+data)){
-			return cachedSearch.get(name.toUpperCase()+","+data);
+
+	public static MaterialLib requestMaterialLib(String name, byte data) {
+		if (cachedSearch.containsKey(name.toUpperCase() + "," + data)) {
+			return cachedSearch.get(name.toUpperCase() + "," + data);
 		}
-		for(MaterialLib mat:MaterialLib.values()){
-			for(String test:mat.m){
-				if(name.toUpperCase().equals(test) && ((byte)mat.data) == data){
-					cachedSearch.put(test+","+data,mat);
+		for (MaterialLib mat : MaterialLib.values()) {
+			for (String test : mat.m) {
+				if (name.toUpperCase().equals(test) && ((byte) mat.data) == data) {
+					cachedSearch.put(test + "," + data, mat);
 					return mat;
 				}
 			}
 		}
 		return null;
 	}
-	
-	private MaterialLib fromMaterial(Material mat){
-		try{
+
+	private MaterialLib fromMaterial(Material mat) {
+		try {
 			return MaterialLib.valueOf(mat.toString());
-		}catch(IllegalArgumentException e){
-			for(MaterialLib xmat:MaterialLib.values()){
-				for(String test:xmat.m){
-					if(test.equalsIgnoreCase(mat.toString())){
+		} catch (IllegalArgumentException e) {
+			for (MaterialLib xmat : MaterialLib.values()) {
+				for (String test : xmat.m) {
+					if (test.equalsIgnoreCase(mat.toString())) {
 						return xmat;
 					}
 				}
@@ -1000,48 +1005,48 @@ public enum MaterialLib {
 		}
 		return null;
 	}
-	
-	public static MaterialLib fromString(String key){
+
+	public static MaterialLib fromString(String key) {
 		MaterialLib xmat = null;
-		try{
+		try {
 			xmat = MaterialLib.valueOf(key);
 			return xmat;
-		}catch(IllegalArgumentException e){
+		} catch (IllegalArgumentException e) {
 			String[] split = key.split(":");
-			if(split.length == 1){
-				xmat = requestMaterialLib(key,(byte) 0);
-			}else{
-				xmat = requestMaterialLib(split[0],(byte) Integer.parseInt(split[1]));
+			if (split.length == 1) {
+				xmat = requestMaterialLib(key, (byte) 0);
+			} else {
+				xmat = requestMaterialLib(split[0], (byte) Integer.parseInt(split[1]));
 			}
 			return xmat;
 		}
-		
+
 	}
-	
-	public boolean isDamageable(MaterialLib type){
-		if(type == null) return false;
-        String[] split = type.toString().split("_");
-        int length = split.length;
-		switch(split[length-1]){
-		case "HELMET":
-		case "CHESTPLATE":
-		case "LEGGINGS":
-		case "BOOTS":
-		case "SWORD":
-		case "AXE":
-		case "PICKAXE":
-		case "SHOVEL":
-		case "HOE":
-		case "ELYTRA":
-		case "TRIDENT":
-		case "HORSE_ARMOR":
-		case "SHEARS":
-		case "TURTLE_HELMET": {
-			return true;
-		}
-		default:
-			return false;
+
+	public boolean isDamageable(MaterialLib type) {
+		if (type == null) return false;
+		String[] split = type.toString().split("_");
+		int length = split.length;
+		switch (split[length - 1]) {
+			case "HELMET":
+			case "CHESTPLATE":
+			case "LEGGINGS":
+			case "BOOTS":
+			case "SWORD":
+			case "AXE":
+			case "PICKAXE":
+			case "SHOVEL":
+			case "HOE":
+			case "ELYTRA":
+			case "TRIDENT":
+			case "HORSE_ARMOR":
+			case "SHEARS":
+			case "TURTLE_HELMET": {
+				return true;
+			}
+			default:
+				return false;
 		}
 	}
-	
+
 }

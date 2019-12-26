@@ -69,80 +69,80 @@ public class GameWizard extends SettingWizard {
 	void openGUI(Inventory gui) {
 		for (int i = 0; i < 45; i++) {
 			switch (i) {
-			case 12:
-				ItemMeta foodMeta = food.getItemMeta();
-				foodMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-						"&7상태 : " + (Settings.getNoHunger() ? "&a활성화" : "&c비활성화"))));
-				food.setItemMeta(foodMeta);
+				case 12:
+					ItemMeta foodMeta = food.getItemMeta();
+					foodMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
+							"&7상태 : " + (Settings.getNoHunger() ? "&a활성화" : "&c비활성화"))));
+					food.setItemMeta(foodMeta);
 
-				gui.setItem(i, food);
-				break;
-			case 14:
-				ItemMeta levelMeta = level.getItemMeta();
-				levelMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&',
-								"&7초반 지급 레벨 : &a" + Settings.getStartLevel() + "레벨"),
-						" ", ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1레벨"),
-						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 5레벨"),
-						ChatColor.translateAlternateColorCodes('&', "&c좌클릭         &6» &e- 1레벨"),
-						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 좌클릭 &6» &e- 5레벨"),
-						ChatColor.translateAlternateColorCodes('&', "&c휠클릭         &6» &e+ 10000레벨"),
-						ChatColor.translateAlternateColorCodes('&', "&cQ              &6» &e- 10000레벨")));
-				level.setItemMeta(levelMeta);
+					gui.setItem(i, food);
+					break;
+				case 14:
+					ItemMeta levelMeta = level.getItemMeta();
+					levelMeta.setLore(Messager.asList(
+							ChatColor.translateAlternateColorCodes('&',
+									"&7초반 지급 레벨 : &a" + Settings.getStartLevel() + "레벨"),
+							" ", ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1레벨"),
+							ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 5레벨"),
+							ChatColor.translateAlternateColorCodes('&', "&c좌클릭         &6» &e- 1레벨"),
+							ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 좌클릭 &6» &e- 5레벨"),
+							ChatColor.translateAlternateColorCodes('&', "&c휠클릭         &6» &e+ 10000레벨"),
+							ChatColor.translateAlternateColorCodes('&', "&cQ              &6» &e- 10000레벨")));
+					level.setItemMeta(levelMeta);
 
-				gui.setItem(i, level);
-				break;
-			case 20:
-				ItemMeta durabilityMeta = durability.getItemMeta();
-				durabilityMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-						"&7상태 : " + (Settings.getInfiniteDurability() ? "&a활성화" : "&c비활성화"))));
-				durability.setItemMeta(durabilityMeta);
+					gui.setItem(i, level);
+					break;
+				case 20:
+					ItemMeta durabilityMeta = durability.getItemMeta();
+					durabilityMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
+							"&7상태 : " + (Settings.getInfiniteDurability() ? "&a활성화" : "&c비활성화"))));
+					durability.setItemMeta(durabilityMeta);
 
-				gui.setItem(i, durability);
-				break;
-			case 22:
-				ItemMeta firewallMeta = firewall.getItemMeta();
-				firewallMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&',
-								"&a활성화&f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다."),
-						ChatColor.translateAlternateColorCodes('&', "&c관리자 권한&f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."), "",
-						ChatColor.translateAlternateColorCodes('&',
-								"&7상태 : " + (Settings.getFirewall() ? "&a활성화" : "&c비활성화"))));
-				firewall.setItemMeta(firewallMeta);
+					gui.setItem(i, durability);
+					break;
+				case 22:
+					ItemMeta firewallMeta = firewall.getItemMeta();
+					firewallMeta.setLore(Messager.asList(
+							ChatColor.translateAlternateColorCodes('&',
+									"&a활성화&f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다."),
+							ChatColor.translateAlternateColorCodes('&', "&c관리자 권한&f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."), "",
+							ChatColor.translateAlternateColorCodes('&',
+									"&7상태 : " + (Settings.getFirewall() ? "&a활성화" : "&c비활성화"))));
+					firewall.setItemMeta(firewallMeta);
 
-				gui.setItem(i, firewall);
-				break;
-			case 24:
-				ItemMeta clearWeatherMeta = clearWeather.getItemMeta();
-				clearWeatherMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-						"&7상태 : " + (Settings.getClearWeather() ? "&a활성화" : "&c비활성화"))));
-				clearWeather.setItemMeta(clearWeatherMeta);
+					gui.setItem(i, firewall);
+					break;
+				case 24:
+					ItemMeta clearWeatherMeta = clearWeather.getItemMeta();
+					clearWeatherMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
+							"&7상태 : " + (Settings.getClearWeather() ? "&a활성화" : "&c비활성화"))));
+					clearWeather.setItemMeta(clearWeatherMeta);
 
-				gui.setItem(i, clearWeather);
-				break;
-			case 30:
-				ItemMeta visualEffectMeta = visualEffect.getItemMeta();
-				visualEffectMeta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다."), "",
-						ChatColor.translateAlternateColorCodes('&',
-								"&7상태 : " + (Settings.getVisualEffect() ? "&a활성화" : "&c비활성화"))));
-				visualEffect.setItemMeta(visualEffectMeta);
+					gui.setItem(i, clearWeather);
+					break;
+				case 30:
+					ItemMeta visualEffectMeta = visualEffect.getItemMeta();
+					visualEffectMeta.setLore(Messager.asList(
+							ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다."), "",
+							ChatColor.translateAlternateColorCodes('&',
+									"&7상태 : " + (Settings.getVisualEffect() ? "&a활성화" : "&c비활성화"))));
+					visualEffect.setItemMeta(visualEffectMeta);
 
-				gui.setItem(i, visualEffect);
-				break;
-			case 32:
-				ItemMeta abilityDrawMeta = abilityDraw.getItemMeta();
-				abilityDrawMeta.setLore(
-						Messager.asList(ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
-								"", ChatColor.translateAlternateColorCodes('&',
-										"&7상태 : " + (Settings.getDrawAbility() ? "&a활성화" : "&c비활성화"))));
-				abilityDraw.setItemMeta(abilityDrawMeta);
+					gui.setItem(i, visualEffect);
+					break;
+				case 32:
+					ItemMeta abilityDrawMeta = abilityDraw.getItemMeta();
+					abilityDrawMeta.setLore(
+							Messager.asList(ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
+									"", ChatColor.translateAlternateColorCodes('&',
+											"&7상태 : " + (Settings.getDrawAbility() ? "&a활성화" : "&c비활성화"))));
+					abilityDraw.setItemMeta(abilityDrawMeta);
 
-				gui.setItem(i, abilityDraw);
-				break;
-			default:
-				gui.setItem(i, deco);
-				break;
+					gui.setItem(i, abilityDraw);
+					break;
+				default:
+					gui.setItem(i, deco);
+					break;
 			}
 		}
 
@@ -153,64 +153,64 @@ public class GameWizard extends SettingWizard {
 	void onClick(InventoryClickEvent e, Inventory gui) {
 		e.setCancelled(true);
 		ItemStack currentItem = e.getCurrentItem();
-		if(currentItem != null) {
-			if(currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
+		if (currentItem != null) {
+			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
-				case "§b배고픔 무제한":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
-					Show();
-					break;
-				case "§b초반 지급 레벨":
-					int startLevel = Settings.getStartLevel();
-					switch (e.getClick()) {
-					case RIGHT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 1);
+					case "§b배고픔 무제한":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
 						Show();
 						break;
-					case SHIFT_RIGHT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 5);
+					case "§b초반 지급 레벨":
+						int startLevel = Settings.getStartLevel();
+						switch (e.getClick()) {
+							case RIGHT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 1);
+								Show();
+								break;
+							case SHIFT_RIGHT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 5);
+								Show();
+								break;
+							case LEFT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 1 ? startLevel - 1 : 0);
+								Show();
+								break;
+							case SHIFT_LEFT:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 5 ? startLevel - 5 : 0);
+								Show();
+								break;
+							case MIDDLE:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 10000);
+								Show();
+								break;
+							case DROP:
+								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 10000 ? startLevel - 10000 : 0);
+								Show();
+								break;
+							default:
+								break;
+						}
+						break;
+					case "§b내구도 무한":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INFINITE_DURABILITY, !Settings.getInfiniteDurability());
 						Show();
 						break;
-					case LEFT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 1 ? startLevel - 1 : 0);
+					case "§b방화벽":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_FIREWALL, !Settings.getFirewall());
 						Show();
 						break;
-					case SHIFT_LEFT:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 5 ? startLevel - 5 : 0);
+					case "§b맑은 날씨 고정":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_CLEAR_WEATHER, !Settings.getClearWeather());
 						Show();
 						break;
-					case MIDDLE:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 10000);
+					case "§b시각 효과":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_VISUAL_EFFECT, !Settings.getVisualEffect());
 						Show();
 						break;
-					case DROP:
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 10000 ? startLevel - 10000 : 0);
+					case "§b능력 추첨":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DRAW_ABILITY, !Settings.getDrawAbility());
 						Show();
 						break;
-					default:
-						break;
-					}
-					break;
-				case "§b내구도 무한":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INFINITE_DURABILITY, !Settings.getInfiniteDurability());
-					Show();
-					break;
-				case "§b방화벽":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_FIREWALL, !Settings.getFirewall());
-					Show();
-					break;
-				case "§b맑은 날씨 고정":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_CLEAR_WEATHER, !Settings.getClearWeather());
-					Show();
-					break;
-				case "§b시각 효과":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_VISUAL_EFFECT, !Settings.getVisualEffect());
-					Show();
-					break;
-				case "§b능력 추첨":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DRAW_ABILITY, !Settings.getDrawAbility());
-					Show();
-					break;
 				}
 			}
 		}

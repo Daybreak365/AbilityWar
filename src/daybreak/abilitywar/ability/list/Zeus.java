@@ -23,17 +23,17 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(Name = "제우스", Rank = Rank.S, Species = Species.GOD)
 public class Zeus extends AbilityBase {
-	
+
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
-	
+
 	public Zeus(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f번개의 신 제우스."),
@@ -41,27 +41,27 @@ public class Zeus extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f번개를 맞은 플레이어는 3초간 구속됩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f번개 데미지와 폭발 데미지를 받지 않습니다."));
 	}
-	
+
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
-	
+
 	private final Timer Skill = new Timer(3) {
 
 		Location center;
-		
+
 		@Override
 		public void onStart() {
 			center = getPlayer().getLocation();
 		}
-		
+
 		@Override
 		public void onProcess(int count) {
 			Circle circle = new Circle(center, 2 * (5 - getCount())).setAmount(7).setHighestLocation(true);
-			for(Location l : circle.getLocations()) {
+			for (Location l : circle.getLocations()) {
 				l.getWorld().strikeLightningEffect(l);
-				for(Damageable d : LocationUtil.getNearbyDamageableEntities(l, 4, 4)) {
-					if(!d.equals(getPlayer())) {
+				for (Damageable d : LocationUtil.getNearbyDamageableEntities(l, 4, 4)) {
+					if (!d.equals(getPlayer())) {
 						d.damage(d.getHealth() / 5, getPlayer());
-						if(d instanceof Player) {
+						if (d instanceof Player) {
 							Zeus.this.getGame().getEffectManager().Stun((Player) d, 60);
 						}
 					}
@@ -69,33 +69,34 @@ public class Zeus extends AbilityBase {
 				l.getWorld().createExplosion(l, 3);
 			}
 		}
-		
+
 		@Override
-		public void onEnd() {}
-		
+		public void onEnd() {
+		}
+
 	}.setPeriod(2);
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if(materialType.equals(Material.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Cool.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!Cool.isCooldown()) {
 					Skill.startTimer();
-					
+
 					Cool.startTimer();
-					
+
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 				e.setCancelled(true);
 			}
 		}
@@ -103,8 +104,8 @@ public class Zeus extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 				e.setCancelled(true);
 			}
 		}
@@ -112,14 +113,15 @@ public class Zeus extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getCause().equals(DamageCause.LIGHTNING) || e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 				e.setCancelled(true);
 			}
 		}
 	}
-	
+
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

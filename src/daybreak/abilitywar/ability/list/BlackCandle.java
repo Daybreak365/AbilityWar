@@ -24,12 +24,12 @@ public class BlackCandle extends AbilityBase {
 
 	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 35,
 			"# 데미지를 받았을 시 체력을 회복할 확률") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 1 && value <= 100;
 		}
-		
+
 	};
 
 	public BlackCandle(Participant participant) {
@@ -47,16 +47,16 @@ public class BlackCandle extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
+		if (e.getEntity().equals(getPlayer())) {
 			if (e.getCause().equals(EntityDamageEvent.DamageCause.WITHER) || e.getCause().equals(EntityDamageEvent.DamageCause.POISON)) {
 				e.setCancelled(true);
 			}
 			Random r = new Random();
-			if(r.nextInt(100) + 1 <= chance) {
+			if (r.nextInt(100) + 1 <= chance) {
 				double Health = getPlayer().getHealth() + 1.5;
-				if(Health > 20.0) Health = 20.0;
-				
-				if(!getPlayer().isDead()) {
+				if (Health > 20.0) Health = 20.0;
+
+				if (!getPlayer().isDead()) {
 					getPlayer().setHealth(Health);
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Tone.F));
 				}
@@ -66,13 +66,13 @@ public class BlackCandle extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
+		if (e.getEntity().equals(getPlayer())) {
 			Random r = new Random();
-			if(r.nextInt(100) + 1 <= chance) {
+			if (r.nextInt(100) + 1 <= chance) {
 				double Health = getPlayer().getHealth() + 1.5;
-				if(Health > 20.0) Health = 20.0;
-				
-				if(!getPlayer().isDead()) {
+				if (Health > 20.0) Health = 20.0;
+
+				if (!getPlayer().isDead()) {
 					getPlayer().setHealth(Health);
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Tone.F));
 				}
@@ -82,13 +82,13 @@ public class BlackCandle extends AbilityBase {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
+		if (e.getEntity().equals(getPlayer())) {
 			Random r = new Random();
-			if(r.nextInt(100) + 1 <= chance) {
+			if (r.nextInt(100) + 1 <= chance) {
 				double Health = getPlayer().getHealth() + 1.5;
-				if(Health > 20.0) Health = 20.0;
-				
-				if(!getPlayer().isDead()) {
+				if (Health > 20.0) Health = 20.0;
+
+				if (!getPlayer().isDead()) {
 					getPlayer().setHealth(Health);
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Tone.F));
 				}
@@ -97,6 +97,7 @@ public class BlackCandle extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

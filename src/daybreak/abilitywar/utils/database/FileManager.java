@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 /**
  * File 유틸
+ *
  * @author Daybreak 새벽
  */
 public class FileManager {
@@ -20,7 +21,8 @@ public class FileManager {
 		}
 	}
 
-	private FileManager() {}
+	private FileManager() {
+	}
 
 	public static File createFile(String path) {
 		File file = new File(mainDirectory.getPath() + "/" + path);

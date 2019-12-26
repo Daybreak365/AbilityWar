@@ -21,32 +21,32 @@ public class Chaos extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
-	
+
 	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Chaos.class, "Duration", 5,
 			"# 능력 지속 시간") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 1;
 		}
-		
+
 	};
 
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Chaos.class, "Distance", 5,
 			"# 거리 설정") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 1;
 		}
-		
+
 	};
 
 	public Chaos(Participant participant) {
@@ -59,20 +59,20 @@ public class Chaos extends AbilityBase {
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
 	private final int distance = DistanceConfig.getValue();
-	
+
 	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue() * 20, Cool) {
 
 		private Location center;
-		
+
 		@Override
 		public void onDurationStart() {
 			center = getPlayer().getLocation();
 		}
-		
+
 		@Override
 		public void onDurationProcess(int seconds) {
 			ParticleLib.SMOKE_LARGE.spawnParticle(center, 0, 0, 0, 100);
-			for(Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), distance, distance)) {
+			for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), distance, distance)) {
 				d.damage(1);
 				Vector vector = center.toVector().subtract(d.getLocation().toVector()).multiply(0.7);
 				d.setVelocity(vector);
@@ -80,23 +80,24 @@ public class Chaos extends AbilityBase {
 		}
 
 	}.setPeriod(1);
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if(materialType.equals(Material.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Duration.isDuration() && !Cool.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.startTimer();
-					
+
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

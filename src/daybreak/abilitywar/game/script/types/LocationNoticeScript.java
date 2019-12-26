@@ -4,12 +4,13 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.utils.Messager;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocationNoticeScript extends AbstractScript {
 
@@ -20,9 +21,9 @@ public class LocationNoticeScript extends AbstractScript {
 	@Override
 	protected void Execute(Game game) {
 		List<String> msg = new ArrayList<>();
-		
+
 		msg.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "플레이어 위치"));
-		
+
 		for (Participant participant : game.getParticipants()) {
 			Player player = participant.getPlayer();
 			if (!game.getDeathManager().isDead(player)) {
@@ -30,13 +31,13 @@ public class LocationNoticeScript extends AbstractScript {
 				int X = (int) l.getX();
 				int Y = (int) l.getY();
 				int Z = (int) l.getZ();
-				
+
 				msg.add(ChatColor.translateAlternateColorCodes('&', "&9" + player.getName() + " &f: &bX&f" + X + ", &bY&f" + Y + ", &bZ&f" + Z));
 			}
 		}
-		
+
 		msg.add(ChatColor.translateAlternateColorCodes('&', "&3-------------------------------------------------------------"));
-		
+
 		for (String m : msg) {
 			Bukkit.broadcastMessage(m);
 		}

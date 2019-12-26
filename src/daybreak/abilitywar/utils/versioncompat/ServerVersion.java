@@ -1,24 +1,27 @@
 package daybreak.abilitywar.utils.versioncompat;
 
 import daybreak.abilitywar.utils.Messager;
-import java.lang.reflect.Field;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
+import java.lang.reflect.Field;
+
 /**
  * Server Version
+ *
  * @author Daybreak 새벽
  */
 public class ServerVersion {
 
-	private ServerVersion() {}
+	private ServerVersion() {
+	}
 
 	private static final Messager messager = new Messager();
 	private static String VersionString = getVersionString();
 	private static int Version = getSimpleVersion();
-	
+
 	/**
 	 * 서버 버전을 String으로 받아옵니다. Ex. v1_12_R1
 	 */
@@ -30,7 +33,7 @@ public class ServerVersion {
 			return "";
 		}
 	}
-	
+
 	/**
 	 * 서버 버전을 간단한 Int로 받아옵니다. Ex. 1.14.3 => 14
 	 */
@@ -47,21 +50,21 @@ public class ServerVersion {
 
 		return Version;
 	}
-	
+
 	public static int getVersion() {
 		return Version;
 	}
-	
+
 	public static String getStringVersion() {
 		return VersionString;
 	}
-	
+
 	/**
 	 * 버전 호환 작업
 	 */
 	public static void VersionCompat(Plugin plugin) {
-		if(getVersion() >= 12) {
-			if(getVersion() >= 13) {
+		if (getVersion() >= 12) {
+			if (getVersion() >= 13) {
 				setAPIVersion(plugin, "1." + getVersion());
 			}
 		} else {
@@ -69,7 +72,7 @@ public class ServerVersion {
 			Bukkit.getPluginManager().disablePlugin(plugin);
 		}
 	}
-	
+
 	private static void setAPIVersion(Plugin plugin, String Version) {
 		try {
 			PluginDescriptionFile desc = plugin.getDescription();

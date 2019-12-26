@@ -29,42 +29,44 @@ public class ShowmanShip extends AbilityBase {
 	private final RGB WEAK = new RGB(214, 255, 212);
 	private final RGB POWER = new RGB(255, 184, 150);
 	private final RGB POWERFUL = new RGB(255, 59, 59);
-	
+
 	private final Timer Passive = new Timer() {
 
 		private final Circle circle = new Circle(getPlayer().getLocation(), 10).setAmount(100).setHighestLocation(true);
-		
+
 		@Override
-		public void onStart() {}
-		
+		public void onStart() {
+		}
+
 		@Override
 		public void onProcess(int count) {
 			circle.setCenter(getPlayer().getLocation());
 			final int Count = LocationUtil.getNearbyPlayers(getPlayer(), 10, 10).size();
-			
-			if(Count <= 1) {
+
+			if (Count <= 1) {
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), 20, 0, true);
-				for(Location l : circle.getLocations()) {
+				for (Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, WEAK, 0);
 				}
-			} else if(Count == 2) {
+			} else if (Count == 2) {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 1, true);
-				for(Location l : circle.getLocations()) {
+				for (Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWER, 0);
 				}
 			} else {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 2, true);
-				for(Location l : circle.getLocations()) {
+				for (Location l : circle.getLocations()) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWERFUL, 0);
 				}
 			}
 		}
-		
+
 		@Override
-		public void onEnd() {}
-		
+		public void onEnd() {
+		}
+
 	}.setPeriod(1);
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
@@ -76,6 +78,7 @@ public class ShowmanShip extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

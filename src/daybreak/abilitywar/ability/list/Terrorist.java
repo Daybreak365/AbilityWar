@@ -24,24 +24,24 @@ public class Terrorist extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
 			"# 쿨타임") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
 
 	public static final SettingObject<Integer> CountConfig = new SettingObject<Integer>(Terrorist.class, "Count", 15,
 			"# TNT 개수") {
-		
+
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
 		}
-		
+
 	};
-	
+
 	public Terrorist(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신의 주위에 TNT " + (CountConfig.getValue() * 2) + "개를 떨어뜨립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
@@ -50,44 +50,46 @@ public class Terrorist extends AbilityBase {
 
 	private final int count = CountConfig.getValue();
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
-	
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if(materialType.equals(Material.IRON_INGOT)) {
-			if(ct.equals(ClickType.RIGHT_CLICK)) {
-				if(!Cool.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (ct.equals(ClickType.RIGHT_CLICK)) {
+				if (!Cool.isCooldown()) {
 					Location center = getPlayer().getLocation();
-					for(int i = 0; i < 10; i++) {
-						for(Location l : new Circle(center, i).setAmount(20).setHighestLocation(true).getLocations()) {
+					for (int i = 0; i < 10; i++) {
+						for (Location l : new Circle(center, i).setAmount(20).setHighestLocation(true).getLocations()) {
 							ParticleLib.LAVA.spawnParticle(l, 0, 0, 0, 1);
 						}
 					}
-					
-					for(Location l : LocationUtil.getRandomLocations(center, 9, count)) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
-					for(Location l : new Circle(center, 10).setAmount(count).setHighestLocation(true).getLocations()) l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
-					
+
+					for (Location l : LocationUtil.getRandomLocations(center, 9, count))
+						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
+					for (Location l : new Circle(center, 10).setAmount(count).setHighestLocation(true).getLocations())
+						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
+
 					Cool.startTimer();
-					
+
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if(e.getEntity().equals(getPlayer())) {
-			if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+		if (e.getEntity().equals(getPlayer())) {
+			if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
 				e.setCancelled(true);
 			}
 		}
 	}
-	
 
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {}
-	
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
 }

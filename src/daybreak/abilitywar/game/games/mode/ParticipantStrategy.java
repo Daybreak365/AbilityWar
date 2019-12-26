@@ -8,56 +8,58 @@ import java.util.UUID;
 
 public abstract class ParticipantStrategy {
 
-    private final AbstractGame game;
+	private final AbstractGame game;
 
-    public ParticipantStrategy(AbstractGame game) {
-        this.game = game;
-    }
+	public ParticipantStrategy(AbstractGame game) {
+		this.game = game;
+	}
 
-    public abstract Collection<AbstractGame.Participant> getParticipants();
+	public abstract Collection<AbstractGame.Participant> getParticipants();
 
-    public abstract boolean isParticipating(UUID uuid);
-    public abstract AbstractGame.Participant getParticipant(UUID uuid);
+	public abstract boolean isParticipating(UUID uuid);
 
-    public abstract void addParticipant(Player player) throws UnsupportedOperationException;
-    public abstract void removeParticipant(UUID uuid) throws UnsupportedOperationException;
+	public abstract AbstractGame.Participant getParticipant(UUID uuid);
 
-    public static class DEFAULT_MANAGEMENT extends ParticipantStrategy {
+	public abstract void addParticipant(Player player) throws UnsupportedOperationException;
 
-        private final HashMap<String, AbstractGame.Participant> participants = new HashMap<>();
+	public abstract void removeParticipant(UUID uuid) throws UnsupportedOperationException;
 
-        public DEFAULT_MANAGEMENT(AbstractGame game, Collection<Player> players) {
-            super(game);
-            for (Player player : players) {
-                participants.put(player.getUniqueId().toString(), game.new Participant(player));
-            }
-        }
+	public static class DEFAULT_MANAGEMENT extends ParticipantStrategy {
 
-        @Override
-        public Collection<AbstractGame.Participant> getParticipants() {
-            return participants.values();
-        }
+		private final HashMap<String, AbstractGame.Participant> participants = new HashMap<>();
 
-        @Override
-        public boolean isParticipating(UUID uuid) {
-            return participants.containsKey(uuid.toString());
-        }
+		public DEFAULT_MANAGEMENT(AbstractGame game, Collection<Player> players) {
+			super(game);
+			for (Player player : players) {
+				participants.put(player.getUniqueId().toString(), game.new Participant(player));
+			}
+		}
 
-        @Override
-        public AbstractGame.Participant getParticipant(UUID uuid) {
-            return participants.get(uuid.toString());
-        }
+		@Override
+		public Collection<AbstractGame.Participant> getParticipants() {
+			return participants.values();
+		}
 
-        @Override
-        public void addParticipant(Player player) throws UnsupportedOperationException {
-            throw new UnsupportedOperationException("참가자를 추가할 수 없습니다.");
-        }
+		@Override
+		public boolean isParticipating(UUID uuid) {
+			return participants.containsKey(uuid.toString());
+		}
 
-        @Override
-        public void removeParticipant(UUID uuid) throws UnsupportedOperationException {
-            throw new UnsupportedOperationException("참가자를 제거할 수 없습니다.");
-        }
+		@Override
+		public AbstractGame.Participant getParticipant(UUID uuid) {
+			return participants.get(uuid.toString());
+		}
 
-    }
+		@Override
+		public void addParticipant(Player player) throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("참가자를 추가할 수 없습니다.");
+		}
+
+		@Override
+		public void removeParticipant(UUID uuid) throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("참가자를 제거할 수 없습니다.");
+		}
+
+	}
 
 }

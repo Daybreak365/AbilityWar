@@ -10,12 +10,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,6 +26,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 능력 금지 GUI
@@ -121,24 +122,24 @@ public class BlackListGUI implements Listener {
 		for (Rank r : forEach) {
 			ItemStack RankItem;
 			switch (r) {
-			case D:
-				RankItem = new ItemStack(Material.STONE);
-				break;
-			case C:
-				RankItem = new ItemStack(Material.IRON_BLOCK);
-				break;
-			case B:
-				RankItem = new ItemStack(Material.GOLD_BLOCK);
-				break;
-			case A:
-				RankItem = new ItemStack(Material.DIAMOND_BLOCK);
-				break;
-			case S:
-				RankItem = new ItemStack(Material.EMERALD_BLOCK);
-				break;
-			default:
-				RankItem = new ItemStack(Material.BARRIER);
-				break;
+				case D:
+					RankItem = new ItemStack(Material.STONE);
+					break;
+				case C:
+					RankItem = new ItemStack(Material.IRON_BLOCK);
+					break;
+				case B:
+					RankItem = new ItemStack(Material.GOLD_BLOCK);
+					break;
+				case A:
+					RankItem = new ItemStack(Material.DIAMOND_BLOCK);
+					break;
+				case S:
+					RankItem = new ItemStack(Material.EMERALD_BLOCK);
+					break;
+				default:
+					RankItem = new ItemStack(Material.BARRIER);
+					break;
 			}
 			ItemMeta RankMeta = RankItem.getItemMeta();
 			String RankName = r.getRankName();

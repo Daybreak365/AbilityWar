@@ -70,6 +70,7 @@ public enum PotionEffects {
 	public boolean isPositive() {
 		return type.equals(Type.POSITIVE);
 	}
+
 	public boolean isNegative() {
 		return type.equals(Type.NEGATIVE);
 	}
@@ -78,6 +79,6 @@ public enum PotionEffects {
 		return Enums.getIfPresent(PotionEffects.class, potionEffectType.getName()).get();
 	}
 
-    private enum Type { POSITIVE, NEGATIVE }
+	private enum Type {POSITIVE, NEGATIVE}
 
 }

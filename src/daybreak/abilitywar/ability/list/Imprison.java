@@ -16,15 +16,21 @@ import org.bukkit.entity.LivingEntity;
 @AbilityManifest(Name = "구속", Rank = Rank.B, Species = Species.HUMAN)
 public class Imprison extends AbilityBase {
 
-	public static final SettingObject<Integer> CooldownConfig=new SettingObject<Integer>(Imprison.class,"Cooldown",25,"# 쿨타임"){
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
 
-	@Override public boolean Condition(Integer value){return value>=0;}
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 0;
+		}
 
 	};
 
-	public static final SettingObject<Integer> SizeConfig=new SettingObject<Integer>(Imprison.class,"Size",3,"# 스킬 크기"){
+	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(Imprison.class, "Size", 3, "# 스킬 크기") {
 
-	@Override public boolean Condition(Integer value){return value>=0;}
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 0;
+		}
 
 	};
 

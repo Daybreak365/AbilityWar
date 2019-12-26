@@ -81,20 +81,20 @@ public class SpawnWizard extends SettingWizard {
 		if (currentItem != null) {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
-				case "§b스폰 이동":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_SPAWN_ENABLE, !Settings.getSpawnEnable());
-					Show();
-					break;
-				case "§b스폰 설정":
-					p.closeInventory();
-					if (e.getClick().equals(ClickType.SHIFT_LEFT)) {
-						p.teleport(Settings.getSpawnLocation());
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a스폰 &f위치로 이동되었습니다."));
-					} else {
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_SPAWN_LOCATION, p.getLocation());
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a게임 스폰이 변경되었습니다."));
-					}
-					break;
+					case "§b스폰 이동":
+						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_SPAWN_ENABLE, !Settings.getSpawnEnable());
+						Show();
+						break;
+					case "§b스폰 설정":
+						p.closeInventory();
+						if (e.getClick().equals(ClickType.SHIFT_LEFT)) {
+							p.teleport(Settings.getSpawnLocation());
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a스폰 &f위치로 이동되었습니다."));
+						} else {
+							AbilityWarSettings.modifyProperty(ConfigNodes.GAME_SPAWN_LOCATION, p.getLocation());
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a게임 스폰이 변경되었습니다."));
+						}
+						break;
 				}
 			}
 		}

@@ -35,7 +35,8 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 				handlerClass = (Class<? extends Event>) field.getDeclaringClass();
 				break;
 			}
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+		}
 		return handlerClass;
 	}
 
