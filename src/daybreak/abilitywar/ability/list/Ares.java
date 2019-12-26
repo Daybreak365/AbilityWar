@@ -11,14 +11,15 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase {
@@ -128,9 +129,6 @@ public class Ares extends AbilityBase {
 		}
 	}
 	
-	@Override
-	public void onRestrictClear() {}
-
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	

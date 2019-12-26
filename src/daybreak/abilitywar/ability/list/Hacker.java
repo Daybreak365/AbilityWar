@@ -12,12 +12,13 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AbilityManifest(Name = "해커", Rank = Rank.A, Species = Species.HUMAN)
 public class Hacker extends AbilityBase {
@@ -134,7 +135,7 @@ public class Hacker extends AbilityBase {
 				locations.addAll(top.setCenter(Target.getLocation().add(0, y, 0)).getLocations());
 				locations.addAll(bottom.setCenter(Target.getLocation().add(0, 2.0 - y, 0)).getLocations());
 				
-				for(Location l : locations) ParticleLib.REDSTONE.spawnParticle(l, new RGB(168, 121, 171), 0);
+				for(Location l : locations) ParticleLib.REDSTONE.spawnParticle(l, new RGB(168, 121, 171));
 			}
 		}
 		
@@ -168,9 +169,6 @@ public class Hacker extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void onRestrictClear() {}
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}

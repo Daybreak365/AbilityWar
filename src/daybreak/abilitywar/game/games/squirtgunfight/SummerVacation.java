@@ -5,7 +5,7 @@ import daybreak.abilitywar.config.AbilityWarSettings.Settings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.SummerVacationSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
-import daybreak.abilitywar.game.events.ParticipantDeathEvent;
+import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.mode.decorator.Winnable;
 import daybreak.abilitywar.game.games.standard.Game;

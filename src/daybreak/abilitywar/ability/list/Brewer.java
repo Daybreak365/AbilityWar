@@ -11,11 +11,12 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.PotionBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib.PotionBuilder.PotionShape;
-import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
+
+import java.util.Random;
 
 @AbilityManifest(Name = "양조사", Rank = Rank.B, Species = Species.HUMAN)
 public class Brewer extends AbilityBase {
@@ -64,9 +65,6 @@ public class Brewer extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void onRestrictClear() {}
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}

@@ -58,7 +58,7 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 
 	public void unregisterAll(PassiveExecutor executor) {
 		for (Class<? extends Event> eventClass : passiveExecutors.keySet()) {
-			List<PassiveExecutor> list = passiveExecutors.get(eventClass);
+			CopyOnWriteArrayList<PassiveExecutor> list = passiveExecutors.get(eventClass);
 			while (list.contains(executor))
 				list.remove(executor);
 		}

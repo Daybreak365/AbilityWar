@@ -11,8 +11,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import java.util.ArrayList;
-import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -20,6 +18,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.OTHERS)
 public class Pumpkin extends AbilityBase {
@@ -155,9 +156,6 @@ public class Pumpkin extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void onRestrictClear() {}
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}

@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -144,8 +145,8 @@ public class SquirtGun extends AbilityBase {
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
-	@Override
-	public void onRestrictClear() {
+	@SubscribeEvent(onlyRelevant = true)
+	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
 		passive.startTimer();
 	}
 

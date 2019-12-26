@@ -179,6 +179,7 @@ public class LocationUtil {
 	 */
 	public static <E extends Entity> E getNearestEntity(Class<E> entityType, Entity center) {
 		return getNearestEntity(entityType, center.getLocation(), e -> {
+			if (e.equals(center)) return false;
 			if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 				AbstractGame game = AbilityWarThread.getGame();
 				Player p = (Player) e;

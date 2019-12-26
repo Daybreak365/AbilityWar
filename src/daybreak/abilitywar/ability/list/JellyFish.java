@@ -55,7 +55,4 @@ public class JellyFish extends AbilityBase {
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
-	@Override
-	public void onRestrictClear() {}
-
-}
+	}

@@ -43,9 +43,6 @@ public class Imprison extends AbilityBase {
 	}
 
 	@Override
-	public void onRestrictClear() {}
-
-	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
 		if (mt.equals(MaterialType.IRON_INGOT)) {
 			if (entity != null) {

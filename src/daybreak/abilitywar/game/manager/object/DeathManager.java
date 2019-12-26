@@ -2,7 +2,7 @@ package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
-import daybreak.abilitywar.game.events.ParticipantDeathEvent;
+import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;

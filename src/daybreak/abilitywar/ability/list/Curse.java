@@ -1,10 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -13,6 +8,10 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 @AbilityManifest(Name = "컬스", Rank = Rank.C, Species = Species.HUMAN)
 public class Curse extends AbilityBase {
@@ -39,9 +38,6 @@ public class Curse extends AbilityBase {
 	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
 		return false;
 	}
-
-	@Override
-	public void onRestrictClear() {}
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {

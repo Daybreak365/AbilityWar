@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -125,8 +126,8 @@ public class Sniper extends AbilityBase {
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 
-	@Override
-	public void onRestrictClear() {
+	@SubscribeEvent(onlyRelevant = true)
+	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
 		Snipe.startTimer();
 	}
 

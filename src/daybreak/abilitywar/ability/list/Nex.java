@@ -197,10 +197,6 @@ public class Nex extends AbilityBase {
 	}.setPeriod(4);
 
 	@Override
-	public void onRestrictClear() {
-	}
-
-	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
 	}
 

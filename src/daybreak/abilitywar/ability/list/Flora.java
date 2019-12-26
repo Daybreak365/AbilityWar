@@ -4,6 +4,8 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -71,9 +73,9 @@ public class Flora extends AbilityBase {
 			Location center = getPlayer().getLocation();
 			for (Location l : circle.setCenter(center).getLocations()) {
 				if (type.equals(EffectType.SPEED)) {
-					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), SPEED_COLOR, 0);
+					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), SPEED_COLOR);
 				} else {
-					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), REGENERATION_COLOR, 0);
+					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), REGENERATION_COLOR);
 				}
 			}
 
@@ -124,8 +126,8 @@ public class Flora extends AbilityBase {
 		return false;
 	}
 
-	@Override
-	public void onRestrictClear() {
+	@SubscribeEvent(onlyRelevant = true)
+	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
 		Passive.startTimer();
 	}
 

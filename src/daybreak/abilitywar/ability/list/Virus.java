@@ -5,7 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.game.events.ParticipantDeathEvent;
+import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
@@ -36,10 +36,6 @@ public class Virus extends AbilityBase {
 				} catch (Exception ignored) {}
 			}
 		}
-	}
-
-	@Override
-	public void onRestrictClear() {
 	}
 
 	@Override

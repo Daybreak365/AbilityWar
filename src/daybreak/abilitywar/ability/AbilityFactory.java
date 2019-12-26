@@ -56,6 +56,7 @@ import daybreak.abilitywar.game.games.mixability.Mix;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.database.collections.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 
@@ -243,7 +244,7 @@ public class AbilityFactory {
         private final Class<T> clazz;
         private final Constructor<T> constructor;
         private final AbilityManifest manifest;
-        private final Map<Class<? extends Event>, Method> eventhandlers;
+        private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 
         @SuppressWarnings("unchecked")
         private AbilityRegistration(Class<T> clazz) throws NoSuchMethodException, SecurityException {
@@ -255,12 +256,13 @@ public class AbilityFactory {
                 throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
             this.manifest = clazz.getAnnotation(AbilityManifest.class);
 
-            Map<Class<? extends Event>, Method> eventhandlers = new HashMap<>();
+            HashMap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
             for (Method method : clazz.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(SubscribeEvent.class)) {
+                SubscribeEvent subscribeEvent = method.getAnnotation(SubscribeEvent.class);
+                if (subscribeEvent != null) {
                     Class<?>[] parameters = method.getParameterTypes();
                     if (parameters.length == 1 && Event.class.isAssignableFrom(parameters[0])) {
-                        eventhandlers.put((Class<? extends Event>) parameters[0], method);
+                        eventhandlers.put((Class<? extends Event>) parameters[0], Pair.of(method, subscribeEvent));
                     }
                 }
             }
@@ -279,7 +281,7 @@ public class AbilityFactory {
             return manifest;
         }
 
-        public Map<Class<? extends Event>, Method> getEventhandlers() {
+        public Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> getEventhandlers() {
             return eventhandlers;
         }
 

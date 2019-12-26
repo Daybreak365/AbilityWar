@@ -9,10 +9,11 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import java.util.LinkedList;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
+
+import java.util.LinkedList;
 
 @AbilityManifest(Name = "암살자", Rank = Rank.A, Species = Species.HUMAN)
 public class Assassin extends AbilityBase {
@@ -109,9 +110,6 @@ public class Assassin extends AbilityBase {
 		return false;
 	}
 	
-	@Override
-	public void onRestrictClear() {}
-
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	

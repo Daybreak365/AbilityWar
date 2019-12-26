@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -76,9 +77,9 @@ public class EnergyBlocker extends AbilityBase {
 		@Override
 		public void onProcess(int count) {
 			if(Default) {
-				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(116, 237, 167), 0);
+				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(116, 237, 167));
 			} else {
-				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(85, 237, 242), 0);
+				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(85, 237, 242));
 			}
 		}
 		
@@ -108,9 +109,9 @@ public class EnergyBlocker extends AbilityBase {
 			}
 		}
 	}
-	
-	@Override
-	public void onRestrictClear() {
+
+	@SubscribeEvent(onlyRelevant = true)
+	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
 		Particle.startTimer();
 	}
 

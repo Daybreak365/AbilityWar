@@ -5,14 +5,13 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.events.ParticipantDeathEvent;
+import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.database.PushingArray;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Note;
@@ -24,6 +23,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @AbilityManifest(Name = "시간 역행", Rank = Rank.S, Species = Species.HUMAN)
 public class TimeRewind extends AbilityBase {
@@ -142,8 +144,8 @@ public class TimeRewind extends AbilityBase {
 
 	}.setPeriod(2);
 
-	@Override
-	public void onRestrictClear() {
+	@SubscribeEvent(onlyRelevant = true)
+	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
 		Save.startTimer();
 	}
 

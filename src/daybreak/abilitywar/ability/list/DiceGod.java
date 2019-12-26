@@ -10,11 +10,12 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
-import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+
+import java.util.Random;
 
 @AbilityManifest(Name = "다이스 갓", Rank = Rank.A, Species = Species.GOD)
 public class DiceGod extends AbilityBase {
@@ -97,9 +98,6 @@ public class DiceGod extends AbilityBase {
 		}
 	}
 	
-	@Override
-	public void onRestrictClear() {}
-
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	

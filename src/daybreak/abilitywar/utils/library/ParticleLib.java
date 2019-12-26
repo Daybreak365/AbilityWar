@@ -1,25 +1,26 @@
-/** MIT 라이선스
-* 
-* Copyright ⓒ 2019 DayBreak
-* 
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"),
-* to deal in the Software without restriction, including without limitation 
-* the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-* and/or sell copies of the Software, and to permit persons to whom the 
-* Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included 
-* in all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-* OF * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-* IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-* DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-* ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-* DEALINGS IN THE SOFTWARE.
-**/
+/**
+ * MIT 라이선스
+ * <p>
+ * Copyright ⓒ 2019 DayBreak
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * <p>
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ **/
 
 package daybreak.abilitywar.utils.library;
 
@@ -39,7 +40,8 @@ import org.bukkit.entity.Player;
  */
 public class ParticleLib {
 
-	private ParticleLib() {}
+	private ParticleLib() {
+	}
 
 	public static final Particles BARRIER = new Particles("BARRIER", "BARRIER", "BARRIER", "BARRIER", "BARRIER", "BARRIER", "BARRIER", "");
 	public static final Particles BLOCK_CRACK = new Particles("BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "BLOCK_CRACK", "");
@@ -110,20 +112,20 @@ public class ParticleLib {
 		private Particle particle = null;
 
 		private Particles(String Name14, String Name13, String Name12, String Name11, String Name10, String Name9,
-				String Name8, String Name7) {
+						  String Name8, String Name7) {
 			switch (ServerVersion.getVersion()) {
-			case 14:
-				particleName = Name14;
-				particle = getParticle();
-				break;
-			case 13:
-				particleName = Name13;
-				particle = getParticle();
-				break;
-			case 12:
-				particleName = Name12;
-				particle = getParticle();
-				break;
+				case 14:
+					particleName = Name14;
+					particle = getParticle();
+					break;
+				case 13:
+					particleName = Name13;
+					particle = getParticle();
+					break;
+				case 12:
+					particleName = Name12;
+					particle = getParticle();
+					break;
 			}
 		}
 
@@ -145,7 +147,7 @@ public class ParticleLib {
 		public <T> void spawnParticle(Player p, Location l, float offsetX, float offsetY, float offsetZ, int Count, T t) {
 			if (Settings.getVisualEffect()) {
 				if (particle != null) {
-					if(p != null) {
+					if (p != null) {
 						p.spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ, t);
 					} else {
 						l.getWorld().spawnParticle(particle, l, Count, offsetX, offsetY, offsetZ, t);
@@ -167,8 +169,8 @@ public class ParticleLib {
 		}
 
 		public void spawnParticle(Player p, Location l, RGB rgb, int Count) {
-			if(ServerVersion.getVersion() >= 13) {
-				if(particle.getDataType().equals(DustOptions.class)) {
+			if (ServerVersion.getVersion() >= 13) {
+				if (particle.getDataType().equals(DustOptions.class)) {
 					this.spawnParticle(p, l, 0, 0, 0, Count, new DustOptions(Color.fromRGB(rgb.getRedInt(), rgb.getGreenInt(), rgb.getBlueInt()), 1));
 				} else {
 					this.spawnParticle(p, l, 0, 0, 0, Count, null);
@@ -178,26 +180,26 @@ public class ParticleLib {
 			}
 		}
 
-		public void spawnParticle(Location l, RGB rgb, int Count) {
-			if(ServerVersion.getVersion() >= 13) {
-				if(particle.getDataType().equals(DustOptions.class)) {
-					this.spawnParticle(l, 0, 0, 0, Count, new DustOptions(Color.fromRGB(rgb.getRedInt(), rgb.getGreenInt(), rgb.getBlueInt()), 1));
+		public void spawnParticle(Location l, RGB rgb) {
+			if (ServerVersion.getVersion() >= 13) {
+				if (particle.getDataType().equals(DustOptions.class)) {
+					this.spawnParticle(l, 0, 0, 0, 0, new DustOptions(Color.fromRGB(rgb.getRedInt(), rgb.getGreenInt(), rgb.getBlueInt()), 1));
 				} else {
-					this.spawnParticle(l, 0, 0, 0, Count, null);
+					this.spawnParticle(l, 0, 0, 0, 0, null);
 				}
 			} else {
-				this.spawnParticle(l, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), Count);
+				this.spawnParticle(l, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
 			}
 		}
 
 	}
-	
+
 	public static class RGB {
-		
+
 		private final int red;
 		private final int green;
 		private final int blue;
-		
+
 		public RGB(int Red, int Green, int Blue) {
 			this.red = Red;
 			this.green = Green;
@@ -207,9 +209,11 @@ public class ParticleLib {
 		public float getRed() {
 			return (float) red / 255;
 		}
+
 		public float getGreen() {
 			return (float) green / 255;
 		}
+
 		public float getBlue() {
 			return (float) blue / 255;
 		}
@@ -217,15 +221,19 @@ public class ParticleLib {
 		public int getRedInt() {
 			return red;
 		}
+
 		public int getGreenInt() {
 			return green;
 		}
+
 		public int getBlueInt() {
 			return blue;
 		}
 
-		public Color getColor() { return Color.fromRGB(red, green, blue); }
-		
+		public Color getColor() {
+			return Color.fromRGB(red, green, blue);
+		}
+
 	}
 
 }

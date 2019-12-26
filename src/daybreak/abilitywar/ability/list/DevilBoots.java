@@ -5,10 +5,10 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import java.util.LinkedList;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,6 +16,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
+
+import java.util.LinkedList;
 
 @AbilityManifest(Name = "악마의 부츠", Rank = Rank.B, Species = Species.OTHERS)
 public class DevilBoots extends AbilityBase {
@@ -71,8 +73,8 @@ public class DevilBoots extends AbilityBase {
 		}
 	}
 
-	@Override
-	public void onRestrictClear() {
+	@SubscribeEvent(onlyRelevant = true)
+	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
 		SPEED.startTimer();
 	}
 

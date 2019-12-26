@@ -8,12 +8,13 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
-import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+
+import java.util.Random;
 
 @AbilityManifest(Name = "이열치열", Rank = Rank.B, Species = Species.HUMAN)
 public class FireFightWithFire extends AbilityBase {
@@ -79,10 +80,6 @@ public class FireFightWithFire extends AbilityBase {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onRestrictClear() {
 	}
 
 	@Override

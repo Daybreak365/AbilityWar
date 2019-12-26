@@ -1,20 +1,19 @@
 package daybreak.abilitywar.ability.list;
 
-import java.util.Random;
-
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.PotionEffects;
+import java.util.Random;
 
 @AbilityManifest(Name = "데미갓", Rank = Rank.S, Species = Species.DEMIGOD)
 public class Demigod extends AbilityBase {
@@ -66,9 +65,6 @@ public class Demigod extends AbilityBase {
 		}
 	}
 	
-	@Override
-	public void onRestrictClear() {}
-
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
 	

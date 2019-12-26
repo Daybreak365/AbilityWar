@@ -69,10 +69,6 @@ public class Ira extends AbilityBase {
 	}
 
 	@Override
-	public void onRestrictClear() {
-	}
-
-	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {
 	}
 

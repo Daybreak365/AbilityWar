@@ -15,12 +15,13 @@ import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.math.NumberUtil.NumberStatus;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Random;
 
 @AbilityManifest(Name = "여제", Rank = Rank.B, Species = Species.HUMAN)
 public class TheEmpress extends AbilityBase {
@@ -124,9 +125,6 @@ public class TheEmpress extends AbilityBase {
 		
 		return false;
 	}
-
-	@Override
-	public void onRestrictClear() {}
 
 	@Override
 	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
