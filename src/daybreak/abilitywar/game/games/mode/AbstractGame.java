@@ -3,7 +3,6 @@ package daybreak.abilitywar.game.games.mode;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
-import daybreak.abilitywar.ability.AbilityBase.MaterialType;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
@@ -11,6 +10,7 @@ import daybreak.abilitywar.utils.thread.OverallTimer;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -28,6 +28,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static daybreak.abilitywar.utils.Validate.notNull;
@@ -195,11 +197,11 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		private void onPlayerInteract(PlayerInteractEvent e) {
 			Player p = e.getPlayer();
 			if (p.equals(getPlayer())) {
-				MaterialType materialType = MaterialType.valueOf(VersionUtil.getItemInHand(p).getType());
+				Material material = VersionUtil.getItemInHand(p).getType();
 				ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR)
 						|| e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK
 						: ClickType.LEFT_CLICK;
-				if (materialType != null) {
+				if (attributes.SKILL_MATERIALS.set.contains(material)) {
 					if (hasAbility()) {
 						AbilityBase ability = getAbility();
 						if (!ability.isRestricted()) {
@@ -207,7 +209,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 							long duration = java.time.Duration.between(lastClick, currentInstant).toMillis();
 							if (duration >= 250) {
 								this.lastClick = currentInstant;
-								if (ability.ActiveSkill(materialType, clickType)) {
+								if (ability.ActiveSkill(material, clickType)) {
 									ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 								}
 							}
@@ -220,9 +222,9 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		@EventHandler
 		private void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
 			Player p = e.getPlayer();
-			if (p.equals(getPlayer())) {
-				MaterialType materialType = MaterialType.valueOf(VersionUtil.getItemInHand(p).getType());
-				if (materialType != null && !e.isCancelled() && this.hasAbility()) {
+			if (p.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
+				Material material = VersionUtil.getItemInHand(p).getType();
+				if (attributes.SKILL_MATERIALS.set.contains(material)) {
 					AbilityBase ability = this.getAbility();
 					if (!ability.isRestricted()) {
 						Instant currentInstant = Instant.now();
@@ -234,12 +236,12 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 									Player targetPlayer = (Player) targetEntity;
 									if (isParticipating(targetPlayer)) {
 										this.lastClick = currentInstant;
-										ability.TargetSkill(materialType, targetPlayer);
+										ability.TargetSkill(material, targetPlayer);
 									}
 								} else {
 									LivingEntity target = (LivingEntity) targetEntity;
 									this.lastClick = currentInstant;
-									ability.TargetSkill(materialType, target);
+									ability.TargetSkill(material, target);
 								}
 							}
 						}
@@ -305,36 +307,58 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		public class Attributes {
 			public final Attribute<Boolean> TEAM_CHAT = new Attribute<>(false);
 			public final Attribute<Boolean> TARGETABLE = new Attribute<>(true);
+			public final SetAttribute<Material> SKILL_MATERIALS = new SetAttribute<>(Material.IRON_INGOT, Material.GOLD_INGOT);
         }
 
-        public class Attribute<T> {
+		public class Attribute<T> {
 
-            private final T defaultValue;
-            private T value;
+			private final T defaultValue;
+			private T value;
 
-            void condition(T value) throws IllegalArgumentException {}
+			private Attribute(T defaultValue) {
+				this.defaultValue = defaultValue;
+				this.value = defaultValue;
+			}
 
-            private Attribute(T defaultValue) {
-                this.defaultValue = defaultValue;
-                this.value = defaultValue;
-            }
+			public T getDefaultValue() {
+				return defaultValue;
+			}
 
-            public T getDefaultValue() {
-                return defaultValue;
-            }
+			public T getValue() {
+				return value;
+			}
 
-            public T getValue() {
-                return value;
-            }
+			public T setValue(T value) {
+				T origin = this.value;
+				this.value = value;
+				return origin;
+			}
 
-            public T setValue(T value) {
-                condition(value);
-                T origin = this.value;
-                this.value = value;
-                return origin;
-            }
+		}
 
-        }
+		public class SetAttribute<E> {
+
+			private HashSet<E> set;
+
+			@SafeVarargs
+			private SetAttribute(E... defaultElements) {
+				this.set = new HashSet<>();
+				Collections.addAll(set, defaultElements);
+			}
+
+			public Set<E> getView() {
+				return Collections.unmodifiableSet(set);
+			}
+
+			public void addValue(E element) {
+				set.add(element);
+			}
+
+			public void removeValue(E element) {
+				set.remove(element);
+			}
+
+		}
 
     }
 

@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -58,7 +59,7 @@ public class FastRegeneration extends AbilityBase {
 	}.setPeriod(RegenSpeedConfig.getValue());
 	
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
@@ -69,6 +70,6 @@ public class FastRegeneration extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 	
 }

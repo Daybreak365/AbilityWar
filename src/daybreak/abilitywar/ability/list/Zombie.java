@@ -8,9 +8,9 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -19,6 +19,8 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+
+import java.util.Random;
 
 @AbilityManifest(Name = "좀비", Rank = Rank.B, Species = Species.OTHERS)
 public class Zombie extends AbilityBase {
@@ -40,7 +42,7 @@ public class Zombie extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
@@ -89,6 +91,6 @@ public class Zombie extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 
 }

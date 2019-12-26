@@ -9,6 +9,7 @@ import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -21,7 +22,7 @@ public class Virus extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
@@ -39,7 +40,7 @@ public class Virus extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

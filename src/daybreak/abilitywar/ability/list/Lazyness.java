@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -47,12 +48,12 @@ public class Lazyness extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 
 	private class DamageTimer extends Timer {
 

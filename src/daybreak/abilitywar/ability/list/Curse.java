@@ -9,6 +9,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,13 +36,13 @@ public class Curse extends AbilityBase {
 	private int Count = CountConfig.getValue();
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {
-		if(mt.equals(MaterialType.IRON_INGOT)) {
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+		if(materialType.equals(Material.IRON_INGOT)) {
 			if(entity != null) {
 				if(entity instanceof Player) {
 					Player p = (Player) entity;

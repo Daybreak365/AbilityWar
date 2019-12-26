@@ -13,6 +13,7 @@ import daybreak.abilitywar.utils.library.item.MaterialLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.LivingEntity;
@@ -150,7 +151,7 @@ public class Gladiator extends AbilityBase {
 	}.setPeriod(1);
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
@@ -164,8 +165,8 @@ public class Gladiator extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {
-		if (mt.equals(MaterialType.IRON_INGOT)) {
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+		if (materialType.equals(Material.IRON_INGOT)) {
 			if (entity != null) {
 				if (entity instanceof Player) {
 					if (!Cool.isCooldown()) {

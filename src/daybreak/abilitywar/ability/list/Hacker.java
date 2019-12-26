@@ -14,6 +14,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -147,8 +148,8 @@ public class Hacker extends AbilityBase {
 	}.setPeriod(1);
 	
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.IRON_INGOT)) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
+		if(materialType.equals(Material.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
@@ -171,6 +172,6 @@ public class Hacker extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 	
 }

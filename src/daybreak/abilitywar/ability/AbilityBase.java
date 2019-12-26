@@ -116,11 +116,10 @@ public abstract class AbilityBase implements PassiveExecutor {
 		Class<? extends Event> eventClass = event.getClass();
 		if (eventhandlers.containsKey(eventClass)) {
 			Pair<Method, SubscribeEvent> pair = eventhandlers.get(eventClass);
-			if (pair.getRight().onlyRelevant()) {
-				if (event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility())) return;
-				else if (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant())) return;
-				else if (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer())) return;
-			}
+			SubscribeEvent subscribeEvent = pair.getRight();
+			if (subscribeEvent.onlyRelevant() && ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
+					|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
+					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer())))) return;
 			Method method = pair.getLeft();
 			method.setAccessible(true);
 			try {
@@ -135,19 +134,19 @@ public abstract class AbilityBase implements PassiveExecutor {
 	/**
 	 * 액티브 스킬 발동을 위해 사용됩니다.
 	 *
-	 * @param mt 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
+	 * @param materialType 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
 	 * @param ct 클릭의 종류
 	 * @return 능력 발동 여부
 	 */
-	public abstract boolean ActiveSkill(MaterialType mt, ClickType ct);
+	public abstract boolean ActiveSkill(Material materialType, ClickType ct);
 
 	/**
 	 * 타겟팅 스킬 발동을 위해 사용됩니다.
 	 *
-	 * @param mt     플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
+	 * @param materialType     플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
 	 * @param entity 타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 될 수 있습니다. null 체크가 필요합니다.
 	 */
-	public abstract void TargetSkill(MaterialType mt, LivingEntity entity);
+	public abstract void TargetSkill(Material materialType, LivingEntity entity);
 
 	/**
 	 * 능력 제한이 해제될 경우 호출됩니다.
@@ -271,32 +270,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	}
 
-	public enum ClickType {LEFT_CLICK, RIGHT_CLICK}
-
-	public enum MaterialType {
-
-		IRON_INGOT(Material.IRON_INGOT), GOLD_INGOT(Material.GOLD_INGOT);
-
-		private final Material material;
-
-		MaterialType(Material material) {
-			this.material = material;
-		}
-
-		public Material getMaterial() {
-			return material;
-		}
-
-		public static MaterialType valueOf(Material material) {
-			for (MaterialType type : values()) {
-				if (type.material.equals(material)) {
-					return type;
-				}
-			}
-			return null;
-		}
-
-	}
+	public enum ClickType { LEFT_CLICK, RIGHT_CLICK }
 
 	/**
 	 * 쿨타임 타이머

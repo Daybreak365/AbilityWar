@@ -38,13 +38,13 @@ public class Imprison extends AbilityBase {
 	private final int size = SizeConfig.getValue();
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {
-		if (mt.equals(MaterialType.IRON_INGOT)) {
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+		if (materialType.equals(Material.IRON_INGOT)) {
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {
 					for (Block b : LocationUtil.getBlocks3D(entity.getLocation(), size, true, true)) {

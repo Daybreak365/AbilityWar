@@ -52,8 +52,8 @@ public class Khazhad extends AbilityBase {
 	private final CooldownTimer LeftCool = new CooldownTimer(LeftCooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if (mt.equals(MaterialType.IRON_INGOT)) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
+		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.LEFT_CLICK)) {
 				if (!LeftCool.isCooldown()) {
 					FallBlock fall = new FallBlock(Material.PACKED_ICE, getPlayer().getEyeLocation(), getPlayer().getLocation().getDirection().multiply(1.7)) {
@@ -122,7 +122,7 @@ public class Khazhad extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 
 	@SubscribeEvent(onlyRelevant = true)
 	public void onRestrictionClear(AbilityRestrictionClearEvent e) {

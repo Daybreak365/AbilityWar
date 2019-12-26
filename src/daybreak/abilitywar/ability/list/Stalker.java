@@ -13,6 +13,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -97,8 +98,8 @@ public class Stalker extends AbilityBase {
 	}.setPeriod(1);
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if (mt.equals(MaterialType.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
+		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			if (lastVictim != null) {
 				cooldownTimer.startTimer();
 				skill.startTimer();
@@ -145,7 +146,7 @@ public class Stalker extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 	private final List<Runnable> SOUND_RUNNABLES = Arrays.asList(

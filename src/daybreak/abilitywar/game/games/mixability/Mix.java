@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.Messager;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.InvocationTargetException;
@@ -72,11 +73,11 @@ public class Mix extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (hasAbility()) {
 			boolean abilityUsed = false;
-			if (first.ActiveSkill(mt, ct)) abilityUsed = true;
-			if (second.ActiveSkill(mt, ct)) abilityUsed = true;
+			if (first.ActiveSkill(materialType, ct)) abilityUsed = true;
+			if (second.ActiveSkill(materialType, ct)) abilityUsed = true;
 			return abilityUsed;
 		} else {
 			return false;
@@ -84,10 +85,10 @@ public class Mix extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	public void TargetSkill(Material materialType, LivingEntity entity) {
 		if (hasAbility()) {
-			first.TargetSkill(mt, entity);
-			second.TargetSkill(mt, entity);
+			first.TargetSkill(materialType, entity);
+			second.TargetSkill(materialType, entity);
 		}
 	}
 

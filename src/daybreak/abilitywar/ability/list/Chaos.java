@@ -11,6 +11,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
@@ -81,8 +82,8 @@ public class Chaos extends AbilityBase {
 	}.setPeriod(1);
 	
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.IRON_INGOT)) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
+		if(materialType.equals(Material.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Duration.isDuration() && !Cool.isCooldown()) {
 					Duration.startTimer();
@@ -96,6 +97,6 @@ public class Chaos extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 	
 }

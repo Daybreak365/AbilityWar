@@ -11,6 +11,7 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -40,8 +41,8 @@ public class DiceGod extends AbilityBase {
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 	
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if(mt.equals(MaterialType.IRON_INGOT)) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
+		if(materialType.equals(Material.IRON_INGOT)) {
 			if(ct.equals(ClickType.RIGHT_CLICK)) {
 				if(!Cool.isCooldown()) {
 					Player p = getPlayer();
@@ -99,6 +100,6 @@ public class DiceGod extends AbilityBase {
 	}
 	
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 	
 }

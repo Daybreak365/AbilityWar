@@ -55,8 +55,8 @@ public class Nex extends AbilityBase {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
-		if (mt.equals(MaterialType.IRON_INGOT)) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
+		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
@@ -197,7 +197,7 @@ public class Nex extends AbilityBase {
 	}.setPeriod(4);
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {
+	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

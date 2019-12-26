@@ -81,7 +81,7 @@ public class Sniper extends AbilityBase {
 	
 	
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
@@ -124,7 +124,7 @@ public class Sniper extends AbilityBase {
 	}
 	
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 
 	@SubscribeEvent(onlyRelevant = true)
 	public void onRestrictionClear(AbilityRestrictionClearEvent e) {

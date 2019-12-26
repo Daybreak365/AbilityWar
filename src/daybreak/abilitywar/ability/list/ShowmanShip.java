@@ -14,6 +14,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "쇼맨쉽", Rank = Rank.A, Species = Species.HUMAN)
@@ -65,7 +66,7 @@ public class ShowmanShip extends AbilityBase {
 	}.setPeriod(1);
 	
 	@Override
-	public boolean ActiveSkill(MaterialType mt, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		return false;
 	}
 
@@ -75,6 +76,6 @@ public class ShowmanShip extends AbilityBase {
 	}
 
 	@Override
-	public void TargetSkill(MaterialType mt, LivingEntity entity) {}
+	public void TargetSkill(Material materialType, LivingEntity entity) {}
 	
 }
