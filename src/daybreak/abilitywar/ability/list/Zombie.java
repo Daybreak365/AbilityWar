@@ -22,7 +22,7 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import java.util.Random;
 
-@AbilityManifest(Name = "좀비", Rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(Name = "좀비", Rank = Rank.B, Species = Species.UNDEAD)
 public class Zombie extends AbilityBase {
 
 	public static final AbilitySettings.SettingObject<Integer> DecreaseConfig = new AbilitySettings.SettingObject<Integer>(TheHighPriestess.class, "Decrease", 50,

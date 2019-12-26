@@ -2,55 +2,8 @@ package daybreak.abilitywar.ability;
 
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.list.Ares;
-import daybreak.abilitywar.ability.list.Assassin;
-import daybreak.abilitywar.ability.list.Berserker;
-import daybreak.abilitywar.ability.list.BlackCandle;
-import daybreak.abilitywar.ability.list.BombArrow;
-import daybreak.abilitywar.ability.list.Brewer;
-import daybreak.abilitywar.ability.list.Celebrity;
-import daybreak.abilitywar.ability.list.Chaos;
-import daybreak.abilitywar.ability.list.Clown;
-import daybreak.abilitywar.ability.list.Curse;
-import daybreak.abilitywar.ability.list.DarkVision;
-import daybreak.abilitywar.ability.list.Demigod;
-import daybreak.abilitywar.ability.list.DevilBoots;
-import daybreak.abilitywar.ability.list.DiceGod;
-import daybreak.abilitywar.ability.list.EnergyBlocker;
-import daybreak.abilitywar.ability.list.ExpertOfFall;
-import daybreak.abilitywar.ability.list.FastRegeneration;
-import daybreak.abilitywar.ability.list.Feather;
-import daybreak.abilitywar.ability.list.FireFightWithFire;
-import daybreak.abilitywar.ability.list.Flora;
-import daybreak.abilitywar.ability.list.Gladiator;
-import daybreak.abilitywar.ability.list.Hacker;
-import daybreak.abilitywar.ability.list.Hermit;
-import daybreak.abilitywar.ability.list.HigherBeing;
-import daybreak.abilitywar.ability.list.Imprison;
-import daybreak.abilitywar.ability.list.Ira;
-import daybreak.abilitywar.ability.list.JellyFish;
-import daybreak.abilitywar.ability.list.Khazhad;
-import daybreak.abilitywar.ability.list.Lazyness;
-import daybreak.abilitywar.ability.list.Muse;
-import daybreak.abilitywar.ability.list.Nex;
-import daybreak.abilitywar.ability.list.OnlyOddNumber;
-import daybreak.abilitywar.ability.list.Pumpkin;
-import daybreak.abilitywar.ability.list.ShowmanShip;
-import daybreak.abilitywar.ability.list.Sniper;
-import daybreak.abilitywar.ability.list.Stalker;
-import daybreak.abilitywar.ability.list.SuperNova;
-import daybreak.abilitywar.ability.list.Terrorist;
-import daybreak.abilitywar.ability.list.TheEmperor;
-import daybreak.abilitywar.ability.list.TheEmpress;
-import daybreak.abilitywar.ability.list.TheHighPriestess;
-import daybreak.abilitywar.ability.list.TheMagician;
-import daybreak.abilitywar.ability.list.TimeRewind;
-import daybreak.abilitywar.ability.list.Virtus;
-import daybreak.abilitywar.ability.list.Virus;
 import daybreak.abilitywar.ability.list.Void;
-import daybreak.abilitywar.ability.list.Yeti;
-import daybreak.abilitywar.ability.list.Zeus;
-import daybreak.abilitywar.ability.list.Zombie;
+import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mixability.Mix;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -139,7 +92,6 @@ public class AbilityFactory {
 	}
 
 	static {
-		// 초창기 능력자
 		registerAbility(Assassin.class);
 		registerAbility(Feather.class);
 		registerAbility(Demigod.class);
@@ -185,17 +137,18 @@ public class AbilityFactory {
 		registerAbility(ExpertOfFall.class);
 		registerAbility(Curse.class);
 		registerAbility(TimeRewind.class);
-
 		// 2019 여름 업데이트
 		registerAbility(Khazhad.class);
 		registerAbility(Sniper.class);
 		registerAbility(JellyFish.class);
 
+		registerAbility(Lazyness.class);
+		// v2.0.7.7
+		registerAbility(Vampire.class);
+
+		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
 		registerAbility(SquirtGun.class);
-
-		registerAbility(Lazyness.class);
-
 		// 믹스 능력자 게임모드
 		registerAbility(Mix.class);
 	}

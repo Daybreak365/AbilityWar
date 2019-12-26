@@ -46,17 +46,17 @@ public class ShowmanShip extends AbilityBase {
 			if (Count <= 1) {
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), 20, 0, true);
 				for (Location l : circle.getLocations()) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, WEAK, 0);
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, WEAK);
 				}
 			} else if (Count == 2) {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 1, true);
 				for (Location l : circle.getLocations()) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWER, 0);
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWER);
 				}
 			} else {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 2, true);
 				for (Location l : circle.getLocations()) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWERFUL, 0);
+					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWERFUL);
 				}
 			}
 		}

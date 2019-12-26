@@ -45,6 +45,7 @@ public @interface AbilityManifest {
 		GOD(ChatColor.translateAlternateColorCodes('&', "&c신")),
 		DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7데미&c갓")),
 		ANIMAL(ChatColor.translateAlternateColorCodes('&', "&2동물")),
+		UNDEAD(ChatColor.translateAlternateColorCodes('&', "&c언데드")),
 		OTHERS(ChatColor.translateAlternateColorCodes('&', "&8기타"));
 
 		private final String speciesName;

@@ -161,23 +161,31 @@ public class ParticleLib {
 			this.spawnParticle(null, l, offsetX, offsetY, offsetZ, Count, t);
 		}
 
-		public void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count) {
-			this.spawnParticle(l, offsetX, offsetY, offsetZ, Count, null);
-		}
-
 		public void spawnParticle(Player p, Location l, float offsetX, float offsetY, float offsetZ, int Count) {
 			this.spawnParticle(p, l, offsetX, offsetY, offsetZ, Count, null);
 		}
 
-		public void spawnParticle(Player p, Location l, RGB rgb, int Count) {
+		public void spawnParticle(Location l, float offsetX, float offsetY, float offsetZ, int Count) {
+			this.spawnParticle(l, offsetX, offsetY, offsetZ, Count, null);
+		}
+
+		public void spawnParticle(Player p, Location l) {
+			this.spawnParticle(p, l, 0, 0, 0, 1, null);
+		}
+
+		public void spawnParticle(Location l) {
+			this.spawnParticle(l, 0, 0, 0, 1, null);
+		}
+
+		public void spawnParticle(Player p, Location l, RGB rgb) {
 			if (ServerVersion.getVersion() >= 13) {
 				if (particle.getDataType().equals(DustOptions.class)) {
-					this.spawnParticle(p, l, 0, 0, 0, Count, new DustOptions(Color.fromRGB(rgb.getRedInt(), rgb.getGreenInt(), rgb.getBlueInt()), 1));
+					this.spawnParticle(p, l, 0, 0, 0, 0, new DustOptions(Color.fromRGB(rgb.getRedInt(), rgb.getGreenInt(), rgb.getBlueInt()), 1));
 				} else {
-					this.spawnParticle(p, l, 0, 0, 0, Count, null);
+					this.spawnParticle(p, l, 0, 0, 0, 0, null);
 				}
 			} else {
-				this.spawnParticle(p, l, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), Count);
+				this.spawnParticle(p, l, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
 			}
 		}
 
