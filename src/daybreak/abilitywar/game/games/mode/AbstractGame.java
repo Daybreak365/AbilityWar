@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.games.mode;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
+import daybreak.abilitywar.game.events.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
@@ -255,33 +256,38 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 		private AbilityBase ability;
 
+
+		/**
+		 * 플레이어에게 새 능력을 부여합니다.
+		 *
+		 * @param abilityClass 부여할 능력의 클래스
+		 */
 		public void setAbility(Class<? extends AbilityBase> abilityClass)
 				throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
 				IllegalArgumentException, InvocationTargetException {
+			AbilityBase oldAbility = null;
 			if (hasAbility())
-				removeAbility();
+				oldAbility = removeAbility();
 
 			Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Participant.class);
 			AbilityBase ability = constructor.newInstance(this);
-
 			ability.setRestricted(isRestricted() || !isGameStarted());
-
 			this.ability = ability;
+			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
 		}
 
 		/**
-		 * 플레이어에게 해당 능력을 부여합니다.
-		 *
-		 * @param ability 부여할 능력
+		 * 플레이어에게 해당 능력을 그대로 적용합니다.
+		 * @param ability 	부여할 능력
 		 */
 		public void setAbility(AbilityBase ability) {
-			if (hasAbility()) {
-				removeAbility();
-			}
+			AbilityBase oldAbility = null;
+			if (hasAbility())
+				oldAbility = removeAbility();
 
 			ability.setRestricted(isRestricted() || !isGameStarted());
-
 			this.ability = ability;
+			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
 		}
 
 		public boolean hasAbility() {
@@ -292,11 +298,18 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 			return ability;
 		}
 
-		public void removeAbility() {
-			if (getAbility() != null) {
-				getAbility().destroy();
-				ability = null;
+		/**
+		 * 참가자의 능력을 제거합니다.
+		 *
+		 * @return 제거된 능력
+		 */
+		public AbilityBase removeAbility() {
+			AbilityBase ability = getAbility();
+			if (ability != null) {
+				ability.destroy();
+				this.ability = null;
 			}
+			return ability;
 		}
 
 		public Player getPlayer() {

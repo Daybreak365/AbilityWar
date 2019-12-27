@@ -106,18 +106,13 @@ public class Vampire extends AbilityBase {
 		protected void onDurationProcess(int seconds) {
 			if (count % 5 == 0) {
 				instrumentListeners.add(getPlayer());
+				SoundLib.PIANO.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.B));
+				SoundLib.PIANO.playInstrument(instrumentListeners, Note.sharp(0, Note.Tone.D));
 				if (isNight(getPlayer().getWorld().getTime())) {
-					SoundLib.PIANO.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.B));
-					SoundLib.PIANO.playInstrument(instrumentListeners, Note.sharp(0, Note.Tone.D));
 					SoundLib.PIANO.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.G));
-					SoundLib.PIANO.playInstrument(instrumentListeners, Note.sharp(0, Note.Tone.G));
-					SoundLib.BASS_DRUM.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.B));
-				} else {
-					SoundLib.PIANO.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.B));
-					SoundLib.PIANO.playInstrument(instrumentListeners, Note.sharp(0, Note.Tone.D));
-					SoundLib.PIANO.playInstrument(instrumentListeners, Note.sharp(0, Note.Tone.G));
-					SoundLib.BASS_DRUM.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.B));
 				}
+				SoundLib.PIANO.playInstrument(instrumentListeners, Note.sharp(0, Note.Tone.G));
+				SoundLib.BASS_DRUM.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.B));
 			}
 
 			if (count == 1) {

@@ -4,6 +4,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
@@ -163,6 +164,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 * 절대 임의로 호출하지 마십시오.
 	 */
 	public final void destroy() {
+		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
 		game.getPassiveManager().unregisterAll(this);
 		for (AbstractGame.TimerBase timer : timers) {
 			timer.stopTimer(true);

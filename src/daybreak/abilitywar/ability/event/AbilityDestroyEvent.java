@@ -3,7 +3,7 @@ package daybreak.abilitywar.ability.event;
 import daybreak.abilitywar.ability.AbilityBase;
 import org.bukkit.event.HandlerList;
 
-public class AbilityRestrictionSetEvent extends AbilityEvent {
+public class AbilityDestroyEvent extends AbilityEvent {
 
 	private static final HandlerList handlers = new HandlerList();
 
@@ -16,7 +16,7 @@ public class AbilityRestrictionSetEvent extends AbilityEvent {
 		return handlers;
 	}
 
-	public AbilityRestrictionSetEvent(AbilityBase ability) {
+	public AbilityDestroyEvent(AbilityBase ability) {
 		super(ability);
 	}
 
