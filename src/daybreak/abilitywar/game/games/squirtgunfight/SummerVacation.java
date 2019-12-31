@@ -1,9 +1,9 @@
 package daybreak.abilitywar.game.games.squirtgunfight;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.SummerVacationSettings;
+import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
+import daybreak.abilitywar.config.Configuration.Settings.SummerVacationSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;

@@ -848,6 +848,7 @@ public class SoundLib {
 		private Sounds(String Name14, String Name13, String Name12, String Name11, String Name10, String Name9,
 					   String Name8) {
 			switch (ServerVersion.getVersion()) {
+				case 15:
 				case 14:
 					soundName = Name14;
 					sound = getSound();
@@ -1006,6 +1007,7 @@ public class SoundLib {
 
 		private Instruments(String Name14, String highVersionName, String lowVersionName) {
 			switch (ServerVersion.getVersion()) {
+				case 15:
 				case 14:
 					instrumentName = Name14;
 					instrument = getInstrument();

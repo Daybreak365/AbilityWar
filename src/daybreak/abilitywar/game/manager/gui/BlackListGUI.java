@@ -2,8 +2,8 @@ package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -182,7 +182,7 @@ public class BlackListGUI implements Listener {
 		if (e.getInventory().equals(this.BlackListGUI)) {
 			HandlerList.unregisterAll(this);
 			try {
-				AbilityWarSettings.update();
+				Configuration.update();
 			} catch (IOException | InvalidConfigurationException e1) {
 				logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 			}
@@ -202,29 +202,28 @@ public class BlackListGUI implements Listener {
 						.equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
 					openBlackListGUI(PlayerPage + 1);
 				} else {
-					String ItemName = e.getCurrentItem().getItemMeta().getDisplayName();
+					String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
 
 					if (ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
-						String StripItemName = ChatColor.stripColor(ItemName);
-						if (StripItemName.equals(StripItemName))
-							if (MaterialLib.RED_WOOL.compareMaterial(e.getCurrentItem())) {
-								Settings.removeBlackList(StripItemName);
-								SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
-								openBlackListGUI(PlayerPage);
-							} else if (MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
-								Settings.addBlackList(StripItemName);
-								SoundLib.BLOCK_ANVIL_LAND.playSound(p);
-								openBlackListGUI(PlayerPage);
-							}
+						String stripItemName = ChatColor.stripColor(itemName);
+						if (MaterialLib.RED_WOOL.compareMaterial(e.getCurrentItem())) {
+							Settings.removeBlackList(stripItemName);
+							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+							openBlackListGUI(PlayerPage);
+						} else if (MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
+							Settings.addBlackList(stripItemName);
+							SoundLib.BLOCK_ANVIL_LAND.playSound(p);
+							openBlackListGUI(PlayerPage);
+						}
 					} else {
 						for (Rank r : Rank.values()) {
-							if (ItemName.equals(r.getRankName())) {
+							if (itemName.equals(r.getRankName())) {
 								blacklist(e.getClick(), AbilityList.nameValues(r));
 							}
 						}
 
 						for (Species s : Species.values()) {
-							if (ItemName.equals(s.getSpeciesName())) {
+							if (itemName.equals(s.getSpeciesName())) {
 								blacklist(e.getClick(), AbilityList.nameValues(s));
 							}
 						}

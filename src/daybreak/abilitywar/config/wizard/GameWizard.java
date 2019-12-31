@@ -1,7 +1,7 @@
 package daybreak.abilitywar.config.wizard;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
@@ -157,34 +157,34 @@ public class GameWizard extends SettingWizard {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
 					case "§b배고픔 무제한":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
+						Configuration.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
 						Show();
 						break;
 					case "§b초반 지급 레벨":
 						int startLevel = Settings.getStartLevel();
 						switch (e.getClick()) {
 							case RIGHT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 1);
+								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 1);
 								Show();
 								break;
 							case SHIFT_RIGHT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 5);
+								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 5);
 								Show();
 								break;
 							case LEFT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 1 ? startLevel - 1 : 0);
+								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 1 ? startLevel - 1 : 0);
 								Show();
 								break;
 							case SHIFT_LEFT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 5 ? startLevel - 5 : 0);
+								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 5 ? startLevel - 5 : 0);
 								Show();
 								break;
 							case MIDDLE:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 10000);
+								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 10000);
 								Show();
 								break;
 							case DROP:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 10000 ? startLevel - 10000 : 0);
+								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 10000 ? startLevel - 10000 : 0);
 								Show();
 								break;
 							default:
@@ -192,23 +192,23 @@ public class GameWizard extends SettingWizard {
 						}
 						break;
 					case "§b내구도 무한":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INFINITE_DURABILITY, !Settings.getInfiniteDurability());
+						Configuration.modifyProperty(ConfigNodes.GAME_INFINITE_DURABILITY, !Settings.getInfiniteDurability());
 						Show();
 						break;
 					case "§b방화벽":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_FIREWALL, !Settings.getFirewall());
+						Configuration.modifyProperty(ConfigNodes.GAME_FIREWALL, !Settings.getFirewall());
 						Show();
 						break;
 					case "§b맑은 날씨 고정":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_CLEAR_WEATHER, !Settings.getClearWeather());
+						Configuration.modifyProperty(ConfigNodes.GAME_CLEAR_WEATHER, !Settings.getClearWeather());
 						Show();
 						break;
 					case "§b시각 효과":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_VISUAL_EFFECT, !Settings.getVisualEffect());
+						Configuration.modifyProperty(ConfigNodes.GAME_VISUAL_EFFECT, !Settings.getVisualEffect());
 						Show();
 						break;
 					case "§b능력 추첨":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DRAW_ABILITY, !Settings.getDrawAbility());
+						Configuration.modifyProperty(ConfigNodes.GAME_DRAW_ABILITY, !Settings.getDrawAbility());
 						Show();
 						break;
 				}

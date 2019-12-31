@@ -103,6 +103,7 @@ public class AbilityList {
 		registerAbility(JellyFish.class);
 		registerAbility(Lazyness.class);
 		registerAbility(Vampire.class);
+		registerAbility(PenetrationArrow.class);
 	}
 
 	/**

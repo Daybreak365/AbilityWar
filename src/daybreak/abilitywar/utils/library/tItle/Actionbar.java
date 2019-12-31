@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.library.tItle;
 
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import daybreak.abilitywar.utils.versioncompat.NMSUtil;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
@@ -32,17 +32,9 @@ public class Actionbar extends AbstractTitle {
 		this.fadeOut = fadeOut;
 	}
 
-	private static final Class<?> PacketPlayOutTitle = getNMSClass("PacketPlayOutTitle");
-	private static final Class<?> IChatBaseComponent = getNMSClass("IChatBaseComponent");
-	private static final Class<?> Packet = getNMSClass("Packet");
-
-	private static Class<?> getNMSClass(String className) {
-		try {
-			return Class.forName("net.minecraft.server." + ServerVersion.getStringVersion() + "." + className);
-		} catch (Exception ex) {
-			return null;
-		}
-	}
+	private static final Class<?> PacketPlayOutTitle = NMSUtil.getNMSClass("PacketPlayOutTitle");
+	private static final Class<?> IChatBaseComponent = NMSUtil.getNMSClass("IChatBaseComponent");
+	private static final Class<?> Packet = NMSUtil.getNMSClass("Packet");
 
 	public void sendTo(Player p) {
 		try {

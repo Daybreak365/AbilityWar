@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.script.types;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.manager.AbilityList;

@@ -127,8 +127,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 			try {
 				method.invoke(this, event);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-				logger.log(Level.SEVERE,
-						method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.");
+				logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
 			}
 		}
 	}

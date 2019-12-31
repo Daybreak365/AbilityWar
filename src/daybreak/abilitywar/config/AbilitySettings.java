@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class AbilitySettings {
 
-	private static final Logger logger = Logger.getLogger(AbilityWarSettings.class.getName());
+	private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 	private static final ArrayList<SettingObject<?>> settings = new ArrayList<>();
 
 	private static void registerSetting(SettingObject<?> object) {

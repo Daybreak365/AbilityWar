@@ -9,7 +9,6 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -67,7 +66,6 @@ public class FastRegeneration extends AbilityBase {
 
 	@SubscribeEvent(onlyRelevant = true)
 	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		Bukkit.broadcastMessage(getPlayer().getName() + "의 능력에서: " + e.getPlayer().getName() + "의 능력 호출됨");
 		Passive.startTimer();
 	}
 

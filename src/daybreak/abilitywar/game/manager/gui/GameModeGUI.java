@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager.gui;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
@@ -118,7 +118,7 @@ public class GameModeGUI implements Listener {
 		if (e.getInventory().equals(this.GameModeGUI)) {
 			HandlerList.unregisterAll(this);
 			try {
-				AbilityWarSettings.update();
+				Configuration.update();
 			} catch (IOException | InvalidConfigurationException e1) {
 				logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 			}
@@ -141,7 +141,7 @@ public class GameModeGUI implements Listener {
 						String modeName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 						Class<? extends AbstractGame> gameMode = GameMode.getByString(modeName);
 						if (gameMode != null) {
-							AbilityWarSettings.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getName());
+							Configuration.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getName());
 						} else {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + modeName + " &f클래스는 등록되지 않았습니다."));
 						}

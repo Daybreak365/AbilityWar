@@ -1,7 +1,7 @@
 package daybreak.abilitywar.config.wizard;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.utils.Messager;
@@ -113,17 +113,17 @@ public class DeathWizard extends SettingWizard {
 					Show();
 					break;
 				case "§b능력 공개":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REVEAL,
+					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REVEAL,
 							!DeathSettings.getAbilityReveal());
 					Show();
 					break;
 				case "§b능력 삭제":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REMOVAL,
+					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REMOVAL,
 							!DeathSettings.getAbilityRemoval());
 					Show();
 					break;
 				case "§b아이템 드롭":
-					AbilityWarSettings.modifyProperty(ConfigNodes.GAME_DEATH_ITEM_DROP, !DeathSettings.getItemDrop());
+					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_ITEM_DROP, !DeathSettings.getItemDrop());
 					Show();
 					break;
 			}

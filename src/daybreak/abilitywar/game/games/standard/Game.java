@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.games.standard;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.events.GameEndEvent;
 import daybreak.abilitywar.game.events.GameReadyEvent;
 import daybreak.abilitywar.game.events.GameStartEvent;

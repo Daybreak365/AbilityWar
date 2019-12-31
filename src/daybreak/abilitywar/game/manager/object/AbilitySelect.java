@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -199,7 +199,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 			public ArrayList<Class<? extends AbilityBase>> getAbilities() {
 				ArrayList<Class<? extends AbilityBase>> abilities = new ArrayList<>();
 				for (String name : AbilityList.nameValues()) {
-					if (!AbilityWarSettings.Settings.isBlackListed(name)) {
+					if (!Configuration.Settings.isBlackListed(name)) {
 						abilities.add(AbilityList.getByString(name));
 					}
 				}

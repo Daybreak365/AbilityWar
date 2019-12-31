@@ -1,8 +1,8 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings.DeathSettings;
+import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.manager.SpectatorManager;

@@ -2,7 +2,7 @@ package daybreak.abilitywar;
 
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.AbilitySettings;
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.MainCommand;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.Script;
@@ -88,15 +88,20 @@ public class AbilityWar extends JavaPlugin {
 			@Override
 			public void run() {
 				try {
-					AbilityWarSettings.load();
+					Configuration.load();
 					AbilitySettings.load();
 				} catch (IOException | InvalidConfigurationException e) {
 					logger.log(Level.SEVERE, "콘피그를 불러오는 도중 오류가 발생하였습니다.");
 					Bukkit.getPluginManager().disablePlugin(plugin);
 				}
 				Script.LoadAll();
+				try {
+					Class.forName("daybreak.abilitywar.utils.math.FastMath");
+				} catch (ClassNotFoundException ignored) {
+				}
 			}
 		});
+
 		messager.sendConsoleMessage("플러그인이 활성화되었습니다.");
 	}
 
@@ -104,7 +109,7 @@ public class AbilityWar extends JavaPlugin {
 	public void onDisable() {
 		AbilityWarThread.StopGame();
 		try {
-			AbilityWarSettings.update();
+			Configuration.update();
 		} catch (IOException | InvalidConfigurationException e1) {
 			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 		}

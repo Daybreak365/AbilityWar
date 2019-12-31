@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.library.item;
 
+import com.google.common.base.Enums;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ public class ItemLib {
 	}
 
 	public static ColouredItem WOOL = new ColouredItem("WOOL");
+	public static ColouredItem STAINED_GLASS = new ColouredItem("STAINED_GLASS");
 
 	public static class ColouredItem {
 
@@ -49,10 +51,10 @@ public class ItemLib {
 		public boolean compareType(Material material) {
 			if (ServerVersion.getVersion() >= 13) {
 				String name = material.toString();
-				for (ItemColor color : ItemColor.values()) {
-					name = name.replaceAll(color.toString() + "_", "");
+				String color = name.split("_")[0];
+				if (Enums.getIfPresent(ItemColor.class, color).isPresent()) {
+					name = name.replaceAll(color + "_", "");
 				}
-
 				return name.equalsIgnoreCase(this.materialName);
 			} else {
 				return material.toString().equalsIgnoreCase(this.materialName);

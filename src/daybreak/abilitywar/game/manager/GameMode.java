@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.games.mixability.MixAbility;
@@ -107,7 +107,7 @@ public class GameMode {
 			return true;
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
-			AbilityWarSettings.modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());
+			Configuration.modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());
 			AbilityWarThread.StartGame(new DefaultGame());
 			return false;
 		}

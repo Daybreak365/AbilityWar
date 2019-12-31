@@ -1,7 +1,7 @@
 package daybreak.abilitywar.config.wizard;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
@@ -78,12 +78,12 @@ public class KitWizard extends SettingWizard {
 								itemstacks.add(gui.getItem(i));
 							}
 						}
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, itemstacks);
+						Configuration.modifyProperty(ConfigNodes.GAME_KIT, itemstacks);
 						p.closeInventory();
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
 						break;
 					case "§c초기화":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_KIT, Arrays.asList());
+						Configuration.modifyProperty(ConfigNodes.GAME_KIT, Arrays.asList());
 						p.closeInventory();
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
 						break;

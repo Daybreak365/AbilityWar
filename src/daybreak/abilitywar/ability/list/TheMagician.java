@@ -22,10 +22,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+
 @AbilityManifest(Name = "마술사", Rank = Rank.A, Species = Species.HUMAN)
 public class TheMagician extends AbilityBase {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 3,
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TheMagician.class, "Cooldown", 8,
 			"# 쿨타임") {
 
 		@Override
@@ -37,8 +41,8 @@ public class TheMagician extends AbilityBase {
 
 	public TheMagician(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 엔티티들에게"),
-				ChatColor.translateAlternateColorCodes('&', "&f최대체력의 1/5 만큼의 데미지를 추가로 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게"),
+				ChatColor.translateAlternateColorCodes('&', "&f최대체력의 1/5 만큼의 데미지를 추가로 입히고 위치를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	@Override
@@ -51,22 +55,31 @@ public class TheMagician extends AbilityBase {
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
 		if (e.getEntity() instanceof Arrow) {
-			if (e.getEntity().getShooter().equals(getPlayer())) {
+			if (getPlayer().equals(e.getEntity().getShooter())) {
 				if (!Cool.isCooldown()) {
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 					Location center = e.getEntity().getLocation();
-					for (Damageable d : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
-						if (!d.equals(getPlayer())) {
-							if (LocationUtil.isInCircle(center, d.getLocation(), 5)) {
-								d.damage(VersionUtil.getMaxHealth(d) / 5, getPlayer());
-								if (d instanceof Player) {
-									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) d);
+					HashMap<Damageable, Location> locationMap = new HashMap<>();
+					ArrayList<Damageable> damageables = LocationUtil.getNearbyDamageableEntities(center, 5, 5);
+					for (Damageable damageable : damageables) {
+						locationMap.put(damageable, damageable.getLocation());
+						if (!damageable.equals(getPlayer())) {
+							if (LocationUtil.isInCircle(center, damageable.getLocation(), 5)) {
+								damageable.damage(VersionUtil.getMaxHealth(damageable) / 5, getPlayer());
+								if (damageable instanceof Player) {
+									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) damageable);
 								}
 							}
 						}
 					}
 
-					for (Location l : new Circle(center, 5).setAmount(30).setHighestLocation(true).getLocations()) {
+					Collections.shuffle(damageables);
+					ArrayList<Damageable> keySet = new ArrayList<>(locationMap.keySet());
+					for (int i = 0; i < damageables.size(); i++) {
+						damageables.get(i).teleport(locationMap.get(keySet.get(i)));
+					}
+
+					for (Location l : new Circle(center, 5).setAmount(70).setHighestLocation(true).getLocations()) {
 						ParticleLib.SPELL_WITCH.spawnParticle(l, 0, 0, 0, 1);
 					}
 					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);

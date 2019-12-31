@@ -25,7 +25,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -188,7 +187,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 			}
 		}
 
-		private Instant lastClick = Instant.now();
+		private long lastClick = System.currentTimeMillis();
 
 		@EventHandler
 		private void onPlayerLogin(PlayerLoginEvent e) {
@@ -209,10 +208,9 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 					if (hasAbility()) {
 						AbilityBase ability = getAbility();
 						if (!ability.isRestricted()) {
-							Instant currentInstant = Instant.now();
-							long duration = java.time.Duration.between(lastClick, currentInstant).toMillis();
-							if (duration >= 250) {
-								this.lastClick = currentInstant;
+							long current = System.currentTimeMillis();
+							if (current - lastClick >= 250) {
+								this.lastClick = current;
 								if (ability.ActiveSkill(material, clickType)) {
 									ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 								}
@@ -231,20 +229,19 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 				if (attributes.SKILL_MATERIALS.set.contains(material)) {
 					AbilityBase ability = this.getAbility();
 					if (!ability.isRestricted()) {
-						Instant currentInstant = Instant.now();
-						long duration = java.time.Duration.between(lastClick, currentInstant).toMillis();
-						if (duration >= 250) {
+						long current = System.currentTimeMillis();
+						if (current - lastClick >= 250) {
 							Entity targetEntity = e.getRightClicked();
 							if (targetEntity instanceof LivingEntity) {
 								if (targetEntity instanceof Player) {
 									Player targetPlayer = (Player) targetEntity;
 									if (isParticipating(targetPlayer)) {
-										this.lastClick = currentInstant;
+										this.lastClick = current;
 										ability.TargetSkill(material, targetPlayer);
 									}
 								} else {
 									LivingEntity target = (LivingEntity) targetEntity;
-									this.lastClick = currentInstant;
+									this.lastClick = current;
 									ability.TargetSkill(material, target);
 								}
 							}

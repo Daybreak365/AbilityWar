@@ -1,7 +1,7 @@
 package daybreak.abilitywar.config.wizard;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
@@ -82,7 +82,7 @@ public class SpawnWizard extends SettingWizard {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
 					case "§b스폰 이동":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_SPAWN_ENABLE, !Settings.getSpawnEnable());
+						Configuration.modifyProperty(ConfigNodes.GAME_SPAWN_ENABLE, !Settings.getSpawnEnable());
 						Show();
 						break;
 					case "§b스폰 설정":
@@ -91,7 +91,7 @@ public class SpawnWizard extends SettingWizard {
 							p.teleport(Settings.getSpawnLocation());
 							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a스폰 &f위치로 이동되었습니다."));
 						} else {
-							AbilityWarSettings.modifyProperty(ConfigNodes.GAME_SPAWN_LOCATION, p.getLocation());
+							Configuration.modifyProperty(ConfigNodes.GAME_SPAWN_LOCATION, p.getLocation());
 							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a게임 스폰이 변경되었습니다."));
 						}
 						break;

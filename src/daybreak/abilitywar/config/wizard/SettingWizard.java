@@ -1,6 +1,6 @@
 package daybreak.abilitywar.config.wizard;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
@@ -39,7 +39,7 @@ public abstract class SettingWizard {
 				if (e.getInventory().equals(gui)) {
 					HandlerList.unregisterAll(this);
 					try {
-						AbilityWarSettings.update();
+						Configuration.update();
 					} catch (IOException | InvalidConfigurationException e1) {
 						logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 					}

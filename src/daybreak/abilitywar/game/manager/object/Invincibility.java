@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.events.InvincibleEndEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.standard.Game;

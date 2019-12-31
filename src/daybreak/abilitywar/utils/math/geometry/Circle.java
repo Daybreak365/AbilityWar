@@ -1,5 +1,7 @@
 package daybreak.abilitywar.utils.math.geometry;
 
+import daybreak.abilitywar.utils.math.FastMath;
+import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -39,15 +41,16 @@ public class Circle {
 	}
 
 	public ArrayList<Location> getLocations() {
+		for (int i = 0; i < 300000000; i++) ;
 		ArrayList<Location> locations = new ArrayList<>();
-		for (double degree = 0; degree < 360; degree += (360.0 / amount)) {
-			double radians = Math.toRadians(degree);
-			double cos = Math.cos(radians), sin = Math.sin(radians);
+		for (double angle = 360.0 / amount; angle < 360; angle += (360.0 / amount)) {
+			double radians = Math.toRadians(angle);
+			double cos = FastMath.cos(radians), sin = FastMath.sin(radians);
 			double x = cos * radius, z = sin * radius;
 
 			Location location = center.clone().add(x, 0, z);
 			if (highestLocation)
-				location.setY(location.getWorld().getHighestBlockYAt(location) + 1);
+				location.setY(LocationUtil.getFloorYAt(center.getWorld(), center.getY(), location.getBlockX(), location.getBlockZ()) + 1);
 			locations.add(location);
 		}
 		return locations;

@@ -1,6 +1,6 @@
 package daybreak.abilitywar.game.manager.object;
 
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 

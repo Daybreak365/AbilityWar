@@ -24,7 +24,7 @@
 
 package daybreak.abilitywar.utils.library;
 
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -115,6 +115,7 @@ public class ParticleLib {
 		private Particles(String Name14, String Name13, String Name12, String Name11, String Name10, String Name9,
 						  String Name8, String Name7) {
 			switch (ServerVersion.getVersion()) {
+				case 15:
 				case 14:
 					particleName = Name14;
 					particle = getParticle();

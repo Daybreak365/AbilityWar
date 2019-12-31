@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.games.mixability;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.AbilityWarSettings;
+import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
@@ -37,7 +37,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 	}
 
-	private boolean invincible = AbilityWarSettings.Settings.InvincibilitySettings.isEnabled();
+	private boolean invincible = Configuration.Settings.InvincibilitySettings.isEnabled();
 
 	@Override
 	protected void progressGame(int seconds) {
@@ -86,7 +86,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				}
 				break;
 			case 5:
-				if (AbilityWarSettings.Settings.getDrawAbility()) {
+				if (Configuration.Settings.getDrawAbility()) {
 					startAbilitySelect();
 				}
 				break;
@@ -124,14 +124,14 @@ public class MixAbility extends Game implements DefaultKitHandler {
 
 				giveDefaultKit(getParticipants());
 
-				if (AbilityWarSettings.Settings.getSpawnEnable()) {
-					Location spawn = AbilityWarSettings.Settings.getSpawnLocation();
+				if (Configuration.Settings.getSpawnEnable()) {
+					Location spawn = Configuration.Settings.getSpawnLocation();
 					for (Participant participant : getParticipants()) {
 						participant.getPlayer().teleport(spawn);
 					}
 				}
 
-				if (AbilityWarSettings.Settings.getNoHunger()) {
+				if (Configuration.Settings.getNoHunger()) {
 					new TimerBase() {
 						@Override
 						public void onStart() {
@@ -149,13 +149,13 @@ public class MixAbility extends Game implements DefaultKitHandler {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 				}
 
-				if (AbilityWarSettings.Settings.getInfiniteDurability()) {
+				if (Configuration.Settings.getInfiniteDurability()) {
 					attachObserver(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
 				}
 
-				if (AbilityWarSettings.Settings.getClearWeather()) {
+				if (Configuration.Settings.getClearWeather()) {
 					for (World w : Bukkit.getWorlds()) {
 						w.setStorm(false);
 					}

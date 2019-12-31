@@ -145,6 +145,7 @@ public class AbilityFactory {
 		registerAbility(Lazyness.class);
 		// v2.0.7.7
 		registerAbility(Vampire.class);
+		registerAbility(PenetrationArrow.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

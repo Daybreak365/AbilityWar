@@ -1,7 +1,7 @@
 package daybreak.abilitywar.config.wizard;
 
-import daybreak.abilitywar.config.AbilityWarSettings;
-import daybreak.abilitywar.config.AbilityWarSettings.Settings;
+import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -70,7 +70,7 @@ public class InvincibilityWizard extends SettingWizard {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
 					case "§b초반 무적":
-						AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_ENABLE,
+						Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_ENABLE,
 								!Settings.InvincibilitySettings.isEnabled());
 						Show();
 						break;
@@ -78,17 +78,17 @@ public class InvincibilityWizard extends SettingWizard {
 						int duration = Settings.InvincibilitySettings.getDuration();
 						switch (e.getClick()) {
 							case RIGHT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 1);
+								Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 1);
 								break;
 							case SHIFT_RIGHT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 5);
+								Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION, duration + 5);
 								break;
 							case LEFT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
+								Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
 										duration >= 2 ? duration - 1 : 1);
 								break;
 							case SHIFT_LEFT:
-								AbilityWarSettings.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
+								Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_DURATION,
 										duration >= 6 ? duration - 5 : 1);
 								break;
 							default:

@@ -51,6 +51,19 @@ public class LocationUtil {
 		return center.getWorld().equals(location.getWorld()) && center.distanceSquared(location) <= (radius * radius);
 	}
 
+	public static int getFloorYAt(World world, double referenceY, int x, int z) {
+		int y = world.getHighestBlockYAt(x, z);
+		if (y > referenceY) {
+			for (int yCheck = y; yCheck >= referenceY; yCheck--) {
+				if (world.getBlockAt(x, yCheck, z).isEmpty()) y = yCheck;
+			}
+			if (world.getBlockAt(x, y - 1, z).isEmpty()) {
+				while (world.getBlockAt(x, y - 1, z).isEmpty() && y >= 0) y--;
+				return y;
+			} else return y;
+		} else return y;
+	}
+
 	/**
 	 * 3차원 공간에서 범위 안에 있는 블록들을 {@link ArrayList}로  반환합니다.
 	 *
@@ -117,8 +130,8 @@ public class LocationUtil {
 		ArrayList<Location> locations = new ArrayList<>();
 		for (int i = 0; i < amount; i++) {
 			double angle = random.nextDouble() * 360;
-			double x = center.getX() + (random.nextDouble() * radius * Math.cos(Math.toRadians(angle)));
-			double z = center.getZ() + (random.nextDouble() * radius * Math.sin(Math.toRadians(angle)));
+			double x = center.getX() + (random.nextDouble() * radius * FastMath.cos(Math.toRadians(angle)));
+			double z = center.getZ() + (random.nextDouble() * radius * FastMath.sin(Math.toRadians(angle)));
 			Location l = new Location(center.getWorld(), x, center.getWorld().getHighestBlockYAt((int) x, (int) z), z);
 			locations.add(l);
 		}
@@ -129,11 +142,11 @@ public class LocationUtil {
 		ArrayList<Location> locations = new ArrayList<>();
 		if (amount > 0) {
 			for (double i = 0; i <= Math.PI; i += Math.PI / amount) {
-				double radius = Math.sin(i) * r;
-				double y = Math.cos(i) * r;
+				double radius = FastMath.sin(i) * r;
+				double y = FastMath.cos(i) * r;
 				for (double a = 0; a < Math.PI * 2; a += Math.PI / amount) {
-					double x = Math.cos(a) * radius;
-					double z = Math.sin(a) * radius;
+					double x = FastMath.cos(a) * radius;
+					double z = FastMath.sin(a) * radius;
 					locations.add(center.clone().add(x, y, z));
 				}
 			}
@@ -241,7 +254,7 @@ public class LocationUtil {
 	 * @param predicate  커스텀 조건
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
-	public static <T extends Entity> Collection<T> getNearbyEntities(Class<T> entityType, Location location, double horizontal, double vertical, Predicate<T> predicate) {
+	public static <T extends Entity> ArrayList<T> getNearbyEntities(Class<T> entityType, Location location, double horizontal, double vertical, Predicate<T> predicate) {
 		ArrayList<T> entities = new ArrayList<>();
 		for (Entity e : collectEntities(location, horizontal)) {
 			if (entityType.isAssignableFrom(e.getClass())) {
@@ -266,7 +279,7 @@ public class LocationUtil {
 	 * @param vertical   수직 거리
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
-	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> entityType, Entity center, double horizontal, double vertical) {
+	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Entity center, double horizontal, double vertical) {
 		return getNearbyEntities(entityType, center.getLocation(), horizontal, vertical, e -> {
 			if (e.equals(center)) return false;
 			if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
@@ -298,7 +311,7 @@ public class LocationUtil {
 	 * @param vertical   수직 거리
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
-	public static <E extends Entity> Collection<E> getNearbyEntities(Class<E> entityType, Location center, double horizontal, double vertical) {
+	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Location center, double horizontal, double vertical) {
 		return getNearbyEntities(entityType, center, horizontal, vertical, e -> {
 			if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
 				AbstractGame game = AbilityWarThread.getGame();
@@ -309,19 +322,19 @@ public class LocationUtil {
 		});
 	}
 
-	public static Collection<Damageable> getNearbyDamageableEntities(Player p, double horizontal, double vertical) {
+	public static ArrayList<Damageable> getNearbyDamageableEntities(Player p, double horizontal, double vertical) {
 		return getNearbyEntities(Damageable.class, p, horizontal, vertical);
 	}
 
-	public static Collection<Damageable> getNearbyDamageableEntities(Location l, double horizontal, double vertical) {
+	public static ArrayList<Damageable> getNearbyDamageableEntities(Location l, double horizontal, double vertical) {
 		return getNearbyEntities(Damageable.class, l, horizontal, vertical);
 	}
 
-	public static Collection<Player> getNearbyPlayers(Player p, double horizontal, double vertical) {
+	public static ArrayList<Player> getNearbyPlayers(Player p, double horizontal, double vertical) {
 		return getNearbyEntities(Player.class, p, horizontal, vertical);
 	}
 
-	public static Collection<Player> getNearbyPlayers(Location l, double horizontal, double vertical) {
+	public static ArrayList<Player> getNearbyPlayers(Location l, double horizontal, double vertical) {
 		return getNearbyEntities(Player.class, l, horizontal, vertical);
 	}
 
