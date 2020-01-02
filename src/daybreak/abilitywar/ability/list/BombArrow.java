@@ -5,33 +5,22 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.StringJoiner;
 
 @AbilityManifest(Name = "폭발화살", Rank = Rank.S, Species = Species.HUMAN)
 public class BombArrow extends AbilityBase {
-
-	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BombArrow.class, "Chance", 40,
-			"# 화살을 맞췄을 때 몇 퍼센트 확률로 폭발을 일으킬지 설정합니다.",
-			"# 40은 40%를 의미합니다.") {
-
-		@Override
-		public boolean Condition(Integer value) {
-			return value >= 1 && value <= 100;
-		}
-
-	};
 
 	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 2,
 			"# 화살을 맞췄을 때 얼마나 큰 폭발을 일으킬지 설정합니다.") {
@@ -45,46 +34,67 @@ public class BombArrow extends AbilityBase {
 
 	public BombArrow(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f화살을 맞췄을 때 " + ChanceConfig.getValue() + "% 확률로 폭발을 일으킵니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f10초마다 스택을 1만큼 얻습니다. 스택은 최대 3만큼 중첩됩니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f활을 쏘면 스택을 1만큼 소모하여 폭발 화살을 쏩니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f스택이 없으면 화살이 나가지 않습니다."));
 	}
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		return false;
+		return true;
 	}
 
-	private final int Chance = ChanceConfig.getValue();
-	private final int Size = SizeConfig.getValue();
+	private final int maxStack = 3;
+	private int stack = 0;
 
-	private final ArrayList<Arrow> ArrowList = new ArrayList<>();
+	private final Timer stackAdder = new Timer() {
+		@Override
+		protected void onProcess(int count) {
+			if (stack < maxStack) {
+				stack++;
+			}
+		}
+	}.setPeriod(200);
+
+	private final int size = SizeConfig.getValue();
+	private final Actionbar actionbar = new Actionbar("", 0, 3, 0);
+
+	private final Timer actionbarSender = new Timer() {
+		@Override
+		protected void onProcess(int count) {
+			StringJoiner joiner = new StringJoiner(" ");
+			for (int i = 0; i < stack; i++) joiner.add(ChatColor.RED + "●");
+			for (int i = 0; i < maxStack - stack; i++) joiner.add(ChatColor.RED + "○");
+			actionbar.setMessage(joiner.toString());
+			actionbar.sendTo(getPlayer());
+		}
+	}.setPeriod(2);
 
 	@SubscribeEvent
-	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (e.getEntity().getShooter().equals(getPlayer())) {
-			if (e.getEntity() instanceof Arrow) {
-				ArrowList.add((Arrow) e.getEntity());
+	private void onProjectileShoot(ProjectileHitEvent e) {
+		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
+			Location location = e.getHitEntity() == null ? e.getHitBlock().getLocation() : e.getHitEntity().getLocation();
+			location.getWorld().createExplosion(location, 1, false, true);
+			e.getEntity().remove();
+		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onEntityShootBow(EntityShootBowEvent e) {
+		if (e.getProjectile() instanceof Arrow) {
+			if (stack <= 0) {
+				e.setCancelled(true);
+				getPlayer().updateInventory();
+			} else {
+				stack--;
 			}
 		}
 	}
 
-	@SubscribeEvent
-	public void onProjectileHit(ProjectileHitEvent e) {
-		if (e.getEntity().getShooter().equals(getPlayer())) {
-			if (e.getEntity() instanceof Arrow) {
-				Arrow arrow = (Arrow) e.getEntity();
-
-				if (ArrowList.contains(arrow)) {
-					ArrowList.remove(arrow);
-					Random r = new Random();
-
-					if ((r.nextInt(100) + 1) <= Chance) {
-						SoundLib.BLOCK_NOTE_BLOCK_BELL.playSound(getPlayer());
-						Location l = arrow.getLocation();
-						l.getWorld().createExplosion(l, Size, false);
-					}
-				}
-			}
-		}
+	@SubscribeEvent(onlyRelevant = true)
+	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
+		stackAdder.startTimer();
+		actionbarSender.startTimer();
 	}
 
 	@Override

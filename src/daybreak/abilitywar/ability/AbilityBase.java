@@ -28,6 +28,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.MainHand;
 
@@ -120,7 +121,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 			SubscribeEvent subscribeEvent = pair.getRight();
 			if (subscribeEvent.onlyRelevant() && ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
 					|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
-					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))))
+					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
+					|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity()))))
 				return;
 			Method method = pair.getLeft();
 			method.setAccessible(true);

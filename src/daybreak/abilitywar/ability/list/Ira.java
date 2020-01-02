@@ -47,20 +47,20 @@ public class Ira extends AbilityBase {
 			if (ExplodeCount >= AttackConfig.getValue() - 1) {
 				ExplodeCount = 0;
 
-				Entity Damager = e.getDamager();
+				Entity damager = e.getDamager();
 
-				if (Damager instanceof Projectile) {
-					if (((Projectile) Damager).getShooter() instanceof LivingEntity) {
-						LivingEntity entity = (LivingEntity) ((Projectile) Damager).getShooter();
-						getPlayer().getWorld().createExplosion(entity.getLocation(), 2, false);
+				if (damager instanceof Projectile) {
+					if (((Projectile) damager).getShooter() instanceof LivingEntity) {
+						LivingEntity entity = (LivingEntity) ((Projectile) damager).getShooter();
+						getPlayer().getWorld().createExplosion(entity.getLocation(), 1.3f, false, false);
 						if (entity.getVelocity().getY() > 0) {
 							entity.setVelocity(entity.getVelocity().setY(0));
 						}
 					}
 				} else {
-					getPlayer().getWorld().createExplosion(Damager.getLocation(), 2, false);
-					if (Damager.getVelocity().getY() > 0) {
-						Damager.setVelocity(Damager.getVelocity().setY(0));
+					getPlayer().getWorld().createExplosion(damager.getLocation(), 1.3f, false, false);
+					if (damager.getVelocity().getY() > 0) {
+						damager.setVelocity(damager.getVelocity().setY(0));
 					}
 				}
 			} else {

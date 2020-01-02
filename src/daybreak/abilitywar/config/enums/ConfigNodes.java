@@ -85,11 +85,7 @@ public enum ConfigNodes {
 	SUMMER_VACATION_KILL("신나는여름휴가.킬횟수", 10,
 			"# 우승하기 위해 필요한 킬 횟수"),
 	GAME_MODE("게임모드", DefaultGame.class.getName(),
-			"# 게임 모드 클래스"),
-	TRIGONOMETRIC_FUNCTION_ACCURACY("삼각함수.정확도", 4,
-			"# AbilityWar 플러그인은 서버가 시작될 때 삼각함수를 미리 계산해 값을 저장해둡니다.",
-			"# 이는 원, 구, 포물선 등의 계산을 효율적으로 하기 위함이며, 정확도가 높을수록 더욱 정확한 계산이 가능합니다.",
-			"# 정확도를 4로 설정하면 플러그인을 불러올 때 2초의 딜레이가 생기며, 5의 경우 20초 가량의 딜레이가 생깁니다.");
+			"# 게임 모드 클래스");
 
 	private final String path;
 	private final Object defaultValue;

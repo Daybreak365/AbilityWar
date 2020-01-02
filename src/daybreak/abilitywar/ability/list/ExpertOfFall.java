@@ -9,6 +9,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -32,7 +33,23 @@ public class ExpertOfFall extends AbilityBase {
 		if (e.getEntity().equals(getPlayer())) {
 			if (e.getCause().equals(DamageCause.FALL)) {
 				e.setCancelled(true);
-				getPlayer().getLocation().getBlock().setType(Material.WATER);
+				Block block = getPlayer().getLocation().getBlock();
+				Material origin = block.getType();
+				new Timer(2) {
+					@Override
+					protected void onStart() {
+						block.setType(Material.WATER);
+					}
+
+					@Override
+					protected void onProcess(int count) {
+					}
+
+					@Override
+					protected void onEnd() {
+						block.setType(origin);
+					}
+				}.startTimer();
 				SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 			}
 		}

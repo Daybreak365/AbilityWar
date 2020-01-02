@@ -1,11 +1,8 @@
 package daybreak.abilitywar.utils.math;
 
-import daybreak.abilitywar.config.Configuration;
-import daybreak.abilitywar.config.enums.ConfigNodes;
-
 public class FastMath {
 
-	private static final int accuracy = (int) Math.pow(10, Configuration.Settings.getInt(ConfigNodes.TRIGONOMETRIC_FUNCTION_ACCURACY));
+	private static final int accuracy = (int) Math.pow(10, 2);
 	private static final double[] sin = new double[accuracy * 360];
 	private static final double[] cos = new double[accuracy * 360];
 	private static final double[] tan = new double[accuracy * 360];

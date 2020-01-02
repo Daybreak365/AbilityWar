@@ -172,7 +172,7 @@ public class PenetrationArrow extends AbilityBase {
 			this.forward = arrowVelocity.setY(Math.min(arrowVelocity.getY(), 0)).multiply(0.85);
 			this.color = color;
 			this.lastLocation = startLocation;
-			this.line = new Line(startLocation, startLocation).setLocationAmount(20);
+			this.line = new Line(startLocation, startLocation).setLocationAmount(8);
 			this.time = 0.3;
 		}
 

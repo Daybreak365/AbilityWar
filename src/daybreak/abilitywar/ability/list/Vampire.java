@@ -6,7 +6,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.utils.CombatUtil;
+import daybreak.abilitywar.utils.DamageUtil;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -81,7 +81,7 @@ public class Vampire extends AbilityBase {
 			lines = new HashMap<>();
 			instrumentListeners = new ArrayList<>();
 			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, 250)) {
-				if (!damageable.isDead() && CombatUtil.canDamage(getPlayer(), damageable, EntityDamageEvent.DamageCause.MAGIC, 1)) {
+				if (!damageable.isDead() && DamageUtil.canDamage(getPlayer(), damageable, EntityDamageEvent.DamageCause.MAGIC, 1)) {
 					damageable.damage(0);
 					final int amount;
 					if (isNight(getPlayer().getWorld().getTime())) {
