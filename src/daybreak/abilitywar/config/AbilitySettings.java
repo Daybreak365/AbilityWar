@@ -2,7 +2,7 @@ package daybreak.abilitywar.config;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.utils.database.FileManager;
+import daybreak.abilitywar.utils.database.FileUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class AbilitySettings {
 
 	public static void load() throws IOException, InvalidConfigurationException {
 		if (!isLoaded()) {
-			file = FileManager.createFile("abilitysettings.yml");
+			file = FileUtil.newFile("abilitysettings.yml");
 			lastModified = file.lastModified();
 			config = new CommentedConfiguration(file);
 			update();

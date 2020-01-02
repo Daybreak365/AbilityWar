@@ -1,7 +1,7 @@
 package daybreak.abilitywar.addon;
 
 import daybreak.abilitywar.addon.exception.InvalidAddonException;
-import daybreak.abilitywar.utils.database.FileManager;
+import daybreak.abilitywar.utils.database.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class AddonLoader {
 	 * 애드온 디렉토리에 있는 모든 애드온을 불러옵니다.
 	 */
 	public static void loadAll() {
-		for (File file : FileManager.createDirectory("Addon").listFiles()) {
+		for (File file : FileUtil.newDirectory("Addon").listFiles()) {
 			load(file);
 		}
 	}

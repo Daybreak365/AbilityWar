@@ -1,22 +1,16 @@
 package daybreak.abilitywar;
 
+import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.MainCommand;
-import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.Script;
-import daybreak.abilitywar.game.script.Script.RequiredData;
-import daybreak.abilitywar.game.script.types.ChangeAbilityScript;
-import daybreak.abilitywar.game.script.types.ChangeAbilityScript.ChangeTarget;
-import daybreak.abilitywar.game.script.types.LocationNoticeScript;
-import daybreak.abilitywar.game.script.types.TeleportScript;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -70,16 +64,16 @@ public class AbilityWar extends JavaPlugin {
 				} catch (IOException | InterruptedException | ExecutionException ignore) {
 				}
 				AbilityWar.this.installer = installer;
+				try {
+					Class.forName("daybreak.abilitywar.utils.math.FastMath");
+					Class.forName("daybreak.abilitywar.utils.ResourcepackManager");
+				} catch (ClassNotFoundException ignored) {
+				}
 			}
 		});
-		ServerVersion.VersionCompat(this);
+		ServerVersion.compatVersion(this);
 		messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand(this));
-		Script.registerScript(TeleportScript.class, new RequiredData<>("텔레포트 위치", Location.class));
-		Script.registerScript(ChangeAbilityScript.class, new RequiredData<>("능력 변경 대상", ChangeTarget.class));
-		Script.registerScript(LocationNoticeScript.class);
-
-		AbilityList.nameValues();
 
 		AddonLoader.loadAll();
 		AddonLoader.enableAll();
@@ -87,6 +81,7 @@ public class AbilityWar extends JavaPlugin {
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			@Override
 			public void run() {
+				AbilityFactory.nameValues();
 				try {
 					Configuration.load();
 					AbilitySettings.load();
@@ -95,10 +90,6 @@ public class AbilityWar extends JavaPlugin {
 					Bukkit.getPluginManager().disablePlugin(plugin);
 				}
 				Script.LoadAll();
-				try {
-					Class.forName("daybreak.abilitywar.utils.math.FastMath");
-				} catch (ClassNotFoundException ignored) {
-				}
 			}
 		});
 

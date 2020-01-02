@@ -7,11 +7,15 @@ import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.script.ScriptException.State;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.game.script.objects.setter.Setter;
+import daybreak.abilitywar.game.script.types.ChangeAbilityScript;
+import daybreak.abilitywar.game.script.types.LocationNoticeScript;
+import daybreak.abilitywar.game.script.types.TeleportScript;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
-import daybreak.abilitywar.utils.database.FileManager;
+import daybreak.abilitywar.utils.database.FileUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -63,7 +67,7 @@ public class Script {
 	public static void LoadAll() {
 		scripts.clear();
 
-		for (File file : FileManager.createDirectory("Script").listFiles()) {
+		for (File file : FileUtil.newDirectory("Script").listFiles()) {
 			try {
 				AbstractScript script = Load(file);
 				scripts.add(script);
@@ -94,6 +98,12 @@ public class Script {
 		}
 
 		scriptTypes.add(new ScriptRegisteration(clazz, requiredDatas));
+	}
+
+	static {
+		Script.registerScript(TeleportScript.class, new RequiredData<>("텔레포트 위치", Location.class));
+		Script.registerScript(ChangeAbilityScript.class, new RequiredData<>("능력 변경 대상", ChangeAbilityScript.ChangeTarget.class));
+		Script.registerScript(LocationNoticeScript.class);
 	}
 
 	public static ScriptRegisteration getRegisteration(Class<? extends AbstractScript> clazz)
@@ -212,8 +222,8 @@ public class Script {
 	public static void Save(AbstractScript script) {
 		try {
 			if (isRegistered(script.getClass())) {
-				FileManager.createDirectory("Script");
-				File f = FileManager.createFile("Script/" + script.getName() + ".json");
+				FileUtil.newDirectory("Script");
+				File f = FileUtil.newFile("Script/" + script.getName() + ".json");
 				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 				gson.toJson(script, bw);
 				bw.close();

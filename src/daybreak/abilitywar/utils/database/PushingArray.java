@@ -14,8 +14,8 @@ public class PushingArray<T> {
 	private final T[] array;
 
 	@SuppressWarnings("unchecked")
-	public PushingArray(Class<T> clazz, int Size) {
-		this.array = (T[]) Array.newInstance(clazz, Size);
+	public PushingArray(Class<T> clazz, int size) {
+		this.array = (T[]) Array.newInstance(clazz, size);
 	}
 
 	public void add(T t) {
