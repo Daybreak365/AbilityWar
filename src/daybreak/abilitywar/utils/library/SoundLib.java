@@ -11,6 +11,13 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
+/**
+ * 소리 라이브러리
+ *
+ * @author Daybreak 새벽
+ * @version 2.0
+ * @since 2019-02-19
+ */
 public class SoundLib {
 	public static final SimpleSound BLOCK_ANVIL_BREAK = new SimpleSound("BLOCK_ANVIL_BREAK");
 	public static final SimpleSound BLOCK_ANVIL_DESTROY = new SimpleSound("BLOCK_ANVIL_DESTROY");

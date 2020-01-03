@@ -36,7 +36,7 @@ import org.bukkit.entity.Player;
  * 파티클 라이브러리
  *
  * @author Daybreak 새벽
- * @version 1.3 (Minecraft 1.14)
+ * @version 2.0
  * @since 2019-02-19
  */
 public class ParticleLib {

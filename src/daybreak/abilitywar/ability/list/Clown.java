@@ -87,7 +87,7 @@ public class Clown extends AbilityBase {
 
 					for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), RangeConfig.getValue(), 250)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(p);
-						PotionEffects.BLINDNESS.addPotionEffect(p, 200, 2, true);
+						PotionEffects.BLINDNESS.addPotionEffect(p, 100, 2, true);
 					}
 				}
 			}

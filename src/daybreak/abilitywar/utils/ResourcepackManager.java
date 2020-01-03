@@ -26,9 +26,6 @@ public class ResourcepackManager implements Listener {
 
 	private ResourcepackManager() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			player.setResourcePack(RESOURCEPACK_LINK);
-		}
 	}
 
 	@EventHandler

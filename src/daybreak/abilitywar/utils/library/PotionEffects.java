@@ -9,50 +9,50 @@ import org.bukkit.potion.PotionEffectType;
  * 효과 라이브러리
  *
  * @author Daybreak 새벽
- * @version 1.3 (Minecraft 1.14)
+ * @version 1.4
  * @since 2019-02-19
  */
 public enum PotionEffects {
 
-	ABSORPTION(Type.POSITIVE),
-	BAD_OMEN(Type.NEGATIVE),
-	BLINDNESS(Type.NEGATIVE),
-	CONFUSION(Type.NEGATIVE),
-	CONDUIT_POWER(Type.POSITIVE),
-	DOLPHINS_GRACE(Type.POSITIVE),
-	DAMAGE_RESISTANCE(Type.POSITIVE),
-	FAST_DIGGING(Type.POSITIVE),
-	FIRE_RESISTANCE(Type.POSITIVE),
-	GLOWING(Type.NEGATIVE),
-	HARM(Type.NEGATIVE),
-	HEAL(Type.POSITIVE),
-	HEALTH_BOOST(Type.POSITIVE),
-	HUNGER(Type.NEGATIVE),
-	HERO_OF_THE_VILLAGE(Type.POSITIVE),
-	INCREASE_DAMAGE(Type.POSITIVE),
-	INVISIBILITY(Type.POSITIVE),
-	JUMP(Type.POSITIVE),
-	LEVITATION(Type.NEGATIVE),
-	LUCK(Type.POSITIVE),
-	NIGHT_VISION(Type.POSITIVE),
-	POISON(Type.NEGATIVE),
-	REGENERATION(Type.POSITIVE),
-	SATURATION(Type.POSITIVE),
-	SLOW(Type.NEGATIVE),
-	SLOW_DIGGING(Type.NEGATIVE),
-	SLOW_FALLING(Type.POSITIVE),
-	SPEED(Type.POSITIVE),
-	UNLUCK(Type.NEGATIVE),
-	WATER_BREATHING(Type.POSITIVE),
-	WEAKNESS(Type.NEGATIVE),
-	WITHER(Type.NEGATIVE);
+	ABSORPTION(true),
+	BAD_OMEN(false),
+	BLINDNESS(false),
+	CONFUSION(false),
+	CONDUIT_POWER(true),
+	DOLPHINS_GRACE(true),
+	DAMAGE_RESISTANCE(true),
+	FAST_DIGGING(true),
+	FIRE_RESISTANCE(true),
+	GLOWING(false),
+	HARM(false),
+	HEAL(true),
+	HEALTH_BOOST(true),
+	HUNGER(false),
+	HERO_OF_THE_VILLAGE(true),
+	INCREASE_DAMAGE(true),
+	INVISIBILITY(true),
+	JUMP(true),
+	LEVITATION(false),
+	LUCK(true),
+	NIGHT_VISION(true),
+	POISON(false),
+	REGENERATION(true),
+	SATURATION(true),
+	SLOW(false),
+	SLOW_DIGGING(false),
+	SLOW_FALLING(true),
+	SPEED(true),
+	UNLUCK(false),
+	WATER_BREATHING(true),
+	WEAKNESS(false),
+	WITHER(false);
 
 	final PotionEffectType effect;
-	final Type type;
+	final boolean positive;
 
-	PotionEffects(Type type) {
+	PotionEffects(boolean positive) {
 		this.effect = PotionEffectType.getByName(name());
-		this.type = type;
+		this.positive = positive;
 	}
 
 	public void addPotionEffect(LivingEntity entity, int duration, int amplifier, boolean force) {
@@ -68,17 +68,14 @@ public enum PotionEffects {
 	}
 
 	public boolean isPositive() {
-		return type.equals(Type.POSITIVE);
+		return positive;
 	}
-
 	public boolean isNegative() {
-		return type.equals(Type.NEGATIVE);
+		return !positive;
 	}
 
 	public static PotionEffects valueOf(PotionEffectType potionEffectType) {
-		return Enums.getIfPresent(PotionEffects.class, potionEffectType.getName()).get();
+		return Enums.getIfPresent(PotionEffects.class, potionEffectType.getName()).orNull();
 	}
-
-	private enum Type {POSITIVE, NEGATIVE}
 
 }

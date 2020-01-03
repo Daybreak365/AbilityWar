@@ -71,4 +71,14 @@ public class Line {
 		return locations;
 	}
 
+	public ArrayList<Vector> getVectors() {
+		ArrayList<Vector> vectors = new ArrayList<>();
+		Vector vector = targetLocation.toVector().subtract(startLocation.toVector());
+		final double increasement = 1.0 / locationAmount;
+		for (int i = 0; i <= locationAmount; i++) {
+			vectors.add(vector.clone().multiply(Math.min(increasement * i, 1.0)));
+		}
+		return vectors;
+	}
+
 }

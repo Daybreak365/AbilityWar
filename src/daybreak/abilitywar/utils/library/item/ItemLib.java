@@ -266,77 +266,67 @@ public class ItemLib {
 
 	public static class PotionBuilder {
 
-		private Object Potion;
-		private PotionType effectType;
-		private boolean Extended = false;
-		private boolean Upgraded = false;
+		private PotionType type;
+		private PotionShape shape;
+		private boolean extended = false;
+		private boolean upgraded = false;
 
-		public PotionBuilder(PotionType effect, PotionShape type) {
-			if (ServerVersion.getVersion() >= 9) {
-				switch (type) {
-					case NORMAL:
-						Potion = new ItemStack(Material.POTION);
-						break;
-					case SPLASH:
-						Potion = new ItemStack(Material.SPLASH_POTION);
-						break;
-					case LINGERING:
-						Potion = new ItemStack(Material.LINGERING_POTION);
-						break;
-				}
-			} else {
-				try {
-					Class<?> potionClass = Class.forName("org.bukkit.potion.Potion");
-					Potion = potionClass.getConstructor(PotionType.class).newInstance(effect);
-					potionClass.getMethod("setSplash", boolean.class).invoke(potionClass.cast(Potion), type.equals(PotionShape.SPLASH));
-				} catch (Exception ex) {
-				}
-			}
-
-			this.effectType = effect;
+		public PotionBuilder(PotionType type, PotionShape shape) {
+			this.type = type;
+			this.shape = shape;
 		}
 
-		public PotionBuilder setExtended(boolean Extended) {
-			this.Extended = Extended;
+		public PotionBuilder setType(PotionType type) {
+			this.type = type;
+			this.extended = type.isExtendable() && extended;
+			this.upgraded = type.isUpgradeable() && upgraded;
 			return this;
 		}
 
-		public PotionBuilder setUpgraded(boolean Upgraded) {
-			this.Upgraded = Upgraded;
+		public PotionBuilder setShape(PotionShape shape) {
+			this.shape = shape;
+			return this;
+		}
+
+		public PotionBuilder setExtended(boolean extended) {
+			this.extended = type.isExtendable() && extended;
+			return this;
+		}
+
+		public PotionBuilder setUpgraded(boolean upgraded) {
+			this.upgraded = type.isUpgradeable() && upgraded;
 			return this;
 		}
 
 		/**
-		 * 포션을 ItemStack으로 받아옵니다.
+		 * 포션을 ItemStack으로 반환합니다.
 		 *
-		 * @param Amount 개수
+		 * @param amount 개수
 		 * @return ItemStack
 		 */
-		public ItemStack getItemStack(int Amount) throws Exception {
-			if (ServerVersion.getVersion() >= 9) {
-				ItemStack potion = (ItemStack) Potion;
-				potion.setAmount(Amount);
-				PotionMeta meta = (PotionMeta) potion.getItemMeta();
-				try {
-					boolean Extend = Extended, Upgrade = Upgraded;
-					if (!effectType.isExtendable()) Extend = false;
-					if (!effectType.isUpgradeable()) Upgrade = false;
-
-					meta.setBasePotionData(new PotionData(effectType, Extend, Upgrade));
-				} catch (Exception ex) {
-				}
-				potion.setItemMeta(meta);
-
-				return potion;
-			} else {
-				Class<?> potionClass = Class.forName("org.bukkit.potion.Potion");
-				potionClass.getMethod("setHasExtendedDuration", boolean.class).invoke(potionClass.cast(Potion), Extended);
-				potionClass.getMethod("setLevel", int.class).invoke(potionClass.cast(Potion), Upgraded ? 2 : 1);
-				return (ItemStack) potionClass.getMethod("toItemStack", int.class).invoke(potionClass.cast(Potion), Amount);
+		public ItemStack getItemStack(int amount) {
+			ItemStack stack = new ItemStack(shape.material);
+			stack.setAmount(amount);
+			try {
+				PotionMeta meta = (PotionMeta) stack.getItemMeta();
+				meta.setBasePotionData(new PotionData(type, extended, upgraded));
+				stack.setItemMeta(meta);
+			} catch (Exception ignored) {
 			}
+			return stack;
 		}
 
-		public enum PotionShape {NORMAL, SPLASH, LINGERING}
+		public enum PotionShape {
+			NORMAL(Material.POTION),
+			SPLASH(Material.SPLASH_POTION),
+			LINGERING(Material.LINGERING_POTION);
+
+			final Material material;
+
+			PotionShape(Material material) {
+				this.material = material;
+			}
+		}
 
 	}
 
