@@ -8,18 +8,21 @@ import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -126,10 +129,13 @@ public class PenetrationArrow extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	private void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
+	private void onProjectileLaunch(EntityShootBowEvent e) {
+		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
-			arrowType.launchArrow((Arrow) e.getEntity());
+			if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
+				ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
+			}
+			arrowType.launchArrow((Arrow) e.getProjectile());
 			arrowBullet--;
 			if (arrowBullet <= 0) {
 				arrowType = arrowTypes.get(random.nextInt(arrowTypes.size()));
@@ -142,7 +148,7 @@ public class PenetrationArrow extends AbilityBase {
 	public void TargetSkill(Material material, LivingEntity livingEntity) {
 	}
 
-	private abstract class ArrowType {
+	private abstract static class ArrowType {
 
 		private final String name;
 

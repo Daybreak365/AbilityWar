@@ -5,6 +5,8 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,6 +15,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,12 +43,24 @@ public class ItemLib {
 		@SuppressWarnings("deprecation")
 		public ItemStack getItemStack(ItemColor color) {
 			if (ServerVersion.getVersion() >= 13) {
-				Material material = Material.valueOf(color.toString() + "_" + this.materialName);
-				return new ItemStack(material);
+				return new ItemStack(Material.valueOf(color.name() + "_" + this.materialName));
 			} else {
-				Material material = Material.valueOf(this.materialName);
-				return new ItemStack(material, 1, color.getDamage());
+				return new ItemStack(Material.valueOf(this.materialName), 1, color.getDamage());
 			}
+		}
+
+		public Block setBlock(Location location, ItemColor color) {
+			Block block = location.getBlock();
+			if (ServerVersion.getVersion() >= 13) {
+				block.setType(Material.valueOf(color.name() + "_" + this.materialName));
+			} else {
+				block.setType(Material.valueOf(this.materialName));
+				try {
+					block.getClass().getDeclaredMethod("setData", byte.class).invoke(block, (byte) color.getDamage());
+				} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
+				}
+			}
+			return block;
 		}
 
 		public boolean compareType(Material material) {
@@ -65,78 +80,26 @@ public class ItemLib {
 
 	public enum ItemColor {
 
-		/**
-		 * 하얀색
-		 */
 		WHITE((short) 0),
-		/**
-		 * 주황색
-		 */
 		ORANGE((short) 1),
-		/**
-		 * 자홍색
-		 */
 		MAGENTA((short) 2),
-		/**
-		 * 하늘색
-		 */
 		LIGHT_BLUE((short) 3),
-		/**
-		 * 노란색
-		 */
 		YELLOW((short) 4),
-		/**
-		 * 연두색
-		 */
 		LIME((short) 5),
-		/**
-		 * 분홍색
-		 */
 		PINK((short) 6),
-		/**
-		 * 회색
-		 */
 		GRAY((short) 7),
-		/**
-		 * 회백색
-		 */
 		LIGHT_GRAY((short) 8),
-		/**
-		 * 청록색
-		 */
 		CYAN((short) 9),
-		/**
-		 * 보라색
-		 */
 		PURPLE((short) 10),
-		/**
-		 * 파란색
-		 */
 		BLUE((short) 11),
-		/**
-		 * 갈색
-		 */
 		BROWN((short) 12),
-		/**
-		 * 초록색
-		 */
 		GREEN((short) 13),
-		/**
-		 * 빨간색
-		 */
 		RED((short) 14),
-		/**
-		 * 검은색
-		 */
-		BLACK((short) 15),
-		/**
-		 * 에러가 났을 경우 사용되는 값입니다.
-		 */
-		ERROR((short) -1);
+		BLACK((short) 15);
 
 		private short damage;
 
-		private ItemColor(short damage) {
+		ItemColor(short damage) {
 			this.damage = damage;
 		}
 
@@ -144,24 +107,14 @@ public class ItemLib {
 			return damage;
 		}
 
-		/**
-		 * Damage로 ItemColor를 받아옵니다.
-		 * 해당하는 ItemColor가 없을 경우 ERROR를 반환합니다.
-		 */
 		public static ItemColor getByDamage(short damage) {
-			for (ItemColor color : ItemColor.values()) {
-				if (color.getDamage() == damage) {
-					return color;
-				}
-			}
-
-			return ItemColor.ERROR;
+			return values()[damage];
 		}
 
 	}
 
 	@SuppressWarnings("deprecation")
-	public static SkullMeta setOwner(SkullMeta meta, String Player) {
+	public static SkullMeta setOwner(SkullMeta meta, String playerName) {
 		if (ServerVersion.getVersion() >= 13) {
 			meta.setOwningPlayer(new OfflinePlayer() {
 
@@ -215,7 +168,7 @@ public class ItemLib {
 
 				@Override
 				public String getName() {
-					return Player;
+					return playerName;
 				}
 
 				@Override
@@ -234,18 +187,14 @@ public class ItemLib {
 				}
 			});
 		} else {
-			meta.setOwner(Player);
+			meta.setOwner(playerName);
 		}
-
 		return meta;
 	}
 
 	public static ItemStack getHead(String owner) {
 		ItemStack item = MaterialLib.PLAYER_HEAD.getItem();
-
-		SkullMeta meta = (SkullMeta) item.getItemMeta();
-		item.setItemMeta(setOwner(meta, owner));
-
+		item.setItemMeta(setOwner((SkullMeta) item.getItemMeta(), owner));
 		return item;
 	}
 
@@ -328,6 +277,20 @@ public class ItemLib {
 			}
 		}
 
+	}
+
+	public static void removeItem(Inventory inventory, Material type, int amount) {
+		for (int i = 0; i < inventory.getContents().length; i++) {
+			ItemStack stack = inventory.getItem(i);
+			if (stack == null || !stack.getType().equals(type)) continue;
+			if (stack.getAmount() >= amount) {
+				stack.setAmount(stack.getAmount() - amount);
+				break;
+			} else {
+				amount -= stack.getAmount();
+				stack.setAmount(0);
+			}
+		}
 	}
 
 }
