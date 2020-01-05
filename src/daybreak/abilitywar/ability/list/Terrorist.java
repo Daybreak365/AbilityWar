@@ -8,9 +8,9 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,6 +50,7 @@ public class Terrorist extends AbilityBase {
 
 	private final int count = CountConfig.getValue();
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final Vectors circle = new Circle(10, count).getVectors();
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
@@ -57,15 +58,10 @@ public class Terrorist extends AbilityBase {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!Cool.isCooldown()) {
 					Location center = getPlayer().getLocation();
-					for (int i = 0; i < 10; i++) {
-						for (Location l : new Circle(center, i).setAmount(20).setHighestLocation(true).getLocations()) {
-							ParticleLib.LAVA.spawnParticle(l, 0, 0, 0, 1);
-						}
-					}
 
 					for (Location l : LocationUtil.getRandomLocations(center, 9, count))
 						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
-					for (Location l : new Circle(center, 10).setAmount(count).setHighestLocation(true).getLocations())
+					for (Location l : circle.getAsLocations(center).floor(center.getY()))
 						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 
 					Cool.startTimer();

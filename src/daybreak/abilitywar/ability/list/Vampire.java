@@ -13,6 +13,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.math.geometry.Line;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -69,7 +70,7 @@ public class Vampire extends AbilityBase {
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final int distance = DistanceConfig.getValue();
-	private final Circle circle = new Circle(getPlayer().getLocation(), distance).setHighestLocation(true).setAmount(distance * 15);
+	private final Vectors circle = new Circle(distance, distance * 15).getVectors();
 	private static final ParticleLib.RGB COLOR_BLOOD_RED = new ParticleLib.RGB(138, 7, 7);
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 10, cooldownTimer) {
 		int count;
@@ -127,12 +128,16 @@ public class Vampire extends AbilityBase {
 				blood = 0;
 				count = 1;
 			}
-			circle.setCenter(getPlayer().getLocation());
-			for (Location location : circle.getLocations()) {
+			for (Location location : circle.getAsLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 				ParticleLib.REDSTONE.spawnParticle(location, COLOR_BLOOD_RED);
 			}
 			for (Map.Entry<Damageable, Line> entry : lines.entrySet()) {
-				ParticleLib.HEART.spawnParticle(entry.getValue().setTargetLocation(getPlayer().getLocation()).setStartLocation(entry.getKey().getLocation()).getLocation(count - 1));
+				Location startLocation = entry.getKey().getLocation();
+				try {
+					ParticleLib.HEART.spawnParticle(entry.getValue().setVector(startLocation, getPlayer().getLocation()).getLocation(startLocation, count - 1));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 	}.setPeriod(2);

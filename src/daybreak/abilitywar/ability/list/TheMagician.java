@@ -12,6 +12,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -51,6 +52,7 @@ public class TheMagician extends AbilityBase {
 	}
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final Vectors circle = new Circle(5, 70).getVectors();
 
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
@@ -79,8 +81,8 @@ public class TheMagician extends AbilityBase {
 						damageables.get(i).teleport(locationMap.get(keySet.get(i)));
 					}
 
-					for (Location l : new Circle(center, 5).setAmount(70).setHighestLocation(true).getLocations()) {
-						ParticleLib.SPELL_WITCH.spawnParticle(l, 0, 0, 0, 1);
+					for (Location l : circle.getAsLocations(center).floor(center.getY())) {
+						ParticleLib.SPELL_WITCH.spawnParticle(l);
 					}
 					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);
 

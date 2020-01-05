@@ -131,6 +131,14 @@ public class TheEmperor extends AbilityBase {
 			}
 			armorStands.clear();
 		}
+
+		@Override
+		protected void onSilentEnd() {
+			for (ArmorStand armorStand : armorStands) {
+				armorStand.remove();
+			}
+			armorStands.clear();
+		}
 	}.setPeriod(1);
 
 	@Override

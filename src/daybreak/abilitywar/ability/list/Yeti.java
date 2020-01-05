@@ -71,20 +71,20 @@ public class Yeti extends AbilityBase {
 
 	private final Timer Ice = new Timer(RangeConfig.getValue()) {
 
-		private int Count;
+		private int count;
 		private Location center;
 
 		@Override
 		public void onStart() {
-			Count = 1;
+			count = 1;
 			center = getPlayer().getLocation();
 
 			center.getWorld().getHighestBlockAt(center).setType(Material.SNOW);
 		}
 
 		@Override
-		public void onProcess(int count) {
-			for (Block b : LocationUtil.getBlocks2D(center, Count, true, true)) {
+		public void onProcess(int sec) {
+			for (Block b : LocationUtil.getBlocks2D(center, count, true, true)) {
 				Block db = b.getLocation().subtract(0, 1, 0).getBlock();
 				Material type = db.getType();
 				if (type.equals(Material.WATER)) {
@@ -111,14 +111,14 @@ public class Yeti extends AbilityBase {
 
 				l.add(0, 1, 0).getBlock().setType(Material.SNOW);
 			}*/
-			Count++;
+			count++;
 		}
 
 		@Override
 		public void onEnd() {
 		}
 
-	}.setPeriod(3);
+	}.setPeriod(1);
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 

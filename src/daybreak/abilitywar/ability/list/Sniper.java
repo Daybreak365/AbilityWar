@@ -93,7 +93,7 @@ public class Sniper extends AbilityBase {
 
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (e.getEntity().getShooter().equals(getPlayer())) {
+		if (getPlayer().equals(e.getEntity().getShooter())) {
 			if (e.getEntity() instanceof Arrow) {
 				Arrow a = (Arrow) e.getEntity();
 				new Timer(Duration) {

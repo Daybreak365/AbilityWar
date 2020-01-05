@@ -13,6 +13,7 @@ import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Line;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -63,6 +64,7 @@ public class PenetrationArrow extends AbilityBase {
 
 	private final int bulletCount = BulletConfig.getValue();
 
+	private final Vectors sphere = LocationUtil.getSphere(4, 10);
 	private final Random random = new Random();
 	private final List<ArrowType> arrowTypes = Arrays.asList(
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&c절단")) {
@@ -86,7 +88,7 @@ public class PenetrationArrow extends AbilityBase {
 					new Parabola(arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, PURPLE) {
 						@Override
 						public void onHit(Damageable damager, Damageable victim) {
-							for (Location location : LocationUtil.getSphere(victim.getLocation(), 4, 10)) {
+							for (Location location : sphere.getAsLocations(victim.getLocation())) {
 								ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
 							}
 							for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(victim.getLocation(), 4, 4)) {
@@ -192,7 +194,7 @@ public class PenetrationArrow extends AbilityBase {
 			time += 0.03;
 			double height = (velocity * sin * time) - (0.5 * GRAVITATIONAL_CONSTANT * (time * time));
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
-			for (Location location : line.setStartLocation(lastLocation).setTargetLocation(newLocation).getLocations()) {
+			for (Location location : line.setVector(lastLocation, newLocation).getLocations(lastLocation)) {
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(location, 1.4, 1.4)) {
 					if (!getPlayer().equals(damageable) && !attacked.contains(damageable)) {
 						damageable.damage(Math.round(2.5 * velocity * 10) / 10.0, getPlayer());

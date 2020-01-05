@@ -12,14 +12,12 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @AbilityManifest(Name = "해커", Rank = Rank.A, Species = Species.HUMAN)
 public class Hacker extends AbilityBase {
@@ -51,7 +49,7 @@ public class Hacker extends AbilityBase {
 				Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
-	private Player Target = null;
+	private Player target = null;
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
@@ -68,24 +66,24 @@ public class Hacker extends AbilityBase {
 
 		@Override
 		protected void onEnd() {
-			if (Target != null) {
+			if (target != null) {
 				new Title("", "", 0, 1, 0).sendTo(getPlayer());
 
-				int X = (int) Target.getLocation().getX();
-				int Y = (int) Target.getLocation().getY();
-				int Z = (int) Target.getLocation().getZ();
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
+				int X = (int) target.getLocation().getX();
+				int Y = (int) target.getLocation().getY();
+				int Z = (int) target.getLocation().getZ();
+				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
 
-				Target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"));
-				new Title(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0).sendTo(Target);
-				getGame().getEffectManager().Stun(Target, DurationTick);
+				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"));
+				new Title(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0).sendTo(target);
+				getGame().getEffectManager().Stun(target, DurationTick);
 				Particle.startTimer();
 			}
 		}
 
 		@Override
 		protected void onProcess(int count) {
-			if (Target != null) {
+			if (target != null) {
 				StringBuilder sb = new StringBuilder();
 				int all = 20;
 				int green = (int) (((double) Count / 100) * all);
@@ -93,7 +91,7 @@ public class Hacker extends AbilityBase {
 				int gray = all - green;
 				for (int i = 0; i < gray; i++) sb.append(ChatColor.GRAY + "|");
 
-				Title packet = new Title(ChatColor.translateAlternateColorCodes('&', "&e" + Target.getName() + " &f해킹중..."),
+				Title packet = new Title(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + " &f해킹중..."),
 						ChatColor.translateAlternateColorCodes('&', sb.toString() + " &f" + Count + "%"), 0, 5, 0);
 				packet.sendTo(getPlayer());
 
@@ -101,6 +99,11 @@ public class Hacker extends AbilityBase {
 			}
 		}
 	}.setPeriod(1);
+
+	private final int amount = 25;
+	private final Vectors top = new Circle(1, amount).getVectors();
+	private final Vectors bottom = new Circle(1, amount).getVectors();
+	private final RGB PURPLE = RGB.of(168, 121, 171);
 
 	private final Timer Particle = new Timer(DurationTick) {
 
@@ -113,13 +116,9 @@ public class Hacker extends AbilityBase {
 			add = true;
 		}
 
-		private final int amount = 25;
-		private final Circle top = new Circle(getPlayer().getLocation(), 1).setAmount(amount);
-		private final Circle bottom = new Circle(getPlayer().getLocation(), 1).setAmount(amount);
-
 		@Override
 		public void onProcess(int count) {
-			if (Target != null) {
+			if (target != null) {
 				if (add && y >= 2.0) {
 					add = false;
 				} else if (!add && y <= 0) {
@@ -132,17 +131,16 @@ public class Hacker extends AbilityBase {
 					y -= 0.1;
 				}
 
-				List<Location> locations = new ArrayList<>();
-				locations.addAll(top.setCenter(Target.getLocation().add(0, y, 0)).getLocations());
-				locations.addAll(bottom.setCenter(Target.getLocation().add(0, 2.0 - y, 0)).getLocations());
-
-				for (Location l : locations) ParticleLib.REDSTONE.spawnParticle(l, new RGB(168, 121, 171));
+				for (Location location : top.getAsLocations(target.getLocation().add(0, y, 0)))
+					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
+				for (Location location : bottom.getAsLocations(target.getLocation().add(0, 2.0 - y, 0)))
+					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
 			}
 		}
 
 		@Override
 		public void onEnd() {
-			Target = null;
+			target = null;
 		}
 
 	}.setPeriod(1);
@@ -155,7 +153,7 @@ public class Hacker extends AbilityBase {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 
 					if (target != null) {
-						Target = target;
+						this.target = target;
 						Skill.startTimer();
 
 						Cool.startTimer();

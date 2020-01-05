@@ -43,6 +43,7 @@ public class Zeus extends AbilityBase {
 	}
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final Circle circle = new Circle(1, 7);
 
 	private final Timer Skill = new Timer(3) {
 
@@ -55,8 +56,7 @@ public class Zeus extends AbilityBase {
 
 		@Override
 		public void onProcess(int count) {
-			Circle circle = new Circle(center, 2 * (5 - getCount())).setAmount(7).setHighestLocation(true);
-			for (Location l : circle.getLocations()) {
+			for (Location l : circle.setRadius(2 * (5 - getCount())).getVectors().getAsLocations(center).floor(center.getY())) {
 				l.getWorld().strikeLightningEffect(l);
 				for (Damageable d : LocationUtil.getNearbyDamageableEntities(l, 4, 4)) {
 					if (!d.equals(getPlayer())) {

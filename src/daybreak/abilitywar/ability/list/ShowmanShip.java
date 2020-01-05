@@ -12,6 +12,7 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,10 +30,9 @@ public class ShowmanShip extends AbilityBase {
 	private final RGB WEAK = new RGB(214, 255, 212);
 	private final RGB POWER = new RGB(255, 184, 150);
 	private final RGB POWERFUL = new RGB(255, 59, 59);
+	private final Vectors circle = new Circle(10, 100).getVectors();
 
 	private final Timer Passive = new Timer() {
-
-		private final Circle circle = new Circle(getPlayer().getLocation(), 10).setAmount(100).setHighestLocation(true);
 
 		@Override
 		public void onStart() {
@@ -40,24 +40,22 @@ public class ShowmanShip extends AbilityBase {
 
 		@Override
 		public void onProcess(int count) {
-			circle.setCenter(getPlayer().getLocation());
-			final int Count = LocationUtil.getNearbyPlayers(getPlayer(), 10, 10).size();
+			final int players = LocationUtil.getNearbyPlayers(getPlayer(), 10, 10).size();
 
-			if (Count <= 1) {
+			final RGB color;
+			if (players <= 1) {
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), 20, 0, true);
-				for (Location l : circle.getLocations()) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, WEAK);
-				}
-			} else if (Count == 2) {
+				color = WEAK;
+			} else if (players == 2) {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 1, true);
-				for (Location l : circle.getLocations()) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWER);
-				}
+				color = POWER;
 			} else {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 20, 2, true);
-				for (Location l : circle.getLocations()) {
-					ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, POWERFUL);
-				}
+				color = POWERFUL;
+			}
+
+			for (Location l : circle.getAsLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+				ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, color);
 			}
 		}
 

@@ -1,41 +1,30 @@
 package daybreak.abilitywar.utils.math.geometry;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
 
 import static daybreak.abilitywar.utils.Validate.notNull;
 
 public class Line {
 
-	private Location startLocation;
-	private Location targetLocation;
+	private Vector vector;
 	private int locationAmount = 10;
-	private boolean highestLocation = false;
 
 	public Line(Location startLocation, Location targetLocation) {
-		if (!notNull(startLocation).getWorld().equals(notNull(targetLocation).getWorld())) {
-			throw new IllegalArgumentException("StartLocation과 TargetLocation이 같은 세계에 있어야 합니다.");
-		}
-		this.startLocation = startLocation.clone();
-		this.targetLocation = targetLocation.clone();
+		this.vector = notNull(targetLocation).toVector().subtract(notNull(startLocation).toVector());
 	}
 
-	public Line setStartLocation(Location startLocation) {
-		if (!targetLocation.getWorld().equals(notNull(startLocation).getWorld())) {
-			throw new IllegalArgumentException("StartLocation과 TargetLocation이 같은 세계에 있어야 합니다.");
-		}
-		this.startLocation = notNull(startLocation).clone();
+	public Line(Vector vector) {
+		this.vector = notNull(vector);
+	}
+
+	public Line setVector(Location startLocation, Location targetLocation) {
+		this.vector = notNull(targetLocation).toVector().subtract(notNull(startLocation).toVector());
 		return this;
 	}
 
-	public Line setTargetLocation(Location targetLocation) {
-		if (!startLocation.getWorld().equals(notNull(targetLocation).getWorld())) {
-			throw new IllegalArgumentException("StartLocation과 TargetLocation이 같은 세계에 있어야 합니다.");
-		}
-		this.targetLocation = notNull(targetLocation).clone();
+	public Line setVector(Vector vector) {
+		this.vector = notNull(vector);
 		return this;
 	}
 
@@ -52,28 +41,25 @@ public class Line {
 	 * @throws IndexOutOfBoundsException index에 범위 외의 수가 입력되었을 경우
 	 * @return index 번째 위치
 	 */
-	public Location getLocation(int index) throws IndexOutOfBoundsException {
+	public Location getLocation(Location startLocation, int index) throws IndexOutOfBoundsException {
 		if (index <= locationAmount) {
-			return startLocation.toVector().clone().add(targetLocation.toVector().subtract(startLocation.toVector()).clone().multiply(Math.min((1.0 / locationAmount) * index, 1.0))).toLocation(startLocation.getWorld());
+			return startLocation.toVector().clone().add(vector.clone().multiply(Math.min((1.0 / locationAmount) * index, 1.0))).toLocation(startLocation.getWorld());
 		} else {
 			throw new IndexOutOfBoundsException("index는 0과 " + locationAmount + " 사이의 수가 입력되어야 합니다.");
 		}
 	}
 
-	public ArrayList<Location> getLocations() {
-		ArrayList<Location> locations = new ArrayList<>();
-		World world = startLocation.getWorld();
-		Vector vector = targetLocation.toVector().subtract(startLocation.toVector());
+	public Locations getLocations(Location startLocation) {
+		Locations locations = new Locations();
 		final double increasement = 1.0 / locationAmount;
 		for (int i = 0; i <= locationAmount; i++) {
-			locations.add(startLocation.toVector().clone().add(vector.clone().multiply(Math.min(increasement * i, 1.0))).toLocation(world));
+			locations.add(startLocation.toVector().clone().add(vector.clone().multiply(Math.min(increasement * i, 1.0))).toLocation(startLocation.getWorld()));
 		}
 		return locations;
 	}
 
-	public ArrayList<Vector> getVectors() {
-		ArrayList<Vector> vectors = new ArrayList<>();
-		Vector vector = targetLocation.toVector().subtract(startLocation.toVector());
+	public Vectors getVectors() {
+		Vectors vectors = new Vectors();
 		final double increasement = 1.0 / locationAmount;
 		for (int i = 0; i <= locationAmount; i++) {
 			vectors.add(vector.clone().multiply(Math.min(increasement * i, 1.0)));

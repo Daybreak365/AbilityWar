@@ -4,6 +4,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,8 +116,11 @@ public class LocationUtil {
 		for (int x = blockX - horizontal; x <= blockX + horizontal; x++) {
 			for (int z = blockZ - horizontal; z <= blockZ + horizontal; z++) {
 				Block block = highestBlocks ? center.getWorld().getHighestBlockAt(x, z) : center.getWorld().getBlockAt(x, center.getBlockY(), z);
-				if (highestBlocks && block.isEmpty()) block = block.getRelative(0, -1, 0);
-				double distance = center.distanceSquared(block.getLocation());
+				Location compare = center.clone();
+				compare.setY(0);
+				Location blockCompare = block.getLocation().clone();
+				blockCompare.setY(0);
+				double distance = compare.distanceSquared(blockCompare);
 				if (distance <= (horizontal * horizontal) && !(hollow && distance < ((horizontal - 1) * (horizontal - 1)))) {
 					blocks.add(block);
 				}
@@ -138,20 +143,20 @@ public class LocationUtil {
 		return locations;
 	}
 
-	public static ArrayList<Location> getSphere(Location center, double r, int amount) {
-		ArrayList<Location> locations = new ArrayList<>();
+	public static Vectors getSphere(double scale, int amount) {
+		Vectors vectors = new Vectors();
 		if (amount > 0) {
-			for (double i = 0; i <= Math.PI; i += Math.PI / amount) {
-				double radius = FastMath.sin(i) * r;
-				double y = FastMath.cos(i) * r;
-				for (double a = 0; a < Math.PI * 2; a += Math.PI / amount) {
-					double x = FastMath.cos(a) * radius;
-					double z = FastMath.sin(a) * radius;
-					locations.add(center.clone().add(x, y, z));
+			for (double a = Math.PI / amount; a <= Math.PI; a += Math.PI / amount) {
+				double radius = FastMath.sin(a) * scale;
+				double y = FastMath.cos(a) * scale;
+				for (double b = Math.PI / amount; b < Math.PI * 2; b += Math.PI / amount) {
+					double x = FastMath.cos(b) * radius;
+					double z = FastMath.sin(b) * radius;
+					vectors.add(new Vector(x, y, z));
 				}
 			}
 		}
-		return locations;
+		return vectors;
 	}
 
 	/**

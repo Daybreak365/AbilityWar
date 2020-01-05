@@ -12,6 +12,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -59,6 +60,7 @@ public class TheHighPriestess extends AbilityBase {
 
 	private final int duration = DurationConfig.getValue();
 	private final double range = RangeConfig.getValue();
+	private final Vectors circle = new Circle(range, (int) range * 8).getVectors();
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
@@ -79,7 +81,7 @@ public class TheHighPriestess extends AbilityBase {
 
 		@Override
 		public void onDurationProcess(int seconds) {
-			for (Location l : new Circle(center, range).setAmount((int) range * 8).setHighestLocation(true).getLocations()) {
+			for (Location l : circle.getAsLocations(center)) {
 				ParticleLib.SPELL_INSTANT.spawnParticle(l, 0, 0, 0, 1);
 			}
 			for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), range, range)) {

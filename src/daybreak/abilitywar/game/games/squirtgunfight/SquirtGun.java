@@ -16,6 +16,7 @@ import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
@@ -50,10 +51,9 @@ public class SquirtGun extends AbilityBase {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!bombCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
-					for (int i = 2; i > 0; i--)
-						for (Location l : LocationUtil.getSphere(center, i, 40)) {
-							l.getBlock().setType(Material.WATER);
-						}
+					for (Block b : LocationUtil.getBlocks3D(center, 2, false, true)) {
+						b.setType(Material.WATER);
+					}
 					for (Player p : LocationUtil.getNearbyPlayers(center, 5, 5)) {
 						if (!p.equals(getPlayer())) {
 							p.damage(20, getPlayer());
@@ -67,12 +67,11 @@ public class SquirtGun extends AbilityBase {
 			} else {
 				if (!spongeCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
-					for (int i = 10; i > 0; i--)
-						for (Location l : LocationUtil.getSphere(center, i, 40)) {
-							if (l.getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && l.getBlock().getType().equals(Material.valueOf("STATIONARY_WATER")))) {
-								l.getBlock().setType(Material.AIR);
-							}
+					for (Block b : LocationUtil.getBlocks3D(center, 9, false, true)) {
+						if (b.getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && b.getType().equals(Material.valueOf("STATIONARY_WATER")))) {
+							b.setType(Material.AIR);
 						}
+					}
 
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 
@@ -99,7 +98,7 @@ public class SquirtGun extends AbilityBase {
 
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
-		if (e.getEntity().getShooter().equals(getPlayer()) && e.getEntity() instanceof Arrow) {
+		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
 			Arrow a = (Arrow) e.getEntity();
 			arrows.add(a);
 		}
@@ -109,7 +108,7 @@ public class SquirtGun extends AbilityBase {
 	public void onProjectileHit(ProjectileHitEvent e) {
 		if (e.getEntity() instanceof Arrow) {
 			arrows.remove(e.getEntity());
-			if (e.getEntity().getShooter().equals(getPlayer())) {
+			if (getPlayer().equals(e.getEntity().getShooter())) {
 				if (!gunCool.isCooldown()) {
 					if (e.getHitEntity() != null && e.getHitEntity() instanceof Damageable) {
 						((Damageable) e.getHitEntity()).damage(200, getPlayer());

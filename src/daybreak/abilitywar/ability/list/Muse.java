@@ -58,7 +58,7 @@ public class Muse extends AbilityBase {
 			count = 1;
 			soundCount = 1;
 			center = getPlayer().getLocation();
-			circle = new Circle(center, count).setAmount(count * 6).setHighestLocation(true);
+			circle = new Circle(count, count * 6);
 		}
 
 		@Override
@@ -66,7 +66,7 @@ public class Muse extends AbilityBase {
 			circle.setRadius(count).setAmount(count * 6);
 
 			if (count <= 10) {
-				for (Location l : circle.getLocations()) {
+				for (Location l : circle.getVectors().getAsLocations(center).floor(center.getY())) {
 					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
 				}
 
@@ -114,7 +114,7 @@ public class Muse extends AbilityBase {
 
 				count++;
 			} else {
-				for (Location l : circle.getLocations()) {
+				for (Location l : circle.getVectors().getAsLocations(center).floor(center.getY())) {
 					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
 				}
 

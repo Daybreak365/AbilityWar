@@ -13,6 +13,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
+import daybreak.abilitywar.utils.math.geometry.Vectors;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -41,11 +42,8 @@ public class Flora extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 범위를 변경합니다."));
 	}
 
-	private final Circle circle = new Circle(getPlayer().getLocation(), 6).setAmount(50).setHighestLocation(true);
 	private EffectType type = EffectType.SPEED;
 	private Radius radius = Radius.BIG;
-	private final ParticleLib.RGB REGENERATION_COLOR = new ParticleLib.RGB(255, 93, 82);
-	private final ParticleLib.RGB SPEED_COLOR = new ParticleLib.RGB(46, 219, 202);
 
 	private final Timer Passive = new Timer() {
 
@@ -72,12 +70,8 @@ public class Flora extends AbilityBase {
 			}
 
 			Location center = getPlayer().getLocation();
-			for (Location l : circle.setCenter(center).getLocations()) {
-				if (type.equals(EffectType.SPEED)) {
-					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), SPEED_COLOR);
-				} else {
-					ParticleLib.REDSTONE.spawnParticle(l.subtract(0, y, 0), REGENERATION_COLOR);
-				}
+			for (Location location : radius.vectors.getAsLocations(center).floor(center.getY())) {
+				ParticleLib.REDSTONE.spawnParticle(location.subtract(0, y, 0), type.color);
 			}
 
 			for (Player p : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {
@@ -119,7 +113,6 @@ public class Flora extends AbilityBase {
 				}
 			} else if (ct.equals(ClickType.LEFT_CLICK)) {
 				radius = radius.next();
-				circle.setRadius(radius.radius);
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6범위 설정&f: " + radius.radius));
 			}
 		}
@@ -134,39 +127,43 @@ public class Flora extends AbilityBase {
 
 	private enum EffectType {
 
-		REGENERATION(ChatColor.translateAlternateColorCodes('&', "&c재생")),
-		SPEED(ChatColor.translateAlternateColorCodes('&', "&b신속"));
+		REGENERATION(ChatColor.translateAlternateColorCodes('&', "&c재생"), ParticleLib.RGB.of(255, 93, 82)),
+		SPEED(ChatColor.translateAlternateColorCodes('&', "&b신속"), ParticleLib.RGB.of(46, 219, 202));
 
 		private final String name;
+		private final ParticleLib.RGB color;
 
-		EffectType(String name) {
+		EffectType(String name, ParticleLib.RGB color) {
 			this.name = name;
+			this.color = color;
 		}
 
 	}
 
 	private enum Radius {
 
-		BIG(6) {
+		BIG(6, new Circle(6, 50).getVectors()) {
 			protected Radius next() {
 				return Radius.MIDIUM;
 			}
 		},
-		MIDIUM(4) {
+		MIDIUM(4, new Circle(4, 50).getVectors()) {
 			protected Radius next() {
 				return Radius.SMALL;
 			}
 		},
-		SMALL(2) {
+		SMALL(2, new Circle(2, 50).getVectors()) {
 			protected Radius next() {
 				return Radius.BIG;
 			}
 		};
 
 		private final int radius;
+		private final Vectors vectors;
 
-		Radius(int radius) {
+		Radius(int radius, Vectors vectors) {
 			this.radius = radius;
+			this.vectors = vectors;
 		}
 
 		protected abstract Radius next();
