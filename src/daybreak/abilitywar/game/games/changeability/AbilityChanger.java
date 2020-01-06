@@ -9,7 +9,6 @@ import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.tItle.Title;
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
@@ -92,14 +91,12 @@ public class AbilityChanger {
 					}
 				}
 
-				Title packet = new Title(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
-				packet.sendTo(p);
+				p.sendTitle(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
 			}
 
 			@Override
 			protected void onEnd() {
-				Title packet = new Title("", "", 0, 1, 0);
-				packet.sendTo(p);
+				p.resetTitle();
 			}
 		}.setPeriod(3).startTimer();
 

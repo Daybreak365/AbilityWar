@@ -18,7 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -151,7 +151,7 @@ public class TheEmperor extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	private void onInteractAtEntity(PlayerInteractAtEntityEvent e) {
+	private void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
 		if (armorStands.contains(e.getRightClicked())) e.setCancelled(true);
 	}
 

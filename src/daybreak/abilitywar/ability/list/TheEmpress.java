@@ -11,14 +11,15 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.MaterialLib;
-import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.math.NumberUtil.NumberStatus;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
@@ -106,9 +107,10 @@ public class TheEmpress extends AbilityBase {
 					} else if (X.isZero() && Z.isZero()) {
 						if (!EasterEgg) {
 							EasterEgg = true;
-							Title title = new Title(ChatColor.translateAlternateColorCodes('&', "&a여제의 가호"),
-									"여제의 가호에 의해 모든 플레이어의 능력 쿨타임이 초기화되었습니다.", 15, 80, 15);
-							title.Broadcast();
+							for (Player player : Bukkit.getOnlinePlayers()) {
+								player.sendTitle(ChatColor.translateAlternateColorCodes('&', "&a여제의 가호"),
+										"여제의 가호에 의해 모든 플레이어의 능력 쿨타임이 초기화되었습니다.", 15, 80, 15);
+							}
 
 							SoundLib.UI_TOAST_CHALLENGE_COMPLETE.broadcastSound();
 

@@ -9,7 +9,6 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import daybreak.abilitywar.utils.library.tItle.Title;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.math.geometry.Vectors;
@@ -67,7 +66,7 @@ public class Hacker extends AbilityBase {
 		@Override
 		protected void onEnd() {
 			if (target != null) {
-				new Title("", "", 0, 1, 0).sendTo(getPlayer());
+				getPlayer().resetTitle();
 
 				int X = (int) target.getLocation().getX();
 				int Y = (int) target.getLocation().getY();
@@ -75,7 +74,7 @@ public class Hacker extends AbilityBase {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
 
 				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"));
-				new Title(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0).sendTo(target);
+				target.sendTitle(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0);
 				getGame().getEffectManager().Stun(target, DurationTick);
 				Particle.startTimer();
 			}
@@ -91,9 +90,8 @@ public class Hacker extends AbilityBase {
 				int gray = all - green;
 				for (int i = 0; i < gray; i++) sb.append(ChatColor.GRAY + "|");
 
-				Title packet = new Title(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + " &f해킹중..."),
+				getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + " &f해킹중..."),
 						ChatColor.translateAlternateColorCodes('&', sb.toString() + " &f" + Count + "%"), 0, 5, 0);
-				packet.sendTo(getPlayer());
 
 				Count++;
 			}

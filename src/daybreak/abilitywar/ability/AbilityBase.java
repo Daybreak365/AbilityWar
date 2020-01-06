@@ -19,9 +19,9 @@ import daybreak.abilitywar.game.manager.passivemanager.PassiveExecutor;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
 import daybreak.abilitywar.utils.database.collections.Pair;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import daybreak.abilitywar.utils.versioncompat.NMSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -311,7 +311,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		@Override
 		public void onProcess(int count) {
 			if (sendActionbar) {
-				new Actionbar(toString(), 0, 20, 0).sendTo(getPlayer());
+				NMSUtil.PlayerUtil.sendActionbar(getPlayer(), toString(), 0, 20, 0);
 			}
 			if (count == (getMaxCount() / 2) || (count <= 5 && count >= 1)) {
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
@@ -326,7 +326,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 				String message = ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다.");
 				player.sendMessage(message);
 				if (sendActionbar) {
-					new Actionbar(message, 0, 20, 0).sendTo(getPlayer());
+					NMSUtil.PlayerUtil.sendActionbar(getPlayer(), message, 0, 20, 0);
 				}
 			}
 		}
@@ -434,15 +434,15 @@ public abstract class AbilityBase implements PassiveExecutor {
 		@Override
 		protected final void onProcess(int count) {
 			onDurationProcess(count);
-			Player target = getPlayer();
+			Player player = getPlayer();
 			if (sendActionbar) {
-				new Actionbar(toString(), 0, 20, 0).sendTo(target);
+				NMSUtil.PlayerUtil.sendActionbar(player, toString(), 0, 20, 0);
 			}
 			final int fixedCount = getFixedCount();
 			if ((fixedCount == (duration / 2) && !counted.contains(fixedCount)) || (fixedCount <= 5 && fixedCount >= 1 && !counted.contains(fixedCount))) {
 				counted.add(fixedCount);
-				target.sendMessage(toString(ChatColor.WHITE));
-				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(target);
+				player.sendMessage(toString(ChatColor.WHITE));
+				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(player);
 			}
 		}
 
@@ -455,7 +455,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 				String message = ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다.");
 				player.sendMessage(message);
 				if (sendActionbar) {
-					new Actionbar(message, 0, 20, 0).sendTo(getPlayer());
+					NMSUtil.PlayerUtil.sendActionbar(getPlayer(), message, 0, 20, 0);
 				}
 
 				if (cooldownTimer != null) {

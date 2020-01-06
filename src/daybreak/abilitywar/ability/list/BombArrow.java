@@ -8,7 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.library.tItle.Actionbar;
+import daybreak.abilitywar.utils.versioncompat.NMSUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +57,6 @@ public class BombArrow extends AbilityBase {
 	}.setPeriod(200);
 
 	private final int size = SizeConfig.getValue();
-	private final Actionbar actionbar = new Actionbar("", 0, 3, 0);
 
 	private final Timer actionbarSender = new Timer() {
 		@Override
@@ -65,8 +64,7 @@ public class BombArrow extends AbilityBase {
 			StringJoiner joiner = new StringJoiner(" ");
 			for (int i = 0; i < stack; i++) joiner.add(ChatColor.RED + "●");
 			for (int i = 0; i < maxStack - stack; i++) joiner.add(ChatColor.RED + "○");
-			actionbar.setMessage(joiner.toString());
-			actionbar.sendTo(getPlayer());
+			NMSUtil.PlayerUtil.sendActionbar(getPlayer(), joiner.toString(), 0, 3, 0);
 		}
 	}.setPeriod(2);
 

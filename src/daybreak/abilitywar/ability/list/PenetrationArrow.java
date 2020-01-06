@@ -9,11 +9,11 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
-import daybreak.abilitywar.utils.library.tItle.Actionbar;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import daybreak.abilitywar.utils.math.geometry.Vectors;
+import daybreak.abilitywar.utils.versioncompat.NMSUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -116,12 +116,10 @@ public class PenetrationArrow extends AbilityBase {
 	private ArrowType arrowType = arrowTypes.get(0);
 	private int arrowBullet = bulletCount;
 
-	private final Actionbar noticeActionbar = new Actionbar("", 0, 4, 0);
 	private final Timer notice = new Timer() {
 		@Override
 		protected void onProcess(int count) {
-			noticeActionbar.setMessage(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
-			noticeActionbar.sendTo(getPlayer());
+			NMSUtil.PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"), 0, 4, 0);
 		}
 	}.setPeriod(2);
 

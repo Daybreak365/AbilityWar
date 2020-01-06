@@ -19,44 +19,35 @@ public class ServerVersion {
 	}
 
 	private static final Messager messager = new Messager();
-	private static String VersionString = getVersionString();
-	private static int Version = getSimpleVersion();
+	private static String versionString;
+	private static int version;
 
-	/**
-	 * 서버 버전을 String으로 받아옵니다. Ex. v1_12_R1
-	 */
-	private static String getVersionString() {
+	static {
 		String[] versionArray = Bukkit.getServer().getClass().getName().replace('.', ',').split(",");
 		if (versionArray.length >= 4) {
-			return versionArray[3];
+			versionString = versionArray[3];
 		} else {
-			return "";
+			versionString = "";
 		}
-	}
 
-	/**
-	 * 서버 버전을 간단한 Int로 받아옵니다. Ex. 1.14.3 => 14
-	 */
-	private static int getSimpleVersion() {
-		int Version = -1;
-		String[] versionArray = VersionString.split("_");
+		int version = -1;
+		versionArray = versionString.split("_");
 		if (versionArray.length >= 2) {
 			try {
-				Version = Integer.valueOf(versionArray[1]);
-			} catch (NumberFormatException ex) {
+				version = Integer.parseInt(versionArray[1]);
+			} catch (NumberFormatException ignored) {
 				//Ignore: Should Never Happen
 			}
 		}
-
-		return Version;
+		ServerVersion.version = version;
 	}
 
 	public static int getVersion() {
-		return Version;
+		return version;
 	}
 
 	public static String getStringVersion() {
-		return VersionString;
+		return versionString;
 	}
 
 	/**
@@ -73,14 +64,14 @@ public class ServerVersion {
 		}
 	}
 
-	private static void setAPIVersion(Plugin plugin, String Version) {
+	private static void setAPIVersion(Plugin plugin, String version) {
 		try {
 			PluginDescriptionFile desc = plugin.getDescription();
 			Field apiVersion = PluginDescriptionFile.class.getDeclaredField("apiVersion");
 			apiVersion.setAccessible(true);
-			apiVersion.set(desc, Version);
+			apiVersion.set(desc, version);
 			apiVersion.setAccessible(false);
-		} catch (IllegalAccessException | NoSuchFieldException e) {
+		} catch (IllegalAccessException | NoSuchFieldException ignored) {
 			//Ignore: Should Never Happen
 		}
 	}
