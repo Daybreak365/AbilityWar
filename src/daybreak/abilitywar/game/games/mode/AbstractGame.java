@@ -160,6 +160,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 	protected void startGame() {
 		this.gameStarted = true;
+		observers.forEach(observer -> observer.update(GAME_UPDATE.START));
 	}
 
 	@Override

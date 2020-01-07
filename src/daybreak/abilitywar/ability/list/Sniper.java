@@ -18,7 +18,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 @AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
@@ -89,7 +90,7 @@ public class Sniper extends AbilityBase {
 		return false;
 	}
 
-	private final ArrayList<Arrow> arrows = new ArrayList<>();
+	private final Set<Arrow> arrows = new HashSet<>();
 
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
@@ -108,6 +109,13 @@ public class Sniper extends AbilityBase {
 
 					@Override
 					protected void onEnd() {
+						a.setGlowing(false);
+						a.setGravity(true);
+						arrows.remove(a);
+					}
+
+					@Override
+					protected void onSilentEnd() {
 						a.setGlowing(false);
 						a.setGravity(true);
 						arrows.remove(a);

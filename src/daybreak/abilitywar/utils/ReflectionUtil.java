@@ -2,6 +2,7 @@ package daybreak.abilitywar.utils;
 
 import daybreak.abilitywar.addon.AddonLoader;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -15,9 +16,11 @@ public class ReflectionUtil {
 	private ReflectionUtil() {
 	}
 
-	/**
-	 * Class Util
-	 */
+	public static <T extends AccessibleObject> T setAccessible(T accessibleObject) {
+		accessibleObject.setAccessible(true);
+		return accessibleObject;
+	}
+
 	public static class ClassUtil {
 
 		private ClassUtil() {
@@ -40,9 +43,6 @@ public class ReflectionUtil {
 
 	}
 
-	/**
-	 * Field Util
-	 */
 	public static class FieldUtil {
 
 		private FieldUtil() {

@@ -95,6 +95,13 @@ public class Stalker extends AbilityBase {
 			}
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
+
+		@Override
+		protected void onSilentEnd() {
+			p.setGameMode(originalMode);
+			p.setVelocity(new Vector());
+			getParticipant().attributes().TARGETABLE.setValue(true);
+		}
 	}.setPeriod(1);
 
 	@Override

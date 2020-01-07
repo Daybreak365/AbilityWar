@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.standard.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,46 +12,45 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-public class ScoreboardManager implements EventExecutor {
+public class ScoreboardManager implements EventExecutor, AbstractGame.Observer {
+
+	public ScoreboardManager(Game game) {
+		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
+		game.attachObserver(this);
+	}
 
 	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
 	public Scoreboard getScoreboard() {
 		return scoreboard;
 	}
 
-	private final List<Player> viewers = new ArrayList<>();
+	private final Set<Player> viewers = new HashSet<>();
 
-	public void Initialize() {
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (!viewers.contains(p)) {
-				p.setScoreboard(scoreboard);
-				viewers.add(p);
+	@Override
+	public void update(AbstractGame.GAME_UPDATE update) {
+		if (update == AbstractGame.GAME_UPDATE.START) {
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				if (viewers.add(player)) {
+					player.setScoreboard(scoreboard);
+				}
+			}
+		} else if (update == AbstractGame.GAME_UPDATE.END) {
+			for (Player viewer : viewers) {
+				viewer.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 			}
 		}
-	}
-
-	public void Clear() {
-		for (Player p : viewers) {
-			p.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-		}
-	}
-
-	public ScoreboardManager(Game game) {
-		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
 	}
 
 	@Override
 	public void execute(Listener listener, Event event) {
 		if (event instanceof PlayerJoinEvent) {
 			PlayerJoinEvent e = (PlayerJoinEvent) event;
-			Player p = e.getPlayer();
-			if (!viewers.contains(p)) {
-				p.setScoreboard(scoreboard);
-				viewers.add(p);
+			Player player = e.getPlayer();
+			if (viewers.add(player)) {
+				player.setScoreboard(scoreboard);
 			}
 		}
 	}

@@ -60,7 +60,6 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	@Override
 	protected void onEnd() {
 		super.onEnd();
-		scoreboardManager.Clear();
 		Bukkit.getPluginManager().callEvent(new GameEndEvent(this));
 	}
 
@@ -210,7 +209,6 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	protected void startGame() {
 		super.startGame();
 		wreck.noticeIfEnabled();
-		this.getScoreboardManager().Initialize();
 		Bukkit.getPluginManager().callEvent(new GameStartEvent(this));
 	}
 

@@ -11,10 +11,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PassiveManager implements Listener, EventExecutor, AbstractGame.Observer {
 
@@ -23,9 +23,9 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final HashMap<Class<? extends Event>, CopyOnWriteArrayList<PassiveExecutor>> passiveExecutors = new HashMap<>();
+	private final HashMap<Class<? extends Event>, Set<PassiveExecutor>> passiveExecutors = new HashMap<>();
 	private final EventPriority priority = EventPriority.HIGHEST;
-	private final ArrayList<Class<? extends Event>> registeredEvents = new ArrayList<>();
+	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends Event> getHandlerListDeclaringClass(Class<? extends Event> eventClass) {
@@ -42,26 +42,20 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 
 	public void register(Class<? extends Event> eventClass, PassiveExecutor executor) {
 		if (!passiveExecutors.containsKey(eventClass)) {
-			passiveExecutors.put(eventClass, new CopyOnWriteArrayList<>());
+			passiveExecutors.put(eventClass, Collections.synchronizedSet(new HashSet<>()));
 		}
 
 		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);
-		if (handlerDeclaringClass != null && !registeredEvents.contains(handlerDeclaringClass)) {
+		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
 			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, priority, this, AbilityWar.getPlugin());
-			registeredEvents.add(handlerDeclaringClass);
 		}
 
-		List<PassiveExecutor> list = passiveExecutors.get(eventClass);
-		if (!list.contains(executor)) {
-			list.add(executor);
-		}
+		passiveExecutors.get(eventClass).add(executor);
 	}
 
 	public void unregisterAll(PassiveExecutor executor) {
 		for (Class<? extends Event> eventClass : passiveExecutors.keySet()) {
-			CopyOnWriteArrayList<PassiveExecutor> list = passiveExecutors.get(eventClass);
-			while (list.contains(executor))
-				list.remove(executor);
+			passiveExecutors.get(eventClass).remove(executor);
 		}
 	}
 
