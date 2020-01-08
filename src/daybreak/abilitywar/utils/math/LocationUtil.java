@@ -4,7 +4,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.utils.math.geometry.Vectors;
+import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -130,9 +130,9 @@ public class LocationUtil {
 		return blocks;
 	}
 
-	public static ArrayList<Location> getRandomLocations(Location center, double radius, int amount) {
+	public static Locations getRandomLocations(Location center, double radius, int amount) {
 		Random random = new Random();
-		ArrayList<Location> locations = new ArrayList<>();
+		Locations locations = new Locations();
 		for (int i = 0; i < amount; i++) {
 			double angle = random.nextDouble() * 360;
 			double x = center.getX() + (random.nextDouble() * radius * FastMath.cos(Math.toRadians(angle)));
@@ -343,4 +343,21 @@ public class LocationUtil {
 		return getNearbyEntities(Player.class, l, horizontal, vertical);
 	}
 
+	public static class Locations extends ArrayList<Location> {
+
+		public Locations floor(double referenceY) {
+			for (Location location : this) {
+				location.setY(getFloorYAt(location.getWorld(), referenceY, location.getBlockX(), location.getBlockZ()) + 1);
+			}
+			return this;
+		}
+
+		public Locations highest() {
+			for (Location location : this) {
+				location.setY(location.getWorld().getHighestBlockYAt(location) + 1);
+			}
+			return this;
+		}
+
+	}
 }

@@ -23,8 +23,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @AbilityManifest(Name = "황제", Rank = Rank.A, Species = Species.HUMAN)
 public class TheEmperor extends AbilityBase {
@@ -45,7 +46,7 @@ public class TheEmperor extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f앞에 있는 모든 생명체와 물체를 밀쳐냅니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final ArrayList<ArmorStand> armorStands = new ArrayList<>();
+	private final Set<ArmorStand> armorStands = new HashSet<>();
 	private Vector direction;
 
 
@@ -77,25 +78,21 @@ public class TheEmperor extends AbilityBase {
 			center = null;
 			Vector centerVector = null;
 			diff = new HashMap<>();
-			for (int i = 0; i < armorStands.size(); i++) {
-				ArmorStand armorStand = armorStands.get(i);
+			for (ArmorStand armorStand : armorStands) {
 				armorStand.setInvulnerable(true);
 				armorStand.setCollidable(false);
 				armorStand.setBasePlate(false);
 				armorStand.setArms(true);
 				armorStand.setVisible(false);
 				armorStand.setRightArmPose(eulerAngle);
-				switch (i) {
-					case 0:
-						center = armorStand;
-						centerVector = center.getLocation().toVector();
-						break;
-					default:
-						armorStand.setGravity(false);
-						armorStand.setItemInHand(new ItemStack(Material.SHIELD));
-						armorStand.setHelmet(MaterialLib.GOLDEN_HELMET.getItem());
-						diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector));
-						break;
+				if (center == null || centerVector == null) {
+					center = armorStand;
+					centerVector = center.getLocation().toVector();
+				} else {
+					armorStand.setGravity(false);
+					armorStand.setItemInHand(new ItemStack(Material.SHIELD));
+					armorStand.setHelmet(MaterialLib.GOLDEN_HELMET.getItem());
+					diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector));
 				}
 			}
 			gravityFalse = false;

@@ -81,8 +81,6 @@ public class DeathManager implements Listener, AbstractGame.Observer {
 		if (game.isParticipating(victimPlayer)) {
 			Participant victim = game.getParticipant(victimPlayer);
 
-			e.setKeepInventory(!DeathSettings.getItemDrop());
-
 			Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
 
 			if (DeathSettings.getAbilityReveal()) {

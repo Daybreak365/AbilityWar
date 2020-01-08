@@ -1,6 +1,7 @@
 package daybreak.abilitywar.utils.math.geometry;
 
 import daybreak.abilitywar.utils.math.FastMath;
+import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import org.bukkit.util.Vector;
 
 public class Circle {

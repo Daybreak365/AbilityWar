@@ -146,6 +146,9 @@ public class AbilityFactory {
 		// v2.0.7.7
 		registerAbility(Vampire.class);
 		registerAbility(PenetrationArrow.class);
+		// v2.0.8.8
+		registerAbility(Reaper.class);
+		registerAbility(Hedgehog.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

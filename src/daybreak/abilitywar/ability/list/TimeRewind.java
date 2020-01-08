@@ -10,7 +10,7 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.database.PushingArray;
+import daybreak.abilitywar.utils.database.PushingList;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,8 +25,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 
 @AbilityManifest(Name = "시간 역행", Rank = Rank.S, Species = Species.HUMAN)
 public class TimeRewind extends AbilityBase {
@@ -78,41 +78,42 @@ public class TimeRewind extends AbilityBase {
 	@SubscribeEvent
 	public void onPlayerDeath(ParticipantDeathEvent e) {
 		if (e.getParticipant().equals(getParticipant())) {
-			array = new PushingArray<>(PlayerData.class, time * 20);
+			playerDatas = new PushingList<>(time * 20);
 		}
 	}
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(getPlayer()) && Rewinding) {
+		if (e.getEntity().equals(getPlayer()) && rewinding) {
 			e.setCancelled(true);
 		}
 	}
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getDamager().equals(getPlayer()) && Rewinding) {
+		if (e.getDamager().equals(getPlayer()) && rewinding) {
 			e.setCancelled(true);
 		}
 	}
 
-	private boolean Rewinding = false;
+	private boolean rewinding = false;
 
-	private PushingArray<PlayerData> array = new PushingArray<>(PlayerData.class, time * 20);
+	private PushingList<PlayerData> playerDatas = new PushingList<>(time * 20);
 
 	private final DurationTimer Skill = new DurationTimer(time * 10, Cool) {
 
-		private ArrayList<PlayerData> list;
+		private LinkedList<PlayerData> datas;
 
 		@Override
 		public void onDurationStart() {
-			Rewinding = true;
-			this.list = array.toList();
+			rewinding = true;
+			this.datas = playerDatas;
+			playerDatas = new PushingList<>(time * 20);
 		}
 
 		@Override
 		public void onDurationProcess(int seconds) {
-			PlayerData data = list.get((time * 10 - seconds));
+			PlayerData data = datas.pollLast();
 			if (data != null && !getPlayer().isDead()) {
 				data.apply();
 			}
@@ -120,7 +121,7 @@ public class TimeRewind extends AbilityBase {
 
 		@Override
 		public void onDurationEnd() {
-			Rewinding = false;
+			rewinding = false;
 			SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
 			SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(0, Tone.F));
 			SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));
@@ -131,16 +132,8 @@ public class TimeRewind extends AbilityBase {
 	private final Timer Save = new Timer() {
 
 		@Override
-		public void onStart() {
-		}
-
-		@Override
 		public void onProcess(int count) {
-			array.add(new PlayerData());
-		}
-
-		@Override
-		public void onEnd() {
+			playerDatas.add(new PlayerData());
 		}
 
 	}.setPeriod(2);

@@ -1,5 +1,7 @@
 package daybreak.abilitywar.utils.math.geometry;
 
+import daybreak.abilitywar.utils.math.LocationUtil;
+import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -49,8 +51,8 @@ public class Line {
 		}
 	}
 
-	public Locations getLocations(Location startLocation) {
-		Locations locations = new Locations();
+	public LocationUtil.Locations getLocations(Location startLocation) {
+		LocationUtil.Locations locations = new LocationUtil.Locations();
 		final double increasement = 1.0 / locationAmount;
 		for (int i = 0; i <= locationAmount; i++) {
 			locations.add(startLocation.toVector().clone().add(vector.clone().multiply(Math.min(increasement * i, 1.0))).toLocation(startLocation.getWorld()));

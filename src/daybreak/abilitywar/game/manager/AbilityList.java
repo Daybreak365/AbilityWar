@@ -104,6 +104,8 @@ public class AbilityList {
 		registerAbility(Lazyness.class);
 		registerAbility(Vampire.class);
 		registerAbility(PenetrationArrow.class);
+		registerAbility(Reaper.class);
+		registerAbility(Hedgehog.class);
 	}
 
 	/**

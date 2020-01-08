@@ -204,13 +204,6 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
 				}
 
-				if (DeathSettings.getItemDrop()) {
-					e.setKeepInventory(false);
-					victimPlayer.getInventory().clear();
-				} else {
-					e.setKeepInventory(true);
-				}
-
 				if (isParticipating(victimPlayer)) {
 					Participant victim = getParticipant(victimPlayer);
 

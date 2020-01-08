@@ -84,15 +84,6 @@ public class DeathWizard extends SettingWizard {
 					abilityRemoval.setItemMeta(abilityRemovalMeta);
 					gui.setItem(i, abilityRemoval);
 					break;
-				case 16:
-					ItemMeta itemDropMeta = itemDrop.getItemMeta();
-					itemDropMeta.setLore(Messager.asList(
-							ChatColor.translateAlternateColorCodes('&', "&c비활성화&f하면 게임이 시작되고 난 후 사망하였을 때 아이템을 드롭하지 않습니다."),
-							"", ChatColor.translateAlternateColorCodes('&',
-									"&7상태 : " + (DeathSettings.getItemDrop() ? "&a활성화" : "&c비활성화"))));
-					itemDrop.setItemMeta(itemDropMeta);
-					gui.setItem(i, itemDrop);
-					break;
 				default:
 					gui.setItem(i, deco);
 					break;
@@ -120,10 +111,6 @@ public class DeathWizard extends SettingWizard {
 				case "§b능력 삭제":
 					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REMOVAL,
 							!DeathSettings.getAbilityRemoval());
-					Show();
-					break;
-				case "§b아이템 드롭":
-					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_ITEM_DROP, !DeathSettings.getItemDrop());
 					Show();
 					break;
 			}

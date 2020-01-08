@@ -215,10 +215,6 @@ public class Configuration {
 				modifyProperty(ConfigNodes.GAME_DEATH_OPERATION, getOperation().Next().name());
 			}
 
-			public static boolean getItemDrop() {
-				return getBoolean(ConfigNodes.GAME_DEATH_ITEM_DROP);
-			}
-
 			public static boolean getAbilityReveal() {
 				return getBoolean(ConfigNodes.GAME_DEATH_ABILITY_REVEAL);
 			}
