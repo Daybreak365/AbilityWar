@@ -62,7 +62,8 @@ public class Reaper extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f7초간 주위를 떠돌게 합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f주위를 떠도는 영혼들은 생명체에 닿으면 해당 생명체에게 데미지를 주며,"),
 				ChatColor.translateAlternateColorCodes('&', "&f7초 후에는 영혼들을 모두 온 사방으로 흩뿌리며 닿은 생명체들에게"),
-				ChatColor.translateAlternateColorCodes('&', "&f큰 데미지를 줍니다. 철괴를 좌클릭하면 수확한 영혼의 개수를 확인합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f큰 데미지를 줍니다. 스킬을 맞은 모든 적에게 구속 디버프를 부여하며"),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 수확한 영혼의 개수를 확인합니다."));
 	}
 
 	private static final RGB BLACK = RGB.of(1, 1, 1);
