@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -52,13 +53,15 @@ public class Ira extends AbilityBase {
 				if (damager instanceof Projectile) {
 					if (((Projectile) damager).getShooter() instanceof LivingEntity) {
 						LivingEntity entity = (LivingEntity) ((Projectile) damager).getShooter();
-						getPlayer().getWorld().createExplosion(entity.getLocation(), 1.3f, false, false);
+						Location location = entity.getLocation();
+						getPlayer().getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), 1.3f, false, false);
 						if (entity.getVelocity().getY() > 0) {
 							entity.setVelocity(entity.getVelocity().setY(0));
 						}
 					}
 				} else {
-					getPlayer().getWorld().createExplosion(damager.getLocation(), 1.3f, false, false);
+					Location location = damager.getLocation();
+					getPlayer().getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), 1.3f, false, false);
 					if (damager.getVelocity().getY() > 0) {
 						damager.setVelocity(damager.getVelocity().setY(0));
 					}

@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.games.mixability;
 
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
@@ -25,6 +26,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -223,7 +226,75 @@ public class MixAbility extends Game implements DefaultKitHandler {
 
 	@Override
 	protected AbilitySelect setupAbilitySelect() {
-		return null;
+		return new AbilitySelect(this, 1) {
+			@Override
+			protected Collection<Participant> initSelectors() {
+				return getParticipants();
+			}
+
+			private ArrayList<Class<? extends AbilityBase>> abilities;
+
+			@Override
+			protected void drawAbility(Collection<Participant> selectors) {
+				abilities = AbilitySelectStrategy.EVERY_ABILITY_EXCLUDING_BLACKLISTED.getAbilities();
+				if (getSelectors().size() <= abilities.size()) {
+					Random random = new Random();
+
+					for (Participant participant : selectors) {
+						Player p = participant.getPlayer();
+
+						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
+						Class<? extends AbilityBase> secondAbilityClass = abilities.get(random.nextInt(abilities.size()));
+						try {
+							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
+
+							p.sendMessage(new String[]{
+									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
+									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
+									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")});
+						} catch (IllegalAccessException | NoSuchMethodException | SecurityException |
+								InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+							Messager.sendConsoleErrorMessage(
+									ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
+									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+						}
+					}
+				} else {
+					Messager.broadcastErrorMessage("사용 가능한 능력의 수가 참가자의 수보다 적어 게임을 종료합니다.");
+					AbilityWarThread.StopGame();
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
+				}
+			}
+
+			@Override
+			protected boolean changeAbility(Participant participant) {
+				Player p = participant.getPlayer();
+
+				if (abilities.size() > 0) {
+					Random random = new Random();
+
+					if (participant.hasAbility()) {
+						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
+						Class<? extends AbilityBase> secondAbilityClass = abilities.get(random.nextInt(abilities.size()));
+						try {
+							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
+							return true;
+						} catch (Exception e) {
+							Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님의 능력을 변경하는 도중 오류가 발생하였습니다."));
+							Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+						}
+					}
+				} else {
+					Messager.sendErrorMessage(p, "능력을 변경할 수 없습니다.");
+				}
+
+				return false;
+			}
+
+			@Override
+			protected void onSelectEnd() {
+			}
+		};
 	}
 
 	@Override

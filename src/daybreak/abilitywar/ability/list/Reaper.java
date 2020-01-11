@@ -9,6 +9,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.LocationUtil.Locations;
 import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
@@ -66,7 +67,7 @@ public class Reaper extends AbilityBase {
 
 	private static final RGB BLACK = RGB.of(1, 1, 1);
 	private static final RGB SOUL_COLOUR = RGB.of(1, 17, 48);
-	private static final Vector MULTIPLY = new Vector(0.01, 0.55, 0.01);
+	private static final Vector MULTIPLY = new Vector(0.1, 0.55, 0.1);
 
 	private final int distance = DistanceConfig.getValue();
 
@@ -110,6 +111,8 @@ public class Reaper extends AbilityBase {
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(location, 1.5, 1.5)) {
 					if (!getPlayer().equals(damageable)) {
 						damageable.damage(3.5, getPlayer());
+						if (damageable instanceof LivingEntity)
+							PotionEffects.SLOW.addPotionEffect((LivingEntity) damageable, 60, 2, true);
 					}
 				}
 			}
@@ -140,6 +143,8 @@ public class Reaper extends AbilityBase {
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(realLocation, 1.5, 1.5)) {
 					if (!getPlayer().equals(damageable)) {
 						damageable.damage(3.5, getPlayer());
+						if (damageable instanceof LivingEntity)
+							PotionEffects.SLOW.addPotionEffect((LivingEntity) damageable, 60, 2, true);
 					}
 				}
 			}
@@ -179,6 +184,8 @@ public class Reaper extends AbilityBase {
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(location, 1.5, 1.5)) {
 					if (!getPlayer().equals(damageable)) {
 						damageable.damage(7, getPlayer());
+						if (damageable instanceof LivingEntity)
+							PotionEffects.SLOW.addPotionEffect((LivingEntity) damageable, 60, 2, true);
 					}
 				}
 			}

@@ -66,7 +66,6 @@ public class AbilityWar extends JavaPlugin {
 				AbilityWar.this.installer = installer;
 				try {
 					Class.forName("daybreak.abilitywar.utils.math.FastMath");
-					Class.forName("daybreak.abilitywar.utils.ResourcepackManager");
 				} catch (ClassNotFoundException ignored) {
 				}
 			}

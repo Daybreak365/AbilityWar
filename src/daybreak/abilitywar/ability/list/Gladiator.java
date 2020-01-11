@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.HashMap;
+import java.util.Random;
 
 @AbilityManifest(Name = "글래디에이터", Rank = Rank.S, Species = Species.HUMAN)
 public class Gladiator extends AbilityBase {
@@ -43,7 +44,7 @@ public class Gladiator extends AbilityBase {
 
 	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
 
-	private final HashMap<Block, BlockState> Saves = new HashMap<Block, BlockState>();
+	private final HashMap<Block, BlockState> Saves = new HashMap<>();
 
 	private final Timer FieldClear = new Timer(20) {
 
@@ -80,6 +81,7 @@ public class Gladiator extends AbilityBase {
 	};
 
 	private Player target = null;
+	private final Random random = new Random();
 
 	private final Timer Field = new Timer(26) {
 
@@ -99,9 +101,18 @@ public class Gladiator extends AbilityBase {
 		@Override
 		public void onProcess(int count) {
 			if (TotalCount <= 10) {
-				for (Block b : LocationUtil.getBlocks2D(center, buildCount, false, false)) {
+				for (Block b : LocationUtil.getBlocks2D(center, buildCount, true, false)) {
 					Saves.putIfAbsent(b, b.getState());
-					b.setType(MaterialLib.STONE_BRICKS.getMaterial());
+					if (random.nextInt(5) <= 1) {
+						MaterialLib.STONE_BRICKS.setType(b);
+					} else {
+						MaterialLib.MOSSY_STONE_BRICKS.setType(b);
+					}
+				}
+				for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, center, buildCount, 6)) {
+					if (!getPlayer().equals(livingEntity) && !target.equals(livingEntity)) {
+						livingEntity.setVelocity(livingEntity.getLocation().toVector().clone().subtract(center.toVector()).normalize());
+					}
 				}
 
 				buildCount++;
@@ -121,7 +132,11 @@ public class Gladiator extends AbilityBase {
 				for (Block b : LocationUtil.getBlocks2D(center, buildCount, true, false)) {
 					Location l = b.getLocation();
 					Saves.putIfAbsent(l.clone().add(0, 6, 0).getBlock(), l.clone().add(0, 6, 0).getBlock().getState());
-					l.add(0, 6, 0).getBlock().setType(MaterialLib.STONE_BRICKS.getMaterial());
+					if (random.nextInt(5) <= 1) {
+						MaterialLib.STONE_BRICKS.setType(l.add(0, 6, 0).getBlock());
+					} else {
+						MaterialLib.MOSSY_STONE_BRICKS.setType(l.add(0, 6, 0).getBlock());
+					}
 				}
 
 				buildCount--;
@@ -141,7 +156,7 @@ public class Gladiator extends AbilityBase {
 			Location teleport = center.clone().add(0, 1, 0);
 
 			getPlayer().teleport(teleport);
-			PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 400, 4, true);
+			PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 400, 2, true);
 			PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);
 			target.teleport(teleport);
 

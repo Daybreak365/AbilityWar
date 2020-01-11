@@ -14,7 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@AbilityManifest(Name = "컬스", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "컬스", Rank = Rank.D, Species = Species.HUMAN)
 public class Curse extends AbilityBase {
 
 	public static final SettingObject<Integer> CountConfig = new SettingObject<Integer>(Curse.class, "Count", 3,

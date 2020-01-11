@@ -77,13 +77,13 @@ public class Flora extends AbilityBase {
 			for (Player p : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {
 				if (LocationUtil.isInCircle(center, p.getLocation(), radius.radius)) {
 					if (type.equals(EffectType.SPEED)) {
-						PotionEffects.SPEED.addPotionEffect(p, 20, 2, true);
+						PotionEffects.SPEED.addPotionEffect(p, 20, 1, true);
 					} else {
 						if (!p.isDead()) {
 							double maxHealth = VersionUtil.getMaxHealth(p);
 
 							if (p.getHealth() < maxHealth) {
-								p.setHealth(Math.min(p.getHealth() + 0.05, 20.0));
+								p.setHealth(Math.min(p.getHealth() + 0.04, 20.0));
 							}
 						}
 					}

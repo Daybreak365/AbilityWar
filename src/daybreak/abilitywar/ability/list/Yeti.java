@@ -42,7 +42,7 @@ public class Yeti extends AbilityBase {
 
 	public Yeti(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f눈과 얼음 위에 서있으면 다양한 버프를 받습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f눈과 얼음 위에 서있으면 &6힘&f, &b신속 &f버프를 받습니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
@@ -59,7 +59,6 @@ public class Yeti extends AbilityBase {
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
 				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
-				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
 			}
 		}
 
