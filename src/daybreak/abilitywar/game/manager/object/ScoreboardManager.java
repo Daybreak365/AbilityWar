@@ -23,6 +23,7 @@ public class ScoreboardManager implements EventExecutor, AbstractGame.Observer {
 	}
 
 	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
 	public Scoreboard getScoreboard() {
 		return scoreboard;
 	}
@@ -53,6 +54,10 @@ public class ScoreboardManager implements EventExecutor, AbstractGame.Observer {
 				player.setScoreboard(scoreboard);
 			}
 		}
+	}
+
+	public interface Handler {
+		ScoreboardManager getScoreboardManager();
 	}
 
 }

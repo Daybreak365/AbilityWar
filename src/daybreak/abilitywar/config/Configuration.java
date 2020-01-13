@@ -45,9 +45,6 @@ public class Configuration {
 		for (Entry<ConfigNodes, Cache> entry : cache.entrySet()) {
 			Cache cache = entry.getValue();
 			if (cache.isModifiedValue()) {
-				if (entry.getKey().equals(ConfigNodes.GAME_DEATH_ABILITY_REVEAL)) {
-					logger.log(Level.SEVERE, "");
-				}
 				config.set(entry.getKey().getPath(), cache.getValue());
 			}
 		}

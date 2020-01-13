@@ -168,7 +168,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	private final int MaxKill;
 
 	@Override
-	protected DeathManager setupDeathManager() {
+	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@EventHandler
 			protected void onDeath(PlayerDeathEvent e) {
@@ -362,7 +362,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	}
 
 	@Override
-	protected AbilitySelect setupAbilitySelect() {
+	public AbilitySelect newAbilitySelect() {
 		return null;
 	}
 

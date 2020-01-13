@@ -159,6 +159,8 @@ public class DeathManager implements Listener, AbstractGame.Observer {
 
 	public interface Handler {
 		DeathManager getDeathManager();
+
+		DeathManager newDeathManager();
 	}
 
 }

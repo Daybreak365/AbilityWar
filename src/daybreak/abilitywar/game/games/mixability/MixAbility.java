@@ -24,9 +24,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,7 +92,10 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				break;
 			case 5:
 				if (Configuration.Settings.getDrawAbility()) {
-					startAbilitySelect();
+					try {
+						startAbilitySelect();
+					} catch (OperationNotSupportedException ignored) {
+					}
 				}
 				break;
 			case 7:
@@ -225,14 +230,10 @@ public class MixAbility extends Game implements DefaultKitHandler {
 	}
 
 	@Override
-	protected AbilitySelect setupAbilitySelect() {
-		return new AbilitySelect(this, 1) {
-			@Override
-			protected Collection<Participant> initSelectors() {
-				return getParticipants();
-			}
+	public AbilitySelect newAbilitySelect() {
+		return new AbilitySelect(this, getParticipants(), 1) {
 
-			private ArrayList<Class<? extends AbilityBase>> abilities;
+			private List<Class<? extends AbilityBase>> abilities;
 
 			@Override
 			protected void drawAbility(Collection<Participant> selectors) {
@@ -249,9 +250,10 @@ public class MixAbility extends Game implements DefaultKitHandler {
 							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
 
 							p.sendMessage(new String[]{
-									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")});
+									ChatColor.translateAlternateColorCodes('&', "&a능력이 할당되었습니다. &e/aw check&f로 확인 할 수 있습니다."),
+									ChatColor.translateAlternateColorCodes('&', "&e/aw yes &f명령어를 사용하여 능력을 확정합니다."),
+									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
+							});
 						} catch (IllegalAccessException | NoSuchMethodException | SecurityException |
 								InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendConsoleErrorMessage(
@@ -290,15 +292,11 @@ public class MixAbility extends Game implements DefaultKitHandler {
 
 				return false;
 			}
-
-			@Override
-			protected void onSelectEnd() {
-			}
 		};
 	}
 
 	@Override
-	protected DeathManager setupDeathManager() {
+	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			protected String AbilityReveal(Participant victim) {

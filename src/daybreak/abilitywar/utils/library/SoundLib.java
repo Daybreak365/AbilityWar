@@ -689,13 +689,11 @@ public class SoundLib {
 
 	}
 
-	public static final CustomSound SWOOSH = new CustomSound("SWOOSH");
-
 	public static class CustomSound {
 
 		private final String sound;
 
-		private CustomSound(String sound) {
+		public CustomSound(String sound) {
 			this.sound = sound;
 		}
 

@@ -17,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 
 /**
@@ -29,10 +30,8 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 
 	public DefaultGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		setRestricted(invincible);
+		setRestricted(Settings.InvincibilitySettings.isEnabled());
 	}
-
-	private boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
 	@Override
 	protected void progressGame(int seconds) {
@@ -79,44 +78,43 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 							ChatColor.translateAlternateColorCodes('&', "&7능력을 무작위로 할당합니다..."))) {
 						Bukkit.broadcastMessage(line);
 					}
+					try {
+						startAbilitySelect();
+					} catch (OperationNotSupportedException ignored) {
+					}
 				}
 				break;
-			case 8:
-				if (Settings.getDrawAbility()) {
-					startAbilitySelect();
-				}
-				break;
-			case 10:
+			case 6:
 				if (Settings.getDrawAbility()) {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 참가자가 능력을 &b확정&f했습니다."));
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
 				}
 				break;
-			case 12:
+			case 8:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e잠시 후 게임이 시작됩니다."));
 				break;
-			case 15:
+			case 10:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 16:
+			case 11:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 17:
+			case 12:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 18:
+			case 13:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 19:
+			case 14:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 20:
+			case 15:
 				for (String line : Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
 						ChatColor.translateAlternateColorCodes('&', "&f             &cAbilityWar &f- &6능력자 전쟁  "),
@@ -164,11 +162,10 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 					}
 				}
 
-				if (invincible) {
+				if (isRestricted()) {
 					getInvincibility().Start(false);
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
-					setRestricted(false);
 				}
 
 				Script.RunAll(this);

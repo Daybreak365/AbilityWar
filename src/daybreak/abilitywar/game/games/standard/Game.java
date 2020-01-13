@@ -21,26 +21,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
+import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 import static daybreak.abilitywar.utils.Validate.notNull;
 
-public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler {
+public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
 
 	public Game(Collection<Player> players) {
 		super(players);
 	}
 
-	private final DeathManager deathManager = notNull(setupDeathManager());
+	private final DeathManager deathManager = notNull(newDeathManager());
 	private final Invincibility invincibility = new Invincibility(this);
 	private final WRECK wreck = new WRECK();
 	private final ScoreboardManager scoreboardManager = new ScoreboardManager(this);
-	@SuppressWarnings("unused")
 	private final Firewall fireWall = new Firewall(this, this);
-	private AbilitySelect abilitySelect = null;
+	private AbilitySelect abilitySelect = newAbilitySelect();
 
 	@Override
 	protected void onStart() {
@@ -51,7 +51,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	@Override
 	protected void onProcess(int seconds) {
-		if (getAbilitySelect() == null || (getAbilitySelect() != null && getAbilitySelect().isEnded())) {
+		if (abilitySelect == null || !abilitySelect.isStarted() || abilitySelect.isEnded()) {
 			this.seconds++;
 			progressGame(this.seconds);
 		}
@@ -72,14 +72,11 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	 * AbilitySelect 초깃값 설정
 	 * null을 반환할 수 있습니다. 능력 할당이 필요하지 않을 경우 null을 반환하세요.
 	 */
-	protected AbilitySelect setupAbilitySelect() {
-		return new AbilitySelect(this, 1) {
-			@Override
-			protected Collection<Participant> initSelectors() {
-				return getParticipants();
-			}
+	@Override
+	public AbilitySelect newAbilitySelect() {
+		return new AbilitySelect(this, getParticipants(), 1) {
 
-			private ArrayList<Class<? extends AbilityBase>> abilities;
+			private List<Class<? extends AbilityBase>> abilities;
 
 			@Override
 			protected void drawAbility(Collection<Participant> selectors) {
@@ -96,9 +93,10 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 							abilities.remove(abilityClass);
 
 							p.sendMessage(new String[]{
-									ChatColor.translateAlternateColorCodes('&', "&a당신에게 능력이 할당되었습니다. &e/ability check&f로 확인 할 수 있습니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability yes &f명령어를 사용하면 능력을 확정합니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/ability no &f명령어를 사용하면 능력을 변경할 수 있습니다.")});
+									ChatColor.translateAlternateColorCodes('&', "&a능력이 할당되었습니다. &e/aw check&f로 확인 할 수 있습니다."),
+									ChatColor.translateAlternateColorCodes('&', "&e/aw yes &f명령어를 사용하여 능력을 확정합니다."),
+									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
+							});
 						} catch (IllegalAccessException | NoSuchMethodException | SecurityException |
 								InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendConsoleErrorMessage(
@@ -141,23 +139,43 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 				return false;
 			}
-
-			@Override
-			protected void onSelectEnd() {
-			}
 		};
+	}
+
+	/**
+	 * AbilitySelect를 반환합니다.
+	 * null을 반환할 수 있습니다. 능력 할당 전이거나 능력 할당 기능을 사용하지 않을 경우 null을 반환합니다.
+	 */
+	@Override
+	public AbilitySelect getAbilitySelect() {
+		return abilitySelect;
+	}
+
+	@Override
+	public void startAbilitySelect() throws OperationNotSupportedException {
+		if (abilitySelect == null) {
+			throw new OperationNotSupportedException("AbilitySelect is null");
+		}
+		abilitySelect.startTimer();
+	}
+
+	@Override
+	public Firewall getFirewall() {
+		return fireWall;
+	}
+
+	@Override
+	public ScoreboardManager getScoreboardManager() {
+		return scoreboardManager;
 	}
 
 	/**
 	 * DeathManager 초깃값 설정
 	 * null을 반환하지 않습니다.
 	 */
-	protected DeathManager setupDeathManager() {
+	@Override
+	public DeathManager newDeathManager() {
 		return new DeathManager(this);
-	}
-
-	protected ScoreboardManager getScoreboardManager() {
-		return scoreboardManager;
 	}
 
 	/**
@@ -184,25 +202,12 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	}
 
 	/**
-	 * AbilitySelect를 반환합니다.
-	 * null을 반환할 수 있습니다. 능력 할당 전이거나 능력 할당 기능을 사용하지 않을 경우 null을 반환합니다.
-	 */
-	@Override
-	public AbilitySelect getAbilitySelect() {
-		return abilitySelect;
-	}
-
-	/**
 	 * Invincibility를 반환합니다.
 	 * null을 반환하지 않습니다.
 	 */
 	@Override
 	public Invincibility getInvincibility() {
 		return invincibility;
-	}
-
-	protected void startAbilitySelect() {
-		this.abilitySelect = setupAbilitySelect();
 	}
 
 	@Override
@@ -220,10 +225,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	@EventHandler
 	public final void onFoodLevelChange(FoodLevelChangeEvent e) {
 		if (Settings.getNoHunger()) {
-			e.setCancelled(true);
-
-			Player p = (Player) e.getEntity();
-			p.setFoodLevel(19);
+			e.setFoodLevel(19);
 		}
 	}
 

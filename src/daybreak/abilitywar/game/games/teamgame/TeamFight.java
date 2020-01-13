@@ -25,6 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -87,44 +88,43 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 							ChatColor.translateAlternateColorCodes('&', "&7능력을 무작위로 할당합니다..."))) {
 						Bukkit.broadcastMessage(line);
 					}
+					try {
+						startAbilitySelect();
+					} catch (OperationNotSupportedException ignored) {
+					}
 				}
 				break;
-			case 8:
-				if (Settings.getDrawAbility()) {
-					startAbilitySelect();
-				}
-				break;
-			case 10:
+			case 7:
 				if (Settings.getDrawAbility()) {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 참가자가 능력을 &b확정&f했습니다."));
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
 				}
 				break;
-			case 12:
+			case 9:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e잠시 후 게임이 시작됩니다."));
 				break;
-			case 15:
+			case 11:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 16:
+			case 12:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 17:
+			case 13:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 18:
+			case 14:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 19:
+			case 15:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 20:
+			case 16:
 				for (String line : Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
 						ChatColor.translateAlternateColorCodes('&', "&f             &cAbilityWar &f- &6능력자 전쟁  "),
@@ -260,7 +260,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 	}
 
 	@EventHandler
-	private void onChat(AsyncPlayerChatEvent e) {
+	public void onChat(AsyncPlayerChatEvent e) {
 		Player player = e.getPlayer();
 		if (isParticipating(player)) {
 			Participant participant = getParticipant(e.getPlayer());
@@ -280,7 +280,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 	}
 
 	@EventHandler
-	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Participant entity = getParticipant((Player) e.getEntity());
 			Participant damager = null;

@@ -14,6 +14,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
+import daybreak.abilitywar.utils.base.StringUtils;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -79,21 +80,52 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	protected void progressGame(int Seconds) {
 		switch (Seconds) {
 			case 1:
-				broadcastPlayerList();
+				ArrayList<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&d==== &f게임 참여자 목록 &d===="));
+				int count = 0;
+				for (Participant p : getParticipants()) {
+					count++;
+					lines.add(ChatColor.translateAlternateColorCodes('&', "&5" + count + ". &f" + p.getPlayer().getName()));
+				}
+				lines.add(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &5: &d" + count + "명"));
+				lines.add(ChatColor.translateAlternateColorCodes('&', "&d=========================="));
+
+				for (String line : lines) {
+					Bukkit.broadcastMessage(line);
+				}
 				if (getParticipants().size() < 2) {
 					AbilityWarThread.StopGame();
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&72명&8)"));
 				}
 				break;
 			case 3:
-				broadcastPluginDescription();
+				ArrayList<String> msg = new ArrayList<>();
+				msg.add(ChatColor.translateAlternateColorCodes('&', "&5&l체인지! &d&l능력 &f&l전쟁"));
+				msg.add(ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()));
+				msg.add(ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"));
+				msg.add(ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908"));
+
+				GameCreditEvent event = new GameCreditEvent();
+				Bukkit.getPluginManager().callEvent(event);
+
+				msg.addAll(event.getCreditList());
+
+				for (String m : msg) {
+					Bukkit.broadcastMessage(m);
+				}
 				break;
 			case 5:
-				broadcastAbilityReady();
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &d" + AbilityList.nameValues().size() + "개&f의 능력이 등록되어 있습니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임 시작시 &f첫번째 능력&7이 할당되며, 이후 &f" + NumberUtil.parseTimeString(changer.getPeriod()) + "&7마다 능력이 변경됩니다."));
 				break;
 			case 7:
-				scoreboardSetup();
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7스코어보드 &f설정중..."));
+				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+				if (ServerVersion.getVersion() < 13)
+					lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c생명"));
+				for (Participant p : getParticipants()) {
+					Score score = lifeObjective.getScore(p.getPlayer().getName());
+					score.setScore(maxLife);
+				}
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&d잠시 후 &f게임이 시작됩니다."));
 				break;
 			case 9:
@@ -117,35 +149,79 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 14:
-				GameStart();
+				for (String m : new String[]{
+						ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
+						ChatColor.translateAlternateColorCodes('&', "&f                &5&l체인지! &d&l능력 &f&l전쟁"),
+						ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
+						ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")}) {
+					Bukkit.broadcastMessage(m);
+				}
+				SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
+
+				giveDefaultKit(getParticipants());
+
+				for (Participant p : getParticipants()) {
+					if (Settings.getSpawnEnable()) {
+						p.getPlayer().teleport(Settings.getSpawnLocation());
+					}
+				}
+
+				if (Settings.getNoHunger()) {
+					NoHunger.setPeriod(1);
+					NoHunger.startTimer();
+				} else {
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
+				}
+
+				if (invincible) {
+					getInvincibility().Start(false);
+				} else {
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
+					for (Participant participant : this.getParticipants()) {
+						if (participant.hasAbility()) {
+							participant.getAbility().setRestricted(false);
+						}
+					}
+				}
+
+				if (Settings.getInfiniteDurability()) {
+					attachObserver(infiniteDurability);
+				} else {
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
+				}
+
+				for (World w : Bukkit.getWorlds()) {
+					if (Settings.getClearWeather()) {
+						w.setStorm(false);
+					}
+				}
+
+				changer.StartTimer();
+
+				startGame();
 				break;
 		}
 	}
 
 	private final int maxLife;
-
-	private void scoreboardSetup() {
-		lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		if (ServerVersion.getVersion() < 13)
-			lifeObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c생명"));
-		for (Participant p : getParticipants()) {
-			Score score = lifeObjective.getScore(p.getPlayer().getName());
-			score.setScore(maxLife);
-		}
-	}
-
 	private final ArrayList<Participant> noLife = new ArrayList<>();
 
 	@Override
-	protected DeathManager setupDeathManager() {
+	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			protected void Operation(Participant victim) {
 				Player victimPlayer = victim.getPlayer();
 				Score score = lifeObjective.getScore(victimPlayer.getName());
 				if (score.isScoreSet()) {
-					if (score.getScore() >= 1) {
-						score.setScore(score.getScore() - 1);
+					int life = score.getScore();
+					if (life >= 1) {
+						score.setScore(--life);
+						if (maxLife <= 10) {
+							victimPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f남은 생명: &c" + StringUtils.repeat("&c♥", life) + StringUtils.repeat("&c♡", maxLife - life)));
+						} else {
+							victimPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f남은 생명: &c" + life));
+						}
 					}
 					if (score.getScore() <= 0) {
 						noLife.add(victim);
@@ -167,102 +243,6 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				}
 			}
 		};
-	}
-
-	public void broadcastPlayerList() {
-		ArrayList<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&d==== &f게임 참여자 목록 &d===="));
-		int count = 0;
-		for (Participant p : getParticipants()) {
-			count++;
-			lines.add(ChatColor.translateAlternateColorCodes('&', "&5" + count + ". &f" + p.getPlayer().getName()));
-		}
-		lines.add(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &5: &d" + count + "명"));
-		lines.add(ChatColor.translateAlternateColorCodes('&', "&d=========================="));
-
-		for (String line : lines) {
-			Bukkit.broadcastMessage(line);
-		}
-	}
-
-	public void broadcastPluginDescription() {
-		ArrayList<String> msg = new ArrayList<>();
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&5&l체인지! &d&l능력 &f&l전쟁"));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908"));
-
-		GameCreditEvent event = new GameCreditEvent();
-		Bukkit.getPluginManager().callEvent(event);
-
-		for (String str : event.getCreditList()) {
-			msg.add(str);
-		}
-
-		for (String m : msg) {
-			Bukkit.broadcastMessage(m);
-		}
-	}
-
-	public void broadcastAbilityReady() {
-
-		for (String m : new String[]{
-				ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &d" + AbilityList.nameValues().size() + "개&f의 능력이 등록되어 있습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&7게임 시작시 &f첫번째 능력&7이 할당되며, 이후 &f" + NumberUtil.parseTimeString(changer.getPeriod()) + "&7마다 능력이 변경됩니다.")}) {
-			Bukkit.broadcastMessage(m);
-		}
-	}
-
-	public void GameStart() {
-		for (String m : new String[]{
-				ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-				ChatColor.translateAlternateColorCodes('&', "&f                &5&l체인지! &d&l능력 &f&l전쟁"),
-				ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
-				ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")}) {
-			Bukkit.broadcastMessage(m);
-		}
-		SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
-
-		giveDefaultKit(getParticipants());
-
-		for (Participant p : getParticipants()) {
-			if (Settings.getSpawnEnable()) {
-				p.getPlayer().teleport(Settings.getSpawnLocation());
-			}
-		}
-
-		if (Settings.getNoHunger()) {
-			NoHunger.setPeriod(1);
-			NoHunger.startTimer();
-		} else {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
-		}
-
-		if (invincible) {
-			getInvincibility().Start(false);
-		} else {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
-			for (Participant participant : this.getParticipants()) {
-				if (participant.hasAbility()) {
-					participant.getAbility().setRestricted(false);
-				}
-			}
-		}
-
-		if (Settings.getInfiniteDurability()) {
-			attachObserver(infiniteDurability);
-		} else {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
-		}
-
-		for (World w : Bukkit.getWorlds()) {
-			if (Settings.getClearWeather()) {
-				w.setStorm(false);
-			}
-		}
-
-		changer.StartTimer();
-
-		startGame();
 	}
 
 	/**
@@ -288,14 +268,14 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	}
 
 	@Override
-	protected AbilitySelect setupAbilitySelect() {
+	public AbilitySelect newAbilitySelect() {
 		return null;
 	}
 
 	@Override
 	protected void onEnd() {
-		super.onEnd();
 		lifeObjective.unregister();
+		super.onEnd();
 	}
 
 }
