@@ -166,6 +166,7 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 					getInvincibility().Start(false);
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
+					setRestricted(false);
 				}
 
 				Script.RunAll(this);

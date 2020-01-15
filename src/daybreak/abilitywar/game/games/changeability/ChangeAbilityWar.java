@@ -177,11 +177,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 					getInvincibility().Start(false);
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
-					for (Participant participant : this.getParticipants()) {
-						if (participant.hasAbility()) {
-							participant.getAbility().setRestricted(false);
-						}
-					}
+					setRestricted(false);
 				}
 
 				if (Settings.getInfiniteDurability()) {

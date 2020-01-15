@@ -122,7 +122,6 @@ public class AbilityFactory {
 		registerAbility(OnlyOddNumber.class);
 		registerAbility(Clown.class);
 		registerAbility(TheMagician.class);
-		registerAbility(TheHighPriestess.class);
 		registerAbility(TheEmpress.class);
 		registerAbility(TheEmperor.class);
 		registerAbility(Pumpkin.class);
@@ -149,6 +148,8 @@ public class AbilityFactory {
 		// v2.0.8.8
 		registerAbility(Reaper.class);
 		registerAbility(Hedgehog.class);
+		// v2.0.9.2
+		registerAbility(ReligiousLeader.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

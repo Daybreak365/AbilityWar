@@ -4,69 +4,109 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "빠른 회복", Rank = Rank.A, Species = Species.HUMAN)
 public class FastRegeneration extends AbilityBase {
 
-	public static final SettingObject<Integer> RegenSpeedConfig = new SettingObject<Integer>(FastRegeneration.class, "RegenSpeed", 20,
-			"# 회복 속도를 설정합니다.",
-			"# 숫자가 낮을수록 회복이 더욱 빨라집니다.") {
-
-		@Override
-		public boolean Condition(Integer value) {
-			return value >= 1;
-		}
-
-	};
-
 	public FastRegeneration(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f다른 능력들에 비해서 더 빠른 속도로 체력을 회복합니다."));
 	}
 
-	private final Timer Passive = new Timer() {
+	private final CooldownTimer cooldownTimer = new CooldownTimer(25);
+
+	private final DurationTimer healthGain = new DurationTimer(20, cooldownTimer) {
 
 		@Override
-		public void onStart() {
+		public void onDurationStart() {
+			sound.startTimer();
 		}
 
 		@Override
-		public void onProcess(int count) {
-			if (!isRestricted()) {
-				Player p = getPlayer();
-				if (!p.isDead()) {
-					double MaxHealth = VersionUtil.getMaxHealth(p);
-
-					if (p.getHealth() < MaxHealth) {
-						p.setHealth(Math.min(p.getHealth() + 1.5, 20.0));
+		public void onDurationProcess(int count) {
+			Player player = getPlayer();
+			if (!player.isDead()) {
+				final double playerHealth = player.getHealth();
+				final double maxHealth = VersionUtil.getMaxHealth(player);
+				if (playerHealth < maxHealth) {
+					final double gain;
+					if (playerHealth <= 2) {
+						gain = 1.2;
+					} else if (playerHealth <= 5) {
+						gain = 1;
+					} else if (playerHealth <= 10) {
+						gain = 0.8;
+					} else if (playerHealth <= 15) {
+						gain = 0.6;
+					} else {
+						gain = 0.4;
 					}
+
+					player.setHealth(Math.min(player.getHealth() + gain, maxHealth));
 				}
 			}
 		}
 
 		@Override
-		public void onEnd() {
+		public void onDurationEnd() {
+			sound.stopTimer(false);
 		}
 
-	}.setPeriod(RegenSpeedConfig.getValue());
+		@Override
+		public void onSilentEnd() {
+			sound.stopTimer(false);
+		}
+
+	}.setPeriod(10);
+
+	private final Timer sound = new Timer() {
+
+		private int tick;
+
+		@Override
+		public void onStart() {
+			tick = 0;
+		}
+
+		@Override
+		public void onProcess(int count) {
+			tick++;
+			Player player = getPlayer();
+			if (!player.isDead()) {
+				switch (tick) {
+					case 1:
+					case 5:
+						SoundLib.BASS_DRUM.playInstrument(getPlayer(), Note.natural(0, Tone.A));
+						break;
+					case 2:
+					case 6:
+						SoundLib.BASS_DRUM.playInstrument(getPlayer(), Note.natural(0, Tone.E));
+						break;
+				}
+			}
+			if (tick >= 8) {
+				tick = 0;
+			}
+		}
+
+	}.setPeriod(5);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
+		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
+			healthGain.startTimer();
+			return true;
+		}
 		return false;
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		Passive.startTimer();
 	}
 
 	@Override

@@ -83,7 +83,6 @@ public class AbilityList {
 		registerAbility(OnlyOddNumber.class);
 		registerAbility(Clown.class);
 		registerAbility(TheMagician.class);
-		registerAbility(TheHighPriestess.class);
 		registerAbility(TheEmpress.class);
 		registerAbility(TheEmperor.class);
 		registerAbility(Pumpkin.class);
@@ -106,6 +105,7 @@ public class AbilityList {
 		registerAbility(PenetrationArrow.class);
 		registerAbility(Reaper.class);
 		registerAbility(Hedgehog.class);
+		registerAbility(ReligiousLeader.class);
 	}
 
 	/**

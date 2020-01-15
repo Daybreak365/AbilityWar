@@ -22,7 +22,7 @@ import java.util.StringJoiner;
 @AbilityManifest(Name = "폭발화살", Rank = Rank.S, Species = Species.HUMAN)
 public class BombArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 2,
+	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 1,
 			"# 화살을 맞췄을 때 얼마나 큰 폭발을 일으킬지 설정합니다.") {
 
 		@Override
@@ -41,7 +41,7 @@ public class BombArrow extends AbilityBase {
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		return true;
+		return false;
 	}
 
 	private final int maxStack = 3;
@@ -72,7 +72,7 @@ public class BombArrow extends AbilityBase {
 	private void onProjectileShoot(ProjectileHitEvent e) {
 		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
 			Location location = e.getHitEntity() == null ? e.getHitBlock().getLocation() : e.getHitEntity().getLocation();
-			location.getWorld().createExplosion(location, 1, false, true);
+			location.getWorld().createExplosion(location, size, false, true);
 			e.getEntity().remove();
 		}
 	}

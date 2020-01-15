@@ -145,7 +145,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if (game.isParticipating(p)) {
 							Participant participant = game.getParticipant(p);
 							AbilitySelect select = ((AbilitySelect.Handler) game).getAbilitySelect();
-							if (!select.isEnded()) {
+							if (select.isStarted() && !select.isEnded()) {
 								if (select.isSelector(participant)) {
 									if (!select.hasDecided(participant)) {
 										select.decideAbility(participant);
@@ -175,7 +175,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if (game.isParticipating(p)) {
 							Participant participant = game.getParticipant(p);
 							AbilitySelect select = ((AbilitySelect.Handler) game).getAbilitySelect();
-							if (!select.isEnded()) {
+							if (select.isStarted() && !select.isEnded()) {
 								if (select.isSelector(participant)) {
 									if (!select.hasDecided(participant)) {
 										select.alterAbility(participant);
@@ -201,7 +201,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				if (sender.isOp()) {
 					if (AbilityWarThread.isGameTaskRunning() && AbilityWarThread.isGameOf(AbilitySelect.Handler.class) && ((AbilitySelect.Handler) AbilityWarThread.getGame()).getAbilitySelect() != null) {
 						AbilitySelect select = ((AbilitySelect.Handler) AbilityWarThread.getGame()).getAbilitySelect();
-						if (!select.isEnded()) {
+						if (select.isStarted() && !select.isEnded()) {
 							select.Skip(sender.getName());
 						} else {
 							Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력을 선택하는 중이 아닙니다."));
