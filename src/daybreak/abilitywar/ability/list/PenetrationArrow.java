@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -14,6 +15,7 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import daybreak.abilitywar.utils.versioncompat.NMSUtil;
+import daybreak.abilitywar.utils.versioncompat.NMSUtil.PlayerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -31,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-@AbilityManifest(Name = "관통화살", Rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.OTHERS)
+@AbilityManifest(Name = "관통화살", Rank = AbilityManifest.Rank.S, Species = AbilityManifest.Species.OTHERS)
 public class PenetrationArrow extends AbilityBase {
 
 	public static final AbilitySettings.SettingObject<Integer> BulletConfig = new AbilitySettings.SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 5,
@@ -48,6 +50,7 @@ public class PenetrationArrow extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f투사체에는 특수한 능력이 있으며, 활을 &e" + BulletConfig.getValue() + "번 쏠 때마다 능력이 변경됩니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f능력을 변경할 때 3초의 재장전 시간이 소요됩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&c절단&f: 투사체를 맞은 대상에게 추가 데미지를 입힙니다."),
 				ChatColor.translateAlternateColorCodes('&', "&5중력&f: 투사체를 맞은 대상 주위 4칸의 생명체를 대상에게 끌어갑니다."),
 				ChatColor.translateAlternateColorCodes('&', "&e풍월&f: 투사체를 맞은 대상을 나에게서 멀리 날려보냅니다."));
@@ -115,11 +118,14 @@ public class PenetrationArrow extends AbilityBase {
 
 	private ArrowType arrowType = arrowTypes.get(0);
 	private int arrowBullet = bulletCount;
+	private Timer reload = null;
 
 	private final Timer notice = new Timer() {
 		@Override
 		protected void onProcess(int count) {
-			NMSUtil.PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"), 0, 4, 0);
+			if (reload == null) {
+				NMSUtil.PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"), 0, 4, 0);
+			}
 		}
 	}.setPeriod(2);
 
@@ -132,14 +138,33 @@ public class PenetrationArrow extends AbilityBase {
 	private void onProjectileLaunch(EntityShootBowEvent e) {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
-			if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
-				ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
-			}
-			arrowType.launchArrow((Arrow) e.getProjectile());
-			arrowBullet--;
-			if (arrowBullet <= 0) {
-				arrowType = arrowTypes.get(random.nextInt(arrowTypes.size()));
-				arrowBullet = bulletCount;
+			if (reload == null) {
+				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
+					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
+				}
+				arrowType.launchArrow((Arrow) e.getProjectile());
+				arrowBullet--;
+				if (arrowBullet <= 0) {
+					this.reload = new Timer(15) {
+						private final ProgressBar progressBar = new ProgressBar(15, 15);
+
+						@Override
+						protected void onProcess(int count) {
+							progressBar.step();
+							PlayerUtil.sendActionbar(getPlayer(), "재장전: " + progressBar.getProgress(), 0, 6, 0);
+						}
+
+						@Override
+						protected void onEnd() {
+							arrowType = arrowTypes.get(random.nextInt(arrowTypes.size()));
+							arrowBullet = bulletCount;
+							PenetrationArrow.this.reload = null;
+						}
+					}.setPeriod(4);
+					reload.startTimer();
+				}
+			} else {
+				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));
 			}
 		}
 	}
@@ -189,8 +214,8 @@ public class PenetrationArrow extends AbilityBase {
 
 		@Override
 		protected void onProcess(int i) {
-			time += 0.03;
-			double height = (velocity * sin * time) - (0.5 * GRAVITATIONAL_CONSTANT * (time * time));
+			time += 0.04;
+			double height = (velocity * sin * time) - (0.5 * GRAVITATIONAL_CONSTANT * (time * time)) * 0.8;
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
 			for (Location location : line.setVector(lastLocation, newLocation).getLocations(lastLocation)) {
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(location, 1.4, 1.4)) {

@@ -39,6 +39,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 	public TeamFight() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(invincible);
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	private boolean invincible = Settings.InvincibilitySettings.isEnabled();

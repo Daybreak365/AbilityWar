@@ -18,7 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
-@AbilityManifest(Name = "쇼맨쉽", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "쇼맨쉽", Rank = Rank.B, Species = Species.HUMAN)
 public class ShowmanShip extends AbilityBase {
 
 	public ShowmanShip(Participant participant) {

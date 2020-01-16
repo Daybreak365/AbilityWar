@@ -25,7 +25,7 @@ import java.util.Random;
 @AbilityManifest(Name = "좀비", Rank = Rank.B, Species = Species.UNDEAD)
 public class Zombie extends AbilityBase {
 
-	public static final AbilitySettings.SettingObject<Integer> DecreaseConfig = new AbilitySettings.SettingObject<Integer>(TheHighPriestess.class, "Decrease", 50,
+	public static final AbilitySettings.SettingObject<Integer> DecreaseConfig = new AbilitySettings.SettingObject<Integer>(Zombie.class, "Decrease", 50,
 			"# 데미지 감소량 (단위: 퍼센트)") {
 
 		@Override
