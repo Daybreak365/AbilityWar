@@ -57,9 +57,9 @@ public class Berserker extends AbilityBase {
 
 	private final int Strength = StrengthConfig.getValue();
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	private final DurationTimer Duration = new DurationTimer(5, Cool) {
+	private final DurationTimer Duration = new DurationTimer(5, cooldownTimer) {
 
 		@Override
 		public void onDurationStart() {
@@ -83,7 +83,7 @@ public class Berserker extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !Cool.isCooldown()) {
+				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
 					Duration.startTimer();
 
 					return true;

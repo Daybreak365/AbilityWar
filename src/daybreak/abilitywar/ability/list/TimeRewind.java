@@ -56,7 +56,7 @@ public class TimeRewind extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 시간을 역행해 " + TimeConfig.getValue() + "초 전으로 돌아갑니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private final int time = TimeConfig.getValue();
 
@@ -64,7 +64,7 @@ public class TimeRewind extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Skill.startTimer();
 
 					return true;
@@ -100,7 +100,7 @@ public class TimeRewind extends AbilityBase {
 
 	private PushingList<PlayerData> playerDatas = new PushingList<>(time * 20);
 
-	private final DurationTimer Skill = new DurationTimer(time * 10, Cool) {
+	private final DurationTimer Skill = new DurationTimer(time * 10, cooldownTimer) {
 
 		private LinkedList<PlayerData> datas;
 

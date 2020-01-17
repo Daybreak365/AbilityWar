@@ -2,7 +2,7 @@ package daybreak.abilitywar.game.script.objects.setter;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.script.ScriptWizard;
-import daybreak.abilitywar.utils.Validate;
+import daybreak.abilitywar.utils.base.Precondition;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
@@ -90,11 +90,11 @@ public abstract class Setter<T> implements EventExecutor {
 					return constructor.newInstance(Key, Default, Wizard);
 				}
 			} else {
-				Validate.minimumConstant(clazz, 1);
+				Precondition.checkMinimumConstants(clazz, 1);
 				return new EnumSetter(Key, clazz.getEnumConstants()[0], Wizard);
 			}
 		} catch (NoSuchMethodException | SecurityException | InstantiationException
-				| IllegalAccessException | InvocationTargetException e) {
+				| IllegalAccessException | InvocationTargetException ignored) {
 		}
 
 		throw new IllegalArgumentException();

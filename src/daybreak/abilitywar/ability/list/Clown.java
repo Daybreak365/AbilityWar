@@ -48,9 +48,9 @@ public class Clown extends AbilityBase {
 
 	private Location OriginalPoint = null;
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	private final DurationTimer Duration = new DurationTimer(10, Cool) {
+	private final DurationTimer Duration = new DurationTimer(10, cooldownTimer) {
 
 		@Override
 		protected void onDurationStart() {
@@ -75,7 +75,7 @@ public class Clown extends AbilityBase {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!Duration.isDuration()) {
-					if (!Cool.isCooldown()) {
+					if (!cooldownTimer.isCooldown()) {
 						Duration.startTimer();
 
 						return true;

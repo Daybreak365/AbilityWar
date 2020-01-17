@@ -45,7 +45,7 @@ public class Virtus extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 데미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private boolean Activated = false;
 
@@ -73,10 +73,10 @@ public class Virtus extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Activate.startTimer();
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 
 					return true;
 				}

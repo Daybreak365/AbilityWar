@@ -50,7 +50,7 @@ public class Hacker extends AbilityBase {
 
 	private Player target = null;
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private final int DurationTick = DurationConfig.getValue() * 20;
 
@@ -147,14 +147,14 @@ public class Hacker extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 
 					if (target != null) {
 						this.target = target;
 						Skill.startTimer();
 
-						Cool.startTimer();
+						cooldownTimer.startTimer();
 
 						return true;
 					} else {

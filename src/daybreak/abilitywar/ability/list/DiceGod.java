@@ -38,13 +38,13 @@ public class DiceGod extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f공격을 받았을 때 1/6 확률로 데미지를 받는 대신 데미지만큼 체력을 회복합니다."));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Player p = getPlayer();
 
 					Random r = new Random();
@@ -70,7 +70,7 @@ public class DiceGod extends AbilityBase {
 						PotionEffects.WEAKNESS.addPotionEffect(p, 200, 1, true);
 					}
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 
 					return true;
 				}

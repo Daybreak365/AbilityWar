@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
+import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
 public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
 
@@ -35,7 +35,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		super(players);
 	}
 
-	private final DeathManager deathManager = notNull(newDeathManager());
+	private final DeathManager deathManager = checkNotNull(newDeathManager());
 	private final Invincibility invincibility = new Invincibility(this);
 	private final WRECK wreck = new WRECK();
 	private final ScoreboardManager scoreboardManager = new ScoreboardManager(this);

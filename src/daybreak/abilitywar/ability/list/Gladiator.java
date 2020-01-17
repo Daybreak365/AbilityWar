@@ -42,7 +42,7 @@ public class Gladiator extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private final HashMap<Block, BlockState> Saves = new HashMap<>();
 
@@ -184,15 +184,15 @@ public class Gladiator extends AbilityBase {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (entity != null) {
 				if (entity instanceof Player) {
-					if (!Cool.isCooldown()) {
+					if (!cooldownTimer.isCooldown()) {
 						this.target = (Player) entity;
 						Field.startTimer();
 
-						Cool.startTimer();
+						cooldownTimer.startTimer();
 					}
 				}
 			} else {
-				Cool.isCooldown();
+				cooldownTimer.isCooldown();
 			}
 		}
 	}

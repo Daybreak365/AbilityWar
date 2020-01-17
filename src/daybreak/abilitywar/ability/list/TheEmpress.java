@@ -59,13 +59,13 @@ public class TheEmpress extends AbilityBase {
 
 	private boolean EasterEgg = !EasterEggConfig.getValue();
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Location l = getPlayer().getLocation();
 
 					NumberStatus X = NumberUtil.getNumberStatus((int) l.getX());
@@ -118,7 +118,7 @@ public class TheEmpress extends AbilityBase {
 						}
 					}
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 
 					return true;
 				}

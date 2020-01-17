@@ -53,7 +53,7 @@ public class Pumpkin extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private final Timer Song = new Timer(13) {
 
@@ -104,7 +104,7 @@ public class Pumpkin extends AbilityBase {
 
 	private HashMap<Player, ItemStack> Players;
 
-	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue(), Cool) {
+	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue(), cooldownTimer) {
 
 		@Override
 		public void onDurationStart() {
@@ -148,7 +148,7 @@ public class Pumpkin extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !Cool.isCooldown()) {
+				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
 					Duration.startTimer();
 
 					return true;

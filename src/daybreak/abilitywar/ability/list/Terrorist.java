@@ -49,14 +49,14 @@ public class Terrorist extends AbilityBase {
 	}
 
 	private final int count = CountConfig.getValue();
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final Vectors circle = new Circle(10, count).getVectors();
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Location center = getPlayer().getLocation();
 
 					for (Location l : LocationUtil.getRandomLocations(center, 9, count))
@@ -64,7 +64,7 @@ public class Terrorist extends AbilityBase {
 					for (Location l : circle.getAsLocations(center).floor(center.getY()))
 						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 
 					return true;
 				}

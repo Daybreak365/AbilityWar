@@ -42,7 +42,7 @@ public class Zeus extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f번개 데미지와 폭발 데미지를 받지 않습니다."));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final Circle circle = new Circle(1, 7);
 
 	private final Timer Skill = new Timer(3) {
@@ -80,10 +80,10 @@ public class Zeus extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Skill.startTimer();
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 
 					return true;
 				}

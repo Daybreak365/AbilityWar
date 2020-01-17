@@ -51,14 +51,14 @@ public class TheMagician extends AbilityBase {
 		return false;
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final Vectors circle = new Circle(5, 70).getVectors();
 
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
 		if (e.getEntity() instanceof Arrow) {
 			if (getPlayer().equals(e.getEntity().getShooter())) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 					Location center = e.getEntity().getLocation();
 					HashMap<Damageable, Location> locationMap = new HashMap<>();
@@ -86,7 +86,7 @@ public class TheMagician extends AbilityBase {
 					}
 					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 				}
 			}
 		}

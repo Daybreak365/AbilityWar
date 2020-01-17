@@ -41,13 +41,13 @@ public class EnergyBlocker extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Default = !Default;
 					Player p = getPlayer();
 					if (Default) {
@@ -56,7 +56,7 @@ public class EnergyBlocker extends AbilityBase {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3로 변경되었습니다."));
 					}
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 				}
 			} else if (ct.equals(ClickType.LEFT_CLICK)) {
 				if (Default) {

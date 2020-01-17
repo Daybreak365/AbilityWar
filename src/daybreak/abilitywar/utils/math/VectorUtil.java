@@ -43,15 +43,9 @@ public class VectorUtil {
 	public static class Vectors extends ArrayList<Vector> implements Cloneable {
 
 		public Vectors rotateAroundAxis(Vector axis, double angle) {
-			double radians = Math.toRadians(angle);
+			double radians = Math.toRadians(angle), sin = Math.sin(radians), cos = Math.cos(radians);
 			for (Vector vector : this) {
-				double x = vector.getX(), y = vector.getY(), z = vector.getZ();
-				double axisX = axis.getX(), axisY = axis.getY(), axisZ = axis.getZ();
-
-				double cos = Math.cos(radians);
-				double sin = Math.sin(radians);
-				double dot = vector.dot(axis);
-
+				double x = vector.getX(), y = vector.getY(), z = vector.getZ(), axisX = axis.getX(), axisY = axis.getY(), axisZ = axis.getZ(), dot = vector.dot(axis);
 				vector.setX(axisX * dot * (1d - cos) + x * cos + (-axisZ * y + axisY * z) * sin).setY(axisY * dot * (1d - cos) + y * cos + (axisZ * x - axisX * z) * sin).setZ(axisZ * dot * (1d - cos) + z * cos + (-axisY * x + axisX * y) * sin);
 			}
 			return this;

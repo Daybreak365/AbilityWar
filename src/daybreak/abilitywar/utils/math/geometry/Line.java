@@ -5,7 +5,7 @@ import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
+import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
 public class Line {
 
@@ -13,20 +13,20 @@ public class Line {
 	private int locationAmount = 10;
 
 	public Line(Location startLocation, Location targetLocation) {
-		this.vector = notNull(targetLocation).toVector().subtract(notNull(startLocation).toVector());
+		this.vector = checkNotNull(targetLocation).toVector().subtract(checkNotNull(startLocation).toVector());
 	}
 
 	public Line(Vector vector) {
-		this.vector = notNull(vector);
+		this.vector = checkNotNull(vector);
 	}
 
 	public Line setVector(Location startLocation, Location targetLocation) {
-		this.vector = notNull(targetLocation).toVector().subtract(notNull(startLocation).toVector());
+		this.vector = checkNotNull(targetLocation).toVector().subtract(checkNotNull(startLocation).toVector());
 		return this;
 	}
 
 	public Line setVector(Vector vector) {
-		this.vector = notNull(vector);
+		this.vector = checkNotNull(vector);
 		return this;
 	}
 

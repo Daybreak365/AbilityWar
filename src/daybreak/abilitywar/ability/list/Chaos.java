@@ -56,11 +56,11 @@ public class Chaos extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private final int distance = DistanceConfig.getValue();
 
-	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue() * 20, Cool) {
+	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 
 		private Location center;
 
@@ -85,7 +85,7 @@ public class Chaos extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !Cool.isCooldown()) {
+				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
 					Duration.startTimer();
 
 					return true;

@@ -38,7 +38,7 @@ public class Void extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f텔레포트를 하고 난 후 2초간 무적 상태에 돌입합니다."));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private final Timer invincibilityTimer = new Timer(2) {
 
@@ -52,7 +52,7 @@ public class Void extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 
 					if (target != null) {
@@ -62,7 +62,7 @@ public class Void extends AbilityBase {
 
 						invincibilityTimer.startTimer();
 
-						Cool.startTimer();
+						cooldownTimer.startTimer();
 					} else {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
 					}

@@ -119,16 +119,16 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(1);
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Ice.startTimer();
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 
 					return true;
 				}

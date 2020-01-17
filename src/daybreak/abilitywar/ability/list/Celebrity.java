@@ -33,13 +33,13 @@ public class Celebrity extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 모든 플레이어가 자신의 방향을 바라봅니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 
 					if (AbilityWarThread.isGameTaskRunning()) {
 						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f안녕하세요, 여러분! 전 세계적으로 &c선풍적인 &f인기를 끌고있는 &e" + getPlayer().getName() + "&f입니다! @==(^o^)@"));
@@ -52,7 +52,7 @@ public class Celebrity extends AbilityBase {
 						}
 					}
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 
 					return true;
 				}

@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
+import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
 public class TeleportScript extends AbstractScript {
 
@@ -30,7 +30,7 @@ public class TeleportScript extends AbstractScript {
 	@Override
 	public void Execute(Game game) {
 		try {
-			Location l = new Location(notNull(Bukkit.getWorld(WorldName)), X, Y, Z, Yaw, Pitch);
+			Location l = new Location(checkNotNull(Bukkit.getWorld(WorldName)), X, Y, Z, Yaw, Pitch);
 			for (Player p : Bukkit.getOnlinePlayers()) p.teleport(l);
 		} catch (NullPointerException ignore) {
 		}

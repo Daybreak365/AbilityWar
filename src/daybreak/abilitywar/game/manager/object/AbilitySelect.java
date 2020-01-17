@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
+import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
 public abstract class AbilitySelect extends AbstractGame.TimerBase {
 
@@ -47,7 +47,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 
 	public AbilitySelect(AbstractGame game, Collection<Participant> selectors, int changeCount) {
 		game.super();
-		this.selectorData = new SelectorData(notNull(selectors), changeCount);
+		this.selectorData = new SelectorData(checkNotNull(selectors), changeCount);
 	}
 
 	@Override

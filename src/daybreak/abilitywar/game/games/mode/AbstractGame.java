@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
+import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
 public abstract class AbstractGame extends OverallTimer implements Listener, EffectManager.Handler, CommandHandler {
 
@@ -48,7 +48,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	 * 게임이 종료될 때 등록 해제되어야 하는 {@link Listener}를 등록합니다.
 	 */
 	public final void attachObserver(Observer observer) {
-		if (!observers.contains(notNull(observer))) {
+		if (!observers.contains(checkNotNull(observer))) {
 			observers.add(observer);
 		}
 	}
@@ -65,7 +65,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	}
 
 	public void setParticipantStrategy(ParticipantStrategy participantStrategy) {
-		this.participantStrategy = notNull(participantStrategy);
+		this.participantStrategy = checkNotNull(participantStrategy);
 	}
 
 	/**

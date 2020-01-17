@@ -93,13 +93,13 @@ public class Flora extends AbilityBase {
 
 	}.setPeriod(1);
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Cool.isCooldown()) {
+				if (!cooldownTimer.isCooldown()) {
 					Player p = getPlayer();
 					if (type.equals(EffectType.SPEED)) {
 						type = EffectType.REGENERATION;
@@ -109,7 +109,7 @@ public class Flora extends AbilityBase {
 
 					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.name + "&f으로 변경되었습니다."));
 
-					Cool.startTimer();
+					cooldownTimer.startTimer();
 				}
 			} else if (ct.equals(ClickType.LEFT_CLICK)) {
 				radius = radius.next();

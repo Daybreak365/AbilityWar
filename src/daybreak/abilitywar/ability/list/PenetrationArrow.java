@@ -13,6 +13,7 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import daybreak.abilitywar.utils.versioncompat.NMSUtil;
 import daybreak.abilitywar.utils.versioncompat.NMSUtil.PlayerUtil;
@@ -189,6 +190,7 @@ public class PenetrationArrow extends AbilityBase {
 
 	public abstract class Parabola extends Timer {
 
+		private final CenteredBoundingBox centeredBoundingBox;
 		private final double velocity;
 		private final double sin;
 		private final Vector forward;
@@ -198,6 +200,7 @@ public class PenetrationArrow extends AbilityBase {
 		private Parabola(Location startLocation, Vector arrowVelocity, double angle, ParticleLib.RGB color) {
 			super(300);
 			setPeriod(1);
+			this.centeredBoundingBox = new CenteredBoundingBox(startLocation, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 			this.velocity = Math.sqrt((arrowVelocity.getX() * arrowVelocity.getX()) + (arrowVelocity.getY() * arrowVelocity.getY()) + (arrowVelocity.getZ() * arrowVelocity.getZ()));
 			this.sin = FastMath.sin(Math.toRadians(angle));
 			this.forward = arrowVelocity.setY(Math.min(arrowVelocity.getY(), 0)).multiply(0.85);
@@ -217,8 +220,9 @@ public class PenetrationArrow extends AbilityBase {
 			time += 0.04;
 			double height = (velocity * sin * time) - (0.5 * GRAVITATIONAL_CONSTANT * (time * time)) * 0.8;
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
+			centeredBoundingBox.setLocation(newLocation);
 			for (Location location : line.setVector(lastLocation, newLocation).getLocations(lastLocation)) {
-				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(location, 1.4, 1.4)) {
+				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {
 					if (!getPlayer().equals(damageable) && !attacked.contains(damageable)) {
 						damageable.damage(Math.round(2.5 * velocity * 10) / 10.0, getPlayer());
 						onHit(getPlayer(), damageable);

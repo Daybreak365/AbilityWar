@@ -25,7 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static daybreak.abilitywar.utils.Validate.notNull;
+import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
 /**
  * 스크립트 관리 클래스
@@ -241,7 +241,7 @@ public class Script {
 	public static AbstractScript Load(File file) throws ScriptException {
 		try {
 			if (file.exists()) {
-				JsonObject object = notNull(parser.parse(new BufferedReader(new FileReader(file)))).getAsJsonObject();
+				JsonObject object = checkNotNull(parser.parse(new BufferedReader(new FileReader(file)))).getAsJsonObject();
 				Class<?> typeClass = ClassUtil.forName(object.get("scriptType").getAsString());
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				Object script = gson.fromJson(br, typeClass);

@@ -19,8 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase {
@@ -62,17 +63,17 @@ public class Ares extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 밀쳐냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
-	private final CooldownTimer Cool = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	private final DurationTimer Duration = new DurationTimer(20, Cool) {
+	private final DurationTimer Duration = new DurationTimer(20, cooldownTimer) {
 
-		private final boolean DashIntoTheAir = DashConfig.getValue();
-		private final int DamagePercent = DamageConfig.getValue();
-		private ArrayList<Damageable> Attacked;
+		private final boolean dashIntoTheAir = DashConfig.getValue();
+		private final int damagePercent = DamageConfig.getValue();
+		private Set<Damageable> attacked;
 
 		@Override
 		protected void onDurationStart() {
-			Attacked = new ArrayList<>();
+			attacked = new HashSet<>();
 			Collection<Player> nearby = LocationUtil.getNearbyPlayers(getPlayer().getLocation(), 10, 10);
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(nearby);
 		}
@@ -83,28 +84,24 @@ public class Ares extends AbilityBase {
 
 			ParticleLib.LAVA.spawnParticle(p.getLocation(), 4, 4, 4, 40);
 
-			if (DashIntoTheAir) {
+			if (dashIntoTheAir) {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7)));
 			} else {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7).setY(0)));
 			}
 
-			for (Damageable d : LocationUtil.getNearbyDamageableEntities(p, 4, 4)) {
-				double Damage = (d.getHealth() / 100) * DamagePercent;
-				if (!Attacked.contains(d)) {
-					d.damage(Damage, p);
-					Attacked.add(d);
+			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(p, 4, 4)) {
+				double damage = (damageable.getHealth() / 100) * damagePercent;
+				if (!attacked.contains(damageable)) {
+					damageable.damage(damage, p);
+					attacked.add(damageable);
 					SoundLib.BLOCK_ANVIL_LAND.playSound(p, 0.5f, 1);
 				} else {
-					d.damage(Damage / 5, p);
+					damageable.damage(damage / 5, p);
 				}
 
-				d.setVelocity(p.getLocation().toVector().subtract(d.getLocation().toVector()).multiply(-1).setY(1));
+				damageable.setVelocity(p.getLocation().toVector().subtract(damageable.getLocation().toVector()).multiply(-1).setY(1));
 			}
-		}
-
-		@Override
-		protected void onDurationEnd() {
 		}
 
 	}.setPeriod(1);
@@ -113,7 +110,7 @@ public class Ares extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !Cool.isCooldown()) {
+				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
 					Duration.startTimer();
 
 					return true;
