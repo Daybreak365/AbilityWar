@@ -208,7 +208,7 @@ public class ReligiousLeader extends AbilityBase {
 				Player target = (Player) entity;
 				if (getGame().isParticipating(target) && belivers.add(getGame().getParticipant(target))) {
 					sendMessage("&e" + target.getName() + "&f님은 이제 &5" + religionName + "&f를 믿습니다. &f( &5" + religionName + " &d신자 수&f: &e" + belivers.size() + " &f)");
-					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5" + religionName + " &f만세!"));
+					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getPlayer().getName() + "&f님이 당신을 포섭했습니다: &5" + religionName + " &f만세!"));
 				}
 			} else {
 				sendMessage("신자 수가 최대치에 도달하여 더이상 모을 수 없습니다.");
