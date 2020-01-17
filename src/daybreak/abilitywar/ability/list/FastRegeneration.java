@@ -29,7 +29,7 @@ public class FastRegeneration extends AbilityBase {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 10,
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(FastRegeneration.class, "Duration", 10,
 			"# 지속 시간 (단위: 초)") {
 
 		@Override
