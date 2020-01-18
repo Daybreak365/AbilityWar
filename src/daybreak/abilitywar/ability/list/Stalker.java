@@ -44,7 +44,7 @@ public class Stalker extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다른 플레이어가 타게팅할 수 없는 상태로 변하여"),
 				ChatColor.translateAlternateColorCodes('&', "&f마지막으로 때렸던 플레이어에게 돌진합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f동일한 플레이어를 연속적으로 떄릴 때마다 스택이 쌓이며,"),
+				ChatColor.translateAlternateColorCodes('&', "&f동일한 플레이어를 연속적으로 공격할 때마다 스택이 쌓이며,"),
 				ChatColor.translateAlternateColorCodes('&', "&f다른 플레이어를 때리면 초기화됩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f다른 플레이어를 때릴 때마다 쿨타임이 쌓인 스택만큼 감소합니다."));
 	}

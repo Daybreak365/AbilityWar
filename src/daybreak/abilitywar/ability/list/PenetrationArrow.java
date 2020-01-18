@@ -29,10 +29,11 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @AbilityManifest(Name = "관통화살", Rank = AbilityManifest.Rank.S, Species = AbilityManifest.Species.OTHERS)
 public class PenetrationArrow extends AbilityBase {
@@ -203,22 +204,22 @@ public class PenetrationArrow extends AbilityBase {
 			this.centeredBoundingBox = new CenteredBoundingBox(startLocation, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 			this.velocity = Math.sqrt((arrowVelocity.getX() * arrowVelocity.getX()) + (arrowVelocity.getY() * arrowVelocity.getY()) + (arrowVelocity.getZ() * arrowVelocity.getZ()));
 			this.sin = FastMath.sin(Math.toRadians(angle));
-			this.forward = arrowVelocity.setY(Math.min(arrowVelocity.getY(), 0)).multiply(0.85);
+			this.forward = arrowVelocity.setY(arrowVelocity.getY() * 0.7);
 			this.color = color;
 			this.lastLocation = startLocation;
 			this.line = new Line(startLocation, startLocation).setLocationAmount(8);
-			this.time = 0.3;
+			this.time = Math.max(0, (angle + 135) / 360);
 		}
 
 		private Location lastLocation;
 		private final Line line;
 		private double time;
-		private final ArrayList<Damageable> attacked = new ArrayList<>();
+		private final Set<Damageable> attacked = new HashSet<>();
 
 		@Override
 		protected void onProcess(int i) {
-			time += 0.04;
-			double height = (velocity * sin * time) - (0.5 * GRAVITATIONAL_CONSTANT * (time * time)) * 0.8;
+			time += 0.03;
+			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time) + (velocity * sin * time) * 0.7;
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
 			centeredBoundingBox.setLocation(newLocation);
 			for (Location location : line.setVector(lastLocation, newLocation).getLocations(lastLocation)) {

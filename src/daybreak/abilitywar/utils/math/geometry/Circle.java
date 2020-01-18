@@ -26,8 +26,7 @@ public class Circle {
 
 	public Vectors getVectors() {
 		Vectors vectors = new Vectors();
-		final int size = vectors.size();
-		for (double angle = 360.0 / amount; angle < 360.0 || size <= amount; angle += (360.0 / amount)) {
+		for (double angle = 360.0 / amount; angle < 360.0 && vectors.size() <= amount; angle += (360.0 / amount)) {
 			double radians = Math.toRadians(angle);
 			double sin = FastMath.sin(radians), cos = FastMath.cos(radians);
 			double x = cos * radius, z = sin * radius;

@@ -20,7 +20,7 @@ public class Mix extends AbilityBase {
 	private static String[] formatAbilityInfo(AbilityBase ability) {
 		ArrayList<String> list = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
-		list.addAll(ability.getExplain());
+		list.addAll(ability.getDescription());
 		return list.toArray(new String[0]);
 	}
 

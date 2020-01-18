@@ -38,7 +38,7 @@ public class Zombie extends AbilityBase {
 	public Zombie(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f받는 데미지가 " + DecreaseConfig.getValue() + "% 감소합니다. 근육 경련으로 인해"),
-				ChatColor.translateAlternateColorCodes('&', "&f공격할 떄 에임이 튑니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f공격할 때 에임이 튑니다."));
 	}
 
 	@Override

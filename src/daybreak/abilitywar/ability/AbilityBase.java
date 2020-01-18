@@ -197,7 +197,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	/**
 	 * 능력의 설명을 반환합니다.
 	 */
-	public final ArrayList<String> getExplain() {
+	public final ArrayList<String> getDescription() {
 		ArrayList<String> explain = new ArrayList<>();
 		for (DescriptionLine line : description) {
 			Collections.addAll(explain, line.strings);
@@ -264,12 +264,12 @@ public abstract class AbilityBase implements PassiveExecutor {
 			this.strings = strings;
 		}
 
-		public String[] getStrings() {
-			return strings;
-		}
-
 		public void setStrings(String... strings) {
 			this.strings = strings;
+		}
+
+		public String[] getStrings() {
+			return strings;
 		}
 
 	}
