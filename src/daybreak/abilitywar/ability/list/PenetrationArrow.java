@@ -93,7 +93,7 @@ public class PenetrationArrow extends AbilityBase {
 					new Parabola(arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, PURPLE) {
 						@Override
 						public void onHit(Damageable damager, Damageable victim) {
-							for (Location location : sphere.getAsLocations(victim.getLocation())) {
+							for (Location location : sphere.toLocations(victim.getLocation())) {
 								ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
 							}
 							for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(victim.getLocation(), 4, 4)) {
@@ -221,8 +221,8 @@ public class PenetrationArrow extends AbilityBase {
 			time += 0.03;
 			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time) + (velocity * sin * time) * 0.7;
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
-			centeredBoundingBox.setLocation(newLocation);
 			for (Location location : line.setVector(lastLocation, newLocation).getLocations(lastLocation)) {
+				centeredBoundingBox.setLocation(location);
 				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {
 					if (!getPlayer().equals(damageable) && !attacked.contains(damageable)) {
 						damageable.damage(Math.round(2.5 * velocity * 10) / 10.0, getPlayer());

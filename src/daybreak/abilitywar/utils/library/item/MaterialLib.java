@@ -970,6 +970,20 @@ public enum MaterialLib {
 		return false;
 	}
 
+	public boolean compareMaterial(Material comp) {
+		if (isNewVersion()) {
+			return comp == this.getMaterial();
+		}
+		if (comp == this.getMaterial()) {
+			return true;
+		}
+		MaterialLib xmat = fromMaterial(comp);
+		if (isDamageable(xmat)) {
+			return this.getMaterial() == comp;
+		}
+		return false;
+	}
+
 	private static boolean isNewVersion() {
 		return ServerVersion.getVersion() >= 13;
 	}

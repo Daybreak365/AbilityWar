@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * {@link DefaultGame}, {@link ChangeAbilityWar} 등에서 사용하는 능력자 플러그인의 기본적인 능력 목록을 관리하는 클래스입니다.
@@ -108,15 +109,12 @@ public class AbilityList {
 		registerAbility(ReligiousLeader.class);
 	}
 
-	/**
-	 * 등록된 능력들의 이름 목록을 반환합니다.
-	 */
-	public static ArrayList<String> nameValues() {
+	public static List<String> nameValues() {
 		return new ArrayList<>(abilities.keySet());
 	}
 
-	public static ArrayList<String> nameValues(Rank rank) {
-		ArrayList<String> values = new ArrayList<>();
+	public static List<String> nameValues(Rank rank) {
+		List<String> values = new ArrayList<>();
 		for (Class<? extends AbilityBase> abilityClass : abilities.values()) {
 			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegisteration(abilityClass);
 			if (registration != null) {
@@ -129,8 +127,8 @@ public class AbilityList {
 		return values;
 	}
 
-	public static ArrayList<String> nameValues(Species species) {
-		ArrayList<String> values = new ArrayList<>();
+	public static List<String> nameValues(Species species) {
+		List<String> values = new ArrayList<>();
 		for (Class<? extends AbilityBase> abilityClass : abilities.values()) {
 			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegisteration(abilityClass);
 			if (registration != null) {

@@ -24,7 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,7 +65,7 @@ public class GameModeGUI implements Listener {
 						is = MaterialLib.ENCHANTED_BOOK.getItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-						ArrayList<String> lore = Messager.asList(manifest.Description());
+						List<String> lore = Messager.asList(manifest.Description());
 						lore.add(ChatColor.translateAlternateColorCodes('&', "&7선택된 게임모드입니다."));
 						im.setLore(lore);
 						is.setItemMeta(im);
@@ -73,7 +73,7 @@ public class GameModeGUI implements Listener {
 						is = MaterialLib.BOOK.getItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-						ArrayList<String> lore = Messager.asList(manifest.Description());
+						List<String> lore = Messager.asList(manifest.Description());
 						lore.add(ChatColor.translateAlternateColorCodes('&', "&b» &f이 게임모드를 선택하려면 클릭하세요."));
 						im.setLore(lore);
 						is.setItemMeta(im);

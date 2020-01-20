@@ -9,7 +9,6 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -50,7 +49,7 @@ public class Terrorist extends AbilityBase {
 
 	private final int count = CountConfig.getValue();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-	private final Vectors circle = new Circle(10, count).getVectors();
+	private final Circle circle = Circle.of(10, count);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType ct) {
@@ -61,7 +60,7 @@ public class Terrorist extends AbilityBase {
 
 					for (Location l : LocationUtil.getRandomLocations(center, 9, count))
 						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
-					for (Location l : circle.getAsLocations(center).floor(center.getY()))
+					for (Location l : circle.toLocations(center).floor(center.getY()))
 						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 
 					cooldownTimer.startTimer();

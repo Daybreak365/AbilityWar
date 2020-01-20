@@ -14,12 +14,12 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -35,14 +35,16 @@ public class LocationUtil {
 	}
 
 	/**
-	 * {@link Location}이 범위 안에 있는지 확인합니다.
+	 * 평면상에서 두 좌표의 거리의 제곱을 구합니다.
 	 *
-	 * @param center   중심
-	 * @param location 확인할 위치
-	 * @param radius   원의 반지름
+	 * @param ax 첫번째 X 좌표
+	 * @param az 첫번째 Z 좌표
+	 * @param bx 두번째 X 좌표
+	 * @param bz 두번째 Z 좌표
+	 * @return 두 좌표의 거리의 제곱
 	 */
-	public static boolean isInCircle(Location center, Location location, double radius) {
-		return center.getWorld().equals(location.getWorld()) && center.distanceSquared(location) <= (radius * radius);
+	public static double distanceSquared2D(double ax, double az, double bx, double bz) {
+		return ((bx - ax) * (bx - ax)) + ((bz - az) * (bz - az));
 	}
 
 	/**
@@ -52,8 +54,31 @@ public class LocationUtil {
 	 * @param location 확인할 위치
 	 * @param radius   원의 반지름
 	 */
-	public static boolean isInCircle(Location center, Location location, int radius) {
-		return center.getWorld().equals(location.getWorld()) && center.distanceSquared(location) <= (radius * radius);
+	public static boolean isInCircle(Location center, Location location, double radius) {
+		return center.getWorld().equals(location.getWorld()) && distanceSquared2D(center.getX(), center.getZ(), location.getX(), location.getZ()) <= (radius * radius);
+	}
+
+	public static <T extends Entity> List<T> getEntitiesInCircle(Class<T> entityType, Location center, double radius, Predicate<Entity> predicate) {
+		double centerX = center.getX(), centerZ = center.getZ(), SQUARED_RADIUS = radius * radius;
+		List<T> entities = new ArrayList<>();
+		for (Entity e : collectEntities(center, radius)) {
+			if (entityType.isAssignableFrom(e.getClass())) {
+				@SuppressWarnings("unchecked") T entity = (T) e;
+				Location entityLocation = entity.getLocation();
+				if (distanceSquared2D(centerX, centerZ, entityLocation.getX(), entityLocation.getZ()) <= SQUARED_RADIUS && (predicate == null || predicate.test(entity))) {
+					entities.add(entity);
+				}
+			}
+		}
+		return entities;
+	}
+
+	public static List<LivingEntity> getLivingEntitiesInCircle(Location center, double radius, Predicate<Entity> predicate) {
+		return getEntitiesInCircle(LivingEntity.class, center, radius, predicate);
+	}
+
+	public static List<Player> getPlayersInCircle(Location center, double radius, Predicate<Entity> predicate) {
+		return getEntitiesInCircle(Player.class, center, radius, predicate);
 	}
 
 	public static int getFloorYAt(World world, double referenceY, int x, int z) {
@@ -172,7 +197,7 @@ public class LocationUtil {
 	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Entity> T getNearestEntity(Class<T> entityType, Location center, Predicate<T> predicate) {
+	public static <T extends Entity> T getNearestEntity(Class<T> entityType, Location center, Predicate<Entity> predicate) {
 		double distance = Double.MAX_VALUE;
 		T current = null;
 
@@ -202,30 +227,7 @@ public class LocationUtil {
 	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
 	 */
 	public static <E extends Entity> E getNearestEntity(Class<E> entityType, Entity center) {
-		return getNearestEntity(entityType, center.getLocation(), new Predicate<E>() {
-			@Override
-			public boolean test(E e) {
-				if (e.equals(center)) return false;
-				if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
-					AbstractGame game = AbilityWarThread.getGame();
-					Player p = (Player) e;
-					if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p)) || !game.getParticipant(p).attributes().TARGETABLE.getValue()) {
-						return false;
-					}
-					if (game instanceof TeamGame && center instanceof Player) {
-						Participant participant = game.getParticipant(p);
-						Participant centerParticipant = game.getParticipant((Player) center);
-						TeamGame teamGame = (TeamGame) game;
-						if (centerParticipant != null) {
-							if (teamGame.hasTeam(participant) && teamGame.hasTeam(centerParticipant) && (teamGame.getTeam(participant).equals(teamGame.getTeam(centerParticipant)))) {
-								return false;
-							}
-						}
-					}
-				}
-				return true;
-			}
-		});
+		return getNearestEntity(entityType, center.getLocation(), Predicates.STRICT(center));
 	}
 
 	/**
@@ -242,13 +244,41 @@ public class LocationUtil {
 	}
 
 
-	private static Collection<Entity> collectEntities(Location location, double horizontal) {
-		ArrayList<Entity> entities = new ArrayList<>();
-		World world = location.getWorld();
-		Chunk leftTop = location.clone().add(horizontal, 0, -horizontal).getChunk();
-		Chunk rightBottom = location.clone().add(-horizontal, 0, horizontal).getChunk();
+	/**
+	 * 일정 범위 내에 있는 청크들의 엔티티 목록을 반환합니다.
+	 *
+	 * @param center     중점
+	 * @param horizontal 수평 거리
+	 * @return 엔티티 목록
+	 */
+	public static List<Entity> collectEntities(Location center, double horizontal) {
+		List<Entity> entities = new ArrayList<>();
+		World world = center.getWorld();
+		Chunk leftTop = center.clone().add(horizontal, 0, -horizontal).getChunk();
+		Chunk rightBottom = center.clone().add(-horizontal, 0, horizontal).getChunk();
 		for (int x = rightBottom.getX(); x <= leftTop.getX(); x++) {
 			for (int z = leftTop.getZ(); z <= rightBottom.getZ(); z++) {
+				entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
+			}
+		}
+		return entities;
+	}
+
+	/**
+	 * 일정 범위 내에 있는 청크들의 엔티티 목록을 반환합니다.
+	 *
+	 * @param center 중심 청크
+	 * @param minX   엔티티 목록을 확인할 청크들의 X 좌표 중 가장 작은 값 (중심 청크 기준)
+	 * @param minZ   엔티티 목록을 확인할 청크들의 Z 좌표 중 가장 작은 값 (중심 청크 기준)
+	 * @param maxX   엔티티 목록을 확인할 청크들의 X 좌표 중 가장 큰 값 (중심 청크 기준)
+	 * @param maxZ   엔티티 목록을 확인할 청크들의 Z 좌표 중 가장 큰 값 (중심 청크 기준)
+	 * @return 엔티티 목록
+	 */
+	public static List<Entity> collectEntities(Chunk center, int minX, int minZ, int maxX, int maxZ) {
+		List<Entity> entities = new ArrayList<>();
+		World world = center.getWorld();
+		for (int x = minX; x <= maxX; x++) {
+			for (int z = minZ; z <= maxZ; z++) {
 				entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
 			}
 		}
@@ -259,19 +289,20 @@ public class LocationUtil {
 	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
 	 *
 	 * @param entityType 탐색할 엔티티 타입
-	 * @param location   중점
+	 * @param center     중점
 	 * @param horizontal 수평 거리
 	 * @param vertical   수직 거리
 	 * @param predicate  커스텀 조건
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
-	public static <T extends Entity> ArrayList<T> getNearbyEntities(Class<T> entityType, Location location, double horizontal, double vertical, Predicate<T> predicate) {
+	public static <T extends Entity> ArrayList<T> getNearbyEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<Entity> predicate) {
+		double centerX = center.getX(), centerZ = center.getZ();
 		ArrayList<T> entities = new ArrayList<>();
-		for (Entity e : collectEntities(location, horizontal)) {
+		for (Entity e : collectEntities(center, horizontal)) {
 			if (entityType.isAssignableFrom(e.getClass())) {
 				@SuppressWarnings("unchecked") T entity = (T) e;
 				Location entityLocation = entity.getLocation();
-				if (location.distanceSquared(entityLocation) <= (horizontal * horizontal) && NumberUtil.subtract(location.getY(), entityLocation.getY()) <= vertical && (predicate == null || predicate.test(entity))) {
+				if (distanceSquared2D(centerX, centerZ, entityLocation.getX(), entityLocation.getZ()) <= (horizontal * horizontal) && NumberUtil.subtract(center.getY(), entityLocation.getY()) <= vertical && (predicate == null || predicate.test(entity))) {
 					entities.add(entity);
 				}
 			}
@@ -291,28 +322,7 @@ public class LocationUtil {
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
 	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Entity center, double horizontal, double vertical) {
-		return getNearbyEntities(entityType, center.getLocation(), horizontal, vertical, new Predicate<E>() {
-			@Override
-			public boolean test(E e) {
-				if (e.equals(center)) return false;
-				if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
-					AbstractGame game = AbilityWarThread.getGame();
-					Player p = (Player) e;
-					if (!game.isParticipating(p) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(p)) || !game.getParticipant(p).attributes().TARGETABLE.getValue()) {
-						return false;
-					}
-					if (game instanceof TeamGame && center instanceof Player) {
-						Participant participant = game.getParticipant(p);
-						TeamGame teamGame = (TeamGame) game;
-						Participant centerParticipant = game.getParticipant((Player) center);
-						if (centerParticipant != null) {
-							return !teamGame.hasTeam(participant) || !teamGame.hasTeam(centerParticipant) || (!teamGame.getTeam(participant).equals(teamGame.getTeam(centerParticipant)));
-						}
-					}
-				}
-				return true;
-			}
-		});
+		return getNearbyEntities(entityType, center.getLocation(), horizontal, vertical, Predicates.STRICT(center));
 	}
 
 	/**
@@ -326,17 +336,7 @@ public class LocationUtil {
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
 	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Location center, double horizontal, double vertical) {
-		return getNearbyEntities(entityType, center, horizontal, vertical, new Predicate<E>() {
-			@Override
-			public boolean test(E e) {
-				if (AbilityWarThread.isGameTaskRunning() && e instanceof Player) {
-					AbstractGame game = AbilityWarThread.getGame();
-					Player p = (Player) e;
-					return game.isParticipating(p) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(p)) && game.getParticipant(p).attributes().TARGETABLE.getValue();
-				}
-				return true;
-			}
-		});
+		return getNearbyEntities(entityType, center, horizontal, vertical, Predicates.PARTICIPANTS());
 	}
 
 	public static ArrayList<Damageable> getNearbyDamageableEntities(Player p, double horizontal, double vertical) {
@@ -359,7 +359,7 @@ public class LocationUtil {
 		return a.getMinX() < b.getMaxX() && b.getMinX() < a.getMaxX() && a.getMinY() < b.getMaxY() && b.getMinY() < a.getMaxY() && a.getMinZ() < b.getMaxZ() && b.getMinZ() < a.getMaxZ();
 	}
 
-	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<T> predicate) {
+	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<Entity> predicate) {
 		List<T> entities = new ArrayList<>();
 		World world = boundingBox.getLocation().getWorld();
 		Chunk chunk = boundingBox.getLocation().getChunk();
@@ -385,17 +385,7 @@ public class LocationUtil {
 	}
 
 	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox) {
-		return getConflictingEntities(entityType, boundingBox, new Predicate<T>() {
-			@Override
-			public boolean test(T t) {
-				if (AbilityWarThread.isGameTaskRunning() && t instanceof Player) {
-					AbstractGame game = AbilityWarThread.getGame();
-					Player p = (Player) t;
-					return game.isParticipating(p) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(p)) && game.getParticipant(p).attributes().TARGETABLE.getValue();
-				}
-				return true;
-			}
-		});
+		return getConflictingEntities(entityType, boundingBox, Predicates.PARTICIPANTS());
 	}
 
 	public static List<Damageable> getConflictingDamageables(BoundingBox boundingBox) {
@@ -406,17 +396,103 @@ public class LocationUtil {
 
 		public Locations floor(double referenceY) {
 			for (Location location : this) {
-				location.setY(getFloorYAt(location.getWorld(), referenceY, location.getBlockX(), location.getBlockZ()) + 1);
+				location.setY(getFloorYAt(location.getWorld(), referenceY, location.getBlockX(), location.getBlockZ()) + 0.1);
 			}
 			return this;
 		}
 
 		public Locations highest() {
 			for (Location location : this) {
-				location.setY(location.getWorld().getHighestBlockYAt(location) + 1);
+				location.setY(location.getWorld().getHighestBlockYAt(location) + 0.1);
 			}
 			return this;
 		}
 
 	}
+
+	public static class Predicates {
+
+		private Predicates() {
+		}
+
+		public static Predicate<Entity> STRICT(Entity criterion) {
+			return new Predicate<Entity>() {
+				@Override
+				public boolean test(Entity entity) {
+					if (entity.equals(criterion)) return false;
+					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
+						AbstractGame game = AbilityWarThread.getGame();
+						Player player = (Player) entity;
+						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
+							return false;
+						}
+						if (game instanceof TeamGame && criterion instanceof Player) {
+							TeamGame teamGame = (TeamGame) game;
+							Participant criteriaParticipant = game.getParticipant((Player) criterion);
+							if (criteriaParticipant != null) {
+								Participant participant = game.getParticipant(player);
+								return !teamGame.hasTeam(participant) || !teamGame.hasTeam(criteriaParticipant) || (!teamGame.getTeam(participant).equals(teamGame.getTeam(criteriaParticipant)));
+							}
+						}
+					}
+					return true;
+				}
+			};
+		}
+
+		public static Predicate<Entity> PARTICIPANTS_EXCLUDING_TEAMS(Entity criterion) {
+			return new Predicate<Entity>() {
+				@Override
+				public boolean test(Entity entity) {
+					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
+						AbstractGame game = AbilityWarThread.getGame();
+						Player player = (Player) entity;
+						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
+							return false;
+						}
+						if (game instanceof TeamGame && criterion instanceof Player) {
+							TeamGame teamGame = (TeamGame) game;
+							Participant criteriaParticipant = game.getParticipant((Player) criterion);
+							if (criteriaParticipant != null) {
+								Participant participant = game.getParticipant(player);
+								return !teamGame.hasTeam(participant) || !teamGame.hasTeam(criteriaParticipant) || (!teamGame.getTeam(participant).equals(teamGame.getTeam(criteriaParticipant)));
+							}
+						}
+					}
+					return true;
+				}
+			};
+		}
+
+		public static Predicate<Entity> PARTICIPANTS_UNEQUAL(Entity criterion) {
+			return new Predicate<Entity>() {
+				@Override
+				public boolean test(Entity entity) {
+					if (entity.equals(criterion)) return false;
+					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
+						AbstractGame game = AbilityWarThread.getGame();
+						Player player = (Player) entity;
+						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
+					}
+					return true;
+				}
+			};
+		}
+
+		public static Predicate<Entity> PARTICIPANTS() {
+			return new Predicate<Entity>() {
+				@Override
+				public boolean test(Entity entity) {
+					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
+						AbstractGame game = AbilityWarThread.getGame();
+						Player player = (Player) entity;
+						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
+					}
+					return true;
+				}
+			};
+		}
+
+	}
+
 }

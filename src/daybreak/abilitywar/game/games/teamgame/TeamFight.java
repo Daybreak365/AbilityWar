@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 	protected void progressGame(int seconds) {
 		switch (seconds) {
 			case 1:
-				ArrayList<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&6==== &e게임 참여자 목록 &6===="));
+				List<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&6==== &e게임 참여자 목록 &6===="));
 				int count = 0;
 				for (Participant p : getParticipants()) {
 					count++;

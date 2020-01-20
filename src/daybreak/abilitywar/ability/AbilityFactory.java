@@ -1,7 +1,5 @@
 package daybreak.abilitywar.ability;
 
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.AbilitySettings.SettingObject;
@@ -20,6 +18,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +30,7 @@ public class AbilityFactory {
 	}
 
 	private static final HashMap<String, Class<? extends AbilityBase>> usedNames = new HashMap<>();
-	private static final HashMap<Class<? extends AbilityBase>, AbilityRegistration<? extends AbilityBase>> registeredAbilities = new HashMap<>();
+	private static final HashMap<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
 
 	/**
 	 * 능력을 등록합니다.
@@ -46,11 +45,11 @@ public class AbilityFactory {
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
 		if (!registeredAbilities.containsKey(abilityClass)) {
 			try {
-				AbilityRegistration<?> registeration = new AbilityRegistration<>(abilityClass);
+				AbilityRegistration registeration = new AbilityRegistration(abilityClass);
 				String name = registeration.getManifest().Name();
 				if (!usedNames.containsKey(name)) {
-					usedNames.put(name, abilityClass);
 					registeredAbilities.put(abilityClass, registeration);
+					usedNames.put(name, abilityClass);
 
 					for (Field field : abilityClass.getFields()) {
 						if (field.getType().equals(SettingObject.class) && Modifier.isStatic(field.getModifiers())) {
@@ -58,21 +57,19 @@ public class AbilityFactory {
 						}
 					}
 				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&',
-							"&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
+					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
-			} catch (Exception ex) {
-				if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-					Messager.sendConsoleErrorMessage(ex.getMessage());
+			} catch (IllegalAccessException | NoSuchMethodException e) {
+				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
+					Messager.sendConsoleErrorMessage(e.getMessage());
 				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&',
-							"&e" + abilityClass.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록중 오류가 발생하였습니다."));
 				}
 			}
 		}
 	}
 
-	public static AbilityRegistration<?> getRegisteration(Class<? extends AbilityBase> clazz) {
+	public static AbilityRegistration getRegisteration(Class<? extends AbilityBase> clazz) {
 		return registeredAbilities.get(clazz);
 	}
 
@@ -81,14 +78,7 @@ public class AbilityFactory {
 	}
 
 	private static boolean containsName(String name) {
-		for (AbilityRegistration<?> r : registeredAbilities.values()) {
-			AbilityManifest manifest = r.getManifest();
-			if (manifest.Name().equalsIgnoreCase(name)) {
-				return true;
-			}
-		}
-
-		return false;
+		return usedNames.containsKey(name);
 	}
 
 	static {
@@ -159,32 +149,10 @@ public class AbilityFactory {
 	}
 
 	/**
-	 * 등록된 능력들의 이름을 String ArrayList로 반환합니다. AbilityManifest가 존재하지 않는 능력은 포함되지 않습니다.
+	 * 등록된 능력들의 이름을 String List로 반환합니다. AbilityManifest가 존재하지 않는 능력은 포함되지 않습니다.
 	 */
-	public static ArrayList<String> nameValues() {
+	public static List<String> nameValues() {
 		return new ArrayList<>(usedNames.keySet());
-	}
-
-	public static ArrayList<String> nameValues(Rank rank) {
-		ArrayList<String> values = new ArrayList<>();
-		for (AbilityRegistration<?> registration : registeredAbilities.values()) {
-			AbilityManifest manifest = registration.getManifest();
-			if (manifest.Rank().equals(rank)) {
-				values.add(manifest.Name());
-			}
-		}
-		return values;
-	}
-
-	public static ArrayList<String> nameValues(Species species) {
-		ArrayList<String> values = new ArrayList<>();
-		for (AbilityRegistration<?> registration : registeredAbilities.values()) {
-			AbilityManifest manifest = registration.getManifest();
-			if (manifest.Species().equals(species)) {
-				values.add(manifest.Name());
-			}
-		}
-		return values;
 	}
 
 	/**
@@ -198,15 +166,15 @@ public class AbilityFactory {
 		return usedNames.get(name);
 	}
 
-	public static class AbilityRegistration<T extends AbilityBase> {
+	public static class AbilityRegistration {
 
-		private final Class<T> clazz;
-		private final Constructor<T> constructor;
+		private final Class<? extends AbilityBase> clazz;
+		private final Constructor<? extends AbilityBase> constructor;
 		private final AbilityManifest manifest;
 		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 
 		@SuppressWarnings("unchecked")
-		private AbilityRegistration(Class<T> clazz) throws NoSuchMethodException, SecurityException {
+		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NoSuchMethodException, SecurityException {
 			this.clazz = clazz;
 
 			this.constructor = clazz.getConstructor(Participant.class);
@@ -228,11 +196,11 @@ public class AbilityFactory {
 			this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
 		}
 
-		public Class<T> getAbilityClass() {
+		public Class<? extends AbilityBase> getAbilityClass() {
 			return clazz;
 		}
 
-		public Constructor<T> getConstructor() {
+		public Constructor<? extends AbilityBase> getConstructor() {
 			return constructor;
 		}
 

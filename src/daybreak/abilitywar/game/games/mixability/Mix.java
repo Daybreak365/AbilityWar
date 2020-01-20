@@ -12,13 +12,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.List;
 
 @AbilityManifest(Name = "믹스", Rank = AbilityManifest.Rank.SPECIAL, Species = AbilityManifest.Species.OTHERS)
 public class Mix extends AbilityBase {
 
 	private static String[] formatAbilityInfo(AbilityBase ability) {
-		ArrayList<String> list = Messager.asList(
+		List<String> list = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
 		list.addAll(ability.getDescription());
 		return list.toArray(new String[0]);

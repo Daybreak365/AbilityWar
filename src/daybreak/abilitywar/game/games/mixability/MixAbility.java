@@ -26,7 +26,6 @@ import org.bukkit.plugin.Plugin;
 
 import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -48,7 +47,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 	protected void progressGame(int seconds) {
 		switch (seconds) {
 			case 1:
-				ArrayList<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&6==== &e게임 참여자 목록 &6===="));
+				List<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&6==== &e게임 참여자 목록 &6===="));
 				int count = 0;
 				for (Participant p : getParticipants()) {
 					count++;

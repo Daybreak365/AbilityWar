@@ -74,7 +74,7 @@ public class Reaper extends AbilityBase {
 
 	private int soulCount = 0;
 
-	private final Vectors wingVectors = new Circle(0.6, 20).getVectors();
+	private final Circle wingVectors = Circle.of(0.6, 20);
 	private Vectors souls;
 
 	private int tempSoul;
@@ -101,13 +101,13 @@ public class Reaper extends AbilityBase {
 		protected void onProcess(int count) {
 			getPlayer().setVelocity(getPlayer().getVelocity().multiply(MULTIPLY));
 			Location playerLocation = getPlayer().getLocation().clone().add(0, 1, 0);
-			for (Location location : wingVectors.clone().rotateAroundAxisY(playerLocation.getYaw()).rotateAroundAxis(playerLocation.getDirection().clone().setY(0).normalize(), 52).getAsLocations(playerLocation)) {
+			for (Location location : wingVectors.clone().rotateAroundAxisY(playerLocation.getYaw()).rotateAroundAxis(playerLocation.getDirection().clone().setY(0).normalize(), 52).toLocations(playerLocation)) {
 				ParticleLib.REDSTONE.spawnParticle(location, BLACK);
 			}
-			for (Location location : wingVectors.clone().rotateAroundAxisY(playerLocation.getYaw()).rotateAroundAxis(playerLocation.getDirection().clone().setY(0).normalize(), -52).getAsLocations(playerLocation)) {
+			for (Location location : wingVectors.clone().rotateAroundAxisY(playerLocation.getYaw()).rotateAroundAxis(playerLocation.getDirection().clone().setY(0).normalize(), -52).toLocations(playerLocation)) {
 				ParticleLib.REDSTONE.spawnParticle(location, BLACK);
 			}
-			for (Location location : souls.rotateAroundAxisY(6).getAsLocations(playerLocation)) {
+			for (Location location : souls.rotateAroundAxisY(6).toLocations(playerLocation)) {
 				ParticleLib.REDSTONE.spawnParticle(location, SOUL_COLOUR);
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(location, 1.5, 1.5)) {
 					if (!getPlayer().equals(damageable)) {
@@ -138,7 +138,7 @@ public class Reaper extends AbilityBase {
 			count++;
 			getPlayer().setVelocity(getPlayer().getVelocity().multiply(MULTIPLY));
 			Location playerLocation = getPlayer().getLocation().clone().add(0, 1, 0);
-			for (Location location : souls.rotateAroundAxisY(6).getAsLocations(playerLocation)) {
+			for (Location location : souls.rotateAroundAxisY(6).toLocations(playerLocation)) {
 				Location realLocation = new Line(location, playerLocation).setLocationAmount(25).getLocation(location, count);
 				ParticleLib.REDSTONE.spawnParticle(realLocation, SOUL_COLOUR);
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(realLocation, 1.5, 1.5)) {
@@ -226,7 +226,7 @@ public class Reaper extends AbilityBase {
 	@SubscribeEvent
 	private void onPlayerDeath(PlayerDeathEvent e) {
 		if (getGame().isParticipating(e.getEntity())) {
-			Locations locations = sphere.getAsLocations(e.getEntity().getLocation().clone().add(0, 1, 0));
+			Locations locations = sphere.toLocations(e.getEntity().getLocation().clone().add(0, 1, 0));
 			new Timer(1200) {
 				@Override
 				protected void onProcess(int count) {
@@ -266,7 +266,7 @@ public class Reaper extends AbilityBase {
 
 	@SubscribeEvent
 	private void onEntityDeath(EntityDeathEvent e) {
-		Locations locations = sphere.getAsLocations(e.getEntity().getLocation().clone().add(0, 1, 0));
+		Locations locations = sphere.toLocations(e.getEntity().getLocation().clone().add(0, 1, 0));
 		new Timer(1200) {
 			@Override
 			protected void onProcess(int count) {

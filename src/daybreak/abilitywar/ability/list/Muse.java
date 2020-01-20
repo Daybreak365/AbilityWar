@@ -9,6 +9,7 @@ import daybreak.abilitywar.config.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -45,95 +46,96 @@ public class Muse extends AbilityBase {
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
+	private static final RGB PINK = RGB.of(255, 189, 235);
+	private static final Note D = Note.natural(0, Tone.D);
+	private static final Note FSharp = Note.sharp(1, Tone.F);
+	private static final Note LowA = Note.natural(0, Tone.A);
+	private static final Note A = Note.natural(1, Tone.A);
+	private double currentRadius;
 	private Location center = null;
 
-	private final DurationTimer skill = new DurationTimer(90, cooldownTimer) {
+	private final DurationTimer skill = new DurationTimer(120, cooldownTimer) {
 
 		private int count;
 		private int soundCount;
-		private Circle circle;
 
 		@Override
 		public void onDurationStart() {
 			count = 1;
 			soundCount = 1;
+			currentRadius = 11;
 			center = getPlayer().getLocation();
-			circle = new Circle(count, count * 6);
 		}
 
 		@Override
 		public void onDurationProcess(int seconds) {
-			circle.setRadius(count).setAmount(count * 6);
-
 			if (count <= 10) {
-				for (Location l : circle.getVectors().getAsLocations(center).floor(center.getY())) {
-					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
+				double playerY = getPlayer().getLocation().getY();
+				for (Location loc : Circle.iterableOf(center, count, count * 16)) {
+					loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
+					ParticleLib.REDSTONE.spawnParticle(loc, PINK);
 				}
 
-				if (count == 1) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.C));
-					}
-				} else if (count == 2) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.E));
-					}
-				} else if (count == 3) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.G));
-					}
-				} else if (count == 4) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(1, Tone.C));
-					}
-				} else if (count == 5) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.G));
-					}
-				} else if (count == 6) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.E));
-					}
-				} else if (count == 7) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.C));
-					}
-				} else if (count == 8) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.E));
-					}
-				} else if (count == 9) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(0, Tone.G));
-					}
-				} else if (count == 10) {
-					for (Player p : LocationUtil.getNearbyPlayers(center, 20, 20)) {
-						SoundLib.BELL.playInstrument(p, Note.natural(1, Tone.C));
-					}
+				final Note note;
+				switch (count) {
+					case 1:
+					case 4:
+					case 7:
+					case 10:
+						note = D;
+						break;
+					case 2:
+					case 6:
+					case 8:
+						note = FSharp;
+						break;
+					case 3:
+					case 5:
+					case 9:
+						note = LowA;
+						break;
+					default:
+						note = null;
+						break;
 				}
 
+				SoundLib.BELL.playInstrument(LocationUtil.getNearbyPlayers(center, 20, 20), note);
 				count++;
 			} else {
-				for (Location l : circle.getVectors().getAsLocations(center).floor(center.getY())) {
-					ParticleLib.NOTE.spawnParticle(l.subtract(0, 1, 0), 0, 0, 0, 1);
+				if (currentRadius > 1) currentRadius -= 0.115;
+				double playerY = getPlayer().getLocation().getY();
+				for (Location loc : Circle.iterableOf(center, currentRadius, count * 16)) {
+					loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
+					ParticleLib.REDSTONE.spawnParticle(loc, PINK);
 				}
 
-				for (Player p : LocationUtil.getNearbyPlayers(center, 11, 200)) {
-					PotionEffects.GLOWING.addPotionEffect(p, 4, 0, true);
-
-					if (soundCount % 5 == 0) {
-						soundCount = 1;
-
-						SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
+				if (soundCount % 5 == 0) {
+					soundCount = 1;
+					for (LivingEntity livingEntity : LocationUtil.getLivingEntitiesInCircle(center, currentRadius, LocationUtil.Predicates.PARTICIPANTS())) {
+						PotionEffects.GLOWING.addPotionEffect(livingEntity, 4, 0, true);
+						if (livingEntity instanceof Player) SoundLib.BELL.playInstrument((Player) livingEntity, A);
+					}
+				} else {
+					for (LivingEntity livingEntity : LocationUtil.getLivingEntitiesInCircle(center, currentRadius, LocationUtil.Predicates.PARTICIPANTS())) {
+						PotionEffects.GLOWING.addPotionEffect(livingEntity, 4, 0, true);
 					}
 				}
-
 				soundCount++;
 			}
 		}
 
 		@Override
 		public void onDurationEnd() {
+			for (Player player : LocationUtil.getPlayersInCircle(center, currentRadius, LocationUtil.Predicates.PARTICIPANTS())) {
+				SoundLib.BELL.playInstrument(player, D);
+				SoundLib.BELL.playInstrument(player, FSharp);
+				SoundLib.BELL.playInstrument(player, A);
+			}
+			center = null;
+		}
+
+		@Override
+		public void onSilentEnd() {
 			center = null;
 		}
 
@@ -157,7 +159,7 @@ public class Muse extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11)) {
+			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
 			}
@@ -167,7 +169,7 @@ public class Muse extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
 		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11)) {
+			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
 			}
@@ -177,7 +179,7 @@ public class Muse extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
 		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), 11)) {
+			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
 			}

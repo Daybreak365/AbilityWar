@@ -80,7 +80,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	protected void progressGame(int Seconds) {
 		switch (Seconds) {
 			case 1:
-				ArrayList<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&d==== &f게임 참여자 목록 &d===="));
+				List<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&d==== &f게임 참여자 목록 &d===="));
 				int count = 0;
 				for (Participant p : getParticipants()) {
 					count++;

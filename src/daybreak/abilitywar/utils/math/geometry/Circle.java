@@ -1,38 +1,60 @@
 package daybreak.abilitywar.utils.math.geometry;
 
 import daybreak.abilitywar.utils.math.FastMath;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
+import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class Circle {
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-	private double radius;
-	private int amount;
+public class Circle extends Shape {
 
-	public Circle(double radius, int amount) {
-		this.radius = radius;
-		this.amount = amount;
+	private static final double TWICE_PI = 2 * Math.PI;
+
+	public static Iterable<Location> iterableOf(Location center, double radius, int amount) {
+		return new Iterable<Location>() {
+			@Override
+			public Iterator<Location> iterator() {
+				return new Iterator<Location>() {
+					private int cursor = 0;
+
+					@Override
+					public boolean hasNext() {
+						return cursor < amount;
+					}
+
+					@Override
+					public Location next() {
+						if (cursor >= amount) throw new NoSuchElementException();
+						cursor++;
+						double radians = (TWICE_PI / amount) * cursor;
+						return center.clone().add(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius);
+					}
+				};
+			}
+		};
 	}
 
-	public Circle setRadius(double radius) {
-		if (radius > 0) this.radius = radius;
-		return this;
-	}
-
-	public Circle setAmount(int amount) {
-		if (amount > 0) this.amount = amount;
-		return this;
-	}
-
-	public Vectors getVectors() {
-		Vectors vectors = new Vectors();
-		for (double angle = 360.0 / amount; angle < 360.0 && vectors.size() <= amount; angle += (360.0 / amount)) {
-			double radians = Math.toRadians(angle);
-			double sin = FastMath.sin(radians), cos = FastMath.cos(radians);
-			double x = cos * radius, z = sin * radius;
-			vectors.add(new Vector(x, 0, z));
+	public static Circle of(double radius, int amount) {
+		Circle circle = new Circle();
+		final double divided = TWICE_PI / amount;
+		for (double radians = divided; circle.size() <= amount; radians += divided) {
+			circle.add(new Vector(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius));
 		}
-		return vectors;
+		return circle;
+	}
+
+	private Circle() {
+		super();
+	}
+
+	@Override
+	public Circle clone() {
+		Circle circle = new Circle();
+		for (Vector vector : this) {
+			circle.add(vector.clone());
+		}
+		return circle;
 	}
 
 }

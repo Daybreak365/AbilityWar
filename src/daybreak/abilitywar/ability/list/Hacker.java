@@ -99,8 +99,8 @@ public class Hacker extends AbilityBase {
 	}.setPeriod(1);
 
 	private final int amount = 25;
-	private final Vectors top = new Circle(1, amount).getVectors();
-	private final Vectors bottom = new Circle(1, amount).getVectors();
+	private final Vectors top = Circle.of(1, amount);
+	private final Vectors bottom = Circle.of(1, amount);
 	private final RGB PURPLE = RGB.of(168, 121, 171);
 
 	private final Timer Particle = new Timer(DurationTick) {
@@ -129,9 +129,9 @@ public class Hacker extends AbilityBase {
 					y -= 0.1;
 				}
 
-				for (Location location : top.getAsLocations(target.getLocation().add(0, y, 0)))
+				for (Location location : top.toLocations(target.getLocation().add(0, y, 0)))
 					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
-				for (Location location : bottom.getAsLocations(target.getLocation().add(0, 2.0 - y, 0)))
+				for (Location location : bottom.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
 					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
 			}
 		}

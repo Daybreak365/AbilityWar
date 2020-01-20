@@ -11,7 +11,6 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -30,7 +29,7 @@ public class ShowmanShip extends AbilityBase {
 	private final RGB WEAK = new RGB(214, 255, 212);
 	private final RGB POWER = new RGB(255, 184, 150);
 	private final RGB POWERFUL = new RGB(255, 59, 59);
-	private final Vectors circle = new Circle(10, 100).getVectors();
+	private final Circle circle = Circle.of(10, 100);
 
 	private final Timer Passive = new Timer() {
 
@@ -54,7 +53,7 @@ public class ShowmanShip extends AbilityBase {
 				color = POWERFUL;
 			}
 
-			for (Location l : circle.getAsLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+			for (Location l : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer(), l, color);
 			}
 		}

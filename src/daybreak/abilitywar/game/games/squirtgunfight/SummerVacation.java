@@ -259,7 +259,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	}
 
 	public void broadcastPluginDescription() {
-		ArrayList<String> msg = Messager.asList(
+		List<String> msg = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&eSummer Vacation &f- &c여름 휴가"),
 				ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
 				ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"),

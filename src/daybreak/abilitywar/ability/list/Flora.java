@@ -12,7 +12,6 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
@@ -70,7 +69,7 @@ public class Flora extends AbilityBase {
 			}
 
 			Location center = getPlayer().getLocation();
-			for (Location location : radius.vectors.getAsLocations(center).floor(center.getY())) {
+			for (Location location : radius.circle.toLocations(center).floor(center.getY())) {
 				ParticleLib.REDSTONE.spawnParticle(location.subtract(0, y, 0), type.color);
 			}
 
@@ -142,28 +141,28 @@ public class Flora extends AbilityBase {
 
 	private enum Radius {
 
-		BIG(6, new Circle(6, 50).getVectors()) {
+		BIG(6, Circle.of(6, 80)) {
 			protected Radius next() {
 				return Radius.MIDIUM;
 			}
 		},
-		MIDIUM(4, new Circle(4, 50).getVectors()) {
+		MIDIUM(4, Circle.of(4, 60)) {
 			protected Radius next() {
 				return Radius.SMALL;
 			}
 		},
-		SMALL(2, new Circle(2, 50).getVectors()) {
+		SMALL(2, Circle.of(2, 40)) {
 			protected Radius next() {
 				return Radius.BIG;
 			}
 		};
 
 		private final int radius;
-		private final Vectors vectors;
+		private final Circle circle;
 
-		Radius(int radius, Vectors vectors) {
+		Radius(int radius, Circle circle) {
 			this.radius = radius;
-			this.vectors = vectors;
+			this.circle = circle;
 		}
 
 		protected abstract Radius next();

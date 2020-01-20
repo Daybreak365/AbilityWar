@@ -53,7 +53,7 @@ public class SuperNova extends AbilityBase {
 		@Override
 		public void onProcess(int seconds) {
 			double count = ((Size + 1) - seconds) / 1.2;
-			for (Location location : LocationUtil.getSphere(count, 5).getAsLocations(center)) {
+			for (Location location : LocationUtil.getSphere(count, 5).toLocations(center)) {
 				location.getWorld().createExplosion(location, 2);
 				ParticleLib.SPELL.spawnParticle(location, 0, 0, 0, 1);
 			}

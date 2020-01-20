@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -66,7 +67,7 @@ public class Configuration {
 
 	private static final EnumMap<ConfigNodes, Cache> cache = new EnumMap<>(ConfigNodes.class);
 
-	@SuppressWarnings("unchecked") // Private only method
+	@SuppressWarnings("unchecked") // private only method
 	private static <T> T get(ConfigNodes configNode, Class<T> clazz) throws IllegalStateException {
 		if (!isLoaded()) {
 			logger.log(Level.SEVERE, "콘피그가 불러와지지 않은 상태에서 접근을 시도하였습니다.");
@@ -82,7 +83,7 @@ public class Configuration {
 		return (T) cache.get(configNode).getValue();
 	}
 
-	@SuppressWarnings("unchecked") // Private only method
+	@SuppressWarnings("unchecked") // private only method
 	private static <T> List<T> getList(ConfigNodes configNode, Class<T> clazz) throws IllegalStateException {
 		List<?> list = (List<?>) get(configNode, List.class);
 		List<T> newList = new ArrayList<>();
@@ -100,9 +101,6 @@ public class Configuration {
 
 	public static class Settings {
 
-		/**
-		 * String Config
-		 */
 		public static String getString(ConfigNodes node) {
 			return get(node, String.class);
 		}
@@ -156,6 +154,7 @@ public class Configuration {
 		public static boolean getVisualEffect() {
 			return getBoolean(ConfigNodes.GAME_VISUAL_EFFECT);
 		}
+
 		public static boolean isBlackListed(String abilityName) {
 			return getBlackList().contains(abilityName);
 		}
@@ -164,10 +163,25 @@ public class Configuration {
 			return getStringList(ConfigNodes.GAME_BLACKLIST);
 		}
 
+		public static void addBlackListAll(Collection<String> abilityNames) {
+			List<String> list = getStringList(ConfigNodes.GAME_BLACKLIST);
+			if (!list.containsAll(abilityNames)) {
+				list.addAll(abilityNames);
+				modifyProperty(ConfigNodes.GAME_BLACKLIST, list);
+			}
+		}
+
 		public static void addBlackList(String abilityName) {
 			List<String> list = getStringList(ConfigNodes.GAME_BLACKLIST);
 			if (!list.contains(abilityName)) {
 				list.add(abilityName);
+				modifyProperty(ConfigNodes.GAME_BLACKLIST, list);
+			}
+		}
+
+		public static void removeBlackListAll(Collection<String> abilityNames) {
+			List<String> list = getStringList(ConfigNodes.GAME_BLACKLIST);
+			if (list.removeAll(abilityNames)) {
 				modifyProperty(ConfigNodes.GAME_BLACKLIST, list);
 			}
 		}

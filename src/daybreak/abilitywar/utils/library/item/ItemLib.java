@@ -31,6 +31,7 @@ public class ItemLib {
 
 	public static ColouredItem WOOL = new ColouredItem("WOOL");
 	public static ColouredItem STAINED_GLASS = new ColouredItem("STAINED_GLASS");
+	public static ColouredItem STAINED_GLASS_PANE = new ColouredItem("STAINED_GLASS_PANE");
 
 	public static class ColouredItem {
 

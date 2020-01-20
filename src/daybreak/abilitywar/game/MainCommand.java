@@ -720,7 +720,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				|| label.equalsIgnoreCase("va") || label.equalsIgnoreCase("능력자")) {
 			switch (args.length) {
 				case 1:
-					ArrayList<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "skip", "anew",
+					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "skip", "anew",
 							"config", "util", "script", "gamemode", "install", "team", "specialthanks");
 					if (args[0].isEmpty()) {
 						return subCommands;
@@ -730,7 +730,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					}
 				case 2:
 					if (args[0].equalsIgnoreCase("config")) {
-						ArrayList<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death");
+						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death");
 						if (args[1].isEmpty()) {
 							return configs;
 						} else {
@@ -738,7 +738,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							return configs;
 						}
 					} else if (args[0].equalsIgnoreCase("util")) {
-						ArrayList<String> utils = Messager.asList("abi", "spec", "ablist", "blacklist", "resetcool",
+						List<String> utils = Messager.asList("abi", "spec", "ablist", "blacklist", "resetcool",
 								"resetduration", "kit", "inv", "team");
 						if (args[1].isEmpty()) {
 							return utils;
@@ -755,7 +755,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							return scripts;
 						}
 					} else if (args[0].equalsIgnoreCase("team")) {
-						ArrayList<String> commands = Messager.asList("chat", "info");
+						List<String> commands = Messager.asList("chat", "info");
 						if (args[1].isEmpty()) {
 							return commands;
 						} else {
@@ -777,7 +777,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 								return players;
 							}
 						} else if (args[1].equalsIgnoreCase("team")) {
-							ArrayList<String> teamUtils = Messager.asList("list", "set", "new", "remove", "divide");
+							List<String> teamUtils = Messager.asList("list", "set", "new", "remove", "divide");
 							if (args[2].isEmpty()) {
 								return teamUtils;
 							} else {

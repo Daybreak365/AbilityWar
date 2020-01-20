@@ -11,7 +11,6 @@ import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.ChatColor;
@@ -70,7 +69,7 @@ public class Vampire extends AbilityBase {
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final int distance = DistanceConfig.getValue();
-	private final Vectors circle = new Circle(distance, distance * 15).getVectors();
+	private final Circle circle = Circle.of(distance, distance * 15);
 	private static final ParticleLib.RGB COLOR_BLOOD_RED = new ParticleLib.RGB(138, 7, 7);
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 10, cooldownTimer) {
 		int count;
@@ -128,7 +127,7 @@ public class Vampire extends AbilityBase {
 				blood = 0;
 				count = 1;
 			}
-			for (Location location : circle.getAsLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
+			for (Location location : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 				ParticleLib.REDSTONE.spawnParticle(location, COLOR_BLOOD_RED);
 			}
 			for (Map.Entry<Damageable, Line> entry : lines.entrySet()) {

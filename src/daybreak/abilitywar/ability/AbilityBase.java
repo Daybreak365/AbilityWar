@@ -89,7 +89,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		if (!AbilityFactory.isRegistered(getClass())) {
 			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
-		AbilityRegistration<?> registry = AbilityFactory.getRegisteration(getClass());
+		AbilityRegistration registry = AbilityFactory.getRegisteration(getClass());
 		this.manifest = registry.getManifest();
 		this.eventhandlers = registry.getEventhandlers();
 

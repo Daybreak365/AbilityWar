@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 
 public class Messager {
@@ -72,7 +75,7 @@ public class Messager {
 	 * 능력 설명을 구성합니다.
 	 */
 	public static String[] formatAbilityInfo(AbilityBase ability) {
-		ArrayList<String> list = Messager.asList(
+		List<String> list = Messager.asList(
 				Messager.formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
 				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + (ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
 		list.addAll(ability.getDescription());
@@ -114,8 +117,12 @@ public class Messager {
 		}
 	}
 
-	public static ArrayList<String> asList(String... strings) {
+	public static List<String> asList(String... strings) {
 		return new ArrayList<>(Arrays.asList(strings));
+	}
+
+	public static Set<String> asSet(String... strings) {
+		return new HashSet<>(Arrays.asList(strings));
 	}
 
 	/**
