@@ -46,6 +46,7 @@ public class Muse extends AbilityBase {
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
+	private static final Circle headCircle = Circle.of(0.5, 10);
 	private static final RGB PINK = RGB.of(255, 189, 235);
 	private static final Note D = Note.natural(0, Tone.D);
 	private static final Note FSharp = Note.sharp(1, Tone.F);
@@ -100,11 +101,10 @@ public class Muse extends AbilityBase {
 				}
 
 				SoundLib.BELL.playInstrument(LocationUtil.getNearbyPlayers(center, 20, 20), note);
-				count++;
 			} else {
 				if (currentRadius > 1) currentRadius -= 0.115;
 				double playerY = getPlayer().getLocation().getY();
-				for (Location loc : Circle.iterableOf(center, currentRadius, count * 16)) {
+				for (Location loc : Circle.iterableOf(center, currentRadius, (int) (currentRadius * 16))) {
 					loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
 					ParticleLib.REDSTONE.spawnParticle(loc, PINK);
 				}
@@ -122,6 +122,8 @@ public class Muse extends AbilityBase {
 				}
 				soundCount++;
 			}
+			ParticleLib.NOTE.spawnParticle(getPlayer().getEyeLocation().clone().add(0, 0.6, 0).add(headCircle.get(count % 10)));
+			count++;
 		}
 
 		@Override

@@ -70,7 +70,7 @@ public class Flora extends AbilityBase {
 
 			Location center = getPlayer().getLocation();
 			for (Location location : radius.circle.toLocations(center).floor(center.getY())) {
-				ParticleLib.REDSTONE.spawnParticle(location.subtract(0, y, 0), type.color);
+				ParticleLib.REDSTONE.spawnParticle(location.subtract(0, y - 1, 0), type.color);
 			}
 
 			for (Player p : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {

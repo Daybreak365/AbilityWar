@@ -112,7 +112,6 @@ public class AbilityFactory {
 		registerAbility(OnlyOddNumber.class);
 		registerAbility(Clown.class);
 		registerAbility(TheMagician.class);
-		registerAbility(TheEmpress.class);
 		registerAbility(TheEmperor.class);
 		registerAbility(Pumpkin.class);
 		registerAbility(Virus.class);

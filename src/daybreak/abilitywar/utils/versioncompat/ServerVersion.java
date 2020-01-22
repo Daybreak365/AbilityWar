@@ -19,24 +19,24 @@ public class ServerVersion {
 	}
 
 	private static final Messager messager = new Messager();
-	private static String versionString;
+	private static String majorVersion;
 	private static int version;
 
 	static {
 		String[] versionArray = Bukkit.getServer().getClass().getName().replace('.', ',').split(",");
 		if (versionArray.length >= 4) {
-			versionString = versionArray[3];
+			majorVersion = versionArray[3];
 		} else {
-			versionString = "";
+			majorVersion = "";
 		}
 
 		int version = -1;
-		versionArray = versionString.split("_");
+		versionArray = majorVersion.split("_");
 		if (versionArray.length >= 2) {
 			try {
 				version = Integer.parseInt(versionArray[1]);
 			} catch (NumberFormatException ignored) {
-				//Ignore: Should Never Happen
+				//Ignore: should never happen
 			}
 		}
 		ServerVersion.version = version;
@@ -46,13 +46,10 @@ public class ServerVersion {
 		return version;
 	}
 
-	public static String getStringVersion() {
-		return versionString;
+	public static String getMajorVersion() {
+		return majorVersion;
 	}
 
-	/**
-	 * 버전 호환 작업
-	 */
 	public static void compatVersion(Plugin plugin) {
 		if (getVersion() >= 12) {
 			if (getVersion() >= 13) {

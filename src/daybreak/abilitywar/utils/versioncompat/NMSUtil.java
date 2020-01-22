@@ -49,7 +49,7 @@ public class NMSUtil {
 	 */
 	public static Class<?> getNMSClass(String className) {
 		try {
-			return Class.forName("net.minecraft.server." + ServerVersion.getStringVersion() + "." + className);
+			return Class.forName("net.minecraft.server." + ServerVersion.getMajorVersion() + "." + className);
 		} catch (ClassNotFoundException ex) {
 			throw new RuntimeException("An error occurred while finding NMS class.", ex);
 		}
@@ -60,7 +60,7 @@ public class NMSUtil {
 	 */
 	public static Class<?> getOBCClass(String className) {
 		try {
-			return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getStringVersion() + "." + className);
+			return Class.forName("org.bukkit.craftbukkit." + ServerVersion.getMajorVersion() + "." + className);
 		} catch (ClassNotFoundException ex) {
 			throw new RuntimeException("An error occurred while finding OBC class.", ex);
 		}
