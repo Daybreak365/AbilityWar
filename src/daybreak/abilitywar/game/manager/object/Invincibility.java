@@ -106,7 +106,7 @@ public class Invincibility implements EventExecutor {
 
 		private InvincibilityTimer() {
 			game.super();
-			this.startMessage = ChatColor.GREEN + "무적이 적용되었습니다. 지금부터 무적이 해제될 때까지 데미지를 입지 않습니다.";
+			this.startMessage = ChatColor.GREEN + "무적이 적용되었습니다. 지금부터 무적이 해제될 때까지 대미지를 입지 않습니다.";
 			if (isBossbarEnabled) {
 				bar = new Bar(bossbarInfiniteMessage, BarColor.GREEN, BarStyle.SEGMENTED_10);
 			}
@@ -139,7 +139,7 @@ public class Invincibility implements EventExecutor {
 				bar.remove();
 			}
 			game.setRestricted(false);
-			Bukkit.broadcastMessage(ChatColor.GREEN + "무적이 해제되었습니다. 지금부터 데미지를 입습니다.");
+			Bukkit.broadcastMessage(ChatColor.GREEN + "무적이 해제되었습니다. 지금부터 대미지를 입습니다.");
 			SoundLib.ENTITY_ENDER_DRAGON_GROWL.broadcastSound();
 			Bukkit.getPluginManager().callEvent(new InvincibleEndEvent(game));
 		}

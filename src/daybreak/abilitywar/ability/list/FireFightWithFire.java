@@ -33,7 +33,7 @@ public class FireFightWithFire extends AbilityBase {
 
 	public FireFightWithFire(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f화염 데미지를 받을 때, " + ChanceConfig.getValue() + "% 확률로 데미지만큼 체력을 회복합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f화염 대미지를 받을 때, " + ChanceConfig.getValue() + "% 확률로 대미지만큼 체력을 회복합니다."));
 	}
 
 	@Override

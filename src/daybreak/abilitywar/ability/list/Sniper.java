@@ -49,15 +49,6 @@ public class Sniper extends AbilityBase {
 
 	private final Timer snipe = ServerVersion.getVersion() < 14 ?
 			new Timer() {
-
-				@Override
-				protected void onStart() {
-				}
-
-				@Override
-				protected void onEnd() {
-				}
-
 				@Override
 				protected void onProcess(int count) {
 					Material main = getPlayer().getInventory().getItemInMainHand().getType();
@@ -70,15 +61,6 @@ public class Sniper extends AbilityBase {
 			}.setPeriod(3)
 			:
 			new Timer() {
-
-				@Override
-				protected void onStart() {
-				}
-
-				@Override
-				protected void onEnd() {
-				}
-
 				@Override
 				protected void onProcess(int count) {
 					Material main = getPlayer().getInventory().getItemInMainHand().getType();
@@ -119,8 +101,6 @@ public class Sniper extends AbilityBase {
 		snipe.startTimer();
 	}
 
-	private static final Vector SUBTRACT = new Vector(0, .005, 0);
-
 	public abstract class Bullet extends Timer {
 
 		private final CenteredBoundingBox centeredBoundingBox;
@@ -129,7 +109,7 @@ public class Sniper extends AbilityBase {
 		private final ParticleLib.RGB color;
 
 		private Bullet(Location startLocation, Vector arrowVelocity, ParticleLib.RGB color) {
-			super(300);
+			super(160);
 			setPeriod(1);
 			this.centeredBoundingBox = new CenteredBoundingBox(startLocation, -.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(2.5);
@@ -159,7 +139,7 @@ public class Sniper extends AbilityBase {
 				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {
 					if (!getPlayer().equals(damageable)) {
 						double damage = Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 15);
-						Bukkit.broadcastMessage(damage + " 데미지");
+						Bukkit.broadcastMessage(damage + " 대미지");
 						damageable.damage(damage, getPlayer());
 						onHit(getPlayer(), damageable);
 						stopTimer(false);

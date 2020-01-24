@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.manager.gui;
 import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 import daybreak.abilitywar.utils.installer.Version;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

@@ -4,7 +4,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

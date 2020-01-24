@@ -35,7 +35,7 @@ public class DiceGod extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 &c재생 &f/ &b신속 &f/ &6힘 &f/ &3저항 &f/ &8구속 &f/ &7나약함 &f효과 중 하나를"),
 				ChatColor.translateAlternateColorCodes('&', "&f10초간 받습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f공격을 받았을 때 1/6 확률로 데미지를 받는 대신 데미지만큼 체력을 회복합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f공격을 받았을 때 1/6 확률로 대미지를 받는 대신 대미지만큼 체력을 회복합니다."));
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

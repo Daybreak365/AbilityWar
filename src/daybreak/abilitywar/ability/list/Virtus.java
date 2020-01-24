@@ -42,7 +42,7 @@ public class Virtus extends AbilityBase {
 
 	public Virtus(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 데미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 대미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

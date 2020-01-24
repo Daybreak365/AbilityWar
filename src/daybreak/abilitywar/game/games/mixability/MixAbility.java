@@ -11,7 +11,7 @@ import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
-import daybreak.abilitywar.game.script.Script;
+import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -175,7 +175,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 					setRestricted(false);
 				}
 
-				Script.RunAll(this);
+				ScriptManager.RunAll(this);
 
 				startGame();
 				break;

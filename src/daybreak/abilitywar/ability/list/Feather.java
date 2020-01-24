@@ -41,7 +41,7 @@ public class Feather extends AbilityBase {
 	public Feather(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 비행할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f낙하 데미지를 무시합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f낙하 대미지를 무시합니다."));
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
@@ -89,7 +89,7 @@ public class Feather extends AbilityBase {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (!e.isCancelled() && getPlayer().equals(e.getEntity()) && e.getCause().equals(DamageCause.FALL)) {
 			e.setCancelled(true);
-			getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a낙하 데미지를 받지 않습니다."));
+			getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a낙하 대미지를 받지 않습니다."));
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 		}
 	}

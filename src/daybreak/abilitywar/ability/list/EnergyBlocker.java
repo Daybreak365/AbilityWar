@@ -31,7 +31,7 @@ public class EnergyBlocker extends AbilityBase {
 
 	};
 
-	private boolean Default = true;
+	private boolean projectileBlocking = true;
 
 	public EnergyBlocker(Participant participant) {
 		super(participant,
@@ -48,9 +48,9 @@ public class EnergyBlocker extends AbilityBase {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					Default = !Default;
+					projectileBlocking = !projectileBlocking;
 					Player p = getPlayer();
-					if (Default) {
+					if (projectileBlocking) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f1/3&7, &a근거리 &f두 배로 변경되었습니다."));
 					} else {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3로 변경되었습니다."));
@@ -59,7 +59,7 @@ public class EnergyBlocker extends AbilityBase {
 					cooldownTimer.startTimer();
 				}
 			} else if (ct.equals(ClickType.LEFT_CLICK)) {
-				if (Default) {
+				if (projectileBlocking) {
 					getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f1/3&7, &a근거리 &f두 배"));
 				} else {
 					getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f두 배&7, &a근거리 &f1/3"));
@@ -78,7 +78,7 @@ public class EnergyBlocker extends AbilityBase {
 
 		@Override
 		public void onProcess(int count) {
-			if (Default) {
+			if (projectileBlocking) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(116, 237, 167));
 			} else {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(85, 237, 242));
@@ -94,20 +94,18 @@ public class EnergyBlocker extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			DamageCause dc = e.getCause();
-			if (dc != null) {
-				if (dc.equals(DamageCause.PROJECTILE)) {
-					if (Default) {
-						e.setDamage(e.getDamage() / 3);
-					} else {
-						e.setDamage(e.getDamage() * 2);
-					}
-				} else if (dc.equals(DamageCause.ENTITY_ATTACK)) {
-					if (Default) {
-						e.setDamage(e.getDamage() * 2);
-					} else {
-						e.setDamage(e.getDamage() / 3);
-					}
+			DamageCause cause = e.getCause();
+			if (cause.equals(DamageCause.PROJECTILE)) {
+				if (projectileBlocking) {
+					e.setDamage(e.getDamage() / 3);
+				} else {
+					e.setDamage(e.getDamage() * 2);
+				}
+			} else if (cause.equals(DamageCause.ENTITY_ATTACK)) {
+				if (projectileBlocking) {
+					e.setDamage(e.getDamage() * 2);
+				} else {
+					e.setDamage(e.getDamage() / 3);
 				}
 			}
 		}

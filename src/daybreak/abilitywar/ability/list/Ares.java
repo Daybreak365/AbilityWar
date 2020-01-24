@@ -27,7 +27,7 @@ import java.util.Set;
 public class Ares extends AbilityBase {
 
 	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
-			"# 스킬 데미지") {
+			"# 스킬 대미지") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -59,8 +59,8 @@ public class Ares extends AbilityBase {
 	public Ares(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f전쟁의 신 아레스."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 데미지를 주며,"),
-				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받은 엔티티들을 밀쳐냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 대미지를 주며,"),
+				ChatColor.translateAlternateColorCodes('&', "&f대미지를 받은 엔티티들을 밀쳐냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

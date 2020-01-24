@@ -4,6 +4,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.mode.decorator.Winnable;
 import daybreak.abilitywar.game.games.standard.Game;
@@ -23,13 +24,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 체인지 능력 전쟁
@@ -38,12 +44,14 @@ import java.util.List;
  */
 @GameManifest(Name = "체인지 능력 전쟁", Description = {"§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.", "§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.", "§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
 		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f체인지 능력전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
-public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler {
+public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler, Observer {
 
 	public ChangeAbilityWar() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(invincible);
 		this.maxLife = ChangeAbilityWarSettings.getLife();
+		attachObserver(this);
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -200,13 +208,40 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	}
 
 	private final int maxLife;
-	private final ArrayList<Participant> noLife = new ArrayList<>();
+	private final Set<Participant> noLife = new HashSet<>();
+
+	@EventHandler
+	private void onPlayerQuit(PlayerQuitEvent e) {
+		Player player = e.getPlayer();
+		if (isParticipating(player)) {
+			Participant quitParticipant = getParticipant(player);
+			Score score = lifeObjective.getScore(player.getName());
+			if (score.isScoreSet()) {
+				score.setScore(0);
+				noLife.add(quitParticipant);
+				getDeathManager().Operation(quitParticipant);
+
+				Participant winner = null;
+				int count = 0;
+				for (Participant participant : getParticipants()) {
+					if (!noLife.contains(participant)) {
+						count++;
+						winner = participant;
+					}
+				}
+
+				if (count == 1) {
+					Win(winner);
+				}
+			}
+		}
+	}
 
 	@Override
 	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
-			protected void Operation(Participant victim) {
+			public void Operation(Participant victim) {
 				Player victimPlayer = victim.getPlayer();
 				Score score = lifeObjective.getScore(victimPlayer.getName());
 				if (score.isScoreSet()) {
@@ -272,6 +307,13 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	protected void onEnd() {
 		lifeObjective.unregister();
 		super.onEnd();
+	}
+
+	@Override
+	public void update(GAME_UPDATE update) {
+		if (update == GAME_UPDATE.END) {
+			HandlerList.unregisterAll(this);
+		}
 	}
 
 }

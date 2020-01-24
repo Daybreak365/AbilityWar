@@ -105,7 +105,7 @@ public class DeathManager implements Listener, AbstractGame.Observer {
 		}
 	}
 
-	protected void Operation(Participant victim) {
+	public void Operation(Participant victim) {
 		switch (DeathSettings.getOperation()) {
 			case 탈락:
 				Eliminate(victim);

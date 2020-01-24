@@ -7,7 +7,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.manager.GameMode;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

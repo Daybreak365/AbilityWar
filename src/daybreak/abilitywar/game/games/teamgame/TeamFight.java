@@ -3,13 +3,14 @@ package daybreak.abilitywar.game.games.teamgame;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
-import daybreak.abilitywar.game.script.Script;
+import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -22,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -35,11 +37,12 @@ import java.util.Set;
 import java.util.UUID;
 
 @GameManifest(Name = "팀 전투", Description = {"§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다."})
-public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
+public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Observer {
 
 	public TeamFight() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(invincible);
+		attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
@@ -185,7 +188,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 					setTeam(participant, null);
 				}
 
-				Script.RunAll(this);
+				ScriptManager.RunAll(this);
 
 				startGame();
 				break;
@@ -296,6 +299,13 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame {
 					e.setCancelled(true);
 				}
 			}
+		}
+	}
+
+	@Override
+	public void update(GAME_UPDATE update) {
+		if (update == GAME_UPDATE.END) {
+			HandlerList.unregisterAll(this);
 		}
 	}
 

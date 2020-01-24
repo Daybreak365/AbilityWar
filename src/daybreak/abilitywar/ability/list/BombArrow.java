@@ -34,7 +34,7 @@ public class BombArrow extends AbilityBase {
 
 	public BombArrow(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f10초마다 스택을 1만큼 얻습니다. 스택은 최대 3만큼 중첩됩니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f7초마다 스택을 1만큼 얻습니다. 스택은 최대 4만큼 중첩됩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쏘면 스택을 1만큼 소모하여 폭발 화살을 쏩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f스택이 없으면 화살이 나가지 않습니다."));
 	}
@@ -44,7 +44,7 @@ public class BombArrow extends AbilityBase {
 		return false;
 	}
 
-	private final int maxStack = 3;
+	private final int maxStack = 4;
 	private int stack = 0;
 
 	private final Timer stackAdder = new Timer() {
@@ -54,7 +54,7 @@ public class BombArrow extends AbilityBase {
 				stack++;
 			}
 		}
-	}.setPeriod(200);
+	}.setPeriod(140);
 
 	private final int size = SizeConfig.getValue();
 
@@ -62,8 +62,8 @@ public class BombArrow extends AbilityBase {
 		@Override
 		protected void onProcess(int count) {
 			StringJoiner joiner = new StringJoiner(" ");
-			for (int i = 0; i < stack; i++) joiner.add(ChatColor.RED + "●");
-			for (int i = 0; i < maxStack - stack; i++) joiner.add(ChatColor.RED + "○");
+			for (int i = 0; i < stack; i++) joiner.add(ChatColor.DARK_RED + "●");
+			for (int i = 0; i < maxStack - stack; i++) joiner.add(ChatColor.DARK_RED + "○");
 			NMSUtil.PlayerUtil.sendActionbar(getPlayer(), joiner.toString(), 0, 3, 0);
 		}
 	}.setPeriod(2);

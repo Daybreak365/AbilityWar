@@ -23,7 +23,7 @@ import java.util.Random;
 public class BlackCandle extends AbilityBase {
 
 	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(BlackCandle.class, "Chance", 35,
-			"# 데미지를 받았을 시 체력을 회복할 확률") {
+			"# 대미지를 받았을 시 체력을 회복할 확률") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -34,8 +34,8 @@ public class BlackCandle extends AbilityBase {
 
 	public BlackCandle(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f독 데미지와 시듦 데미지를 받지 않으며, 스턴 공격을 받지 않습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f데미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f독 대미지와 시듦 대미지를 받지 않으며, 스턴 공격을 받지 않습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f대미지를 받았을 때 " + ChanceConfig.getValue() + "% 확률로 체력을 1.5칸 회복합니다."));
 	}
 
 	@Override

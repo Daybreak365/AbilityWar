@@ -32,7 +32,7 @@ public class Ira extends AbilityBase {
 	public Ira(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f다른 엔티티에게 " + AttackConfig.getValue() + "번 공격을 당할 때마다 상대방의 위치에 폭발을 일으킵니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f자기 자신도 폭발 데미지를 입습니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f자기 자신도 폭발 대미지를 입습니다."));
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import java.util.Random;
 public class Zombie extends AbilityBase {
 
 	public static final AbilitySettings.SettingObject<Integer> DecreaseConfig = new AbilitySettings.SettingObject<Integer>(Zombie.class, "Decrease", 50,
-			"# 데미지 감소량 (단위: 퍼센트)") {
+			"# 대미지 감소량 (단위: 퍼센트)") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -37,7 +37,7 @@ public class Zombie extends AbilityBase {
 
 	public Zombie(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f받는 데미지가 " + DecreaseConfig.getValue() + "% 감소합니다. 근육 경련으로 인해"),
+				ChatColor.translateAlternateColorCodes('&', "&f받는 대미지가 " + DecreaseConfig.getValue() + "% 감소합니다. 근육 경련으로 인해"),
 				ChatColor.translateAlternateColorCodes('&', "&f공격할 때 에임이 튑니다."));
 	}
 

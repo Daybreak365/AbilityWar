@@ -2,9 +2,9 @@ package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.library.MaterialLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

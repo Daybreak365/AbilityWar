@@ -17,8 +17,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 public class OnlyOddNumber extends AbilityBase {
 
 	public static final SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 59,
-			"# 체력이 홀수일 때 데미지를 몇 퍼센트 줄여 받을지 설정합니다.",
-			"# 60으로 설정하면 원래 데미지의 40%를 받습니다.") {
+			"# 체력이 홀수일 때 대미지를 몇 퍼센트 줄여 받을지 설정합니다.",
+			"# 60으로 설정하면 원래 대미지의 40%를 받습니다.") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -28,8 +28,8 @@ public class OnlyOddNumber extends AbilityBase {
 	};
 
 	public static final SettingObject<Integer> EvenNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "EvenNumber", 29,
-			"# 체력이 짝수일 때 데미지를 몇 퍼센트 늘려 받을지 설정합니다.",
-			"# 30으로 설정하면 원래 데미지의 130%를 받습니다.") {
+			"# 체력이 짝수일 때 대미지를 몇 퍼센트 늘려 받을지 설정합니다.",
+			"# 30으로 설정하면 원래 대미지의 130%를 받습니다.") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -40,8 +40,8 @@ public class OnlyOddNumber extends AbilityBase {
 
 	public OnlyOddNumber(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f공격을 받으면 체력에 따라 다른 효과를 받습니다. &f체력이 홀수일 경우 데미지를"),
-				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% 줄여 받고, 체력이 짝수일 경우 데미지를 " + EvenNumberConfig.getValue() + "% 늘려 받습니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f공격을 받으면 체력에 따라 다른 효과를 받습니다. &f체력이 홀수일 경우 대미지를"),
+				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% 줄여 받고, 체력이 짝수일 경우 대미지를 " + EvenNumberConfig.getValue() + "% 늘려 받습니다."));
 	}
 
 	@Override

@@ -42,7 +42,7 @@ public class TheMagician extends AbilityBase {
 	public TheMagician(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게"),
-				ChatColor.translateAlternateColorCodes('&', "&f최대체력의 1/5 만큼의 데미지를 추가로 입히고 위치를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f최대체력의 1/5 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	@Override

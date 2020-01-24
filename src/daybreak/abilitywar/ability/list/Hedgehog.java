@@ -18,7 +18,7 @@ import org.bukkit.entity.LivingEntity;
 public class Hedgehog extends AbilityBase {
 
 	public static final SettingObject<Double> DamageConfig = new SettingObject<Double>(Hedgehog.class, "Damage", 2.0,
-			"# 데미지") {
+			"# 대미지") {
 
 		@Override
 		public boolean Condition(Double value) {
@@ -47,8 +47,10 @@ public class Hedgehog extends AbilityBase {
 	private final Timer passive = new Timer() {
 		@Override
 		protected void onProcess(int count) {
-			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), 1.5, 1.5)) {
-				damageable.damage(damage, getPlayer());
+			if (!getPlayer().isDead()) {
+				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), 1.5, 1.5)) {
+					damageable.damage(damage, getPlayer());
+				}
 			}
 		}
 	}.setPeriod(10);

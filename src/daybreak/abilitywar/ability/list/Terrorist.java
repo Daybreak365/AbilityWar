@@ -44,7 +44,7 @@ public class Terrorist extends AbilityBase {
 	public Terrorist(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신의 주위에 TNT " + (CountConfig.getValue() * 2) + "개를 떨어뜨립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f폭발 데미지를 입지 않습니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f폭발 대미지를 입지 않습니다."));
 	}
 
 	private final int count = CountConfig.getValue();

@@ -44,7 +44,7 @@ public class ReligiousLeader extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f참가자 수의 1/2만큼 모을 수 있으며, 신자가 참가자 수의 1/4 이상 모이면"),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭해 이단 심판을 시작할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f이단 심판이 시작되면 신자들과 교주는 서로 물리적으로 공격할 수 없으며,"),
-				ChatColor.translateAlternateColorCodes('&', "&f신자가 아닌 참가자를 공격할 때 추가 데미지를 주며 심판합니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f신자가 아닌 참가자를 공격할 때 추가 대미지를 주며 심판합니다."));
 	}
 
 	private final int maxBelivers = getGame().getParticipants().size() / 2;

@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.script;
 
-import daybreak.abilitywar.game.script.Script.RequiredData;
-import daybreak.abilitywar.game.script.Script.ScriptRegisteration;
+import daybreak.abilitywar.game.script.ScriptManager.RequiredData;
+import daybreak.abilitywar.game.script.ScriptManager.ScriptRegisteration;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.game.script.objects.setter.Setter;
 import daybreak.abilitywar.game.script.objects.setter.special.LoopCountSetter;
@@ -9,7 +9,7 @@ import daybreak.abilitywar.game.script.objects.setter.special.LoopSetter;
 import daybreak.abilitywar.game.script.objects.setter.special.MessageSetter;
 import daybreak.abilitywar.game.script.objects.setter.special.TimeSetter;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -45,7 +45,7 @@ public class ScriptWizard implements Listener {
 		this.scriptClass = scriptClass;
 		this.scriptName = scriptName;
 
-		ScriptRegisteration reg = Script.getRegisteration(scriptClass);
+		ScriptRegisteration reg = ScriptManager.getRegisteration(scriptClass);
 		for (RequiredData<?> data : reg.getRequiredDatas()) {
 			if (data.getSetterClass() == null) {
 				Setter<?> setter = Setter.newInstance(data.getClazz(), data.getKey(), data.getDefault(), this);
@@ -209,8 +209,8 @@ public class ScriptWizard implements Listener {
 
 							Constructor<?> constructor = scriptClass.getConstructor(classList.toArray(new Class<?>[classList.size()]));
 							AbstractScript script = (AbstractScript) constructor.newInstance(valueList.toArray(new Object[valueList.size()]));
-							Script.Save(script);
-							Script.AddScript(script);
+							ScriptManager.Save(script);
+							ScriptManager.AddScript(script);
 						} catch (Exception ex) {
 							exception = ex;
 						}

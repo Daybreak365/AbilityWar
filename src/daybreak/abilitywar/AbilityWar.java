@@ -5,7 +5,7 @@ import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.MainCommand;
-import daybreak.abilitywar.game.script.Script;
+import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -88,7 +88,7 @@ public class AbilityWar extends JavaPlugin {
 					logger.log(Level.SEVERE, "콘피그를 불러오는 도중 오류가 발생하였습니다.");
 					Bukkit.getPluginManager().disablePlugin(plugin);
 				}
-				Script.LoadAll();
+				ScriptManager.LoadAll();
 			}
 		});
 

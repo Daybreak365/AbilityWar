@@ -20,8 +20,8 @@ import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.Invincibility;
-import daybreak.abilitywar.game.script.Script;
 import daybreak.abilitywar.game.script.ScriptException;
+import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.utils.Messager;
@@ -246,7 +246,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					if (p.isOp()) {
 						if (split.length > 2) {
 							try {
-								Class<? extends AbstractScript> scriptClass = Script.getScriptClass(split[1]);
+								Class<? extends AbstractScript> scriptClass = ScriptManager.getScriptClass(split[1]);
 								if (Pattern.compile("^[가-힣a-zA-Z0-9_]+$").matcher(split[2]).find() && split[2].length() <= 10) {
 									File file = new File("plugins/" + plugin.getName() + "/Script/" + split[2] + ".yml");
 									if (!file.exists()) {
@@ -747,7 +747,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							return utils;
 						}
 					} else if (args[0].equalsIgnoreCase("script")) {
-						ArrayList<String> scripts = Script.getRegisteredScriptNames();
+						ArrayList<String> scripts = ScriptManager.getRegisteredScriptNames();
 						if (args[1].isEmpty()) {
 							return scripts;
 						} else {

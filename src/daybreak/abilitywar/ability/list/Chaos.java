@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.Vector;
 
 @AbilityManifest(Name = "카오스", Rank = Rank.S, Species = Species.GOD)
 public class Chaos extends AbilityBase {
@@ -72,10 +71,9 @@ public class Chaos extends AbilityBase {
 		@Override
 		public void onDurationProcess(int seconds) {
 			ParticleLib.SMOKE_LARGE.spawnParticle(center, 0, 0, 0, 100);
-			for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), distance, distance)) {
-				d.damage(1);
-				Vector vector = center.toVector().subtract(d.getLocation().toVector()).multiply(0.7);
-				d.setVelocity(vector);
+			for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), distance, distance)) {
+				damageable.damage(1);
+				damageable.setVelocity(center.toVector().subtract(damageable.getLocation().toVector()).multiply(0.7));
 			}
 		}
 

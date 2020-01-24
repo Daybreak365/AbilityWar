@@ -7,7 +7,7 @@ import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
-import daybreak.abilitywar.game.script.Script;
+import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -169,7 +169,7 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 					setRestricted(false);
 				}
 
-				Script.RunAll(this);
+				ScriptManager.RunAll(this);
 
 				startGame();
 				break;

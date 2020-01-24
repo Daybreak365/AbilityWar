@@ -27,11 +27,11 @@ public class Berserker extends AbilityBase {
 
 	};
 
-	public static final SettingObject<Integer> StrengthConfig = new SettingObject<Integer>(Berserker.class, "Strength", 4,
+	public static final SettingObject<Double> StrengthConfig = new SettingObject<Double>(Berserker.class, "Strength", 5.0,
 			"# 공격 강화 배수") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean Condition(Double value) {
 			return value >= 2;
 		}
 
@@ -51,43 +51,24 @@ public class Berserker extends AbilityBase {
 	public Berserker(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭한 후 5초 안에 하는 다음 근접 공격이 강화됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f강화된 공격은 " + StrengthConfig.getValue() + "배의 데미지를 내며, 강화된 공격을 사용한 후"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "초간 데미지를 입힐 수 없습니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f강화된 공격은 " + StrengthConfig.getValue() + "배의 대미지를 내며, 강화된 공격을 사용한 후"),
+				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "초간 대미지를 입힐 수 없습니다."));
 	}
 
-	private final int Strength = StrengthConfig.getValue();
-
+	private final double strength = StrengthConfig.getValue();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-
-	private final DurationTimer Duration = new DurationTimer(5, cooldownTimer) {
-
-		@Override
-		public void onDurationStart() {
-			Strengthen = true;
-		}
-
+	private final DurationTimer durationTimer = new DurationTimer(5, cooldownTimer) {
 		@Override
 		public void onDurationProcess(int seconds) {
 		}
-
-		@Override
-		public void onDurationEnd() {
-			Strengthen = false;
-		}
-
 	};
 
-	private boolean Strengthen = false;
-
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
-					Duration.startTimer();
-
-					return true;
-				}
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType == ClickType.RIGHT_CLICK) {
+			if (!durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
+				durationTimer.startTimer();
+				return true;
 			}
 		}
 
@@ -99,9 +80,9 @@ public class Berserker extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
-			if (Strengthen) {
-				if (Duration.isDuration()) Duration.stopTimer(false);
-				e.setDamage(e.getDamage() * Strength);
+			if (durationTimer.isRunning()) {
+				durationTimer.stopTimer(false);
+				e.setDamage(e.getFinalDamage() * strength);
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
 			}
 		}

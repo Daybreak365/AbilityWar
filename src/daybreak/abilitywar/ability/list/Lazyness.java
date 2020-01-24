@@ -17,7 +17,7 @@ public class Lazyness extends AbilityBase {
 
 	public Lazyness(AbstractGame.Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f지금 받을 데미지를 3초 뒤의 나에게 미룹니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f지금 받을 대미지를 3초 뒤의 나에게 미룹니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f넉백을 무시합니다."));
 	}
 

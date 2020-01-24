@@ -119,8 +119,7 @@ public class Gladiator extends AbilityBase {
 			} else if (totalCount <= 15) {
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 2, true, false)) {
 					saves.putIfAbsent(block, block.getType());
-					BlockX.setType(block, MaterialX.BLUE_BANNER);
-					getPlayer().getInventory().addItem(MaterialX.BLUE_BANNER.parseItem());
+					BlockX.setType(block, MaterialX.IRON_BARS);
 				}
 
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 1, true, false)) {

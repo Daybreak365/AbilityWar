@@ -37,7 +37,7 @@ public class Nex extends AbilityBase {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# 데미지") {
+	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# 대미지") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -49,7 +49,7 @@ public class Nex extends AbilityBase {
 	public Nex(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다가 바닥으로 내려 찍으며"),
-				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 데미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 대미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

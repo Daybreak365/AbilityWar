@@ -8,7 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.item.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Line;
@@ -19,6 +19,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -90,8 +91,9 @@ public class TheEmperor extends AbilityBase {
 					centerVector = center.getLocation().toVector();
 				} else {
 					armorStand.setGravity(false);
-					armorStand.setItemInHand(new ItemStack(Material.SHIELD));
-					armorStand.setHelmet(MaterialLib.GOLDEN_HELMET.getItem());
+					EntityEquipment equipment = armorStand.getEquipment();
+					equipment.setItemInMainHand(new ItemStack(Material.SHIELD));
+					equipment.setHelmet(MaterialX.GOLDEN_HELMET.parseItem());
 					diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector));
 				}
 			}

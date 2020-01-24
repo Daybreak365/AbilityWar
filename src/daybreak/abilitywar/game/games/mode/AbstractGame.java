@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.game.events.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
 import daybreak.abilitywar.utils.thread.OverallTimer;
@@ -232,11 +233,14 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 					if (!ability.isRestricted()) {
 						long current = System.currentTimeMillis();
 						if (current - lastClick >= 250) {
+							if (ability.ActiveSkill(material, ClickType.RIGHT_CLICK)) {
+								ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
+							}
 							Entity targetEntity = e.getRightClicked();
 							if (targetEntity instanceof LivingEntity) {
 								if (targetEntity instanceof Player) {
 									Player targetPlayer = (Player) targetEntity;
-									if (isParticipating(targetPlayer)) {
+									if (isParticipating(targetPlayer) && (!(this instanceof DeathManager.Handler) || !((DeathManager.Handler) this).getDeathManager().isDead(targetPlayer))) {
 										this.lastClick = current;
 										ability.TargetSkill(material, targetPlayer);
 									}

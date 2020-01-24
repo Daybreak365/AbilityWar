@@ -22,31 +22,31 @@ import java.util.HashMap;
  */
 public abstract class Setter<T> implements EventExecutor {
 
-	private final String Key;
-	private T Value;
-	private final ScriptWizard Wizard;
+	private final String key;
+	private T value;
+	private final ScriptWizard wizard;
 
 	public Setter(String Key, T Default, ScriptWizard Wizard) {
-		this.Key = Key;
-		this.Value = Default;
-		this.Wizard = Wizard;
+		this.key = Key;
+		this.value = Default;
+		this.wizard = Wizard;
 	}
 
 	public String getKey() {
-		return Key;
+		return key;
 	}
 
 	public T getValue() {
-		return Value;
+		return value;
 	}
 
 	protected void setValue(T value) {
-		Value = value;
+		this.value = value;
 		updateGUI();
 	}
 
 	protected ScriptWizard getWizard() {
-		return Wizard;
+		return wizard;
 	}
 
 	public Class<?> getClazz() {
@@ -58,11 +58,11 @@ public abstract class Setter<T> implements EventExecutor {
 	}
 
 	protected void registerEvent(Class<? extends Event> event) {
-		Bukkit.getPluginManager().registerEvent(event, Wizard, EventPriority.HIGH, this, AbilityWar.getPlugin());
+		Bukkit.getPluginManager().registerEvent(event, wizard, EventPriority.HIGH, this, AbilityWar.getPlugin());
 	}
 
 	protected void updateGUI() {
-		Wizard.openScriptWizard(Wizard.getPlayerPage());
+		wizard.openScriptWizard(wizard.getPlayerPage());
 	}
 
 	public abstract void onClick(ClickType click);
