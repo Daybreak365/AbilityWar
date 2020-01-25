@@ -2,8 +2,8 @@ package daybreak.abilitywar;
 
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.AddonLoader;
-import daybreak.abilitywar.config.AbilitySettings;
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.MainCommand;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;

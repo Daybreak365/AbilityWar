@@ -31,29 +31,22 @@ public class AbilityGUI implements Listener {
 	private final Player p;
 	private final Participant target;
 
-	public AbilityGUI(Player p, Plugin Plugin) {
+	public AbilityGUI(Player p, Participant target, Plugin plugin) {
 		this.p = p;
-		this.target = null;
-		Bukkit.getPluginManager().registerEvents(this, Plugin);
+		this.target = target;
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 
 		values = new ArrayList<>(AbilityList.nameValues());
 		values.sort(String::compareToIgnoreCase);
 	}
 
-	public AbilityGUI(Player p, Participant target, Plugin Plugin) {
-		this.p = p;
-		this.target = target;
-		Bukkit.getPluginManager().registerEvents(this, Plugin);
-
-		values = new ArrayList<>(AbilityList.nameValues());
-		values.sort(String::compareToIgnoreCase);
+	public AbilityGUI(Player p, Plugin plugin) {
+		this(p, null, plugin);
 	}
 
 	private final ArrayList<String> values;
-
-	private int PlayerPage = 1;
-
-	private Inventory AbilityGUI;
+	private int currentPage = 1;
+	private Inventory abilityGUI;
 
 	public void openAbilityGUI(int page) {
 		int MaxPage = ((values.size() - 1) / 36) + 1;
@@ -61,9 +54,8 @@ public class AbilityGUI implements Listener {
 			page = 1;
 		if (page < 1)
 			page = 1;
-		AbilityGUI = Bukkit.createInventory(null, 54,
-				ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
-		PlayerPage = page;
+		abilityGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
+		currentPage = page;
 		int Count = 0;
 
 		for (String name : values) {
@@ -74,7 +66,7 @@ public class AbilityGUI implements Listener {
 			is.setItemMeta(im);
 
 			if (Count / 36 == page - 1) {
-				AbilityGUI.setItem(Count % 36, is);
+				abilityGUI.setItem(Count % 36, is);
 			}
 			Count++;
 		}
@@ -84,7 +76,7 @@ public class AbilityGUI implements Listener {
 			ItemMeta previousMeta = previousPage.getItemMeta();
 			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
 			previousPage.setItemMeta(previousMeta);
-			AbilityGUI.setItem(48, previousPage);
+			abilityGUI.setItem(48, previousPage);
 		}
 
 		if (page != MaxPage) {
@@ -92,38 +84,38 @@ public class AbilityGUI implements Listener {
 			ItemMeta nextMeta = nextPage.getItemMeta();
 			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
 			nextPage.setItemMeta(nextMeta);
-			AbilityGUI.setItem(50, nextPage);
+			abilityGUI.setItem(50, nextPage);
 		}
 
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
 		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + MaxPage));
 		Page.setItemMeta(PageMeta);
-		AbilityGUI.setItem(49, Page);
+		abilityGUI.setItem(49, Page);
 
-		p.openInventory(AbilityGUI);
+		p.openInventory(abilityGUI);
 	}
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(this.AbilityGUI)) {
+		if (e.getInventory().equals(this.abilityGUI)) {
 			HandlerList.unregisterAll(this);
 		}
 	}
 
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(AbilityGUI)) {
+		if (e.getInventory().equals(abilityGUI)) {
 			Player p = (Player) e.getWhoClicked();
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta()
 					&& e.getCurrentItem().getItemMeta().hasDisplayName()) {
 				if (e.getCurrentItem().getItemMeta().getDisplayName()
 						.equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
-					openAbilityGUI(PlayerPage - 1);
+					openAbilityGUI(currentPage - 1);
 				} else if (e.getCurrentItem().getItemMeta().getDisplayName()
 						.equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
-					openAbilityGUI(PlayerPage + 1);
+					openAbilityGUI(currentPage + 1);
 				}
 			}
 

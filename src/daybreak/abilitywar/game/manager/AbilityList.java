@@ -13,8 +13,9 @@ import daybreak.abilitywar.utils.Messager;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * {@link DefaultGame}, {@link ChangeAbilityWar} 등에서 사용하는 능력자 플러그인의 기본적인 능력 목록을 관리하는 클래스입니다.
@@ -25,7 +26,7 @@ public class AbilityList {
 	}
 
 	private static final Messager messager = new Messager();
-	private static final HashMap<String, Class<? extends AbilityBase>> abilities = new HashMap<>();
+	private static final Map<String, Class<? extends AbilityBase>> abilities = new TreeMap<>();
 
 	/**
 	 * 능력을 등록합니다.

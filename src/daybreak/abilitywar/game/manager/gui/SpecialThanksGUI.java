@@ -28,8 +28,9 @@ public class SpecialThanksGUI implements Listener {
 	private static final SpecialThank[] SpecialThanks = {
 			new SpecialThank("f6cef0829b7e48c1a973532389b6e3e1", "다량의 능력 아이디어를 제공해주셨습니다."),
 			new SpecialThank("ecb53e2ffdf34089ae3486cff3fc5f34", "능력 아이디어 제공 및 코드 개선에 도움을 주셨습니다."),
-			new SpecialThank("48b5f9e0ba544368ab4dc6f2be56d9f4", "테스팅에 도움을 주셨습니다."),
+			new SpecialThank("2dcb3299e24049adb8bb554d862bd7be", "테스팅에 도움을 주셨습니다."),
 			new SpecialThank("101ceb32a2bc4dbd9d32291c86b66eca", "테스팅에 도움을 주셨습니다."),
+			new SpecialThank("2b4af44c86434a2fa3b07a34f4406636", "테스팅에 도움을 주셨습니다."),
 			new SpecialThank("507fc49666fb43489200251f48bf4719", "몇몇 업데이트에 기여하셨습니다.")
 	};
 
@@ -69,16 +70,16 @@ public class SpecialThanksGUI implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
-	private int PlayerPage = 1;
+	private int currentPage = 1;
 
-	private Inventory STGUI;
+	private Inventory gui;
 
-	public void openGUI(Integer page) {
-		Integer MaxPage = ((SpecialThanks.length - 1) / 18) + 1;
-		if (MaxPage < page) page = 1;
+	public void openGUI(int page) {
+		int maxPage = ((SpecialThanks.length - 1) / 18) + 1;
+		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		STGUI = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&c&l✿ &0&lSpecial Thanks &c&l✿"));
-		PlayerPage = page;
+		gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&c&l✿ &0&lSpecial Thanks &c&l✿"));
+		currentPage = page;
 		int Count = 0;
 
 		for (SpecialThank st : SpecialThanks) {
@@ -97,7 +98,7 @@ public class SpecialThanksGUI implements Listener {
 			is.setItemMeta(im);
 
 			if (Count / 18 == page - 1) {
-				STGUI.setItem(Count % 18, is);
+				gui.setItem(Count % 18, is);
 			}
 			Count++;
 		}
@@ -107,43 +108,43 @@ public class SpecialThanksGUI implements Listener {
 			ItemMeta previousMeta = previousPage.getItemMeta();
 			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
 			previousPage.setItemMeta(previousMeta);
-			STGUI.setItem(21, previousPage);
+			gui.setItem(21, previousPage);
 		}
 
-		if (page != MaxPage) {
+		if (page != maxPage) {
 			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta nextMeta = nextPage.getItemMeta();
 			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
 			nextPage.setItemMeta(nextMeta);
-			STGUI.setItem(23, nextPage);
+			gui.setItem(23, nextPage);
 		}
 
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
 		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6페이지 &e" + page + " &6/ &e" + MaxPage));
+				"&6페이지 &e" + page + " &6/ &e" + maxPage));
 		Page.setItemMeta(PageMeta);
-		STGUI.setItem(22, Page);
+		gui.setItem(22, Page);
 
-		p.openInventory(STGUI);
+		p.openInventory(gui);
 	}
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(this.STGUI)) {
+		if (e.getInventory().equals(this.gui)) {
 			HandlerList.unregisterAll(this);
 		}
 	}
 
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(STGUI)) {
+		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
-					openGUI(PlayerPage - 1);
+					openGUI(currentPage - 1);
 				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
-					openGUI(PlayerPage + 1);
+					openGUI(currentPage + 1);
 				}
 			}
 		}

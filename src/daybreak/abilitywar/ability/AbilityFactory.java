@@ -2,11 +2,12 @@ package daybreak.abilitywar.ability;
 
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mixability.Mix;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.ReflectionUtil;
 import daybreak.abilitywar.utils.database.collections.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
@@ -50,16 +51,10 @@ public class AbilityFactory {
 				if (!usedNames.containsKey(name)) {
 					registeredAbilities.put(abilityClass, registeration);
 					usedNames.put(name, abilityClass);
-
-					for (Field field : abilityClass.getFields()) {
-						if (field.getType().equals(SettingObject.class) && Modifier.isStatic(field.getModifiers())) {
-							field.get(null);
-						}
-					}
 				} else {
 					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
-			} catch (IllegalAccessException | NoSuchMethodException e) {
+			} catch (NoSuchMethodException | IllegalAccessException e) {
 				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
 					Messager.sendConsoleErrorMessage(e.getMessage());
 				} else {
@@ -154,6 +149,10 @@ public class AbilityFactory {
 		return new ArrayList<>(usedNames.keySet());
 	}
 
+	public static List<AbilityRegistration> getRegistrations() {
+		return new ArrayList<>(registeredAbilities.values());
+	}
+
 	/**
 	 * 등록된 능력 중 해당 이름의 능력을 반환합니다. AbilityManifest가 존재하지 않는 능력이거나 존재하지 않는 능력일 경우
 	 * null을 반환할 수 있습니다.
@@ -171,9 +170,10 @@ public class AbilityFactory {
 		private final Constructor<? extends AbilityBase> constructor;
 		private final AbilityManifest manifest;
 		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
+		private final Map<String, SettingObject<?>> settingObjects;
 
 		@SuppressWarnings("unchecked")
-		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NoSuchMethodException, SecurityException {
+		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NoSuchMethodException, SecurityException, IllegalAccessException {
 			this.clazz = clazz;
 
 			this.constructor = clazz.getConstructor(Participant.class);
@@ -182,7 +182,7 @@ public class AbilityFactory {
 				throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
 			this.manifest = clazz.getAnnotation(AbilityManifest.class);
 
-			HashMap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
+			Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
 			for (Method method : clazz.getDeclaredMethods()) {
 				SubscribeEvent subscribeEvent = method.getAnnotation(SubscribeEvent.class);
 				if (subscribeEvent != null) {
@@ -193,6 +193,15 @@ public class AbilityFactory {
 				}
 			}
 			this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
+
+			Map<String, SettingObject<?>> settingObjects = new HashMap<>();
+			for (Field field : clazz.getDeclaredFields()) {
+				if (field.getType().equals(SettingObject.class) && Modifier.isStatic(field.getModifiers())) {
+					SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
+					settingObjects.put(settingObject.getKey(), settingObject);
+				}
+			}
+			this.settingObjects = Collections.unmodifiableMap(settingObjects);
 		}
 
 		public Class<? extends AbilityBase> getAbilityClass() {
@@ -209,6 +218,10 @@ public class AbilityFactory {
 
 		public Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> getEventhandlers() {
 			return eventhandlers;
+		}
+
+		public Map<String, SettingObject<?>> getSettingObjects() {
+			return settingObjects;
 		}
 
 	}

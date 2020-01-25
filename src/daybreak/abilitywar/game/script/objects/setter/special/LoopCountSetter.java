@@ -52,7 +52,7 @@ public class LoopCountSetter extends Setter<Integer> {
 		ItemMeta loopCountMeta = loopCount.getItemMeta();
 		loopCountMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 
-		if (getWizard().Loop.getValue()) {
+		if (getWizard().loopSetter.getValue()) {
 			if (getValue() > 0) {
 				loopCountMeta.setLore(Arrays.asList(
 						ChatColor.translateAlternateColorCodes('&', "&e" + getValue() + "번 &f반복 실행됩니다."),

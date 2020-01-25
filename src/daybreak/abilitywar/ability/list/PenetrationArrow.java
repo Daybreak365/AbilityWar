@@ -4,7 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
-import daybreak.abilitywar.config.AbilitySettings;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.library.ParticleLib;

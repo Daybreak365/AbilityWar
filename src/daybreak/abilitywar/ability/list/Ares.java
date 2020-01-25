@@ -5,7 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.config.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -27,7 +27,7 @@ import java.util.Set;
 public class Ares extends AbilityBase {
 
 	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
-			"# 스킬 대미지") {
+			"# 스킬 대미지 (단위: 백분율)") {
 
 		@Override
 		public boolean Condition(Integer value) {

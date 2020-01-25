@@ -279,23 +279,3 @@ public class Configuration {
 	}
 
 }
-
-class Cache {
-
-	private final boolean isModifiedValue;
-	private final Object value;
-
-	Cache(boolean isModifiedValue, Object value) {
-		this.isModifiedValue = isModifiedValue;
-		this.value = value;
-	}
-
-	boolean isModifiedValue() {
-		return isModifiedValue;
-	}
-
-	Object getValue() {
-		return value;
-	}
-
-}

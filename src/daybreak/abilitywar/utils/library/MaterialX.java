@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Locale;
@@ -1398,10 +1399,16 @@ public enum MaterialX {
 	 * @return true if the material is the same as the item's material (and data value if on older versions), otherwise false.
 	 * @since 1.0.0
 	 */
-	public boolean isSimilar(ItemStack item) {
+	public boolean compareType(ItemStack item) {
 		Objects.requireNonNull(item, "Cannot compare with null ItemStack");
 		if (item.getType() != this.parseMaterial()) return false;
 		return NEW_VERSION || this.isDamageable() || item.getDurability() == this.data;
+	}
+
+	public boolean compareType(Block block) {
+		Objects.requireNonNull(block, "Cannot compare with null Block");
+		if (block.getType() != this.parseMaterial()) return false;
+		return NEW_VERSION || block.getData() == this.data;
 	}
 
 	/**

@@ -2,6 +2,7 @@ package daybreak.abilitywar.game;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.config.ability.wizard.AbilitySettingWizard;
 import daybreak.abilitywar.config.wizard.DeathWizard;
 import daybreak.abilitywar.config.wizard.GameWizard;
 import daybreak.abilitywar.config.wizard.InvincibilityWizard;
@@ -349,6 +350,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			new GameWizard(p, plugin).Show();
 		} else if (args[0].equalsIgnoreCase("death")) {
 			new DeathWizard(p, plugin).Show();
+		} else if (args[0].equalsIgnoreCase("ability")) {
+			new AbilitySettingWizard(p, plugin).openGUI(1);
 		} else {
 			if (NumberUtil.isInt(args[0])) {
 				sendHelpConfigCommand(p, label, Integer.parseInt(args[0]));
@@ -633,20 +636,31 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendHelpConfigCommand(CommandSender sender, String label, int page) {
-		int AllPage = 1;
+		int allPage = 2;
 
-		if (page == 1) {
-			sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
-					ChatColor.translateAlternateColorCodes('&',
-							"&b/" + label + " config <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage
-									+ " 페이지 &7)"),
-					Messager.formatCommand(label + " config", "kit", "능력자 전쟁 기본템을 설정합니다.", true),
-					Messager.formatCommand(label + " config", "spawn", "능력자 전쟁 스폰을 설정합니다.", true),
-					Messager.formatCommand(label + " config", "inv", "초반 무적을 설정합니다.", true),
-					Messager.formatCommand(label + " config", "game", "게임의 전반적인 부분들을 설정합니다.", true),
-					Messager.formatCommand(label + " config", "death", "플레이어 사망에 관련된 콘피그를 설정합니다.", true)});
-		} else {
-			Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
+
+		switch (page) {
+			case 1:
+				sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
+						ChatColor.translateAlternateColorCodes('&',
+								"&b/" + label + " config <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
+										+ " 페이지 &7)"),
+						Messager.formatCommand(label + " config", "kit", "능력자 전쟁 기본템을 설정합니다.", true),
+						Messager.formatCommand(label + " config", "spawn", "능력자 전쟁 스폰을 설정합니다.", true),
+						Messager.formatCommand(label + " config", "inv", "초반 무적을 설정합니다.", true),
+						Messager.formatCommand(label + " config", "game", "게임의 전반적인 부분들을 설정합니다.", true),
+						Messager.formatCommand(label + " config", "death", "플레이어 사망에 관련된 콘피그를 설정합니다.", true)});
+				break;
+			case 2:
+				sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
+						ChatColor.translateAlternateColorCodes('&',
+								"&b/" + label + " config <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
+										+ " 페이지 &7)"),
+						Messager.formatCommand(label + " config", "ability", "능력별 설정을 변경합니다.", true)});
+				break;
+			default:
+				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
+				break;
 		}
 	}
 
@@ -730,7 +744,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					}
 				case 2:
 					if (args[0].equalsIgnoreCase("config")) {
-						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death");
+						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability");
 						if (args[1].isEmpty()) {
 							return configs;
 						} else {

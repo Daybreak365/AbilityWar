@@ -19,9 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * 관전자 설정 GUI
@@ -35,44 +34,28 @@ public class SpectatorGUI implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 
-	private int PlayerPage = 1;
+	private int currentPage = 1;
 
-	private Inventory SpectateGUI;
+	private Inventory gui;
 
-	public List<String> getPlayers() {
-		ArrayList<String> list = new ArrayList<String>();
+	public Set<String> getPlayers() {
+		Set<String> list = new TreeSet<>();
 
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (!list.contains(p.getName())) {
-				list.add(p.getName());
-			}
+			list.add(p.getName());
 		}
-
-		for (String p : SpectatorManager.getSpectators()) {
-			if (!list.contains(p)) {
-				list.add(p);
-			}
-		}
-
-		list.sort(new Comparator<String>() {
-
-			public int compare(String obj1, String obj2) {
-				return obj1.compareToIgnoreCase(obj2);
-			}
-
-		});
-
+		list.addAll(SpectatorManager.getSpectators());
 		return list;
 	}
 
-	public void openSpectateGUI(Integer page) {
-		List<String> Players = getPlayers();
-		Integer MaxPage = ((Players.size() - 1) / 36) + 1;
+	public void openSpectateGUI(int page) {
+		Set<String> Players = getPlayers();
+		int MaxPage = ((Players.size() - 1) / 36) + 1;
 		if (MaxPage < page)
 			page = 1;
 		if (page < 1) page = 1;
-		SpectateGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&b플레이어 &f목록"));
-		PlayerPage = page;
+		gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&b플레이어 &f목록"));
+		currentPage = page;
 		int Count = 0;
 
 		for (String player : Players) {
@@ -99,7 +82,7 @@ public class SpectatorGUI implements Listener {
 			}
 
 			if (Count / 36 == page - 1) {
-				SpectateGUI.setItem(Count % 36, is);
+				gui.setItem(Count % 36, is);
 			}
 			Count++;
 		}
@@ -109,7 +92,7 @@ public class SpectatorGUI implements Listener {
 			ItemMeta previousMeta = previousPage.getItemMeta();
 			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
 			previousPage.setItemMeta(previousMeta);
-			SpectateGUI.setItem(48, previousPage);
+			gui.setItem(48, previousPage);
 		}
 
 		if (page != MaxPage) {
@@ -117,7 +100,7 @@ public class SpectatorGUI implements Listener {
 			ItemMeta nextMeta = nextPage.getItemMeta();
 			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
 			nextPage.setItemMeta(nextMeta);
-			SpectateGUI.setItem(50, nextPage);
+			gui.setItem(50, nextPage);
 		}
 
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
@@ -125,28 +108,28 @@ public class SpectatorGUI implements Listener {
 		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 				"&6페이지 &e" + page + " &6/ &e" + MaxPage));
 		Page.setItemMeta(PageMeta);
-		SpectateGUI.setItem(49, Page);
+		gui.setItem(49, Page);
 
-		p.openInventory(SpectateGUI);
+		p.openInventory(gui);
 	}
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(this.SpectateGUI)) {
+		if (e.getInventory().equals(this.gui)) {
 			HandlerList.unregisterAll(this);
 		}
 	}
 
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(SpectateGUI)) {
+		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
 			Player p = (Player) e.getWhoClicked();
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
-					openSpectateGUI(PlayerPage - 1);
+					openSpectateGUI(currentPage - 1);
 				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
-					openSpectateGUI(PlayerPage + 1);
+					openSpectateGUI(currentPage + 1);
 				}
 			}
 
@@ -166,7 +149,7 @@ public class SpectatorGUI implements Listener {
 						if (target != null) {
 							SpectatorManager.removeSpectator(target);
 
-							openSpectateGUI(PlayerPage);
+							openSpectateGUI(currentPage);
 						} else {
 							throw new Exception("해당 플레이어가 존재하지 않습니다.");
 						}
@@ -175,7 +158,7 @@ public class SpectatorGUI implements Listener {
 						if (target != null) {
 							SpectatorManager.addSpectator(target);
 
-							openSpectateGUI(PlayerPage);
+							openSpectateGUI(currentPage);
 						} else {
 							throw new Exception("해당 플레이어가 존재하지 않습니다.");
 						}

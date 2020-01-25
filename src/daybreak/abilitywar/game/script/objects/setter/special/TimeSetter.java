@@ -53,7 +53,7 @@ public class TimeSetter extends Setter<Integer> {
 
 		List<String> Lore = new ArrayList<String>();
 
-		if (getWizard().Loop.getValue()) {
+		if (getWizard().loopSetter.getValue()) {
 			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 후 &e" + NumberUtil.parseTimeString(this.getValue()) + "&f마다 실행됩니다."));
 		} else {
 			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 &e" + NumberUtil.parseTimeString(this.getValue()) + " &f후에 실행됩니다."));
