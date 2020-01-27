@@ -23,8 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @AbilityManifest(Name = "뱀파이어", Rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.UNDEAD)
 public class Vampire extends AbilityBase {
@@ -73,14 +72,14 @@ public class Vampire extends AbilityBase {
 	private static final ParticleLib.RGB COLOR_BLOOD_RED = new ParticleLib.RGB(138, 7, 7);
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 10, cooldownTimer) {
 		int count;
-		HashMap<Damageable, Line> lines;
-		ArrayList<Player> instrumentListeners;
+		List<Damageable> targets;
+		List<Player> instrumentListeners;
 		int blood;
 
 		public void Target() {
-			lines = new HashMap<>();
+			targets = LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, 250);
 			instrumentListeners = new ArrayList<>();
-			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, 250)) {
+			for (Damageable damageable : targets) {
 				if (!damageable.isDead() && DamageUtil.canDamage(getPlayer(), damageable, EntityDamageEvent.DamageCause.MAGIC, 1)) {
 					damageable.damage(0);
 					final int amount;
@@ -91,7 +90,6 @@ public class Vampire extends AbilityBase {
 					}
 					damageable.setHealth(Math.max(damageable.getHealth() - amount, 0));
 					blood += amount;
-					lines.put(damageable, new Line(damageable.getLocation(), getPlayer().getLocation()));
 					if (damageable instanceof Player) instrumentListeners.add((Player) damageable);
 				}
 			}
@@ -130,13 +128,9 @@ public class Vampire extends AbilityBase {
 			for (Location location : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 				ParticleLib.REDSTONE.spawnParticle(location, COLOR_BLOOD_RED);
 			}
-			for (Map.Entry<Damageable, Line> entry : lines.entrySet()) {
-				Location startLocation = entry.getKey().getLocation();
-				try {
-					ParticleLib.HEART.spawnParticle(entry.getValue().setVector(startLocation, getPlayer().getLocation()).getLocation(startLocation, count - 1));
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
+			for (Damageable target : targets) {
+				Location startLocation = target.getLocation();
+				ParticleLib.HEART.spawnParticle(startLocation.clone().add(Line.vectorAt(startLocation, getPlayer().getLocation(), 10, count - 1)));
 			}
 		}
 	}.setPeriod(2);

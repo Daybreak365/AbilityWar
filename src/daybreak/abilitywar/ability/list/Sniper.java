@@ -26,6 +26,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
+import java.util.Iterator;
+
 @AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
 
@@ -115,16 +117,15 @@ public class Sniper extends AbilityBase {
 			this.forward = arrowVelocity.multiply(2.5);
 			this.color = color;
 			this.lastLocation = startLocation;
-			this.line = new Line(startLocation, startLocation).setLocationAmount(30);
 		}
 
 		private Location lastLocation;
-		private final Line line;
 
 		@Override
 		protected void onProcess(int i) {
 			Location newLocation = lastLocation.clone().add(forward);
-			for (Location location : line.setVector(lastLocation, newLocation).getLocations(lastLocation)) {
+			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 20).toLocationIterator(lastLocation); iterator.hasNext(); ) {
+				Location location = iterator.next();
 				centeredBoundingBox.setLocation(location);
 				Block block = location.getBlock();
 				Material type = block.getType();

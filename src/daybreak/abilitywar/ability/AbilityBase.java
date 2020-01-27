@@ -425,11 +425,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 		@Override
 		protected final void onStart() {
-			counted = new ArrayList<>();
 			onDurationStart();
 		}
-
-		private ArrayList<Integer> counted = new ArrayList<>();
 
 		@Override
 		protected final void onProcess(int count) {
@@ -439,8 +436,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 				NMSUtil.PlayerUtil.sendActionbar(player, toString(), 0, 20, 0);
 			}
 			final int fixedCount = getFixedCount();
-			if ((fixedCount == (duration / 2) && !counted.contains(fixedCount)) || (fixedCount <= 5 && fixedCount >= 1 && !counted.contains(fixedCount))) {
-				counted.add(fixedCount);
+			if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
 				player.sendMessage(toString(ChatColor.WHITE));
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(player);
 			}

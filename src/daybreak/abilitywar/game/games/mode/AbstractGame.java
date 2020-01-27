@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -380,13 +382,13 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 	}
 
-	private final ArrayList<TimerBase> timerTasks = new ArrayList<>();
+	private final List<TimerBase> timerTasks = new LinkedList<>();
 
 	/**
 	 * 현재 실행중인 모든 {@link TimerBase}를 반환합니다.
 	 */
-	public Collection<TimerBase> getTimers() {
-		return Collections.unmodifiableList(new ArrayList<>(timerTasks));
+	public final Collection<TimerBase> getTimers() {
+		return new ArrayList<>(timerTasks);
 	}
 
 	/**
@@ -394,7 +396,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	 *
 	 * @param timerType 종료할 타이머 타입
 	 */
-	public void stopTimers(Class<? extends TimerBase> timerType) {
+	public final void stopTimers(Class<? extends TimerBase> timerType) {
 		for (TimerBase timer : getTimers()) {
 			if (timerType.isAssignableFrom(timer.getClass())) {
 				timer.stopTimer(false);
@@ -414,12 +416,11 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 	public abstract class TimerBase {
 
-		private int task = -1;
-
-		private boolean isInfinite;
-
-		private int maxCount;
+		private int taskId = -1;
 		private int count;
+
+		private final int maxCount;
+		private boolean infinite;
 		private int period = 20;
 
 		/**
@@ -457,7 +458,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		 * {@link TimerBase}의 실행 여부를 반환합니다.
 		 */
 		public final boolean isRunning() {
-			return task != -1;
+			return taskId != -1;
 		}
 
 		/**
@@ -466,7 +467,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		public final void startTimer() {
 			if (AbstractGame.this.isRunning() && !isRunning()) {
 				count = maxCount;
-				this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, period);
+				this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, period);
 				timerTasks.add(this);
 				onStart();
 			}
@@ -477,9 +478,9 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		 */
 		public final void stopTimer(boolean silent) {
 			if (isRunning()) {
-				Bukkit.getScheduler().cancelTask(task);
+				Bukkit.getScheduler().cancelTask(taskId);
 				timerTasks.remove(this);
-				this.task = -1;
+				this.taskId = -1;
 				if (!silent) {
 					onEnd();
 				} else {
@@ -510,7 +511,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		 * @return 타이머가 무한 타이머인지의 여부를 반환합니다.
 		 */
 		public final boolean isInfinite() {
-			return isInfinite;
+			return infinite;
 		}
 
 		/**
@@ -530,7 +531,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		 * maxCount 이후 종료되는 일반 {@link TimerBase}를 만듭니다.
 		 */
 		public TimerBase(int maxCount) {
-			isInfinite = false;
+			infinite = false;
 			this.maxCount = maxCount;
 		}
 
@@ -538,14 +539,14 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		 * 종료되지 않는 무한 {@link TimerBase}를 만듭니다.
 		 */
 		public TimerBase() {
-			isInfinite = true;
+			infinite = true;
 			this.maxCount = 1;
 		}
 
 		private final class TimerTask extends Thread {
 			@Override
 			public void run() {
-				if (isInfinite) {
+				if (infinite) {
 					onProcess(count);
 					count++;
 				} else {

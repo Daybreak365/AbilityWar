@@ -36,21 +36,24 @@ public class Circle extends Shape {
 	}
 
 	public static Circle of(double radius, int amount) {
-		Circle circle = new Circle();
-		final double divided = TWICE_PI / amount;
-		for (double radians = divided; circle.size() <= amount; radians += divided) {
-			circle.add(new Vector(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius));
-		}
-		return circle;
+		return new Circle(radius, amount);
 	}
 
-	private Circle() {
-		super();
+	private Circle(double radius, int amount) {
+		super(amount);
+		final double divided = TWICE_PI / amount;
+		for (double radians = divided; size() <= amount; radians += divided) {
+			add(new Vector(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius));
+		}
+	}
+
+	private Circle(int amount) {
+		super(amount);
 	}
 
 	@Override
 	public Circle clone() {
-		Circle circle = new Circle();
+		Circle circle = new Circle(size());
 		for (Vector vector : this) {
 			circle.add(vector.clone());
 		}

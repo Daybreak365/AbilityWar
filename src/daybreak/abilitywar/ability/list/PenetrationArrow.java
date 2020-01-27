@@ -31,6 +31,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -207,12 +208,10 @@ public class PenetrationArrow extends AbilityBase {
 			this.forward = arrowVelocity.setY(arrowVelocity.getY() * 0.7);
 			this.color = color;
 			this.lastLocation = startLocation;
-			this.line = new Line(startLocation, startLocation).setLocationAmount(8);
 			this.time = Math.max(0, (angle + 135) / 360);
 		}
 
 		private Location lastLocation;
-		private final Line line;
 		private double time;
 		private final Set<Damageable> attacked = new HashSet<>();
 
@@ -221,7 +220,8 @@ public class PenetrationArrow extends AbilityBase {
 			time += 0.03;
 			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time) + (velocity * sin * time) * 0.7;
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
-			for (Location location : line.setVector(lastLocation, newLocation).getLocations(lastLocation)) {
+			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 8).toLocationIterator(lastLocation); iterator.hasNext(); ) {
+				Location location = iterator.next();
 				centeredBoundingBox.setLocation(location);
 				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {
 					if (!getPlayer().equals(damageable) && !attacked.contains(damageable)) {

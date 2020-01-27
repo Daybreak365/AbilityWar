@@ -139,7 +139,7 @@ public class Reaper extends AbilityBase {
 			getPlayer().setVelocity(getPlayer().getVelocity().multiply(MULTIPLY));
 			Location playerLocation = getPlayer().getLocation().clone().add(0, 1, 0);
 			for (Location location : souls.rotateAroundAxisY(6).toLocations(playerLocation)) {
-				Location realLocation = new Line(location, playerLocation).setLocationAmount(25).getLocation(location, count);
+				Location realLocation = location.add(Line.vectorAt(location, playerLocation, 25, count));
 				ParticleLib.REDSTONE.spawnParticle(realLocation, SOUL_COLOUR);
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(realLocation, 1.5, 1.5)) {
 					if (!getPlayer().equals(damageable)) {
@@ -168,11 +168,11 @@ public class Reaper extends AbilityBase {
 			Random random = new Random();
 			Location playerLocation = getPlayer().getLocation();
 			for (int i = 0; i < tempSoul; i++) {
-				locationsList.add(new Line(Vector.getRandom().multiply(new Vector(
+				locationsList.add(Line.of(Vector.getRandom().multiply(new Vector(
 						random.nextBoolean() ? distance * 2 : -distance * 2,
 						random.nextBoolean() ? distance * 2 : -distance * 2,
 						random.nextBoolean() ? distance * 2 : -distance * 2
-				))).setLocationAmount(20).getLocations(playerLocation));
+				)), 20).toLocations(playerLocation));
 			}
 		}
 

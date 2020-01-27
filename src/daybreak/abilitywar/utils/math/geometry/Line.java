@@ -1,72 +1,90 @@
 package daybreak.abilitywar.utils.math.geometry;
 
-import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.math.geometry.vector.VectorIterator;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
+import java.util.NoSuchElementException;
 
-public class Line {
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-	private Vector vector;
-	private int locationAmount = 10;
+public class Line extends Shape {
 
-	public Line(Location startLocation, Location targetLocation) {
-		this.vector = checkNotNull(targetLocation).toVector().subtract(checkNotNull(startLocation).toVector());
-	}
-
-	public Line(Vector vector) {
-		this.vector = checkNotNull(vector);
-	}
-
-	public Line setVector(Location startLocation, Location targetLocation) {
-		this.vector = checkNotNull(targetLocation).toVector().subtract(checkNotNull(startLocation).toVector());
-		return this;
-	}
-
-	public Line setVector(Vector vector) {
-		this.vector = checkNotNull(vector);
-		return this;
-	}
-
-	public Line setLocationAmount(int locationAmount) {
-		if (locationAmount < 1) {
-			throw new IllegalArgumentException("locationAmount는 자연수로 설정되어야 합니다.");
+	public static Vector vectorAt(Location from, Location to, int amount, int index) throws IndexOutOfBoundsException {
+		checkNotNull(from);
+		checkNotNull(to);
+		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		if (index > amount || index < 0) {
+			throw new IndexOutOfBoundsException("index must be a number between 0 and amount.");
 		}
-		this.locationAmount = locationAmount;
-		return this;
+		return to.toVector().subtract(from.toVector()).multiply(Math.min((1.0 / amount) * index, 1.0));
 	}
 
-	/**
-	 * @param index index가 0이면 StartLocation과 동일한 위치, index가 LocationAmount면 TargetLocation과 동일한 위치를 반환합니다.
-	 * @throws IndexOutOfBoundsException index에 범위 외의 수가 입력되었을 경우
-	 * @return index 번째 위치
-	 */
-	public Location getLocation(Location startLocation, int index) throws IndexOutOfBoundsException {
-		if (index <= locationAmount) {
-			return startLocation.toVector().clone().add(vector.clone().multiply(Math.min((1.0 / locationAmount) * index, 1.0))).toLocation(startLocation.getWorld());
-		} else {
-			throw new IndexOutOfBoundsException("index는 0과 " + locationAmount + " 사이의 수가 입력되어야 합니다.");
+	public static Line between(Location from, Location to, int amount) {
+		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		return new Line(checkNotNull(from), checkNotNull(to), amount);
+	}
+
+	public static VectorIterator iteratorBetween(Location from, Location to, int amount) {
+		checkNotNull(from);
+		checkNotNull(to);
+		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		return new VectorIterator() {
+			final Vector vector = to.toVector().subtract(from.toVector());
+			final double increment = 1.0 / amount;
+			private int cursor = 0;
+
+			@Override
+			public boolean hasNext() {
+				return cursor < amount;
+			}
+
+			@Override
+			public Vector next() {
+				if (cursor >= amount) throw new NoSuchElementException();
+				cursor++;
+				return vector.clone().multiply(Math.min(increment * cursor, 1.0));
+			}
+		};
+	}
+
+	public static Line of(Vector vector, int amount) {
+		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		return new Line(checkNotNull(vector), amount);
+	}
+
+	public static VectorIterator iteratorOf(Vector vector, int amount) {
+		checkNotNull(vector);
+		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		return new VectorIterator() {
+			final double increment = 1.0 / amount;
+			private int cursor = 0;
+
+			@Override
+			public boolean hasNext() {
+				return cursor < amount;
+			}
+
+			@Override
+			public Vector next() {
+				if (cursor >= amount) throw new NoSuchElementException();
+				cursor++;
+				return vector.clone().multiply(Math.min(increment * cursor, 1.0));
+			}
+		};
+	}
+
+	private Line(Vector vector, int amount) {
+		super(amount);
+		final double increment = 1.0 / amount;
+		for (int i = 0; i <= amount; i++) {
+			add(vector.clone().multiply(Math.min(increment * i, 1.0)));
 		}
 	}
 
-	public LocationUtil.Locations getLocations(Location startLocation) {
-		LocationUtil.Locations locations = new LocationUtil.Locations();
-		final double increasement = 1.0 / locationAmount;
-		for (int i = 0; i <= locationAmount; i++) {
-			locations.add(startLocation.toVector().clone().add(vector.clone().multiply(Math.min(increasement * i, 1.0))).toLocation(startLocation.getWorld()));
-		}
-		return locations;
-	}
-
-	public Vectors getVectors() {
-		Vectors vectors = new Vectors();
-		final double increasement = 1.0 / locationAmount;
-		for (int i = 0; i <= locationAmount; i++) {
-			vectors.add(vector.clone().multiply(Math.min(increasement * i, 1.0)));
-		}
-		return vectors;
+	private Line(Location from, Location to, int amount) {
+		this(to.toVector().subtract(from.toVector()), amount);
 	}
 
 }

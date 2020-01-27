@@ -42,6 +42,10 @@ public class VectorUtil {
 
 	public static class Vectors extends ArrayList<Vector> implements Cloneable {
 
+		public Vectors(int initialCapacity) {
+			super(initialCapacity);
+		}
+
 		public Vectors() {
 			super();
 		}

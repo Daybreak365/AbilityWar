@@ -7,7 +7,10 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -52,18 +55,43 @@ public class Demigod extends AbilityBase {
 					Random r = new Random();
 
 					if ((r.nextInt(100) + 1) <= Chance) {
-						Integer Buff = r.nextInt(3);
-						if (Buff.equals(0)) {
+						int buff = r.nextInt(3);
+						if (buff == 0) {
+							showHelix(ABSORPTION);
 							PotionEffects.ABSORPTION.addPotionEffect(p, 100, 1, true);
-						} else if (Buff.equals(1)) {
+						} else if (buff == 1) {
+							showHelix(REGENERATION);
 							PotionEffects.REGENERATION.addPotionEffect(p, 100, 0, true);
-						} else if (Buff.equals(2)) {
+						} else if (buff == 2) {
+							showHelix(DAMAGE_RESISTANCE);
 							PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(p, 100, 1, true);
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private static final RGB ABSORPTION = RGB.of(255, 215, 54);
+	private static final RGB REGENERATION = RGB.of(255, 92, 92);
+	private static final RGB DAMAGE_RESISTANCE = RGB.of(173, 173, 173);
+
+	private static final int particleCount = 20;
+	private static final double yDiff = 0.6 / particleCount;
+	private static final Circle circle = Circle.of(0.5, particleCount);
+
+	private void showHelix(RGB color) {
+		new Timer((particleCount * 3) / 2) {
+			int count = 0;
+
+			@Override
+			protected void onProcess(int a) {
+				for (int i = 0; i < 2; i++) {
+					ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(circle.get(count % 20)).add(0, count * yDiff, 0), color);
+					count++;
+				}
+			}
+		}.setPeriod(1).startTimer();
 	}
 
 	@Override

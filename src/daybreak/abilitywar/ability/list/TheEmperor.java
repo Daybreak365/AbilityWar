@@ -60,10 +60,10 @@ public class TheEmperor extends AbilityBase {
 		@Override
 		protected void onDurationStart() {
 			Location playerLocation = getPlayer().getLocation();
-			direction = getPlayer().getLocation().getDirection();
-			Line line = new Line(playerLocation, playerLocation.clone().add(direction.clone().setY(0).normalize().multiply(3))).setLocationAmount(4);
+			direction = playerLocation.getDirection();
+			Location lineTarget = playerLocation.clone().add(direction.clone().setY(0).normalize().multiply(3));
 			final double radians = Math.toRadians(90);
-			for (Vector vector : line.getVectors()) {
+			for (Vector vector : Line.between(playerLocation, lineTarget, 4)) {
 				final double originX = vector.getX();
 				final double originZ = vector.getZ();
 				armorStands.add(getPlayer().getWorld().spawn(playerLocation.clone().add(vector.clone()
@@ -75,9 +75,13 @@ public class TheEmperor extends AbilityBase {
 						.setZ(rotateZ(originX, originZ, radians * 3))), ArmorStand.class)
 				);
 			}
+			Vector centerVector = lineTarget.toVector();
+			this.center = getPlayer().getWorld().spawn(lineTarget, ArmorStand.class);
+			center.setInvulnerable(true);
+			center.setCollidable(false);
+			center.setVisible(false);
+
 			EulerAngle eulerAngle = new EulerAngle(Math.toRadians(270), Math.toRadians(270), 0);
-			center = null;
-			Vector centerVector = null;
 			diff = new HashMap<>();
 			for (ArmorStand armorStand : armorStands) {
 				armorStand.setInvulnerable(true);
@@ -86,16 +90,11 @@ public class TheEmperor extends AbilityBase {
 				armorStand.setArms(true);
 				armorStand.setVisible(false);
 				armorStand.setRightArmPose(eulerAngle);
-				if (center == null || centerVector == null) {
-					center = armorStand;
-					centerVector = center.getLocation().toVector();
-				} else {
-					armorStand.setGravity(false);
-					EntityEquipment equipment = armorStand.getEquipment();
-					equipment.setItemInMainHand(new ItemStack(Material.SHIELD));
-					equipment.setHelmet(MaterialX.GOLDEN_HELMET.parseItem());
-					diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector));
-				}
+				armorStand.setGravity(false);
+				EntityEquipment equipment = armorStand.getEquipment();
+				equipment.setItemInMainHand(new ItemStack(Material.SHIELD));
+				equipment.setHelmet(MaterialX.GOLDEN_HELMET.parseItem());
+				diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector));
 			}
 			gravityFalse = false;
 		}
