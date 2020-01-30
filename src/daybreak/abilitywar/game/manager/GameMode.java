@@ -10,6 +10,7 @@ import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.squirtgunfight.SummerVacation;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.games.teamgame.TeamFight;
+import daybreak.abilitywar.game.games.zerotick.ZeroTick;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
@@ -35,6 +36,7 @@ public class GameMode {
 		registerGameMode(SummerVacation.class);
 		registerGameMode(TeamFight.class);
 		registerGameMode(MixAbility.class);
+		registerGameMode(ZeroTick.class);
 	}
 
 	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {

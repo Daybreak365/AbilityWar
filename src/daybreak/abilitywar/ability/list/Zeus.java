@@ -21,6 +21,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import java.util.Iterator;
+
 @AbilityManifest(Name = "제우스", Rank = Rank.S, Species = Species.GOD)
 public class Zeus extends AbilityBase {
 
@@ -56,7 +58,8 @@ public class Zeus extends AbilityBase {
 		@Override
 		public void onProcess(int count) {
 			double playerY = getPlayer().getLocation().getY();
-			for (Location loc : Circle.iterableOf(center, 2 * (5 - getCount()), 7)) {
+			for (Iterator<Location> iterator = Circle.iteratorOf(center, 2 * (5 - getCount()), 7); iterator.hasNext(); ) {
+				Location loc = iterator.next();
 				loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()));
 				loc.getWorld().strikeLightningEffect(loc);
 				for (Damageable d : LocationUtil.getNearbyDamageableEntities(loc, 4, 4)) {

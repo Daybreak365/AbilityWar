@@ -53,7 +53,7 @@ public class Brewer extends AbilityBase {
 						ItemLib.PotionBuilder.PotionShape.values()[random.nextInt(ItemLib.PotionBuilder.PotionShape.values().length)])
 						.setExtended(random.nextBoolean())
 						.setUpgraded(random.nextBoolean())
-						.getItemStack(1));
+						.build(1));
 			}
 			SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(player);
 			ParticleLib.SPELL_WITCH.spawnParticle(player.getLocation(), 2, 2, 2, 10);

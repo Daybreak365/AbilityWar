@@ -428,17 +428,23 @@ public abstract class AbilityBase implements PassiveExecutor {
 			onDurationStart();
 		}
 
+		private int tick = 0;
+
 		@Override
 		protected final void onProcess(int count) {
 			onDurationProcess(count);
-			Player player = getPlayer();
-			if (sendActionbar) {
-				NMSUtil.PlayerUtil.sendActionbar(player, toString(), 0, 20, 0);
-			}
-			final int fixedCount = getFixedCount();
-			if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
-				player.sendMessage(toString(ChatColor.WHITE));
-				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(player);
+			tick += getPeriod();
+			if (tick >= 20) {
+				tick = 0;
+				Player player = getPlayer();
+				if (sendActionbar) {
+					NMSUtil.PlayerUtil.sendActionbar(player, toString(), 0, 20, 0);
+				}
+				final int fixedCount = getFixedCount();
+				if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
+					player.sendMessage(toString(ChatColor.WHITE));
+					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(player);
+				}
 			}
 		}
 

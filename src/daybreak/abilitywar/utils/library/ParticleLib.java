@@ -40,6 +40,7 @@ import org.bukkit.entity.Player;
  * @since 2019-02-19
  */
 public class ParticleLib {
+
 	public static final SimpleParticle BARRIER = new SimpleParticle("BARRIER");
 	public static final SimpleParticle BLOCK_CRACK = new SimpleParticle("BLOCK_CRACK");
 	public static final SimpleParticle BLOCK_DUST = new SimpleParticle("BLOCK_DUST");
@@ -156,6 +157,10 @@ public class ParticleLib {
 	}
 
 	public static class RGB {
+
+		public static RGB fromRGB(int rgb) {
+			return new RGB(rgb >> 16 & 255, rgb >> 8 & 255, rgb & 255);
+		}
 
 		public static RGB of(int red, int green, int blue) {
 			return new RGB(red, green, blue);

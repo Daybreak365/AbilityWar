@@ -11,13 +11,13 @@ import java.util.Collection;
 
 public interface DefaultKitHandler {
 
-	default void giveDefaultKit(Player p) {
-		p.setLevel(0);
+	default void giveDefaultKit(Player player) {
+		player.setLevel(0);
 		if (Configuration.Settings.getStartLevel() > 0) {
-			p.giveExpLevels(Configuration.Settings.getStartLevel());
-			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
+			player.giveExpLevels(Configuration.Settings.getStartLevel());
+			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(player);
 		}
-		Inventory inventory = p.getInventory();
+		Inventory inventory = player.getInventory();
 		if (Configuration.Settings.getInventoryClear()) {
 			inventory.clear();
 		}

@@ -326,7 +326,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	 * 기본 킷 유저 지급
 	 */
 	@Override
-	public void giveDefaultKit(Player p) {
+	public void giveDefaultKit(Player player) {
 		ItemStack bow = new ItemStack(Material.BOW);
 		ItemMeta bowMeta = bow.getItemMeta();
 		bowMeta.setUnbreakable(true);
@@ -335,11 +335,11 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		List<ItemStack> DefaultKit = Arrays.asList(bow, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
 
 		if (Settings.getInventoryClear()) {
-			p.getInventory().clear();
+			player.getInventory().clear();
 		}
 
 		for (ItemStack is : DefaultKit) {
-			p.getInventory().addItem(is);
+			player.getInventory().addItem(is);
 		}
 
 		ItemStack boots = new ItemStack(Material.IRON_BOOTS);
@@ -357,8 +357,8 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		helmet.setItemMeta(helmetMeta);
 		helmet.addEnchantment(Enchantment.BINDING_CURSE, 1);
 
-		p.getInventory().setHelmet(helmet);
-		p.getInventory().setBoots(boots);
+		player.getInventory().setHelmet(helmet);
+		player.getInventory().setBoots(boots);
 	}
 
 	@Override

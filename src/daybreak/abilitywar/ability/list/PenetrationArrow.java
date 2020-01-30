@@ -220,7 +220,7 @@ public class PenetrationArrow extends AbilityBase {
 			time += 0.03;
 			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time) + (velocity * sin * time) * 0.7;
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
-			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 8).toLocationIterator(lastLocation); iterator.hasNext(); ) {
+			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 8); iterator.hasNext(); ) {
 				Location location = iterator.next();
 				centeredBoundingBox.setLocation(location);
 				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {

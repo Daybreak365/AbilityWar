@@ -37,6 +37,22 @@ public class LocationUtil {
 	private LocationUtil() {
 	}
 
+	private static final double TWO_PI = 6.283185307179586D;
+
+	public static float getYaw(Vector vector) {
+		return (float) Math.toDegrees((Math.atan2(-vector.getX(), vector.getZ()) + TWO_PI) % TWO_PI);
+	}
+
+	public static float getPitch(Vector vector) {
+		double x = vector.getX();
+		double z = vector.getZ();
+		if (x == 0.0D && z == 0.0D) {
+			return vector.getY() > 0.0D ? -90 : 90;
+		} else {
+			return (float) Math.toDegrees(Math.atan(-vector.getY() / Math.sqrt((x * x) + (z * z))));
+		}
+	}
+
 	/**
 	 * 평면상에서 두 좌표의 거리의 제곱을 구합니다.
 	 *
@@ -440,6 +456,20 @@ public class LocationUtil {
 		public Locations highest() {
 			for (Location location : this) {
 				location.setY(location.getWorld().getHighestBlockYAt(location) + 0.1);
+			}
+			return this;
+		}
+
+		public Locations add(Vector vector) {
+			for (Location location : this) {
+				location.add(vector);
+			}
+			return this;
+		}
+
+		public Locations add(double x, double y, double z) {
+			for (Location location : this) {
+				location.add(x, y, z);
 			}
 			return this;
 		}

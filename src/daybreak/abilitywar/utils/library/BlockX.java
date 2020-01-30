@@ -45,20 +45,10 @@ import org.bukkit.material.Wool;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.EnumSet;
 
 @SuppressWarnings("deprecation")
 public final class BlockX {
 
-	public static final EnumSet<MaterialX> CROPS = EnumSet.of(
-			MaterialX.CARROT, MaterialX.POTATO, MaterialX.NETHER_WART, MaterialX.WHEAT_SEEDS, MaterialX.PUMPKIN_SEEDS,
-			MaterialX.MELON_SEEDS, MaterialX.BEETROOT_SEEDS, MaterialX.SUGAR_CANE, MaterialX.BAMBOO_SAPLING, MaterialX.CHORUS_PLANT,
-			MaterialX.KELP, MaterialX.SEA_PICKLE, MaterialX.BROWN_MUSHROOM, MaterialX.RED_MUSHROOM
-	);
-
-	public static final EnumSet<MaterialX> DANGEROUS = EnumSet.of(
-			MaterialX.MAGMA_BLOCK, MaterialX.LAVA, MaterialX.CAMPFIRE, MaterialX.FIRE
-	);
 	public static final int CAKE_SLICES = 6;
 
 	public static boolean isLit(Block block) {

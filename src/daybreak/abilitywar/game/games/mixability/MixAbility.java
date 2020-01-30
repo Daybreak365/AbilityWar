@@ -298,7 +298,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
-			protected String AbilityReveal(Participant victim) {
+			protected String getRevealMessage(Participant victim) {
 				Mix mix = (Mix) victim.getAbility();
 				if (mix.hasAbility()) {
 					String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();

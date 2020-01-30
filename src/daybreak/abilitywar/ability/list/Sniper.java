@@ -124,7 +124,7 @@ public class Sniper extends AbilityBase {
 		@Override
 		protected void onProcess(int i) {
 			Location newLocation = lastLocation.clone().add(forward);
-			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 20).toLocationIterator(lastLocation); iterator.hasNext(); ) {
+			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 20); iterator.hasNext(); ) {
 				Location location = iterator.next();
 				centeredBoundingBox.setLocation(location);
 				Block block = location.getBlock();

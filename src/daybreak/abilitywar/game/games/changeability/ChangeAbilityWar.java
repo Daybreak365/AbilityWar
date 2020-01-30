@@ -280,21 +280,21 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	 * 기본 킷 유저 지급
 	 */
 	@Override
-	public void giveDefaultKit(Player p) {
+	public void giveDefaultKit(Player player) {
 		List<ItemStack> DefaultKit = Settings.getDefaultKit();
 
 		if (Settings.getInventoryClear()) {
-			p.getInventory().clear();
+			player.getInventory().clear();
 		}
 
 		for (ItemStack is : DefaultKit) {
-			p.getInventory().addItem(is);
+			player.getInventory().addItem(is);
 		}
 
-		p.setLevel(0);
+		player.setLevel(0);
 		if (Settings.getStartLevel() > 0) {
-			p.giveExpLevels(Settings.getStartLevel());
-			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(p);
+			player.giveExpLevels(Settings.getStartLevel());
+			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(player);
 		}
 	}
 

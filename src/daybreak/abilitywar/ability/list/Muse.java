@@ -25,6 +25,8 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.util.Iterator;
+
 @AbilityManifest(Name = "뮤즈", Rank = Rank.S, Species = Species.GOD)
 public class Muse extends AbilityBase {
 
@@ -72,7 +74,8 @@ public class Muse extends AbilityBase {
 		public void onDurationProcess(int seconds) {
 			if (count <= 10) {
 				double playerY = getPlayer().getLocation().getY();
-				for (Location loc : Circle.iterableOf(center, count, count * 16)) {
+				for (Iterator<Location> iterator = Circle.iteratorOf(center, count, count * 16); iterator.hasNext(); ) {
+					Location loc = iterator.next();
 					loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
 					ParticleLib.REDSTONE.spawnParticle(loc, PINK);
 				}
@@ -104,7 +107,8 @@ public class Muse extends AbilityBase {
 			} else {
 				if (currentRadius > 1) currentRadius -= 0.115;
 				double playerY = getPlayer().getLocation().getY();
-				for (Location loc : Circle.iterableOf(center, currentRadius, (int) (currentRadius * 16))) {
+				for (Iterator<Location> iterator = Circle.iteratorOf(center, currentRadius, (int) (currentRadius * 16)); iterator.hasNext(); ) {
+					Location loc = iterator.next();
 					loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()) + 0.1);
 					ParticleLib.REDSTONE.spawnParticle(loc, PINK);
 				}

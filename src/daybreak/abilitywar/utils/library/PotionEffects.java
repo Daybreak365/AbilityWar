@@ -1,6 +1,7 @@
 package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -70,12 +71,13 @@ public enum PotionEffects {
 	public boolean isPositive() {
 		return positive;
 	}
+
 	public boolean isNegative() {
 		return !positive;
 	}
 
-	public static PotionEffects valueOf(PotionEffectType potionEffectType) {
-		return Enums.getIfPresent(PotionEffects.class, potionEffectType.getName()).orNull();
+	public static Optional<PotionEffects> valueOf(PotionEffectType potionEffectType) {
+		return Enums.getIfPresent(PotionEffects.class, potionEffectType.getName());
 	}
 
 }

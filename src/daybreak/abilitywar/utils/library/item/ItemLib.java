@@ -255,7 +255,7 @@ public class ItemLib {
 		 * @param amount 개수
 		 * @return ItemStack
 		 */
-		public ItemStack getItemStack(int amount) {
+		public ItemStack build(int amount) {
 			ItemStack stack = new ItemStack(shape.material);
 			stack.setAmount(amount);
 			try {

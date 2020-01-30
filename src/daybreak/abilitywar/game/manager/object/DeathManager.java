@@ -17,7 +17,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -81,27 +82,27 @@ public class DeathManager implements Listener, AbstractGame.Observer {
 		if (game.isParticipating(victimPlayer)) {
 			Participant victim = game.getParticipant(victimPlayer);
 
-			Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
+			ParticipantDeathEvent event = new ParticipantDeathEvent(victim);
+			Bukkit.getPluginManager().callEvent(event);
+			if (!event.isCancelled()) {
+				if (DeathSettings.getAbilityReveal()) {
+					Bukkit.broadcastMessage(getRevealMessage(victim));
+				}
+				if (DeathSettings.getAbilityRemoval()) {
+					victim.removeAbility();
+				}
 
-			if (DeathSettings.getAbilityReveal()) {
-				Bukkit.broadcastMessage(AbilityReveal(victim));
+				Operation(victim);
 			}
-			if (DeathSettings.getAbilityRemoval()) {
-				victim.removeAbility();
-			}
-
-			Operation(victim);
 		}
 	}
 
-	protected String AbilityReveal(Participant victim) {
+	protected String getRevealMessage(Participant victim) {
 		if (victim.hasAbility()) {
 			String name = victim.getAbility().getName();
-			return ChatColor.translateAlternateColorCodes('&',
-					"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getNeededJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+			return ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getNeededJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
 		} else {
-			return ChatColor.translateAlternateColorCodes('&',
-					"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님은 능력이 없습니다.");
+			return ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님은 능력이 없습니다.");
 		}
 	}
 
@@ -123,7 +124,7 @@ public class DeathManager implements Listener, AbstractGame.Observer {
 	/**
 	 * 사망한 유저 UUID 목록
 	 */
-	protected final ArrayList<UUID> deadPlayers = new ArrayList<>();
+	protected final Set<UUID> deadPlayers = new HashSet<>();
 
 	/**
 	 * Operation 콘피그에 따라 탈락, 관전모드 설정 또는 아무 행동도 하지 않을 수 있습니다.

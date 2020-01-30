@@ -1,7 +1,10 @@
 package daybreak.abilitywar.utils.versioncompat;
 
+import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -70,35 +73,37 @@ public class NMSUtil {
 
 		private static final Logger logger = Logger.getLogger(PlayerUtil.class.getName());
 
-		private static final Class<?> PacketPlayInClientCommand = NMSUtil.getNMSClass("PacketPlayInClientCommand");
-		private static final Class<?> EnumClientCommand = PacketPlayInClientCommand.getDeclaredClasses()[0];
+		private static final Class<?>
+				PacketPlayInClientCommand = NMSUtil.getNMSClass("PacketPlayInClientCommand"),
+				EnumClientCommand = PacketPlayInClientCommand.getDeclaredClasses()[0];
+		private static Constructor<?> newClientCommand;
 		private static Object PERFORM_RESPAWN;
 
 		static {
 			try {
+				newClientCommand = PacketPlayInClientCommand.getConstructor(EnumClientCommand);
 				PERFORM_RESPAWN = EnumClientCommand.getField("PERFORM_RESPAWN").get(null);
-			} catch (NoSuchFieldException | IllegalAccessException e) {
+			} catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException e) {
 				logger.log(Level.SEVERE, "리스폰 기능을 초기화하는 도중 오류가 발생하였습니다.");
 			}
 		}
 
 		public static void respawn(Player player) {
 			try {
-				Constructor<?> constructor = PacketPlayInClientCommand.getConstructor(EnumClientCommand);
-				a(player, constructor.newInstance(PERFORM_RESPAWN));
-			} catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException ex) {
+				a(player, newClientCommand.newInstance(PERFORM_RESPAWN));
+			} catch (IllegalAccessException | InstantiationException | InvocationTargetException ex) {
 				logger.log(Level.SEVERE, player.getName() + " 플레이어를 리스폰하는 도중 오류가 발생하였습니다.");
 			}
 		}
 
 		private static final Class<?> PacketPlayOutTitle = NMSUtil.getNMSClass("PacketPlayOutTitle");
-		private static Constructor<?> constructor = null;
+		private static Constructor<?> newTitlePacket = null;
 		private static Object TIMES = null;
 		private static Object ACTIONBAR = null;
 
 		static {
 			try {
-				constructor = PacketPlayOutTitle.getConstructor(
+				newTitlePacket = PacketPlayOutTitle.getConstructor(
 						PacketPlayOutTitle.getDeclaredClasses()[0],
 						IChatBaseComponent.IChatBaseComponent, int.class, int.class, int.class);
 				TIMES = PacketPlayOutTitle.getDeclaredClasses()[0].getField("TIMES").get(null);
@@ -111,11 +116,79 @@ public class NMSUtil {
 		public static void sendActionbar(Player player, String message, int fadeIn, int stay, int fadeOut) {
 			try {
 				Object actionbar = IChatBaseComponent.of(message);
-				sendPacket(player, constructor.newInstance(TIMES, actionbar, fadeIn, stay, fadeOut));
-				sendPacket(player, constructor.newInstance(ACTIONBAR, actionbar, fadeIn, stay, fadeOut));
+				sendPacket(player, newTitlePacket.newInstance(TIMES, actionbar, fadeIn, stay, fadeOut));
+				sendPacket(player, newTitlePacket.newInstance(ACTIONBAR, actionbar, fadeIn, stay, fadeOut));
 			} catch (IllegalAccessException | InvocationTargetException | InstantiationException | NullPointerException e) {
 				logger.log(Level.SEVERE, "액션바 메시지를 보내는 도중 " + e.getClass().getSimpleName() + " 오류가 발생하였습니다.");
 			}
+		}
+
+	}
+
+	public static class EntityUtil {
+
+		private static final Logger logger = Logger.getLogger(EntityUtil.class.getName());
+
+		private static final Class<?>
+				EntityMetadataClass = getNMSClass("PacketPlayOutEntityMetadata"),
+				DataWatcher = getNMSClass("DataWatcher"),
+				entityClass = getNMSClass("Entity");
+		private static Constructor<?> newEntityMetadata;
+
+		private static Method getId, getDataWatcher;
+
+		static {
+			try {
+				newEntityMetadata = EntityMetadataClass.getConstructor(int.class, DataWatcher, boolean.class);
+				getId = entityClass.getMethod("getId");
+				getDataWatcher = entityClass.getMethod("getDataWatcher");
+			} catch (NoSuchMethodException e) {
+				logger.log(Level.SEVERE, "엔티티 유틸을 초기화하는 도중 오류가 발생하였습니다.");
+			}
+		}
+
+		public static int getId(Entity entity) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+			return (int) getId.invoke(getHandle(entity));
+		}
+
+		public static Object getDataWatcher(Entity entity) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+			return getDataWatcher.invoke(getHandle(entity));
+		}
+
+		private static final Class<?>
+				EntityLookClass = getNMSClass("PacketPlayOutEntity$PacketPlayOutEntityLook"),
+				EntityHeadRotationClass = getNMSClass("PacketPlayOutEntityHeadRotation");
+		private static Constructor<?> newEntityLook, newEntityHeadRotation, newEntityTeleport;
+
+		static {
+			try {
+				newEntityLook = EntityLookClass.getConstructor(int.class, byte.class, byte.class, boolean.class);
+				newEntityHeadRotation = EntityHeadRotationClass.getConstructor(entityClass, byte.class);
+				newEntityTeleport = getNMSClass("PacketPlayOutEntityTeleport").getConstructor(getNMSClass("Entity"));
+			} catch (NoSuchMethodException e) {
+				logger.log(Level.SEVERE, "엔티티 방향 기능을 초기화하는 도중 오류가 발생하였습니다.");
+			}
+		}
+
+		public static void rotateHead(Player receiver, Entity entity, float yaw, float pitch) {
+			try {
+				int entityId = getId(entity);
+				Object handle = getHandle(entity);
+				byte fixedYaw = getFixedRotation(yaw);
+				sendPacket(receiver, newEntityTeleport.newInstance(handle));
+				sendPacket(receiver, newEntityLook.newInstance(entityId, fixedYaw, getFixedRotation(pitch), entity.isOnGround()));
+				sendPacket(receiver, newEntityHeadRotation.newInstance(handle, fixedYaw));
+			} catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
+				logger.log(Level.SEVERE, "엔티티 방향 기능을 사용하는 도중 " + e.getClass().getSimpleName() + " 오류가 발생하였습니다.");
+			}
+		}
+
+		public static void rotateHead(Player receiver, Entity entity, Vector direction) {
+			rotateHead(receiver, entity, LocationUtil.getYaw(direction), LocationUtil.getPitch(direction));
+		}
+
+		private static byte getFixedRotation(float f) {
+			return (byte) (f * (256F / 360F));
 		}
 
 	}

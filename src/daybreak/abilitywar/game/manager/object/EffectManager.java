@@ -12,8 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.EventExecutor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EffectManager implements EventExecutor {
 
@@ -33,18 +33,18 @@ public class EffectManager implements EventExecutor {
 		});
 	}
 
-	private final ArrayList<Participant> STUN = new ArrayList<>();
+	private final Set<Participant> STUN = new HashSet<>();
 
-	public void Stun(Player p, int Tick) {
-		if (game.isParticipating(p)) {
-			Participant part = game.getParticipant(p);
+	public void Stun(Player player, int tick) {
+		if (game.isParticipating(player)) {
+			Participant part = game.getParticipant(player);
 
 			for (EffectCondition condition : conditions) {
 				if (!condition.checkCondition(part, EffectType.STUN))
 					return;
 			}
 
-			game.new TimerBase(Tick) {
+			game.new TimerBase(tick) {
 				@Override
 				protected void onStart() {
 					STUN.add(part);
@@ -62,11 +62,10 @@ public class EffectManager implements EventExecutor {
 		}
 	}
 
-	private final List<EffectCondition> conditions = new ArrayList<EffectCondition>();
+	private final Set<EffectCondition> conditions = new HashSet<>();
 
 	public void registerCondition(EffectCondition condition) {
-		if (!conditions.contains(condition))
-			conditions.add(condition);
+		conditions.add(condition);
 	}
 
 	public abstract class EffectCondition {

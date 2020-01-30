@@ -9,7 +9,8 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.BlockX;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -68,7 +69,7 @@ public class Yeti extends AbilityBase {
 
 	}.setPeriod(1);
 
-	private final Timer Ice = new Timer(RangeConfig.getValue()) {
+	private final Timer iceMaker = new Timer(RangeConfig.getValue()) {
 
 		private int count;
 		private Location center;
@@ -90,26 +91,15 @@ public class Yeti extends AbilityBase {
 					db.setType(Material.PACKED_ICE);
 				} else if (type.equals(Material.LAVA)) {
 					db.setType(Material.OBSIDIAN);
-				} else if (type.equals(MaterialLib.ACACIA_LEAVES.getMaterial()) || type.equals(MaterialLib.BIRCH_LEAVES.getMaterial()) || type.equals(MaterialLib.DARK_OAK_LEAVES.getMaterial())
-						|| type.equals(MaterialLib.JUNGLE_LEAVES.getMaterial()) || type.equals(MaterialLib.OAK_LEAVES.getMaterial()) || type.equals(MaterialLib.SPRUCE_LEAVES.getMaterial())) {
-					MaterialLib.GREEN_WOOL.setType(db);
+				} else if (MaterialX.ACACIA_LEAVES.compareType(db) || MaterialX.BIRCH_LEAVES.compareType(db) || MaterialX.DARK_OAK_LEAVES.compareType(db)
+						|| MaterialX.JUNGLE_LEAVES.compareType(db) || MaterialX.OAK_LEAVES.compareType(db) || MaterialX.SPRUCE_LEAVES.compareType(db)) {
+					BlockX.setType(db, MaterialX.GREEN_WOOL);
 				} else {
 					db.setType(Material.SNOW_BLOCK);
 				}
 
 				b.setType(Material.SNOW);
-			}/*
-			for (Location l : LocationUtil.getCircle(center, Count, Count * 20, true)) {
-				ParticleLib.SNOWBALL.spawnParticle(l, 0, 0, 0, 1);
-
-				Block db = l.subtract(0, 2, 0).getBlock();
-
-				if (type.equals(Material.WATER)) {
-					db.setType(Material.PACKED_ICE);
-				}
-
-				l.add(0, 1, 0).getBlock().setType(Material.SNOW);
-			}*/
+			}
 			count++;
 		}
 
@@ -122,17 +112,11 @@ public class Yeti extends AbilityBase {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
-				if (!cooldownTimer.isCooldown()) {
-					Ice.startTimer();
-
-					cooldownTimer.startTimer();
-
-					return true;
-				}
-			}
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+			iceMaker.startTimer();
+			cooldownTimer.startTimer();
+			return true;
 		}
 
 		return false;

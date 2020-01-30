@@ -51,6 +51,7 @@ public class TheEmperor extends AbilityBase {
 	private Vector direction;
 
 
+	private static final double radians = Math.toRadians(90);
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final DurationTimer skill = new DurationTimer(140, cooldownTimer) {
 
@@ -62,7 +63,6 @@ public class TheEmperor extends AbilityBase {
 			Location playerLocation = getPlayer().getLocation();
 			direction = playerLocation.getDirection();
 			Location lineTarget = playerLocation.clone().add(direction.clone().setY(0).normalize().multiply(3));
-			final double radians = Math.toRadians(90);
 			for (Vector vector : Line.between(playerLocation, lineTarget, 4)) {
 				final double originX = vector.getX();
 				final double originZ = vector.getZ();

@@ -1,9 +1,10 @@
 package daybreak.abilitywar.game.events.participant;
 
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class ParticipantDeathEvent extends ParticipantEvent {
+public class ParticipantDeathEvent extends ParticipantEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
@@ -18,6 +19,18 @@ public class ParticipantDeathEvent extends ParticipantEvent {
 
 	public ParticipantDeathEvent(Participant participant) {
 		super(participant);
+	}
+
+	private boolean isCancelled = false;
+
+	@Override
+	public boolean isCancelled() {
+		return isCancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean isCancelled) {
+		this.isCancelled = isCancelled;
 	}
 
 }

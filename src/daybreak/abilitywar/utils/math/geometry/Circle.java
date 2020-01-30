@@ -1,36 +1,31 @@
 package daybreak.abilitywar.utils.math.geometry;
 
 import daybreak.abilitywar.utils.math.FastMath;
+import daybreak.abilitywar.utils.math.geometry.location.LocationIterator;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Circle extends Shape {
 
 	private static final double TWICE_PI = 2 * Math.PI;
 
-	public static Iterable<Location> iterableOf(Location center, double radius, int amount) {
-		return new Iterable<Location>() {
+	public static LocationIterator iteratorOf(Location center, double radius, int amount) {
+		return new LocationIterator() {
+			private int cursor = 0;
+
 			@Override
-			public Iterator<Location> iterator() {
-				return new Iterator<Location>() {
-					private int cursor = 0;
+			public boolean hasNext() {
+				return cursor < amount;
+			}
 
-					@Override
-					public boolean hasNext() {
-						return cursor < amount;
-					}
-
-					@Override
-					public Location next() {
-						if (cursor >= amount) throw new NoSuchElementException();
-						cursor++;
-						double radians = (TWICE_PI / amount) * cursor;
-						return center.clone().add(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius);
-					}
-				};
+			@Override
+			public Location next() {
+				if (cursor >= amount) throw new NoSuchElementException();
+				cursor++;
+				double radians = (TWICE_PI / amount) * cursor;
+				return center.clone().add(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius);
 			}
 		};
 	}

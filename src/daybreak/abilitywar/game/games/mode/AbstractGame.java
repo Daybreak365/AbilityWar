@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.games.mode;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
+import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.game.events.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
@@ -216,6 +217,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 							if (current - lastClick >= 250) {
 								this.lastClick = current;
 								if (ability.ActiveSkill(material, clickType)) {
+									Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
 									ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 								}
 							}
@@ -236,6 +238,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 						long current = System.currentTimeMillis();
 						if (current - lastClick >= 250) {
 							if (ability.ActiveSkill(material, ClickType.RIGHT_CLICK)) {
+								Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, ClickType.RIGHT_CLICK));
 								ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 							}
 							Entity targetEntity = e.getRightClicked();
@@ -421,6 +424,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 		private final int maxCount;
 		private boolean infinite;
+
 		private int period = 20;
 
 		/**
@@ -512,6 +516,13 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		 */
 		public final boolean isInfinite() {
 			return infinite;
+		}
+
+		/**
+		 * @return 타이머 실행 주기를 반환합니다.
+		 */
+		public int getPeriod() {
+			return period;
 		}
 
 		/**

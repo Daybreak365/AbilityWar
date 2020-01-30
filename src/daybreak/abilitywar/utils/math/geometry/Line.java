@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.math.geometry;
 
+import daybreak.abilitywar.utils.math.geometry.location.LocationIterator;
 import daybreak.abilitywar.utils.math.geometry.vector.VectorIterator;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -26,11 +27,11 @@ public class Line extends Shape {
 		return new Line(checkNotNull(from), checkNotNull(to), amount);
 	}
 
-	public static VectorIterator iteratorBetween(Location from, Location to, int amount) {
+	public static LocationIterator iteratorBetween(Location from, Location to, int amount) {
 		checkNotNull(from);
 		checkNotNull(to);
 		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
-		return new VectorIterator() {
+		return new LocationIterator() {
 			final Vector vector = to.toVector().subtract(from.toVector());
 			final double increment = 1.0 / amount;
 			private int cursor = 0;
@@ -41,10 +42,10 @@ public class Line extends Shape {
 			}
 
 			@Override
-			public Vector next() {
+			public Location next() {
 				if (cursor >= amount) throw new NoSuchElementException();
 				cursor++;
-				return vector.clone().multiply(Math.min(increment * cursor, 1.0));
+				return from.clone().add(vector.clone().multiply(Math.min(increment * cursor, 1.0)));
 			}
 		};
 	}
