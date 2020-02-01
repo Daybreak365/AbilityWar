@@ -4,7 +4,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,6 +18,7 @@ public class GameWizard extends SettingWizard {
 
 	private final ItemStack deco;
 	private final ItemStack food;
+	private final ItemStack wreck;
 	private final ItemStack level;
 	private final ItemStack durability;
 	private final ItemStack firewall;
@@ -27,7 +28,7 @@ public class GameWizard extends SettingWizard {
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 진행 설정"), plugin);
-		this.deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
+		this.deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
 		ItemMeta decoMeta = deco.getItemMeta();
 		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		deco.setItemMeta(decoMeta);
@@ -35,7 +36,11 @@ public class GameWizard extends SettingWizard {
 		ItemMeta foodMeta = food.getItemMeta();
 		foodMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b배고픔 무제한"));
 		food.setItemMeta(foodMeta);
-		this.level = MaterialLib.EXPERIENCE_BOTTLE.getItem();
+		this.wreck = new ItemStack(Material.NETHER_STAR, 1);
+		ItemMeta wreckMeta = wreck.getItemMeta();
+		wreckMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&bWRECK"));
+		wreck.setItemMeta(wreckMeta);
+		this.level = MaterialX.EXPERIENCE_BOTTLE.parseItem();
 		ItemMeta levelMeta = level.getItemMeta();
 		levelMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 지급 레벨"));
 		level.setItemMeta(levelMeta);
@@ -47,7 +52,7 @@ public class GameWizard extends SettingWizard {
 		ItemMeta firewallMeta = firewall.getItemMeta();
 		firewallMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b방화벽"));
 		firewall.setItemMeta(firewallMeta);
-		this.clearWeather = MaterialLib.SNOWBALL.getItem();
+		this.clearWeather = MaterialX.SNOWBALL.parseItem();
 		ItemMeta clearWeatherMeta = clearWeather.getItemMeta();
 		clearWeatherMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b맑은 날씨 고정"));
 		clearWeather.setItemMeta(clearWeatherMeta);
@@ -58,10 +63,8 @@ public class GameWizard extends SettingWizard {
 		this.abilityDraw = new ItemStack(Material.DISPENSER);
 		ItemMeta abilityDrawMeta = abilityDraw.getItemMeta();
 		abilityDrawMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 추첨"));
-		abilityDrawMeta
-				.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
-						"", ChatColor.translateAlternateColorCodes('&',
-								"&7상태 : " + (Settings.getDrawAbility() ? "&a활성화" : "&c비활성화"))));
+		abilityDrawMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
+				"", ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getDrawAbility() ? "&a활성화" : "&c비활성화"))));
 		abilityDraw.setItemMeta(abilityDrawMeta);
 	}
 
@@ -69,6 +72,14 @@ public class GameWizard extends SettingWizard {
 	void openGUI(Inventory gui) {
 		for (int i = 0; i < 45; i++) {
 			switch (i) {
+				case 4:
+					ItemMeta wreckMeta = wreck.getItemMeta();
+					wreckMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
+							"&7상태 : " + (Settings.isWRECKEnabled() ? "&a활성화" : "&c비활성화"))));
+					wreck.setItemMeta(wreckMeta);
+
+					gui.setItem(i, wreck);
+					break;
 				case 12:
 					ItemMeta foodMeta = food.getItemMeta();
 					foodMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
@@ -158,6 +169,10 @@ public class GameWizard extends SettingWizard {
 				switch (currentItem.getItemMeta().getDisplayName()) {
 					case "§b배고픔 무제한":
 						Configuration.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
+						Show();
+						break;
+					case "§bWRECK":
+						Configuration.modifyProperty(ConfigNodes.GAME_WRECK, !Settings.isWRECKEnabled());
 						Show();
 						break;
 					case "§b초반 지급 레벨":

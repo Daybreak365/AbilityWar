@@ -26,8 +26,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 @AbilityManifest(Name = "유명 인사", Rank = Rank.D, Species = Species.HUMAN)
 public class Celebrity extends AbilityBase {
@@ -42,22 +44,35 @@ public class Celebrity extends AbilityBase {
 
 	};
 
+	public static final SettingObject<Double> DistanceConfig = new SettingObject<Double>(Celebrity.class, "Distance", 10.0,
+			"# 능력 거리") {
+
+		@Override
+		public boolean Condition(Double value) {
+			return value > 0;
+		}
+
+	};
+
 	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Celebrity.class, "Duration", 5,
 			"# 쿨타임") {
 
 		@Override
 		public boolean Condition(Integer value) {
-			return value >= 0;
+			return value >= 1;
 		}
 
 	};
 
 	public Celebrity(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 모든 플레이어가 자신의 방향을 바라봅니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&f능력으로 인해 깔린 레드 카펫 위에 있을 때 주변 " + DistanceConfig.getValue() + "칸 이내의 모든 생명체가"),
+				ChatColor.translateAlternateColorCodes('&', "&f자신을 바라보며, 깔린 레드 카펫은 " + DurationConfig.getValue() + "초 후 사라집니다."));
 	}
 
 	private static final double radians = Math.toRadians(90);
+	private final double distance = DistanceConfig.getValue();
 	private final Map<Block, Material> carpets = new HashMap<>();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
@@ -78,19 +93,23 @@ public class Celebrity extends AbilityBase {
 						.setZ(rotateZ(originX, originZ, radians * 3))));
 			}
 			direction.multiply(0.75);
-			new Timer(20) {
+			new Timer(30) {
+				Set<String> set = new HashSet<>();
+
 				@Override
 				protected void onProcess(int count) {
 					locations.add(direction);
 					for (Location location : locations) {
-						Block block = world.getBlockAt(
-								location.getBlockX(),
-								LocationUtil.getFloorYAt(world, playerLocation.getY(), location.getBlockX(), location.getBlockZ()),
-								location.getBlockZ()
-						);
-						if (!carpets.containsKey(block)) {
-							carpets.put(block, block.getType());
-							BlockX.setType(block, MaterialX.RED_CARPET);
+						if (set.add(location.getBlockX() + ":" + location.getBlockZ())) {
+							Block block = world.getBlockAt(
+									location.getBlockX(),
+									LocationUtil.getFloorYAt(world, playerLocation.getY(), location.getBlockX(), location.getBlockZ()),
+									location.getBlockZ()
+							);
+							if (!carpets.containsKey(block)) {
+								carpets.put(block, block.getType());
+								BlockX.setType(block, MaterialX.RED_CARPET);
+							}
 						}
 					}
 				}
@@ -101,7 +120,7 @@ public class Celebrity extends AbilityBase {
 		protected void onDurationProcess(int seconds) {
 			Block block = getPlayer().getLocation().getBlock();
 			if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
-				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer(), 10, 10)) {
+				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer(), distance, distance)) {
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						EntityUtil.rotateHead(player, entity, getPlayer().getEyeLocation().toVector().subtract(entity.getEyeLocation().toVector()));
 					}
@@ -111,6 +130,14 @@ public class Celebrity extends AbilityBase {
 
 		@Override
 		protected void onDurationEnd() {
+			for (Entry<Block, Material> entry : carpets.entrySet()) {
+				entry.getKey().setType(entry.getValue());
+			}
+			carpets.clear();
+		}
+
+		@Override
+		protected void onSilentEnd() {
 			for (Entry<Block, Material> entry : carpets.entrySet()) {
 				entry.getKey().setType(entry.getValue());
 			}

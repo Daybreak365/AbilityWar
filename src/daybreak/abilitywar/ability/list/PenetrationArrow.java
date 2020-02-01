@@ -81,7 +81,10 @@ public class PenetrationArrow extends AbilityBase {
 						@Override
 						public void onHit(Damageable damager, Damageable victim) {
 							ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
-							victim.damage(4, damager);
+							if (victim instanceof LivingEntity) {
+								((LivingEntity) victim).setNoDamageTicks(0);
+							}
+							victim.damage(5, damager);
 						}
 					}.startTimer();
 				}

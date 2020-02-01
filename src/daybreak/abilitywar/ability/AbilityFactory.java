@@ -134,6 +134,8 @@ public class AbilityFactory {
 		registerAbility(Hedgehog.class);
 		// v2.0.9.2
 		registerAbility(ReligiousLeader.class);
+		// v2.1.3
+		registerAbility(Kidnap.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

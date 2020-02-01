@@ -83,7 +83,7 @@ public class SpecialThanksGUI implements Listener {
 		int Count = 0;
 
 		for (SpecialThank st : SpecialThanks) {
-			ItemStack is = ItemLib.getHead(st.getName());
+			ItemStack is = ItemLib.getSkull(st.getName());
 			SkullMeta im = (SkullMeta) is.getItemMeta();
 			if (!st.getName().equals("Error")) {
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + st.getName()));

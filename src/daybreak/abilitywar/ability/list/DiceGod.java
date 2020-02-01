@@ -46,37 +46,38 @@ public class DiceGod extends AbilityBase {
 			if (ct.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Player p = getPlayer();
-
-					Random r = new Random();
-					Integer random = r.nextInt(6);
-
-					if (random.equals(0)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c재생 &f효과를 받았습니다."));
-						PotionEffects.REGENERATION.addPotionEffect(p, 200, 2, true);
-					} else if (random.equals(1)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b신속 &f효과를 받았습니다."));
-						PotionEffects.SPEED.addPotionEffect(p, 200, 2, true);
-					} else if (random.equals(2)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6힘 &f효과를 받았습니다."));
-						PotionEffects.INCREASE_DAMAGE.addPotionEffect(p, 200, 2, true);
-					} else if (random.equals(3)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3저항 &f효과를 받았습니다."));
-						PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(p, 200, 2, true);
-					} else if (random.equals(4)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8구속 &f효과를 받았습니다."));
-						PotionEffects.SLOW.addPotionEffect(p, 200, 1, true);
-					} else if (random.equals(5)) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7나약함 &f효과를 받았습니다."));
-						PotionEffects.WEAKNESS.addPotionEffect(p, 200, 1, true);
+					Random random = new Random();
+					switch (random.nextInt(6)) {
+						case 0:
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c재생 &f효과를 받았습니다."));
+							PotionEffects.REGENERATION.addPotionEffect(p, 200, 2, true);
+							break;
+						case 1:
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b신속 &f효과를 받았습니다."));
+							PotionEffects.SPEED.addPotionEffect(p, 200, 2, true);
+							break;
+						case 2:
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6힘 &f효과를 받았습니다."));
+							PotionEffects.INCREASE_DAMAGE.addPotionEffect(p, 200, 2, true);
+							break;
+						case 3:
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3저항 &f효과를 받았습니다."));
+							PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(p, 200, 2, true);
+							break;
+						case 4:
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8구속 &f효과를 받았습니다."));
+							PotionEffects.SLOW.addPotionEffect(p, 200, 1, true);
+							break;
+						case 5:
+							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7나약함 &f효과를 받았습니다."));
+							PotionEffects.WEAKNESS.addPotionEffect(p, 200, 1, true);
+							break;
 					}
-
 					cooldownTimer.startTimer();
-
 					return true;
 				}
 			}
 		}
-
 		return false;
 	}
 

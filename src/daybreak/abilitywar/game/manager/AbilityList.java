@@ -107,6 +107,7 @@ public class AbilityList {
 		registerAbility(Reaper.class);
 		registerAbility(Hedgehog.class);
 		registerAbility(ReligiousLeader.class);
+		registerAbility(Kidnap.class);
 	}
 
 	public static List<String> nameValues() {

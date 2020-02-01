@@ -78,7 +78,7 @@ public class Curse extends AbilityBase {
 			armorStand.setGravity(false);
 			EntityEquipment equipment = armorStand.getEquipment();
 			equipment.setArmorContents(target.getInventory().getArmorContents());
-			equipment.setHelmet(ItemLib.getHead(target.getName()));
+			equipment.setHelmet(ItemLib.getSkull(target.getName()));
 		}
 
 		@Override

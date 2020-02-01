@@ -37,7 +37,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	private final DeathManager deathManager = checkNotNull(newDeathManager());
 	private final Invincibility invincibility = new Invincibility(this);
-	private final WRECK wreck = new WRECK();
+	private final WRECK wreck = newWRECK();
 	private final ScoreboardManager scoreboardManager = new ScoreboardManager(this);
 	private final Firewall fireWall = new Firewall(this, this);
 	private AbilitySelect abilitySelect = newAbilitySelect();
@@ -213,7 +213,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	@Override
 	protected void startGame() {
 		super.startGame();
-		wreck.noticeIfEnabled();
+		wreck.noticeIfEnabled(this);
 		Bukkit.getPluginManager().callEvent(new GameStartEvent(this));
 	}
 

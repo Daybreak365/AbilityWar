@@ -1,8 +1,13 @@
 package daybreak.abilitywar.utils.library.item;
 
 import com.google.common.base.Enums;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
+import daybreak.abilitywar.utils.ReflectionUtil.FieldUtil;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +24,8 @@ import org.bukkit.potion.PotionType;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Item 라이브러리
@@ -26,6 +33,8 @@ import java.util.UUID;
  * @author Daybreak 새벽
  */
 public class ItemLib {
+
+	private static final Logger logger = Logger.getLogger(ItemLib.class.getName());
 
 	private ItemLib() {
 	}
@@ -194,10 +203,27 @@ public class ItemLib {
 		return meta;
 	}
 
-	public static ItemStack getHead(String owner) {
-		ItemStack item = MaterialLib.PLAYER_HEAD.getItem();
+	public static ItemStack getSkull(String owner) {
+		ItemStack item = MaterialX.PLAYER_HEAD.parseItem();
 		item.setItemMeta(setOwner((SkullMeta) item.getItemMeta(), owner));
 		return item;
+	}
+
+	public static ItemStack getCustomSkull(String url) {
+		ItemStack skull = MaterialX.PLAYER_HEAD.parseItem();
+		if (url == null || url.isEmpty()) return skull;
+		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+		GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+		PropertyMap propertyMap = profile.getProperties();
+		byte[] encodedData = Base64.encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
+		propertyMap.put("textures", new Property("textures", new String(encodedData)));
+		try {
+			FieldUtil.setValue(skullMeta.getClass(), skullMeta, "profile", profile);
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			logger.log(Level.SEVERE, "getCustomSkull(String): " + e.getClass().getSimpleName());
+		}
+		skull.setItemMeta(skullMeta);
+		return skull;
 	}
 
 	@SuppressWarnings("deprecation")
