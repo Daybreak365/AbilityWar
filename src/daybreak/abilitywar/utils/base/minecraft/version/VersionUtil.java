@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.versioncompat;
+package daybreak.abilitywar.utils.base.minecraft.version;
 
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;

@@ -8,8 +8,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.FallBlock;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.FallBlock;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -52,9 +52,9 @@ public class Khazhad extends AbilityBase {
 	private final CooldownTimer LeftCool = new CooldownTimer(LeftCooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.LEFT_CLICK)) {
+			if (clickType.equals(ClickType.LEFT_CLICK)) {
 				if (!LeftCool.isCooldown()) {
 					FallBlock fall = new FallBlock(Material.PACKED_ICE, getPlayer().getEyeLocation(), getPlayer().getLocation().getDirection().multiply(1.7)) {
 

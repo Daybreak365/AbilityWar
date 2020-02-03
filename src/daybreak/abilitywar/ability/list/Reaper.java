@@ -7,6 +7,8 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.Hologram;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -15,8 +17,6 @@ import daybreak.abilitywar.utils.math.LocationUtil.Locations;
 import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.math.geometry.Line;
-import daybreak.abilitywar.utils.versioncompat.NMSUtil;
-import daybreak.abilitywar.utils.versioncompat.NMSUtil.Hologram;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -194,11 +194,11 @@ public class Reaper extends AbilityBase {
 	}.setPeriod(1);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.LEFT_CLICK)) {
+			if (clickType.equals(ClickType.LEFT_CLICK)) {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&0수확한 영혼&f: " + soulCount + "개"));
-			} else if (ct.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()
+			} else if (clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()
 					&& !abilityOne.isRunning() && !abilityTwo.isRunning()) {
 				abilityOne.startTimer();
 				cooldownTimer.startTimer();

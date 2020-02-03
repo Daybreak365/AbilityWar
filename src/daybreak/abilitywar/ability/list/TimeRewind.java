@@ -10,7 +10,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.database.PushingList;
+import daybreak.abilitywar.utils.base.collect.PushingList;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,9 +61,9 @@ public class TimeRewind extends AbilityBase {
 	private final int time = TimeConfig.getValue();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Skill.startTimer();
 

@@ -12,7 +12,7 @@ import daybreak.abilitywar.game.script.types.LocationNoticeScript;
 import daybreak.abilitywar.game.script.types.TeleportScript;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
-import daybreak.abilitywar.utils.database.FileUtil;
+import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

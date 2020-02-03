@@ -14,12 +14,12 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.message.KoreanUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -101,7 +101,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					for (Participant p : getParticipants()) {
 						p.setAbility(SquirtGun.class);
 					}
-				} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ignored) {
+				} catch (InstantiationException | InvocationTargetException | IllegalAccessException ignored) {
 				}
 				break;
 			case 13:

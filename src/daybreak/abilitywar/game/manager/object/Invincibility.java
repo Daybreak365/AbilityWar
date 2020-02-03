@@ -5,7 +5,7 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.events.InvincibleEndEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.standard.Game;
-import daybreak.abilitywar.utils.Bar;
+import daybreak.abilitywar.utils.base.minecraft.Bar;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import org.bukkit.Bukkit;

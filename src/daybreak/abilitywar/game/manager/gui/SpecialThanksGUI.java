@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.database.MojangAPI;
+import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -42,8 +43,8 @@ public class SpecialThanksGUI implements Listener {
 		public SpecialThank(String UUID, String... role) {
 			try {
 				this.name = MojangAPI.getNickname(UUID);
-			} catch (Exception e) {
-				this.name = "Error";
+			} catch (IOException e) {
+				this.name = "ERROR";
 			}
 			this.role = role;
 		}
@@ -71,7 +72,6 @@ public class SpecialThanksGUI implements Listener {
 	}
 
 	private int currentPage = 1;
-
 	private Inventory gui;
 
 	public void openGUI(int page) {
@@ -80,51 +80,49 @@ public class SpecialThanksGUI implements Listener {
 		if (page < 1) page = 1;
 		gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&c&l✿ &0&lSpecial Thanks &c&l✿"));
 		currentPage = page;
-		int Count = 0;
+		int count = 0;
 
 		for (SpecialThank st : SpecialThanks) {
-			ItemStack is = ItemLib.getSkull(st.getName());
-			SkullMeta im = (SkullMeta) is.getItemMeta();
-			if (!st.getName().equals("Error")) {
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + st.getName()));
-
-				im.setLore(st.getRole());
+			ItemStack stack = ItemLib.getSkull(st.getName());
+			SkullMeta meta = (SkullMeta) stack.getItemMeta();
+			if (!st.getName().equals("ERROR")) {
+				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + st.getName()));
+				meta.setLore(st.getRole());
 			} else {
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c오류"));
-
-				im.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
+				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c오류"));
+				meta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
 			}
 
-			is.setItemMeta(im);
+			stack.setItemMeta(meta);
 
-			if (Count / 18 == page - 1) {
-				gui.setItem(Count % 18, is);
+			if (count / 18 == page - 1) {
+				gui.setItem(count % 18, stack);
 			}
-			Count++;
+			count++;
 		}
 
 		if (page > 1) {
-			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
-			previousPage.setItemMeta(previousMeta);
-			gui.setItem(21, previousPage);
+			ItemStack stack = new ItemStack(Material.ARROW, 1);
+			ItemMeta meta = stack.getItemMeta();
+			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
+			stack.setItemMeta(meta);
+			gui.setItem(21, stack);
 		}
 
 		if (page != maxPage) {
-			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
-			nextPage.setItemMeta(nextMeta);
-			gui.setItem(23, nextPage);
+			ItemStack stack = new ItemStack(Material.ARROW, 1);
+			ItemMeta meta = stack.getItemMeta();
+			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
+			stack.setItemMeta(meta);
+			gui.setItem(23, stack);
 		}
 
-		ItemStack Page = new ItemStack(Material.PAPER, 1);
-		ItemMeta PageMeta = Page.getItemMeta();
-		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+		ItemStack stack = new ItemStack(Material.PAPER, 1);
+		ItemMeta meta = stack.getItemMeta();
+		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 				"&6페이지 &e" + page + " &6/ &e" + maxPage));
-		Page.setItemMeta(PageMeta);
-		gui.setItem(22, Page);
+		stack.setItemMeta(meta);
+		gui.setItem(22, stack);
 
 		p.openInventory(gui);
 	}

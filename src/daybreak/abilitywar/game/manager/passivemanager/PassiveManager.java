@@ -1,5 +1,7 @@
 package daybreak.abilitywar.game.manager.passivemanager;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.ReflectionUtil;
@@ -11,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,28 +23,22 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final HashMap<Class<? extends Event>, Set<PassiveExecutor>> passiveExecutors = new HashMap<>();
+	private final Multimap<Class<? extends Event>, PassiveExecutor> passiveExecutors = MultimapBuilder.hashKeys().hashSetValues().build();
 	private final EventPriority priority = EventPriority.HIGHEST;
 	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends Event> getHandlerListDeclaringClass(Class<? extends Event> eventClass) {
-		Class<? extends Event> handlerClass = null;
 		try {
 			for (Field field : ReflectionUtil.FieldUtil.getExistingFields(eventClass, HandlerList.class)) {
-				handlerClass = (Class<? extends Event>) field.getDeclaringClass();
-				break;
+				return (Class<? extends Event>) field.getDeclaringClass();
 			}
 		} catch (Exception ignored) {
 		}
-		return handlerClass;
+		return null;
 	}
 
 	public void register(Class<? extends Event> eventClass, PassiveExecutor executor) {
-		if (!passiveExecutors.containsKey(eventClass)) {
-			passiveExecutors.put(eventClass, Collections.synchronizedSet(new HashSet<>()));
-		}
-
 		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);
 		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
 			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, priority, this, AbilityWar.getPlugin());
@@ -54,14 +48,14 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 	}
 
 	public void unregisterAll(PassiveExecutor executor) {
-		for (Class<? extends Event> eventClass : passiveExecutors.keySet()) {
-			passiveExecutors.get(eventClass).remove(executor);
+		for (Class<? extends Event> eventClass : new HashSet<>(passiveExecutors.keySet())) {
+			passiveExecutors.remove(eventClass, executor);
 		}
 	}
 
 	@Override
 	public void execute(Listener listener, Event event) {
-		Class<?> eventClass = event.getClass();
+		Class<? extends Event> eventClass = event.getClass();
 		if (passiveExecutors.containsKey(eventClass)) {
 			for (PassiveExecutor executor : passiveExecutors.get(eventClass)) {
 				executor.execute(event);

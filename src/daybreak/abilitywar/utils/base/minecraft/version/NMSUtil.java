@@ -1,5 +1,7 @@
-package daybreak.abilitywar.utils.versioncompat;
+package daybreak.abilitywar.utils.base.minecraft.version;
 
+import daybreak.abilitywar.utils.ReflectionUtil.FieldUtil;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -10,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -189,6 +192,24 @@ public class NMSUtil {
 
 		private static byte getFixedRotation(float f) {
 			return (byte) (f * (256F / 360F));
+		}
+
+		@Beta
+		public static void setGlowing(Player receiver, Entity entity, boolean glowing) {
+			try {
+				Object dataWatcher = getDataWatcher(entity);
+				Map<Object, Object> map = FieldUtil.getValue(dataWatcher, "d");
+
+				Object item = map.get(0);
+				byte initialBitMask = FieldUtil.getValue(item, "b");
+				byte bitMaskIndex = 6;
+				if (glowing) FieldUtil.setValue(item, "b", (byte) (initialBitMask | 1 << bitMaskIndex));
+				else FieldUtil.setValue(item, "b", (byte) (initialBitMask & ~(1 << bitMaskIndex)));
+
+				sendPacket(receiver, newEntityMetadata.newInstance(getId(entity), dataWatcher, true));
+			} catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | NoSuchFieldException | InstantiationException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}

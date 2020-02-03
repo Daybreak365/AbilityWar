@@ -9,8 +9,9 @@ import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
+import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
 import daybreak.abilitywar.utils.thread.OverallTimer;
-import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,7 +26,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -269,15 +269,13 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 		 *
 		 * @param abilityClass 부여할 능력의 클래스
 		 */
-		public void setAbility(Class<? extends AbilityBase> abilityClass)
-				throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
-				IllegalArgumentException, InvocationTargetException {
+		public void setAbility(Class<? extends AbilityBase> abilityClass) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 			AbilityBase oldAbility = null;
-			if (hasAbility())
+			if (hasAbility()) {
 				oldAbility = removeAbility();
+			}
 
-			Constructor<? extends AbilityBase> constructor = abilityClass.getConstructor(Participant.class);
-			AbilityBase ability = constructor.newInstance(this);
+			AbilityBase ability = AbilityBase.create(abilityClass, this);
 			ability.setRestricted(isRestricted() || !isGameStarted());
 			this.ability = ability;
 			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
@@ -285,14 +283,17 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 		/**
 		 * 플레이어에게 해당 능력을 그대로 적용합니다.
-		 * @param ability 	부여할 능력
+		 *
+		 * @param ability 부여할 능력
 		 */
+		@Beta
 		public void setAbility(AbilityBase ability) {
 			AbilityBase oldAbility = null;
 			if (hasAbility())
 				oldAbility = removeAbility();
 
 			ability.setRestricted(isRestricted() || !isGameStarted());
+
 			this.ability = ability;
 			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
 		}

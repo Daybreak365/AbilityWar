@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.versioncompat.VersionUtil;
+import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -45,7 +45,7 @@ public class OnlyOddNumber extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		return false;
 	}
 

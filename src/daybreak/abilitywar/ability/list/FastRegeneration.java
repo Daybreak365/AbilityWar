@@ -7,8 +7,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -125,8 +125,8 @@ public class FastRegeneration extends AbilityBase {
 	}.setPeriod(5);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
 			healthGain.startTimer();
 			return true;
 		}

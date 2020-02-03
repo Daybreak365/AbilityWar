@@ -7,11 +7,11 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.FallBlock;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.FallBlock;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,9 +55,9 @@ public class Nex extends AbilityBase {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);

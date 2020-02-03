@@ -6,8 +6,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.utils.DamageUtil;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.DamageUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -157,8 +157,8 @@ public class Vampire extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			skill.startTimer();
 			return true;
 		}

@@ -35,7 +35,7 @@ public class SuperNova extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		return false;
 	}
 

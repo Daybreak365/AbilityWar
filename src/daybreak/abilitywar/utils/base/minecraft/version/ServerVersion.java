@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.versioncompat;
+package daybreak.abilitywar.utils.base.minecraft.version;
 
 import daybreak.abilitywar.utils.Messager;
 import org.bukkit.Bukkit;

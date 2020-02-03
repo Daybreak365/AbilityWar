@@ -73,11 +73,11 @@ public class Mix extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (hasAbility()) {
 			boolean abilityUsed = false;
-			if (first.ActiveSkill(materialType, ct)) abilityUsed = true;
-			if (second.ActiveSkill(materialType, ct)) abilityUsed = true;
+			if (first.ActiveSkill(materialType, clickType)) abilityUsed = true;
+			if (second.ActiveSkill(materialType, clickType)) abilityUsed = true;
 			return abilityUsed;
 		} else {
 			return false;

@@ -40,7 +40,7 @@ public class AbilityList {
 	 */
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
 		if (!abilities.containsValue(abilityClass)) {
-			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegisteration(abilityClass);
+			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 			if (registration != null) {
 				String name = registration.getManifest().Name();
 				if (!abilities.containsKey(name)) {
@@ -117,7 +117,7 @@ public class AbilityList {
 	public static List<String> nameValues(Rank rank) {
 		List<String> values = new ArrayList<>();
 		for (Class<? extends AbilityBase> abilityClass : abilities.values()) {
-			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegisteration(abilityClass);
+			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 			if (registration != null) {
 				AbilityManifest manifest = registration.getManifest();
 				if (manifest.Rank().equals(rank)) {
@@ -131,7 +131,7 @@ public class AbilityList {
 	public static List<String> nameValues(Species species) {
 		List<String> values = new ArrayList<>();
 		for (Class<? extends AbilityBase> abilityClass : abilities.values()) {
-			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegisteration(abilityClass);
+			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 			if (registration != null) {
 				AbilityManifest manifest = registration.getManifest();
 				if (manifest.Species().equals(species)) {

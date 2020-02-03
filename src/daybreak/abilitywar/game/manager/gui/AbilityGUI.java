@@ -128,7 +128,7 @@ public class AbilityGUI implements Listener {
 								}
 							}
 						}
-					} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+					} catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 						if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 							Messager.sendErrorMessage(p, ex.getMessage());
 						} else {

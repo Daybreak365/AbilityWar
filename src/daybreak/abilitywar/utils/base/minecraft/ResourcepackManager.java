@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils;
+package daybreak.abilitywar.utils.base.minecraft;
 
 import org.bukkit.event.Listener;
 

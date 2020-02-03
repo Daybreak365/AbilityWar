@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.library.item;
 
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;

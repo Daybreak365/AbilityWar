@@ -7,13 +7,13 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.EntityUtil;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.LocationUtil.Locations;
 import daybreak.abilitywar.utils.math.geometry.Line;
-import daybreak.abilitywar.utils.versioncompat.NMSUtil.EntityUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -146,8 +146,8 @@ public class Celebrity extends AbilityBase {
 	}.setPeriod(1);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !skillTimer.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skillTimer.isDuration() && !cooldownTimer.isCooldown()) {
 			skillTimer.startTimer();
 			return true;
 		}

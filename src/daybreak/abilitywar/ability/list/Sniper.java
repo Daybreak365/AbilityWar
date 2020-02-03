@@ -8,14 +8,13 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.math.geometry.Line;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,34 +48,21 @@ public class Sniper extends AbilityBase {
 	private static final Material GLASS_PANE = ServerVersion.getVersion() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
 	private static final ParticleLib.RGB PURPLE = new ParticleLib.RGB(138, 9, 173);
 
-	private final Timer snipe = ServerVersion.getVersion() < 14 ?
-			new Timer() {
-				@Override
-				protected void onProcess(int count) {
-					Material main = getPlayer().getInventory().getItemInMainHand().getType();
-					Material off = getPlayer().getInventory().getItemInOffHand().getType();
-					if (main.equals(Material.BOW) || off.equals(Material.BOW)) {
-						PotionEffects.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
-						PotionEffects.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
-					}
-				}
-			}.setPeriod(3)
-			:
-			new Timer() {
-				@Override
-				protected void onProcess(int count) {
-					Material main = getPlayer().getInventory().getItemInMainHand().getType();
-					Material off = getPlayer().getInventory().getItemInOffHand().getType();
-					if (main.equals(Material.BOW) || off.equals(Material.BOW) || main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)) {
-						PotionEffects.SLOW.addPotionEffect(getPlayer(), 5, 8, true);
-						PotionEffects.JUMP.addPotionEffect(getPlayer(), 5, 200, true);
-					}
-				}
-			}.setPeriod(3);
+	private final Timer snipeMode = new Timer() {
+		@Override
+		protected void onProcess(int count) {
+			Material main = getPlayer().getInventory().getItemInMainHand().getType();
+			Material off = getPlayer().getInventory().getItemInOffHand().getType();
+			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersion() >= 14 && (main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)))) {
+				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 3, true);
+				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(0).setZ(0));
+			}
+		}
+	}.setPeriod(1);
 
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		return false;
 	}
 
@@ -85,12 +71,7 @@ public class Sniper extends AbilityBase {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
 			Arrow arrow = (Arrow) e.getProjectile();
-			new Bullet(arrow.getLocation(), arrow.getVelocity(), PURPLE) {
-				@Override
-				public void onHit(Damageable damager, Damageable victim) {
-					Bukkit.broadcastMessage("명중");
-				}
-			}.startTimer();
+			new Bullet(arrow.getLocation(), arrow.getVelocity(), PURPLE).startTimer();
 		}
 	}
 
@@ -100,10 +81,10 @@ public class Sniper extends AbilityBase {
 
 	@SubscribeEvent(onlyRelevant = true)
 	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		snipe.startTimer();
+		snipeMode.startTimer();
 	}
 
-	public abstract class Bullet extends Timer {
+	public class Bullet extends Timer {
 
 		private final CenteredBoundingBox centeredBoundingBox;
 		private final Vector forward;
@@ -139,10 +120,8 @@ public class Sniper extends AbilityBase {
 				}
 				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {
 					if (!getPlayer().equals(damageable)) {
-						double damage = Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 15);
-						Bukkit.broadcastMessage(damage + " 대미지");
+						double damage = Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10);
 						damageable.damage(damage, getPlayer());
-						onHit(getPlayer(), damageable);
 						stopTimer(false);
 						return;
 					}
@@ -151,8 +130,6 @@ public class Sniper extends AbilityBase {
 			}
 			lastLocation = newLocation;
 		}
-
-		public abstract void onHit(Damageable damager, Damageable victim);
 
 	}
 

@@ -22,10 +22,8 @@ package daybreak.abilitywar.utils.library;
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableSet;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,7 +31,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public enum MaterialX {
@@ -1068,12 +1065,6 @@ public enum MaterialX {
 			"FISHING_ROD", "CARROT_ON_A_STICK", "CARROT_STICK", "SPADE", "SHIELD"
 	);
 
-	private static final Cache<MaterialX, Material> PARSE_CACHE = CacheBuilder.newBuilder()
-			.softValues()
-			.expireAfterAccess(15, TimeUnit.MINUTES)
-			.concurrencyLevel(Runtime.getRuntime().availableProcessors())
-			.build();
-
     /*
      * A set of all the legacy names without duplicates.
      * <p>
@@ -1112,11 +1103,19 @@ public enum MaterialX {
 	private final byte data;
 	private final Version version;
 	private final String legacy;
+	private final Material material;
 
 	MaterialX(int data, Version version, String legacy) {
 		this.data = (byte) data;
 		this.version = version;
 		this.legacy = legacy;
+		if (ServerVersion.getVersion() >= 13) {
+			Material material = Material.getMaterial(name());
+			this.material = material != null ? material : (legacy != null ? Material.getMaterial(legacy) : null);
+		} else {
+			Material material = legacy != null ? Material.getMaterial(legacy) : null;
+			this.material = material != null ? material : Material.getMaterial(name());
+		}
 	}
 
 	MaterialX(Version version, String legacy) {
@@ -1368,28 +1367,7 @@ public enum MaterialX {
 	 * @since 1.0.0
 	 */
 	public Material parseMaterial() {
-		Material cache = PARSE_CACHE.getIfPresent(this);
-		if (cache != null) return cache;
-
-		if (NEW_VERSION) {
-			Material material = Material.getMaterial(name());
-			if (material != null) {
-				PARSE_CACHE.put(this, material);
-				return material;
-			}
-			material = legacy != null ? Material.getMaterial(legacy) : null;
-			if (material != null) PARSE_CACHE.put(this, material);
-			return material;
-		} else {
-			Material material = legacy != null ? Material.getMaterial(legacy) : null;
-			if (material != null) {
-				PARSE_CACHE.put(this, material);
-				return material;
-			}
-			material = Material.getMaterial(name());
-			if (material != null) PARSE_CACHE.put(this, material);
-			return material;
-		}
+		return material;
 	}
 
 	/**

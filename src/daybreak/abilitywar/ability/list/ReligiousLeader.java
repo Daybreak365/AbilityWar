@@ -10,7 +10,7 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.versioncompat.NMSUtil.PlayerUtil;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -190,8 +190,8 @@ public class ReligiousLeader extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.LEFT_CLICK) && religionName != null && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.LEFT_CLICK) && religionName != null && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			if (belivers.size() >= minBelivers) {
 				skill.startTimer();
 			} else {

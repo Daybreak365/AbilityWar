@@ -1,7 +1,7 @@
 package daybreak.abilitywar.addon;
 
 import daybreak.abilitywar.addon.exception.InvalidAddonException;
-import daybreak.abilitywar.utils.database.FileUtil;
+import daybreak.abilitywar.utils.base.io.FileUtil;
 
 import java.io.File;
 import java.io.IOException;

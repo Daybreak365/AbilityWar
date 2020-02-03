@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability;
 
+import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -12,16 +13,19 @@ import daybreak.abilitywar.game.events.participant.ParticipantEvent;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.AbstractGame.TimerBase;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveExecutor;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
-import daybreak.abilitywar.utils.database.collections.Pair;
+import daybreak.abilitywar.utils.ReflectionUtil;
+import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.versioncompat.NMSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -32,12 +36,14 @@ import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.MainHand;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,14 +68,42 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
 
+	@Beta
+	public static AbilityBase create(Class<? extends AbilityBase> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Preconditions.checkNotNull(abilityClass);
+		Preconditions.checkNotNull(participant);
+		if (AbilityFactory.isRegistered(abilityClass)) {
+			AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
+			AbilityBase abilityBase = registration.getConstructor().newInstance(participant);
+			if (registration.getScheduledTimers().size() > 0) {
+				Set<Field> fields = registration.getScheduledTimers();
+				abilityBase.scheduledTimers = new ArrayList<>(fields.size());
+				for (Field field : fields) {
+					try {
+						TimerBase timer = (TimerBase) ReflectionUtil.setAccessible(field).get(abilityBase);
+						if (timer != null) {
+							abilityBase.scheduledTimers.add(timer);
+						}
+					} catch (IllegalAccessException ignored) {
+					}
+				}
+			}
+			return abilityBase;
+		} else {
+			throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
+		}
+	}
+
 	private final Participant participant;
 	private final DescriptionLine[] description;
+	private final AbilityRegistration registration;
 	private final AbilityManifest manifest;
 	private final AbstractGame game;
 	private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
-	private final HashSet<AbstractGame.TimerBase> timers = new HashSet<>();
+	private final List<TimerBase> timers = new ArrayList<>();
+	private List<TimerBase> scheduledTimers = null;
 
-	private boolean restricted = true;
+	private boolean restricted;
 
 	/**
 	 * {@link AbilityBase}의 기본 생성자입니다.
@@ -89,14 +123,16 @@ public abstract class AbilityBase implements PassiveExecutor {
 		if (!AbilityFactory.isRegistered(getClass())) {
 			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
-		AbilityRegistration registry = AbilityFactory.getRegisteration(getClass());
-		this.manifest = registry.getManifest();
-		this.eventhandlers = registry.getEventhandlers();
+		this.registration = AbilityFactory.getRegistration(getClass());
+		this.manifest = registration.getManifest();
+		this.eventhandlers = registration.getEventhandlers();
 
 		PassiveManager passiveManager = game.getPassiveManager();
 		for (Class<? extends Event> eventClass : eventhandlers.keySet()) {
 			passiveManager.register(eventClass, this);
 		}
+
+		this.restricted = game.isRestricted() || !game.isGameStarted();
 	}
 
 	/**
@@ -113,21 +149,21 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	@Override
 	public void execute(Event event) {
-		if (restricted)
-			return;
+		if (restricted) return;
 		Class<? extends Event> eventClass = event.getClass();
 		if (eventhandlers.containsKey(eventClass)) {
 			Pair<Method, SubscribeEvent> pair = eventhandlers.get(eventClass);
 			SubscribeEvent subscribeEvent = pair.getRight();
-			if (subscribeEvent.onlyRelevant() && ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
-					|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
-					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
-					|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity()))))
+			if (subscribeEvent.onlyRelevant() && (
+					(event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
+							|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
+							|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
+							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
 				return;
+			}
 			Method method = pair.getLeft();
-			method.setAccessible(true);
 			try {
-				method.invoke(this, event);
+				ReflectionUtil.setAccessible(method).invoke(this, event);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
 			}
@@ -138,10 +174,10 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 * 액티브 스킬 발동을 위해 사용됩니다.
 	 *
 	 * @param materialType 플레이어가 클릭할 때 {@link MainHand}에 들고 있었던 아이템
-	 * @param ct           클릭의 종류
+	 * @param clickType    클릭의 종류
 	 * @return 능력 발동 여부
 	 */
-	public abstract boolean ActiveSkill(Material materialType, ClickType ct);
+	public abstract boolean ActiveSkill(Material materialType, ClickType clickType);
 
 	/**
 	 * 타겟팅 스킬 발동을 위해 사용됩니다.
@@ -251,6 +287,11 @@ public abstract class AbilityBase implements PassiveExecutor {
 			}
 			Bukkit.getPluginManager().callEvent(new AbilityRestrictionSetEvent(this));
 		} else {
+			if (scheduledTimers != null) {
+				for (TimerBase timer : scheduledTimers) {
+					timer.startTimer();
+				}
+			}
 			Bukkit.getPluginManager().callEvent(new AbilityRestrictionClearEvent(this));
 			onRestrictClear();
 		}

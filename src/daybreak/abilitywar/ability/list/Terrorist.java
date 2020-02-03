@@ -52,9 +52,9 @@ public class Terrorist extends AbilityBase {
 	private final Circle circle = Circle.of(10, count);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Location center = getPlayer().getLocation();
 

@@ -26,7 +26,7 @@ package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
 import daybreak.abilitywar.config.Configuration;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;

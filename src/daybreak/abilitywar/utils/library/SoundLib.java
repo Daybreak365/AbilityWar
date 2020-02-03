@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Instrument;
 import org.bukkit.Location;

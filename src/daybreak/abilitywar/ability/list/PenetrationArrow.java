@@ -7,6 +7,8 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.base.ProgressBar;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.PlayerUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -15,8 +17,6 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.math.geometry.Line;
-import daybreak.abilitywar.utils.versioncompat.NMSUtil;
-import daybreak.abilitywar.utils.versioncompat.NMSUtil.PlayerUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -157,7 +157,7 @@ public class PenetrationArrow extends AbilityBase {
 						@Override
 						protected void onProcess(int count) {
 							progressBar.step();
-							PlayerUtil.sendActionbar(getPlayer(), "재장전: " + progressBar.getProgress(), 0, 6, 0);
+							PlayerUtil.sendActionbar(getPlayer(), "재장전: " + progressBar.toString(), 0, 6, 0);
 						}
 
 						@Override

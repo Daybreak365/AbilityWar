@@ -13,7 +13,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.message.KoreanUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -67,7 +67,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 					for (Participant participant : getParticipants()) {
 						try {
 							participant.setAbility(Mix.class);
-						} catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException ignored) {
+						} catch (InvocationTargetException | InstantiationException | IllegalAccessException ignored) {
 							logger.log(Level.SEVERE, participant.getPlayer().getName() + "님에게 " + Mix.class.getName() + " 능력을 부여하는 도중 오류가 발생하였습니다.");
 						}
 					}

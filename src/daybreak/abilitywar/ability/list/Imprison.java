@@ -44,7 +44,7 @@ public class Imprison extends AbilityBase {
 	private final int size = SizeConfig.getValue();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		return false;
 	}
 

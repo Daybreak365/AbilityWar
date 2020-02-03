@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.database;
+package daybreak.abilitywar.utils.base.collect;
 
 import java.util.LinkedList;
 

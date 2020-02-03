@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.library;
 
-import daybreak.abilitywar.utils.versioncompat.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;

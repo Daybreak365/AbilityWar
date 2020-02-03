@@ -163,7 +163,7 @@ public class Gladiator extends AbilityBase {
 	}.setPeriod(1);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		return false;
 	}
 

@@ -1,8 +1,8 @@
 package daybreak.abilitywar.game.games.mode.decorator;
 
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.utils.FireworkUtil;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import daybreak.abilitywar.utils.thread.OverallTimer;

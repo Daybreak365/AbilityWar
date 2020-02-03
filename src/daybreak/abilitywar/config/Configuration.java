@@ -5,7 +5,7 @@ import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
-import daybreak.abilitywar.utils.database.FileUtil;
+import daybreak.abilitywar.utils.base.io.FileUtil;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;

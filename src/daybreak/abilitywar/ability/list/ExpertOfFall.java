@@ -6,7 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.FallBlock;
+import daybreak.abilitywar.utils.base.minecraft.FallBlock;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -19,7 +19,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-@AbilityManifest(Name = "낙법의 달인", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(Name = "낙법의 달인", Rank = Rank.B, Species = Species.HUMAN)
 public class ExpertOfFall extends AbilityBase {
 
 	public ExpertOfFall(Participant participant) {
@@ -30,7 +30,7 @@ public class ExpertOfFall extends AbilityBase {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		return false;
 	}
 

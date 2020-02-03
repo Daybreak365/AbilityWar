@@ -36,7 +36,7 @@ public class JellyFish extends AbilityBase {
 	private final int duration = DurationConfig.getValue();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		return false;
 	}
 

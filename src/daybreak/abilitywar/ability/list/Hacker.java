@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -51,16 +52,16 @@ public class Hacker extends AbilityBase {
 	private Player target = null;
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final int stunTick = DurationConfig.getValue() * 20;
+	private final Timer skill = new Timer(100) {
 
-	private final int DurationTick = DurationConfig.getValue() * 20;
-
-	private final Timer Skill = new Timer(100) {
-
-		private int Count;
+		private int count;
+		private ProgressBar progressBar;
 
 		@Override
 		protected void onStart() {
-			this.Count = 1;
+			this.count = 1;
+			this.progressBar = new ProgressBar(100, 20);
 		}
 
 		@Override
@@ -75,25 +76,23 @@ public class Hacker extends AbilityBase {
 
 				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"));
 				target.sendTitle(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0);
-				getGame().getEffectManager().Stun(target, DurationTick);
-				Particle.startTimer();
+				getGame().getEffectManager().Stun(target, stunTick);
+				particleShow.startTimer();
 			}
 		}
 
 		@Override
 		protected void onProcess(int count) {
 			if (target != null) {
-				StringBuilder sb = new StringBuilder();
-				int all = 20;
-				int green = (int) (((double) Count / 100) * all);
-				for (int i = 0; i < green; i++) sb.append(ChatColor.GREEN + "|");
-				int gray = all - green;
-				for (int i = 0; i < gray; i++) sb.append(ChatColor.GRAY + "|");
+				progressBar.step();
 
-				getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + " &f해킹중..."),
-						ChatColor.translateAlternateColorCodes('&', sb.toString() + " &f" + Count + "%"), 0, 5, 0);
+				getPlayer().sendTitle(
+						ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + " &f해킹중..."),
+						ChatColor.translateAlternateColorCodes('&', progressBar.toString() + " &f" + this.count + "%"),
+						0, 5, 0
+				);
 
-				Count++;
+				this.count++;
 			}
 		}
 	}.setPeriod(1);
@@ -103,7 +102,7 @@ public class Hacker extends AbilityBase {
 	private final Vectors bottom = Circle.of(1, amount);
 	private final RGB PURPLE = RGB.of(168, 121, 171);
 
-	private final Timer Particle = new Timer(DurationTick) {
+	private final Timer particleShow = new Timer(stunTick) {
 
 		private double y;
 		private boolean add;
@@ -144,15 +143,15 @@ public class Hacker extends AbilityBase {
 	}.setPeriod(1);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Player target = LocationUtil.getNearestPlayer(getPlayer());
 
 					if (target != null) {
 						this.target = target;
-						Skill.startTimer();
+						skill.startTimer();
 
 						cooldownTimer.startTimer();
 

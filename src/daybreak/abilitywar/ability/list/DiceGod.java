@@ -8,8 +8,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -41,9 +41,9 @@ public class DiceGod extends AbilityBase {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Player p = getPlayer();
 					Random random = new Random();

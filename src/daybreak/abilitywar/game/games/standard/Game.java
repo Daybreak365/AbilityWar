@@ -97,8 +97,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 									ChatColor.translateAlternateColorCodes('&', "&e/aw yes &f명령어를 사용하여 능력을 확정합니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
 							});
-						} catch (IllegalAccessException | NoSuchMethodException | SecurityException |
-								InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendConsoleErrorMessage(
 									ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
 									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));

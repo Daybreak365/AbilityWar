@@ -5,10 +5,11 @@ import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mixability.Mix;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.AbstractGame.TimerBase;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil;
-import daybreak.abilitywar.utils.database.collections.Pair;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 
@@ -19,8 +20,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * {@link AbilityBase}를 기반으로 하는 모든 능력을 관리하는 클래스입니다.
@@ -64,7 +67,7 @@ public class AbilityFactory {
 		}
 	}
 
-	public static AbilityRegistration getRegisteration(Class<? extends AbilityBase> clazz) {
+	public static AbilityRegistration getRegistration(Class<? extends AbilityBase> clazz) {
 		return registeredAbilities.get(clazz);
 	}
 
@@ -173,6 +176,7 @@ public class AbilityFactory {
 		private final AbilityManifest manifest;
 		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 		private final Map<String, SettingObject<?>> settingObjects;
+		private final Set<Field> scheduledTimers;
 
 		@SuppressWarnings("unchecked")
 		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NoSuchMethodException, SecurityException, IllegalAccessException {
@@ -197,13 +201,22 @@ public class AbilityFactory {
 			this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
 
 			Map<String, SettingObject<?>> settingObjects = new HashMap<>();
+			Set<Field> scheduledTimers = new HashSet<>();
 			for (Field field : clazz.getDeclaredFields()) {
-				if (field.getType().equals(SettingObject.class) && Modifier.isStatic(field.getModifiers())) {
-					SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
-					settingObjects.put(settingObject.getKey(), settingObject);
+				Class<?> type = field.getType();
+				if (type.equals(SettingObject.class)) {
+					if (Modifier.isStatic(field.getModifiers())) {
+						SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
+						settingObjects.put(settingObject.getKey(), settingObject);
+					}
+				} else if (TimerBase.class.isAssignableFrom(type)) {
+					if (!Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(Scheduled.class)) {
+						scheduledTimers.add(field);
+					}
 				}
 			}
 			this.settingObjects = Collections.unmodifiableMap(settingObjects);
+			this.scheduledTimers = Collections.unmodifiableSet(scheduledTimers);
 		}
 
 		public Class<? extends AbilityBase> getAbilityClass() {
@@ -224,6 +237,10 @@ public class AbilityFactory {
 
 		public Map<String, SettingObject<?>> getSettingObjects() {
 			return settingObjects;
+		}
+
+		public Set<Field> getScheduledTimers() {
+			return scheduledTimers;
 		}
 
 	}

@@ -42,8 +42,8 @@ public class Brewer extends AbilityBase {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			Inventory brewingGUI = Bukkit.createInventory(null, InventoryType.BREWING, "");
 			Player player = getPlayer();
 			Random random = new Random();

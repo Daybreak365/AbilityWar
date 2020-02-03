@@ -107,8 +107,8 @@ public class Stalker extends AbilityBase {
 	}.setPeriod(1);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
-		if (materialType.equals(Material.IRON_INGOT) && ct.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			if (lastVictim != null) {
 				cooldownTimer.startTimer();
 				skill.startTimer();

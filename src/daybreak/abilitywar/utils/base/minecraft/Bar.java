@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils;
+package daybreak.abilitywar.utils.base.minecraft;
 
 import daybreak.abilitywar.AbilityWar;
 import org.bukkit.Bukkit;

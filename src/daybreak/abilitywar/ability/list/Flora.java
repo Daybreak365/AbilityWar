@@ -9,11 +9,11 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.versioncompat.VersionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -95,9 +95,9 @@ public class Flora extends AbilityBase {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Player p = getPlayer();
 					if (type.equals(EffectType.SPEED)) {
@@ -110,7 +110,7 @@ public class Flora extends AbilityBase {
 
 					cooldownTimer.startTimer();
 				}
-			} else if (ct.equals(ClickType.LEFT_CLICK)) {
+			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
 				radius = radius.next();
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6범위 설정&f: " + radius.radius));
 			}

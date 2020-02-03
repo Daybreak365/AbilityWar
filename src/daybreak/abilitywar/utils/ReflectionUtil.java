@@ -72,10 +72,32 @@ public class ReflectionUtil {
 			return fields;
 		}
 
+		@SuppressWarnings("unchecked")
+		public static <T> T getValue(Class<?> clazz, Object object, String field) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+			Preconditions.checkNotNull(clazz);
+			Preconditions.checkNotNull(object);
+			Preconditions.checkNotNull(field);
+			return (T) setAccessible(clazz.getDeclaredField(field)).get(object);
+		}
+
+		@SuppressWarnings("unchecked")
+		public static <T> T getValue(Object object, String field) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+			Preconditions.checkNotNull(object);
+			Preconditions.checkNotNull(field);
+			return (T) setAccessible(object.getClass().getDeclaredField(field)).get(object);
+		}
+
 		public static void setValue(Class<?> clazz, Object object, String field, Object value) throws NoSuchFieldException, IllegalAccessException {
 			Preconditions.checkNotNull(clazz);
 			Preconditions.checkNotNull(object);
+			Preconditions.checkNotNull(field);
 			setAccessible(clazz.getDeclaredField(field)).set(object, value);
+		}
+
+		public static void setValue(Object object, String field, Object value) throws NoSuchFieldException, IllegalAccessException {
+			Preconditions.checkNotNull(object);
+			Preconditions.checkNotNull(field);
+			setAccessible(object.getClass().getDeclaredField(field)).set(object, value);
 		}
 
 	}

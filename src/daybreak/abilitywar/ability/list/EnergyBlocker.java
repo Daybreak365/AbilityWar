@@ -44,9 +44,9 @@ public class EnergyBlocker extends AbilityBase {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType ct) {
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
-			if (ct.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					projectileBlocking = !projectileBlocking;
 					Player p = getPlayer();
@@ -58,7 +58,7 @@ public class EnergyBlocker extends AbilityBase {
 
 					cooldownTimer.startTimer();
 				}
-			} else if (ct.equals(ClickType.LEFT_CLICK)) {
+			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
 				if (projectileBlocking) {
 					getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f1/3&7, &a근거리 &f두 배"));
 				} else {

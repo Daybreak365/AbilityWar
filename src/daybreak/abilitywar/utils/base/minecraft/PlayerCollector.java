@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils;
+package daybreak.abilitywar.utils.base.minecraft;
 
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import org.bukkit.Bukkit;
