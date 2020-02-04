@@ -73,7 +73,7 @@ public class DiceGod extends AbilityBase {
 							PotionEffects.WEAKNESS.addPotionEffect(p, 200, 1, true);
 							break;
 					}
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 					return true;
 				}
 			}

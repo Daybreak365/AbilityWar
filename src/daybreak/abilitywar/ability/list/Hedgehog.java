@@ -4,10 +4,10 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -44,20 +44,16 @@ public class Hedgehog extends AbilityBase {
 
 	private final double damage = DamageConfig.getValue();
 
+	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			if (!getPlayer().isDead()) {
 				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), 1.5, 1.5)) {
 					damageable.damage(damage, getPlayer());
 				}
 			}
 		}
-	}.setPeriod(10);
-
-	@SubscribeEvent(onlyRelevant = true)
-	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		passive.startTimer();
-	}
+	}.setPeriod(TimeUnit.TICKS, 10);
 
 }

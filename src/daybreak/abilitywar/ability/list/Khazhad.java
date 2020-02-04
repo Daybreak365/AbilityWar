@@ -4,11 +4,12 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FallBlock;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -74,7 +75,7 @@ public class Khazhad extends AbilityBase {
 
 					fall.toggleGlowing(true).toggleSetBlock(true).Spawn();
 
-					LeftCool.startTimer();
+					LeftCool.start();
 					return true;
 				}
 			}
@@ -90,9 +91,10 @@ public class Khazhad extends AbilityBase {
 		}
 	};
 
+	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			Location center = getPlayer().getLocation();
 			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, center, 7, 7)) {
 				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7)) {
@@ -106,18 +108,18 @@ public class Khazhad extends AbilityBase {
 						}
 
 						@Override
-						protected void onProcess(int count) {
+						protected void run(int count) {
 						}
 
 						@Override
 						protected void onEnd() {
 							projectile.getLocation().getBlock().setType(Material.AIR);
 						}
-					}.startTimer();
+					}.start();
 				}
 			}
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@SubscribeEvent
 	private void onProjectileHit(ProjectileHitEvent e) {
@@ -126,11 +128,6 @@ public class Khazhad extends AbilityBase {
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		passive.startTimer();
 	}
 
 }

@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -77,14 +78,14 @@ public class Chaos extends AbilityBase {
 			}
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
-					Duration.startTimer();
+					Duration.start();
 
 					return true;
 				}

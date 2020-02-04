@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -55,7 +56,7 @@ public class Gladiator extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
 			getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
 		}
@@ -99,7 +100,7 @@ public class Gladiator extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			if (totalCount <= 10) {
 				for (Block block : LocationUtil.getBlocks2D(center, buildCount, true, false)) {
 					saves.putIfAbsent(block, block.getType());
@@ -157,10 +158,10 @@ public class Gladiator extends AbilityBase {
 			PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);
 			target.teleport(teleport);
 
-			clearField.startTimer();
+			clearField.start();
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
@@ -196,9 +197,9 @@ public class Gladiator extends AbilityBase {
 				if (entity instanceof Player) {
 					if (!cooldownTimer.isCooldown()) {
 						this.target = (Player) entity;
-						createField.startTimer();
+						createField.start();
 
-						cooldownTimer.startTimer();
+						cooldownTimer.start();
 					}
 				}
 			} else {

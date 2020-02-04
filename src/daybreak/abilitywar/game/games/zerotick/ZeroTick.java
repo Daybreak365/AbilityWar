@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -139,19 +140,19 @@ public class ZeroTick extends Game implements DefaultKitHandler, Observer {
 				}
 
 				if (Settings.getNoHunger()) {
-					new TimerBase() {
+					new GameTimer(TaskType.INFINITE, -1) {
 						@Override
 						public void onStart() {
 							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
 						}
 
 						@Override
-						public void onProcess(int count) {
+						public void run(int count) {
 							for (Participant participant : getParticipants()) {
 								participant.getPlayer().setFoodLevel(19);
 							}
 						}
-					}.setPeriod(1).startTimer();
+					}.setPeriod(TimeUnit.TICKS, 1).start();
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 				}
@@ -175,16 +176,16 @@ public class ZeroTick extends Game implements DefaultKitHandler, Observer {
 					setRestricted(false);
 				}
 
-				new TimerBase() {
+				new GameTimer(TaskType.INFINITE, -1) {
 					@Override
-					protected void onProcess(int count) {
+					protected void run(int count) {
 						for (World world : Bukkit.getWorlds()) {
 							for (LivingEntity entity : world.getLivingEntities()) {
 								entity.setNoDamageTicks(0);
 							}
 						}
 					}
-				}.setPeriod(1).startTimer();
+				}.setPeriod(TimeUnit.TICKS, 1).start();
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a공격 쿨타임이 &f제로틱&a으로 변경되었습니다."));
 
 				ScriptManager.RunAll(this);

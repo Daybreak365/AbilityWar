@@ -8,9 +8,11 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,9 +41,9 @@ public class SuperNova extends AbilityBase {
 		return false;
 	}
 
-	private final int Size = SizeConfig.getValue();
+	private final int size = SizeConfig.getValue();
 
-	private final OverallTimer Explosion = new OverallTimer(Size) {
+	private final SimpleTimer explosion = new SimpleTimer(TaskType.REVERSE, size) {
 
 		Location center;
 
@@ -51,8 +53,8 @@ public class SuperNova extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int seconds) {
-			double count = ((Size + 1) - seconds) / 1.2;
+		public void run(int seconds) {
+			double count = ((size + 1) - seconds) / 1.2;
 			for (Location location : LocationUtil.getSphere(count, 5).toLocations(center)) {
 				location.getWorld().createExplosion(location, 2);
 				ParticleLib.SPELL.spawnParticle(location, 0, 0, 0, 1);
@@ -63,12 +65,12 @@ public class SuperNova extends AbilityBase {
 		public void onEnd() {
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@SubscribeEvent
 	public void onPlayerDeath(ParticipantDeathEvent e) {
 		if (e.getParticipant().equals(getParticipant())) {
-			Explosion.startTimer();
+			explosion.start();
 		}
 	}
 

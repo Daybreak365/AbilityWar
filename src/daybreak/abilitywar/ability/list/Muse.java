@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -145,14 +146,14 @@ public class Muse extends AbilityBase {
 			center = null;
 		}
 
-	}.setPeriod(2);
+	}.setPeriod(TimeUnit.TICKS, 2);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
-					skill.startTimer();
+					skill.start();
 
 					return true;
 				}

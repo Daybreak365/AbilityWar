@@ -13,6 +13,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
+
 @AbilityManifest(Name = "바이러스", Rank = Rank.D, Species = Species.OTHERS)
 public class Virus extends AbilityBase {
 
@@ -34,7 +36,7 @@ public class Virus extends AbilityBase {
 			if (killer != null && AbilityWarThread.getGame().isParticipating(killer)) {
 				try {
 					getGame().getParticipant(killer).setAbility(Virus.class);
-				} catch (Exception ignored) {
+				} catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
 				}
 			}
 		}

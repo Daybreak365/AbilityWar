@@ -57,7 +57,7 @@ public class Virtus extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
 			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 3, 3, 3, 10);
 		}
@@ -74,9 +74,9 @@ public class Virtus extends AbilityBase {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					Activate.startTimer();
+					Activate.start();
 
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 
 					return true;
 				}

@@ -50,7 +50,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	private int seconds = 0;
 
 	@Override
-	protected void onProcess(int seconds) {
+	protected void run(int seconds) {
 		if (abilitySelect == null || !abilitySelect.isStarted() || abilitySelect.isEnded()) {
 			this.seconds++;
 			progressGame(this.seconds);
@@ -155,7 +155,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		if (abilitySelect == null) {
 			throw new OperationNotSupportedException("AbilitySelect is null");
 		}
-		abilitySelect.startTimer();
+		abilitySelect.start();
 	}
 
 	@Override

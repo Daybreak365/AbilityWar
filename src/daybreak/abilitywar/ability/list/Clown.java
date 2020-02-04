@@ -76,14 +76,14 @@ public class Clown extends AbilityBase {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!Duration.isDuration()) {
 					if (!cooldownTimer.isCooldown()) {
-						Duration.startTimer();
+						Duration.start();
 
 						return true;
 					}
 				} else {
 					if (OriginalPoint != null) getPlayer().teleport(OriginalPoint);
 					SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer());
-					Duration.stopTimer(false);
+					Duration.stop(false);
 
 					for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), RangeConfig.getValue(), 250)) {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(p);

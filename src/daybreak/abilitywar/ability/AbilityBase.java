@@ -12,8 +12,10 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
 import daybreak.abilitywar.game.events.participant.ParticipantEvent;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.mode.AbstractGame.TimerBase;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.games.mode.AbstractGame.RestrictionBehavior;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.WRECK;
@@ -22,8 +24,9 @@ import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
 import daybreak.abilitywar.utils.ReflectionUtil;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.collect.Pair;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
@@ -41,9 +44,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -80,7 +87,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 				abilityBase.scheduledTimers = new ArrayList<>(fields.size());
 				for (Field field : fields) {
 					try {
-						TimerBase timer = (TimerBase) ReflectionUtil.setAccessible(field).get(abilityBase);
+						GameTimer timer = (GameTimer) ReflectionUtil.setAccessible(field).get(abilityBase);
 						if (timer != null) {
 							abilityBase.scheduledTimers.add(timer);
 						}
@@ -100,8 +107,9 @@ public abstract class AbilityBase implements PassiveExecutor {
 	private final AbilityManifest manifest;
 	private final AbstractGame game;
 	private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
-	private final List<TimerBase> timers = new ArrayList<>();
-	private List<TimerBase> scheduledTimers = null;
+	private final List<GameTimer> timers = new ArrayList<>();
+	private List<GameTimer> scheduledTimers = null;
+	private final Set<ActionbarChannel> actionbarChannels = new HashSet<>();
 
 	private boolean restricted;
 
@@ -203,13 +211,12 @@ public abstract class AbilityBase implements PassiveExecutor {
 	public final void destroy() {
 		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
 		game.getPassiveManager().unregisterAll(this);
-		for (AbstractGame.TimerBase timer : timers) {
-			timer.stopTimer(true);
+		for (GameTimer timer : timers) {
+			timer.stop(true);
 		}
-	}
-
-	protected final void registerTimer(AbstractGame.TimerBase timer) {
-		timers.add(timer);
+		for (ActionbarChannel channel : actionbarChannels) {
+			channel.unregister();
+		}
 	}
 
 	/**
@@ -233,8 +240,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 	/**
 	 * 능력의 설명을 반환합니다.
 	 */
-	public final ArrayList<String> getDescription() {
-		ArrayList<String> explain = new ArrayList<>();
+	public final List<String> getDescription() {
+		List<String> explain = new ArrayList<>();
 		for (DescriptionLine line : description) {
 			Collections.addAll(explain, line.strings);
 		}
@@ -276,25 +283,44 @@ public abstract class AbilityBase implements PassiveExecutor {
 		return restricted;
 	}
 
+	private final Queue<GameTimer> pausedTimers = new LinkedList<>();
+
 	/**
 	 * 능력의 제한 여부를 설정합니다.
 	 */
 	public final void setRestricted(boolean restricted) {
 		this.restricted = restricted;
 		if (restricted) {
-			for (AbstractGame.TimerBase timer : timers) {
-				timer.stopTimer(true);
+			for (GameTimer timer : timers) {
+				if (timer.getBehavior() == RestrictionBehavior.STOP_START) {
+					timer.stop(true);
+				} else {
+					timer.pause();
+					pausedTimers.add(timer);
+				}
+			}
+			for (ActionbarChannel channel : actionbarChannels) {
+				channel.update(null);
 			}
 			Bukkit.getPluginManager().callEvent(new AbilityRestrictionSetEvent(this));
 		} else {
+			while (!pausedTimers.isEmpty()) {
+				pausedTimers.poll().resume();
+			}
 			if (scheduledTimers != null) {
-				for (TimerBase timer : scheduledTimers) {
-					timer.startTimer();
+				for (GameTimer timer : scheduledTimers) {
+					timer.start();
 				}
 			}
 			Bukkit.getPluginManager().callEvent(new AbilityRestrictionClearEvent(this));
 			onRestrictClear();
 		}
+	}
+
+	public final ActionbarChannel newActionbarChannel() {
+		ActionbarChannel channel = participant.actionbar().newChannel();
+		actionbarChannels.add(channel);
+		return channel;
 	}
 
 	public static class DescriptionLine {
@@ -323,15 +349,17 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 *
 	 * @author Daybreak 새벽
 	 */
-	public final class CooldownTimer extends AbstractGame.TimerBase {
+	public final class CooldownTimer extends GameTimer implements Supplier<String> {
 
+		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private final String abilityName;
 		private boolean sendActionbar = true;
 
 		public CooldownTimer(int cooldown, String abilityName) {
-			game.super((AbilityWarThread.getGame() instanceof WRECK.Handler && ((WRECK.Handler) AbilityWarThread.getGame()).isWRECKEnabled()) ? (cooldown / 10) : cooldown);
+			game.super(TaskType.REVERSE, (AbilityWarThread.getGame() instanceof WRECK.Handler && ((WRECK.Handler) AbilityWarThread.getGame()).isWRECKEnabled()) ? (cooldown / 10) : cooldown);
+			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 			this.abilityName = abilityName;
-			registerTimer(this);
+			timers.add(this);
 		}
 
 		public CooldownTimer(int cooldown) {
@@ -340,21 +368,17 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 		public boolean isCooldown() {
 			if (isRunning()) {
-				Player player = getPlayer();
-				if (player != null) {
-					player.sendMessage(toString(ChatColor.WHITE));
+				if (getPlayer() != null) {
+					getPlayer().sendMessage(toString(ChatColor.WHITE));
 				}
 			}
-
 			return isRunning();
 		}
 
 		@Override
-		public void onProcess(int count) {
-			if (sendActionbar) {
-				NMSUtil.PlayerUtil.sendActionbar(getPlayer(), toString(), 0, 20, 0);
-			}
-			if (count == (getMaxCount() / 2) || (count <= 5 && count >= 1)) {
+		public void run(int count) {
+			actionbarChannel.update(toString());
+			if (count == (getMaximumCount() / 2) || (count <= 5 && count >= 1)) {
 				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
 				getPlayer().sendMessage(toString(ChatColor.WHITE));
 			}
@@ -366,15 +390,18 @@ public abstract class AbilityBase implements PassiveExecutor {
 			if (player != null) {
 				String message = ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다.");
 				player.sendMessage(message);
-				if (sendActionbar) {
-					NMSUtil.PlayerUtil.sendActionbar(getPlayer(), message, 0, 20, 0);
-				}
+				actionbarChannel.update(message, 2);
 			}
 		}
 
 		@Override
 		public String toString() {
 			return toString(ChatColor.GOLD);
+		}
+
+		@Override
+		public String get() {
+			return toString();
 		}
 
 		public String toString(ChatColor timeColor) {
@@ -386,81 +413,75 @@ public abstract class AbilityBase implements PassiveExecutor {
 		}
 
 		@Override
-		public CooldownTimer setPeriod(int period) {
+		public CooldownTimer setPeriod(TimeUnit timeUnit, int period) {
 			return this;
 		}
 
-		public void setCount(int count) {
-			super.setCount(count);
-		}
-
-		public CooldownTimer setSendActionbar(boolean sendActionbar) {
-			this.sendActionbar = sendActionbar;
+		@Override
+		public CooldownTimer setDelay(TimeUnit timeUnit, int period) {
 			return this;
 		}
 
 	}
 
 	/**
-	 * Duration TimerBase (지속시간 타이머)
+	 * Duration Timer (지속시간 타이머)
 	 * 능력의 지속시간을 관리하고 능력을 발동시키기 위해 만들어진 타이머입니다.
 	 *
 	 * @author Daybreak 새벽
 	 */
-	public abstract class DurationTimer extends AbstractGame.TimerBase {
+	public abstract class DurationTimer extends GameTimer {
 
+		private final ActionbarChannel actionbarChannel = participant.actionbar().newChannel();
 		private final int duration;
 		private final String abilityName;
 		private final CooldownTimer cooldownTimer;
-		private boolean sendActionbar = true;
+		private int period = 20;
 
-		public DurationTimer(int duration, String abilityName, CooldownTimer cooldownTimer) {
-			game.super(duration);
+		public DurationTimer(int duration, CooldownTimer cooldownTimer, String abilityName) {
+			game.super(TaskType.REVERSE, duration);
 			this.duration = duration;
 			this.abilityName = abilityName;
 			this.cooldownTimer = cooldownTimer;
-			registerTimer(this);
-		}
-
-		public DurationTimer(int duration, String abilityName) {
-			this(duration, "", null);
+			timers.add(this);
 		}
 
 		public DurationTimer(int duration, CooldownTimer cooldownTimer) {
-			this(duration, "", cooldownTimer);
+			this(duration, cooldownTimer, "");
 		}
 
 		public DurationTimer(int duration) {
-			this(duration, "", null);
+			this(duration, null);
 		}
 
 		protected void onDurationStart() {
 		}
 
-		protected abstract void onDurationProcess(int seconds);
+		protected abstract void onDurationProcess(int count);
 
 		protected void onDurationEnd() {
 		}
 
 		public final boolean isDuration() {
 			if (isRunning()) {
-				Player player = getPlayer();
-				if (player != null) {
-					player.sendMessage(toString(ChatColor.WHITE));
+				if (getPlayer() != null) {
+					getPlayer().sendMessage(toString(ChatColor.WHITE));
 				}
 			}
-
 			return isRunning();
 		}
 
 		@Override
-		public final DurationTimer setPeriod(int period) {
-			super.setPeriod(period);
+		public DurationTimer setPeriod(TimeUnit timeUnit, int period) {
+			Preconditions.checkNotNull(timeUnit);
+			this.period = timeUnit.toTicks(period);
+			super.setPeriod(TimeUnit.TICKS, FastMath.gcd(this.period, 20));
 			return this;
 		}
 
-		public final DurationTimer setSendActionbar(boolean sendActionbar) {
-			this.sendActionbar = sendActionbar;
+		@Override
+		public DurationTimer setDelay(TimeUnit timeUnit, int period) {
+			super.setDelay(timeUnit, period);
 			return this;
 		}
 
@@ -472,19 +493,20 @@ public abstract class AbilityBase implements PassiveExecutor {
 		private int tick = 0;
 
 		@Override
-		protected final void onProcess(int count) {
-			onDurationProcess(count);
+		protected final void run(int count) {
 			tick += getPeriod();
-			if (tick >= 20) {
-				tick = 0;
-				Player player = getPlayer();
-				if (sendActionbar) {
-					NMSUtil.PlayerUtil.sendActionbar(player, toString(), 0, 20, 0);
-				}
+			if (tick % 20 == 0) {
+				actionbarChannel.update(toString());
 				final int fixedCount = getFixedCount();
 				if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
-					player.sendMessage(toString(ChatColor.WHITE));
-					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(player);
+					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
+					getPlayer().sendMessage(toString(ChatColor.WHITE));
+				}
+			}
+			if (tick % period == 0) {
+				onDurationProcess(count);
+				if (tick >= 20) {
+					tick = 0;
 				}
 			}
 		}
@@ -497,12 +519,10 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 				String message = ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다.");
 				player.sendMessage(message);
-				if (sendActionbar) {
-					NMSUtil.PlayerUtil.sendActionbar(getPlayer(), message, 0, 20, 0);
-				}
+				actionbarChannel.update(message, 2);
 
 				if (cooldownTimer != null) {
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 				}
 			}
 		}
@@ -522,21 +542,30 @@ public abstract class AbilityBase implements PassiveExecutor {
 
 	}
 
-	public abstract class Timer extends AbstractGame.TimerBase {
+	public abstract class Timer extends GameTimer {
 
-		public Timer(int duration) {
-			game.super(duration);
-			registerTimer(this);
+		public Timer(TaskType taskType, int maximumCount) {
+			game.super(taskType, maximumCount);
+			timers.add(this);
+		}
+
+		public Timer(int maximumCount) {
+			this(TaskType.REVERSE, maximumCount);
 		}
 
 		public Timer() {
-			game.super();
-			registerTimer(this);
+			this(TaskType.INFINITE, -1);
 		}
 
 		@Override
-		public final Timer setPeriod(int period) {
-			super.setPeriod(period);
+		public Timer setPeriod(TimeUnit timeUnit, int period) {
+			super.setPeriod(timeUnit, period);
+			return this;
+		}
+
+		@Override
+		public Timer setDelay(TimeUnit timeUnit, int period) {
+			super.setDelay(timeUnit, period);
 			return this;
 		}
 

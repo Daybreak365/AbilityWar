@@ -67,7 +67,7 @@ public class Berserker extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType == ClickType.RIGHT_CLICK) {
 			if (!durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
-				durationTimer.startTimer();
+				durationTimer.start();
 				return true;
 			}
 		}
@@ -81,7 +81,7 @@ public class Berserker extends AbilityBase {
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
 			if (durationTimer.isRunning()) {
-				durationTimer.stopTimer(false);
+				durationTimer.stop(false);
 				e.setDamage(e.getFinalDamage() * strength);
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
 			}

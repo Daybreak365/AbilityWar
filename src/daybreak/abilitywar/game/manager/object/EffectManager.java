@@ -4,6 +4,8 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.list.BlackCandle;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -44,7 +46,7 @@ public class EffectManager implements EventExecutor {
 					return;
 			}
 
-			game.new TimerBase(tick) {
+			game.new GameTimer(TaskType.NORMAL, tick) {
 				@Override
 				protected void onStart() {
 					STUN.add(part);
@@ -56,9 +58,9 @@ public class EffectManager implements EventExecutor {
 				}
 
 				@Override
-				protected void onProcess(int count) {
+				protected void run(int count) {
 				}
-			}.setPeriod(1).startTimer();
+			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}
 	}
 

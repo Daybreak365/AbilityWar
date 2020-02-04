@@ -2,10 +2,12 @@ package daybreak.abilitywar.game.games.mode.decorator;
 
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,12 +24,12 @@ public interface Winnable {
 			Player p = participant.getPlayer();
 			joiner.add(p.getName());
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
-			new OverallTimer(8) {
+			new SimpleTimer(TaskType.REVERSE, 8) {
 				@Override
-				protected void onProcess(int seconds) {
+				protected void run(int seconds) {
 					FireworkUtil.spawnWinnerFirework(p.getEyeLocation());
 				}
-			}.setPeriod(8).startTimer();
+			}.setPeriod(TimeUnit.TICKS, 8).start();
 		}
 		builder.append(joiner.toString());
 		Bukkit.broadcastMessage(builder.toString());

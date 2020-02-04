@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FallBlock;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -63,8 +64,8 @@ public class Nex extends AbilityBase {
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
 					}
 					SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
-					Skill.startTimer();
-					cooldownTimer.startTimer();
+					Skill.start();
+					cooldownTimer.start();
 					return true;
 				}
 			}
@@ -85,7 +86,7 @@ public class Nex extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 		}
 
 		@Override
@@ -94,7 +95,7 @@ public class Nex extends AbilityBase {
 			getPlayer().setVelocity(getPlayer().getVelocity().add(new Vector(0, -4, 0)));
 		}
 
-	}.setPeriod(10);
+	}.setPeriod(TimeUnit.TICKS, 10);
 
 	private final int damage = DamageConfig.getValue();
 
@@ -127,7 +128,7 @@ public class Nex extends AbilityBase {
 					}
 					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
 
-					fallBlockTimer.startTimer();
+					fallBlockTimer.start();
 				}
 			}
 		}
@@ -144,7 +145,7 @@ public class Nex extends AbilityBase {
 
 		@SuppressWarnings("deprecation")
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			int distance = 6 - count;
 
 			for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
@@ -163,7 +164,7 @@ public class Nex extends AbilityBase {
 			}
 		}
 
-	}.setPeriod(4) :
+	}.setPeriod(TimeUnit.TICKS, 4) :
 			new Timer(5) {
 
 				Location center;
@@ -175,7 +176,7 @@ public class Nex extends AbilityBase {
 
 				@SuppressWarnings("deprecation")
 				@Override
-				public void onProcess(int count) {
+				public void run(int count) {
 					int distance = 6 - count;
 
 					for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
@@ -194,7 +195,7 @@ public class Nex extends AbilityBase {
 					}
 				}
 
-			}.setPeriod(4);
+			}.setPeriod(TimeUnit.TICKS, 4);
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {

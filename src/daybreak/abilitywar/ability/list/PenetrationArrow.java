@@ -2,11 +2,12 @@ package daybreak.abilitywar.ability.list;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.base.ProgressBar;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.PlayerUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -86,7 +87,7 @@ public class PenetrationArrow extends AbilityBase {
 							}
 							victim.damage(5, damager);
 						}
-					}.startTimer();
+					}.start();
 				}
 			},
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&5중력")) {
@@ -104,7 +105,7 @@ public class PenetrationArrow extends AbilityBase {
 								damageable.setVelocity(victim.getLocation().toVector().subtract(damageable.getLocation().toVector()).multiply(0.75));
 							}
 						}
-					}.startTimer();
+					}.start();
 				}
 			},
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&e풍월")) {
@@ -117,7 +118,7 @@ public class PenetrationArrow extends AbilityBase {
 						public void onHit(Damageable damager, Damageable victim) {
 							victim.setVelocity(damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-0.35).setY(0));
 						}
-					}.startTimer();
+					}.start();
 				}
 			}
 	);
@@ -126,19 +127,15 @@ public class PenetrationArrow extends AbilityBase {
 	private int arrowBullet = bulletCount;
 	private Timer reload = null;
 
+	@Scheduled
 	private final Timer notice = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			if (reload == null) {
 				NMSUtil.PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"), 0, 4, 0);
 			}
 		}
-	}.setPeriod(2);
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		notice.startTimer();
-	}
+	}.setPeriod(TimeUnit.TICKS, 2);
 
 	@SubscribeEvent
 	private void onProjectileLaunch(EntityShootBowEvent e) {
@@ -155,7 +152,7 @@ public class PenetrationArrow extends AbilityBase {
 						private final ProgressBar progressBar = new ProgressBar(15, 15);
 
 						@Override
-						protected void onProcess(int count) {
+						protected void run(int count) {
 							progressBar.step();
 							PlayerUtil.sendActionbar(getPlayer(), "재장전: " + progressBar.toString(), 0, 6, 0);
 						}
@@ -166,8 +163,8 @@ public class PenetrationArrow extends AbilityBase {
 							arrowBullet = bulletCount;
 							PenetrationArrow.this.reload = null;
 						}
-					}.setPeriod(4);
-					reload.startTimer();
+					}.setPeriod(TimeUnit.TICKS, 4);
+					reload.start();
 				}
 			} else {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));
@@ -204,7 +201,7 @@ public class PenetrationArrow extends AbilityBase {
 
 		private Parabola(Location startLocation, Vector arrowVelocity, double angle, ParticleLib.RGB color) {
 			super(300);
-			setPeriod(1);
+			setPeriod(TimeUnit.TICKS, 1);
 			this.centeredBoundingBox = new CenteredBoundingBox(startLocation, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 			this.velocity = Math.sqrt((arrowVelocity.getX() * arrowVelocity.getX()) + (arrowVelocity.getY() * arrowVelocity.getY()) + (arrowVelocity.getZ() * arrowVelocity.getZ()));
 			this.sin = FastMath.sin(Math.toRadians(angle));
@@ -219,7 +216,7 @@ public class PenetrationArrow extends AbilityBase {
 		private final Set<Damageable> attacked = new HashSet<>();
 
 		@Override
-		protected void onProcess(int i) {
+		protected void run(int i) {
 			time += 0.03;
 			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time) + (velocity * sin * time) * 0.7;
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);

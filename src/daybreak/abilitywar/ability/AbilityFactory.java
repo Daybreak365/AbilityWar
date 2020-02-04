@@ -4,8 +4,8 @@ import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mixability.Mix;
+import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.mode.AbstractGame.TimerBase;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil;
@@ -209,7 +209,7 @@ public class AbilityFactory {
 						SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
 						settingObjects.put(settingObject.getKey(), settingObject);
 					}
-				} else if (TimerBase.class.isAssignableFrom(type)) {
+				} else if (GameTimer.class.isAssignableFrom(type)) {
 					if (!Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(Scheduled.class)) {
 						scheduledTimers.add(field);
 					}

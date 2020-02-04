@@ -14,6 +14,7 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -65,7 +66,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
-	private final TimerBase NoHunger = new TimerBase() {
+	private final GameTimer noHunger = new GameTimer(TaskType.INFINITE, -1) {
 
 		@Override
 		public void onStart() {
@@ -73,7 +74,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			for (Participant p : getParticipants()) {
 				p.getPlayer().setFoodLevel(19);
 			}
@@ -175,8 +176,8 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				}
 
 				if (Settings.getNoHunger()) {
-					NoHunger.setPeriod(1);
-					NoHunger.startTimer();
+					noHunger.setPeriod(TimeUnit.TICKS, 1);
+					noHunger.start();
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 				}
@@ -200,7 +201,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 					}
 				}
 
-				changer.StartTimer();
+				changer.start();
 
 				startGame();
 				break;

@@ -75,7 +75,7 @@ public class Feather extends AbilityBase {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
-					Duration.startTimer();
+					Duration.start();
 
 					return true;
 				}

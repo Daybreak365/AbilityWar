@@ -3,63 +3,63 @@ package daybreak.abilitywar.utils.base.concurrent;
 public enum TimeUnit {
 
 	TICKS {
-		public long toMillis(long duration) {
+		public int toMillis(int duration) {
 			return duration * 50;
 		}
 
-		public long toTicks(long duration) {
+		public int toTicks(int duration) {
 			return duration;
 		}
 
-		public long toSeconds(long duration) {
+		public int toSeconds(int duration) {
 			return duration / 20;
 		}
 
-		public long toMinutes(long duration) {
+		public int toMinutes(int duration) {
 			return duration / 1200;
 		}
 	},
 	SECONDS {
-		public long toMillis(long duration) {
+		public int toMillis(int duration) {
 			return duration * 1000;
 		}
 
-		public long toTicks(long duration) {
+		public int toTicks(int duration) {
 			return duration * 20;
 		}
 
-		public long toSeconds(long duration) {
+		public int toSeconds(int duration) {
 			return duration;
 		}
 
-		public long toMinutes(long duration) {
+		public int toMinutes(int duration) {
 			return duration / 60;
 		}
 	},
 	MINUTES {
-		public long toMillis(long duration) {
+		public int toMillis(int duration) {
 			return duration * 60000;
 		}
 
-		public long toTicks(long duration) {
+		public int toTicks(int duration) {
 			return duration * 1200;
 		}
 
-		public long toSeconds(long duration) {
+		public int toSeconds(int duration) {
 			return duration * 60;
 		}
 
-		public long toMinutes(long duration) {
+		public int toMinutes(int duration) {
 			return duration;
 		}
 	};
 
-	public abstract long toMillis(long duration);
+	public abstract int toMillis(int duration);
 
-	public abstract long toTicks(long duration);
+	public abstract int toTicks(int duration);
 
-	public abstract long toSeconds(long duration);
+	public abstract int toSeconds(int duration);
 
-	public abstract long toMinutes(long duration);
+	public abstract int toMinutes(int duration);
 
 }

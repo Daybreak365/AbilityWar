@@ -43,7 +43,7 @@ public class Void extends AbilityBase {
 	private final Timer invincibilityTimer = new Timer(2) {
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 		}
 
 	};
@@ -60,9 +60,9 @@ public class Void extends AbilityBase {
 						getPlayer().teleport(target);
 						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 
-						invincibilityTimer.startTimer();
+						invincibilityTimer.start();
 
-						cooldownTimer.startTimer();
+						cooldownTimer.start();
 					} else {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
 					}

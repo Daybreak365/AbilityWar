@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -47,7 +48,7 @@ public class ShowmanShip extends AbilityBase {
 	private final Timer passive = new Timer() {
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			final double point = getPoint(7, 7);
 
 			final RGB color;
@@ -67,7 +68,7 @@ public class ShowmanShip extends AbilityBase {
 			}
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {

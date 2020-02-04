@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -85,13 +86,13 @@ public class Demigod extends AbilityBase {
 			int count = 0;
 
 			@Override
-			protected void onProcess(int a) {
+			protected void run(int a) {
 				for (int i = 0; i < 2; i++) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(circle.get(count % 20)).add(0, count * yDiff, 0), color);
 					count++;
 				}
 			}
-		}.setPeriod(1).startTimer();
+		}.setPeriod(TimeUnit.TICKS, 1).start();
 	}
 
 	@Override

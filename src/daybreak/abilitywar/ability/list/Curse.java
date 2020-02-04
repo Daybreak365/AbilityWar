@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -104,13 +105,13 @@ public class Curse extends AbilityBase {
 			armorStand.remove();
 			armorStand = null;
 		}
-	}.setPeriod(2);
+	}.setPeriod(TimeUnit.TICKS, 2);
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {
 		if (materialType.equals(Material.IRON_INGOT) && entity instanceof Player && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			target = (Player) entity;
-			skill.startTimer();
+			skill.start();
 		}
 	}
 

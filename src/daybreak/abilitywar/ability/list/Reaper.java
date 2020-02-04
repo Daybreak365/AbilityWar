@@ -6,8 +6,9 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.Hologram;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -95,10 +96,11 @@ public class Reaper extends AbilityBase {
 				)).setY(Math.random() * 1.4));
 			}
 			soulCount = 0;
+			soulNotice.update(ChatColor.translateAlternateColorCodes('&', "&f" + soulCount + " &0●"));
 		}
 
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			getPlayer().setVelocity(getPlayer().getVelocity().multiply(MULTIPLY));
 			Location playerLocation = getPlayer().getLocation().clone().add(0, 1, 0);
 			for (Location location : wingVectors.clone().rotateAroundAxisY(playerLocation.getYaw()).rotateAroundAxis(playerLocation.getDirection().clone().setY(0).normalize(), 52).toLocations(playerLocation)) {
@@ -121,9 +123,9 @@ public class Reaper extends AbilityBase {
 
 		@Override
 		protected void onEnd() {
-			abilityTwo.startTimer();
+			abilityTwo.start();
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	private final Timer abilityTwo = new Timer(25) {
 		int count;
@@ -134,7 +136,7 @@ public class Reaper extends AbilityBase {
 		}
 
 		@Override
-		protected void onProcess(int seconds) {
+		protected void run(int seconds) {
 			count++;
 			getPlayer().setVelocity(getPlayer().getVelocity().multiply(MULTIPLY));
 			Location playerLocation = getPlayer().getLocation().clone().add(0, 1, 0);
@@ -153,9 +155,9 @@ public class Reaper extends AbilityBase {
 
 		@Override
 		protected void onEnd() {
-			abilityThree.startTimer();
+			abilityThree.start();
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	private final Timer abilityThree = new Timer(20) {
 		int count;
@@ -177,7 +179,7 @@ public class Reaper extends AbilityBase {
 		}
 
 		@Override
-		protected void onProcess(int seconds) {
+		protected void run(int seconds) {
 			count++;
 			for (Locations locations : locationsList) {
 				Location location = locations.get(count);
@@ -191,17 +193,21 @@ public class Reaper extends AbilityBase {
 				}
 			}
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
+		soulNotice.update(ChatColor.translateAlternateColorCodes('&', "&f" + soulCount + " &0●"));
+	}
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.LEFT_CLICK)) {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&0수확한 영혼&f: " + soulCount + "개"));
-			} else if (clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()
-					&& !abilityOne.isRunning() && !abilityTwo.isRunning()) {
-				abilityOne.startTimer();
-				cooldownTimer.startTimer();
+			} else if (clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown() && !abilityOne.isRunning() && !abilityTwo.isRunning()) {
+				abilityOne.start();
+				cooldownTimer.start();
 				return true;
 			}
 		}
@@ -210,18 +216,7 @@ public class Reaper extends AbilityBase {
 
 	private final Vectors sphere = LocationUtil.getSphere(0.07, 4);
 
-	private final Timer soulNotice = new Timer() {
-		@Override
-		protected void onProcess(int count) {
-			if (!cooldownTimer.isRunning())
-				NMSUtil.PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f" + soulCount + " &0●"), 0, 3, 0);
-		}
-	}.setPeriod(1);
-
-	@SubscribeEvent(onlyRelevant = true)
-	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		soulNotice.startTimer();
-	}
+	private final ActionbarChannel soulNotice = newActionbarChannel();
 
 	@SubscribeEvent
 	private void onPlayerDeath(PlayerDeathEvent e) {
@@ -229,12 +224,13 @@ public class Reaper extends AbilityBase {
 			Locations locations = sphere.toLocations(e.getEntity().getLocation().clone().add(0, 1, 0));
 			new Timer(1200) {
 				@Override
-				protected void onProcess(int count) {
+				protected void run(int count) {
 					for (Location location : locations) {
 						ParticleLib.REDSTONE.spawnParticle(getPlayer(), location, SOUL_COLOUR);
 						if (location.distanceSquared(getPlayer().getLocation()) <= 1.2) {
-							stopTimer(false);
+							stop(false);
 							soulCount += 40;
+							soulNotice.update(ChatColor.translateAlternateColorCodes('&', "&f" + soulCount + " &0●"));
 							Hologram hologram = new Hologram(e.getEntity().getLocation().clone(), ChatColor.translateAlternateColorCodes('&', "&f+ " + 40 + " &0●"));
 							new Timer(4) {
 								@Override
@@ -243,7 +239,7 @@ public class Reaper extends AbilityBase {
 								}
 
 								@Override
-								protected void onProcess(int count) {
+								protected void run(int count) {
 								}
 
 								@Override
@@ -255,12 +251,12 @@ public class Reaper extends AbilityBase {
 								protected void onSilentEnd() {
 									hologram.hide(getPlayer());
 								}
-							}.startTimer();
+							}.start();
 							break;
 						}
 					}
 				}
-			}.setPeriod(1).startTimer();
+			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}
 	}
 
@@ -269,15 +265,16 @@ public class Reaper extends AbilityBase {
 		Locations locations = sphere.toLocations(e.getEntity().getLocation().clone().add(0, 1, 0));
 		new Timer(1200) {
 			@Override
-			protected void onProcess(int count) {
+			protected void run(int count) {
 				for (Location location : locations) {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), location, SOUL_COLOUR);
 					if (location.distanceSquared(getPlayer().getLocation()) <= 1.2) {
-						stopTimer(false);
+						stop(false);
 						int soulGain = (int) e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 						if (e.getEntity() instanceof Animals) soulGain /= 7;
 						else if (e.getEntity() instanceof Monster) soulGain /= 5;
 						soulCount += soulGain;
+						soulNotice.update(ChatColor.translateAlternateColorCodes('&', "&f" + soulCount + " &0●"));
 						Hologram hologram = new Hologram(e.getEntity().getLocation().clone(), ChatColor.translateAlternateColorCodes('&', "&f+ " + soulGain + " &0●"));
 						new Timer(4) {
 							@Override
@@ -286,7 +283,7 @@ public class Reaper extends AbilityBase {
 							}
 
 							@Override
-							protected void onProcess(int count) {
+							protected void run(int count) {
 							}
 
 							@Override
@@ -298,12 +295,12 @@ public class Reaper extends AbilityBase {
 							protected void onSilentEnd() {
 								hologram.hide(getPlayer());
 							}
-						}.startTimer();
+						}.start();
 						break;
 					}
 				}
 			}
-		}.setPeriod(1).startTimer();
+		}.setPeriod(TimeUnit.TICKS, 1).start();
 	}
 
 	@Override

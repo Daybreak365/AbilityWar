@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.games.mode;
 
+import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
@@ -10,8 +11,10 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.PlayerUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
-import daybreak.abilitywar.utils.thread.OverallTimer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -34,11 +37,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
-public abstract class AbstractGame extends OverallTimer implements Listener, EffectManager.Handler, CommandHandler {
+public abstract class AbstractGame extends SimpleTimer implements Listener, EffectManager.Handler, CommandHandler {
 
 	public interface Observer {
 		void update(GAME_UPDATE update);
@@ -65,6 +69,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	private final EffectManager effectManager = new EffectManager(this);
 
 	public AbstractGame(Collection<Player> players) {
+		super(TaskType.INFINITE, -1);
 		this.participantStrategy = new ParticipantStrategy.DEFAULT_MANAGEMENT(this, players);
 	}
 
@@ -177,6 +182,7 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 	public class Participant implements Listener, Observer {
 
 		private final Attributes attributes = new Attributes();
+		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
 		private Player player;
 
 		protected Participant(Player player) {
@@ -384,194 +390,147 @@ public abstract class AbstractGame extends OverallTimer implements Listener, Eff
 
 		}
 
+		public ActionbarNotification actionbar() {
+			return actionbarNotification;
+		}
+
+		public class ActionbarNotification extends GameTimer {
+
+			private Set<ActionbarChannel> channels = Collections.synchronizedSet(new HashSet<>());
+			private String lastString = "";
+
+			private ActionbarNotification() {
+				super(TaskType.INFINITE, -1);
+				start();
+			}
+
+			private void update() {
+				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + " | ");
+				for (ActionbarChannel channel : channels) {
+					if (channel.string != null) {
+						joiner.add(channel.string);
+					}
+				}
+				this.lastString = joiner.toString();
+				PlayerUtil.sendActionbar(getPlayer(), lastString, 0, 20, 20);
+			}
+
+			@Override
+			protected void run(int count) {
+				boolean updated = false;
+				for (ActionbarChannel channel : channels) {
+					if (channel.seconds > 0) {
+						if (--channel.seconds == 0) {
+							channel.string = null;
+							updated = true;
+						}
+					}
+				}
+				if (updated) {
+					update();
+				} else {
+					PlayerUtil.sendActionbar(getPlayer(), lastString, 0, 20, 20);
+				}
+			}
+
+			public ActionbarChannel newChannel() {
+				return new ActionbarChannel();
+			}
+
+			public class ActionbarChannel {
+
+				private String string;
+				private int seconds = 0;
+
+				public ActionbarChannel() {
+					channels.add(this);
+				}
+
+				public void update(String string) {
+					this.string = string;
+					this.seconds = 0;
+					ActionbarNotification.this.update();
+				}
+
+				public void update(String string, int seconds) {
+					this.string = string;
+					this.seconds = seconds;
+					ActionbarNotification.this.update();
+				}
+
+				public void unregister() {
+					channels.remove(this);
+					ActionbarNotification.this.update();
+				}
+
+			}
+
+		}
+
 	}
 
-	private final List<TimerBase> timerTasks = new LinkedList<>();
+	private final List<GameTimer> timerTasks = new LinkedList<>();
 
 	/**
-	 * 현재 실행중인 모든 {@link TimerBase}를 반환합니다.
+	 * 현재 실행중인 모든 {@link GameTimer}를 반환합니다.
 	 */
-	public final Collection<TimerBase> getTimers() {
+	public final Collection<GameTimer> getTimers() {
 		return new ArrayList<>(timerTasks);
 	}
 
 	/**
-	 * 해당 타입의 {@link TimerBase}를 모두 종료합니다.
+	 * 해당 타입의 {@link GameTimer}를 모두 종료합니다.
 	 *
-	 * @param timerType 종료할 타이머 타입
+	 * @param type 종료할 타이머 타입
 	 */
-	public final void stopTimers(Class<? extends TimerBase> timerType) {
-		for (TimerBase timer : getTimers()) {
-			if (timerType.isAssignableFrom(timer.getClass())) {
-				timer.stopTimer(false);
+	public final void stopTimers(Class<? extends GameTimer> type) {
+		for (GameTimer timer : getTimers()) {
+			if (type.isAssignableFrom(timer.getClass())) {
+				timer.stop(false);
 			}
 		}
 	}
 
 	/**
-	 * 현재 실행중인 {@link TimerBase}를 모두 종료합니다.
+	 * 현재 실행중인 {@link GameTimer}를 모두 종료합니다.
 	 */
 	public void stopTimers() {
-		for (TimerBase timer : getTimers()) {
-			timer.stopTimer(true);
+		for (GameTimer timer : getTimers()) {
+			timer.stop(true);
 		}
 		timerTasks.clear();
 	}
 
-	public abstract class TimerBase {
+	public abstract class GameTimer extends SimpleTimer {
 
-		private int taskId = -1;
-		private int count;
+		private RestrictionBehavior behavior = RestrictionBehavior.STOP_START;
 
-		private final int maxCount;
-		private boolean infinite;
-
-		private int period = 20;
-
-		/**
-		 * {@link TimerBase}가 실행될 때 호출됩니다.
-		 */
-		protected void onStart() {
+		public GameTimer(TaskType taskType, int maximumCount) {
+			super(taskType, maximumCount);
+			timerTasks.add(this);
 		}
 
-		/**
-		 * {@link TimerBase} 실행 이후 {@link #period}틱마다 호출됩니다.
-		 * <pre>
-		 * 일반 타이머
-		 * <pre>
-		 * 카운트 값이 {@link #maxCount}에서 시작하여 1까지 감소합니다.</pre>
-		 * 무한 타이머
-		 * <pre>
-		 * 카운트 값이 1에서 시작하여 {@link Integer#MAX_VALUE}까지 증가합니다.</pre>
-		 * </pre>
-		 */
-		protected abstract void onProcess(int count);
-
-		/**
-		 * {@link TimerBase}가 종료될 때 호출됩니다.
-		 */
-		protected void onEnd() {
-		}
-
-		/**
-		 * {@link TimerBase}가 Silent로 종료될 때 호출됩니다.
-		 */
-		protected void onSilentEnd() {
-		}
-
-		/**
-		 * {@link TimerBase}의 실행 여부를 반환합니다.
-		 */
-		public final boolean isRunning() {
-			return taskId != -1;
-		}
-
-		/**
-		 * {@link TimerBase}를 실행합니다.
-		 */
-		public final void startTimer() {
-			if (AbstractGame.this.isRunning() && !isRunning()) {
-				count = maxCount;
-				this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), new TimerTask(), 0, period);
-				timerTasks.add(this);
-				onStart();
-			}
-		}
-
-		/**
-		 * {@link TimerBase}를 종료합니다.<p>
-		 */
-		public final void stopTimer(boolean silent) {
-			if (isRunning()) {
-				Bukkit.getScheduler().cancelTask(taskId);
-				timerTasks.remove(this);
-				this.taskId = -1;
-				if (!silent) {
-					onEnd();
-				} else {
-					onSilentEnd();
-				}
-			}
-		}
-
-		/**
-		 * @return 타이머를 초기화할 때 설정된 Max Count를 반환합니다.
-		 */
-		public final int getMaxCount() {
-			return maxCount;
-		}
-
-		/**
-		 * @return 남은 Count를 반환합니다.
-		 */
-		public final int getCount() {
-			return count;
-		}
-
-		protected synchronized void setCount(int count) {
-			this.count = count;
-		}
-
-		/**
-		 * @return 타이머가 무한 타이머인지의 여부를 반환합니다.
-		 */
-		public final boolean isInfinite() {
-			return infinite;
-		}
-
-		/**
-		 * @return 타이머 실행 주기를 반환합니다.
-		 */
-		public int getPeriod() {
-			return period;
-		}
-
-		/**
-		 * @return Period에 따라 변할 수 있는 실행 주기를 계산하여 Count를 반환합니다.
-		 * 1틱마다 실행되는 타이머가 count 20만큼 남았을 때 1을 반환합니다.
-		 */
-		public final int getFixedCount() {
-			return count / (20 / period);
-		}
-
-		public TimerBase setPeriod(int period) {
-			this.period = period;
+		public GameTimer setDelay(TimeUnit timeUnit, int delay) {
+			super.setDelay(timeUnit, delay);
 			return this;
 		}
 
-		/**
-		 * maxCount 이후 종료되는 일반 {@link TimerBase}를 만듭니다.
-		 */
-		public TimerBase(int maxCount) {
-			infinite = false;
-			this.maxCount = maxCount;
+		public GameTimer setPeriod(TimeUnit timeUnit, int period) {
+			super.setPeriod(timeUnit, period);
+			return this;
 		}
 
-		/**
-		 * 종료되지 않는 무한 {@link TimerBase}를 만듭니다.
-		 */
-		public TimerBase() {
-			infinite = true;
-			this.maxCount = 1;
+		public GameTimer setBehavior(RestrictionBehavior behavior) {
+			this.behavior = Preconditions.checkNotNull(behavior);
+			return this;
 		}
 
-		private final class TimerTask extends Thread {
-			@Override
-			public void run() {
-				if (infinite) {
-					onProcess(count);
-					count++;
-				} else {
-					if (count > 0) {
-						onProcess(count);
-						count--;
-					} else {
-						stopTimer(false);
-					}
-				}
-			}
+		public RestrictionBehavior getBehavior() {
+			return behavior;
 		}
 
 	}
+
+	public enum RestrictionBehavior {STOP_START, PAUSE_RESUME }
 
 }

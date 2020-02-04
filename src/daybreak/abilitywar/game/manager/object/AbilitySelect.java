@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.manager.object;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 import static daybreak.abilitywar.utils.base.Precondition.checkNotNull;
 
-public abstract class AbilitySelect extends AbstractGame.TimerBase {
+public abstract class AbilitySelect extends GameTimer {
 
 	private static final class SelectorData {
 
@@ -46,7 +47,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 	private Map<Participant, Integer> selectorMap = null;
 
 	public AbilitySelect(AbstractGame game, Collection<Participant> selectors, int changeCount) {
-		game.super();
+		game.super(TaskType.INFINITE, -1);
 		this.selectorData = new SelectorData(checkNotNull(selectors), changeCount);
 	}
 
@@ -86,8 +87,8 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 
 	public final void reset() {
 		setEnded(false);
-		stopTimer(true);
-		startTimer();
+		stop(true);
+		start();
 	}
 
 	/**
@@ -164,11 +165,11 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 				decideAbility(p);
 
 		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
-		this.stopTimer(false);
+		this.stop(false);
 	}
 
 	@Override
-	public void onProcess(int count) {
+	public void run(int count) {
 		if (!isEveryoneSelected()) {
 			if (count % 20 == 0) {
 				for (String m : Messager.asList(
@@ -178,7 +179,7 @@ public abstract class AbilitySelect extends AbstractGame.TimerBase {
 				}
 			}
 		} else {
-			this.stopTimer(false);
+			this.stop(false);
 		}
 	}
 

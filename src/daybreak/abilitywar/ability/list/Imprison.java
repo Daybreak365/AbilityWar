@@ -57,7 +57,7 @@ public class Imprison extends AbilityBase {
 						b.setType(Material.GLASS);
 					}
 
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 				}
 			} else {
 				cooldownTimer.isCooldown();

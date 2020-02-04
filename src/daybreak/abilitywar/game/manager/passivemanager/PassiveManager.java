@@ -1,7 +1,5 @@
 package daybreak.abilitywar.game.manager.passivemanager;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.ReflectionUtil;
@@ -13,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +23,7 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final Multimap<Class<? extends Event>, PassiveExecutor> passiveExecutors = MultimapBuilder.hashKeys().hashSetValues().build();
+	private final HashMap<Class<? extends Event>, Set<PassiveExecutor>> passiveExecutors = new HashMap<>();
 	private final EventPriority priority = EventPriority.HIGHEST;
 	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
 
@@ -39,6 +39,9 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 	}
 
 	public void register(Class<? extends Event> eventClass, PassiveExecutor executor) {
+		if (!passiveExecutors.containsKey(eventClass))
+			passiveExecutors.put(eventClass, Collections.synchronizedSet(new HashSet<>()));
+
 		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);
 		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
 			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, priority, this, AbilityWar.getPlugin());
@@ -48,8 +51,8 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 	}
 
 	public void unregisterAll(PassiveExecutor executor) {
-		for (Class<? extends Event> eventClass : new HashSet<>(passiveExecutors.keySet())) {
-			passiveExecutors.remove(eventClass, executor);
+		for (Class<? extends Event> eventClass : passiveExecutors.keySet()) {
+			passiveExecutors.get(eventClass).remove(executor);
 		}
 	}
 

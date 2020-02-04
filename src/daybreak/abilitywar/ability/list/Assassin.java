@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -75,7 +76,7 @@ public class Assassin extends AbilityBase {
 	private final Timer durationTimer = new Timer(TeleportCountConfig.getValue()) {
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			if (entities != null) {
 				if (!entities.isEmpty()) {
 					Damageable e = entities.remove();
@@ -84,12 +85,12 @@ public class Assassin extends AbilityBase {
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 				} else {
-					stopTimer(false);
+					stop(false);
 				}
 			}
 		}
 
-	}.setPeriod(3);
+	}.setPeriod(TimeUnit.TICKS, 3);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
@@ -98,8 +99,8 @@ public class Assassin extends AbilityBase {
 				if (!cooldownTimer.isCooldown()) {
 					this.entities = new LinkedList<>(LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, 5));
 					if (entities.size() > 0) {
-						durationTimer.startTimer();
-						cooldownTimer.startTimer();
+						durationTimer.start();
+						cooldownTimer.start();
 						return true;
 					} else {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&f" + distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));

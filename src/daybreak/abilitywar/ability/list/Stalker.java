@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -74,7 +75,7 @@ public class Stalker extends AbilityBase {
 		}
 
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			Location targetLocation = target.getLocation();
 			Location playerLocation = p.getLocation();
 			for (int i = 0; i < 10; i++) {
@@ -82,7 +83,7 @@ public class Stalker extends AbilityBase {
 			}
 			p.setVelocity(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.7));
 			if (playerLocation.distanceSquared(targetLocation) < 1.0) {
-				stopTimer(false);
+				stop(false);
 				p.teleport(target);
 			}
 		}
@@ -104,14 +105,14 @@ public class Stalker extends AbilityBase {
 			p.setVelocity(new Vector());
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			if (lastVictim != null) {
-				cooldownTimer.startTimer();
-				skill.startTimer();
+				cooldownTimer.start();
+				skill.start();
 				return true;
 			} else {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4마지막으로 때렸던 플레이어가 존재하지 않습니다."));

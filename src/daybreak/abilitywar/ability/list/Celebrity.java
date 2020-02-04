@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.EntityUtil;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -97,7 +98,7 @@ public class Celebrity extends AbilityBase {
 				Set<String> set = new HashSet<>();
 
 				@Override
-				protected void onProcess(int count) {
+				protected void run(int count) {
 					locations.add(direction);
 					for (Location location : locations) {
 						if (set.add(location.getBlockX() + ":" + location.getBlockZ())) {
@@ -113,7 +114,7 @@ public class Celebrity extends AbilityBase {
 						}
 					}
 				}
-			}.setPeriod(2).startTimer();
+			}.setPeriod(TimeUnit.TICKS, 2).start();
 		}
 
 		@Override
@@ -143,12 +144,12 @@ public class Celebrity extends AbilityBase {
 			}
 			carpets.clear();
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skillTimer.isDuration() && !cooldownTimer.isCooldown()) {
-			skillTimer.startTimer();
+			skillTimer.start();
 			return true;
 		}
 		return false;

@@ -4,11 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -44,7 +44,8 @@ public class Flora extends AbilityBase {
 	private EffectType type = EffectType.SPEED;
 	private Radius radius = Radius.BIG;
 
-	private final Timer Passive = new Timer() {
+	@Scheduled
+	private final Timer passive = new Timer() {
 
 		private double y;
 		private boolean add;
@@ -55,7 +56,7 @@ public class Flora extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			if (add && y >= 1.0) {
 				add = false;
 			} else if (!add && y <= 0) {
@@ -90,7 +91,7 @@ public class Flora extends AbilityBase {
 			}
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
@@ -108,7 +109,7 @@ public class Flora extends AbilityBase {
 
 					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.name + "&f으로 변경되었습니다."));
 
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 				}
 			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
 				radius = radius.next();
@@ -117,11 +118,6 @@ public class Flora extends AbilityBase {
 		}
 
 		return false;
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		Passive.startTimer();
 	}
 
 	private enum EffectType {

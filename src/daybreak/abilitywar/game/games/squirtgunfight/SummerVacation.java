@@ -14,6 +14,7 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -63,7 +64,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
-	private final TimerBase NoHunger = new TimerBase() {
+	private final GameTimer noHunger = new GameTimer(TaskType.INFINITE, -1) {
 
 		@Override
 		public void onStart() {
@@ -71,7 +72,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			for (Participant p : getParticipants()) {
 				p.getPlayer().setFoodLevel(19);
 			}
@@ -80,7 +81,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		@Override
 		public void onEnd() {
 		}
-	};
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	protected void progressGame(int Seconds) {
@@ -147,7 +148,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 	private final List<Participant> Killers = new ArrayList<Participant>();
 
-	private final TimerBase Glow = new TimerBase() {
+	private final GameTimer Glow = new GameTimer(TaskType.INFINITE, -1) {
 
 		@Override
 		protected void onStart() {
@@ -158,12 +159,12 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		}
 
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			for (Participant p : Killers) {
 				PotionEffects.GLOWING.addPotionEffect(p.getPlayer(), 20, 0, true);
 			}
 		}
-	}.setPeriod(10);
+	}.setPeriod(TimeUnit.TICKS, 10);
 
 	private final int MaxKill;
 
@@ -299,10 +300,9 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 			}
 		}
 
-		NoHunger.setPeriod(1);
-		NoHunger.startTimer();
+		noHunger.start();
 
-		Glow.startTimer();
+		Glow.start();
 
 		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 		for (Participant participant : this.getParticipants()) {

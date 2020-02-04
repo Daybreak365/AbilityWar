@@ -63,7 +63,7 @@ public class Terrorist extends AbilityBase {
 					for (Location l : circle.toLocations(center).floor(center.getY()))
 						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
 
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 
 					return true;
 				}

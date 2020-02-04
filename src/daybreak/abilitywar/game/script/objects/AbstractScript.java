@@ -1,7 +1,8 @@
 package daybreak.abilitywar.game.script.objects;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -13,7 +14,7 @@ public abstract class AbstractScript {
 	private final int loopCount;
 	private final String preMessage;
 	private final String runMessage;
-	private transient AbstractGame.TimerBase timer = null;
+	private transient GameTimer timer = null;
 
 	public AbstractScript(String name, int period, int loopCount, String preMessage, String runMessage) {
 		this.scriptType = this.getClass().getName();
@@ -26,7 +27,7 @@ public abstract class AbstractScript {
 
 	public void Start(Game game) {
 		if (timer == null || !timer.isRunning()) {
-			timer = game.new TimerBase() {
+			timer = game.new GameTimer(TaskType.INFINITE, -1) {
 				int count = loopCount;
 
 				@Override
@@ -35,11 +36,11 @@ public abstract class AbstractScript {
 				}
 
 				@Override
-				protected void onProcess(int count) {
+				protected void run(int count) {
 					String msg = getPreRunMessage(count);
 
 					if (!msg.equalsIgnoreCase("none")) {
-						if (count == (this.getMaxCount() / 2)) {
+						if (count == (getMaximumCount() / 2)) {
 							Bukkit.broadcastMessage(msg);
 						} else if (count <= 5 && count >= 1) {
 							Bukkit.broadcastMessage(msg);
@@ -59,15 +60,15 @@ public abstract class AbstractScript {
 					if (isLoop()) {
 						if (count > -1) {
 							if (count > 0) {
-								this.startTimer();
+								this.start();
 							}
 						} else {
-							this.startTimer();
+							this.start();
 						}
 					}
 				}
 			};
-			timer.startTimer();
+			timer.start();
 		}
 	}
 
@@ -83,7 +84,7 @@ public abstract class AbstractScript {
 		return loopCount != 0;
 	}
 
-	protected AbstractGame.TimerBase getTimer() {
+	protected GameTimer getTimer() {
 		return timer;
 	}
 

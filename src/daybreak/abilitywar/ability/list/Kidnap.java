@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,7 +44,7 @@ public class Kidnap extends AbilityBase {
 
 	public Kidnap(Participant participant) throws IllegalStateException {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f능력 사용중에는 신속 버프를 받고, 납치 대상은 지속 시간동안"),
 				ChatColor.translateAlternateColorCodes('&', "&f실명에 걸리며 대미지를 받지 않습니다. 대상은 " + DurationConfig.getValue() + "초 뒤에"),
 				ChatColor.translateAlternateColorCodes('&', "&f자동으로 내려지며, 지속 시간이 끝나기 전에 스스로 내릴 수 없습니다."));
@@ -58,7 +59,7 @@ public class Kidnap extends AbilityBase {
 				getPlayer().addPassenger(target);
 				target.setInvulnerable(true);
 			} else {
-				stopTimer(true);
+				stop(true);
 			}
 		}
 
@@ -108,7 +109,7 @@ public class Kidnap extends AbilityBase {
 			Bukkit.getPluginManager().callEvent(startEvent);
 			if (!startEvent.isCancelled()) {
 				this.target = entity;
-				skill.startTimer();
+				skill.start();
 			} else {
 				getPlayer().sendMessage(String.valueOf(startEvent.cancelMessage));
 			}

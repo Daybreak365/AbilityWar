@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -37,7 +38,7 @@ public class DarkVision extends AbilityBase {
 	@Scheduled
 	private final Timer darkVision = new Timer() {
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			PotionEffects.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 5, true);
 			PotionEffects.JUMP.addPotionEffect(getPlayer(), 5, 1, true);
@@ -45,7 +46,7 @@ public class DarkVision extends AbilityBase {
 				PotionEffects.GLOWING.addPotionEffect(entity, 10, 0, true);
 			}
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {

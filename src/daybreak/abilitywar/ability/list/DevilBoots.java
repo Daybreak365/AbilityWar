@@ -4,8 +4,8 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -32,9 +32,10 @@ public class DevilBoots extends AbilityBase {
 		return false;
 	}
 
-	private final Timer SPEED = new Timer() {
+	@Scheduled
+	private final Timer speed = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
 		}
 	};
@@ -71,11 +72,6 @@ public class DevilBoots extends AbilityBase {
 				e.setCancelled(true);
 			}
 		}
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		SPEED.startTimer();
 	}
 
 	@Override

@@ -2,11 +2,11 @@ package daybreak.abilitywar.ability.list;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.DamageUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -133,15 +133,16 @@ public class Vampire extends AbilityBase {
 				ParticleLib.HEART.spawnParticle(startLocation.clone().add(Line.vectorAt(startLocation, getPlayer().getLocation(), 10, count - 1)));
 			}
 		}
-	}.setPeriod(2);
+	}.setPeriod(TimeUnit.TICKS, 2);
 
 	private boolean isNight(long time) {
 		return time > 12300 && time < 23850;
 	}
 
+	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			if (cooldownTimer.isRunning()) {
 				long time = getPlayer().getWorld().getTime();
 				if (isNight(time)) {
@@ -149,17 +150,12 @@ public class Vampire extends AbilityBase {
 				}
 			}
 		}
-	}.setPeriod(10);
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		passive.startTimer();
-	}
+	}.setPeriod(TimeUnit.TICKS, 10);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
-			skill.startTimer();
+			skill.start();
 			return true;
 		}
 		return false;

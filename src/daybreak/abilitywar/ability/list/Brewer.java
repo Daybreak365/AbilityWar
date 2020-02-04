@@ -58,7 +58,7 @@ public class Brewer extends AbilityBase {
 			SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound(player);
 			ParticleLib.SPELL_WITCH.spawnParticle(player.getLocation(), 2, 2, 2, 10);
 			player.openInventory(brewingGUI);
-			cooldownTimer.startTimer();
+			cooldownTimer.start();
 
 			return true;
 		}

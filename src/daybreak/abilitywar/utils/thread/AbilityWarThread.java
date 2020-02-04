@@ -24,7 +24,7 @@ public class AbilityWarThread {
 	public static void StartGame(AbstractGame game) {
 		if (!isGameTaskRunning()) {
 			setGame(game);
-			game.startTimer();
+			game.start();
 		}
 	}
 
@@ -33,7 +33,7 @@ public class AbilityWarThread {
 	 */
 	public static void StopGame() {
 		if (isGameTaskRunning()) {
-			currentGame.stopTimer();
+			currentGame.stop(false);
 			setGame(null);
 
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 중지되었습니다."));

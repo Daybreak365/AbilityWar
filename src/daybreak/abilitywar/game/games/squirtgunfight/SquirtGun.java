@@ -4,10 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -27,7 +28,8 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 @AbilityManifest(Name = "물총", Rank = Rank.SPECIAL, Species = Species.SPECIAL)
 public class SquirtGun extends AbilityBase {
@@ -62,7 +64,7 @@ public class SquirtGun extends AbilityBase {
 
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 
-					bombCool.startTimer();
+					bombCool.start();
 				}
 			} else {
 				if (!spongeCool.isCooldown()) {
@@ -75,7 +77,7 @@ public class SquirtGun extends AbilityBase {
 
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 
-					spongeCool.startTimer();
+					spongeCool.start();
 				}
 			}
 		}
@@ -84,23 +86,24 @@ public class SquirtGun extends AbilityBase {
 
 	private final CooldownTimer gunCool = new CooldownTimer(3, "물총");
 
-	private final ArrayList<Arrow> arrows = new ArrayList<>();
+	private final List<Arrow> arrows = new LinkedList<>();
 
+	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
-		protected void onProcess(int count) {
-			for (Arrow a : arrows) {
-				ParticleLib.DRIP_WATER.spawnParticle(a.getLocation(), 10, 1, 1, 1);
+		protected void run(int count) {
+			for (Arrow arrow : arrows) {
+				ParticleLib.DRIP_WATER.spawnParticle(arrow.getLocation(), 10, 1, 1, 1);
 			}
 			PotionEffects.NIGHT_VISION.addPotionEffect(getPlayer(), 400, 0, true);
 		}
-	}.setPeriod(3);
+	}.setPeriod(TimeUnit.TICKS, 3);
 
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {
 		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
-			Arrow a = (Arrow) e.getEntity();
-			arrows.add(a);
+			Arrow arrow = (Arrow) e.getEntity();
+			arrows.add(arrow);
 		}
 	}
 
@@ -119,7 +122,7 @@ public class SquirtGun extends AbilityBase {
 						l.getBlock().setType(Material.WATER);
 					}
 
-					gunCool.startTimer();
+					gunCool.start();
 				}
 			}
 		}
@@ -143,11 +146,6 @@ public class SquirtGun extends AbilityBase {
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		passive.startTimer();
 	}
 
 }

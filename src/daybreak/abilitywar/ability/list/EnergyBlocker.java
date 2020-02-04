@@ -4,11 +4,12 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import org.bukkit.ChatColor;
@@ -56,7 +57,7 @@ public class EnergyBlocker extends AbilityBase {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3로 변경되었습니다."));
 					}
 
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 				}
 			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
 				if (projectileBlocking) {
@@ -70,14 +71,15 @@ public class EnergyBlocker extends AbilityBase {
 		return false;
 	}
 
-	private final Timer Particle = new Timer() {
+	@Scheduled
+	private final Timer particle = new Timer() {
 
 		@Override
 		public void onStart() {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			if (projectileBlocking) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(116, 237, 167));
 			} else {
@@ -89,7 +91,7 @@ public class EnergyBlocker extends AbilityBase {
 		public void onEnd() {
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -109,11 +111,6 @@ public class EnergyBlocker extends AbilityBase {
 				}
 			}
 		}
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		Particle.startTimer();
 	}
 
 	@Override

@@ -85,7 +85,7 @@ public class TheMagician extends AbilityBase {
 					}
 					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);
 
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 				}
 			}
 		}

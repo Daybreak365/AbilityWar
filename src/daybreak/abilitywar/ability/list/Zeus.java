@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
@@ -56,7 +57,7 @@ public class Zeus extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			double playerY = getPlayer().getLocation().getY();
 			for (Iterator<Location> iterator = Circle.iteratorOf(center, 2 * (5 - getCount()), 7); iterator.hasNext(); ) {
 				Location loc = iterator.next();
@@ -78,16 +79,16 @@ public class Zeus extends AbilityBase {
 		public void onEnd() {
 		}
 
-	}.setPeriod(2);
+	}.setPeriod(TimeUnit.TICKS, 2);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					Skill.startTimer();
+					Skill.start();
 
-					cooldownTimer.startTimer();
+					cooldownTimer.start();
 
 					return true;
 				}

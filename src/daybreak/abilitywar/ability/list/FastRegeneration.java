@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
@@ -52,7 +53,7 @@ public class FastRegeneration extends AbilityBase {
 
 		@Override
 		public void onDurationStart() {
-			sound.startTimer();
+			sound.start();
 		}
 
 		@Override
@@ -82,15 +83,15 @@ public class FastRegeneration extends AbilityBase {
 
 		@Override
 		public void onDurationEnd() {
-			sound.stopTimer(false);
+			sound.stop(false);
 		}
 
 		@Override
 		public void onSilentEnd() {
-			sound.stopTimer(false);
+			sound.stop(false);
 		}
 
-	}.setPeriod(10);
+	}.setPeriod(TimeUnit.TICKS, 10);
 
 	private final Timer sound = new Timer() {
 
@@ -102,7 +103,7 @@ public class FastRegeneration extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			tick++;
 			Player player = getPlayer();
 			if (!player.isDead()) {
@@ -122,12 +123,12 @@ public class FastRegeneration extends AbilityBase {
 			}
 		}
 
-	}.setPeriod(5);
+	}.setPeriod(TimeUnit.TICKS, 5);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
-			healthGain.startTimer();
+			healthGain.start();
 			return true;
 		}
 		return false;

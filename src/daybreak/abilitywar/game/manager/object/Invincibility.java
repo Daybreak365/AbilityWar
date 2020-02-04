@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.manager.object;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.events.InvincibleEndEvent;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.base.minecraft.Bar;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -39,7 +39,7 @@ public class Invincibility implements EventExecutor {
 				AbilityWar.getPlugin());
 	}
 
-	private AbstractGame.TimerBase timer;
+	private GameTimer timer;
 
 	public boolean Start(boolean isInfinite) {
 		if (timer == null || !timer.isRunning()) {
@@ -48,7 +48,7 @@ public class Invincibility implements EventExecutor {
 			} else {
 				this.timer = new InvincibilityTimer();
 			}
-			timer.startTimer();
+			timer.start();
 			return true;
 		}
 		return false;
@@ -57,7 +57,7 @@ public class Invincibility implements EventExecutor {
 	public boolean Start(final int duration) {
 		if (timer == null || !timer.isRunning()) {
 			this.timer = new InvincibilityTimer(duration);
-			timer.startTimer();
+			timer.start();
 			return true;
 		}
 		return false;
@@ -65,7 +65,7 @@ public class Invincibility implements EventExecutor {
 
 	public boolean Stop() {
 		if (timer != null && timer.isRunning()) {
-			timer.stopTimer(false);
+			timer.stop(false);
 			timer = null;
 			return true;
 		}
@@ -90,25 +90,25 @@ public class Invincibility implements EventExecutor {
 		Invincibility getInvincibility();
 	}
 
-	private class InvincibilityTimer extends AbstractGame.TimerBase {
+	private class InvincibilityTimer extends GameTimer {
 
-		private Bar bar = null;
+		private Bar bossBar = null;
 		private final String startMessage;
 
 		private InvincibilityTimer(int duration) {
-			game.super(duration);
+			game.super(TaskType.REVERSE, duration);
 			this.startMessage = ChatColor.GREEN + "무적이 " + ChatColor.WHITE + NumberUtil.parseTimeString(duration) + ChatColor.GREEN + "동안 적용됩니다.";
 			if (isBossbarEnabled) {
 				int[] time = NumberUtil.parseTime(duration);
-				bar = new Bar(String.format(bossbarMessage, time[0], time[1]), BarColor.GREEN, BarStyle.SEGMENTED_10);
+				bossBar = new Bar(String.format(bossbarMessage, time[0], time[1]), BarColor.GREEN, BarStyle.SEGMENTED_10);
 			}
 		}
 
 		private InvincibilityTimer() {
-			game.super();
+			game.super(TaskType.INFINITE, -1);
 			this.startMessage = ChatColor.GREEN + "무적이 적용되었습니다. 지금부터 무적이 해제될 때까지 대미지를 입지 않습니다.";
 			if (isBossbarEnabled) {
-				bar = new Bar(bossbarInfiniteMessage, BarColor.GREEN, BarStyle.SEGMENTED_10);
+				bossBar = new Bar(bossbarInfiniteMessage, BarColor.GREEN, BarStyle.SEGMENTED_10);
 			}
 		}
 
@@ -119,13 +119,13 @@ public class Invincibility implements EventExecutor {
 		}
 
 		@Override
-		protected void onProcess(int count) {
-			if (!isInfinite()) {
-				if (bar != null) {
+		protected void run(int count) {
+			if (getTaskType() != TaskType.INFINITE) {
+				if (bossBar != null) {
 					int[] time = NumberUtil.parseTime(count);
-					bar.setTitle(String.format(bossbarMessage, time[0], time[1])).setProgress(Math.min(count / (double) getMaxCount(), 1.0));
+					bossBar.setTitle(String.format(bossbarMessage, time[0], time[1])).setProgress(Math.min(count / (double) getMaximumCount(), 1.0));
 				}
-				if (count == (getMaxCount()) / 2 || (count <= 5 && count >= 1)) {
+				if (count == (getMaximumCount()) / 2 || (count <= 5 && count >= 1)) {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
 							"&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
@@ -135,8 +135,8 @@ public class Invincibility implements EventExecutor {
 
 		@Override
 		protected void onEnd() {
-			if (bar != null) {
-				bar.remove();
+			if (bossBar != null) {
+				bossBar.remove();
 			}
 			game.setRestricted(false);
 			Bukkit.broadcastMessage(ChatColor.GREEN + "무적이 해제되었습니다. 지금부터 대미지를 입습니다.");
@@ -146,8 +146,8 @@ public class Invincibility implements EventExecutor {
 
 		@Override
 		protected void onSilentEnd() {
-			if (bar != null) {
-				bar.remove();
+			if (bossBar != null) {
+				bossBar.remove();
 			}
 		}
 

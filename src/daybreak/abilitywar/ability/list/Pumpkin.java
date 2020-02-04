@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.MaterialLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
@@ -69,7 +70,7 @@ public class Pumpkin extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			if (Count.equals(1)) {
 				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.D));
 				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
@@ -100,7 +101,7 @@ public class Pumpkin extends AbilityBase {
 		public void onEnd() {
 		}
 
-	}.setPeriod(3);
+	}.setPeriod(TimeUnit.TICKS, 3);
 
 	private HashMap<Player, ItemStack> Players;
 
@@ -110,7 +111,7 @@ public class Pumpkin extends AbilityBase {
 		public void onDurationStart() {
 			Players = new HashMap<Player, ItemStack>();
 			LocationUtil.getNearbyPlayers(getPlayer(), 30, 30).stream().forEach(p -> Players.put(p, p.getInventory().getHelmet()));
-			Song.startTimer();
+			Song.start();
 		}
 
 		@Override
@@ -149,7 +150,7 @@ public class Pumpkin extends AbilityBase {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
-					Duration.startTimer();
+					Duration.start();
 
 					return true;
 				}

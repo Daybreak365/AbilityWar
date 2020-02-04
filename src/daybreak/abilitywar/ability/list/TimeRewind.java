@@ -4,13 +4,14 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.base.collect.PushingList;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -65,7 +66,7 @@ public class TimeRewind extends AbilityBase {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					Skill.startTimer();
+					Skill.start();
 
 					return true;
 				}
@@ -127,21 +128,17 @@ public class TimeRewind extends AbilityBase {
 			SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
-	private final Timer Save = new Timer() {
+	@Scheduled
+	private final Timer save = new Timer() {
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			playerDatas.add(new PlayerData());
 		}
 
-	}.setPeriod(2);
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		Save.startTimer();
-	}
+	}.setPeriod(TimeUnit.TICKS, 2);
 
 	private class PlayerData {
 

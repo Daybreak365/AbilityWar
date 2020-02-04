@@ -10,6 +10,7 @@ import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -76,7 +77,7 @@ public class ReligiousLeader extends AbilityBase {
 		}
 
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&5종교&d의 이름을 정하세요: &e" + count + ""), 0, 23, 0);
 		}
 
@@ -85,23 +86,23 @@ public class ReligiousLeader extends AbilityBase {
 			nameSelecting = false;
 			newReligion("능력자교");
 			sendMessage("종교의 이름이 선택되지 않아 이름이 임의로 설정되었습니다.");
-			noticer.startTimer();
+			noticer.start();
 		}
 
 		@Override
 		protected void onSilentEnd() {
-			noticer.startTimer();
+			noticer.start();
 		}
 	};
 
 	private final Timer noticer = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			if (!cooldownTimer.isRunning()) {
 				PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&5" + religionName + " &d신자 수&f: &e" + belivers.size()), 0, 7, 0);
 			}
 		}
-	}.setPeriod(5);
+	}.setPeriod(TimeUnit.TICKS, 5);
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
@@ -138,7 +139,7 @@ public class ReligiousLeader extends AbilityBase {
 			String name = e.getMessage();
 			if (name.length() <= 10) {
 				nameSelecting = false;
-				nameSelect.stopTimer(true);
+				nameSelect.stop(true);
 				newReligion(name + "교");
 			} else {
 				sendMessage("종교 이름은 최대 10글자입니다.");
@@ -149,7 +150,7 @@ public class ReligiousLeader extends AbilityBase {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
 		if (religionName == null) {
-			nameSelect.startTimer();
+			nameSelect.start();
 		}
 	}
 
@@ -193,7 +194,7 @@ public class ReligiousLeader extends AbilityBase {
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.LEFT_CLICK) && religionName != null && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			if (belivers.size() >= minBelivers) {
-				skill.startTimer();
+				skill.start();
 			} else {
 				sendMessage("신자 수가 부족합니다. (최소 " + minBelivers + "명)");
 			}

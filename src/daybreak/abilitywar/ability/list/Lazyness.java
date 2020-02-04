@@ -64,11 +64,11 @@ public class Lazyness extends AbilityBase {
 		private DamageTimer(double damage) {
 			super(3);
 			this.damage = damage;
-			startTimer();
+			start();
 		}
 
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 		}
 
 		@Override

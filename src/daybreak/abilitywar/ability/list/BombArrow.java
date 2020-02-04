@@ -4,10 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -47,26 +48,28 @@ public class BombArrow extends AbilityBase {
 	private final int maxStack = 4;
 	private int stack = 0;
 
+	@Scheduled
 	private final Timer stackAdder = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			if (stack < maxStack) {
 				stack++;
 			}
 		}
-	}.setPeriod(140);
+	}.setPeriod(TimeUnit.TICKS, 140);
 
 	private final int size = SizeConfig.getValue();
 
+	@Scheduled
 	private final Timer actionbarSender = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			StringJoiner joiner = new StringJoiner(" ");
 			for (int i = 0; i < stack; i++) joiner.add(ChatColor.DARK_RED + "●");
 			for (int i = 0; i < maxStack - stack; i++) joiner.add(ChatColor.DARK_RED + "○");
 			NMSUtil.PlayerUtil.sendActionbar(getPlayer(), joiner.toString(), 0, 3, 0);
 		}
-	}.setPeriod(2);
+	}.setPeriod(TimeUnit.TICKS, 2);
 
 	@SubscribeEvent
 	private void onProjectileShoot(ProjectileHitEvent e) {
@@ -87,12 +90,6 @@ public class BombArrow extends AbilityBase {
 				stack--;
 			}
 		}
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		stackAdder.startTimer();
-		actionbarSender.startTimer();
 	}
 
 	@Override

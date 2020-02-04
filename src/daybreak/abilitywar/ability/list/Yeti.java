@@ -4,11 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -47,14 +47,15 @@ public class Yeti extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
-	private final Timer Buff = new Timer() {
+	@Scheduled
+	private final Timer buff = new Timer() {
 
 		@Override
 		public void onStart() {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
@@ -67,7 +68,7 @@ public class Yeti extends AbilityBase {
 		public void onEnd() {
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	private final Timer iceMaker = new Timer(RangeConfig.getValue()) {
 
@@ -83,7 +84,7 @@ public class Yeti extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int sec) {
+		public void run(int sec) {
 			for (Block b : LocationUtil.getBlocks2D(center, count, true, true)) {
 				Block db = b.getLocation().subtract(0, 1, 0).getBlock();
 				Material type = db.getType();
@@ -107,24 +108,19 @@ public class Yeti extends AbilityBase {
 		public void onEnd() {
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
-			iceMaker.startTimer();
-			cooldownTimer.startTimer();
+			iceMaker.start();
+			cooldownTimer.start();
 			return true;
 		}
 
 		return false;
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		Buff.startTimer();
 	}
 
 	@Override

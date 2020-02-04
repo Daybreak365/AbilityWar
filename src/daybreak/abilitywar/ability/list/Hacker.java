@@ -8,6 +8,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.base.ProgressBar;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -77,12 +78,12 @@ public class Hacker extends AbilityBase {
 				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"));
 				target.sendTitle(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"), "", 0, 40, 0);
 				getGame().getEffectManager().Stun(target, stunTick);
-				particleShow.startTimer();
+				particleShow.start();
 			}
 		}
 
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			if (target != null) {
 				progressBar.step();
 
@@ -95,7 +96,7 @@ public class Hacker extends AbilityBase {
 				this.count++;
 			}
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	private final int amount = 25;
 	private final Vectors top = Circle.of(1, amount);
@@ -114,7 +115,7 @@ public class Hacker extends AbilityBase {
 		}
 
 		@Override
-		public void onProcess(int count) {
+		public void run(int count) {
 			if (target != null) {
 				if (add && y >= 2.0) {
 					add = false;
@@ -140,7 +141,7 @@ public class Hacker extends AbilityBase {
 			target = null;
 		}
 
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
@@ -151,9 +152,9 @@ public class Hacker extends AbilityBase {
 
 					if (target != null) {
 						this.target = target;
-						skill.startTimer();
+						skill.start();
 
-						cooldownTimer.startTimer();
+						cooldownTimer.start();
 
 						return true;
 					} else {

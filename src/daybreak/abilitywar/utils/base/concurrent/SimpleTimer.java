@@ -9,42 +9,72 @@ import org.bukkit.Bukkit;
 public abstract class SimpleTimer {
 
 	private final TaskType taskType;
-	private final int maximum;
-	private Runnable runnable = null;
+	private final int maximumCount;
+	private Task task = null;
 	private int taskId = -1;
 
-	public SimpleTimer(TaskType taskType, int maximum) {
+	public SimpleTimer(TaskType taskType, int maximumCount) {
 		this.taskType = taskType;
-		this.maximum = maximum;
+		this.maximumCount = maximumCount;
 	}
 
-	private long delay = 0L;
-	private long period = 20L;
+	private int delay = 0;
+	private int period = 20;
 
-	public SimpleTimer setDelay(TimeUnit timeUnit, long delay) {
+	public SimpleTimer setDelay(TimeUnit timeUnit, int delay) {
 		Preconditions.checkNotNull(timeUnit);
 		this.delay = timeUnit.toTicks(delay);
 		return this;
 	}
 
-	public SimpleTimer setPeriod(TimeUnit timeUnit, long period) {
+	public SimpleTimer setPeriod(TimeUnit timeUnit, int period) {
 		Preconditions.checkNotNull(timeUnit);
 		this.period = timeUnit.toTicks(period);
 		return this;
 	}
 
 	public boolean isRunning() {
-		return runnable != null && taskId != -1;
+		return task != null && taskId != -1;
 	}
 
 	public boolean isPaused() {
-		return runnable != null && taskId == -1;
+		return task != null && taskId == -1;
+	}
+
+	public TaskType getTaskType() {
+		return taskType;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public int getMaximumCount() {
+		return maximumCount;
+	}
+
+	public int getCount() {
+		if (task != null) {
+			return task.getCount();
+		} else {
+			return -1;
+		}
+	}
+
+	public int getFixedCount() {
+		return getCount() / (20 / period);
+	}
+
+	public void setCount(int count) {
+		if (task != null) {
+			task.setCount(count);
+		}
 	}
 
 	public boolean start() {
 		if (!isRunning()) {
-			this.runnable = taskType.newRunnable(this);
-			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), runnable, 0, period);
+			this.task = taskType.newRunnable(this);
+			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task, delay, period);
 			onStart();
 			return true;
 		}
@@ -52,9 +82,9 @@ public abstract class SimpleTimer {
 	}
 
 	public boolean stop(boolean silent) {
-		if (isRunning()) {
+		if (isRunning() || isPaused()) {
 			Bukkit.getScheduler().cancelTask(taskId);
-			this.runnable = null;
+			this.task = null;
 			this.taskId = -1;
 			if (!silent) onEnd();
 			else onSilentEnd();
@@ -74,7 +104,7 @@ public abstract class SimpleTimer {
 
 	public boolean resume() {
 		if (isPaused()) {
-			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), runnable, 0, period);
+			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task, delay, period);
 			return true;
 		}
 		return false;
@@ -93,45 +123,83 @@ public abstract class SimpleTimer {
 
 	public enum TaskType {
 		INFINITE {
-			Runnable newRunnable(SimpleTimer simpleTimer) {
-				return new Runnable() {
+			Task newRunnable(SimpleTimer simpleTimer) {
+				return new Task() {
 					int count = 0;
 
 					@Override
 					public void run() {
 						simpleTimer.run(++count);
 					}
+
+					@Override
+					public int getCount() {
+						return count;
+					}
+
+					@Override
+					public void setCount(int count) {
+						this.count = count;
+					}
 				};
 			}
 		},
 		NORMAL {
-			Runnable newRunnable(SimpleTimer simpleTimer) {
-				return new Runnable() {
+			Task newRunnable(SimpleTimer simpleTimer) {
+				return new Task() {
 					int count = 0;
 
 					@Override
 					public void run() {
-						if (count <= simpleTimer.maximum) simpleTimer.run(++count);
+						if (count < simpleTimer.maximumCount) simpleTimer.run(++count);
 						else simpleTimer.stop(false);
+					}
+
+					@Override
+					public int getCount() {
+						return count;
+					}
+
+					@Override
+					public void setCount(int count) {
+						this.count = count;
 					}
 				};
 			}
 		},
 		REVERSE {
-			Runnable newRunnable(SimpleTimer simpleTimer) {
-				return new Runnable() {
-					int count = simpleTimer.maximum;
+			Task newRunnable(SimpleTimer simpleTimer) {
+				return new Task() {
+					int count = simpleTimer.maximumCount + 1;
 
 					@Override
 					public void run() {
-						if (count > 0) simpleTimer.run(count--);
+						if (count > 1) simpleTimer.run(--count);
 						else simpleTimer.stop(false);
+					}
+
+					@Override
+					public int getCount() {
+						return count;
+					}
+
+					@Override
+					public void setCount(int count) {
+						this.count = count;
 					}
 				};
 			}
 		};
 
-		abstract Runnable newRunnable(SimpleTimer simpleTimer);
+		abstract Task newRunnable(SimpleTimer simpleTimer);
+	}
+
+	public interface Task extends Runnable {
+
+		int getCount();
+
+		void setCount(int count);
+
 	}
 
 }

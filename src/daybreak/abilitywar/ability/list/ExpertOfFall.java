@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FallBlock;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -48,14 +49,14 @@ public class ExpertOfFall extends AbilityBase {
 					}
 
 					@Override
-					protected void onProcess(int count) {
+					protected void run(int count) {
 					}
 
 					@Override
 					protected void onEnd() {
 						block.setType(blockType);
 					}
-				}.setPeriod(10).startTimer();
+				}.setPeriod(TimeUnit.TICKS, 10).start();
 				SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 
 				Block belowBlock = block.getRelative(BlockFace.DOWN);

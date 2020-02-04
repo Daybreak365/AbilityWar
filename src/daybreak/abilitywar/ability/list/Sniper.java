@@ -4,10 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -48,17 +49,18 @@ public class Sniper extends AbilityBase {
 	private static final Material GLASS_PANE = ServerVersion.getVersion() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
 	private static final ParticleLib.RGB PURPLE = new ParticleLib.RGB(138, 9, 173);
 
+	@Scheduled
 	private final Timer snipeMode = new Timer() {
 		@Override
-		protected void onProcess(int count) {
+		protected void run(int count) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
 			Material off = getPlayer().getInventory().getItemInOffHand().getType();
 			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersion() >= 14 && (main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)))) {
 				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 3, true);
-				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(0).setZ(0));
+				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(Math.min(0, getPlayer().getVelocity().getY())).setZ(0));
 			}
 		}
-	}.setPeriod(1);
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 
 	@Override
@@ -71,17 +73,12 @@ public class Sniper extends AbilityBase {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
 			Arrow arrow = (Arrow) e.getProjectile();
-			new Bullet(arrow.getLocation(), arrow.getVelocity(), PURPLE).startTimer();
+			new Bullet(arrow.getLocation(), arrow.getVelocity(), PURPLE).start();
 		}
 	}
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		snipeMode.startTimer();
 	}
 
 	public class Bullet extends Timer {
@@ -93,7 +90,7 @@ public class Sniper extends AbilityBase {
 
 		private Bullet(Location startLocation, Vector arrowVelocity, ParticleLib.RGB color) {
 			super(160);
-			setPeriod(1);
+			setPeriod(TimeUnit.TICKS, 1);
 			this.centeredBoundingBox = new CenteredBoundingBox(startLocation, -.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(2.5);
 			this.color = color;
@@ -103,7 +100,7 @@ public class Sniper extends AbilityBase {
 		private Location lastLocation;
 
 		@Override
-		protected void onProcess(int i) {
+		protected void run(int i) {
 			Location newLocation = lastLocation.clone().add(forward);
 			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 20); iterator.hasNext(); ) {
 				Location location = iterator.next();
@@ -114,7 +111,7 @@ public class Sniper extends AbilityBase {
 					if (ItemLib.STAINED_GLASS.compareType(type) || Material.GLASS == type || ItemLib.STAINED_GLASS_PANE.compareType(type) || type == GLASS_PANE) {
 						block.breakNaturally();
 					} else {
-						stopTimer(false);
+						stop(false);
 						return;
 					}
 				}
@@ -122,7 +119,7 @@ public class Sniper extends AbilityBase {
 					if (!getPlayer().equals(damageable)) {
 						double damage = Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10);
 						damageable.damage(damage, getPlayer());
-						stopTimer(false);
+						stop(false);
 						return;
 					}
 				}
