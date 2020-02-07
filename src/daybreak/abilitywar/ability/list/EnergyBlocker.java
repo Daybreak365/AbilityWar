@@ -6,9 +6,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -20,17 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(Name = "에너지 블로커", Rank = Rank.A, Species = Species.HUMAN)
-public class EnergyBlocker extends AbilityBase {
-
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(EnergyBlocker.class, "Cooldown", 3,
-			"# 쿨타임") {
-
-		@Override
-		public boolean Condition(Integer value) {
-			return value >= 0;
-		}
-
-	};
+public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 
 	private boolean projectileBlocking = true;
 
@@ -38,26 +27,20 @@ public class EnergyBlocker extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 1/3로, 근거리 공격 피해를 두 배로 받거나"),
 				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 두 배로, 근거리 공격 피해를 1/3로 받을 수 있습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."));
 	}
-
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!cooldownTimer.isCooldown()) {
-					projectileBlocking = !projectileBlocking;
-					Player p = getPlayer();
-					if (projectileBlocking) {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f1/3&7, &a근거리 &f두 배로 변경되었습니다."));
-					} else {
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3로 변경되었습니다."));
-					}
-
-					cooldownTimer.start();
+				projectileBlocking = !projectileBlocking;
+				Player p = getPlayer();
+				if (projectileBlocking) {
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f1/3&7, &a근거리 &f두 배로 변경되었습니다."));
+				} else {
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3로 변경되었습니다."));
 				}
 			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
 				if (projectileBlocking) {
@@ -71,6 +54,9 @@ public class EnergyBlocker extends AbilityBase {
 		return false;
 	}
 
+	private static final RGB LONG_DISTANCE = new RGB(116, 237, 167);
+	private static final RGB SHORT_DISTANCE = new RGB(85, 237, 242);
+
 	@Scheduled
 	private final Timer particle = new Timer() {
 
@@ -81,9 +67,9 @@ public class EnergyBlocker extends AbilityBase {
 		@Override
 		public void run(int count) {
 			if (projectileBlocking) {
-				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(116, 237, 167));
+				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), LONG_DISTANCE);
 			} else {
-				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), new RGB(85, 237, 242));
+				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), SHORT_DISTANCE);
 			}
 		}
 

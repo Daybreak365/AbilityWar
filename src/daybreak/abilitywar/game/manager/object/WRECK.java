@@ -39,4 +39,8 @@ public class WRECK {
 		boolean isWRECKEnabled();
 	}
 
+	public static boolean isEnabled(AbstractGame game) {
+		return game instanceof WRECK.Handler && ((WRECK.Handler) game).isWRECKEnabled();
+	}
+
 }

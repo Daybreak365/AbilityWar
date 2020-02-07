@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -30,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AbilityManifest(Name = "황제", Rank = Rank.A, Species = Species.HUMAN)
-public class TheEmperor extends AbilityBase {
+public class TheEmperor extends AbilityBase implements ActiveHandler {
 
 	public static final AbilitySettings.SettingObject<Integer> CooldownConfig = new AbilitySettings.SettingObject<Integer>(TheEmperor.class, "Cooldown", 50,
 			"# 쿨타임") {
@@ -128,14 +129,16 @@ public class TheEmperor extends AbilityBase {
 			for (ArmorStand armorStand : armorStands) {
 				armorStand.remove();
 			}
+			center.remove();
 			armorStands.clear();
 		}
 
 		@Override
-		protected void onSilentEnd() {
+		protected void onDurationSilentEnd() {
 			for (ArmorStand armorStand : armorStands) {
 				armorStand.remove();
 			}
+			center.remove();
 			armorStands.clear();
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);

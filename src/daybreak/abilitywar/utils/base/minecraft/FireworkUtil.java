@@ -17,7 +17,7 @@ public class FireworkUtil {
 
 	private static final Random random = new Random();
 
-	public static void spawnRandomFirework(final Location location) {
+	public static Firework spawnRandomFirework(final Location location) {
 		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		fireworkMeta.addEffect(FireworkEffect.builder()
@@ -29,9 +29,40 @@ public class FireworkUtil {
 				.build());
 		fireworkMeta.setPower(1 + random.nextInt(2));
 		firework.setFireworkMeta(fireworkMeta);
+		return firework;
 	}
 
-	public static void spawnWinnerFirework(final Location loc) {
+	public static Firework spawnRandomFirework(final Location location, int power) {
+		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+		FireworkMeta fireworkMeta = firework.getFireworkMeta();
+		fireworkMeta.addEffect(FireworkEffect.builder()
+				.flicker(random.nextBoolean())
+				.withColor(getColor(random.nextInt(17)))
+				.withFade(getColor(random.nextInt(17)))
+				.with(Type.values()[random.nextInt(Type.values().length)])
+				.trail(random.nextBoolean())
+				.build());
+		fireworkMeta.setPower(power);
+		firework.setFireworkMeta(fireworkMeta);
+		return firework;
+	}
+
+	public static Firework spawnRandomFirework(final Location location, Color[] colors, Color[] fadeColors, Type[] types, int power) {
+		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+		FireworkMeta fireworkMeta = firework.getFireworkMeta();
+		fireworkMeta.addEffect(FireworkEffect.builder()
+				.flicker(random.nextBoolean())
+				.withColor(colors[random.nextInt(colors.length)])
+				.withFade(fadeColors[random.nextInt(fadeColors.length)])
+				.with(types[random.nextInt(types.length)])
+				.trail(random.nextBoolean())
+				.build());
+		fireworkMeta.setPower(power);
+		firework.setFireworkMeta(fireworkMeta);
+		return firework;
+	}
+
+	public static Firework spawnWinnerFirework(final Location loc) {
 		Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		fireworkMeta.addEffect(FireworkEffect.builder()
@@ -43,6 +74,7 @@ public class FireworkUtil {
 				.build());
 		fireworkMeta.setPower(random.nextInt(3) + 1);
 		firework.setFireworkMeta(fireworkMeta);
+		return firework;
 	}
 
 	private static Color getColor(int color) {

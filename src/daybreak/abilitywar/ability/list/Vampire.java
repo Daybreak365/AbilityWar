@@ -3,6 +3,7 @@ package daybreak.abilitywar.ability.list;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.Scheduled;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.utils.Messager;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AbilityManifest(Name = "뱀파이어", Rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.UNDEAD)
-public class Vampire extends AbilityBase {
+public class Vampire extends AbilityBase implements ActiveHandler {
 
 	public static final AbilitySettings.SettingObject<Integer> CooldownConfig = new AbilitySettings.SettingObject<Integer>(Vampire.class, "Cool", 160,
 			"# 쿨타임") {
@@ -59,7 +60,7 @@ public class Vampire extends AbilityBase {
 
 	};
 
-	public Vampire(AbstractGame.Participant participant) throws IllegalStateException {
+	public Vampire(AbstractGame.Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 " + DistanceConfig.getValue() + "칸 안에 있는 생명체들에게서"),
 				ChatColor.translateAlternateColorCodes('&', "&f체력을 &c반칸&f씩 " + DurationConfig.getValue() + "번 흡혈합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),

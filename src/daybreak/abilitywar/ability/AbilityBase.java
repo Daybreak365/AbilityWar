@@ -34,6 +34,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
@@ -50,7 +51,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,11 +162,14 @@ public abstract class AbilityBase implements PassiveExecutor {
 		if (eventhandlers.containsKey(eventClass)) {
 			Pair<Method, SubscribeEvent> pair = eventhandlers.get(eventClass);
 			SubscribeEvent subscribeEvent = pair.getRight();
-			if (subscribeEvent.onlyRelevant() && (
-					(event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
-							|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
-							|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
-							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
+			if (subscribeEvent.onlyRelevant()
+					&& ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
+					|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
+					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
+					|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
+				return;
+			}
+			if (subscribeEvent.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled()) {
 				return;
 			}
 			Method method = pair.getLeft();
@@ -212,6 +215,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
 		game.getPassiveManager().unregisterAll(this);
 		for (GameTimer timer : timers) {
+			if (timer instanceof Timer) ((Timer) timer).destroyed = true;
 			timer.stop(true);
 		}
 		for (ActionbarChannel channel : actionbarChannels) {
@@ -349,17 +353,16 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 *
 	 * @author Daybreak 새벽
 	 */
-	public final class CooldownTimer extends GameTimer implements Supplier<String> {
+	public final class CooldownTimer extends Timer {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private final String abilityName;
 		private boolean sendActionbar = true;
 
 		public CooldownTimer(int cooldown, String abilityName) {
-			game.super(TaskType.REVERSE, (AbilityWarThread.getGame() instanceof WRECK.Handler && ((WRECK.Handler) AbilityWarThread.getGame()).isWRECKEnabled()) ? (cooldown / 10) : cooldown);
+			super(TaskType.REVERSE, (WRECK.isEnabled(AbilityWarThread.getGame()) ? (cooldown / 10) : cooldown));
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 			this.abilityName = abilityName;
-			timers.add(this);
 		}
 
 		public CooldownTimer(int cooldown) {
@@ -395,13 +398,13 @@ public abstract class AbilityBase implements PassiveExecutor {
 		}
 
 		@Override
-		public String toString() {
-			return toString(ChatColor.GOLD);
+		public void onSilentEnd() {
+			actionbarChannel.update(null);
 		}
 
 		@Override
-		public String get() {
-			return toString();
+		public String toString() {
+			return toString(ChatColor.GOLD);
 		}
 
 		public String toString(ChatColor timeColor) {
@@ -430,20 +433,19 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 *
 	 * @author Daybreak 새벽
 	 */
-	public abstract class DurationTimer extends GameTimer {
+	public abstract class DurationTimer extends Timer {
 
-		private final ActionbarChannel actionbarChannel = participant.actionbar().newChannel();
+		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private final int duration;
 		private final String abilityName;
 		private final CooldownTimer cooldownTimer;
 		private int period = 20;
 
 		public DurationTimer(int duration, CooldownTimer cooldownTimer, String abilityName) {
-			game.super(TaskType.REVERSE, duration);
+			super(TaskType.REVERSE, duration);
 			this.duration = duration;
 			this.abilityName = abilityName;
 			this.cooldownTimer = cooldownTimer;
-			timers.add(this);
 		}
 
 		public DurationTimer(int duration, CooldownTimer cooldownTimer) {
@@ -460,6 +462,9 @@ public abstract class AbilityBase implements PassiveExecutor {
 		protected abstract void onDurationProcess(int count);
 
 		protected void onDurationEnd() {
+		}
+
+		protected void onDurationSilentEnd() {
 		}
 
 		public final boolean isDuration() {
@@ -528,6 +533,11 @@ public abstract class AbilityBase implements PassiveExecutor {
 		}
 
 		@Override
+		protected final void onSilentEnd() {
+			actionbarChannel.update(null);
+		}
+
+		@Override
 		public final String toString() {
 			return toString(ChatColor.YELLOW);
 		}
@@ -543,6 +553,8 @@ public abstract class AbilityBase implements PassiveExecutor {
 	}
 
 	public abstract class Timer extends GameTimer {
+
+		private boolean destroyed;
 
 		public Timer(TaskType taskType, int maximumCount) {
 			game.super(taskType, maximumCount);
@@ -567,6 +579,15 @@ public abstract class AbilityBase implements PassiveExecutor {
 		public Timer setDelay(TimeUnit timeUnit, int period) {
 			super.setDelay(timeUnit, period);
 			return this;
+		}
+
+		@Override
+		public boolean start() {
+			if (!destroyed) {
+				return super.start();
+			} else {
+				return false;
+			}
 		}
 
 	}

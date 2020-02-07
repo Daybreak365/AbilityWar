@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
@@ -30,7 +31,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 @AbilityManifest(Name = "시간 역행", Rank = Rank.S, Species = Species.HUMAN)
-public class TimeRewind extends AbilityBase {
+public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
 			"# 쿨타임") {

@@ -50,7 +50,7 @@ public class PenetrationArrow extends AbilityBase {
 
 	};
 
-	public PenetrationArrow(AbstractGame.Participant participant) throws IllegalStateException {
+	public PenetrationArrow(AbstractGame.Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f투사체에는 특수한 능력이 있으며, 활을 &e" + BulletConfig.getValue() + "번 쏠 때마다 능력이 변경됩니다."),

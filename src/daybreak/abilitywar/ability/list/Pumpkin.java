@@ -4,6 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.OTHERS)
-public class Pumpkin extends AbilityBase {
+public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80,
 			"# 쿨타임") {
@@ -126,7 +127,7 @@ public class Pumpkin extends AbilityBase {
 		}
 
 		@Override
-		public void onSilentEnd() {
+		public void onDurationSilentEnd() {
 			Players.keySet().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
 		}
 

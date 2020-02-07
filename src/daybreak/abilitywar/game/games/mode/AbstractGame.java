@@ -209,23 +209,19 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 		@EventHandler
 		private void onPlayerInteract(PlayerInteractEvent e) {
-			Player p = e.getPlayer();
-			if (p.equals(getPlayer())) {
-				Material material = VersionUtil.getItemInHand(p).getType();
-				ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR)
-						|| e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK
-						: ClickType.LEFT_CLICK;
-				if (attributes.SKILL_MATERIALS.set.contains(material)) {
-					if (hasAbility()) {
-						AbilityBase ability = getAbility();
-						if (!ability.isRestricted()) {
-							long current = System.currentTimeMillis();
-							if (current - lastClick >= 250) {
-								this.lastClick = current;
-								if (ability.ActiveSkill(material, clickType)) {
-									Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
-									ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
-								}
+			Player player = e.getPlayer();
+			if (player.equals(getPlayer()) && hasAbility()) {
+				AbilityBase ability = getAbility();
+				if (!ability.isRestricted()) {
+					Material material = VersionUtil.getItemInHand(player).getType();
+					ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
+					if (attributes.SKILL_MATERIALS.set.contains(material)) {
+						long current = System.currentTimeMillis();
+						if (current - lastClick >= 250) {
+							this.lastClick = current;
+							if (ability.ActiveSkill(material, clickType)) {
+								Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
+								ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 							}
 						}
 					}
@@ -237,10 +233,10 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		private void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
 			Player p = e.getPlayer();
 			if (p.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
-				Material material = VersionUtil.getItemInHand(p).getType();
-				if (attributes.SKILL_MATERIALS.set.contains(material)) {
-					AbilityBase ability = this.getAbility();
-					if (!ability.isRestricted()) {
+				AbilityBase ability = this.getAbility();
+				if (!ability.isRestricted()) {
+					Material material = VersionUtil.getItemInHand(p).getType();
+					if (attributes.SKILL_MATERIALS.set.contains(material)) {
 						long current = System.currentTimeMillis();
 						if (current - lastClick >= 250) {
 							if (ability.ActiveSkill(material, ClickType.RIGHT_CLICK)) {

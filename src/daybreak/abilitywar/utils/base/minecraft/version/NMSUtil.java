@@ -126,6 +126,36 @@ public class NMSUtil {
 			}
 		}
 
+		private static Class<?> entityHumanClass = getNMSClass("EntityHuman");
+		private static Method attackCooldownMethod;
+
+		static {
+			try {
+				switch (ServerVersion.getVersion()) {
+					case 12:
+						attackCooldownMethod = entityHumanClass.getDeclaredMethod("n", float.class);
+						break;
+					case 13:
+						attackCooldownMethod = entityHumanClass.getDeclaredMethod("r", float.class);
+						break;
+					case 14:
+					case 15:
+						attackCooldownMethod = entityHumanClass.getDeclaredMethod("s", float.class);
+						break;
+				}
+			} catch (NoSuchMethodException e) {
+				logger.log(Level.SEVERE, "공격 쿨타임 확인 기능을 준비하는 도중 " + e.getClass().getSimpleName() + " 오류가 발생하였습니다.");
+			}
+		}
+
+		public static float getAttackCooldown(Player player) {
+			try {
+				return (float) attackCooldownMethod.invoke(getHandle(player), 0f);
+			} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				return -1;
+			}
+		}
+
 	}
 
 	public static class EntityUtil {

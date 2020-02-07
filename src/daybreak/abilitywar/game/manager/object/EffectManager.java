@@ -1,12 +1,14 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.list.BlackCandle;
+import daybreak.abilitywar.ability.list.VictoryBySword;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -30,7 +32,7 @@ public class EffectManager implements EventExecutor {
 			@Override
 			protected boolean checkCondition(Participant p, EffectType type) {
 				return !type.equals(EffectType.STUN) || !p.hasAbility()
-						|| !p.getAbility().getClass().equals(BlackCandle.class);
+						|| !p.getAbility().getClass().equals(VictoryBySword.class);
 			}
 		});
 	}
@@ -39,26 +41,29 @@ public class EffectManager implements EventExecutor {
 
 	public void Stun(Player player, int tick) {
 		if (game.isParticipating(player)) {
-			Participant part = game.getParticipant(player);
+			Participant participant = game.getParticipant(player);
 
 			for (EffectCondition condition : conditions) {
-				if (!condition.checkCondition(part, EffectType.STUN))
+				if (!condition.checkCondition(participant, EffectType.STUN))
 					return;
 			}
 
-			game.new GameTimer(TaskType.NORMAL, tick) {
+			ActionbarChannel actionbarChannel = participant.actionbar().newChannel();
+			game.new GameTimer(TaskType.REVERSE, tick) {
 				@Override
 				protected void onStart() {
-					STUN.add(part);
+					STUN.add(participant);
 				}
 
 				@Override
 				protected void onEnd() {
-					STUN.remove(part);
+					STUN.remove(participant);
+					actionbarChannel.unregister();
 				}
 
 				@Override
 				protected void run(int count) {
+					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&e스턴&f: " + (count / 20.0) + "초"));
 				}
 			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}

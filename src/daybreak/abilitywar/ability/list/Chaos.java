@@ -4,6 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -17,7 +18,7 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "카오스", Rank = Rank.S, Species = Species.GOD)
-public class Chaos extends AbilityBase {
+public class Chaos extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
 			"# 쿨타임") {

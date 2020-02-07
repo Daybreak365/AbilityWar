@@ -6,18 +6,22 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -26,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AbilityManifest(Name = "교주", Rank = Rank.A, Species = Species.HUMAN)
-public class ReligiousLeader extends AbilityBase {
+public class ReligiousLeader extends AbilityBase implements TargetHandler, ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(ReligiousLeader.class, "Cooldown", 150,
 			"# 쿨타임") {
@@ -66,7 +70,10 @@ public class ReligiousLeader extends AbilityBase {
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&5" + name + "&f가 창시되었습니다."));
 			}
 		}.runTask(AbilityWar.getPlugin());
+		actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&5" + religionName + " &d신자 수&f: &e" + belivers.size()));
 	}
+
+	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
 	private final Timer nameSelect = new Timer(30) {
 		@Override
@@ -78,7 +85,7 @@ public class ReligiousLeader extends AbilityBase {
 
 		@Override
 		protected void run(int count) {
-			PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&5종교&d의 이름을 정하세요: &e" + count + ""), 0, 23, 0);
+			actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&5종교&d의 이름을 정하세요: &e" + count + ""));
 		}
 
 		@Override
@@ -86,23 +93,9 @@ public class ReligiousLeader extends AbilityBase {
 			nameSelecting = false;
 			newReligion("능력자교");
 			sendMessage("종교의 이름이 선택되지 않아 이름이 임의로 설정되었습니다.");
-			noticer.start();
 		}
 
-		@Override
-		protected void onSilentEnd() {
-			noticer.start();
-		}
 	};
-
-	private final Timer noticer = new Timer() {
-		@Override
-		protected void run(int count) {
-			if (!cooldownTimer.isRunning()) {
-				PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&5" + religionName + " &d신자 수&f: &e" + belivers.size()), 0, 7, 0);
-			}
-		}
-	}.setPeriod(TimeUnit.TICKS, 5);
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
@@ -126,7 +119,7 @@ public class ReligiousLeader extends AbilityBase {
 		}
 
 		@Override
-		protected void onSilentEnd() {
+		protected void onDurationSilentEnd() {
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4" + religionName + " &c이단 심판이 끝났습니다."));
 			inquisition = false;
 		}
@@ -138,12 +131,26 @@ public class ReligiousLeader extends AbilityBase {
 			e.setCancelled(true);
 			String name = e.getMessage();
 			if (name.length() <= 10) {
-				nameSelecting = false;
-				nameSelect.stop(true);
-				newReligion(name + "교");
+				NewReligionEvent newReligionEvent = new NewReligionEvent(name.concat("교"));
+				Bukkit.getPluginManager().callEvent(newReligionEvent);
+				if (!newReligionEvent.isCancelled()) {
+					nameSelecting = false;
+					nameSelect.stop(true);
+					newReligion(name + "교");
+				} else {
+					getPlayer().sendMessage(String.valueOf(newReligionEvent.cancelMessage));
+				}
 			} else {
 				sendMessage("종교 이름은 최대 10글자입니다.");
 			}
+		}
+	}
+
+	@SubscribeEvent
+	private void onNewReligion(NewReligionEvent e) {
+		if (!e.getLeader().equals(getParticipant()) && e.getName().equals(religionName)) {
+			e.setCancelled(true);
+			e.setCancelMessage(ChatColor.translateAlternateColorCodes('&', "&c이미 다른 플레이어가 사용 중인 이름입니다."));
 		}
 	}
 
@@ -185,7 +192,7 @@ public class ReligiousLeader extends AbilityBase {
 	public boolean isReligious(Player player) {
 		if (getGame().isParticipating(player)) {
 			Participant participant = getGame().getParticipant(player);
-			if (belivers.contains(participant) || getParticipant().equals(participant)) return true;
+			return belivers.contains(participant) || getParticipant().equals(participant);
 		}
 		return false;
 	}
@@ -210,11 +217,69 @@ public class ReligiousLeader extends AbilityBase {
 				if (getGame().isParticipating(target) && belivers.add(getGame().getParticipant(target))) {
 					sendMessage("&e" + target.getName() + "&f님은 이제 &5" + religionName + "&f를 믿습니다. &f( &5" + religionName + " &d신자 수&f: &e" + belivers.size() + " &f)");
 					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getPlayer().getName() + "&f님이 당신을 포섭했습니다: &5" + religionName + " &f만세!"));
+					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&5" + religionName + " &d신자 수&f: &e" + belivers.size()));
 				}
 			} else {
 				sendMessage("신자 수가 최대치에 도달하여 더이상 모을 수 없습니다.");
 			}
 		}
+	}
+
+	public static class ReligionEvent extends Event {
+
+		private static final HandlerList handlers = new HandlerList();
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		@Override
+		public HandlerList getHandlers() {
+			return handlers;
+		}
+
+		private final Participant leader;
+
+		private ReligionEvent(ReligiousLeader religiousLeader) {
+			this.leader = religiousLeader.getParticipant();
+		}
+
+		public Participant getLeader() {
+			return leader;
+		}
+
+	}
+
+	public class NewReligionEvent extends ReligiousLeader.ReligionEvent implements Cancellable {
+
+		private final String name;
+
+		private NewReligionEvent(String name) {
+			super(ReligiousLeader.this);
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		private boolean cancelled = false;
+		private String cancelMessage = null;
+
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		@Override
+		public void setCancelled(boolean cancelled) {
+			this.cancelled = cancelled;
+		}
+
+		public void setCancelMessage(String cancelMessage) {
+			this.cancelMessage = cancelMessage;
+		}
+
 	}
 
 }

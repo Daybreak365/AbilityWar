@@ -8,8 +8,10 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,8 +19,6 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-
-import java.util.StringJoiner;
 
 @AbilityManifest(Name = "폭발화살", Rank = Rank.S, Species = Species.HUMAN)
 public class BombArrow extends AbilityBase {
@@ -54,22 +54,14 @@ public class BombArrow extends AbilityBase {
 		protected void run(int count) {
 			if (stack < maxStack) {
 				stack++;
+				actionbarChannel.update(ChatColor.DARK_RED.toString().concat(StringUtils.repeat("●", stack).concat(StringUtils.repeat("○", maxStack - stack))));
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 140);
+	}.setPeriod(TimeUnit.TICKS, WRECK.isEnabled(getGame()) ? 60 : 140);
 
 	private final int size = SizeConfig.getValue();
 
-	@Scheduled
-	private final Timer actionbarSender = new Timer() {
-		@Override
-		protected void run(int count) {
-			StringJoiner joiner = new StringJoiner(" ");
-			for (int i = 0; i < stack; i++) joiner.add(ChatColor.DARK_RED + "●");
-			for (int i = 0; i < maxStack - stack; i++) joiner.add(ChatColor.DARK_RED + "○");
-			NMSUtil.PlayerUtil.sendActionbar(getPlayer(), joiner.toString(), 0, 3, 0);
-		}
-	}.setPeriod(TimeUnit.TICKS, 2);
+	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
 	@SubscribeEvent
 	private void onProjectileShoot(ProjectileHitEvent e) {
@@ -88,6 +80,7 @@ public class BombArrow extends AbilityBase {
 				getPlayer().updateInventory();
 			} else {
 				stack--;
+				actionbarChannel.update(StringUtils.repeat(ChatColor.DARK_RED + "●", stack).concat(StringUtils.repeat(ChatColor.DARK_RED + "○", maxStack - stack)));
 			}
 		}
 	}

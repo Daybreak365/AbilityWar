@@ -23,9 +23,9 @@ import java.util.Random;
 @AbilityManifest(Name = "데미갓", Rank = Rank.S, Species = Species.DEMIGOD)
 public class Demigod extends AbilityBase {
 
-	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(Demigod.class, "Chance", 40,
+	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(Demigod.class, "Chance", 30,
 			"# 공격을 받았을 시 몇 퍼센트 확률로 랜덤 버프를 받을지 설정합니다.",
-			"# 40은 40%를 의미합니다.") {
+			"# 30은 30%를 의미합니다.") {
 
 		@Override
 		public boolean Condition(Integer value) {
@@ -45,7 +45,7 @@ public class Demigod extends AbilityBase {
 		return false;
 	}
 
-	private final int Chance = ChanceConfig.getValue();
+	private final int chance = ChanceConfig.getValue();
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -55,7 +55,7 @@ public class Demigod extends AbilityBase {
 				if (!e.isCancelled()) {
 					Random r = new Random();
 
-					if ((r.nextInt(100) + 1) <= Chance) {
+					if ((r.nextInt(100) + 1) <= chance) {
 						int buff = r.nextInt(3);
 						if (buff == 0) {
 							showHelix(ABSORPTION);

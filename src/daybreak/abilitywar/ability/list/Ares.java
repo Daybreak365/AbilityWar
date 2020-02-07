@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -25,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
-public class Ares extends AbilityBase {
+public class Ares extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
 			"# 스킬 대미지 (단위: 백분율)") {

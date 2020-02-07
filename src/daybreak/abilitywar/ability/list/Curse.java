@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -25,7 +26,7 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
 
 @AbilityManifest(Name = "컬스", Rank = Rank.A, Species = Species.OTHERS)
-public class Curse extends AbilityBase {
+public class Curse extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Curse.class, "Cooldown", 100,
 			"# 쿨타임") {
@@ -100,7 +101,7 @@ public class Curse extends AbilityBase {
 		}
 
 		@Override
-		protected void onSilentEnd() {
+		protected void onDurationSilentEnd() {
 			target = null;
 			armorStand.remove();
 			armorStand = null;

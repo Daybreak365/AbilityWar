@@ -18,4 +18,6 @@ public @interface SubscribeEvent {
 	 */
 	boolean onlyRelevant() default false;
 
+	boolean ignoreCancelled() default false;
+
 }

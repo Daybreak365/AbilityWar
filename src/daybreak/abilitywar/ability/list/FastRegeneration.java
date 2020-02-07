@@ -4,6 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -18,7 +19,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "빠른 회복", Rank = Rank.A, Species = Species.HUMAN)
-public class FastRegeneration extends AbilityBase {
+public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
 			"# 쿨타임") {
@@ -87,7 +88,7 @@ public class FastRegeneration extends AbilityBase {
 		}
 
 		@Override
-		public void onSilentEnd() {
+		public void onDurationSilentEnd() {
 			sound.stop(false);
 		}
 

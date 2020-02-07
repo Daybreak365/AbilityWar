@@ -72,7 +72,7 @@ public class AbilityList {
 		registerAbility(Void.class);
 		registerAbility(DarkVision.class);
 		registerAbility(HigherBeing.class);
-		registerAbility(BlackCandle.class);
+		registerAbility(VictoryBySword.class);
 		registerAbility(FireFightWithFire.class);
 		registerAbility(Hacker.class);
 		registerAbility(Muse.class);
@@ -108,6 +108,7 @@ public class AbilityList {
 		registerAbility(Hedgehog.class);
 		registerAbility(ReligiousLeader.class);
 		registerAbility(Kidnap.class);
+		registerAbility(Flector.class);
 	}
 
 	public static List<String> nameValues() {

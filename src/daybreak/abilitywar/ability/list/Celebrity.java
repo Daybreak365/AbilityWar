@@ -4,6 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -33,7 +34,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 @AbilityManifest(Name = "유명 인사", Rank = Rank.D, Species = Species.HUMAN)
-public class Celebrity extends AbilityBase {
+public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,
 			"# 쿨타임") {
@@ -138,7 +139,7 @@ public class Celebrity extends AbilityBase {
 		}
 
 		@Override
-		protected void onSilentEnd() {
+		protected void onDurationSilentEnd() {
 			for (Entry<Block, Material> entry : carpets.entrySet()) {
 				entry.getKey().setType(entry.getValue());
 			}

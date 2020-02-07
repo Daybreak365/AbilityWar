@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -30,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @AbilityManifest(Name = "스토커", Rank = Rank.A, Species = Species.HUMAN)
-public class Stalker extends AbilityBase {
+public class Stalker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Stalker.class, "Cooldown", 210,
 			"# 쿨타임") {

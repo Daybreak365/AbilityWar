@@ -1,5 +1,7 @@
 package daybreak.abilitywar.ability;
 
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -97,7 +99,7 @@ public class AbilityFactory {
 		registerAbility(Void.class);
 		registerAbility(DarkVision.class);
 		registerAbility(HigherBeing.class);
-		registerAbility(BlackCandle.class);
+		registerAbility(VictoryBySword.class);
 		registerAbility(FireFightWithFire.class);
 		registerAbility(Hacker.class);
 		registerAbility(Muse.class);
@@ -139,6 +141,8 @@ public class AbilityFactory {
 		registerAbility(ReligiousLeader.class);
 		// v2.1.3
 		registerAbility(Kidnap.class);
+		// v2.1.4.8
+		registerAbility(Flector.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -177,6 +181,7 @@ public class AbilityFactory {
 		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 		private final Map<String, SettingObject<?>> settingObjects;
 		private final Set<Field> scheduledTimers;
+		private final int flag;
 
 		@SuppressWarnings("unchecked")
 		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NoSuchMethodException, SecurityException, IllegalAccessException {
@@ -217,6 +222,10 @@ public class AbilityFactory {
 			}
 			this.settingObjects = Collections.unmodifiableMap(settingObjects);
 			this.scheduledTimers = Collections.unmodifiableSet(scheduledTimers);
+			int flag = 0x0;
+			if (ActiveHandler.class.isAssignableFrom(clazz)) flag |= Flag.ACTIVE_SKILL;
+			if (TargetHandler.class.isAssignableFrom(clazz)) flag |= Flag.TARGET_SKILL;
+			this.flag = flag;
 		}
 
 		public Class<? extends AbilityBase> getAbilityClass() {
@@ -241,6 +250,15 @@ public class AbilityFactory {
 
 		public Set<Field> getScheduledTimers() {
 			return scheduledTimers;
+		}
+
+		public boolean hasFlag(int flag) {
+			return (this.flag & flag) == flag;
+		}
+
+		public static class Flag {
+			public static final int ACTIVE_SKILL = 0x1;
+			public static final int TARGET_SKILL = 0x2;
 		}
 
 	}

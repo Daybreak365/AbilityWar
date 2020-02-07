@@ -133,6 +133,38 @@ public class LocationUtil {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T extends Entity> T getEntityLookingAt(Class<T> entityType, CenteredBoundingBox boundingBox, LivingEntity criterion, int maxDistance, Predicate<Entity> predicate) {
+		if (criterion == null || maxDistance <= 0) return null;
+		World world = criterion.getWorld();
+		Iterator<Block> iterator = new BlockIterator(criterion, maxDistance);
+		while (iterator.hasNext()) {
+			Block block = iterator.next();
+			if (block.getType().isOccluding()) return null;
+			boundingBox.setLocation(block.getLocation());
+			Chunk blockChunk = block.getChunk();
+			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
+			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
+				for (int z = blockChunkZ - 1; z <= blockChunkZ + 1; z++) {
+					Chunk chunk = world.getChunkAt(x, z);
+					for (Entity e : chunk.getEntities()) {
+						if (!criterion.equals(e) && entityType.isAssignableFrom(e.getClass())) {
+							Boundary.BoundaryData boundaryData = Boundary.BoundaryData.of(e.getType());
+							Location entityLocation = e.getLocation();
+							double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
+							if (entityX + boundaryData.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < boundingBox.getMaxY() &&
+									boundingBox.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityZ + boundaryData.getMaxZ() &&
+									(predicate == null || predicate.test(e))) {
+								return (T) e;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 	public static int getFloorYAt(World world, double referenceY, int x, int z) {
 		int y = world.getHighestBlockYAt(x, z);
 		if (y > referenceY) {

@@ -24,7 +24,6 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 	}
 
 	private final HashMap<Class<? extends Event>, Set<PassiveExecutor>> passiveExecutors = new HashMap<>();
-	private final EventPriority priority = EventPriority.HIGHEST;
 	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
 
 	@SuppressWarnings("unchecked")
@@ -44,7 +43,7 @@ public class PassiveManager implements Listener, EventExecutor, AbstractGame.Obs
 
 		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);
 		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
-			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, priority, this, AbilityWar.getPlugin());
+			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, EventPriority.HIGHEST, this, AbilityWar.getPlugin());
 		}
 
 		passiveExecutors.get(eventClass).add(executor);

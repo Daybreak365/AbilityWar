@@ -63,7 +63,7 @@ public class Mix extends AbilityBase {
 		return second;
 	}
 
-	public Mix(AbstractGame.Participant participant) throws IllegalStateException {
+	public Mix(AbstractGame.Participant participant) {
 		super(participant,
 				new DescriptionLine("믹스"),
 				new DescriptionLine(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------")),

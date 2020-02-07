@@ -3,6 +3,7 @@ package daybreak.abilitywar.ability.list;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 @AbilityManifest(Name = "영혼수확자", Rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.HUMAN)
-public class Reaper extends AbilityBase {
+public class Reaper extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Reaper.class, "Cooldown", 140,
 			"# 쿨타임") {

@@ -13,7 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-@AbilityManifest(Name = "홀수강박증", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(Name = "홀수강박증", Rank = Rank.C, Species = Species.HUMAN)
 public class OnlyOddNumber extends AbilityBase {
 
 	public static final SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 59,

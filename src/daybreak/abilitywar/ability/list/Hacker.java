@@ -4,6 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -21,7 +22,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(Name = "해커", Rank = Rank.A, Species = Species.HUMAN)
-public class Hacker extends AbilityBase {
+public class Hacker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
 			"# 쿨타임") {
@@ -68,7 +69,7 @@ public class Hacker extends AbilityBase {
 		@Override
 		protected void onEnd() {
 			if (target != null) {
-				getPlayer().resetTitle();
+				getPlayer().sendTitle("", "", 0, 0, 0);
 
 				int X = (int) target.getLocation().getX();
 				int Y = (int) target.getLocation().getY();

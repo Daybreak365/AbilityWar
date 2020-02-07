@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 @AbilityManifest(Name = "글래디에이터", Rank = Rank.S, Species = Species.HUMAN)
-public class Gladiator extends AbilityBase {
+public class Gladiator extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
 			"# 쿨타임") {

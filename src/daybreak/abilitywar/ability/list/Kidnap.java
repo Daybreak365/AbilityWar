@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
@@ -20,7 +21,7 @@ import org.bukkit.event.entity.EntityEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 @AbilityManifest(Name = "납치", Rank = Rank.B, Species = Species.HUMAN)
-public class Kidnap extends AbilityBase {
+public class Kidnap extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Kidnap.class, "Cooldown", 30,
 			"# 쿨타임") {
@@ -42,7 +43,7 @@ public class Kidnap extends AbilityBase {
 
 	};
 
-	public Kidnap(Participant participant) throws IllegalStateException {
+	public Kidnap(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
 				ChatColor.translateAlternateColorCodes('&', "&f능력 사용중에는 신속 버프를 받고, 납치 대상은 지속 시간동안"),
@@ -80,7 +81,7 @@ public class Kidnap extends AbilityBase {
 		}
 
 		@Override
-		protected void onSilentEnd() {
+		protected void onDurationSilentEnd() {
 			if (target != null && target.isValid()) {
 				getPlayer().removePassenger(target);
 				target.setInvulnerable(false);

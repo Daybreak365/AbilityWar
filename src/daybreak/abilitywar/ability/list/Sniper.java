@@ -47,7 +47,7 @@ public class Sniper extends AbilityBase {
 	}
 
 	private static final Material GLASS_PANE = ServerVersion.getVersion() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
-	private static final ParticleLib.RGB PURPLE = new ParticleLib.RGB(138, 9, 173);
+	private static final ParticleLib.RGB BULLET_COLOR = new ParticleLib.RGB(43, 209, 224);
 
 	@Scheduled
 	private final Timer snipeMode = new Timer() {
@@ -73,7 +73,7 @@ public class Sniper extends AbilityBase {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
 			Arrow arrow = (Arrow) e.getProjectile();
-			new Bullet(arrow.getLocation(), arrow.getVelocity(), PURPLE).start();
+			new Bullet(arrow.getLocation(), arrow.getVelocity(), BULLET_COLOR).start();
 		}
 	}
 
