@@ -75,12 +75,12 @@ public class Messager {
 	 * 능력 설명을 구성합니다.
 	 */
 	public static String[] formatAbilityInfo(AbilityBase ability) {
-		List<String> list = Messager.asList(
+		List<String> info = Messager.asList(
 				Messager.formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
 				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + (ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
-		list.addAll(ability.getDescription());
-		list.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
-		return list.toArray(new String[0]);
+		info.addAll(ability.getDescription());
+		info.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
+		return info.toArray(new String[0]);
 	}
 
 	/**

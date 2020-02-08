@@ -22,22 +22,21 @@ import java.util.logging.Logger;
 
 public class Configuration {
 
+	private Configuration() {
+	}
+
 	private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 	private static File file = null;
 	private static long lastModified;
 	private static CommentedConfiguration config = null;
+	private static boolean error = false;
+
+	public static boolean isError() {
+		return error;
+	}
 
 	public static boolean isLoaded() {
 		return file != null && config != null;
-	}
-
-	public static void load() throws IOException, InvalidConfigurationException {
-		if (!isLoaded()) {
-			file = FileUtil.newFile("Config.yml");
-			lastModified = file.lastModified();
-			config = new CommentedConfiguration(file);
-			update();
-		}
 	}
 
 	public static void update() throws IOException, InvalidConfigurationException {
@@ -69,18 +68,29 @@ public class Configuration {
 
 	@SuppressWarnings("unchecked") // private only method
 	private static <T> T get(ConfigNodes configNode, Class<T> clazz) throws IllegalStateException {
-		if (!isLoaded()) {
-			logger.log(Level.SEVERE, "콘피그가 불러와지지 않은 상태에서 접근을 시도하였습니다.");
-			throw new IllegalStateException("콘피그가 아직 불러와지지 않았습니다.");
-		}
-		if (lastModified != file.lastModified()) {
-			try {
-				update();
-			} catch (IOException | InvalidConfigurationException e) {
-				logger.log(Level.SEVERE, "콘피그를 다시 불러오는 도중 오류가 발생하였습니다.");
+		if (!error) {
+			if (!isLoaded()) {
+				try {
+					file = FileUtil.newFile("Config.yml");
+					lastModified = file.lastModified();
+					config = new CommentedConfiguration(file);
+					update();
+				} catch (IOException | InvalidConfigurationException e) {
+					error = true;
+				}
+				return get(configNode, clazz);
 			}
+			if (lastModified != file.lastModified()) {
+				try {
+					update();
+				} catch (IOException | InvalidConfigurationException e) {
+					logger.log(Level.SEVERE, "콘피그를 다시 불러오는 도중 오류가 발생하였습니다.");
+				}
+			}
+			return (T) cache.get(configNode).getValue();
+		} else {
+			throw new IllegalStateException("콘피그를 불러오는 도중 오류가 발생하였습니다.");
 		}
-		return (T) cache.get(configNode).getValue();
 	}
 
 	@SuppressWarnings("unchecked") // private only method
@@ -101,12 +111,17 @@ public class Configuration {
 
 	public static class Settings {
 
+		private Settings() {
+		}
+
 		public static String getString(ConfigNodes node) {
 			return get(node, String.class);
 		}
+
 		public static int getInt(ConfigNodes node) {
 			return get(node, Integer.class);
 		}
+
 		public static boolean getBoolean(ConfigNodes node) {
 			return get(node, Boolean.class);
 		}
@@ -195,6 +210,10 @@ public class Configuration {
 		}
 
 		public static class InvincibilitySettings {
+
+			private InvincibilitySettings() {
+			}
+
 			public static boolean isEnabled() {
 				return getBoolean(ConfigNodes.GAME_INVINCIBILITY_ENABLE);
 			}
@@ -218,6 +237,9 @@ public class Configuration {
 
 		public static class DeathSettings {
 
+			private DeathSettings() {
+			}
+
 			public static OnDeath getOperation() {
 				return OnDeath.getIfPresent(getString(ConfigNodes.GAME_DEATH_OPERATION));
 			}
@@ -238,12 +260,17 @@ public class Configuration {
 
 		public static class ChangeAbilityWarSettings {
 
+			private ChangeAbilityWarSettings() {
+			}
+
 			public static int getPeriod() {
 				return getInt(ConfigNodes.ABILITY_CHANGE_GAME_PERIOD);
 			}
+
 			public static int getLife() {
 				return getInt(ConfigNodes.ABILITY_CHANGE_GAME_LIFE);
 			}
+
 			public static boolean getEliminate() {
 				return getBoolean(ConfigNodes.ABILITY_CHANGE_GAME_ELIMINATE);
 			}
@@ -252,8 +279,22 @@ public class Configuration {
 
 		public static class SummerVacationSettings {
 
+			private SummerVacationSettings() {
+			}
+
 			public static int getMaxKill() {
 				return getInt(ConfigNodes.SUMMER_VACATION_KILL);
+			}
+
+		}
+
+		public static class DeveloperSettings {
+
+			private DeveloperSettings() {
+			}
+
+			public static boolean isEnabled() {
+				return getBoolean(ConfigNodes.DEVELOPER);
 			}
 
 		}

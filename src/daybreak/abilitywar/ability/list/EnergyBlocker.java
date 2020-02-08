@@ -7,14 +7,15 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -31,31 +32,30 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."));
 	}
 
+	private final ActionbarChannel actionbarChannel = newActionbarChannel();
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				projectileBlocking = !projectileBlocking;
-				Player p = getPlayer();
-				if (projectileBlocking) {
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f1/3&7, &a근거리 &f두 배로 변경되었습니다."));
-				} else {
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3로 변경되었습니다."));
-				}
+				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', getState() + "로 변경되었습니다."));
+				actionbarChannel.update(getState());
 			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
-				if (projectileBlocking) {
-					getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f1/3&7, &a근거리 &f두 배"));
-				} else {
-					getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: &b원거리 &f두 배&7, &a근거리 &f1/3"));
-				}
+				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: ") + getState());
 			}
 		}
 
 		return false;
 	}
 
-	private static final RGB LONG_DISTANCE = new RGB(116, 237, 167);
-	private static final RGB SHORT_DISTANCE = new RGB(85, 237, 242);
+	public String getState() {
+		if (projectileBlocking) return ChatColor.translateAlternateColorCodes('&', "&b원거리 &f1/3 배&7, &a근거리 &f두 배");
+		else return ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3 배");
+	}
+
+	private static final RGB LONG_DISTANCE = RGB.of(116, 237, 167);
+	private static final RGB SHORT_DISTANCE = RGB.of(85, 237, 242);
 
 	@Scheduled
 	private final Timer particle = new Timer() {
@@ -97,6 +97,11 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 				}
 			}
 		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
+		actionbarChannel.update(getState());
 	}
 
 	@Override

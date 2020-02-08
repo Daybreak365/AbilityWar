@@ -82,7 +82,6 @@ public class AbilityWar extends JavaPlugin {
 			public void run() {
 				AbilityFactory.nameValues();
 				try {
-					Configuration.load();
 					AbilitySettings.load();
 				} catch (IOException | InvalidConfigurationException e) {
 					logger.log(Level.SEVERE, "콘피그를 불러오는 도중 오류가 발생하였습니다.");

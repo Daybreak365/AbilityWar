@@ -82,7 +82,11 @@ public enum ConfigNodes {
 	SUMMER_VACATION_KILL("신나는여름휴가.킬횟수", 10,
 			"# 우승하기 위해 필요한 킬 횟수"),
 	GAME_MODE("게임모드", DefaultGame.class.getName(),
-			"# 게임 모드 클래스");
+			"# 게임 모드 클래스"),
+	DEVELOPER("개발자", false,
+			"# 개발자 모드 활성화 여부",
+			"# 디버그 게임 모드가 활성화됩니다.",
+			"# 베타 능력을 사용할 수 있습니다.");
 
 	private final String path;
 	private final Object defaultValue;

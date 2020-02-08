@@ -2,17 +2,22 @@ package daybreak.abilitywar.game.manager;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.utils.Messager;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -26,7 +31,7 @@ public class AbilityList {
 	}
 
 	private static final Messager messager = new Messager();
-	private static final Map<String, Class<? extends AbilityBase>> abilities = new TreeMap<>();
+	private static final Map<String, AbilityRegistration> abilities = new TreeMap<>();
 
 	/**
 	 * 능력을 등록합니다.
@@ -39,18 +44,17 @@ public class AbilityList {
 	 * @param abilityClass 능력 클래스
 	 */
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
-		if (!abilities.containsValue(abilityClass)) {
-			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
-			if (registration != null) {
-				String name = registration.getManifest().Name();
-				if (!abilities.containsKey(name)) {
-					abilities.put(name, abilityClass);
-				} else {
-					messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
-				}
+		AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
+		if (registration != null) {
+			String name = registration.getManifest().Name();
+			if (!abilities.containsKey(name)) {
+				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
+				abilities.put(name, registration);
 			} else {
-				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityFactory에 등록되지 않은 능력입니다."));
+				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 			}
+		} else {
+			messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityFactory에 등록되지 않은 능력입니다."));
 		}
 	}
 
@@ -111,14 +115,17 @@ public class AbilityList {
 		registerAbility(Flector.class);
 	}
 
+	public static Collection<AbilityRegistration> values() {
+		return Collections.unmodifiableCollection(abilities.values());
+	}
+
 	public static List<String> nameValues() {
 		return new ArrayList<>(abilities.keySet());
 	}
 
 	public static List<String> nameValues(Rank rank) {
 		List<String> values = new ArrayList<>();
-		for (Class<? extends AbilityBase> abilityClass : abilities.values()) {
-			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
+		for (AbilityRegistration registration : abilities.values()) {
 			if (registration != null) {
 				AbilityManifest manifest = registration.getManifest();
 				if (manifest.Rank().equals(rank)) {
@@ -131,8 +138,7 @@ public class AbilityList {
 
 	public static List<String> nameValues(Species species) {
 		List<String> values = new ArrayList<>();
-		for (Class<? extends AbilityBase> abilityClass : abilities.values()) {
-			AbilityFactory.AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
+		for (AbilityRegistration registration : abilities.values()) {
 			if (registration != null) {
 				AbilityManifest manifest = registration.getManifest();
 				if (manifest.Species().equals(species)) {
@@ -151,7 +157,7 @@ public class AbilityList {
 	 * @return 능력 Class
 	 */
 	public static Class<? extends AbilityBase> getByString(String name) {
-		return abilities.get(name);
+		return abilities.get(name).getAbilityClass();
 	}
 
 }

@@ -442,16 +442,18 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 					channels.add(this);
 				}
 
-				public void update(String string) {
+				public ActionbarChannel update(String string) {
 					this.string = string;
 					this.seconds = 0;
 					ActionbarNotification.this.update();
+					return this;
 				}
 
-				public void update(String string, int seconds) {
+				public ActionbarChannel update(String string, int seconds) {
 					this.string = string;
 					this.seconds = seconds;
 					ActionbarNotification.this.update();
+					return this;
 				}
 
 				public void unregister() {

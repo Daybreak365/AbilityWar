@@ -42,7 +42,6 @@ public class EffectManager implements EventExecutor {
 	public void Stun(Player player, int tick) {
 		if (game.isParticipating(player)) {
 			Participant participant = game.getParticipant(player);
-
 			for (EffectCondition condition : conditions) {
 				if (!condition.checkCondition(participant, EffectType.STUN))
 					return;
@@ -63,7 +62,7 @@ public class EffectManager implements EventExecutor {
 
 				@Override
 				protected void run(int count) {
-					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&e스턴&f: " + (count / 20.0) + "초"));
+					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&e기절&f: " + (count / 20.0) + "초"));
 				}
 			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}

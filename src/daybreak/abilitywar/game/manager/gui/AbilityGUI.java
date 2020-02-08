@@ -1,6 +1,8 @@
 package daybreak.abilitywar.game.manager.gui;
 
-import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
+import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -22,7 +24,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 
 /**
  * 능력 부여 GUI
@@ -47,15 +52,17 @@ public class AbilityGUI implements Listener {
 		this.target = target;
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 
-		values = new ArrayList<>(AbilityList.nameValues());
-		values.sort(String::compareToIgnoreCase);
+		values = new TreeMap<>();
+		for (AbilityRegistration registration : AbilityList.values()) {
+			values.put(registration.getManifest().Name(), registration);
+		}
 	}
 
-	public AbilityGUI(Player p, Plugin plugin) {
-		this(p, null, plugin);
+	public AbilityGUI(Player player, Plugin plugin) {
+		this(player, null, plugin);
 	}
 
-	private final ArrayList<String> values;
+	private final Map<String, AbilityRegistration> values;
 	private int currentPage = 1;
 	private Inventory abilityGUI;
 
@@ -69,12 +76,24 @@ public class AbilityGUI implements Listener {
 		currentPage = page;
 		int count = 0;
 
-		for (String name : values) {
+		for (Entry<String, AbilityRegistration> entry : values.entrySet()) {
 			if (count / 36 == page - 1) {
+				AbilityRegistration registration = entry.getValue();
+				AbilityManifest manifest = registration.getManifest();
 				ItemStack stack = new ItemStack(Material.IRON_BLOCK);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-				meta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요.")));
+				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + manifest.Name()));
+				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
+				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
+				meta.setLore(Messager.asList(
+						ChatColor.translateAlternateColorCodes('&', "&f등급: " + manifest.Rank().getRankName()),
+						ChatColor.translateAlternateColorCodes('&', "&f종류: " + manifest.Species().getSpeciesName()),
+						joiner.toString(),
+						"",
+						ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요.")
+				));
 				stack.setItemMeta(meta);
 				abilityGUI.setItem(count % 36, stack);
 			}
@@ -112,17 +131,17 @@ public class AbilityGUI implements Listener {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 				if (e.getCurrentItem().getType().equals(Material.IRON_BLOCK)) {
-					Class<? extends AbilityBase> abilityClass = AbilityList.getByString(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
+					AbilityRegistration registration = values.get(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
 					try {
-						if (abilityClass != null) {
+						if (registration != null) {
 							if (AbilityWarThread.isGameTaskRunning()) {
 								AbstractGame game = AbilityWarThread.getGame();
 								if (target != null) {
-									target.setAbility(abilityClass);
+									target.setAbility(registration.getAbilityClass());
 									Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님에게 능력을 임의로 부여하였습니다."));
 								} else {
 									for (Participant participant : game.getParticipants()) {
-										participant.setAbility(abilityClass);
+										participant.setAbility(registration.getAbilityClass());
 									}
 									Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a에게 능력을 임의로 부여하였습니다."));
 								}

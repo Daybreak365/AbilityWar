@@ -2,8 +2,10 @@ package daybreak.abilitywar.game.manager;
 
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
+import daybreak.abilitywar.game.games.debug.DebugMode;
 import daybreak.abilitywar.game.games.mixability.MixAbility;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
@@ -37,6 +39,7 @@ public class GameMode {
 		registerGameMode(TeamFight.class);
 		registerGameMode(MixAbility.class);
 		registerGameMode(ZeroTick.class);
+		if (DeveloperSettings.isEnabled()) GameMode.registerGameMode(DebugMode.class);
 	}
 
 	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {

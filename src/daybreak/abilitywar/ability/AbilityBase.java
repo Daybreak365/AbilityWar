@@ -223,6 +223,10 @@ public abstract class AbilityBase implements PassiveExecutor {
 		}
 	}
 
+	public AbilityRegistration getRegistration() {
+		return registration;
+	}
+
 	/**
 	 * 능력을 소유하는 플레이어를 반환합니다.
 	 */

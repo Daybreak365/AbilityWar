@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability;
 
+import com.google.common.base.Preconditions;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
@@ -11,6 +12,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.ReflectionUtil;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
@@ -59,7 +61,7 @@ public class AbilityFactory {
 				} else {
 					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
-			} catch (NoSuchMethodException | IllegalAccessException e) {
+			} catch (NoSuchMethodException | IllegalAccessException | NullPointerException e) {
 				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
 					Messager.sendConsoleErrorMessage(e.getMessage());
 				} else {
@@ -184,7 +186,7 @@ public class AbilityFactory {
 		private final int flag;
 
 		@SuppressWarnings("unchecked")
-		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NoSuchMethodException, SecurityException, IllegalAccessException {
+		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException {
 			this.clazz = clazz;
 
 			this.constructor = clazz.getConstructor(Participant.class);
@@ -192,6 +194,9 @@ public class AbilityFactory {
 			if (!clazz.isAnnotationPresent(AbilityManifest.class))
 				throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
 			this.manifest = clazz.getAnnotation(AbilityManifest.class);
+			Preconditions.checkNotNull(manifest.Name());
+			Preconditions.checkNotNull(manifest.Rank());
+			Preconditions.checkNotNull(manifest.Species());
 
 			Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
 			for (Method method : clazz.getDeclaredMethods()) {
@@ -222,9 +227,11 @@ public class AbilityFactory {
 			}
 			this.settingObjects = Collections.unmodifiableMap(settingObjects);
 			this.scheduledTimers = Collections.unmodifiableSet(scheduledTimers);
+
 			int flag = 0x0;
 			if (ActiveHandler.class.isAssignableFrom(clazz)) flag |= Flag.ACTIVE_SKILL;
 			if (TargetHandler.class.isAssignableFrom(clazz)) flag |= Flag.TARGET_SKILL;
+			if (clazz.isAnnotationPresent(Beta.class)) flag |= Flag.BETA;
 			this.flag = flag;
 		}
 
@@ -259,6 +266,7 @@ public class AbilityFactory {
 		public static class Flag {
 			public static final int ACTIVE_SKILL = 0x1;
 			public static final int TARGET_SKILL = 0x2;
+			public static final int BETA = 0x4;
 		}
 
 	}

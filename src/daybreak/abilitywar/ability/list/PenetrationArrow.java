@@ -2,14 +2,13 @@ package daybreak.abilitywar.ability.list;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSUtil.PlayerUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -127,15 +126,7 @@ public class PenetrationArrow extends AbilityBase {
 	private int arrowBullet = bulletCount;
 	private Timer reload = null;
 
-	@Scheduled
-	private final Timer notice = new Timer() {
-		@Override
-		protected void run(int count) {
-			if (reload == null) {
-				NMSUtil.PlayerUtil.sendActionbar(getPlayer(), ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"), 0, 4, 0);
-			}
-		}
-	}.setPeriod(TimeUnit.TICKS, 2);
+	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
 	@SubscribeEvent
 	private void onProjectileLaunch(EntityShootBowEvent e) {
@@ -147,6 +138,7 @@ public class PenetrationArrow extends AbilityBase {
 				}
 				arrowType.launchArrow((Arrow) e.getProjectile());
 				arrowBullet--;
+				actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
 				if (arrowBullet <= 0) {
 					this.reload = new Timer(15) {
 						private final ProgressBar progressBar = new ProgressBar(15, 15);
@@ -154,7 +146,7 @@ public class PenetrationArrow extends AbilityBase {
 						@Override
 						protected void run(int count) {
 							progressBar.step();
-							PlayerUtil.sendActionbar(getPlayer(), "재장전: " + progressBar.toString(), 0, 6, 0);
+							actionbarChannel.update("재장전: " + progressBar.toString());
 						}
 
 						@Override
@@ -162,6 +154,7 @@ public class PenetrationArrow extends AbilityBase {
 							arrowType = arrowTypes.get(random.nextInt(arrowTypes.size()));
 							arrowBullet = bulletCount;
 							PenetrationArrow.this.reload = null;
+							actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
 						}
 					}.setPeriod(TimeUnit.TICKS, 4);
 					reload.start();
@@ -170,6 +163,11 @@ public class PenetrationArrow extends AbilityBase {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));
 			}
 		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
+		actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
 	}
 
 	@Override
