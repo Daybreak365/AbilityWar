@@ -2,48 +2,50 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>DayBreak.AbilityWar</groupId>
-    <artifactId>AbilityWar</artifactId>
-    <version>2.1.4.9</version>
-    <packaging>jar</packaging>
+    <groupId>daybreak.abilitywar</groupId>
+    <artifactId>AbilityWar-Parent</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
 
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>mojang-repo</id>
-            <url>https://libraries.minecraft.net/</url>
-        </repository>
-    </repositories>
+    <modules>
+        <module>modules/nms/Compatibility</module>
+        <module>modules/nms/v1_12_R1</module>
+        <module>modules/nms/v1_13_R1</module>
+        <module>modules/nms/v1_14_R1</module>
+        <module>modules/nms/v1_15_R1</module>
+        <module>modules/Plugin</module>
+    </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>1.5.26</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
     <properties>
         <encoding>UTF-8</encoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <revision>2.1.5.0</revision>
     </properties>
+
     <build>
         <sourceDirectory>src</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifest>
+                                <addClasspath>false</addClasspath>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>

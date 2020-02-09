@@ -1,8 +1,0 @@
-name: AbilityWar
-main: daybreak.abilitywar.AbilityWar
-version: ${project.version}
-
-commands:
-  abilitywar:
-    description: AbilityWar 메인 명령어
-    aliases: [ability, aw, va, 능력자]
