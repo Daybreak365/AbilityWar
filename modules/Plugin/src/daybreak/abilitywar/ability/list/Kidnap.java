@@ -15,9 +15,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.projectiles.ProjectileSource;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 @AbilityManifest(Name = "납치", Rank = Rank.B, Species = Species.HUMAN)
@@ -95,6 +98,23 @@ public class Kidnap extends AbilityBase implements TargetHandler {
 	private void onPlayerDismount(EntityDismountEvent e) {
 		if (skill.isRunning() && e.getDismounted().equals(getPlayer()) && e.getEntity().equals(target)) {
 			e.setCancelled(true);
+		}
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (skill.isRunning()) {
+			Entity damager = e.getDamager();
+			if (damager instanceof Projectile) {
+				ProjectileSource source = ((Projectile) damager).getShooter();
+				if (source instanceof Entity) {
+					damager = (Entity) source;
+				}
+			}
+			if (damager.equals(target) && getPlayer().equals(e.getEntity())) {
+				e.setCancelled(true);
+				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c지금 공격할 수 없습니다!"));
+			}
 		}
 	}
 

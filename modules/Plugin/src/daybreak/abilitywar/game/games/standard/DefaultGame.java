@@ -3,13 +3,13 @@ package daybreak.abilitywar.game.games.standard;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.event.HandlerList;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
@@ -27,11 +28,13 @@ import java.util.List;
  * @author Daybreak 새벽
  */
 @GameManifest(Name = "게임", Description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
-public class DefaultGame extends Game implements DefaultKitHandler {
+public class DefaultGame extends Game implements DefaultKitHandler, Observer {
 
 	public DefaultGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(Settings.InvincibilitySettings.isEnabled());
+		attachObserver(this);
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	@Override
@@ -134,19 +137,7 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 				}
 
 				if (Settings.getNoHunger()) {
-					new GameTimer(TaskType.INFINITE, -1) {
-						@Override
-						public void onStart() {
-							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
-						}
-
-						@Override
-						public void run(int count) {
-							for (Participant participant : getParticipants()) {
-								participant.getPlayer().setFoodLevel(19);
-							}
-						}
-					}.setPeriod(TimeUnit.TICKS, 1).start();
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 				}
@@ -158,9 +149,7 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 				}
 
 				if (Settings.getClearWeather()) {
-					for (World w : Bukkit.getWorlds()) {
-						w.setStorm(false);
-					}
+					for (World world : Bukkit.getWorlds()) world.setStorm(false);
 				}
 
 				if (isRestricted()) {
@@ -174,6 +163,13 @@ public class DefaultGame extends Game implements DefaultKitHandler {
 
 				startGame();
 				break;
+		}
+	}
+
+	@Override
+	public void update(GAME_UPDATE update) {
+		if (update == GAME_UPDATE.END) {
+			HandlerList.unregisterAll(this);
 		}
 	}
 

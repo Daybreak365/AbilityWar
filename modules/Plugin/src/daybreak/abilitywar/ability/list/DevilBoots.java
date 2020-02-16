@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -71,6 +72,13 @@ public class DevilBoots extends AbilityBase {
 			if (cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK) || cause.equals(DamageCause.LAVA)) {
 				e.setCancelled(true);
 			}
+		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	public void onAbilityDestroy(AbilityDestroyEvent e) {
+		for (Block block : blocks) {
+			if (block.getType() == Material.FIRE) block.setType(Material.AIR);
 		}
 	}
 

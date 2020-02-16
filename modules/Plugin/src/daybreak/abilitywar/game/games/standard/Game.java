@@ -216,12 +216,12 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	}
 
 	@EventHandler
-	public final void onWeatherChange(WeatherChangeEvent e) {
-		if (isGameStarted() && Settings.getClearWeather()) e.setCancelled(true);
+	public void onWeatherChange(WeatherChangeEvent e) {
+		if (Settings.getClearWeather() && e.toWeatherState()) e.setCancelled(true);
 	}
 
 	@EventHandler
-	public final void onFoodLevelChange(FoodLevelChangeEvent e) {
+	public void onFoodLevelChange(FoodLevelChangeEvent e) {
 		if (Settings.getNoHunger()) {
 			e.setFoodLevel(19);
 		}

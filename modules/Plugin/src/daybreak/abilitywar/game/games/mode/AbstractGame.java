@@ -16,9 +16,13 @@ import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.compat.NMSHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.VersionUtil;
+import daybreak.abilitywar.utils.math.geometry.Boundary.BoundingBox;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -35,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -49,15 +54,13 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 	public enum GAME_UPDATE {START, END}
 
-	private final ArrayList<Observer> observers = new ArrayList<>();
+	private final Set<Observer> observers = new HashSet<>();
 
 	/**
 	 * 게임이 종료될 때 등록 해제되어야 하는 {@link Listener}를 등록합니다.
 	 */
 	public final void attachObserver(Observer observer) {
-		if (!observers.contains(Precondition.checkNotNull(observer))) {
-			observers.add(observer);
-		}
+		observers.add(observer);
 	}
 
 	private boolean restricted = true;
@@ -528,6 +531,147 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 	}
 
-	public enum RestrictionBehavior {STOP_START, PAUSE_RESUME }
+	public enum RestrictionBehavior {STOP_START, PAUSE_RESUME}
+
+	private final Set<CustomEntity> customEntities = new LinkedHashSet<>();
+
+	public List<CustomEntity> getCustomEntities(Chunk chunk) {
+		List<CustomEntity> collect = new LinkedList<>();
+		int x = chunk.getX(), z = chunk.getZ();
+		for (CustomEntity customEntity : customEntities) {
+			Chunk that = customEntity.world.getChunkAt((int) customEntity.x >> 4, (int) customEntity.z >> 4);
+			if (that.getX() == x && that.getZ() == z) {
+				collect.add(customEntity);
+			}
+		}
+		return collect;
+	}
+
+	public class CustomEntity {
+
+		private final CustomEntityBoundingBox boundingBox = new CustomEntityBoundingBox(0, 0, 0, 0, 0, 0);
+		private World world;
+		private double x, y, z;
+
+		public CustomEntity(World world, double x, double y, double z) {
+			this.world = Preconditions.checkNotNull(world);
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			customEntities.add(this);
+		}
+
+		public World getWorld() {
+			return world;
+		}
+
+		public void setWorld(World world) {
+			this.world = Preconditions.checkNotNull(world);
+		}
+
+		public double x() {
+			return x;
+		}
+
+		public double y() {
+			return x;
+		}
+
+		public double z() {
+			return x;
+		}
+
+		public void setX(double x) {
+			this.x = x;
+		}
+
+		public void setY(double y) {
+			this.y = y;
+		}
+
+		public void setZ(double z) {
+			this.z = z;
+		}
+
+		public void setLocation(Location location) {
+			this.world = Preconditions.checkNotNull(location.getWorld());
+			this.x = location.getX();
+			this.y = location.getY();
+			this.z = location.getZ();
+		}
+
+		public Location getLocation() {
+			return new Location(world, x, y, z);
+		}
+
+		public CustomEntity setBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+			this.boundingBox.minX = minX;
+			this.boundingBox.minY = minY;
+			this.boundingBox.minZ = minZ;
+			this.boundingBox.maxX = maxX;
+			this.boundingBox.maxY = maxY;
+			this.boundingBox.maxZ = maxZ;
+			return this;
+		}
+
+		public BoundingBox getBoundingBox() {
+			return boundingBox;
+		}
+
+		public void remove() {
+			customEntities.remove(this);
+		}
+
+		public class CustomEntityBoundingBox implements BoundingBox {
+
+			private double minX, minY, minZ, maxX, maxY, maxZ;
+
+			public CustomEntityBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+				this.minX = minX;
+				this.minY = minY;
+				this.minZ = minZ;
+				this.maxX = maxX;
+				this.maxY = maxY;
+				this.maxZ = maxZ;
+			}
+
+			@Override
+			public double getMinX() {
+				return x + minX;
+			}
+
+			@Override
+			public double getMinY() {
+				return y + minY;
+			}
+
+			@Override
+			public double getMinZ() {
+				return z + minZ;
+			}
+
+			@Override
+			public double getMaxX() {
+				return x + maxX;
+			}
+
+			@Override
+			public double getMaxY() {
+				return y + maxY;
+			}
+
+			@Override
+			public double getMaxZ() {
+				return z + maxZ;
+			}
+
+			@Override
+			public Location getLocation() {
+				return CustomEntity.this.getLocation();
+			}
+
+		}
+
+	}
 
 }

@@ -12,7 +12,6 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.message.KoreanUtil;
@@ -149,19 +148,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 				}
 
 				if (Settings.getNoHunger()) {
-					new GameTimer(TaskType.INFINITE, -1) {
-						@Override
-						public void onStart() {
-							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
-						}
-
-						@Override
-						public void run(int count) {
-							for (Participant participant : getParticipants()) {
-								participant.getPlayer().setFoodLevel(19);
-							}
-						}
-					}.setPeriod(TimeUnit.TICKS, 1).start();
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 				}

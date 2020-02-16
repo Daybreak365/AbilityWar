@@ -25,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -145,16 +144,14 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 		private final Player player;
 		private final Location location;
-		private final Vector vector;
 		private final double health;
 		private final int fireTicks;
 		private final float fallDistance;
 		private final Collection<PotionEffect> potionEffects;
 
-		public PlayerData() {
+		private PlayerData() {
 			this.player = getPlayer();
 			this.location = player.getLocation();
-			this.vector = player.getVelocity();
 			this.health = player.getHealth();
 			this.fireTicks = player.getFireTicks();
 			this.fallDistance = player.getFallDistance();
@@ -163,7 +160,6 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 		private void apply() {
 			player.teleport(location);
-			player.setVelocity(vector);
 			if (health > 0.0) {
 				player.setHealth(Math.min(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), health));
 			}

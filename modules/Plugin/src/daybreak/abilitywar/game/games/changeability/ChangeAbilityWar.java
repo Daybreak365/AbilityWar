@@ -14,7 +14,6 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -65,25 +64,6 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
-
-	private final GameTimer noHunger = new GameTimer(TaskType.INFINITE, -1) {
-
-		@Override
-		public void onStart() {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
-		}
-
-		@Override
-		public void run(int count) {
-			for (Participant p : getParticipants()) {
-				p.getPlayer().setFoodLevel(19);
-			}
-		}
-
-		@Override
-		public void onEnd() {
-		}
-	};
 
 	@Override
 	protected void progressGame(int Seconds) {
@@ -176,8 +156,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				}
 
 				if (Settings.getNoHunger()) {
-					noHunger.setPeriod(TimeUnit.TICKS, 1);
-					noHunger.start();
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 				}

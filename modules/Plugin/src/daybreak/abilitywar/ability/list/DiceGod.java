@@ -87,16 +87,10 @@ public class DiceGod extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer())) {
 			Random r = new Random();
 			if (r.nextInt(6) == 0) {
-				double damage = e.getDamage();
-				e.setDamage(0);
-
-				double health = getPlayer().getHealth() + damage;
-
-				if (health > VersionUtil.getMaxHealth(getPlayer())) health = VersionUtil.getMaxHealth(getPlayer());
-
 				if (!getPlayer().isDead()) {
-					getPlayer().setHealth(health);
+					getPlayer().setHealth(Math.min(getPlayer().getHealth() + e.getFinalDamage(), VersionUtil.getMaxHealth(getPlayer())));
 				}
+				e.setDamage(0);
 			}
 		}
 	}

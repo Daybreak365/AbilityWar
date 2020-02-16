@@ -54,6 +54,7 @@ public class Firewall implements Listener, Observer {
 	public Firewall(AbstractGame game, DeathManager.Handler handler) {
 		this.game = game;
 		this.handler = handler;
+		game.attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 

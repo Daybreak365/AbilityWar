@@ -9,6 +9,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.minecraft.compat.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -40,10 +41,16 @@ public class Flector extends AbilityBase {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(PlayerInteractEvent e) {
 		if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) && e.getItem() != null && materials.contains(e.getItem().getType())) {
-			Projectile projectile = LocationUtil.getEntityLookingAt(Projectile.class, CenteredBoundingBox.of(getPlayer().getLocation(), -1.3, -1.3, -1.3, 1.3, 1.3, 1.3), getPlayer(), 4, null);
+			Projectile projectile = LocationUtil.getEntityLookingAt(Projectile.class, CenteredBoundingBox.of(getPlayer().getLocation(), -1.5, -1.5, -1.5, 1.5, 1.5, 1.5), getPlayer(), 5, null);
 			if (projectile != null && !projectile.isOnGround() && projectile.isValid()) {
-				projectile.setVelocity(getPlayer().getLocation().getDirection().multiply(1.5 * NMSHandler.getNMS().getAttackCooldown(e.getPlayer())));
+				projectile.setVelocity(getPlayer().getLocation().getDirection().multiply(2.2 * NMSHandler.getNMS().getAttackCooldown(e.getPlayer())));
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
+			} else {
+				Deflectable deflectable = LocationUtil.getCustomEntityLookingAt(Deflectable.class, getGame(), CenteredBoundingBox.of(getPlayer().getLocation(), -1.5, -1.5, -1.5, 1.5, 1.5, 1.5), getPlayer(), 5, null);
+				if (deflectable != null) {
+					deflectable.onDeflect(getParticipant(), getPlayer().getLocation().getDirection().multiply(2.2 * NMSHandler.getNMS().getAttackCooldown(e.getPlayer())));
+					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
+				}
 			}
 		}
 	}

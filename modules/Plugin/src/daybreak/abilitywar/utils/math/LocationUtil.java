@@ -1,6 +1,7 @@
 package daybreak.abilitywar.utils.math;
 
 import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
@@ -156,6 +157,36 @@ public class LocationUtil {
 									boundingBox.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityZ + boundaryData.getMaxZ() &&
 									(predicate == null || predicate.test(e))) {
 								return (T) e;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getCustomEntityLookingAt(Class<T> entityType, AbstractGame game, CenteredBoundingBox boundingBox, LivingEntity criterion, int maxDistance, Predicate<CustomEntity> predicate) {
+		if (criterion == null || maxDistance <= 0) return null;
+		World world = criterion.getWorld();
+		Iterator<Block> iterator = new BlockIterator(criterion, maxDistance);
+		while (iterator.hasNext()) {
+			Block block = iterator.next();
+			if (block.getType().isOccluding()) return null;
+			boundingBox.setLocation(block.getLocation());
+			Chunk blockChunk = block.getChunk();
+			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
+			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
+				for (int z = blockChunkZ - 1; z <= blockChunkZ + 1; z++) {
+					Chunk chunk = world.getChunkAt(x, z);
+					for (CustomEntity entity : game.getCustomEntities(chunk)) {
+						if (entityType.isAssignableFrom(entity.getClass())) {
+							BoundingBox entityBox = entity.getBoundingBox();
+							if (entityBox.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityBox.getMaxX() && entityBox.getMinY() < boundingBox.getMaxY() &&
+									boundingBox.getMinY() < entityBox.getMaxY() && entityBox.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityBox.getMaxZ() &&
+									(predicate == null || predicate.test(entity))) {
+								return (T) entity;
 							}
 						}
 					}

@@ -54,7 +54,7 @@ public class GameModeGUI implements Listener {
 		Class<? extends AbstractGame> gameClass = Settings.getGameMode();
 
 		for (String name : GameMode.nameValues()) {
-			Class<? extends AbstractGame> mode = GameMode.getByString(name);
+			Class<? extends AbstractGame> mode = GameMode.getByName(name);
 
 			if (mode != null) {
 				GameManifest manifest = mode.getAnnotation(GameManifest.class);
@@ -139,7 +139,7 @@ public class GameModeGUI implements Listener {
 				if (e.getCurrentItem().getType().equals(Material.BOOK)) {
 					if (e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 						String modeName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-						Class<? extends AbstractGame> gameMode = GameMode.getByString(modeName);
+						Class<? extends AbstractGame> gameMode = GameMode.getByName(modeName);
 						if (gameMode != null) {
 							Configuration.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getName());
 						} else {

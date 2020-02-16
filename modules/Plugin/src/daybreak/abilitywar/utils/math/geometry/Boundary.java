@@ -172,17 +172,11 @@ public class Boundary {
 	public interface BoundingBox {
 
 		double getMinX();
-
 		double getMinY();
-
 		double getMinZ();
-
 		double getMaxX();
-
 		double getMaxY();
-
 		double getMaxZ();
-
 		Location getLocation();
 
 	}

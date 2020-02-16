@@ -65,7 +65,7 @@ public class AbilityFactory {
 				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
 					Messager.sendConsoleErrorMessage(e.getMessage());
 				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록중 오류가 발생하였습니다."));
+					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록 중 오류가 발생하였습니다."));
 				}
 			}
 		}

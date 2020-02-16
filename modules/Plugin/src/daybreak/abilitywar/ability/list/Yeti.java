@@ -17,7 +17,9 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(Name = "설인", Rank = Rank.S, Species = Species.HUMAN)
@@ -86,8 +88,11 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public void run(int sec) {
-			for (Block b : LocationUtil.getBlocks2D(center, count, true, true)) {
-				Block db = b.getLocation().subtract(0, 1, 0).getBlock();
+			Location playerLocation = getPlayer().getLocation();
+			World world = getPlayer().getWorld();
+			for (Block b : LocationUtil.getBlocks2D(center, count, true, false)) {
+				b = world.getBlockAt(b.getX(), LocationUtil.getFloorYAt(world, playerLocation.getY(), b.getX(), b.getZ()), b.getZ());
+				Block db = b.getRelative(BlockFace.DOWN);
 				Material type = db.getType();
 				if (type.equals(Material.WATER)) {
 					db.setType(Material.PACKED_ICE);

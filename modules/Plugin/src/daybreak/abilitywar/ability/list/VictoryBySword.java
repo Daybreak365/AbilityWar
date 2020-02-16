@@ -87,7 +87,6 @@ public class VictoryBySword extends AbilityBase {
 					location.add(vector);
 				}
 				location.setY(LocationUtil.getFloorYAt(location.getWorld(), player.getLocation().getY(), location.getBlockX(), location.getBlockZ()));
-				Bukkit.broadcastMessage(location.toString());
 				player.teleport(location);
 			}
 		}

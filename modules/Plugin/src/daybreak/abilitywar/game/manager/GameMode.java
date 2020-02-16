@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.manager;
 
+import com.google.common.base.Preconditions;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
@@ -11,14 +12,21 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.squirtgunfight.SummerVacation;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
+import daybreak.abilitywar.game.games.standard.WarGame;
 import daybreak.abilitywar.game.games.teamgame.TeamFight;
 import daybreak.abilitywar.game.games.zerotick.ZeroTick;
+import daybreak.abilitywar.game.manager.GameMode.GameRegistration.Flag;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 게임 모드
@@ -30,10 +38,12 @@ public class GameMode {
 	private GameMode() {
 	}
 
-	private static ArrayList<Class<? extends AbstractGame>> modeList = new ArrayList<>();
+	private static final Map<String, Class<? extends AbstractGame>> usedNames = new LinkedHashMap<>();
+	private static final Map<Class<? extends AbstractGame>, GameRegistration> registeredModes = new HashMap<>();
 
 	static {
 		registerGameMode(DefaultGame.class);
+		registerGameMode(WarGame.class);
 		registerGameMode(ChangeAbilityWar.class);
 		registerGameMode(SummerVacation.class);
 		registerGameMode(TeamFight.class);
@@ -43,67 +53,34 @@ public class GameMode {
 	}
 
 	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {
-		if (!modeList.contains(gameClass)) {
-			GameManifest manifest = gameClass.getAnnotation(GameManifest.class);
-			if (manifest != null) {
-				if (!containsName(manifest.Name())) {
-					try {
-						gameClass.getConstructor();
-						modeList.add(gameClass);
-					} catch (NoSuchMethodException | SecurityException e) {
-						Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&',
-								"&e" + gameClass.getName() + " &f게임모드는 생성자가 올바르지 않아 등록되지 않았습니다."));
+		if (!registeredModes.containsKey(gameClass)) {
+			try {
+				GameRegistration registration = new GameRegistration(gameClass);
+				String name = registration.getManifest().Name();
+				if (!usedNames.containsKey(name)) {
+					if (!registration.hasFlag(Flag.BETA) || DeveloperSettings.isEnabled()) {
+						registeredModes.put(gameClass, registration);
+						usedNames.put(name, gameClass);
 					}
 				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&',
-							"&e" + gameClass.getName() + " &f게임모드는 겹치는 이름이 있어 등록되지 않았습니다."));
+					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
-			} else {
-				Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&',
-						"&e" + gameClass.getName() + " &f게임모드는 GameManifest 어노테이션이 존재하지 않아 등록되지 않았습니다."));
-			}
-		} else {
-			Messager.sendConsoleErrorMessage(gameClass.getName() + " 게임모드는 겹치는 이름이 있어 등록되지 않았습니다.");
-		}
-	}
-
-	private static boolean containsName(String name) {
-		for (Class<? extends AbstractGame> gameClass : modeList) {
-			GameManifest manifest = gameClass.getAnnotation(GameManifest.class);
-			if (manifest != null) {
-				if (manifest.Name().equalsIgnoreCase(name)) {
-					return true;
+			} catch (NoSuchMethodException | IllegalAccessException | NullPointerException e) {
+				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
+					Messager.sendConsoleErrorMessage(e.getMessage());
+				} else {
+					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임 모드 등록 중 오류가 발생하였습니다."));
 				}
 			}
 		}
-
-		return false;
 	}
 
 	public static List<String> nameValues() {
-		ArrayList<String> Values = new ArrayList<String>();
-
-		for (Class<? extends AbstractGame> gameClass : modeList) {
-			GameManifest manifest = gameClass.getAnnotation(GameManifest.class);
-			if (manifest != null) {
-				Values.add(manifest.Name());
-			}
-		}
-
-		return Values;
+		return new ArrayList<>(usedNames.keySet());
 	}
 
-	public static Class<? extends AbstractGame> getByString(String name) {
-		for (Class<? extends AbstractGame> gameClass : modeList) {
-			GameManifest manifest = gameClass.getAnnotation(GameManifest.class);
-			if (manifest != null) {
-				if (manifest.Name().equalsIgnoreCase(name)) {
-					return gameClass;
-				}
-			}
-		}
-
-		return null;
+	public static Class<? extends AbstractGame> getByName(String name) {
+		return usedNames.get(name);
 	}
 
 	public static boolean startGame() {
@@ -116,6 +93,50 @@ public class GameMode {
 			AbilityWarThread.StartGame(new DefaultGame());
 			return false;
 		}
+	}
+
+	public static class GameRegistration {
+
+		private final Class<? extends AbstractGame> clazz;
+		private final Constructor<? extends AbstractGame> constructor;
+		private final GameManifest manifest;
+		private final int flag;
+
+		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException {
+			this.clazz = clazz;
+			this.constructor = clazz.getConstructor();
+
+			if (!clazz.isAnnotationPresent(GameManifest.class))
+				throw new IllegalArgumentException("GameManifest가 없는 게임 모드입니다.");
+			this.manifest = clazz.getAnnotation(GameManifest.class);
+			Preconditions.checkNotNull(manifest.Name());
+			Preconditions.checkNotNull(manifest.Description());
+
+			int flag = 0x0;
+			if (clazz.isAnnotationPresent(Beta.class)) flag |= Flag.BETA;
+			this.flag = flag;
+		}
+
+		public Class<? extends AbstractGame> getGameClass() {
+			return clazz;
+		}
+
+		public Constructor<? extends AbstractGame> getConstructor() {
+			return constructor;
+		}
+
+		public GameManifest getManifest() {
+			return manifest;
+		}
+
+		public boolean hasFlag(int flag) {
+			return (this.flag & flag) == flag;
+		}
+
+		public static class Flag {
+			public static final int BETA = 0x1;
+		}
+
 	}
 
 }

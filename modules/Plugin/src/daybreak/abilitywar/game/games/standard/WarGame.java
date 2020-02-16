@@ -1,26 +1,31 @@
-package daybreak.abilitywar.game.games.zerotick;
+package daybreak.abilitywar.game.games.standard;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
 import daybreak.abilitywar.game.games.mode.GameManifest;
-import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.game.games.mode.decorator.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.compat.NMSHandler;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
@@ -30,10 +35,10 @@ import java.util.List;
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "제로틱", Description = {"§f공격 쿨타임 따위는 존재하지 않는 게임 모드!", "§f공격 속도 제한 없이 시원하게 싸워보세요!"})
-public class ZeroTick extends Game implements DefaultKitHandler, Observer {
+@GameManifest(Name = "능력자 전쟁", Description = {"§f우승 조건이 있는 능력자 전쟁 플러그인의 기본 게임입니다."})
+public class WarGame extends Game implements DefaultKitHandler, Winnable, Observer {
 
-	public ZeroTick() {
+	public WarGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(Settings.InvincibilitySettings.isEnabled());
 		attachObserver(this);
@@ -57,16 +62,16 @@ public class ZeroTick extends Game implements DefaultKitHandler, Observer {
 					Bukkit.broadcastMessage(line);
 				}
 
-				if (getParticipants().size() < 1) {
+				if (getParticipants().size() < 2) {
 					AbilityWarThread.StopGame();
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&72명&8)"));
 				}
 				break;
 			case 3:
 				lines = Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&cZeroTick &f- &6제로틱"),
-						ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-						ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"),
+						ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
+						ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
+						ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
 						ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908")
 				);
 
@@ -124,7 +129,7 @@ public class ZeroTick extends Game implements DefaultKitHandler, Observer {
 			case 15:
 				for (String line : Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-						ChatColor.translateAlternateColorCodes('&', "&f                &cZeroTick &f- &6제로틱       "),
+						ChatColor.translateAlternateColorCodes('&', "&f             &cAbilityWar &f- &6능력자 전쟁  "),
 						ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
 						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"))) {
 					Bukkit.broadcastMessage(line);
@@ -164,42 +169,64 @@ public class ZeroTick extends Game implements DefaultKitHandler, Observer {
 					setRestricted(false);
 				}
 
-				new GameTimer(TaskType.INFINITE, -1) {
-					@Override
-					protected void run(int count) {
-						for (World world : Bukkit.getWorlds()) {
-							for (LivingEntity entity : world.getLivingEntities()) {
-								entity.setNoDamageTicks(0);
-							}
-						}
-					}
-				}.setPeriod(TimeUnit.TICKS, 1).start();
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a공격 쿨타임이 &f제로틱&a으로 변경되었습니다."));
-
 				ScriptManager.RunAll(this);
 
 				startGame();
 				break;
 		}
 	}
-/*
+
 	@EventHandler
-	private void onInteract(PlayerInteractEvent e) {
-		if (e.getItem() != null && (e.getItem().getType().equals(Material.BOW) || (ServerVersion.getVersion() >= 14 && MaterialX.CROSSBOW.compareType(e.getItem())))) {
-			e.setCancelled(true);
-			Projectile projectile = e.getPlayer().launchProjectile(Arrow.class, e.getPlayer().getLocation().getDirection().multiply(2));
-			EntityShootBowEvent event = new EntityShootBowEvent(e.getPlayer(), e.getItem(), projectile,5.0f);
-			Bukkit.getPluginManager().callEvent(event);
-			if (event.isCancelled()) projectile.remove();
-			try {
-				Constructor<EntityShootBowEvent> constructor = EntityShootBowEvent.class.getConstructor(LivingEntity.class, ItemStack.class, Projectile.class, float.class);
-				Bukkit.getPluginManager().callEvent(constructor.newInstance(e.getPlayer(), e.getItem(), projectile, 5.0f));
-			} catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
-				ex.printStackTrace();
+	private void onPlayerQuit(PlayerQuitEvent e) {
+		Player player = e.getPlayer();
+		if (isParticipating(player)) {
+			Participant quitParticipant = getParticipant(player);
+			getDeathManager().Operation(quitParticipant);
+			Player winner = null;
+			for (Participant participant : getParticipants()) {
+				if (!getDeathManager().isDead(player)) {
+					if (winner == null) {
+						winner = player;
+					} else {
+						return;
+					}
+				}
 			}
+			if (winner != null) Win(getParticipant(winner));
 		}
 	}
-	*/
+
+	@Override
+	public DeathManager newDeathManager() {
+		return new DeathManager(this) {
+			public void Operation(Participant victim) {
+				switch (DeathSettings.getOperation()) {
+					case 탈락:
+						Eliminate(victim);
+						deadPlayers.add(victim.getPlayer().getUniqueId());
+						break;
+					case 관전모드:
+					case 없음:
+						victim.getPlayer().setGameMode(GameMode.SPECTATOR);
+						NMSHandler.getNMS().respawn(victim.getPlayer());
+						deadPlayers.add(victim.getPlayer().getUniqueId());
+						break;
+				}
+				Player winner = null;
+				for (Participant participant : getParticipants()) {
+					Player player = participant.getPlayer();
+					if (!isDead(player)) {
+						if (winner == null) {
+							winner = player;
+						} else {
+							return;
+						}
+					}
+				}
+				if (winner != null) Win(getParticipant(winner));
+			}
+		};
+	}
 
 	@Override
 	public void update(GAME_UPDATE update) {

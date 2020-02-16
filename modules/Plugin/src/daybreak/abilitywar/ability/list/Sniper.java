@@ -7,23 +7,27 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.games.mode.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
@@ -74,7 +78,7 @@ public class Sniper extends AbilityBase {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
 			Arrow arrow = (Arrow) e.getProjectile();
-			new Bullet(arrow.getLocation(), arrow.getVelocity(), BULLET_COLOR).start();
+			new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), BULLET_COLOR).start();
 		}
 	}
 
@@ -84,15 +88,17 @@ public class Sniper extends AbilityBase {
 
 	public class Bullet extends Timer {
 
-		private final CenteredBoundingBox centeredBoundingBox;
+		private final Entity shooter;
+		private final CustomEntity entity;
 		private final Vector forward;
 
 		private final RGB color;
 
-		private Bullet(Location startLocation, Vector arrowVelocity, RGB color) {
+		private Bullet(Entity shooter, Location startLocation, Vector arrowVelocity, RGB color) {
 			super(160);
 			setPeriod(TimeUnit.TICKS, 1);
-			this.centeredBoundingBox = new CenteredBoundingBox(startLocation, -.75, -.75, -.75, .75, .75, .75);
+			this.shooter = shooter;
+			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(2.5);
 			this.color = color;
 			this.lastLocation = startLocation;
@@ -105,7 +111,7 @@ public class Sniper extends AbilityBase {
 			Location newLocation = lastLocation.clone().add(forward);
 			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 20); iterator.hasNext(); ) {
 				Location location = iterator.next();
-				centeredBoundingBox.setLocation(location);
+				entity.setLocation(location);
 				Block block = location.getBlock();
 				Material type = block.getType();
 				if (type.isSolid()) {
@@ -116,10 +122,10 @@ public class Sniper extends AbilityBase {
 						return;
 					}
 				}
-				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {
-					if (!getPlayer().equals(damageable)) {
+				for (Damageable damageable : LocationUtil.getConflictingDamageables(entity.getBoundingBox())) {
+					if (!shooter.equals(damageable)) {
 						double damage = Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10);
-						damageable.damage(damage, getPlayer());
+						damageable.damage(damage, shooter);
 						stop(false);
 						return;
 					}
@@ -127,6 +133,31 @@ public class Sniper extends AbilityBase {
 				ParticleLib.REDSTONE.spawnParticle(location, color);
 			}
 			lastLocation = newLocation;
+		}
+
+		@Override
+		protected void onEnd() {
+			entity.remove();
+		}
+
+		@Override
+		protected void onSilentEnd() {
+			entity.remove();
+		}
+
+		public class ArrowEntity extends CustomEntity implements Deflectable {
+
+			public ArrowEntity(World world, double x, double y, double z) {
+				getGame().super(world, x, y, z);
+			}
+
+			@Override
+			public void onDeflect(Participant deflector, Vector newDirection) {
+				stop(false);
+				Player deflectedPlayer = deflector.getPlayer();
+				new Bullet(deflectedPlayer, lastLocation, newDirection, color).start();
+			}
+
 		}
 
 	}

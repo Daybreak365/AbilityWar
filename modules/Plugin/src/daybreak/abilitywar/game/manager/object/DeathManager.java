@@ -9,6 +9,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.minecraft.compat.NMSHandler;
 import daybreak.abilitywar.utils.message.KoreanUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -116,6 +117,7 @@ public class DeathManager implements Listener, Observer {
 				break;
 			case 관전모드:
 				victim.getPlayer().setGameMode(GameMode.SPECTATOR);
+				NMSHandler.getNMS().respawn(victim.getPlayer());
 				deadPlayers.add(victim.getPlayer().getUniqueId());
 				break;
 			case 없음:

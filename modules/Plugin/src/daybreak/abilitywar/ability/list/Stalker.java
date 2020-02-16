@@ -51,7 +51,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				ChatColor.translateAlternateColorCodes('&', "&f동일한 플레이어를 연속적으로 공격할 때마다 스택이 쌓이며 실명 효과를 주고,"),
 				ChatColor.translateAlternateColorCodes('&', "&f다른 플레이어를 공격하면 스택이 초기화됩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f플레이어를 공격할 때마다 쿨타임이 스택 만큼 감소하며, 1 스택 당"),
-				ChatColor.translateAlternateColorCodes('&', "&f0.15의 추가 대미지를 냅니다."));
+				ChatColor.translateAlternateColorCodes('&', "&f0.1의 추가 대미지를 냅니다."));
 	}
 
 	private boolean skillRunning = false;
@@ -144,18 +144,18 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				SOUND_RUNNABLES.get(soundNumber).run();
 				cooldownTimer.setCount(Math.max(0, cooldownTimer.getCount() - stack));
 				PotionEffects.BLINDNESS.addPotionEffect(victim, 20, 0, true);
-				e.setDamage(e.getDamage() + (stack * 0.15));
+				e.setDamage(e.getDamage() + (stack * .1));
 			}
 		}
 	}
 
 	@SubscribeEvent
-	private void onSlot(PlayerGameModeChangeEvent e) {
+	private void onGameModeChange(PlayerGameModeChangeEvent e) {
 		if (skillRunning) e.setCancelled(true);
 	}
 
 	@SubscribeEvent
-	private void onSlot(PlayerTeleportEvent e) {
+	private void onPlayerTeleport(PlayerTeleportEvent e) {
 		if (skillRunning) e.setCancelled(true);
 	}
 

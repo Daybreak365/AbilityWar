@@ -6,9 +6,12 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.games.mode.AbstractGame.CustomEntity;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -16,17 +19,18 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
-import daybreak.abilitywar.utils.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.util.Vector;
 
@@ -71,23 +75,14 @@ public class PenetrationArrow extends AbilityBase {
 
 	private final int bulletCount = BulletConfig.getValue();
 
-	private final Vectors sphere = LocationUtil.getSphere(4, 10);
+	private static final Vectors sphere = LocationUtil.getSphere(4, 10);
 	private final Random random = new Random();
 	private final List<ArrowType> arrowTypes = Arrays.asList(
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&c절단")) {
 				@Override
 				protected void launchArrow(Arrow arrow) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
-					new Parabola(arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, RED) {
-						@Override
-						public void onHit(Damageable damager, Damageable victim) {
-							ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
-							if (victim instanceof LivingEntity) {
-								((LivingEntity) victim).setNoDamageTicks(0);
-							}
-							victim.damage(5, damager);
-						}
-					}.start();
+					new Parabola(getPlayer(), OnHitBehavior.CUT, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, RED).start();
 				}
 			},
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&5중력")) {
@@ -95,17 +90,7 @@ public class PenetrationArrow extends AbilityBase {
 				protected void launchArrow(Arrow arrow) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.D));
-					new Parabola(arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, PURPLE) {
-						@Override
-						public void onHit(Damageable damager, Damageable victim) {
-							for (Location location : sphere.toLocations(victim.getLocation())) {
-								ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
-							}
-							for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(victim.getLocation(), 4, 4)) {
-								damageable.setVelocity(victim.getLocation().toVector().subtract(damageable.getLocation().toVector()).multiply(0.75));
-							}
-						}
-					}.start();
+					new Parabola(getPlayer(), OnHitBehavior.GRAVITY, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, PURPLE).start();
 				}
 			},
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&e풍월")) {
@@ -113,12 +98,7 @@ public class PenetrationArrow extends AbilityBase {
 				protected void launchArrow(Arrow arrow) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					SoundLib.XYLOPHONE.playInstrument(getPlayer(), Note.flat(1, Note.Tone.B));
-					new Parabola(arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, YELLOW) {
-						@Override
-						public void onHit(Damageable damager, Damageable victim) {
-							victim.setVelocity(damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-0.35).setY(0));
-						}
-					}.start();
+					new Parabola(getPlayer(), OnHitBehavior.WIND, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, YELLOW).start();
 				}
 			}
 	);
@@ -189,19 +169,23 @@ public class PenetrationArrow extends AbilityBase {
 
 	private static final double GRAVITATIONAL_CONSTANT = 3;
 
-	public abstract class Parabola extends Timer {
+	public class Parabola extends Timer {
 
-		private final CenteredBoundingBox centeredBoundingBox;
+		private final Damageable shooter;
+		private final OnHitBehavior onHitBehavior;
+		private final CustomEntity entity;
 		private final double velocity;
 		private final double sin;
 		private final Vector forward;
 
 		private final ParticleLib.RGB color;
 
-		private Parabola(Location startLocation, Vector arrowVelocity, double angle, ParticleLib.RGB color) {
+		private Parabola(Damageable shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, ParticleLib.RGB color) {
 			super(300);
 			setPeriod(TimeUnit.TICKS, 1);
-			this.centeredBoundingBox = new CenteredBoundingBox(startLocation, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+			this.shooter = shooter;
+			this.onHitBehavior = onHitBehavior;
+			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 			this.velocity = Math.sqrt((arrowVelocity.getX() * arrowVelocity.getX()) + (arrowVelocity.getY() * arrowVelocity.getY()) + (arrowVelocity.getZ() * arrowVelocity.getZ()));
 			this.sin = FastMath.sin(Math.toRadians(angle));
 			this.forward = arrowVelocity.setY(arrowVelocity.getY() * 0.7);
@@ -221,11 +205,11 @@ public class PenetrationArrow extends AbilityBase {
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
 			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 8); iterator.hasNext(); ) {
 				Location location = iterator.next();
-				centeredBoundingBox.setLocation(location);
-				for (Damageable damageable : LocationUtil.getConflictingDamageables(centeredBoundingBox)) {
-					if (!getPlayer().equals(damageable) && !attacked.contains(damageable)) {
+				entity.setLocation(location);
+				for (Damageable damageable : LocationUtil.getConflictingDamageables(entity.getBoundingBox())) {
+					if (!shooter.equals(damageable) && !attacked.contains(damageable)) {
 						damageable.damage(Math.round(2.5 * velocity * 10) / 10.0, getPlayer());
-						onHit(getPlayer(), damageable);
+						onHitBehavior.onHit(shooter, damageable);
 						attacked.add(damageable);
 					}
 				}
@@ -234,8 +218,63 @@ public class PenetrationArrow extends AbilityBase {
 			lastLocation = newLocation;
 		}
 
-		public abstract void onHit(Damageable damager, Damageable victim);
+		@Override
+		protected void onEnd() {
+			entity.remove();
+		}
 
+		@Override
+		protected void onSilentEnd() {
+			entity.remove();
+		}
+
+		public class ArrowEntity extends CustomEntity implements Deflectable {
+
+			public ArrowEntity(World world, double x, double y, double z) {
+				getGame().super(world, x, y, z);
+			}
+
+			@Override
+			public void onDeflect(Participant deflector, Vector newDirection) {
+				stop(false);
+				Player deflectedPlayer = deflector.getPlayer();
+				new Parabola(deflectedPlayer, onHitBehavior, lastLocation, newDirection, getPlayer().getLocation().getDirection().getY() * 90, color).start();
+			}
+
+		}
+
+	}
+
+	public interface OnHitBehavior {
+		OnHitBehavior CUT = new OnHitBehavior() {
+			@Override
+			public void onHit(Damageable damager, Damageable victim) {
+				ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
+				if (victim instanceof LivingEntity) {
+					((LivingEntity) victim).setNoDamageTicks(0);
+				}
+				victim.damage(5, damager);
+			}
+		};
+		OnHitBehavior GRAVITY = new OnHitBehavior() {
+			@Override
+			public void onHit(Damageable damager, Damageable victim) {
+				for (Location location : sphere.toLocations(victim.getLocation())) {
+					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
+				}
+				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(victim.getLocation(), 4, 4)) {
+					damageable.setVelocity(victim.getLocation().toVector().subtract(damageable.getLocation().toVector()).multiply(0.75));
+				}
+			}
+		};
+		OnHitBehavior WIND = new OnHitBehavior() {
+			@Override
+			public void onHit(Damageable damager, Damageable victim) {
+				victim.setVelocity(damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-0.35).setY(0));
+			}
+		};
+
+		void onHit(Damageable damager, Damageable victim);
 	}
 
 }

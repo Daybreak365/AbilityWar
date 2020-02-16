@@ -1,6 +1,5 @@
 package daybreak.abilitywar.game.manager.gui;
 
-import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Bukkit;
@@ -19,7 +18,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 기여자 목록 GUI
@@ -47,19 +48,17 @@ public class SpecialThanksGUI implements Listener {
 				this.name = "ERROR";
 			}
 			this.role = role;
+			for (int i = 0; i < role.length; i++) {
+				role[i] = ChatColor.WHITE + role[i];
+			}
 		}
 
 		public String getName() {
 			return name;
 		}
 
-		public ArrayList<String> getRole() {
-			ArrayList<String> list = new ArrayList<String>();
-			for (String s : role) {
-				list.add(ChatColor.translateAlternateColorCodes('&', "&f" + s));
-			}
-
-			return list;
+		public List<String> getRole() {
+			return Arrays.asList(role);
 		}
 
 	}
@@ -82,15 +81,15 @@ public class SpecialThanksGUI implements Listener {
 		currentPage = page;
 		int count = 0;
 
-		for (SpecialThank st : SpecialThanks) {
-			ItemStack stack = ItemLib.getSkull(st.getName());
+		for (SpecialThank thank : SpecialThanks) {
+			ItemStack stack = ItemLib.getSkull(thank.getName());
 			SkullMeta meta = (SkullMeta) stack.getItemMeta();
-			if (!st.getName().equals("ERROR")) {
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + st.getName()));
-				meta.setLore(st.getRole());
+			if (!thank.getName().equals("ERROR")) {
+				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + thank.getName()));
+				meta.setLore(thank.getRole());
 			} else {
 				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c오류"));
-				meta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
+				meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
 			}
 
 			stack.setItemMeta(meta);

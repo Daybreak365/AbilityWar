@@ -13,7 +13,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.message.KoreanUtil;
@@ -33,7 +33,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@GameManifest(Name = "믹스 능력자 전쟁 (BETA)", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
+@GameManifest(Name = "믹스 능력자 전쟁", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
+@Beta
 public class MixAbility extends Game implements DefaultKitHandler {
 
 	private static final Logger logger = Logger.getLogger(MixAbility.class.getName());
@@ -140,19 +141,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				}
 
 				if (Configuration.Settings.getNoHunger()) {
-					new GameTimer(TaskType.INFINITE, -1) {
-						@Override
-						public void onStart() {
-							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
-						}
-
-						@Override
-						public void run(int count) {
-							for (Participant participant : getParticipants()) {
-								participant.getPlayer().setFoodLevel(19);
-							}
-						}
-					}.setPeriod(TimeUnit.TICKS, 1).start();
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
 				}

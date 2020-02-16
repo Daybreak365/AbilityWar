@@ -54,7 +54,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		boolean invincible = Settings.InvincibilitySettings.isEnabled();
 		setRestricted(invincible);
-		this.MaxKill = SummerVacationSettings.getMaxKill();
+		this.maxKill = SummerVacationSettings.getMaxKill();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -63,25 +63,6 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 			: getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy");
 
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
-
-	private final GameTimer noHunger = new GameTimer(TaskType.INFINITE, -1) {
-
-		@Override
-		public void onStart() {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a배고픔 무제한이 적용됩니다."));
-		}
-
-		@Override
-		public void run(int count) {
-			for (Participant p : getParticipants()) {
-				p.getPlayer().setFoodLevel(19);
-			}
-		}
-
-		@Override
-		public void onEnd() {
-		}
-	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
 	protected void progressGame(int Seconds) {
@@ -146,7 +127,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		}
 	}
 
-	private final List<Participant> Killers = new ArrayList<Participant>();
+	private final List<Participant> killers = new ArrayList<>();
 
 	private final GameTimer Glow = new GameTimer(TaskType.INFINITE, -1) {
 
@@ -160,13 +141,13 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 		@Override
 		protected void run(int count) {
-			for (Participant p : Killers) {
+			for (Participant p : killers) {
 				PotionEffects.GLOWING.addPotionEffect(p.getPlayer(), 20, 0, true);
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 10);
 
-	private final int MaxKill;
+	private final int maxKill;
 
 	@Override
 	public DeathManager newDeathManager() {
@@ -224,14 +205,14 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 				if (victimPlayer.getKiller() != null) {
 					Participant VictimPart = getParticipant(victimPlayer);
-					if (VictimPart != null && Killers.contains(VictimPart)) Killers.remove(VictimPart);
+					if (VictimPart != null && killers.contains(VictimPart)) killers.remove(VictimPart);
 					Participant Killer = getParticipant(victimPlayer.getKiller());
 					if (Killer != null && !Killer.getPlayer().equals(victimPlayer)) {
-						if (!Killers.contains(Killer)) Killers.add(Killer);
+						if (!killers.contains(Killer)) killers.add(Killer);
 						Score score = killObjective.getScore(Killer.getPlayer().getName());
 						if (score.isScoreSet()) {
 							score.setScore(score.getScore() + 1);
-							if (score.getScore() >= MaxKill) {
+							if (score.getScore() >= maxKill) {
 								Win(Killer);
 							}
 						}
@@ -300,7 +281,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 			}
 		}
 
-		noHunger.start();
+		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
 
 		Glow.start();
 

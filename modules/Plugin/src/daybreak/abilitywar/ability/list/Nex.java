@@ -19,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
-@AbilityManifest(Name = "넥스", Rank = Rank.B, Species = Species.GOD)
+@AbilityManifest(Name = "넥스", Rank = Rank.A, Species = Species.GOD)
 public class Nex extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
@@ -50,8 +51,8 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 	public Nex(Participant participant) {
 		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다가 바닥으로 내려 찍으며"),
-				ChatColor.translateAlternateColorCodes('&', "주변의 플레이어들에게 대미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다 바라보는 방향으로 날아가"),
+				ChatColor.translateAlternateColorCodes('&', "&f내려 찍으며 주변의 플레이어들에게 대미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
@@ -93,7 +94,8 @@ public class Nex extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onEnd() {
 			skillEnabled = true;
-			getPlayer().setVelocity(getPlayer().getVelocity().add(new Vector(0, -4, 0)));
+			Vector playerDirection = getPlayer().getLocation().getDirection();
+			getPlayer().setVelocity(getPlayer().getVelocity().add(playerDirection.normalize().multiply(8).setY(-4)));
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 10);
@@ -151,11 +153,15 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 			if (ServerVersion.getVersion() >= 13) {
 				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);
 					FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
 				}
 			} else {
 				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);
 					FallingBlocks.spawnFallingBlock(location, block.getType(), block.getData(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
 				}
