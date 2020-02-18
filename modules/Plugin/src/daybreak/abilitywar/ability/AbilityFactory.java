@@ -204,7 +204,7 @@ public class AbilityFactory {
 				if (subscribeEvent != null) {
 					Class<?>[] parameters = method.getParameterTypes();
 					if (parameters.length == 1 && Event.class.isAssignableFrom(parameters[0])) {
-						eventhandlers.put((Class<? extends Event>) parameters[0], Pair.of(method, subscribeEvent));
+						eventhandlers.putIfAbsent((Class<? extends Event>) parameters[0], Pair.of(method, subscribeEvent));
 					}
 				}
 			}

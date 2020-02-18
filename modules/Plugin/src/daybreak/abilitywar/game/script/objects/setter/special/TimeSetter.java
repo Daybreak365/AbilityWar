@@ -2,7 +2,7 @@ package daybreak.abilitywar.game.script.objects.setter.special;
 
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.objects.setter.Setter;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
@@ -47,7 +47,7 @@ public class TimeSetter extends Setter<Integer> {
 
 	@Override
 	public ItemStack getItem() {
-		ItemStack watch = new ItemStack(MaterialLib.CLOCK.getMaterial());
+		ItemStack watch = MaterialX.CLOCK.parseItem();
 		ItemMeta watchMeta = watch.getItemMeta();
 		watchMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 

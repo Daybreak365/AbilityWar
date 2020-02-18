@@ -1,12 +1,10 @@
 package daybreak.abilitywar.game.manager;
 
-import org.bukkit.event.Listener;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SpectatorManager implements Listener {
+public class SpectatorManager {
 
 	private SpectatorManager() {
 	}
@@ -18,9 +16,7 @@ public class SpectatorManager implements Listener {
 	}
 
 	public static void addSpectator(String name) {
-		if (!spectators.contains(name)) {
-			spectators.add(name);
-		}
+		spectators.add(name);
 	}
 
 	public static void removeSpectator(String name) {

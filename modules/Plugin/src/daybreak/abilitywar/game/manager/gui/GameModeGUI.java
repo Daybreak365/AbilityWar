@@ -7,7 +7,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.manager.GameMode;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -62,7 +62,7 @@ public class GameModeGUI implements Listener {
 					ItemStack is;
 
 					if (gameClass.equals(mode)) {
-						is = MaterialLib.ENCHANTED_BOOK.getItem();
+						is = MaterialX.ENCHANTED_BOOK.parseItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
 						List<String> lore = Messager.asList(manifest.Description());
@@ -70,7 +70,7 @@ public class GameModeGUI implements Listener {
 						im.setLore(lore);
 						is.setItemMeta(im);
 					} else {
-						is = MaterialLib.BOOK.getItem();
+						is = MaterialX.BOOK.parseItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
 						List<String> lore = Messager.asList(manifest.Description());

@@ -4,7 +4,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ public class SpawnWizard extends SettingWizard {
 
 	@Override
 	void openGUI(Inventory gui) {
-		ItemStack deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
+		ItemStack deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
 		ItemMeta decoMeta = deco.getItemMeta();
 		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		deco.setItemMeta(decoMeta);

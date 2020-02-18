@@ -6,7 +6,6 @@ import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.base.Precondition;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -64,24 +63,12 @@ public abstract class AbilitySelect extends GameTimer {
 		return Collections.unmodifiableCollection(selectorData.selectors);
 	}
 
-	private int getLeftPlayersCount() {
-		int count = 0;
-		for (Participant p : getSelectors())
-			if (!hasDecided(p))
-				count++;
-		return count;
-	}
-
 	/**
 	 * {@link Participant}의 능력 선택 여부를 반환합니다. 능력을 선택중인 {@link Participant}가 아닐 경우
 	 * false를 반환합니다.
 	 */
 	public final boolean hasDecided(Participant participant) {
-		if (selectorMap != null && selectorMap.containsKey(participant)) {
-			return selectorMap.get(participant) <= 0;
-		} else {
-			return false;
-		}
+		return selectorMap != null && selectorMap.containsKey(participant) && selectorMap.get(participant) <= 0;
 	}
 
 	public final void reset() {
@@ -112,6 +99,12 @@ public abstract class AbilitySelect extends GameTimer {
 		}
 	}
 
+	private int getLeftPlayers() {
+		int count = 0;
+		for (Participant participant : getSelectors()) if (!hasDecided(participant)) count++;
+		return count;
+	}
+
 	/**
 	 * {@link Participant}에게 남은 능력 변경 횟수를 설정합니다.
 	 */
@@ -124,7 +117,7 @@ public abstract class AbilitySelect extends GameTimer {
 			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요."));
 
 			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."));
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayersCount() + "명"));
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayers() + "명"));
 		}
 	}
 
@@ -169,13 +162,10 @@ public abstract class AbilitySelect extends GameTimer {
 
 	@Override
 	public void run(int count) {
-		if (!isEveryoneSelected()) {
+		if (!hasEveryoneSelected()) {
 			if (count % 20 == 0) {
-				for (String m : Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."),
-						ChatColor.translateAlternateColorCodes('&', "&c/aw yes 또는 /aw no 명령어로 능력을 확정해주세요."))) {
-					Bukkit.broadcastMessage(m);
-				}
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c/aw yes 또는 /aw no 명령어로 능력을 확정해주세요."));
 			}
 		} else {
 			this.stop(false);
@@ -190,9 +180,9 @@ public abstract class AbilitySelect extends GameTimer {
 	/**
 	 * 능력을 선택중인 모든 참가자가 능력을 결정했는지의 여부를 반환합니다.
 	 */
-	private boolean isEveryoneSelected() {
-		for (Participant Key : selectorMap.keySet())
-			if (!hasDecided(Key))
+	private boolean hasEveryoneSelected() {
+		for (Participant key : selectorMap.keySet())
+			if (!hasDecided(key))
 				return false;
 		return true;
 	}

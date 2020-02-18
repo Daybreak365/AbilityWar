@@ -9,7 +9,7 @@ import daybreak.abilitywar.game.script.objects.setter.special.LoopSetter;
 import daybreak.abilitywar.game.script.objects.setter.special.MessageSetter;
 import daybreak.abilitywar.game.script.objects.setter.special.TimeSetter;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -102,7 +102,7 @@ public class ScriptWizard implements Listener {
 		scriptGUI.setItem(5, preRunMessageSetter.getItem());
 		scriptGUI.setItem(6, runMessageSetter.getItem());
 
-		ItemStack Deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
+		ItemStack Deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
 		ItemMeta DecoMeta = Deco.getItemMeta();
 		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		Deco.setItemMeta(DecoMeta);

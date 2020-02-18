@@ -6,7 +6,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
@@ -186,11 +186,11 @@ public class BlackListGUI implements Listener {
 
 					if (ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
 						String stripItemName = ChatColor.stripColor(itemName);
-						if (MaterialLib.RED_WOOL.compareMaterial(e.getCurrentItem())) {
+						if (MaterialX.RED_WOOL.compareType(e.getCurrentItem())) {
 							Settings.removeBlackList(stripItemName);
 							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 							openBlackListGUI(playerPage);
-						} else if (MaterialLib.LIME_WOOL.compareMaterial(e.getCurrentItem())) {
+						} else if (MaterialX.LIME_WOOL.compareType(e.getCurrentItem())) {
 							Settings.addBlackList(stripItemName);
 							SoundLib.BLOCK_ANVIL_LAND.playSound(p);
 							openBlackListGUI(playerPage);

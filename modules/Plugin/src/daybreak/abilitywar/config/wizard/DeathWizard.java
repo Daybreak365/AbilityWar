@@ -5,7 +5,7 @@ import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,34 +19,37 @@ import java.util.List;
 
 public class DeathWizard extends SettingWizard {
 
-	private final ItemStack deco;
-	private final ItemStack eliminate;
-	private final ItemStack abilityReveal;
-	private final ItemStack abilityRemoval;
-	private final ItemStack itemDrop;
+	private static ItemStack deco;
+	private static ItemStack eliminate;
+	private static ItemStack abilityReveal;
+	private static ItemStack abilityRemoval;
+	private static ItemStack itemDrop;
 
-	public DeathWizard(Player player, Plugin plugin) {
-		super(player, 27, ChatColor.translateAlternateColorCodes('&', "&2&l플레이어 사망 설정"), plugin);
-		this.deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
+	static {
+		deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
 		ItemMeta decoMeta = deco.getItemMeta();
 		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		deco.setItemMeta(decoMeta);
-		this.eliminate = new ItemStack(Material.DIAMOND_SWORD);
+		eliminate = new ItemStack(Material.DIAMOND_SWORD);
 		ItemMeta eliminateMeta = eliminate.getItemMeta();
 		eliminateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b작업"));
 		eliminate.setItemMeta(eliminateMeta);
-		this.abilityReveal = MaterialLib.ENDER_EYE.getItem();
+		abilityReveal = MaterialX.ENDER_EYE.parseItem();
 		ItemMeta abilityRevealMeta = abilityReveal.getItemMeta();
 		abilityRevealMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 공개"));
 		abilityReveal.setItemMeta(abilityRevealMeta);
-		this.abilityRemoval = MaterialLib.BEDROCK.getItem();
+		abilityRemoval = MaterialX.BEDROCK.parseItem();
 		ItemMeta abilityRemovalMeta = abilityRemoval.getItemMeta();
 		abilityRemovalMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 삭제"));
 		abilityRemoval.setItemMeta(abilityRemovalMeta);
-		this.itemDrop = new ItemStack(Material.CHEST);
+		itemDrop = new ItemStack(Material.CHEST);
 		ItemMeta itemDropMeta = itemDrop.getItemMeta();
 		itemDropMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b아이템 드롭"));
 		itemDrop.setItemMeta(itemDropMeta);
+	}
+
+	public DeathWizard(Player player, Plugin plugin) {
+		super(player, 27, ChatColor.translateAlternateColorCodes('&', "&2&l플레이어 사망 설정"), plugin);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class Lazyness extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	private void onPlayerDamage(EntityDamageEvent e) {
+	private void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			new DamageTimer(e.getFinalDamage());
 			getPlayer().setNoDamageTicks(getPlayer().getMaximumNoDamageTicks());
@@ -31,21 +31,13 @@ public class Lazyness extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	private void onPlayerDamage(EntityDamageByEntityEvent e) {
-		if (e.getEntity().equals(getPlayer())) {
-			new DamageTimer(e.getFinalDamage());
-			getPlayer().setNoDamageTicks(getPlayer().getMaximumNoDamageTicks());
-			e.setCancelled(true);
-		}
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
 	}
 
 	@SubscribeEvent
-	private void onPlayerDamage(EntityDamageByBlockEvent e) {
-		if (e.getEntity().equals(getPlayer())) {
-			new DamageTimer(e.getFinalDamage());
-			getPlayer().setNoDamageTicks(getPlayer().getMaximumNoDamageTicks());
-			e.setCancelled(true);
-		}
+	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
 	}
 
 	@Override

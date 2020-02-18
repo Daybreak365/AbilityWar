@@ -9,7 +9,7 @@ import daybreak.abilitywar.game.events.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EffectManager;
-import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
+import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Precondition;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
@@ -67,7 +67,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 	private boolean gameStarted = false;
 
 	private ParticipantStrategy participantStrategy;
-	private final PassiveManager passiveManager = new PassiveManager(this);
+	private final EventManager eventManager = new EventManager(this);
 	private final EffectManager effectManager = new EffectManager(this);
 
 	public AbstractGame(Collection<Player> players) {
@@ -80,12 +80,12 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 	}
 
 	/**
-	 * PassiveManager을 반환합니다.
+	 * EventManager를 반환합니다.
 	 * <p>
 	 * null을 반환하지 않습니다.
 	 */
-	public PassiveManager getPassiveManager() {
-		return passiveManager;
+	public EventManager getEventManager() {
+		return eventManager;
 	}
 
 	/**
@@ -177,6 +177,9 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 	@Override
 	protected void onEnd() {
 		stopTimers();
+		for (Participant participant : getParticipants()) {
+			participant.removeAbility();
+		}
 		HandlerList.unregisterAll(this);
 		observers.forEach(observer -> observer.update(GAME_UPDATE.END));
 	}

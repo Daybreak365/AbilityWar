@@ -18,9 +18,8 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNot
 import daybreak.abilitywar.game.games.mode.AbstractGame.RestrictionBehavior;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
-import daybreak.abilitywar.game.manager.passivemanager.PassiveExecutor;
-import daybreak.abilitywar.game.manager.passivemanager.PassiveManager;
 import daybreak.abilitywar.utils.ReflectionUtil;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.collect.Pair;
@@ -71,7 +70,7 @@ import java.util.logging.Logger;
  *
  * @author Daybreak 새벽
  */
-public abstract class AbilityBase implements PassiveExecutor {
+public abstract class AbilityBase implements EventManager.Observer {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
 
@@ -135,9 +134,9 @@ public abstract class AbilityBase implements PassiveExecutor {
 		this.manifest = registration.getManifest();
 		this.eventhandlers = registration.getEventhandlers();
 
-		PassiveManager passiveManager = game.getPassiveManager();
+		EventManager eventManager = game.getEventManager();
 		for (Class<? extends Event> eventClass : eventhandlers.keySet()) {
-			passiveManager.register(eventClass, this);
+			eventManager.register(eventClass, this);
 		}
 
 		this.restricted = game.isRestricted() || !game.isGameStarted();
@@ -156,7 +155,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	}
 
 	@Override
-	public void execute(Event event) {
+	public void onEvent(Event event) {
 		if (restricted) return;
 		Class<? extends Event> eventClass = event.getClass();
 		if (eventhandlers.containsKey(eventClass)) {
@@ -213,7 +212,7 @@ public abstract class AbilityBase implements PassiveExecutor {
 	 */
 	public final void destroy() {
 		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
-		game.getPassiveManager().unregisterAll(this);
+		game.getEventManager().unregisterAll(this);
 		for (GameTimer timer : timers) {
 			if (timer instanceof Timer) ((Timer) timer).destroyed = true;
 			timer.stop(true);

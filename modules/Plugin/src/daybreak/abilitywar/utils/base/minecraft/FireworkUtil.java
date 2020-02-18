@@ -4,7 +4,6 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
@@ -15,30 +14,16 @@ public class FireworkUtil {
 	private FireworkUtil() {
 	}
 
+	private static final Color[] colors = {Color.AQUA, Color.BLACK, Color.BLACK, Color.FUCHSIA, Color.GRAY, Color.GREEN, Color.LIME, Color.MAROON, Color.NAVY, Color.OLIVE, Color.ORANGE, Color.PURPLE, Color.RED, Color.SILVER, Color.TEAL, Color.WHITE, Color.YELLOW};
 	private static final Random random = new Random();
 
-	public static Firework spawnRandomFirework(final Location location) {
-		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
-		FireworkMeta fireworkMeta = firework.getFireworkMeta();
-		fireworkMeta.addEffect(FireworkEffect.builder()
-				.flicker(random.nextBoolean())
-				.withColor(getColor(random.nextInt(17)))
-				.withFade(getColor(random.nextInt(17)))
-				.with(Type.values()[random.nextInt(Type.values().length)])
-				.trail(random.nextBoolean())
-				.build());
-		fireworkMeta.setPower(1 + random.nextInt(2));
-		firework.setFireworkMeta(fireworkMeta);
-		return firework;
-	}
-
 	public static Firework spawnRandomFirework(final Location location, int power) {
-		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+		Firework firework = location.getWorld().spawn(location, Firework.class);
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		fireworkMeta.addEffect(FireworkEffect.builder()
 				.flicker(random.nextBoolean())
-				.withColor(getColor(random.nextInt(17)))
-				.withFade(getColor(random.nextInt(17)))
+				.withColor(colors[random.nextInt(colors.length)])
+				.withFade(colors[random.nextInt(colors.length)])
 				.with(Type.values()[random.nextInt(Type.values().length)])
 				.trail(random.nextBoolean())
 				.build());
@@ -47,8 +32,12 @@ public class FireworkUtil {
 		return firework;
 	}
 
+	public static Firework spawnRandomFirework(final Location location) {
+		return spawnRandomFirework(location, 1 + random.nextInt(2));
+	}
+
 	public static Firework spawnRandomFirework(final Location location, Color[] colors, Color[] fadeColors, Type[] types, int power) {
-		Firework firework = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
+		Firework firework = location.getWorld().spawn(location, Firework.class);
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		fireworkMeta.addEffect(FireworkEffect.builder()
 				.flicker(random.nextBoolean())
@@ -62,8 +51,8 @@ public class FireworkUtil {
 		return firework;
 	}
 
-	public static Firework spawnWinnerFirework(final Location loc) {
-		Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+	public static Firework spawnWinnerFirework(final Location location) {
+		Firework firework = location.getWorld().spawn(location, Firework.class);
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		fireworkMeta.addEffect(FireworkEffect.builder()
 				.flicker(true)
@@ -77,44 +66,4 @@ public class FireworkUtil {
 		return firework;
 	}
 
-	private static Color getColor(int color) {
-		switch (color) {
-			case 0:
-				return Color.AQUA;
-			case 1:
-				return Color.BLACK;
-			case 2:
-				return Color.BLUE;
-			case 3:
-				return Color.FUCHSIA;
-			case 4:
-				return Color.GRAY;
-			case 5:
-				return Color.GREEN;
-			case 6:
-				return Color.LIME;
-			case 7:
-				return Color.MAROON;
-			case 8:
-				return Color.NAVY;
-			case 9:
-				return Color.OLIVE;
-			case 10:
-				return Color.ORANGE;
-			case 11:
-				return Color.PURPLE;
-			case 12:
-				return Color.RED;
-			case 13:
-				return Color.SILVER;
-			case 14:
-				return Color.TEAL;
-			case 15:
-				return Color.WHITE;
-			case 16:
-				return Color.YELLOW;
-			default:
-				return null;
-		}
-	}
 }

@@ -24,7 +24,7 @@ public class HologramImpl implements Hologram {
 	private final PacketPlayOutSpawnEntityLiving packetPlayOutSpawnEntityLiving;
 	private final PacketPlayOutEntityDestroy packetPlayOutEntityDestroy;
 
-	public HologramImpl(World world, double x, double y, double z, String text) {
+	HologramImpl(World world, double x, double y, double z, String text) {
 		this.armorStand = new EntityArmorStand(((CraftWorld) world).getHandle(), x, y, z);
 		this.packetPlayOutSpawnEntityLiving = new PacketPlayOutSpawnEntityLiving(armorStand);
 		this.packetPlayOutEntityDestroy = new PacketPlayOutEntityDestroy(armorStand.getId());
@@ -33,7 +33,7 @@ public class HologramImpl implements Hologram {
 		armorStand.setCustomName(text);
 	}
 
-	public HologramImpl(World world, double x, double y, double z) {
+	HologramImpl(World world, double x, double y, double z) {
 		this(world, x, y, z, "");
 	}
 

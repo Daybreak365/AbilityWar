@@ -1,8 +1,7 @@
-package daybreak.abilitywar.game.manager.passivemanager;
+package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
 import daybreak.abilitywar.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -17,14 +16,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PassiveManager implements Listener, EventExecutor, Observer {
+public class EventManager implements Listener, EventExecutor, AbstractGame.Observer {
 
-	public PassiveManager(AbstractGame game) {
+	public EventManager(AbstractGame game) {
 		game.attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final HashMap<Class<? extends Event>, Set<PassiveExecutor>> passiveExecutors = new HashMap<>();
+	private final HashMap<Class<? extends Event>, Set<Observer>> observers = new HashMap<>();
 	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
 
 	@SuppressWarnings("unchecked")
@@ -38,30 +37,30 @@ public class PassiveManager implements Listener, EventExecutor, Observer {
 		return null;
 	}
 
-	public void register(Class<? extends Event> eventClass, PassiveExecutor executor) {
-		if (!passiveExecutors.containsKey(eventClass))
-			passiveExecutors.put(eventClass, Collections.synchronizedSet(new HashSet<>()));
+	public void register(Class<? extends Event> eventClass, Observer executor) {
+		if (!observers.containsKey(eventClass))
+			observers.put(eventClass, Collections.synchronizedSet(new HashSet<>()));
 
 		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);
 		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
 			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, EventPriority.HIGHEST, this, AbilityWar.getPlugin());
 		}
 
-		passiveExecutors.get(eventClass).add(executor);
+		observers.get(eventClass).add(executor);
 	}
 
-	public void unregisterAll(PassiveExecutor executor) {
-		for (Class<? extends Event> eventClass : passiveExecutors.keySet()) {
-			passiveExecutors.get(eventClass).remove(executor);
+	public void unregisterAll(Observer executor) {
+		for (Class<? extends Event> eventClass : observers.keySet()) {
+			observers.get(eventClass).remove(executor);
 		}
 	}
 
 	@Override
 	public void execute(Listener listener, Event event) {
 		Class<? extends Event> eventClass = event.getClass();
-		if (passiveExecutors.containsKey(eventClass)) {
-			for (PassiveExecutor executor : passiveExecutors.get(eventClass)) {
-				executor.execute(event);
+		if (observers.containsKey(eventClass)) {
+			for (Observer executor : observers.get(eventClass)) {
+				executor.onEvent(event);
 			}
 		}
 	}
@@ -72,4 +71,11 @@ public class PassiveManager implements Listener, EventExecutor, Observer {
 			HandlerList.unregisterAll(this);
 		}
 	}
+
+	public interface Observer {
+
+		void onEvent(Event event);
+
+	}
+
 }

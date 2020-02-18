@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.manager.gui;
 import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 import daybreak.abilitywar.utils.installer.Version;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -49,7 +49,7 @@ public class InstallGUI implements Listener {
 			UpdateObject update = entry.getValue();
 			ItemStack is;
 			if (installer.getPluginVersion().equals(version)) {
-				is = MaterialLib.ENCHANTED_BOOK.getItem();
+				is = MaterialX.ENCHANTED_BOOK.parseItem();
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + version.getVersionString()));
 				im.setLore(Arrays.asList(
@@ -60,7 +60,7 @@ public class InstallGUI implements Listener {
 						ChatColor.translateAlternateColorCodes('&', "&b다운로드 횟수&f: " + update.getDownloadCount())));
 				is.setItemMeta(im);
 			} else {
-				is = MaterialLib.BOOK.getItem();
+				is = MaterialX.BOOK.parseItem();
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + version.getVersionString()));
 				im.setLore(Arrays.asList(

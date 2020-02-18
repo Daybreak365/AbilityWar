@@ -9,7 +9,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -23,7 +23,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.OTHERS)
 public class Pumpkin extends AbilityBase implements ActiveHandler {
@@ -57,107 +60,92 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	private final Timer Song = new Timer(13) {
+	private final Timer music = new Timer(13) {
 
-		private ArrayList<Player> Players;
+		private List<Player> players;
 
-		private Integer Count;
+		private int count;
 
 		@Override
 		public void onStart() {
-			this.Players = new ArrayList<Player>(Pumpkin.this.Players.keySet());
-
-			Count = 1;
+			this.players = new ArrayList<>(Pumpkin.this.players.keySet());
+			players.add(getPlayer());
+			count = 1;
 		}
 
 		@Override
 		public void run(int count) {
-			if (Count.equals(1)) {
-				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.D));
-				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
-			} else if (Count.equals(3)) {
-				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.E));
-				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.E));
-			} else if (Count.equals(4)) {
-				SoundLib.BELL.playInstrument(Players, Note.sharp(1, Tone.F));
-				SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
-			} else if (Count.equals(7)) {
-				SoundLib.BELL.playInstrument(Players, Note.sharp(1, Tone.F));
-				SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
-			} else if (Count.equals(10)) {
-				SoundLib.BELL.playInstrument(Players, Note.natural(1, Tone.G));
-				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.G));
-			} else if (Count.equals(12)) {
-				SoundLib.BELL.playInstrument(Players, Note.sharp(1, Tone.F));
-				SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(1, Tone.F));
-			} else if (Count.equals(13)) {
-				SoundLib.BELL.playInstrument(Players, Note.natural(0, Tone.E));
-				SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.E));
+			switch (count) {
+				case 1:
+					SoundLib.BELL.playInstrument(players, Note.natural(0, Tone.D));
+					break;
+				case 3:
+				case 13:
+					SoundLib.BELL.playInstrument(players, Note.natural(0, Tone.E));
+					break;
+				case 4:
+				case 7:
+				case 12:
+					SoundLib.BELL.playInstrument(players, Note.sharp(1, Tone.F));
+					break;
+				case 10:
+					SoundLib.BELL.playInstrument(players, Note.natural(1, Tone.G));
+					break;
 			}
 
-			Count++;
-		}
-
-		@Override
-		public void onEnd() {
+			this.count++;
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 3);
 
-	private HashMap<Player, ItemStack> Players;
+	private Map<Player, ItemStack> players;
 
-	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue(), cooldownTimer) {
+	private final DurationTimer durationTimer = new DurationTimer(DurationConfig.getValue(), cooldownTimer) {
 
 		@Override
 		public void onDurationStart() {
-			Players = new HashMap<Player, ItemStack>();
-			LocationUtil.getNearbyPlayers(getPlayer(), 30, 30).stream().forEach(p -> Players.put(p, p.getInventory().getHelmet()));
-			Song.start();
+			players = new HashMap<>();
+			for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), 30, 30))
+				players.put(p, p.getInventory().getHelmet());
+			music.start();
 		}
 
 		@Override
 		public void onDurationProcess(int seconds) {
-			ItemStack Pumpkin = getPumpkin(seconds);
-			Players.keySet().stream().forEach(p -> p.getInventory().setHelmet(Pumpkin));
+			players.keySet().forEach(p -> p.getInventory().setHelmet(getPumpkin(seconds)));
 		}
 
 		@Override
 		public void onDurationEnd() {
-			Players.keySet().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
+			players.forEach((Player p, ItemStack stack) -> p.getInventory().setHelmet(stack));
 		}
 
 		@Override
 		public void onDurationSilentEnd() {
-			Players.keySet().forEach(p -> p.getInventory().setHelmet(Players.get(p)));
+			players.forEach((Player p, ItemStack stack) -> p.getInventory().setHelmet(stack));
 		}
 
-		private ItemStack getPumpkin(Integer Time) {
-			ItemStack Pumpkin = new ItemStack(MaterialLib.CARVED_PUMPKIN.getMaterial());
-			ItemMeta PumpkinMeta = Pumpkin.getItemMeta();
-			PumpkinMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6호박"));
-			PumpkinMeta.setLore(Messager.asList(
+		private ItemStack getPumpkin(int time) {
+			ItemStack stack = MaterialX.CARVED_PUMPKIN.parseItem();
+			ItemMeta meta = stack.getItemMeta();
+			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6호박"));
+			meta.setLore(Arrays.asList(
 					ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"),
-					ChatColor.translateAlternateColorCodes('&', "&f남은 시간&7: &a" + Time + "초")
+					ChatColor.translateAlternateColorCodes('&', "&f남은 시간&7: &a" + time + "초")
 			));
-			Pumpkin.setItemMeta(PumpkinMeta);
-			EnchantLib.BINDING_CURSE.addUnsafeEnchantment(Pumpkin, 1);
-			return Pumpkin;
+			stack.setItemMeta(meta);
+			EnchantLib.BINDING_CURSE.addUnsafeEnchantment(stack, 1);
+			return stack;
 		}
 
 	};
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
-					Duration.start();
-
-					return true;
-				}
-			}
+		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
+			durationTimer.start();
+			return true;
 		}
-
 		return false;
 	}
 

@@ -7,11 +7,13 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
+import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.compat.BlocksHandler;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -95,8 +97,10 @@ public class Imprison extends AbilityBase implements TargetHandler {
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {
 					for (Block block : LocationUtil.getBlocks3D(entity.getLocation(), size, true, true)) {
-						BlockX.setType(block, MaterialX.WHITE_STAINED_GLASS);
-						blocks.put(block, solidity);
+						if (!BlocksHandler.getBlocks().isIndestructible(block.getType())) {
+							BlockX.setType(block, MaterialX.WHITE_STAINED_GLASS);
+							blocks.put(block, solidity);
+						}
 					}
 					solidity = 1;
 					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f강도: &c" + solidity));
@@ -106,6 +110,13 @@ public class Imprison extends AbilityBase implements TargetHandler {
 			} else {
 				cooldownTimer.isCooldown();
 			}
+		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onAbilityDestroy(AbilityDestroyEvent e) {
+		for (Block block : blocks.keySet()) {
+			block.setType(Material.AIR);
 		}
 	}
 

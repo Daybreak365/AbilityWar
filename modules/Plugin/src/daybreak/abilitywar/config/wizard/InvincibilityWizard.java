@@ -4,7 +4,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.library.MaterialLib;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import org.bukkit.ChatColor;
@@ -23,7 +23,7 @@ public class InvincibilityWizard extends SettingWizard {
 
 	@Override
 	void openGUI(Inventory gui) {
-		ItemStack deco = MaterialLib.WHITE_STAINED_GLASS_PANE.getItem();
+		ItemStack deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
 		ItemMeta decoMeta = deco.getItemMeta();
 		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
 		deco.setItemMeta(decoMeta);
@@ -41,7 +41,7 @@ public class InvincibilityWizard extends SettingWizard {
 
 				gui.setItem(i, Inv);
 			} else if (i == 15) {
-				ItemStack Inv = MaterialLib.CLOCK.getItem();
+				ItemStack Inv = MaterialX.CLOCK.parseItem();
 				ItemMeta InvMeta = Inv.getItemMeta();
 				InvMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적 시간"));
 				InvMeta.setLore(Messager.asList(
