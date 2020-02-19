@@ -1,9 +1,11 @@
 package daybreak.abilitywar.game.games.mode;
 
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class ParticipantStrategy {
@@ -26,7 +28,7 @@ public abstract class ParticipantStrategy {
 
 	public static class DEFAULT_MANAGEMENT extends ParticipantStrategy {
 
-		private final HashMap<String, AbstractGame.Participant> participants = new HashMap<>();
+		private final Map<String, Participant> participants = new HashMap<>();
 
 		public DEFAULT_MANAGEMENT(AbstractGame game, Collection<Player> players) {
 			super(game);

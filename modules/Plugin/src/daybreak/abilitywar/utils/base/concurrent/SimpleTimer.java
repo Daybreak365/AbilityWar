@@ -2,10 +2,8 @@ package daybreak.abilitywar.utils.base.concurrent;
 
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.utils.annotations.Beta;
 import org.bukkit.Bukkit;
 
-@Beta
 public abstract class SimpleTimer {
 
 	private final TaskType taskType;
@@ -18,12 +16,12 @@ public abstract class SimpleTimer {
 		this.maximumCount = maximumCount;
 	}
 
-	private int delay = 0;
+	private int initialDelay = 0;
 	private int period = 20;
 
-	public SimpleTimer setDelay(TimeUnit timeUnit, int delay) {
+	public SimpleTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
 		Preconditions.checkNotNull(timeUnit);
-		this.delay = timeUnit.toTicks(delay);
+		this.initialDelay = timeUnit.toTicks(initialDelay);
 		return this;
 	}
 
@@ -74,7 +72,7 @@ public abstract class SimpleTimer {
 	public boolean start() {
 		if (!isRunning()) {
 			this.task = taskType.newRunnable(this);
-			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task, delay, period);
+			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task, initialDelay, period);
 			onStart();
 			return true;
 		}
@@ -104,7 +102,7 @@ public abstract class SimpleTimer {
 
 	public boolean resume() {
 		if (isPaused()) {
-			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task, delay, period);
+			this.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task, initialDelay, period);
 			return true;
 		}
 		return false;

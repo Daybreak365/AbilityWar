@@ -100,6 +100,16 @@ public class ReflectionUtil {
 			setAccessible(object.getClass().getDeclaredField(field)).set(object, value);
 		}
 
+		public static Field removeFlag(Field field, int modifiers) throws NoSuchFieldException, IllegalAccessException {
+			setAccessible(Field.class.getDeclaredField("modifiers")).setInt(field, field.getModifiers() & ~modifiers);
+			return field;
+		}
+
+		public static Field addFlag(Field field, int modifiers) throws NoSuchFieldException, IllegalAccessException {
+			setAccessible(Field.class.getDeclaredField("modifiers")).setInt(field, field.getModifiers() | modifiers);
+			return field;
+		}
+
 	}
 
 }

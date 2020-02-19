@@ -21,7 +21,6 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.ReflectionUtil;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -44,7 +43,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -70,11 +68,10 @@ import java.util.logging.Logger;
  *
  * @author Daybreak 새벽
  */
-public abstract class AbilityBase implements EventManager.Observer {
+public abstract class AbilityBase implements EventManager.Observer, Cloneable {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
 
-	@Beta
 	public static AbilityBase create(Class<? extends AbilityBase> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		Preconditions.checkNotNull(abilityClass);
 		Preconditions.checkNotNull(participant);
@@ -106,9 +103,9 @@ public abstract class AbilityBase implements EventManager.Observer {
 	private final AbilityManifest manifest;
 	private final AbstractGame game;
 	private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
-	private final List<GameTimer> timers = new ArrayList<>();
+	private final List<GameTimer> timers = new LinkedList<>();
 	private List<GameTimer> scheduledTimers = null;
-	private final Set<ActionbarChannel> actionbarChannels = new HashSet<>();
+	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
 
 	private boolean restricted;
 
@@ -424,7 +421,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 		}
 
 		@Override
-		public CooldownTimer setDelay(TimeUnit timeUnit, int period) {
+		public CooldownTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
 			return this;
 		}
 
@@ -488,8 +485,8 @@ public abstract class AbilityBase implements EventManager.Observer {
 		}
 
 		@Override
-		public DurationTimer setDelay(TimeUnit timeUnit, int period) {
-			super.setDelay(timeUnit, period);
+		public DurationTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+			super.setInitialDelay(timeUnit, initialDelay);
 			return this;
 		}
 
@@ -537,6 +534,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 
 		@Override
 		protected final void onSilentEnd() {
+			onDurationSilentEnd();
 			actionbarChannel.update(null);
 		}
 
@@ -579,8 +577,8 @@ public abstract class AbilityBase implements EventManager.Observer {
 		}
 
 		@Override
-		public Timer setDelay(TimeUnit timeUnit, int period) {
-			super.setDelay(timeUnit, period);
+		public Timer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+			super.setInitialDelay(timeUnit, initialDelay);
 			return this;
 		}
 

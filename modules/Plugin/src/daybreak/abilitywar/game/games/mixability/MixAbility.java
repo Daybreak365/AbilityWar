@@ -4,8 +4,10 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.events.GameCreditEvent;
+import daybreak.abilitywar.game.events.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.GameManifest;
+import daybreak.abilitywar.game.games.mode.ParticipantStrategy;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
@@ -28,9 +30,11 @@ import org.bukkit.plugin.Plugin;
 import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.logging.Level;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @GameManifest(Name = "믹스 능력자 전쟁", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
@@ -65,14 +69,6 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				if (getParticipants().size() < 1) {
 					AbilityWarThread.StopGame();
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
-				} else {
-					for (Participant participant : getParticipants()) {
-						try {
-							participant.setAbility(Mix.class);
-						} catch (InvocationTargetException | InstantiationException | IllegalAccessException ignored) {
-							logger.log(Level.SEVERE, participant.getPlayer().getName() + "님에게 " + Mix.class.getName() + " 능력을 부여하는 도중 오류가 발생하였습니다.");
-						}
-					}
 				}
 				break;
 			case 3:
@@ -243,7 +239,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 									ChatColor.translateAlternateColorCodes('&', "&e/aw yes &f명령어를 사용하여 능력을 확정합니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
 							});
-						} catch (IllegalAccessException | NoSuchMethodException | SecurityException |
+						} catch (IllegalAccessException | SecurityException |
 								InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendConsoleErrorMessage(
 									ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
@@ -300,6 +296,90 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				}
 			}
 		};
+	}
+
+	@Override
+	public ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
+		class Strategy extends ParticipantStrategy {
+
+			private final Map<String, Participant> participants = new HashMap<>();
+
+			public Strategy(AbstractGame game, Collection<Player> players) {
+				super(game);
+				for (Player player : players) {
+					participants.put(player.getUniqueId().toString(), new MixParticipant(player));
+				}
+			}
+
+			@Override
+			public Collection<AbstractGame.Participant> getParticipants() {
+				return participants.values();
+			}
+
+			@Override
+			public boolean isParticipating(UUID uuid) {
+				return participants.containsKey(uuid.toString());
+			}
+
+			@Override
+			public AbstractGame.Participant getParticipant(UUID uuid) {
+				return participants.get(uuid.toString());
+			}
+
+			@Override
+			public void addParticipant(Player player) throws UnsupportedOperationException {
+				throw new UnsupportedOperationException("참가자를 추가할 수 없습니다.");
+			}
+
+			@Override
+			public void removeParticipant(UUID uuid) throws UnsupportedOperationException {
+				throw new UnsupportedOperationException("참가자를 제거할 수 없습니다.");
+			}
+
+		}
+		return new Strategy(this, players);
+	}
+
+	public class MixParticipant extends Participant {
+
+		private MixParticipant(Player player) {
+			super(player);
+		}
+
+		@Override
+		public void setAbility(Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+			Mix mix = (Mix) this.ability;
+			mix.setAbility(abilityClass, abilityClass);
+			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, mix, mix));
+		}
+
+		@Override
+		public AbilityBase removeAbility() {
+			((Mix) getAbility()).removeAbility();
+			return null;
+		}
+
+		@Override
+		public AbilityBase getAbility() {
+			if (!(this.ability instanceof Mix)) {
+				try {
+					if (this.ability != null) {
+						this.ability.destroy();
+					}
+					AbilityBase mix = AbilityBase.create(Mix.class, this);
+					mix.setRestricted(isRestricted() || !isGameStarted());
+					this.ability = mix;
+				} catch (IllegalAccessException | InvocationTargetException | InstantiationException ignored) {
+				}
+			}
+			return ability;
+		}
+
+		@Override
+		public boolean hasAbility() {
+			return true;
+		}
+
 	}
 
 }

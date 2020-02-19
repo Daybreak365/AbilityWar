@@ -65,15 +65,25 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
 	@Override
-	protected void progressGame(int Seconds) {
-		switch (Seconds) {
-			case 1:
-				broadcastPlayerList();
+	protected void progressGame(int seconds) {
+		switch (seconds) {
+			case 1: {
+
+				int count = 0;
+
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6==== &f게임 참여자 목록 &6===="));
+				for (Participant p : getParticipants()) {
+					count++;
+					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + count + ". &f" + p.getPlayer().getName()));
+				}
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &c: &e" + count + "명"));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
 				if (getParticipants().size() < 1) {
 					AbilityWarThread.StopGame();
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
 				}
 				break;
+			}
 			case 5:
 				broadcastPluginDescription();
 				break;
@@ -222,24 +232,6 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		};
 	}
 
-	public void broadcastPlayerList() {
-		int Count = 0;
-
-		ArrayList<String> msg = new ArrayList<String>();
-
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&6==== &f게임 참여자 목록 &6===="));
-		for (Participant p : getParticipants()) {
-			Count++;
-			msg.add(ChatColor.translateAlternateColorCodes('&', "&c" + Count + ". &f" + p.getPlayer().getName()));
-		}
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &c: &e" + Count + "명"));
-		msg.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
-
-		for (String m : msg) {
-			Bukkit.broadcastMessage(m);
-		}
-	}
-
 	public void broadcastPluginDescription() {
 		List<String> msg = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&eSummer Vacation &f- &c여름 휴가"),
@@ -313,13 +305,13 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		bowMeta.setUnbreakable(true);
 		bowMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b물총"));
 		bow.setItemMeta(bowMeta);
-		List<ItemStack> DefaultKit = Arrays.asList(bow, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
+		List<ItemStack> defaultKit = Arrays.asList(bow, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
 
 		if (Settings.getInventoryClear()) {
 			player.getInventory().clear();
 		}
 
-		for (ItemStack is : DefaultKit) {
+		for (ItemStack is : defaultKit) {
 			player.getInventory().addItem(is);
 		}
 

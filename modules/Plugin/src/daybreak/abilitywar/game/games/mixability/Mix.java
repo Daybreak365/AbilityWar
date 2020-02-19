@@ -27,19 +27,14 @@ public class Mix extends AbilityBase {
 	private AbilityBase first;
 	private AbilityBase second;
 
-	public void setAbility(Class<? extends AbilityBase> first, Class<? extends AbilityBase> second)
-			throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		if (first != null && second != null) {
-			if (hasAbility()) removeAbility();
-
-			this.first = first.getConstructor(Participant.class).newInstance(getParticipant());
-			this.first.setRestricted(isRestricted() || !getGame().isGameStarted());
-			getDescriptionLine(2).setStrings(formatAbilityInfo(this.first));
-			this.second = second.getConstructor(Participant.class).newInstance(getParticipant());
-			this.second.setRestricted(isRestricted() || !getGame().isGameStarted());
-			getDescriptionLine(4).setStrings(formatAbilityInfo(this.second));
-		}
+	public void setAbility(Class<? extends AbilityBase> first, Class<? extends AbilityBase> second) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		removeAbility();
+		this.first = AbilityBase.create(first, getParticipant());
+		this.first.setRestricted(isRestricted() || !getGame().isGameStarted());
+		getDescriptionLine(2).setStrings(formatAbilityInfo(this.first));
+		this.second = AbilityBase.create(second, getParticipant());
+		this.second.setRestricted(isRestricted() || !getGame().isGameStarted());
+		getDescriptionLine(4).setStrings(formatAbilityInfo(this.second));
 	}
 
 	public boolean hasAbility() {

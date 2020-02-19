@@ -10,8 +10,9 @@ import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.object.EventManager;
+import daybreak.abilitywar.utils.ReflectionUtil;
+import daybreak.abilitywar.utils.ReflectionUtil.FieldUtil;
 import daybreak.abilitywar.utils.annotations.Beta;
-import daybreak.abilitywar.utils.base.Precondition;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.compat.NMSHandler;
@@ -34,7 +35,9 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,11 +75,11 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 	public AbstractGame(Collection<Player> players) {
 		super(TaskType.INFINITE, -1);
-		this.participantStrategy = new ParticipantStrategy.DEFAULT_MANAGEMENT(this, players);
+		this.participantStrategy = newParticipantStrategy(players);
 	}
 
-	public void setParticipantStrategy(ParticipantStrategy participantStrategy) {
-		this.participantStrategy = Precondition.checkNotNull(participantStrategy);
+	public ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
+		return new ParticipantStrategy.DEFAULT_MANAGEMENT(this, players);
 	}
 
 	/**
@@ -268,7 +271,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			}
 		}
 
-		private AbilityBase ability;
+		protected AbilityBase ability;
 
 
 		/**
@@ -276,7 +279,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		 *
 		 * @param abilityClass 부여할 능력의 클래스
 		 */
-		public void setAbility(Class<? extends AbilityBase> abilityClass) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		public void setAbility(Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
 			AbilityBase oldAbility = null;
 			if (hasAbility()) {
 				oldAbility = removeAbility();
@@ -294,12 +297,17 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		 * @param ability 부여할 능력
 		 */
 		@Beta
-		public void setAbility(AbilityBase ability) {
-			AbilityBase oldAbility = null;
-			if (hasAbility())
-				oldAbility = removeAbility();
+		public void setAbility(AbilityBase ability) throws NoSuchFieldException, IllegalAccessException {
+			if (hasAbility() && this.ability.equals(ability)) return;
+			AbilityBase oldAbility = removeAbility();
+			if (ability != null) {
+				ability.getParticipant().ability = null;
+				ability.setRestricted(isRestricted() || !isGameStarted());
 
-			ability.setRestricted(isRestricted() || !isGameStarted());
+				Field participant = FieldUtil.removeFlag(AbilityBase.class.getDeclaredField("participant"), Modifier.FINAL);
+				ReflectionUtil.setAccessible(participant).set(ability, Participant.this);
+				FieldUtil.addFlag(participant, Modifier.FINAL);
+			}
 
 			this.ability = ability;
 			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
@@ -513,8 +521,8 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			timerTasks.add(this);
 		}
 
-		public GameTimer setDelay(TimeUnit timeUnit, int delay) {
-			super.setDelay(timeUnit, delay);
+		public GameTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+			super.setInitialDelay(timeUnit, initialDelay);
 			return this;
 		}
 
