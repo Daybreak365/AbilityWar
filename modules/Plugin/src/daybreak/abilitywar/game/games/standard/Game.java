@@ -12,7 +12,7 @@ import daybreak.abilitywar.game.manager.object.Firewall;
 import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.game.manager.object.ScoreboardManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Precondition;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;

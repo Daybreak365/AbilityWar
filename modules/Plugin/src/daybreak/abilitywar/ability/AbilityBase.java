@@ -20,9 +20,9 @@ import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
-import daybreak.abilitywar.utils.ReflectionUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.NumberUtil;
@@ -68,7 +68,7 @@ import java.util.logging.Logger;
  *
  * @author Daybreak 새벽
  */
-public abstract class AbilityBase implements EventManager.Observer, Cloneable {
+public abstract class AbilityBase implements EventManager.Observer {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
 

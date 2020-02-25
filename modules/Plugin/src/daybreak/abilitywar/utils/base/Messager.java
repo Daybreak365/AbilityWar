@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils;
+package daybreak.abilitywar.utils.base;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
@@ -168,41 +168,27 @@ public class Messager {
 
 	}
 
-	private final String prefix;
+	public static void sendConsoleMessage(String string) {
+		console.sendMessage(defaultPrefix + string);
+	}
 
-	public Messager(String prefix) {
-		if (prefix != null) {
-			this.prefix = prefix;
-		} else {
-			this.prefix = "";
+	public static void sendConsoleMessage(String[] strings) {
+		for (String string : strings) {
+			console.sendMessage(defaultPrefix + string);
 		}
 	}
 
-	public Messager() {
-		this.prefix = defaultPrefix;
+	public static void broadcastMessage(String string) {
+		Bukkit.broadcastMessage(defaultPrefix + string);
 	}
 
-	public void sendConsoleMessage(String string) {
-		console.sendMessage(prefix + string);
+	public static void sendMessage(CommandSender cs, String string) {
+		cs.sendMessage(defaultPrefix + string);
 	}
 
-	public void sendConsoleMessage(String[] strings) {
+	public static void sendMessages(CommandSender cs, String... strings) {
 		for (String string : strings) {
-			console.sendMessage(prefix + string);
-		}
-	}
-
-	public void broadcastMessage(String string) {
-		Bukkit.broadcastMessage(prefix + string);
-	}
-
-	public void sendMessage(CommandSender cs, String string) {
-		cs.sendMessage(prefix + string);
-	}
-
-	public void sendMessages(CommandSender cs, String... strings) {
-		for (String string : strings) {
-			cs.sendMessage(prefix + string);
+			cs.sendMessage(defaultPrefix + string);
 		}
 	}
 

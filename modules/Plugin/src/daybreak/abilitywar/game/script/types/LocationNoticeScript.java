@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.script.types;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

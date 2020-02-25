@@ -56,4 +56,14 @@ public class NMSImpl implements daybreak.abilitywar.utils.base.minecraft.compat.
 		return new HologramImpl(world, x, y, z);
 	}
 
+	@Override
+	public float getAbsorptionHearts(Player player) {
+		return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+	}
+
+	@Override
+	public void setAbsorptionHearts(Player player, float absorptionHearts) {
+		((CraftPlayer) player).getHandle().setAbsorptionHearts(absorptionHearts);
+	}
+
 }

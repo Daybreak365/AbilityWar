@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -55,7 +55,6 @@ public class Installer {
 
 	private static final Logger logger = Logger.getLogger(Installer.class.getName());
 	private static final JsonParser parser = new JsonParser();
-	private static final Messager messager = new Messager();
 
 	private final Version pluginVersion;
 	private final Map<Version, UpdateObject> versions;
@@ -111,12 +110,12 @@ public class Installer {
 
 	public void Install(CommandSender sender, UpdateObject update) {
 		try {
-			messager.sendConsoleMessage(Messager.formatInstall(update));
+			Messager.sendConsoleMessage(Messager.formatInstall(update));
 			unload(plugin);
 			if (!sender.equals(Bukkit.getConsoleSender())) {
-				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 시작합니다."));
+				Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 시작합니다."));
 			}
-			messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 시작합니다."));
+			Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 시작합니다."));
 
 			InputStream input = update.getConnection().getInputStream();
 			URL fileURL = AbilityWar.class.getProtectionDomain().getCodeSource().getLocation();
@@ -132,9 +131,9 @@ public class Installer {
 			output.close();
 
 			if (!sender.equals(Bukkit.getConsoleSender())) {
-				messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
+				Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
 			}
-			messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
+			Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
 			load(plugin);
 		} catch (IOException ex) {
 			logger.log(Level.SEVERE, "설치 도중 오류가 발생하였습니다.");
@@ -256,39 +255,36 @@ public class Installer {
 
 		boolean reloadlisteners = true;
 
-		if (pluginManager != null) {
+		pluginManager.disablePlugin(plugin);
 
-			pluginManager.disablePlugin(plugin);
+		try {
+
+			Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
+			pluginsField.setAccessible(true);
+			plugins = (List<Plugin>) pluginsField.get(pluginManager);
+
+			Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
+			lookupNamesField.setAccessible(true);
+			names = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
 
 			try {
-
-				Field pluginsField = Bukkit.getPluginManager().getClass().getDeclaredField("plugins");
-				pluginsField.setAccessible(true);
-				plugins = (List<Plugin>) pluginsField.get(pluginManager);
-
-				Field lookupNamesField = Bukkit.getPluginManager().getClass().getDeclaredField("lookupNames");
-				lookupNamesField.setAccessible(true);
-				names = (Map<String, Plugin>) lookupNamesField.get(pluginManager);
-
-				try {
-					Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
-					listenersField.setAccessible(true);
-					listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField.get(pluginManager);
-				} catch (Exception e) {
-					reloadlisteners = false;
-				}
-
-				Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
-				commandMapField.setAccessible(true);
-				commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
-
-				Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
-				knownCommandsField.setAccessible(true);
-				commands = (Map<String, Command>) knownCommandsField.get(commandMap);
-
-			} catch (NoSuchFieldException | IllegalAccessException e) {
-				return;
+				Field listenersField = Bukkit.getPluginManager().getClass().getDeclaredField("listeners");
+				listenersField.setAccessible(true);
+				listeners = (Map<Event, SortedSet<RegisteredListener>>) listenersField.get(pluginManager);
+			} catch (Exception e) {
+				reloadlisteners = false;
 			}
+
+			Field commandMapField = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
+			commandMapField.setAccessible(true);
+			commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
+
+			Field knownCommandsField = SimpleCommandMap.class.getDeclaredField("knownCommands");
+			knownCommandsField.setAccessible(true);
+			commands = (Map<String, Command>) knownCommandsField.get(commandMap);
+
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			return;
 		}
 
 		pluginManager.disablePlugin(plugin);

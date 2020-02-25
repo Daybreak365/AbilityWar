@@ -15,6 +15,7 @@ import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -29,9 +30,11 @@ import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
@@ -80,25 +83,25 @@ public class PenetrationArrow extends AbilityBase {
 	private final List<ArrowType> arrowTypes = Arrays.asList(
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&c절단")) {
 				@Override
-				protected void launchArrow(Arrow arrow) {
+				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
-					new Parabola(getPlayer(), OnHitBehavior.CUT, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, RED).start();
+					new Parabola<>(getPlayer(), OnHitBehavior.CUT, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, powerLevel, RED).start();
 				}
 			},
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&5중력")) {
 				@Override
-				protected void launchArrow(Arrow arrow) {
+				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.D));
-					new Parabola(getPlayer(), OnHitBehavior.GRAVITY, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, PURPLE).start();
+					new Parabola<>(getPlayer(), OnHitBehavior.GRAVITY, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, powerLevel, PURPLE).start();
 				}
 			},
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&e풍월")) {
 				@Override
-				protected void launchArrow(Arrow arrow) {
+				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					SoundLib.XYLOPHONE.playInstrument(getPlayer(), Note.flat(1, Note.Tone.B));
-					new Parabola(getPlayer(), OnHitBehavior.WIND, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, YELLOW).start();
+					new Parabola<>(getPlayer(), OnHitBehavior.WIND, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, powerLevel, YELLOW).start();
 				}
 			}
 	);
@@ -117,7 +120,7 @@ public class PenetrationArrow extends AbilityBase {
 				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
 					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
 				}
-				arrowType.launchArrow((Arrow) e.getProjectile());
+				arrowType.launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
 				arrowBullet--;
 				actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
 				if (arrowBullet <= 0) {
@@ -163,24 +166,25 @@ public class PenetrationArrow extends AbilityBase {
 			this.name = name;
 		}
 
-		protected abstract void launchArrow(Arrow arrow);
+		protected abstract void launchArrow(Arrow arrow, int powerEnchant);
 
 	}
 
 	private static final double GRAVITATIONAL_CONSTANT = 3;
 
-	public class Parabola extends Timer {
+	public class Parabola<Shooter extends Entity & Damageable & ProjectileSource> extends Timer {
 
-		private final Damageable shooter;
+		private final Shooter shooter;
 		private final OnHitBehavior onHitBehavior;
 		private final CustomEntity entity;
 		private final double velocity;
 		private final double sin;
+		private final int powerEnchant;
 		private final Vector forward;
 
 		private final ParticleLib.RGB color;
 
-		private Parabola(Damageable shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, ParticleLib.RGB color) {
+		private Parabola(Shooter shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, int powerEnchant, ParticleLib.RGB color) {
 			super(300);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
@@ -188,6 +192,7 @@ public class PenetrationArrow extends AbilityBase {
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 			this.velocity = Math.sqrt((arrowVelocity.getX() * arrowVelocity.getX()) + (arrowVelocity.getY() * arrowVelocity.getY()) + (arrowVelocity.getZ() * arrowVelocity.getZ()));
 			this.sin = FastMath.sin(Math.toRadians(angle));
+			this.powerEnchant = powerEnchant;
 			this.forward = arrowVelocity.setY(arrowVelocity.getY() * 0.7);
 			this.color = color;
 			this.lastLocation = startLocation;
@@ -208,7 +213,7 @@ public class PenetrationArrow extends AbilityBase {
 				entity.setLocation(location);
 				for (Damageable damageable : LocationUtil.getConflictingDamageables(entity.getBoundingBox())) {
 					if (!shooter.equals(damageable) && !attacked.contains(damageable)) {
-						damageable.damage(Math.round(2.5 * velocity * 10) / 10.0, getPlayer());
+						damageable.damage(EnchantLib.getDamageWithPowerEnchantment(Math.round(2.5 * velocity * 10) / 10.0, powerEnchant), getPlayer());
 						onHitBehavior.onHit(shooter, damageable);
 						attacked.add(damageable);
 					}
@@ -238,7 +243,12 @@ public class PenetrationArrow extends AbilityBase {
 			public void onDeflect(Participant deflector, Vector newDirection) {
 				stop(false);
 				Player deflectedPlayer = deflector.getPlayer();
-				new Parabola(deflectedPlayer, onHitBehavior, lastLocation, newDirection, getPlayer().getLocation().getDirection().getY() * 90, color).start();
+				new Parabola<>(deflectedPlayer, onHitBehavior, lastLocation, newDirection, getPlayer().getLocation().getDirection().getY() * 90, powerEnchant, color).start();
+			}
+
+			@Override
+			public ProjectileSource getShooter() {
+				return shooter;
 			}
 
 		}

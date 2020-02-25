@@ -61,6 +61,12 @@ public class AbilitySettings {
 	}
 
 	private static void update() throws IOException, InvalidConfigurationException {
+		if (!isLoaded()) {
+			file = FileUtil.newFile("abilitysettings.yml");
+			lastModified = file.lastModified();
+			config = new CommentedConfiguration(file);
+		}
+
 		config.load();
 
 		for (Entry<SettingObject<?>, Cache> entry : cache.entrySet()) {

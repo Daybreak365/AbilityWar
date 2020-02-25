@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.manager.object;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

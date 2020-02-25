@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.version;
 
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
@@ -18,7 +18,6 @@ public class ServerVersion {
 	private ServerVersion() {
 	}
 
-	private static final Messager messager = new Messager();
 	private static String majorVersion;
 	private static int version;
 
@@ -56,7 +55,7 @@ public class ServerVersion {
 				setAPIVersion(plugin, "1." + getVersion());
 			}
 		} else {
-			messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 지원하지 않는 버전을 이용하고 있습니다."));
+			Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인이 지원하지 않는 버전을 이용하고 있습니다."));
 			Bukkit.getPluginManager().disablePlugin(plugin);
 		}
 	}

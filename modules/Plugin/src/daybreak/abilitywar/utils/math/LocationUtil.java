@@ -22,7 +22,6 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -81,7 +80,7 @@ public class LocationUtil {
 	public static <T extends Entity> List<T> getEntitiesInCircle(Class<T> entityType, Location center, double radius, Predicate<Entity> predicate) {
 		double centerX = center.getX(), centerZ = center.getZ(), SQUARED_RADIUS = radius * radius;
 		List<T> entities = new ArrayList<>();
-		for (Entity e : collectEntities(center, radius)) {
+		for (Entity e : collectEntities(center, (int) Math.floor(radius))) {
 			if (entityType.isAssignableFrom(e.getClass())) {
 				@SuppressWarnings("unchecked") T entity = (T) e;
 				Location entityLocation = entity.getLocation();
@@ -366,14 +365,17 @@ public class LocationUtil {
 	 * @param horizontal 수평 거리
 	 * @return 엔티티 목록
 	 */
-	public static List<Entity> collectEntities(Location center, double horizontal) {
-		List<Entity> entities = new ArrayList<>();
+	public static Entity[] collectEntities(Location center, int horizontal) {
+		Entity[] entities = new Entity[0];
 		World world = center.getWorld();
-		Chunk leftTop = center.clone().add(horizontal, 0, -horizontal).getChunk();
-		Chunk rightBottom = center.clone().add(-horizontal, 0, horizontal).getChunk();
-		for (int x = rightBottom.getX(); x <= leftTop.getX(); x++) {
-			for (int z = leftTop.getZ(); z <= rightBottom.getZ(); z++) {
-				entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
+		final int maxX = (center.getBlockX() + horizontal) >> 4, maxZ = (center.getBlockZ() + horizontal) >> 4;
+		for (int x = (center.getBlockX() - horizontal) >> 4; x <= maxX; x++) {
+			for (int z = (center.getBlockZ() - horizontal) >> 4; z <= maxZ; z++) {
+				Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
+				Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
+				System.arraycopy(entities, 0, newEntities, 0, entities.length);
+				System.arraycopy(chunkEntities, 0, newEntities, entities.length, chunkEntities.length);
+				entities = newEntities;
 			}
 		}
 		return entities;
@@ -389,12 +391,16 @@ public class LocationUtil {
 	 * @param maxZ   엔티티 목록을 확인할 청크들의 Z 좌표 중 가장 큰 값 (중심 청크 기준)
 	 * @return 엔티티 목록
 	 */
-	public static List<Entity> collectEntities(Chunk center, int minX, int minZ, int maxX, int maxZ) {
-		List<Entity> entities = new ArrayList<>();
+	public static Entity[] collectEntities(Chunk center, int minX, int minZ, int maxX, int maxZ) {
+		Entity[] entities = new Entity[0];
 		World world = center.getWorld();
 		for (int x = minX; x <= maxX; x++) {
 			for (int z = minZ; z <= maxZ; z++) {
-				entities.addAll(Arrays.asList(world.getChunkAt(x, z).getEntities()));
+				Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
+				Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
+				System.arraycopy(entities, 0, newEntities, 0, entities.length);
+				System.arraycopy(chunkEntities, 0, newEntities, entities.length, chunkEntities.length);
+				entities = newEntities;
 			}
 		}
 		return entities;
@@ -413,7 +419,7 @@ public class LocationUtil {
 	public static <T extends Entity> ArrayList<T> getNearbyEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<Entity> predicate) {
 		double centerX = center.getX(), centerZ = center.getZ();
 		ArrayList<T> entities = new ArrayList<>();
-		for (Entity e : collectEntities(center, horizontal)) {
+		for (Entity e : collectEntities(center, (int) Math.floor(horizontal))) {
 			if (entityType.isAssignableFrom(e.getClass())) {
 				@SuppressWarnings("unchecked") T entity = (T) e;
 				Location entityLocation = entity.getLocation();

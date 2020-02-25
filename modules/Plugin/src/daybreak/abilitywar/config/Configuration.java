@@ -4,8 +4,8 @@ import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.standard.DefaultGame;
-import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
 import daybreak.abilitywar.utils.base.io.FileUtil;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.ClassUtil;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
@@ -40,6 +40,16 @@ public class Configuration {
 	}
 
 	public static void update() throws IOException, InvalidConfigurationException {
+		if (!isLoaded()) {
+			try {
+				file = FileUtil.newFile("Config.yml");
+				lastModified = file.lastModified();
+				config = new CommentedConfiguration(file);
+				update();
+			} catch (IOException | InvalidConfigurationException e) {
+				error = true;
+			}
+		}
 		config.load();
 
 		for (Entry<ConfigNodes, Cache> entry : cache.entrySet()) {

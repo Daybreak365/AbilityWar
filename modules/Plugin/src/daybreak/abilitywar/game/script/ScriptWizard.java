@@ -8,7 +8,7 @@ import daybreak.abilitywar.game.script.objects.setter.special.LoopCountSetter;
 import daybreak.abilitywar.game.script.objects.setter.special.LoopSetter;
 import daybreak.abilitywar.game.script.objects.setter.special.MessageSetter;
 import daybreak.abilitywar.game.script.objects.setter.special.TimeSetter;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

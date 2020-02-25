@@ -18,4 +18,8 @@ public interface NMS {
 
 	Hologram newHologram(World world, double x, double y, double z);
 
+	float getAbsorptionHearts(Player player);
+
+	void setAbsorptionHearts(Player player, float absorptionHearts);
+
 }

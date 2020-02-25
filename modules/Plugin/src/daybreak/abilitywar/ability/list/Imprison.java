@@ -11,7 +11,7 @@ import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.compat.BlocksHandler;
 import daybreak.abilitywar.utils.library.BlockX;
@@ -61,8 +61,10 @@ public class Imprison extends AbilityBase implements TargetHandler {
 	};
 
 	public Imprison(Participant participant) {
-		super(participant, ChatColor.translateAlternateColorCodes('&',
-				"&f상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant,
+				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&f10초마다 &e강도 스택&f이 1씩 오르며, 최대 " + MaxSolidityConfig.getValue() + " 스택을 모을 수 있습니다."),
+				ChatColor.translateAlternateColorCodes('&', "&e강도 스택&f은 능력을 사용하면 초기화되며, "));
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

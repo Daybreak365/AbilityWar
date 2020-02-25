@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.script.objects.setter;
 
 import daybreak.abilitywar.game.script.ScriptWizard;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.game.manager.SpectatorManager;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;

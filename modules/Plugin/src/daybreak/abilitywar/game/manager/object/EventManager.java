@@ -2,7 +2,7 @@ package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.utils.ReflectionUtil;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;

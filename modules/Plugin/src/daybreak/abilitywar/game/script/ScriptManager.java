@@ -10,9 +10,9 @@ import daybreak.abilitywar.game.script.objects.setter.Setter;
 import daybreak.abilitywar.game.script.types.ChangeAbilityScript;
 import daybreak.abilitywar.game.script.types.LocationNoticeScript;
 import daybreak.abilitywar.game.script.types.TeleportScript;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.ReflectionUtil.ClassUtil;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.io.FileUtil;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.ClassUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,8 +36,6 @@ public class ScriptManager {
 
 	private ScriptManager() {
 	}
-
-	private static final Messager messager = new Messager();
 
 	private static final ArrayList<AbstractScript> scripts = new ArrayList<>();
 
@@ -87,13 +85,13 @@ public class ScriptManager {
 	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) {
 		for (ScriptRegisteration check : scriptTypes) {
 			if (check.getClazz().getSimpleName().equalsIgnoreCase(clazz.getSimpleName())) {
-				messager.sendConsoleMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
+				Messager.sendConsoleMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
 				return;
 			}
 		}
 
 		if (isRegistered(clazz)) {
-			messager.sendConsoleMessage(clazz.getName() + " 스크립트는 이미 등록되었습니다.");
+			Messager.sendConsoleMessage(clazz.getName() + " 스크립트는 이미 등록되었습니다.");
 			return;
 		}
 

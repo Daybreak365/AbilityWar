@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.message;
+package daybreak.abilitywar.utils.base.language;
 
 /**
  * 종성에 따른 조사 처리 라이브러리

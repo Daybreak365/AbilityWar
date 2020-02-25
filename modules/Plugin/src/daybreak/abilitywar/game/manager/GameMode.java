@@ -16,8 +16,8 @@ import daybreak.abilitywar.game.games.standard.WarGame;
 import daybreak.abilitywar.game.games.teamgame.TeamFight;
 import daybreak.abilitywar.game.games.zerotick.ZeroTick;
 import daybreak.abilitywar.game.manager.GameMode.GameRegistration.Flag;
-import daybreak.abilitywar.utils.Messager;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
 

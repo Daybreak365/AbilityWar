@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils;
+package daybreak.abilitywar.utils.base.reflect;
 
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.addon.AddonLoader;

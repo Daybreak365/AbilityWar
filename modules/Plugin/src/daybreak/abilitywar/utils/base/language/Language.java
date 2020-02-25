@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.message;
+package daybreak.abilitywar.utils.base.language;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -7,7 +7,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.MainCommand;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.script.ScriptManager;
-import daybreak.abilitywar.utils.Messager;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.math.FastMath;
@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 public class AbilityWar extends JavaPlugin {
 
 	private static final Logger logger = Logger.getLogger(AbilityWar.class.getName());
-	private static final Messager messager = new Messager();
 	private static AbilityWar plugin;
 
 	public static AbilityWar getPlugin() {
@@ -62,14 +61,14 @@ public class AbilityWar extends JavaPlugin {
 				Installer installer = null;
 				try {
 					installer = new Installer("DayBreak365", "AbilityWar", AbilityWar.this);
-					messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
+					Messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
 				} catch (IOException | InterruptedException | ExecutionException ignore) {
 				}
 				AbilityWar.this.installer = installer;
 			}
 		});
 		ServerVersion.compatVersion(this);
-		messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
+		Messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand(this));
 
 		AddonLoader.loadAll();
@@ -95,7 +94,7 @@ public class AbilityWar extends JavaPlugin {
 			}
 		});
 
-		messager.sendConsoleMessage("플러그인이 활성화되었습니다.");
+		Messager.sendConsoleMessage("플러그인이 활성화되었습니다.");
 	}
 
 	@Override
@@ -108,7 +107,7 @@ public class AbilityWar extends JavaPlugin {
 		}
 		AbilitySettings.Update();
 		AddonLoader.disableAll();
-		messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");
+		Messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");
 	}
 
 }

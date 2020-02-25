@@ -10,10 +10,10 @@ import daybreak.abilitywar.game.games.mixability.Mix;
 import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
-import daybreak.abilitywar.utils.Messager;
-import daybreak.abilitywar.utils.ReflectionUtil;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 

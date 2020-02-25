@@ -32,10 +32,16 @@ public class DamageUtil {
 
 	@Beta
 	public static <D extends Entity & Attributable, V extends Entity & Attributable> double getPenetratedDamage(D damager, V victim, double damage) {
-		double attackDamage = damager.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
-		double defensePoint = victim.getAttribute(Attribute.GENERIC_ARMOR).getValue();
-		double base = (attackDamage * (1 - (Math.min(20, Math.max(defensePoint / 5, defensePoint - (attackDamage / (2 + (victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue() / 4))))) / 25)));
+		double base = applyArmorModifier(damager.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue(), victim.getAttribute(Attribute.GENERIC_ARMOR).getValue(), victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue());
 		return base * (damage / base);
+	}
+
+	public static double applyArmorModifier(double damage, double defensePoint, double armorToughness) {
+		return damage * (1.0 - a(defensePoint - damage / (2.0 + armorToughness / 4.0), defensePoint * 0.2) / 25.0);
+	}
+
+	private static double a(double d1, double d2) {
+		return d1 < d2 ? d2 : Math.min(d1, 20.0);
 	}
 
 	@Beta

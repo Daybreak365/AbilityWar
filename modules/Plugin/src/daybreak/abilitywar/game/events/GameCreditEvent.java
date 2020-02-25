@@ -4,6 +4,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GameCreditEvent extends Event {
@@ -26,9 +27,7 @@ public class GameCreditEvent extends Event {
 	}
 
 	public void addCredit(String... strings) {
-		for (String str : strings) {
-			creditList.add(str);
-		}
+		creditList.addAll(Arrays.asList(strings));
 	}
 
 }

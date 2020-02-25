@@ -49,7 +49,7 @@ public class ShowmanShip extends AbilityBase {
 	private static final Type[] types = {
 			Type.BALL_LARGE, Type.STAR
 	};
-	private static final double radius = 7;
+	private static final int radius = 7;
 	private final RGB WEAK = new RGB(214, 255, 212);
 	private final RGB POWER = new RGB(255, 184, 150);
 	private final RGB POWERFUL = new RGB(255, 59, 59);
@@ -120,7 +120,7 @@ public class ShowmanShip extends AbilityBase {
 
 	private final Predicate<Entity> unequalPredicate = Predicates.PARTICIPANTS_UNEQUAL(getPlayer());
 
-	private double getPoint(double horizontal, double vertical) {
+	private double getPoint(int horizontal, int vertical) {
 		Location center = getPlayer().getLocation();
 		double centerX = center.getX(), centerZ = center.getZ();
 		double point = 0;
