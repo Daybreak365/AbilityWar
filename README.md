@@ -19,7 +19,7 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
     - AbilityWar를 로컬 Maven 레포지터리에 설치하려면 `mvn clean install` 명령을 실행하세요.
 - **Craftbukkit Dependency**
     - AbilityWar 플러그인은 craftbukkit dependency를 필요로 합니다.
-    - [Installer v1.0.0](https://drive.google.com/open?id=1JKB3vdz1_HCdL-UQ4-SLOjTqrcQ4rFYE)을 내려받은 후 새 디렉토리에서 `java -jar Installer-1.0.0.jar` 명령으로 jar 파일을 실행하면 자동으로 필요한 버전의 craftbukkit을 로컬 Maven 레포지터리에 설치합니다.
+    - [Installer v1.1.0](https://drive.google.com/open?id=1DUYrxXk7-R3Dwn3qHBb3oSf7B4CpEyMo)을 내려받은 후 새 디렉토리에서 `java -jar Installer-1.1.0.jar` 명령으로 jar 파일을 실행하면 자동으로 필요한 버전의 craftbukkit을 로컬 Maven 레포지터리에 설치합니다.
 
 **🔗 Download**
 
