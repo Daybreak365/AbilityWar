@@ -13,14 +13,14 @@
         <module>modules/compatibility/v1_13_R1</module>
         <module>modules/compatibility/v1_14_R1</module>
         <module>modules/compatibility/v1_15_R1</module>
-        <module>modules/Plugin</module>
+        <module>modules/Core</module>
     </modules>
 
     <properties>
         <encoding>UTF-8</encoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <revision>2.1.5.4</revision>
+        <revision>2.1.5.5</revision>
     </properties>
 
     <build>
