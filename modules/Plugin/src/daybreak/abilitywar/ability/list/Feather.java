@@ -1,0 +1,129 @@
+package daybreak.abilitywar.ability.list;
+
+import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.library.ParticleLib;
+import daybreak.abilitywar.utils.library.SoundLib;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+
+@AbilityManifest(Name = "깃털", Rank = Rank.A, Species = Species.OTHERS)
+public class Feather extends AbilityBase implements ActiveHandler {
+
+	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80,
+			"# 쿨타임") {
+
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+
+	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Feather.class, "Duration", 10,
+			"# 지속시간") {
+
+		@Override
+		public boolean Condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+
+	public Feather(Participant participant) {
+		super(participant,
+				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 &b비행&f할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
+				ChatColor.translateAlternateColorCodes('&', "&b비행 &f중 웅크리면 바라보는 방향으로 돌진합니다."),
+				ChatColor.translateAlternateColorCodes('&', "&f낙하 대미지를 무시합니다."));
+	}
+
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final DurationTimer durationTimer = new DurationTimer(DurationConfig.getValue() * 4, cooldownTimer) {
+
+		@Override
+		public void onDurationProcess(int seconds) {
+			getPlayer().setAllowFlight(true);
+			getPlayer().setFlying(true);
+		}
+
+		@Override
+		public void onDurationEnd() {
+			getPlayer().setFlying(false);
+			GameMode mode = getPlayer().getGameMode();
+			getPlayer().setAllowFlight(mode != GameMode.SURVIVAL && mode != GameMode.ADVENTURE);
+		}
+
+		@Override
+		protected void onDurationSilentEnd() {
+			getPlayer().setFlying(false);
+			GameMode mode = getPlayer().getGameMode();
+			getPlayer().setAllowFlight(mode != GameMode.SURVIVAL && mode != GameMode.ADVENTURE);
+		}
+
+	}.setPeriod(TimeUnit.TICKS, 5);
+
+	@Override
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+				if (!durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
+					durationTimer.start();
+
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@SubscribeEvent
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (!e.isCancelled() && getPlayer().equals(e.getEntity()) && e.getCause().equals(DamageCause.FALL)) {
+			e.setCancelled(true);
+			getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a낙하 대미지를 받지 않습니다."));
+			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
+		}
+	}
+
+	private final Timer dash = new Timer() {
+		@Override
+		protected void run(int count) {
+			if (getPlayer().isFlying()) {
+				getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.25));
+				ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 1);
+			} else {
+				stop(false);
+			}
+		}
+	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onToogleSneak(PlayerToggleSneakEvent e) {
+		Player player = e.getPlayer();
+		if (player.isFlying() && e.isSneaking()) {
+			dash.start();
+		} else {
+			dash.stop(false);
+		}
+	}
+
+	@Override
+	public void TargetSkill(Material materialType, LivingEntity entity) {
+	}
+
+}

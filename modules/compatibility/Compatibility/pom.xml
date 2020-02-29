@@ -23,9 +23,45 @@
 
     <dependencies>
         <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>Interfaces</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_12_R1</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_13_R1</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_13_R2</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_14_R1</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_15_R1</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>${spigot-api.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -10,7 +10,7 @@ public class BlockSnapshotImpl implements BlockSnapshot {
 	private final Material type;
 	private final byte data;
 
-	BlockSnapshotImpl(Block block) {
+	public BlockSnapshotImpl(Block block) {
 		this.block = block;
 		this.type = block.getType();
 		this.data = block.getData();

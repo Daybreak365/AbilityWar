@@ -9,7 +9,7 @@ public class BlockSnapshotImpl implements BlockSnapshot {
 	private final Block block;
 	private final BlockData data;
 
-	BlockSnapshotImpl(Block block) {
+	public BlockSnapshotImpl(Block block) {
 		this.block = block;
 		this.data = block.getBlockData();
 	}
