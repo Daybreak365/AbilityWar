@@ -54,7 +54,6 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				ChatColor.translateAlternateColorCodes('&', "&f0.1의 추가 대미지를 냅니다."));
 	}
 
-	private boolean skillRunning = false;
 	private static final RGB BLACK = new RGB(0, 0, 0);
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final Timer skill = new Timer() {
@@ -73,7 +72,6 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			p.setGameMode(GameMode.SPECTATOR);
 			SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(p);
-			skillRunning = true;
 		}
 
 		@Override
@@ -92,7 +90,6 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onEnd() {
-			skillRunning = false;
 			p.setGameMode(originalMode);
 			p.setVelocity(new Vector());
 			for (int i = 0; i < 30; i++) {
@@ -149,14 +146,14 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	private void onGameModeChange(PlayerGameModeChangeEvent e) {
-		if (skillRunning) e.setCancelled(true);
+		if (skill.isRunning() && getPlayer().getGameMode() == GameMode.SPECTATOR) e.setCancelled(true);
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerTeleport(PlayerTeleportEvent e) {
-		if (skillRunning) e.setCancelled(true);
+		if (skill.isRunning() && getPlayer().getGameMode() == GameMode.SPECTATOR) e.setCancelled(true);
 	}
 
 	@Override

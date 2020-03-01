@@ -112,6 +112,7 @@ public class AbilityList {
 		registerAbility(ReligiousLeader.class);
 		registerAbility(Kidnap.class);
 		registerAbility(Flector.class);
+		registerAbility(Ghost.class);
 	}
 
 	public static Collection<AbilityRegistration> values() {

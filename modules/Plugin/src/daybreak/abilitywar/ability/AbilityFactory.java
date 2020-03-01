@@ -101,7 +101,6 @@ public class AbilityFactory {
 		registerAbility(Void.class);
 		registerAbility(DarkVision.class);
 		registerAbility(HigherBeing.class);
-		registerAbility(VictoryBySword.class);
 		registerAbility(FireFightWithFire.class);
 		registerAbility(Hacker.class);
 		registerAbility(Muse.class);
@@ -144,7 +143,10 @@ public class AbilityFactory {
 		// v2.1.3
 		registerAbility(Kidnap.class);
 		// v2.1.4.8
+		registerAbility(VictoryBySword.class);
 		registerAbility(Flector.class);
+		// v2.1.5.8
+		registerAbility(Ghost.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

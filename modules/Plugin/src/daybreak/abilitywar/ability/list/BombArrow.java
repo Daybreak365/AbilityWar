@@ -59,7 +59,7 @@ public class BombArrow extends AbilityBase {
 		}
 	}.setPeriod(TimeUnit.TICKS, WRECK.isEnabled(getGame()) ? 60 : 140);
 
-	private final int size = SizeConfig.getValue();
+	private final float size = SizeConfig.getValue();
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
