@@ -19,12 +19,12 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
     - AbilityWar를 로컬 Maven 레포지터리에 설치하려면 `mvn clean install` 명령을 실행하세요.
 - **Craftbukkit Dependency**
     - AbilityWar 플러그인은 craftbukkit dependency를 필요로 합니다.
-    - [Installer v1.1.0](https://drive.google.com/uc?export=download&confirm=no_antivirus&id=1DUYrxXk7-R3Dwn3qHBb3oSf7B4CpEyMo)을 내려받은 후 새 디렉토리에서 `java -jar Installer-1.1.0.jar` 명령으로 jar 파일을 실행하면 자동으로 필요한 버전의 craftbukkit을 로컬 Maven 레포지터리에 설치합니다.
-    - 특정 버전의 craftbukkit을 설치하고 싶다면, `java -jar Installer-1.1.0.jar <version>` 명령을 사용하세요. 1.12.2 버전의 craftbukkit을 설치하려면, `java -jar Installer-1.1.0.jar 1.12.2` 명령을 사용하면 됩니다.
+    - [Installer v1.2.0](https://drive.google.com/uc?export=download&confirm=no_antivirus&id=17ipqt53o8ir44p8Yhpj_3U4jSnYMNYcq)을 내려받은 후 새 디렉토리에서 `java -jar Installer-1.2.0.jar` 명령으로 jar 파일을 실행하면 자동으로 필요한 버전의 craftbukkit을 로컬 Maven 레포지터리에 설치합니다.
+    - 특정 버전의 craftbukkit을 설치하고 싶다면, `java -jar Installer-1.2.0.jar <version>` 명령을 사용하세요. 1.12.2 버전의 craftbukkit을 설치하려면, `java -jar Installer-1.2.0.jar 1.12.2` 명령을 사용하면 됩니다.
 
 **🔗 Download**
 
 | 마인크래프트 버전 | 권장 플러그인 버전 |
 |:----:|:----:|
-| MC 1.12.x ~ 1.15.x | [v2.1.5.8](https://github.com/DayBreak365/AbilityWar/releases/download/20200301/AbilityWar-2.1.5.8.jar) |
-| MC 1.8.x ~ 1.11.x | [v1.9.0](https://github.com/DayBreak365/AbilityWar/releases/download/20190725-1/AbilityWar.jar) |
+| MC 1.11.x ~ 1.15.x | [v2.1.6.4](https://github.com/DayBreak365/AbilityWar/releases/download/20200302-1/AbilityWar-2.1.6.4.jar) |
+| MC 1.8.x ~ 1.10.x | [v1.9.0](https://github.com/DayBreak365/AbilityWar/releases/download/20190725-1/AbilityWar.jar) |
