@@ -30,6 +30,12 @@
         </dependency>
         <dependency>
             <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_11_R1</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
             <artifactId>v1_12_R1</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>

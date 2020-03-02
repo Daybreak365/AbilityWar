@@ -9,6 +9,8 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -30,7 +32,6 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 @AbilityManifest(Name = "유명 인사", Rank = Rank.D, Species = Species.HUMAN)
@@ -75,7 +76,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	private static final double radians = Math.toRadians(90);
 	private final double distance = DistanceConfig.getValue();
-	private final Map<Block, Material> carpets = new HashMap<>();
+	private final Map<Block, BlockSnapshot> carpets = new HashMap<>();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 		@Override
@@ -109,7 +110,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 									location.getBlockZ()
 							);
 							if (!carpets.containsKey(block)) {
-								carpets.put(block, block.getType());
+								carpets.put(block, BlockHandler.createSnapshot(block));
 								BlockX.setType(block, MaterialX.RED_CARPET);
 							}
 						}
@@ -133,16 +134,16 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationEnd() {
-			for (Entry<Block, Material> entry : carpets.entrySet()) {
-				entry.getKey().setType(entry.getValue());
+			for (BlockSnapshot snapshot : carpets.values()) {
+				snapshot.apply();
 			}
 			carpets.clear();
 		}
 
 		@Override
 		protected void onDurationSilentEnd() {
-			for (Entry<Block, Material> entry : carpets.entrySet()) {
-				entry.getKey().setType(entry.getValue());
+			for (BlockSnapshot snapshot : carpets.values()) {
+				snapshot.apply();
 			}
 			carpets.clear();
 		}

@@ -18,6 +18,13 @@ public class BlockHandler {
 
 		static SnapshotSupplier newInstance(ServerVersion.Version version) {
 			switch (version) {
+				case v1_11_R1:
+					return new SnapshotSupplier() {
+						@Override
+						public BlockSnapshot createSnapshot(Block block) {
+							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_11_R1.block.BlockSnapshotImpl(block);
+						}
+					};
 				case v1_12_R1:
 					return new SnapshotSupplier() {
 						@Override

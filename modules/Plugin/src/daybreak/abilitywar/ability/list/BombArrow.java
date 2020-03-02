@@ -67,7 +67,7 @@ public class BombArrow extends AbilityBase {
 	private void onProjectileShoot(ProjectileHitEvent e) {
 		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
 			Location location = e.getHitEntity() == null ? e.getHitBlock().getLocation() : e.getHitEntity().getLocation();
-			location.getWorld().createExplosion(location, size, false, true);
+			location.getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), size, false, true);
 			e.getEntity().remove();
 		}
 	}

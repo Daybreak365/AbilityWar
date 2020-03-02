@@ -42,14 +42,16 @@ public class ServerVersion {
 		return version.getRelease();
 	}
 
-	public static void compatVersion(Plugin plugin) {
+	public static boolean compatVersion(Plugin plugin) {
 		if (version != Version.UNSUPPORTED) {
 			if (getVersionNumber() >= 13) {
 				setAPIVersion(plugin, "1." + getVersionNumber());
 			}
+			return true;
 		} else {
 			logger.log(Level.SEVERE, "플러그인이 지원하지 않는 버전을 이용하고 있습니다.");
 			Bukkit.getPluginManager().disablePlugin(plugin);
+			return false;
 		}
 	}
 
@@ -67,6 +69,7 @@ public class ServerVersion {
 
 	public enum Version {
 		UNSUPPORTED(-1, -1),
+		v1_11_R1(11, 1),
 		v1_12_R1(12, 1),
 		v1_13_R1(13, 1), v1_13_R2(13, 2),
 		v1_14_R1(14, 1),

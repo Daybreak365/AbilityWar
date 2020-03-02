@@ -9,6 +9,8 @@ public class NMSHandler {
 
 	private static NMS newInstance(ServerVersion.Version version) {
 		switch (version) {
+			case v1_11_R1:
+				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_11_R1.nms.NMSImpl();
 			case v1_12_R1:
 				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_12_R1.nms.NMSImpl();
 			case v1_13_R1:

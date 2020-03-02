@@ -66,7 +66,7 @@ public class AbilityWar extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		ServerVersion.compatVersion(this);
+		if (!ServerVersion.compatVersion(this)) return;
 		Messager.sendConsoleMessage("Server Version: " + Bukkit.getServer().getBukkitVersion());
 		Bukkit.getPluginCommand("AbilityWar").setExecutor(new MainCommand(this));
 

@@ -15,6 +15,8 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
+import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.math.geometry.Boundary.BoundingBox;
@@ -111,7 +113,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 
 		private final LivingEntity target;
 		private final Block[] blocks = new Block[2];
-		private final Material[] types = new Material[2];
+		private final BlockSnapshot[] snapshots = new BlockSnapshot[2];
 		private final Location teleport;
 		private ActionbarChannel actionbarChannel;
 
@@ -123,7 +125,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 			blocks[1] = blocks[0].getRelative(BlockFace.DOWN);
 			target.setInvulnerable(true);
 			for (int i = 0; i < 2; i++) {
-				types[i] = blocks[i].getType();
+				snapshots[i] = BlockHandler.createSnapshot(blocks[i]);
 				blocks[i].setType(Material.ICE);
 			}
 			this.teleport = blocks[1].getLocation().clone().add(0.5, 0, 0.5).setDirection(target.getLocation().getDirection());
@@ -167,7 +169,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 			HandlerList.unregisterAll(this);
 			target.setInvulnerable(false);
 			for (int i = 0; i < 2; i++) {
-				blocks[i].setType(types[i]);
+				snapshots[i].apply();
 			}
 			if (actionbarChannel != null) actionbarChannel.unregister();
 			frozenEntities.remove(target);
@@ -178,7 +180,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 			HandlerList.unregisterAll(this);
 			target.setInvulnerable(false);
 			for (int i = 0; i < 2; i++) {
-				blocks[i].setType(types[i]);
+				snapshots[i].apply();
 			}
 			if (actionbarChannel != null) actionbarChannel.unregister();
 			frozenEntities.remove(target);
