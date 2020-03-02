@@ -558,7 +558,7 @@ public class LocationUtil {
 					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player player = (Player) entity;
-						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
+						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isExcluded(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
 							return false;
 						}
 						if (game instanceof TeamGame && criterion instanceof Player) {
@@ -582,7 +582,7 @@ public class LocationUtil {
 					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player player = (Player) entity;
-						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isDead(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
+						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isExcluded(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
 							return false;
 						}
 						if (game instanceof TeamGame && criterion instanceof Player) {
@@ -607,7 +607,7 @@ public class LocationUtil {
 					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player player = (Player) entity;
-						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
+						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isExcluded(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
 					}
 					return true;
 				}
@@ -621,7 +621,7 @@ public class LocationUtil {
 					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
 						AbstractGame game = AbilityWarThread.getGame();
 						Player player = (Player) entity;
-						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isDead(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
+						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isExcluded(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
 					}
 					return true;
 				}

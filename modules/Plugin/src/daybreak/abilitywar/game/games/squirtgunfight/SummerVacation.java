@@ -2,10 +2,8 @@ package daybreak.abilitywar.game.games.squirtgunfight;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.Configuration.Settings.SummerVacationSettings;
 import daybreak.abilitywar.game.events.GameCreditEvent;
-import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.games.mode.decorator.Winnable;
 import daybreak.abilitywar.game.games.standard.Game;
@@ -15,8 +13,8 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -27,22 +25,22 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * 체인지 능력 전쟁
+ * 신나는 여름 휴가
  *
  * @author Daybreak 새벽
  */
@@ -68,7 +66,6 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	protected void progressGame(int seconds) {
 		switch (seconds) {
 			case 1: {
-
 				int count = 0;
 
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6==== &f게임 참여자 목록 &6===="));
@@ -137,18 +134,9 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		}
 	}
 
-	private final List<Participant> killers = new ArrayList<>();
+	private final Set<Participant> killers = new HashSet<>();
 
-	private final GameTimer Glow = new GameTimer(TaskType.INFINITE, -1) {
-
-		@Override
-		protected void onStart() {
-		}
-
-		@Override
-		protected void onEnd() {
-		}
-
+	private final GameTimer glow = new GameTimer(TaskType.INFINITE, -1) {
 		@Override
 		protected void run(int count) {
 			for (Participant p : killers) {
@@ -162,72 +150,30 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	@Override
 	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
-			@EventHandler
-			protected void onDeath(PlayerDeathEvent e) {
-				Player victimPlayer = e.getEntity();
-				Player killerPlayer = victimPlayer.getKiller();
-				if (victimPlayer.getLastDamageCause() != null) {
-					DamageCause Cause = victimPlayer.getLastDamageCause().getCause();
-
-					if (killerPlayer != null) {
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&f님이 &c" + victimPlayer.getName() + "&f님을 죽였습니다."));
-					} else {
-						if (Cause.equals(DamageCause.CONTACT)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 찔려 죽었습니다."));
-						} else if (Cause.equals(DamageCause.FALL)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어져 죽었습니다."));
-						} else if (Cause.equals(DamageCause.FALLING_BLOCK)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어지는 블록에 맞아 죽었습니다."));
-						} else if (Cause.equals(DamageCause.SUFFOCATION)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 끼여 죽었습니다."));
-						} else if (Cause.equals(DamageCause.DROWNING)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 익사했습니다."));
-						} else if (Cause.equals(DamageCause.ENTITY_EXPLOSION)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 폭발했습니다."));
-						} else if (Cause.equals(DamageCause.LAVA)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 용암에 빠져 죽었습니다."));
-						} else if (Cause.equals(DamageCause.FIRE) || Cause.equals(DamageCause.FIRE_TICK)) {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 노릇노릇하게 구워졌습니다."));
-						} else {
-							e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
-						}
-					}
-				} else {
-					e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
-				}
-
-				if (isParticipating(victimPlayer)) {
-					Participant victim = getParticipant(victimPlayer);
-
-					Bukkit.getPluginManager().callEvent(new ParticipantDeathEvent(victim));
-
-					if (DeathSettings.getAbilityReveal()) {
-						if (victim.hasAbility()) {
-							String name = victim.getAbility().getName();
-							if (name != null) {
-								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다."));
-							}
-						} else {
-							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victimPlayer.getName() + "&f?님은 능력이 없습니다."));
-						}
-					}
-				}
-
+			@Override
+			public void Operation(Participant victim) {
+				Player victimPlayer = victim.getPlayer();
 				if (victimPlayer.getKiller() != null) {
-					Participant VictimPart = getParticipant(victimPlayer);
-					if (VictimPart != null && killers.contains(VictimPart)) killers.remove(VictimPart);
-					Participant Killer = getParticipant(victimPlayer.getKiller());
-					if (Killer != null && !Killer.getPlayer().equals(victimPlayer)) {
-						if (!killers.contains(Killer)) killers.add(Killer);
-						Score score = killObjective.getScore(Killer.getPlayer().getName());
+					Participant victimParticipant = getParticipant(victimPlayer);
+					if (victimParticipant != null) killers.remove(victimParticipant);
+					Participant killer = getParticipant(victimPlayer.getKiller());
+					if (killer != null && !killer.getPlayer().equals(victimPlayer)) {
+						killers.add(killer);
+						Score score = killObjective.getScore(killer.getPlayer().getName());
 						if (score.isScoreSet()) {
 							score.setScore(score.getScore() + 1);
 							if (score.getScore() >= maxKill) {
-								Win(Killer);
+								Win(killer);
 							}
 						}
 					}
 				}
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						NMSHandler.getNMS().respawn(victimPlayer);
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 2L);
 			}
 		};
 	}
@@ -275,7 +221,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
 
-		Glow.start();
+		glow.start();
 
 		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 		for (Participant participant : this.getParticipants()) {
@@ -343,6 +289,15 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	protected void onEnd() {
 		super.onEnd();
 		killObjective.unregister();
+	}
+
+	@Override
+	public void executeCommand(CommandType commandType, Player player, String[] args, Plugin plugin) {
+		if (commandType == CommandType.ABI) {
+			player.sendMessage(ChatColor.RED + "이 게임모드에서 사용할 수 없는 명령어입니다.");
+		} else {
+			super.executeCommand(commandType, player, args, plugin);
+		}
 	}
 
 }

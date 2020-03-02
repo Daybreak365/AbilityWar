@@ -76,7 +76,7 @@ public class Firewall implements Listener, Observer {
 					+ "\n" + ChatColor.translateAlternateColorCodes('&', "&f게임 진행중이므로 접속할 수 없습니다."));
 		}
 		if (DeathSettings.getOperation().equals(OnDeath.탈락)) {
-			if (handler.getDeathManager().isDead(p) && !p.isOp()) {
+			if (handler.getDeathManager().isExcluded(p) && !p.isOp()) {
 				e.disallow(Result.KICK_OTHER, ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
 						+ "\n" + ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
 			}

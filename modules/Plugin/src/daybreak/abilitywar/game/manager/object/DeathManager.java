@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
+import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.game.events.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.GAME_UPDATE;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +34,8 @@ import java.util.UUID;
 public class DeathManager implements Listener, Observer {
 
 	private final Game game;
+	private boolean abilityReveal = DeathSettings.getAbilityReveal(), abilityRemoval = DeathSettings.getAbilityRemoval();
+	private OnDeath operation = DeathSettings.getOperation();
 
 	public DeathManager(Game game) {
 		this.game = game;
@@ -88,12 +92,8 @@ public class DeathManager implements Listener, Observer {
 			ParticipantDeathEvent event = new ParticipantDeathEvent(victim);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
-				if (DeathSettings.getAbilityReveal()) {
-					Bukkit.broadcastMessage(getRevealMessage(victim));
-				}
-				if (DeathSettings.getAbilityRemoval()) {
-					victim.removeAbility();
-				}
+				if (abilityReveal) Bukkit.broadcastMessage(getRevealMessage(victim));
+				if (abilityRemoval) victim.removeAbility();
 
 				Operation(victim);
 			}
@@ -110,25 +110,45 @@ public class DeathManager implements Listener, Observer {
 	}
 
 	public void Operation(Participant victim) {
-		switch (DeathSettings.getOperation()) {
+		switch (operation) {
 			case 탈락:
 				Eliminate(victim);
-				deadPlayers.add(victim.getPlayer().getUniqueId());
+				excludedPlayers.add(victim.getPlayer().getUniqueId());
 				break;
 			case 관전모드:
 				victim.getPlayer().setGameMode(GameMode.SPECTATOR);
-				NMSHandler.getNMS().respawn(victim.getPlayer());
-				deadPlayers.add(victim.getPlayer().getUniqueId());
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						NMSHandler.getNMS().respawn(victim.getPlayer());
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 2L);
+				excludedPlayers.add(victim.getPlayer().getUniqueId());
 				break;
 			case 없음:
 				break;
 		}
 	}
 
+	public DeathManager setAbilityReveal(boolean abilityReveal) {
+		this.abilityReveal = abilityReveal;
+		return this;
+	}
+
+	public DeathManager setAbilityRemoval(boolean abilityRemoval) {
+		this.abilityRemoval = abilityRemoval;
+		return this;
+	}
+
+	public DeathManager setOperation(OnDeath operation) {
+		this.operation = operation;
+		return this;
+	}
+
 	/**
-	 * 사망한 유저 UUID 목록
+	 * 게임에서 제외된 유저 UUID 목록
 	 */
-	protected final Set<UUID> deadPlayers = new HashSet<>();
+	protected final Set<UUID> excludedPlayers = new HashSet<>();
 
 	/**
 	 * Operation 콘피그에 따라 탈락, 관전모드 설정 또는 아무 행동도 하지 않을 수 있습니다.
@@ -142,17 +162,17 @@ public class DeathManager implements Listener, Observer {
 	}
 
 	/**
-	 * 플레이어의 사망 여부를 확인합니다.
+	 * 플레이어의 게임 제외 여부를 확인합니다.
 	 */
-	public final boolean isDead(Player player) {
-		return deadPlayers.contains(player.getUniqueId());
+	public final boolean isExcluded(Player player) {
+		return excludedPlayers.contains(player.getUniqueId());
 	}
 
 	/**
-	 * 플레이어의 사망 여부를 확인합니다.
+	 * 플레이어의 게임 제외 여부를 확인합니다.
 	 */
-	public final boolean isDead(UUID uuid) {
-		return deadPlayers.contains(uuid);
+	public final boolean isExcluded(UUID uuid) {
+		return excludedPlayers.contains(uuid);
 	}
 
 	@Override
@@ -164,7 +184,6 @@ public class DeathManager implements Listener, Observer {
 
 	public interface Handler {
 		DeathManager getDeathManager();
-
 		DeathManager newDeathManager();
 	}
 

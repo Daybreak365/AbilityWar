@@ -16,33 +16,36 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class ScoreboardManager implements EventExecutor, Observer {
+
+	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+	private final Set<UUID> viewers = new HashSet<>();
 
 	public ScoreboardManager(Game game) {
 		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
 		game.attachObserver(this);
 	}
 
-	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
 	public Scoreboard getScoreboard() {
 		return scoreboard;
 	}
-
-	private final Set<Player> viewers = new HashSet<>();
 
 	@Override
 	public void update(GAME_UPDATE update) {
 		if (update == AbstractGame.GAME_UPDATE.START) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (viewers.add(player)) {
+				if (viewers.add(player.getUniqueId())) {
 					player.setScoreboard(scoreboard);
 				}
 			}
 		} else if (update == AbstractGame.GAME_UPDATE.END) {
-			for (Player viewer : viewers) {
-				viewer.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+			for (UUID uuid : viewers) {
+				Player viewer = Bukkit.getPlayer(uuid);
+				if (viewer != null) {
+					viewer.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+				}
 			}
 		}
 	}
@@ -50,9 +53,8 @@ public class ScoreboardManager implements EventExecutor, Observer {
 	@Override
 	public void execute(Listener listener, Event event) {
 		if (event instanceof PlayerJoinEvent) {
-			PlayerJoinEvent e = (PlayerJoinEvent) event;
-			Player player = e.getPlayer();
-			if (viewers.add(player)) {
+			Player player = ((PlayerJoinEvent) event).getPlayer();
+			if (viewers.add(player.getUniqueId())) {
 				player.setScoreboard(scoreboard);
 			}
 		}

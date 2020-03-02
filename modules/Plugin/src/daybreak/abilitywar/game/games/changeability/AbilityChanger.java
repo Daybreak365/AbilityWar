@@ -55,7 +55,7 @@ public class AbilityChanger {
 	private List<Participant> setupParticipants() {
 		List<Participant> list = new ArrayList<>();
 		for (Participant p : game.getParticipants()) {
-			if (!game.getDeathManager().isDead(p.getPlayer())) {
+			if (!game.getDeathManager().isExcluded(p.getPlayer())) {
 				list.add(p);
 			}
 		}

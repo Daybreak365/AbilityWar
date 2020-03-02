@@ -15,6 +15,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
@@ -28,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -252,6 +254,12 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 						}
 					}
 				}
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						NMSHandler.getNMS().respawn(victimPlayer);
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 2L);
 			}
 		};
 	}

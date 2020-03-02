@@ -254,7 +254,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 							if (targetEntity instanceof LivingEntity) {
 								if (targetEntity instanceof Player) {
 									Player targetPlayer = (Player) targetEntity;
-									if (isParticipating(targetPlayer) && (!(this instanceof DeathManager.Handler) || !((DeathManager.Handler) this).getDeathManager().isDead(targetPlayer))) {
+									if (isParticipating(targetPlayer) && (!(this instanceof DeathManager.Handler) || !((DeathManager.Handler) this).getDeathManager().isExcluded(targetPlayer))) {
 										this.lastClick = current;
 										ability.TargetSkill(material, targetPlayer);
 									}
