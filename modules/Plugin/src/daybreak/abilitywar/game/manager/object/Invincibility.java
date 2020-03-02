@@ -5,9 +5,9 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.events.InvincibleEndEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.Bar;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.math.NumberUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -26,7 +26,7 @@ import org.bukkit.plugin.EventExecutor;
  */
 public class Invincibility implements EventExecutor {
 
-	private final int duration = Settings.InvincibilitySettings.getDuration() * 60;
+	private final int duration = Settings.InvincibilitySettings.getDuration();
 
 	private final boolean isBossbarEnabled = Settings.InvincibilitySettings.isBossbarEnabled();
 	private final String bossbarMessage = Settings.InvincibilitySettings.getBossbarMessage();
@@ -97,9 +97,9 @@ public class Invincibility implements EventExecutor {
 
 		private InvincibilityTimer(int duration) {
 			game.super(TaskType.REVERSE, duration);
-			this.startMessage = ChatColor.GREEN + "무적이 " + ChatColor.WHITE + NumberUtil.parseTimeString(duration) + ChatColor.GREEN + "동안 적용됩니다.";
+			this.startMessage = ChatColor.GREEN + "무적이 " + ChatColor.WHITE + TimeUtil.parseTimeAsString(duration) + ChatColor.GREEN + "동안 적용됩니다.";
 			if (isBossbarEnabled) {
-				int[] time = NumberUtil.parseTime(duration);
+				int[] time = TimeUtil.parseTime(duration);
 				bossBar = new Bar(String.format(bossbarMessage, time[0], time[1]), BarColor.GREEN, BarStyle.SEGMENTED_10);
 			}
 		}
@@ -122,12 +122,12 @@ public class Invincibility implements EventExecutor {
 		protected void run(int count) {
 			if (getTaskType() != TaskType.INFINITE) {
 				if (bossBar != null) {
-					int[] time = NumberUtil.parseTime(count);
+					int[] time = TimeUtil.parseTime(count);
 					bossBar.setTitle(String.format(bossbarMessage, time[0], time[1])).setProgress(Math.min(count / (double) getMaximumCount(), 1.0));
 				}
 				if (count == (getMaximumCount()) / 2 || (count <= 5 && count >= 1)) {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-							"&a무적이 &f" + NumberUtil.parseTimeString(count) + " &a후에 해제됩니다."));
+							"&a무적이 &f" + TimeUtil.parseTimeAsString(count) + " &a후에 해제됩니다."));
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				}
 			}

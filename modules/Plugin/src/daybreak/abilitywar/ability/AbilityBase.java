@@ -20,12 +20,12 @@ import daybreak.abilitywar.game.games.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
+import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.FastMath;
-import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -413,9 +413,9 @@ public abstract class AbilityBase implements EventManager.Observer {
 
 		public String toString(ChatColor timeColor) {
 			if (!abilityName.isEmpty()) {
-				return ChatColor.RED.toString() + abilityName + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getCount());
+				return ChatColor.RED.toString() + abilityName + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
 			} else {
-				return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getCount());
+				return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
 			}
 		}
 
@@ -549,9 +549,9 @@ public abstract class AbilityBase implements EventManager.Observer {
 
 		public final String toString(ChatColor timeColor) {
 			if (!abilityName.isEmpty()) {
-				return ChatColor.GOLD.toString() + abilityName + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getFixedCount());
+				return ChatColor.GOLD.toString() + abilityName + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
 			} else {
-				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + NumberUtil.parseTimeString(getFixedCount());
+				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
 			}
 		}
 

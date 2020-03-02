@@ -14,11 +14,10 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -29,7 +28,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -106,7 +104,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				break;
 			case 5:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &d" + AbilityList.nameValues().size() + "개&f의 능력이 등록되어 있습니다."));
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임 시작시 &f첫번째 능력&7이 할당되며, 이후 &f" + NumberUtil.parseTimeString(changer.getPeriod()) + "&7마다 능력이 변경됩니다."));
+				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임 시작시 &f첫번째 능력&7이 할당되며, 이후 &f" + TimeUtil.parseTimeAsString(changer.getPeriod()) + "&7마다 능력이 변경됩니다."));
 				break;
 			case 7:
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7스코어보드 &f설정중..."));
@@ -254,12 +252,6 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 						}
 					}
 				}
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						NMSHandler.getNMS().respawn(victimPlayer);
-					}
-				}.runTaskLater(AbilityWar.getPlugin(), 2L);
 			}
 		};
 	}

@@ -43,14 +43,8 @@ public class SuperNova extends AbilityBase {
 
 	private final int size = SizeConfig.getValue();
 
+	private Location center;
 	private final SimpleTimer explosion = new SimpleTimer(TaskType.REVERSE, size) {
-
-		Location center;
-
-		@Override
-		public void onStart() {
-			center = getPlayer().getLocation();
-		}
 
 		@Override
 		public void run(int seconds) {
@@ -70,6 +64,7 @@ public class SuperNova extends AbilityBase {
 	@SubscribeEvent
 	public void onPlayerDeath(ParticipantDeathEvent e) {
 		if (e.getParticipant().equals(getParticipant())) {
+			this.center = e.getPlayer().getLocation();
 			explosion.start();
 		}
 	}

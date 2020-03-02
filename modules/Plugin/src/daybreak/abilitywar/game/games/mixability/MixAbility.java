@@ -355,7 +355,10 @@ public class MixAbility extends Game implements DefaultKitHandler {
 
 		@Override
 		public AbilityBase removeAbility() {
-			((Mix) getAbility()).removeAbility();
+			AbilityBase abilityBase = getAbility();
+			if (abilityBase != null) {
+				((Mix) abilityBase).removeAbility();
+			}
 			return null;
 		}
 

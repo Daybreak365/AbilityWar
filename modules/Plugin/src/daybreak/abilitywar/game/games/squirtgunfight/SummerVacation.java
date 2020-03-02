@@ -14,7 +14,6 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -28,7 +27,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -168,12 +166,6 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 						}
 					}
 				}
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						NMSHandler.getNMS().respawn(victimPlayer);
-					}
-				}.runTaskLater(AbilityWar.getPlugin(), 2L);
 			}
 		};
 	}

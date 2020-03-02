@@ -14,7 +14,6 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
@@ -26,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
@@ -209,12 +207,6 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 					case 관전모드:
 					case 없음:
 						victim.getPlayer().setGameMode(GameMode.SPECTATOR);
-						new BukkitRunnable() {
-							@Override
-							public void run() {
-								NMSHandler.getNMS().respawn(victim.getPlayer());
-							}
-						}.runTaskLater(AbilityWar.getPlugin(), 2L);
 						excludedPlayers.add(victim.getPlayer().getUniqueId());
 						break;
 				}

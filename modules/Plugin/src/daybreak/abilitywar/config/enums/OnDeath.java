@@ -5,36 +5,42 @@ import org.bukkit.ChatColor;
 
 public enum OnDeath {
 
-	탈락(ChatColor.WHITE + "플레이어를 탈락시킵니다.") {
+	탈락(true, ChatColor.RED + "● " + ChatColor.WHITE + "플레이어를 탈락시킵니다.", ChatColor.YELLOW + "● " + ChatColor.WHITE + "플레이어 능력을 제거합니다.") {
 		@Override
-		public OnDeath Next() {
+		public OnDeath next() {
 			return OnDeath.관전모드;
 		}
 	},
-	관전모드(ChatColor.WHITE + "플레이어를 관전 모드로 전환합니다.") {
+	관전모드(true, ChatColor.GOLD + "● " + ChatColor.WHITE + "플레이어를 관전 모드로 전환합니다.", ChatColor.YELLOW + "● " + ChatColor.WHITE + "플레이어 능력을 제거합니다.") {
 		@Override
-		public OnDeath Next() {
+		public OnDeath next() {
 			return OnDeath.없음;
 		}
 	},
-	없음(ChatColor.WHITE + "아무 작업도 하지 않습니다.") {
+	없음(false, ChatColor.GREEN + "● " + ChatColor.WHITE + "아무 작업도 하지 않습니다.") {
 		@Override
-		public OnDeath Next() {
+		public OnDeath next() {
 			return OnDeath.탈락;
 		}
 	};
 
-	private final String description;
+	private final boolean abilityRemoval;
+	private final String[] description;
 
-	OnDeath(final String description) {
+	OnDeath(boolean abilityRemoval, String... description) {
+		this.abilityRemoval = abilityRemoval;
 		this.description = description;
 	}
 
-	public String getDescription() {
+	public boolean getAbilityRemoval() {
+		return abilityRemoval;
+	}
+
+	public String[] getDescription() {
 		return description;
 	}
 
-	public abstract OnDeath Next();
+	public abstract OnDeath next();
 
 	/**
 	 * 해당 이름의 상수가 있으면 반환합니다.

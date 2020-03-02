@@ -26,6 +26,7 @@ import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -475,7 +476,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 								int duration = Integer.parseInt(args[1]);
 								invincibility.Start(duration);
 								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-										"&f" + p.getName() + "&a님이 무적 상태를 &f" + NumberUtil.parseTimeString(duration) + "&a간 &f활성화&a하셨습니다."));
+										"&f" + p.getName() + "&a님이 무적 상태를 &f" + TimeUtil.parseTimeAsString(duration) + "&a간 &f활성화&a하셨습니다."));
 							} else {
 								Messager.sendErrorMessage(p, "시간은 자연수로 입력되어야 합니다.");
 							}

@@ -2,8 +2,8 @@ package daybreak.abilitywar.game.script.objects.setter.special;
 
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.objects.setter.Setter;
+import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.math.NumberUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
@@ -54,9 +54,9 @@ public class TimeSetter extends Setter<Integer> {
 		List<String> Lore = new ArrayList<String>();
 
 		if (getWizard().loopSetter.getValue()) {
-			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 후 &e" + NumberUtil.parseTimeString(this.getValue()) + "&f마다 실행됩니다."));
+			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 후 &e" + TimeUtil.parseTimeAsString(this.getValue()) + "&f마다 실행됩니다."));
 		} else {
-			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 &e" + NumberUtil.parseTimeString(this.getValue()) + " &f후에 실행됩니다."));
+			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 &e" + TimeUtil.parseTimeAsString(this.getValue()) + " &f후에 실행됩니다."));
 		}
 
 		Lore.add("");

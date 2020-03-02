@@ -34,7 +34,7 @@ import java.util.UUID;
 public class DeathManager implements Listener, Observer {
 
 	private final Game game;
-	private boolean abilityReveal = DeathSettings.getAbilityReveal(), abilityRemoval = DeathSettings.getAbilityRemoval();
+	private boolean abilityReveal = DeathSettings.getAbilityReveal(), autoRespawn = DeathSettings.getAutoRespawn();
 	private OnDeath operation = DeathSettings.getOperation();
 
 	public DeathManager(Game game) {
@@ -93,9 +93,18 @@ public class DeathManager implements Listener, Observer {
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
 				if (abilityReveal) Bukkit.broadcastMessage(getRevealMessage(victim));
-				if (abilityRemoval) victim.removeAbility();
+				if (operation.getAbilityRemoval()) victim.removeAbility();
 
 				Operation(victim);
+
+				if (autoRespawn) {
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							NMSHandler.getNMS().respawn(victim.getPlayer());
+						}
+					}.runTaskLater(AbilityWar.getPlugin(), 2L);
+				}
 			}
 		}
 	}
@@ -117,12 +126,6 @@ public class DeathManager implements Listener, Observer {
 				break;
 			case 관전모드:
 				victim.getPlayer().setGameMode(GameMode.SPECTATOR);
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						NMSHandler.getNMS().respawn(victim.getPlayer());
-					}
-				}.runTaskLater(AbilityWar.getPlugin(), 2L);
 				excludedPlayers.add(victim.getPlayer().getUniqueId());
 				break;
 			case 없음:
@@ -135,13 +138,13 @@ public class DeathManager implements Listener, Observer {
 		return this;
 	}
 
-	public DeathManager setAbilityRemoval(boolean abilityRemoval) {
-		this.abilityRemoval = abilityRemoval;
+	public DeathManager setAutoRespawn(boolean autoRespawn) {
+		this.autoRespawn = autoRespawn;
 		return this;
 	}
 
 	public DeathManager setOperation(OnDeath operation) {
-		this.operation = operation;
+		this.operation = operation != null ? operation : OnDeath.없음;
 		return this;
 	}
 

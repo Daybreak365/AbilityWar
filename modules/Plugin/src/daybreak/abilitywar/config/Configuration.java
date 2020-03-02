@@ -255,15 +255,15 @@ public class Configuration {
 			}
 
 			public static void nextOperation() {
-				modifyProperty(ConfigNodes.GAME_DEATH_OPERATION, getOperation().Next().name());
+				modifyProperty(ConfigNodes.GAME_DEATH_OPERATION, getOperation().next().name());
 			}
 
 			public static boolean getAbilityReveal() {
 				return getBoolean(ConfigNodes.GAME_DEATH_ABILITY_REVEAL);
 			}
 
-			public static boolean getAbilityRemoval() {
-				return getBoolean(ConfigNodes.GAME_DEATH_ABILITY_REMOVAL);
+			public static boolean getAutoRespawn() {
+				return getBoolean(ConfigNodes.GAME_DEATH_AUTO_RESPAWN);
 			}
 
 		}
