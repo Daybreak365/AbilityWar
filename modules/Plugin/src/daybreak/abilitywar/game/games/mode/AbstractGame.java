@@ -186,7 +186,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		observers.forEach(observer -> observer.update(GAME_UPDATE.END));
 	}
 
-	public class Participant implements Listener, Observer {
+	public class Participant implements Listener, AbstractGame.Observer {
 
 		private final Attributes attributes = new Attributes();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
@@ -208,14 +208,14 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		private long lastClick = System.currentTimeMillis();
 
 		@EventHandler
-		private void onPlayerLogin(PlayerLoginEvent e) {
+		public void onPlayerLogin(PlayerLoginEvent e) {
 			if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 				this.player = e.getPlayer();
 			}
 		}
 
 		@EventHandler
-		private void onPlayerInteract(PlayerInteractEvent e) {
+		public void onPlayerInteract(PlayerInteractEvent e) {
 			Player player = e.getPlayer();
 			if (player.equals(getPlayer()) && hasAbility()) {
 				AbilityBase ability = getAbility();
@@ -237,7 +237,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		}
 
 		@EventHandler
-		private void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
+		public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
 			Player player = e.getPlayer();
 			if (player.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
 				AbilityBase ability = this.getAbility();

@@ -3,7 +3,6 @@ package daybreak.abilitywar.ability.list;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.CustomEntity;
@@ -149,9 +148,11 @@ public class PenetrationArrow extends AbilityBase {
 		}
 	}
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
+		}
 	}
 
 	@Override

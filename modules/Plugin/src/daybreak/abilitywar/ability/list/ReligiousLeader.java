@@ -8,7 +8,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -154,9 +153,9 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 		}
 	}
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		if (religionName == null) {
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR && religionName == null) {
 			nameSelect.start();
 		}
 	}

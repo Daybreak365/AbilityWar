@@ -194,11 +194,13 @@ public abstract class AbilityBase implements EventManager.Observer {
 	 */
 	public abstract void TargetSkill(Material materialType, LivingEntity entity);
 
-	/**
-	 * 능력 제한이 해제될 경우 호출됩니다.
-	 */
-	@Deprecated
-	public void onRestrictClear() {
+	protected void onUpdate(AbilityBase.Update update) {
+	}
+
+	public enum Update {
+		RESTRICTION_SET,
+		RESTRICTION_CLEAR,
+		ABILITY_DESTROY
 	}
 
 	/**
@@ -208,6 +210,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 	 * 절대 임의로 호출하지 마십시오.
 	 */
 	public final void destroy() {
+		onUpdate(Update.ABILITY_DESTROY);
 		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
 		game.getEventManager().unregisterAll(this);
 		for (GameTimer timer : timers) {
@@ -306,6 +309,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 			for (ActionbarChannel channel : actionbarChannels) {
 				channel.update(null);
 			}
+			onUpdate(Update.RESTRICTION_SET);
 			Bukkit.getPluginManager().callEvent(new AbilityRestrictionSetEvent(this));
 		} else {
 			while (!pausedTimers.isEmpty()) {
@@ -316,8 +320,8 @@ public abstract class AbilityBase implements EventManager.Observer {
 					timer.start();
 				}
 			}
+			onUpdate(Update.RESTRICTION_CLEAR);
 			Bukkit.getPluginManager().callEvent(new AbilityRestrictionClearEvent(this));
-			onRestrictClear();
 		}
 	}
 

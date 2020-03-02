@@ -2,9 +2,6 @@ package daybreak.abilitywar.game.games.mixability;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.ChatColor;
@@ -87,19 +84,18 @@ public class Mix extends AbilityBase {
 		}
 	}
 
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		if (hasAbility()) {
-			first.setRestricted(false);
-			second.setRestricted(false);
-		}
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	public void onRestrictionSet(AbilityRestrictionSetEvent e) {
-		if (hasAbility()) {
-			first.setRestricted(true);
-			second.setRestricted(true);
+	@Override
+	protected void onUpdate(AbilityBase.Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			if (hasAbility()) {
+				first.setRestricted(false);
+				second.setRestricted(false);
+			}
+		} else if (update == Update.RESTRICTION_SET) {
+			if (hasAbility()) {
+				first.setRestricted(true);
+				second.setRestricted(true);
+			}
 		}
 	}
 

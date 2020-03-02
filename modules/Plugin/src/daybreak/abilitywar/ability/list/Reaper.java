@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -197,9 +196,11 @@ public class Reaper extends AbilityBase implements ActiveHandler {
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		soulNotice.update(ChatColor.translateAlternateColorCodes('&', "&f" + soulCount + " &0●"));
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			soulNotice.update(ChatColor.translateAlternateColorCodes('&', "&f" + soulCount + " &0●"));
+		}
 	}
 
 	@Override

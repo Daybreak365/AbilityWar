@@ -7,7 +7,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -99,9 +98,11 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onRestrictionClear(AbilityRestrictionClearEvent e) {
-		actionbarChannel.update(getState());
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			actionbarChannel.update(getState());
+		}
 	}
 
 	@Override
