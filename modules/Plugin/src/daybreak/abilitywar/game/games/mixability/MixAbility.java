@@ -16,7 +16,7 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.base.language.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -289,7 +289,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				if (mix.hasAbility()) {
 					String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
 					return ChatColor.translateAlternateColorCodes('&',
-							"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getNeededJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+							"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
 				} else {
 					return ChatColor.translateAlternateColorCodes('&',
 							"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님은 능력이 없습니다.");

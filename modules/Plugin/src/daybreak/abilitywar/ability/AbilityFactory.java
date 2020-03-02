@@ -37,8 +37,8 @@ public class AbilityFactory {
 	private AbilityFactory() {
 	}
 
-	private static final HashMap<String, Class<? extends AbilityBase>> usedNames = new HashMap<>();
-	private static final HashMap<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
+	private static final Map<String, Class<? extends AbilityBase>> usedNames = new HashMap<>();
+	private static final Map<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
 
 	/**
 	 * 능력을 등록합니다.

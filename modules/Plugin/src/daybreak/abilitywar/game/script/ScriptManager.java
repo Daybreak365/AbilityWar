@@ -25,6 +25,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 스크립트 관리 클래스
@@ -44,7 +47,7 @@ public class ScriptManager {
 	public static void RunAll(Game game) {
 		if (AbilityWarThread.isGameTaskRunning()) {
 			for (AbstractScript script : scripts) {
-				script.Start(game);
+				script.start(game);
 			}
 		}
 	}
@@ -73,7 +76,8 @@ public class ScriptManager {
 		}
 	}
 
-	private static ArrayList<ScriptRegisteration> scriptTypes = new ArrayList<>();
+	private static final Map<String, Class<? extends AbstractScript>> usedNames = new HashMap<>();
+	private static Map<Class<? extends AbstractScript>, ScriptRegisteration> scriptTypes = new HashMap<>();
 
 	/**
 	 * 스크립트 등록
@@ -82,19 +86,17 @@ public class ScriptManager {
 	 *                                  이름일 경우, 이미 등록된 스크립트 클래스일 경우
 	 */
 	public static void registerScript(Class<? extends AbstractScript> clazz, RequiredData<?>... requiredDatas) {
-		for (ScriptRegisteration check : scriptTypes) {
-			if (check.getClazz().getSimpleName().equalsIgnoreCase(clazz.getSimpleName())) {
-				Messager.sendConsoleMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
-				return;
-			}
+		if (usedNames.containsKey(clazz.getSimpleName())) {
+			Messager.sendConsoleMessage(clazz.getName() + " 스크립트는 겹치는 이름이 있어 등록되지 않았습니다.");
+			return;
 		}
-
 		if (isRegistered(clazz)) {
 			Messager.sendConsoleMessage(clazz.getName() + " 스크립트는 이미 등록되었습니다.");
 			return;
 		}
 
-		scriptTypes.add(new ScriptRegisteration(clazz, requiredDatas));
+		usedNames.put(clazz.getSimpleName(), clazz);
+		scriptTypes.put(clazz, new ScriptRegisteration(clazz, requiredDatas));
 	}
 
 	static {
@@ -103,47 +105,21 @@ public class ScriptManager {
 		ScriptManager.registerScript(LocationNoticeScript.class);
 	}
 
-	public static ScriptRegisteration getRegisteration(Class<? extends AbstractScript> clazz)
-			throws IllegalArgumentException, ScriptException {
-		if (isRegistered(clazz)) {
-			for (ScriptRegisteration sr : scriptTypes) {
-				if (sr.getClazz().equals(clazz)) {
-					return sr;
-				}
-			}
-
-			throw new ScriptException(State.Not_Found);
-		} else {
-			throw new IllegalArgumentException("등록되지 않은 스크립트입니다.");
-		}
+	public static ScriptRegisteration getRegisteration(Class<? extends AbstractScript> clazz) throws IllegalArgumentException {
+		if (isRegistered(clazz)) return scriptTypes.get(clazz);
+		else throw new IllegalArgumentException("등록되지 않은 스크립트입니다.");
 	}
 
-	public static Class<? extends AbstractScript> getScriptClass(String className) throws ClassNotFoundException {
-		for (ScriptRegisteration reg : scriptTypes) {
-			if (reg.getClazz().getSimpleName().equalsIgnoreCase(className)) {
-				return reg.getClazz();
-			}
-		}
-
-		throw new ClassNotFoundException();
+	public static Class<? extends AbstractScript> getScriptClass(String name) {
+		return usedNames.get(name);
 	}
 
-	public static ArrayList<String> getRegisteredScriptNames() {
-		ArrayList<String> scriptNames = new ArrayList<>();
-		for (ScriptRegisteration reg : scriptTypes) {
-			scriptNames.add(reg.getClazz().getSimpleName());
-		}
-		return scriptNames;
+	public static Set<String> getRegisteredScriptNames() {
+		return usedNames.keySet();
 	}
 
 	public static boolean isRegistered(Class<? extends AbstractScript> clazz) {
-		for (ScriptRegisteration check : scriptTypes) {
-			if (check.getClazz().equals(clazz)) {
-				return true;
-			}
-		}
-
-		return false;
+		return scriptTypes.containsKey(clazz);
 	}
 
 	public static class ScriptRegisteration {
@@ -248,7 +224,7 @@ public class ScriptManager {
 					if (script instanceof AbstractScript) {
 						return (AbstractScript) script;
 					} else {
-						throw new ScriptException(State.IllegalFile);
+						throw new ScriptException(State.ILLEGAL_FILE);
 					}
 				} else {
 					throw new NullPointerException();
@@ -257,9 +233,8 @@ public class ScriptManager {
 				throw new IOException();
 			}
 		} catch (IOException | NullPointerException | ClassNotFoundException e) {
-			Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&',
-					"&e" + file.getName() + " &f스크립트를 불러오는 도중 오류가 발생하였습니다."));
-			throw new ScriptException(State.Not_Loaded);
+			Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + file.getName() + " &f스크립트를 불러오는 도중 오류가 발생하였습니다."));
+			throw new ScriptException(State.NOT_LOADED);
 		}
 	}
 

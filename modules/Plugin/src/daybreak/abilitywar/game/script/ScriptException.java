@@ -10,9 +10,9 @@ public class ScriptException extends Exception {
 
 	protected enum State {
 
-		Not_Loaded("스크립트를 불러오는 도중 오류가 발생하였습니다."),
-		IllegalFile("스크립트 파일이 아닙니다."),
-		Not_Found("스크립트를 찾을 수 없습니다.");
+		NOT_LOADED("스크립트를 불러오는 도중 오류가 발생하였습니다."),
+		ILLEGAL_FILE("스크립트 파일이 아닙니다."),
+		NOT_FOUND("스크립트를 찾을 수 없습니다.");
 
 		String Message;
 

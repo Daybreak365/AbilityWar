@@ -17,7 +17,7 @@ public interface CommandHandler {
 			case ABI:
 				if (args[0].equalsIgnoreCase("@a")) {
 					AbilityGUI gui = new AbilityGUI(player, plugin);
-					gui.openAbilityGUI(1);
+					gui.openGUI(1);
 				} else {
 					Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 					if (targetPlayer != null) {
@@ -25,7 +25,7 @@ public interface CommandHandler {
 						if (game.isParticipating(targetPlayer)) {
 							AbstractGame.Participant target = game.getParticipant(targetPlayer);
 							AbilityGUI gui = new AbilityGUI(player, target, plugin);
-							gui.openAbilityGUI(1);
+							gui.openGUI(1);
 						} else {
 							Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 						}

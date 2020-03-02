@@ -25,7 +25,7 @@ public abstract class AbstractScript {
 		this.runMessage = runMessage;
 	}
 
-	public void Start(Game game) {
+	public void start(Game game) {
 		if (timer == null || !timer.isRunning()) {
 			timer = game.new GameTimer(TaskType.INFINITE, -1) {
 				int count = loopCount;
@@ -50,7 +50,7 @@ public abstract class AbstractScript {
 
 				@Override
 				public void onEnd() {
-					Execute(game);
+					execute(game);
 
 					String msg = getRunMessage();
 					if (!msg.equalsIgnoreCase("none")) {
@@ -88,15 +88,15 @@ public abstract class AbstractScript {
 		return timer;
 	}
 
-	private String getPreRunMessage(Integer Time) {
+	private String getPreRunMessage(int time) {
 		return ChatColor.translateAlternateColorCodes('&',
-				preMessage.replaceAll("%Time%", Time.toString()).replaceAll("%ScriptName%", name));
+				preMessage.replaceAll("%Time%", String.valueOf(time)).replaceAll("%ScriptName%", name));
 	}
 
 	private String getRunMessage() {
 		return ChatColor.translateAlternateColorCodes('&', runMessage.replaceAll("%ScriptName%", name));
 	}
 
-	protected abstract void Execute(Game game);
+	protected abstract void execute(Game game);
 
 }

@@ -12,7 +12,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.base.language.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -209,7 +209,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 			team = newTeam(UUID.randomUUID().toString(), ChatColor.GREEN + player.getName());
 		}
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + team.getDisplayName() + "&f" +
-				KoreanUtil.getNeededJosa(team.getDisplayName().replaceAll("_", ""), KoreanUtil.Josa.으로로) + " 설정되었습니다."));
+				KoreanUtil.getJosa(team.getDisplayName().replaceAll("_", ""), KoreanUtil.Josa.으로로) + " 설정되었습니다."));
 		teamParticipantMap.add(team, participant);
 		participantTeamMap.put(participant, team);
 	}

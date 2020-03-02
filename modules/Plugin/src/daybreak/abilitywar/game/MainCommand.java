@@ -26,6 +26,8 @@ import daybreak.abilitywar.game.script.ScriptManager;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.objects.AbstractScript;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
@@ -248,18 +250,22 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if (split.length > 2) {
 							try {
 								Class<? extends AbstractScript> scriptClass = ScriptManager.getScriptClass(split[1]);
-								if (Pattern.compile("^[가-힣a-zA-Z0-9_]+$").matcher(split[2]).find() && split[2].length() <= 10) {
-									File file = new File("plugins/" + plugin.getName() + "/Script/" + split[2] + ".yml");
-									if (!file.exists()) {
-										ScriptWizard wizard = new ScriptWizard(p, plugin, scriptClass, split[2]);
-										wizard.openScriptWizard(1);
+								if (scriptClass != null) {
+									if (Pattern.compile("^[가-힣a-zA-Z0-9_]+$").matcher(split[2]).find() && split[2].length() <= 10) {
+										File file = new File("plugins/" + plugin.getName() + "/Script/" + split[2] + ".yml");
+										if (!file.exists()) {
+											ScriptWizard wizard = new ScriptWizard(p, plugin, scriptClass, split[2]);
+											wizard.openScriptWizard(1);
+										} else {
+											p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + ".yml &f스크립트 파일이 이미 존재합니다."));
+										}
 									} else {
-										p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + ".yml &f스크립트 파일이 이미 존재합니다."));
+										p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + "&f" + KoreanUtil.getJosa(split[2], Josa.은는) + " 사용할 수 없는 이름입니다."));
 									}
 								} else {
-									p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + "&f은(는) 사용할 수 없는 이름입니다."));
+									Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c존재하지 않는 스크립트 유형입니다."));
 								}
-							} catch (ClassNotFoundException | ScriptException ex) {
+							} catch (ScriptException ex) {
 								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c존재하지 않는 스크립트 유형입니다."));
 							} catch (IllegalArgumentException ex) {
 								Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c사용할 수 없는 스크립트 유형입니다."));
@@ -281,7 +287,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					Player p = (Player) sender;
 					if (p.isOp()) {
 						GameModeGUI gui = new GameModeGUI(p, plugin);
-						gui.openGameModeGUI(1);
+						gui.openGUI(1);
 					} else {
 						Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c이 명령어를 사용하려면 OP 권한이 있어야 합니다."));
 					}
@@ -398,7 +404,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			}
 		} else if (args[0].equalsIgnoreCase("spec")) {
 			SpectatorGUI gui = new SpectatorGUI(p, plugin);
-			gui.openSpectateGUI(1);
+			gui.openGUI(1);
 		} else if (args[0].equalsIgnoreCase("ablist")) {
 			if (AbilityWarThread.isGameTaskRunning()) {
 				AbilityWarThread.getGame().executeCommand(CommandHandler.CommandType.ABLIST, p, Messager.removeArgs(args, 1), plugin);
@@ -407,7 +413,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			}
 		} else if (args[0].equalsIgnoreCase("blacklist")) {
 			BlackListGUI gui = new BlackListGUI(p, plugin);
-			gui.openBlackListGUI(1);
+			gui.openGUI(1);
 		} else if (args[0].equalsIgnoreCase("resetcool")) {
 			if (AbilityWarThread.isGameTaskRunning()) {
 				AbilityWarThread.getGame().stopTimers(AbilityBase.CooldownTimer.class);
@@ -594,13 +600,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendHelpCommand(CommandSender sender, String label, int page) {
-		int AllPage = 3;
+		int allPage = 3;
 
 		switch (page) {
 			case 1:
 				sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 						ChatColor.translateAlternateColorCodes('&',
-								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage
+								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
 										+ " 페이지 &7)"),
 						Messager.formatCommand(label, "start", "능력자 전쟁을 시작시킵니다.", true),
 						Messager.formatCommand(label, "stop", "능력자 전쟁을 중지시킵니다.", true),
@@ -611,7 +617,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			case 2:
 				sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 						ChatColor.translateAlternateColorCodes('&',
-								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage
+								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
 										+ " 페이지 &7)"),
 						Messager.formatCommand(label, "skip", "모든 유저의 능력을 강제로 확정합니다.", true),
 						Messager.formatCommand(label, "anew", "모든 유저의 능력을 새로 뽑습니다.", true),
@@ -622,7 +628,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			case 3:
 				sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 						ChatColor.translateAlternateColorCodes('&',
-								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage
+								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
 										+ " 페이지 &7)"),
 						Messager.formatCommand(label, "gamemode", "능력자 전쟁 게임 모드를 설정합니다.", true),
 						Messager.formatCommand(label, "team", "팀 게임의 명령어 목록을 확인합니다.", false),
@@ -665,12 +671,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendHelpTeamCommand(CommandSender sender, String label, int page) {
-		int AllPage = 1;
+		int allPage = 1;
 
 		if (page == 1) {
 			sender.sendMessage(new String[]{
 					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 팀 명령어"),
-					ChatColor.translateAlternateColorCodes('&', "&b/" + label + " team <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
+					ChatColor.translateAlternateColorCodes('&', "&b/" + label + " team <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage + " 페이지 &7)"),
 					Messager.formatCommand(label + " team", "chat", "팀 채팅을 토글합니다.", false),
 					Messager.formatCommand(label + " team", "info", "속해있는 팀 정보를 확인합니다.", false)
 			});
@@ -680,13 +686,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendHelpUtilCommand(CommandSender sender, String label, int page) {
-		int AllPage = 2;
+		int allPage = 2;
 
 		switch (page) {
 			case 1:
 				sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&',
-								"&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage
+								"&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
 										+ " 페이지 &7)"),
 						Messager.formatCommand(label + " util", "abi <대상/@a>", "대상에게 능력을 임의로 부여합니다.", true),
 						Messager.formatCommand(label + " util", "inv [시간(초)]", "무적 상태를 토글합니다.", true),
@@ -697,7 +703,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			case 2:
 				sender.sendMessage(new String[]{Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 						ChatColor.translateAlternateColorCodes('&',
-								"&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage
+								"&b/" + label + " util <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
 										+ " 페이지 &7)"),
 						Messager.formatCommand(label + " util", "resetcool", "플레이어들의 능력 쿨타임을 초기화시킵니다.", true),
 						Messager.formatCommand(label + " util", "resetduration", "플레이어들의 능력 지속시간을 초기화시킵니다.", true),
@@ -711,12 +717,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendHelpTeamUtilCommand(CommandSender sender, String label, int page) {
-		int AllPage = 1;
+		int allPage = 1;
 
 		if (page == 1) {
 			sender.sendMessage(new String[]{
 					Messager.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 팀 유틸"),
-					ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util team <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + AllPage + " 페이지 &7)"),
+					ChatColor.translateAlternateColorCodes('&', "&b/" + label + " util team <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage + " 페이지 &7)"),
 					Messager.formatCommand(label + " util team", "list [페이지]", "팀 목록을 확인합니다.", true),
 					Messager.formatCommand(label + " util team", "set <대상> <팀 이름>", "대상의 팀을 설정합니다.", true),
 					Messager.formatCommand(label + " util team", "new <팀 이름> <팀 별명>", "새로운 팀을 만듭니다.", true),
@@ -761,7 +767,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 							return utils;
 						}
 					} else if (args[0].equalsIgnoreCase("script")) {
-						ArrayList<String> scripts = ScriptManager.getRegisteredScriptNames();
+						List<String> scripts = new ArrayList<>(ScriptManager.getRegisteredScriptNames());
 						if (args[1].isEmpty()) {
 							return scripts;
 						} else {

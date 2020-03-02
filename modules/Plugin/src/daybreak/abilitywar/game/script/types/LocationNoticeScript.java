@@ -19,7 +19,7 @@ public class LocationNoticeScript extends AbstractScript {
 	}
 
 	@Override
-	protected void Execute(Game game) {
+	protected void execute(Game game) {
 		List<String> msg = new ArrayList<>();
 
 		msg.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "플레이어 위치"));

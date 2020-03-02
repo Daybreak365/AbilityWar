@@ -9,7 +9,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.standard.Game;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.base.language.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -103,7 +103,7 @@ public class DeathManager implements Listener, Observer {
 	protected String getRevealMessage(Participant victim) {
 		if (victim.hasAbility()) {
 			String name = victim.getAbility().getName();
-			return ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getNeededJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+			return ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
 		} else {
 			return ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님은 능력이 없습니다.");
 		}

@@ -8,6 +8,7 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import org.apache.commons.lang.ArrayUtils;
@@ -40,6 +41,16 @@ import java.util.logging.Logger;
  */
 public class BlackListGUI implements Listener {
 
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.build();
+
+	private static final ItemStack NEXT_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.build();
+
 	private static final Logger logger = Logger.getLogger(BlackListGUI.class.getName());
 
 	private final Player p;
@@ -51,7 +62,7 @@ public class BlackListGUI implements Listener {
 
 	private int playerPage = 1;
 
-	private Inventory BlackListGUI;
+	private Inventory gui;
 
 	public Set<String> getAbilityNames() {
 		Set<String> set = new TreeSet<>();
@@ -60,12 +71,12 @@ public class BlackListGUI implements Listener {
 		return set;
 	}
 
-	public void openBlackListGUI(int page) {
+	public void openGUI(int page) {
 		Set<String> abilityNames = getAbilityNames();
 		int maxPage = ((abilityNames.size() - 1) / 36) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		BlackListGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c&l✖ &8&l능력 블랙리스트 &c&l✖"));
+		gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c&l✖ &8&l능력 블랙리스트 &c&l✖"));
 		playerPage = page;
 		int count = 0;
 
@@ -91,7 +102,7 @@ public class BlackListGUI implements Listener {
 			}
 
 			if (count / 36 == page - 1) {
-				BlackListGUI.setItem(count % 36, stack);
+				gui.setItem(count % 36, stack);
 			}
 			count++;
 		}
@@ -121,45 +132,32 @@ public class BlackListGUI implements Listener {
 					RankItem = new ItemStack(Material.BARRIER);
 					break;
 			}
-			ItemMeta RankMeta = RankItem.getItemMeta();
-			String RankName = rank.getRankName();
-			RankMeta.setDisplayName(RankName);
-			RankMeta.setLore(Messager.asList(
-					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 하려면 좌클릭,"),
-					ChatColor.translateAlternateColorCodes('&', "&f모든 " + RankName + " &f능력을 예외 처리 해제하려면 우클릭을 해주세요.")));
-			RankItem.setItemMeta(RankMeta);
-			BlackListGUI.setItem(rankCount, RankItem);
+			ItemMeta rankMeta = RankItem.getItemMeta();
+			String rankName = rank.getRankName();
+			rankMeta.setDisplayName(rankName);
+			rankMeta.setLore(Messager.asList(
+					ChatColor.translateAlternateColorCodes('&', "&f모든 " + rankName + " &f능력을 예외 처리 하려면 좌클릭,"),
+					ChatColor.translateAlternateColorCodes('&', "&f모든 " + rankName + " &f능력을 예외 처리 해제하려면 우클릭을 해주세요.")));
+			RankItem.setItemMeta(rankMeta);
+			gui.setItem(rankCount, RankItem);
 			rankCount++;
 		}
 
-		if (page > 1) {
-			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
-			previousPage.setItemMeta(previousMeta);
-			BlackListGUI.setItem(48, previousPage);
-		}
+		if (page > 1) gui.setItem(48, PREVIOUS_PAGE);
+		if (page != maxPage) gui.setItem(50, NEXT_PAGE);
 
-		if (page != maxPage) {
-			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
-			nextPage.setItemMeta(nextMeta);
-			BlackListGUI.setItem(50, nextPage);
-		}
+		ItemStack stack = new ItemStack(Material.PAPER, 1);
+		ItemMeta meta = stack.getItemMeta();
+		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+		stack.setItemMeta(meta);
+		gui.setItem(49, stack);
 
-		ItemStack Page = new ItemStack(Material.PAPER, 1);
-		ItemMeta PageMeta = Page.getItemMeta();
-		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
-		Page.setItemMeta(PageMeta);
-		BlackListGUI.setItem(49, Page);
-
-		p.openInventory(BlackListGUI);
+		p.openInventory(gui);
 	}
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(this.BlackListGUI)) {
+		if (e.getInventory().equals(this.gui)) {
 			HandlerList.unregisterAll(this);
 			try {
 				Configuration.update();
@@ -171,16 +169,13 @@ public class BlackListGUI implements Listener {
 
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(BlackListGUI)) {
+		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
-			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta()
-					&& e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if (e.getCurrentItem().getItemMeta().getDisplayName()
-						.equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
-					openBlackListGUI(playerPage - 1);
-				} else if (e.getCurrentItem().getItemMeta().getDisplayName()
-						.equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
-					openBlackListGUI(playerPage + 1);
+			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
+				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
+					openGUI(playerPage - 1);
+				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
+					openGUI(playerPage + 1);
 				} else {
 					String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
 
@@ -189,11 +184,11 @@ public class BlackListGUI implements Listener {
 						if (MaterialX.RED_WOOL.compareType(e.getCurrentItem())) {
 							Settings.removeBlackList(stripItemName);
 							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
-							openBlackListGUI(playerPage);
+							openGUI(playerPage);
 						} else if (MaterialX.LIME_WOOL.compareType(e.getCurrentItem())) {
 							Settings.addBlackList(stripItemName);
 							SoundLib.BLOCK_ANVIL_LAND.playSound(p);
-							openBlackListGUI(playerPage);
+							openGUI(playerPage);
 						}
 					} else {
 						for (Rank r : Rank.values()) {
@@ -221,7 +216,7 @@ public class BlackListGUI implements Listener {
 			Settings.removeBlackListAll(abilityNames);
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 		}
-		openBlackListGUI(playerPage);
+		openGUI(playerPage);
 	}
 
 }

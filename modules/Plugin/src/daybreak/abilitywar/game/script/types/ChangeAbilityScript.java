@@ -59,7 +59,7 @@ public class ChangeAbilityScript extends AbstractScript {
 	}
 
 	@Override
-	protected void Execute(Game game) {
+	protected void execute(Game game) {
 		for (Participant participant : target.getParticipant(game)) {
 			Random random = new Random();
 			Player p = participant.getPlayer();

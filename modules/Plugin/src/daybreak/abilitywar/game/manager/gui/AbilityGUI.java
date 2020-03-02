@@ -66,7 +66,7 @@ public class AbilityGUI implements Listener {
 	private int currentPage = 1;
 	private Inventory abilityGUI;
 
-	public void openAbilityGUI(int page) {
+	public void openGUI(int page) {
 		int maxPage = ((values.size() - 1) / 36) + 1;
 		if (maxPage < page)
 			page = 1;
@@ -157,9 +157,9 @@ public class AbilityGUI implements Listener {
 					p.closeInventory();
 				} else {
 					if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
-						openAbilityGUI(currentPage - 1);
+						openGUI(currentPage - 1);
 					} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
-						openAbilityGUI(currentPage + 1);
+						openGUI(currentPage + 1);
 					}
 				}
 			}

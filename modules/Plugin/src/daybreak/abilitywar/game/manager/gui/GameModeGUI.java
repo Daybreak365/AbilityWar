@@ -8,6 +8,7 @@ import daybreak.abilitywar.game.games.mode.GameManifest;
 import daybreak.abilitywar.game.manager.GameMode;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,6 +31,16 @@ import java.util.logging.Logger;
 
 public class GameModeGUI implements Listener {
 
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.build();
+
+	private static final ItemStack NEXT_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.build();
+
 	private static final Logger logger = Logger.getLogger(GameModeGUI.class.getName());
 
 	private final Player p;
@@ -41,13 +52,13 @@ public class GameModeGUI implements Listener {
 
 	private int PlayerPage = 1;
 
-	private Inventory GameModeGUI;
+	private Inventory gui;
 
-	public void openGameModeGUI(int page) {
+	public void openGUI(int page) {
 		int MaxPage = ((GameMode.nameValues().size() - 1) / 18) + 1;
 		if (MaxPage < page) page = 1;
 		if (page < 1) page = 1;
-		GameModeGUI = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &8게임 모드"));
+		gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &8게임 모드"));
 		PlayerPage = page;
 		int Count = 0;
 
@@ -80,42 +91,30 @@ public class GameModeGUI implements Listener {
 					}
 
 					if (Count / 18 == page - 1) {
-						GameModeGUI.setItem(Count % 18, is);
+						gui.setItem(Count % 18, is);
 					}
 					Count++;
 				}
 			}
 		}
 
-		if (page > 1) {
-			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
-			previousPage.setItemMeta(previousMeta);
-			GameModeGUI.setItem(21, previousPage);
-		}
+		if (page > 1) gui.setItem(21, PREVIOUS_PAGE);
 
-		if (page != MaxPage) {
-			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
-			nextPage.setItemMeta(nextMeta);
-			GameModeGUI.setItem(23, nextPage);
-		}
+		if (page != MaxPage) gui.setItem(23, NEXT_PAGE);
 
-		ItemStack Page = new ItemStack(Material.PAPER, 1);
-		ItemMeta PageMeta = Page.getItemMeta();
-		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+		ItemStack stack = new ItemStack(Material.PAPER, 1);
+		ItemMeta meta = stack.getItemMeta();
+		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 				"&6페이지 &e" + page + " &6/ &e" + MaxPage));
-		Page.setItemMeta(PageMeta);
-		GameModeGUI.setItem(22, Page);
+		stack.setItemMeta(meta);
+		gui.setItem(22, stack);
 
-		p.openInventory(GameModeGUI);
+		p.openInventory(gui);
 	}
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(this.GameModeGUI)) {
+		if (e.getInventory().equals(this.gui)) {
 			HandlerList.unregisterAll(this);
 			try {
 				Configuration.update();
@@ -127,13 +126,13 @@ public class GameModeGUI implements Listener {
 
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(GameModeGUI)) {
+		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
-					openGameModeGUI(PlayerPage - 1);
+					openGUI(PlayerPage - 1);
 				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
-					openGameModeGUI(PlayerPage + 1);
+					openGUI(PlayerPage + 1);
 				}
 
 				if (e.getCurrentItem().getType().equals(Material.BOOK)) {
@@ -146,7 +145,7 @@ public class GameModeGUI implements Listener {
 							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + modeName + " &f클래스는 등록되지 않았습니다."));
 						}
 
-						openGameModeGUI(PlayerPage);
+						openGUI(PlayerPage);
 					}
 				}
 			}

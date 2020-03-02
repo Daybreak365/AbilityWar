@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
+import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +27,16 @@ import java.util.List;
  * 기여자 목록 GUI
  */
 public class SpecialThanksGUI implements Listener {
+
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.build();
+
+	private static final ItemStack NEXT_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.build();
 
 	private static final SpecialThank[] SpecialThanks = {
 			new SpecialThank("f6cef0829b7e48c1a973532389b6e3e1", "다량의 능력 아이디어를 제공해주셨습니다."),
@@ -100,26 +111,12 @@ public class SpecialThanksGUI implements Listener {
 			count++;
 		}
 
-		if (page > 1) {
-			ItemStack stack = new ItemStack(Material.ARROW, 1);
-			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
-			stack.setItemMeta(meta);
-			gui.setItem(21, stack);
-		}
-
-		if (page != maxPage) {
-			ItemStack stack = new ItemStack(Material.ARROW, 1);
-			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
-			stack.setItemMeta(meta);
-			gui.setItem(23, stack);
-		}
+		if (page > 1) gui.setItem(21, PREVIOUS_PAGE);
+		if (page != maxPage) gui.setItem(23, NEXT_PAGE);
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6페이지 &e" + page + " &6/ &e" + maxPage));
+		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
 		stack.setItemMeta(meta);
 		gui.setItem(22, stack);
 

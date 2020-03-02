@@ -27,7 +27,7 @@ public class TeleportScript extends AbstractScript {
 	}
 
 	@Override
-	public void Execute(Game game) {
+	public void execute(Game game) {
 		try {
 			Location l = new Location(Preconditions.checkNotNull(Bukkit.getWorld(WorldName)), X, Y, Z, Yaw, Pitch);
 			for (Player p : Bukkit.getOnlinePlayers()) p.teleport(l);

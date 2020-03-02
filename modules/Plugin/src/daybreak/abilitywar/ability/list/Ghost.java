@@ -8,7 +8,6 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -37,14 +36,14 @@ public class Ghost extends AbilityBase {
 
 	private final Timer skill = new Timer() {
 		GameMode originalMode;
-		Player p = getPlayer();
+		Player p;
 
 		@Override
 		protected void onStart() {
+			this.p = getPlayer();
 			originalMode = p.getGameMode();
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			p.setGameMode(GameMode.SPECTATOR);
-			SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(p);
 		}
 
 		@Override
