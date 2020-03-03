@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.SoundsHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -582,10 +582,10 @@ public class SoundLib {
 
 		public void playSound(Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				if (ServerVersion.getVersionNumber() >= 10) {
+				if (!SoundsHandler.isHandled()) {
 					location.getWorld().playSound(location, this.sound, volume, pitch);
 				} else {
-					NMSHandler.getNMS().playSound(sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+					SoundsHandler.getSounds().playSound(sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
 				}
 			}
 		}
@@ -596,10 +596,10 @@ public class SoundLib {
 
 		public void playSound(Player player, Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				if (ServerVersion.getVersionNumber() >= 10) {
+				if (!SoundsHandler.isHandled()) {
 					player.playSound(location, this.sound, volume, pitch);
 				} else {
-					NMSHandler.getNMS().playSound(player, sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+					SoundsHandler.getSounds().playSound(player, sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
 				}
 			}
 		}
