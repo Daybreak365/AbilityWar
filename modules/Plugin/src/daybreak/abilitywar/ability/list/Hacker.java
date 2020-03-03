@@ -10,6 +10,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -69,7 +70,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onEnd() {
 			if (target != null) {
-				getPlayer().sendTitle("", "", 0, 0, 0);
+				NMSHandler.getNMS().clearTitle(getPlayer());
 
 				int X = (int) target.getLocation().getX();
 				int Y = (int) target.getLocation().getY();
@@ -87,7 +88,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 			if (target != null) {
 				progressBar.step();
 
-				getPlayer().sendTitle(
+				NMSHandler.getNMS().sendTitle(getPlayer(),
 						ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + " &f해킹중..."),
 						ChatColor.translateAlternateColorCodes('&', progressBar.toString() + " &f" + this.count + "%"),
 						0, 5, 0

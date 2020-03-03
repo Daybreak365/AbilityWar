@@ -1,6 +1,7 @@
 package daybreak.abilitywar.utils.base;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.games.mode.AbstractGame;
 import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
@@ -146,6 +147,11 @@ public class Messager {
 			System.arraycopy(args, startIndex, newArgs, 0, args.length - startIndex);
 			return newArgs;
 		}
+	}
+
+	public static void sendConsoleDebugMessage(String str) {
+		if (!DeveloperSettings.isEnabled()) return;
+		console.sendMessage(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Debug" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY + str);
 	}
 
 	public static void sendConsoleErrorMessage(String str) {

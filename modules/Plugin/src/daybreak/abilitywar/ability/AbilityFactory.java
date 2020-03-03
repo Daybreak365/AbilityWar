@@ -11,8 +11,11 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
@@ -59,7 +62,7 @@ public class AbilityFactory {
 					registeredAbilities.put(abilityClass, registeration);
 					usedNames.put(name, abilityClass);
 				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
+					Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
 			} catch (NoSuchMethodException | IllegalAccessException | NullPointerException e) {
 				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
@@ -67,6 +70,8 @@ public class AbilityFactory {
 				} else {
 					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록 중 오류가 발생하였습니다."));
 				}
+			} catch (UnsupportedVersionException e) {
+				Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 이 버전에서 지원되지 않습니다."));
 			}
 		}
 	}
@@ -188,7 +193,12 @@ public class AbilityFactory {
 		private final int flag;
 
 		@SuppressWarnings("unchecked")
-		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException {
+		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException {
+			if (clazz.isAnnotationPresent(Support.class)) {
+				Support supported = clazz.getAnnotation(Support.class);
+				if (!ServerVersion.getVersion().isOver(supported.value())) throw new UnsupportedVersionException();
+			}
+
 			this.clazz = clazz;
 
 			this.constructor = clazz.getConstructor(Participant.class);

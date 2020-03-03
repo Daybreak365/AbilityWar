@@ -50,10 +50,10 @@ public class AbilityList {
 				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
 				abilities.put(name, registration);
 			} else {
-				Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
+				Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 			}
 		} else {
-			Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityFactory에 등록되지 않은 능력입니다."));
+			Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityFactory에 등록되지 않은 능력입니다."));
 		}
 	}
 

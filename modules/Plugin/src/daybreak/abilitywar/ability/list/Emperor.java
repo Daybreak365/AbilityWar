@@ -10,6 +10,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -20,6 +21,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -79,15 +83,19 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 			}
 			Vector centerVector = lineTarget.toVector();
 			this.center = getPlayer().getWorld().spawn(lineTarget, ArmorStand.class);
-			center.setInvulnerable(true);
-			center.setCollidable(false);
+			if (ServerVersion.getVersionNumber() >= 10) {
+				center.setInvulnerable(true);
+				center.setCollidable(false);
+			}
 			center.setVisible(false);
 
 			EulerAngle eulerAngle = new EulerAngle(Math.toRadians(270), Math.toRadians(270), 0);
 			diff = new HashMap<>();
 			for (ArmorStand armorStand : armorStands) {
-				armorStand.setInvulnerable(true);
-				armorStand.setCollidable(false);
+				if (ServerVersion.getVersionNumber() >= 10) {
+					armorStand.setInvulnerable(true);
+					armorStand.setCollidable(false);
+				}
 				armorStand.setBasePlate(false);
 				armorStand.setArms(true);
 				armorStand.setVisible(false);
@@ -157,6 +165,23 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	private void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent e) {
 		if (armorStands.contains(e.getRightClicked())) e.setCancelled(true);
+	}
+
+	@SubscribeEvent
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (skill.isRunning() && armorStands.contains(e.getEntity())) {
+			e.setCancelled(true);
+		}
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
 	}
 
 	@Override

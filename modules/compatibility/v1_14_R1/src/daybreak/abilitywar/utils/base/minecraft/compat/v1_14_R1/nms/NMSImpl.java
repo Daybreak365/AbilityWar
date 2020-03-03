@@ -2,7 +2,6 @@ package daybreak.abilitywar.utils.base.minecraft.compat.v1_14_R1.nms;
 
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
-import net.minecraft.server.v1_14_R1.IChatBaseComponent;
 import net.minecraft.server.v1_14_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_14_R1.PacketPlayInClientCommand;
 import net.minecraft.server.v1_14_R1.PacketPlayInClientCommand.EnumClientCommand;
@@ -26,11 +25,28 @@ public class NMSImpl implements NMS {
 	}
 
 	@Override
+	public void playSound(Player player, String sound, double x, double y, double z, float volume, float pitch) {
+	}
+
+	@Override
+	public void playSound(String sound, double x, double y, double z, float volume, float pitch) {
+	}
+
+	@Override
+	public void clearTitle(Player player) {
+		((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.CLEAR, null));
+	}
+
+	@Override
+	public void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+		player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+	}
+
+	@Override
 	public void sendActionbar(Player player, String string, int fadeIn, int stay, int fadeOut) {
 		PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-		IChatBaseComponent component = ChatSerializer.a("{\"text\":\"" + string + "\"}");
-		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.TIMES, component, fadeIn, stay, fadeOut));
-		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.ACTIONBAR, component, fadeIn, stay, fadeOut));
+		connection.sendPacket(new PacketPlayOutTitle(fadeIn, stay, fadeOut));
+		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.ACTIONBAR, ChatSerializer.a("{\"text\":\"" + string + "\"}"), fadeIn, stay, fadeOut));
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -59,7 +59,7 @@ public class DevilBoots extends AbilityBase {
 			}
 			if (toBelow.getType().equals(Material.SNOW_BLOCK)) {
 				toBelow.setType(Material.DIRT);
-			} else if (toBelow.getType().equals(Material.PACKED_ICE) || toBelow.getType().equals(Material.FROSTED_ICE) || toBelow.getType().equals(Material.ICE) || (ServerVersion.getVersionNumber() >= 13 && toBelow.getType().equals(Material.BLUE_ICE))) {
+			} else if (toBelow.getType().equals(Material.PACKED_ICE) || toBelow.getType().equals(Material.ICE) || MaterialX.FROSTED_ICE.compareType(toBelow) || MaterialX.BLUE_ICE.compareType(toBelow)) {
 				toBelow.setType(Material.WATER);
 			}
 		}

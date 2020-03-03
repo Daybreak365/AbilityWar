@@ -9,6 +9,7 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
@@ -19,10 +20,13 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @AbilityManifest(Name = "좀비", Rank = Rank.A, Species = Species.UNDEAD)
 public class Zombie extends AbilityBase implements TargetHandler {
@@ -87,14 +91,13 @@ public class Zombie extends AbilityBase implements TargetHandler {
 
 	private final double radius = RadiusConfig.getValue();
 	private final int zombieCount = ZombieCountConfig.getValue();
+	private final Set<org.bukkit.entity.Zombie> zombies = new HashSet<>(zombieCount);
 	private final CooldownTimer cooldownTimer = new CooldownTimer(100);
 	private Player target;
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
-		List<org.bukkit.entity.Zombie> zombies;
 
 		@Override
 		protected void onDurationStart() {
-			zombies = new ArrayList<>(zombieCount);
 			for (Location location : LocationUtil.getRandomLocations(getPlayer().getLocation(), radius, zombieCount)) {
 				org.bukkit.entity.Zombie zombie = getPlayer().getWorld().spawn(location, org.bukkit.entity.Zombie.class);
 				zombie.setGlowing(true);
@@ -106,7 +109,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		@Override
 		protected void onDurationProcess(int count) {
 			for (org.bukkit.entity.Zombie zombie : zombies) {
-				zombie.setInvulnerable(true);
+				if (ServerVersion.getVersionNumber() >= 10) zombie.setInvulnerable(true);
 				zombie.setFireTicks(0);
 				zombie.setTarget(target);
 				AttributeInstance movement = zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
@@ -121,6 +124,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			for (org.bukkit.entity.Zombie zombie : zombies) {
 				zombie.remove();
 			}
+			zombies.clear();
 			target = null;
 		}
 
@@ -129,9 +133,27 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			for (org.bukkit.entity.Zombie zombie : zombies) {
 				zombie.remove();
 			}
+			zombies.clear();
 			target = null;
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@SubscribeEvent
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (skill.isRunning() && zombies.contains(e.getEntity())) {
+			e.setCancelled(true);
+		}
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {

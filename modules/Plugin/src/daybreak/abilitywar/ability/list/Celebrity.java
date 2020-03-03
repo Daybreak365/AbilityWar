@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@AbilityManifest(Name = "유명 인사", Rank = Rank.D, Species = Species.HUMAN)
+@AbilityManifest(Name = "유명 인사", Rank = Rank.C, Species = Species.HUMAN)
 public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,

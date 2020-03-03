@@ -1,9 +1,9 @@
 package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
-import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Sound;
@@ -582,7 +582,11 @@ public class SoundLib {
 
 		public void playSound(Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				location.getWorld().playSound(location, this.sound, volume, pitch);
+				if (ServerVersion.getVersionNumber() >= 10) {
+					location.getWorld().playSound(location, this.sound, volume, pitch);
+				} else {
+					NMSHandler.getNMS().playSound(sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+				}
 			}
 		}
 
@@ -592,7 +596,11 @@ public class SoundLib {
 
 		public void playSound(Player player, Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				player.playSound(location, this.sound, volume, pitch);
+				if (ServerVersion.getVersionNumber() >= 10) {
+					player.playSound(location, this.sound, volume, pitch);
+				} else {
+					NMSHandler.getNMS().playSound(player, sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+				}
 			}
 		}
 
@@ -640,29 +648,27 @@ public class SoundLib {
 
 	}
 
-	public static final SimpleInstrument BASS_DRUM = new SimpleInstrument("BASS_DRUM");
-	public static final SimpleInstrument BASS_GUITAR = new SimpleInstrument("BASS_GUITAR");
-	public static final SimpleInstrument PIANO = new SimpleInstrument("PIANO");
-	public static final SimpleInstrument SNARE_DRUM = new SimpleInstrument("SNARE_DRUM");
-	public static final SimpleInstrument STICKS = new SimpleInstrument("STICKS");
-	public static final SimpleInstrument BELL = new SimpleInstrument("BELL");
-	public static final SimpleInstrument CHIME = new SimpleInstrument("CHIME");
-	public static final SimpleInstrument FLUTE = new SimpleInstrument("FLUTE");
-	public static final SimpleInstrument GUITAR = new SimpleInstrument("GUITAR");
-	public static final SimpleInstrument XYLOPHONE = new SimpleInstrument("XYLOPHONE");
+	public static final SimpleInstrument BASS_DRUM = new SimpleInstrument(BLOCK_NOTE_BLOCK_BASEDRUM);
+	public static final SimpleInstrument BASS_GUITAR = new SimpleInstrument(BLOCK_NOTE_BLOCK_BASS);
+	public static final SimpleInstrument PIANO = new SimpleInstrument(BLOCK_NOTE_BLOCK_HARP);
+	public static final SimpleInstrument SNARE_DRUM = new SimpleInstrument(BLOCK_NOTE_BLOCK_SNARE);
+	public static final SimpleInstrument STICKS = new SimpleInstrument(BLOCK_NOTE_BLOCK_HAT);
+	public static final SimpleInstrument BELL = new SimpleInstrument(BLOCK_NOTE_BLOCK_BELL);
+	public static final SimpleInstrument CHIME = new SimpleInstrument(BLOCK_NOTE_BLOCK_CHIME);
+	public static final SimpleInstrument FLUTE = new SimpleInstrument(BLOCK_NOTE_BLOCK_FLUTE);
+	public static final SimpleInstrument GUITAR = new SimpleInstrument(BLOCK_NOTE_BLOCK_GUITAR);
+	public static final SimpleInstrument XYLOPHONE = new SimpleInstrument(BLOCK_NOTE_BLOCK_XYLOPHONE);
 
 	public static class SimpleInstrument {
 
-		private final Instrument instrument;
+		private final SimpleSound simpleSound;
 
-		private SimpleInstrument(String name) {
-			this.instrument = Enums.getIfPresent(Instrument.class, name).orNull();
+		private SimpleInstrument(SimpleSound sound) {
+			this.simpleSound = sound;
 		}
 
 		public void playInstrument(Player player, Location location, Note note) {
-			if (this.instrument != null) {
-				player.playNote(location, this.instrument, note);
-			}
+			simpleSound.playSound(player, location, 4, (float) Math.pow(2.0D, (note.getId() - 12.0D) / 12.0D));
 		}
 
 		public void playInstrument(Player player, Note note) {

@@ -111,35 +111,32 @@ public class BlackListGUI implements Listener {
 		Rank[] forEach = Rank.values();
 		ArrayUtils.reverse(forEach);
 		for (Rank rank : forEach) {
-			ItemStack RankItem;
+			ItemStack rankItem;
 			switch (rank) {
-				case D:
-					RankItem = new ItemStack(Material.STONE);
-					break;
 				case C:
-					RankItem = new ItemStack(Material.IRON_BLOCK);
+					rankItem = new ItemStack(Material.IRON_BLOCK);
 					break;
 				case B:
-					RankItem = new ItemStack(Material.GOLD_BLOCK);
+					rankItem = new ItemStack(Material.GOLD_BLOCK);
 					break;
 				case A:
-					RankItem = new ItemStack(Material.DIAMOND_BLOCK);
+					rankItem = new ItemStack(Material.DIAMOND_BLOCK);
 					break;
 				case S:
-					RankItem = new ItemStack(Material.EMERALD_BLOCK);
+					rankItem = new ItemStack(Material.EMERALD_BLOCK);
 					break;
 				default:
-					RankItem = new ItemStack(Material.BARRIER);
+					rankItem = new ItemStack(Material.BARRIER);
 					break;
 			}
-			ItemMeta rankMeta = RankItem.getItemMeta();
+			ItemMeta rankMeta = rankItem.getItemMeta();
 			String rankName = rank.getRankName();
 			rankMeta.setDisplayName(rankName);
 			rankMeta.setLore(Messager.asList(
 					ChatColor.translateAlternateColorCodes('&', "&f모든 " + rankName + " &f능력을 예외 처리 하려면 좌클릭,"),
 					ChatColor.translateAlternateColorCodes('&', "&f모든 " + rankName + " &f능력을 예외 처리 해제하려면 우클릭을 해주세요.")));
-			RankItem.setItemMeta(rankMeta);
-			gui.setItem(rankCount, RankItem);
+			rankItem.setItemMeta(rankMeta);
+			gui.setItem(rankCount, rankItem);
 			rankCount++;
 		}
 

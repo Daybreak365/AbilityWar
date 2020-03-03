@@ -7,7 +7,9 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -22,6 +24,7 @@ import org.bukkit.potion.PotionType;
 
 import java.util.Random;
 
+@Support(Version.v1_11_R1)
 @AbilityManifest(Name = "양조사", Rank = Rank.B, Species = Species.HUMAN)
 public class Brewer extends AbilityBase implements ActiveHandler {
 

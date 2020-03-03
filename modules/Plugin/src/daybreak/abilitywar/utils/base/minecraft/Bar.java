@@ -1,6 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft;
 
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
@@ -23,7 +24,7 @@ public class Bar implements Listener {
 			bossBar.addPlayer(player);
 		}
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		bossBar.setVisible(true);
+		if (ServerVersion.getVersionNumber() >= 10) bossBar.setVisible(true);
 	}
 
 	@EventHandler

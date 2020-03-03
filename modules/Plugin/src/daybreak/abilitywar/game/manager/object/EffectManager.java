@@ -90,7 +90,7 @@ public class EffectManager implements EventExecutor {
 			if (game.isParticipating(p)) {
 				Participant part = game.getParticipant(p);
 				if (STUN.contains(part)) {
-					e.setCancelled(true);
+					e.setTo(e.getFrom());
 				}
 			}
 		}

@@ -86,7 +86,8 @@ public enum ConfigNodes {
 	DEVELOPER("개발자", false,
 			"# 개발자 모드 활성화 여부",
 			"# 디버그 게임 모드가 활성화됩니다.",
-			"# 베타 능력을 사용할 수 있습니다.");
+			"# 베타 능력 및 게임 모드를 사용할 수 있습니다.",
+			"# 디버그 메시지가 출력됩니다.");
 
 	private final String path;
 	private final Object defaultValue;

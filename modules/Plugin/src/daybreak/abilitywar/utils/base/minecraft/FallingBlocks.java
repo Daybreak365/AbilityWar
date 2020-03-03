@@ -25,8 +25,9 @@ public class FallingBlocks {
 		final FallingBlock fallingBlock;
 		if (ServerVersion.getVersionNumber() >= 13)
 			fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
-		else fallingBlock = location.getWorld().spawnFallingBlock(location, new MaterialData(type, data));
-
+		else if (ServerVersion.getVersionNumber() >= 11)
+			fallingBlock = location.getWorld().spawnFallingBlock(location, new MaterialData(type, data));
+		else fallingBlock = location.getWorld().spawnFallingBlock(location, type, data);
 		if (behavior != null) {
 			Bukkit.getPluginManager().registerEvents(new Listener() {
 				@EventHandler
@@ -43,7 +44,7 @@ public class FallingBlocks {
 		}
 
 		fallingBlock.setGlowing(glowing);
-		fallingBlock.setInvulnerable(true);
+		if (ServerVersion.getVersionNumber() >= 10) fallingBlock.setInvulnerable(true);
 		fallingBlock.setDropItem(false);
 		if (velocity != null) {
 			fallingBlock.setVelocity(velocity);

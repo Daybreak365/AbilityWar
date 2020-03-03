@@ -8,6 +8,14 @@ public interface NMS {
 
 	void respawn(Player player);
 
+	void playSound(Player player, String sound, double x, double y, double z, float volume, float pitch);
+
+	void playSound(String sound, double x, double y, double z, float volume, float pitch);
+
+	void clearTitle(Player player);
+
+	void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut);
+
 	void sendActionbar(Player player, String string, int fadeIn, int stay, int fadeOut);
 
 	float getAttackCooldown(Player player);

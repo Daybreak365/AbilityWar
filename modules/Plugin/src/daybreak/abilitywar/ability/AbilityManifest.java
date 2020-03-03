@@ -20,8 +20,7 @@ public @interface AbilityManifest {
 		S(ChatColor.translateAlternateColorCodes('&', "&dS 등급")),
 		A(ChatColor.translateAlternateColorCodes('&', "&aA 등급")),
 		B(ChatColor.translateAlternateColorCodes('&', "&bB 등급")),
-		C(ChatColor.translateAlternateColorCodes('&', "&eC 등급")),
-		D(ChatColor.translateAlternateColorCodes('&', "&7D 등급"));
+		C(ChatColor.translateAlternateColorCodes('&', "&eC 등급"));
 
 		private final String rankName;
 

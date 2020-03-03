@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -66,7 +67,7 @@ public class BombArrow extends AbilityBase {
 	@SubscribeEvent
 	private void onProjectileShoot(ProjectileHitEvent e) {
 		if (getPlayer().equals(e.getEntity().getShooter()) && e.getEntity() instanceof Arrow) {
-			Location location = e.getHitEntity() == null ? e.getHitBlock().getLocation() : e.getHitEntity().getLocation();
+			Location location = ServerVersion.getVersionNumber() >= 11 ? e.getHitEntity() == null ? e.getHitBlock().getLocation() : e.getHitEntity().getLocation() : e.getEntity().getLocation();
 			location.getWorld().createExplosion(location.getX(), location.getY(), location.getZ(), size, false, true);
 			e.getEntity().remove();
 		}

@@ -130,7 +130,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 			e.setCancelled(true);
 			String name = e.getMessage();
 			if (name.length() <= 10) {
-				NewReligionEvent newReligionEvent = new NewReligionEvent(name.concat("교"));
+				NewReligionEvent newReligionEvent = new NewReligionEvent(e.isAsynchronous(), name.concat("교"));
 				Bukkit.getPluginManager().callEvent(newReligionEvent);
 				if (!newReligionEvent.isCancelled()) {
 					nameSelecting = false;
@@ -239,7 +239,8 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 
 		private final Participant leader;
 
-		private ReligionEvent(ReligiousLeader religiousLeader) {
+		private ReligionEvent(boolean async, ReligiousLeader religiousLeader) {
+			super(async);
 			this.leader = religiousLeader.getParticipant();
 		}
 
@@ -253,8 +254,8 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 
 		private final String name;
 
-		private NewReligionEvent(String name) {
-			super(ReligiousLeader.this);
+		private NewReligionEvent(boolean async, String name) {
+			super(async, ReligiousLeader.this);
 			this.name = name;
 		}
 

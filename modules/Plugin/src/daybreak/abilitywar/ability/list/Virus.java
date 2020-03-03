@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 
-@AbilityManifest(Name = "바이러스", Rank = Rank.D, Species = Species.OTHERS)
+@AbilityManifest(Name = "바이러스", Rank = Rank.C, Species = Species.OTHERS)
 public class Virus extends AbilityBase {
 
 	public Virus(Participant participant) {

@@ -10,6 +10,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -88,7 +89,7 @@ public class Curse extends AbilityBase implements TargetHandler {
 		@Override
 		protected void onDurationStart() {
 			armorStand = target.getWorld().spawn(getPlayer().getLocation(), ArmorStand.class);
-			armorStand.setInvulnerable(true);
+			if (ServerVersion.getVersionNumber() >= 10) armorStand.setInvulnerable(true);
 			armorStand.setCustomName(target.getName());
 			armorStand.setCustomNameVisible(true);
 			armorStand.setBasePlate(false);
@@ -160,11 +161,9 @@ public class Curse extends AbilityBase implements TargetHandler {
 
 	@SubscribeEvent
 	private void onEntityDamage(EntityDamageEvent e) {
-		if (skill.isRunning()) {
-			if (e.getEntity().equals(armorStand)) {
-				e.setCancelled(true);
-				target.damage(e.getDamage() * (6 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
-			}
+		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
+			e.setCancelled(true);
+			target.damage(e.getDamage() * (6 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
 		}
 	}
 
