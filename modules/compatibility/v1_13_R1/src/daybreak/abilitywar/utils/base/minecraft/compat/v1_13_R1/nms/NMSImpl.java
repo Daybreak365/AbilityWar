@@ -25,14 +25,6 @@ public class NMSImpl implements NMS {
 	}
 
 	@Override
-	public void playSound(Player player, String sound, double x, double y, double z, float volume, float pitch) {
-	}
-
-	@Override
-	public void playSound(String sound, double x, double y, double z, float volume, float pitch) {
-	}
-
-	@Override
 	public void clearTitle(Player player) {
 		((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.CLEAR, null));
 	}

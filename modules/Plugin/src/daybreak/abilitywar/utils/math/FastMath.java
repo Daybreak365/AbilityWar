@@ -21,21 +21,18 @@ public class FastMath {
 		if (radians > 0) return sin[Math.max((int) ((radians % 360.0) * accuracy) - 1, 0)];
 		else if (radians < 0) return -sin[Math.max((int) ((radians % 360.0) * accuracy) - 1, 0)];
 		else return 0;
-
 	}
 
 	public static double cos(double radians) {
 		if (radians > 0) return cos[Math.max((int) ((radians % 360.0) * accuracy) - 1, 0)];
 		else if (radians < 0) return -cos[Math.max((int) ((radians % 360.0) * accuracy) - 1, 0)];
 		else return 0;
-
 	}
 
 	public static double tan(double radians) {
 		if (radians > 0) return tan[Math.max((int) ((radians % 180.0) * accuracy) - 1, 0)];
 		else if (radians < 0) return -tan[Math.max((int) ((radians % 180.0) * accuracy) - 1, 0)];
 		else return 0;
-
 	}
 
 	public static int gcd(int a, int b) {

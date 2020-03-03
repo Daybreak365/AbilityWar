@@ -446,10 +446,10 @@ public enum Sound {
 	WEATHER_RAIN("weather.rain"),
 	WEATHER_RAIN_ABOVE("weather.rain.above");
 
-	final String namespacedKey;
+	final String minecraftKey;
 
-	Sound(String namespacedKey) {
-		this.namespacedKey = namespacedKey;
+	Sound(String minecraftKey) {
+		this.minecraftKey = minecraftKey;
 	}
 
 }

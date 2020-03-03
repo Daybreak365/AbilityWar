@@ -4,61 +4,26 @@ import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_9_R2.MinecraftKey;
 import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand;
 import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.server.v1_9_R2.PacketPlayOutChat;
 import net.minecraft.server.v1_9_R2.PacketPlayOutEntity.PacketPlayOutEntityLook;
 import net.minecraft.server.v1_9_R2.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_9_R2.PacketPlayOutEntityTeleport;
-import net.minecraft.server.v1_9_R2.PacketPlayOutNamedSoundEffect;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_9_R2.PlayerConnection;
-import net.minecraft.server.v1_9_R2.SoundCategory;
-import net.minecraft.server.v1_9_R2.SoundEffect;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_9_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class NMSImpl implements NMS {
 
 	@Override
 	public void respawn(Player player) {
 		((CraftPlayer) player).getHandle().playerConnection.a(new PacketPlayInClientCommand(EnumClientCommand.PERFORM_RESPAWN));
-	}
-
-	private final Map<String, SoundEffect> soundMap = new HashMap<>();
-
-	{
-		for (Sound sound : Sound.values()) {
-			SoundEffect effect = SoundEffect.a.get(new MinecraftKey(sound.namespacedKey));
-			if (effect != null) soundMap.put(sound.name(), effect);
-		}
-	}
-
-	@Override
-	public void playSound(Player player, String sound, double x, double y, double z, float volume, float pitch) {
-		if (soundMap.containsKey(sound)) {
-			((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect(soundMap.get(sound), SoundCategory.MASTER, x, y, z, volume, pitch));
-		}
-	}
-
-	@Override
-	public void playSound(String sound, double x, double y, double z, float volume, float pitch) {
-		if (soundMap.containsKey(sound)) {
-			PacketPlayOutNamedSoundEffect packet = new PacketPlayOutNamedSoundEffect(soundMap.get(sound), SoundCategory.MASTER, x, y, z, volume, pitch);
-			for (CraftPlayer player : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
-				player.getHandle().playerConnection.sendPacket(packet);
-			}
-		}
 	}
 
 	@Override
