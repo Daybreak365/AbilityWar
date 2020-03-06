@@ -24,7 +24,6 @@ package daybreak.abilitywar.utils.library;
 
 import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -1197,39 +1196,6 @@ public enum MaterialX {
 	}
 
 	/**
-	 * Converts the enum names to a more friendly and readable string.
-	 *
-	 * @return a formatted string.
-	 * @see #toWord(String)
-	 * @since 2.1.0
-	 */
-
-	public static String toWord(Material material) {
-		Objects.requireNonNull(material, "Cannot translate a null material to a word");
-		return toWord(material.name());
-	}
-
-	/**
-	 * Parses an enum name to a normal word.
-	 * Normal names have underlines removed and each word capitalized.
-	 * <p>
-	 * <b>Examples:</b>
-	 * <pre>
-	 *     EMERALD                 -> Emerald
-	 *     EMERALD_BLOCK           -> Emerald Block
-	 *     ENCHANTED_GOLDEN_APPLE  -> Enchanted Golden Apple
-	 * </pre>
-	 *
-	 * @param name the name of the enum.
-	 * @return a cleaned more readable enum name.
-	 * @since 2.1.0
-	 */
-
-	private static String toWord(String name) {
-		return WordUtils.capitalize(name.replace('_', ' ').toLowerCase(Locale.ENGLISH));
-	}
-
-	/**
 	 * Checks if the material can be damaged by using it.
 	 * Names going through this method are not formatted.
 	 *
@@ -1278,17 +1244,9 @@ public enum MaterialX {
 		return item;
 	}
 
-	/**
-	 * User-friendly readable name for this material
-	 * In most cases you should be using {@link #name()} instead.
-	 *
-	 * @return string of this object.
-	 * @see #toWord(String)
-	 * @since 3.0.0
-	 */
 	@Override
 	public String toString() {
-		return toWord(this.name());
+		return this.name();
 	}
 
 	/**

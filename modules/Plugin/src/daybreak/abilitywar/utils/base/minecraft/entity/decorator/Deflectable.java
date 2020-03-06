@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.entity.decorator;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 

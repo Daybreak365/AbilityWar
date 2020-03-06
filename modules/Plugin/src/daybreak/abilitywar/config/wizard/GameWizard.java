@@ -16,7 +16,6 @@ import org.bukkit.plugin.Plugin;
 
 public class GameWizard extends SettingWizard {
 
-	private final ItemStack deco;
 	private final ItemStack food;
 	private final ItemStack wreck;
 	private final ItemStack level;
@@ -28,10 +27,6 @@ public class GameWizard extends SettingWizard {
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 진행 설정"), plugin);
-		this.deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
-		ItemMeta decoMeta = deco.getItemMeta();
-		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
-		deco.setItemMeta(decoMeta);
 		this.food = new ItemStack(Material.COOKED_BEEF, 1);
 		ItemMeta foodMeta = food.getItemMeta();
 		foodMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b배고픔 무제한"));
@@ -152,7 +147,7 @@ public class GameWizard extends SettingWizard {
 					gui.setItem(i, abilityDraw);
 					break;
 				default:
-					gui.setItem(i, deco);
+					gui.setItem(i, DECO);
 					break;
 			}
 		}

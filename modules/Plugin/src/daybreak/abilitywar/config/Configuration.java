@@ -2,8 +2,8 @@ package daybreak.abilitywar.config;
 
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.standard.DefaultGame;
+import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.ClassUtil;
 import org.bukkit.Location;

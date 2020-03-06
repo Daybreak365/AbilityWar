@@ -3,7 +3,6 @@ package daybreak.abilitywar.config.wizard;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
-import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import org.bukkit.ChatColor;
@@ -22,7 +21,6 @@ public class KitWizard extends SettingWizard {
 
 	private final ItemStack confirm;
 	private final ItemStack reset;
-	private final ItemStack deco;
 
 	public KitWizard(Player player, Plugin plugin) {
 		super(player, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 킷 설정"), plugin);
@@ -34,10 +32,6 @@ public class KitWizard extends SettingWizard {
 		ItemMeta resetMeta = reset.getItemMeta();
 		resetMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c초기화"));
 		reset.setItemMeta(resetMeta);
-		this.deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
-		ItemMeta decoMeta = deco.getItemMeta();
-		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
-		deco.setItemMeta(decoMeta);
 	}
 
 	@Override
@@ -51,7 +45,7 @@ public class KitWizard extends SettingWizard {
 					gui.setItem(c, confirm);
 					break;
 				default:
-					gui.setItem(c, deco);
+					gui.setItem(c, DECO);
 					break;
 			}
 		}

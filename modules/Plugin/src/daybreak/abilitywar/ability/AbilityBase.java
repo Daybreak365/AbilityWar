@@ -9,14 +9,14 @@ import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
-import daybreak.abilitywar.game.events.participant.ParticipantEvent;
-import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.games.mode.AbstractGame.RestrictionBehavior;
-import daybreak.abilitywar.game.games.standard.DefaultGame;
+import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GameTimer;
+import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.AbstractGame.RestrictionBehavior;
+import daybreak.abilitywar.game.event.participant.ParticipantEvent;
+import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
+import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
@@ -363,7 +363,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 		private boolean sendActionbar = true;
 
 		public CooldownTimer(int cooldown, String abilityName) {
-			super(TaskType.REVERSE, (WRECK.isEnabled(AbilityWarThread.getGame()) ? (cooldown / 10) : cooldown));
+			super(TaskType.REVERSE, (WRECK.isEnabled(getGame()) ? (cooldown / 10) : cooldown));
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 			this.abilityName = abilityName;
 		}

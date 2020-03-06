@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.thread;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 

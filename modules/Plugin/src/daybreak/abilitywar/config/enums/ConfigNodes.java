@@ -1,6 +1,6 @@
 package daybreak.abilitywar.config.enums;
 
-import daybreak.abilitywar.game.games.standard.DefaultGame;
+import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.Bukkit;
 

@@ -1,15 +1,16 @@
 package daybreak.abilitywar.game.script;
 
-import daybreak.abilitywar.game.script.ScriptManager.RequiredData;
-import daybreak.abilitywar.game.script.ScriptManager.ScriptRegisteration;
-import daybreak.abilitywar.game.script.objects.AbstractScript;
-import daybreak.abilitywar.game.script.objects.setter.Setter;
-import daybreak.abilitywar.game.script.objects.setter.special.LoopCountSetter;
-import daybreak.abilitywar.game.script.objects.setter.special.LoopSetter;
-import daybreak.abilitywar.game.script.objects.setter.special.MessageSetter;
-import daybreak.abilitywar.game.script.objects.setter.special.TimeSetter;
+import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.script.manager.ScriptManager.RequiredData;
+import daybreak.abilitywar.game.script.manager.ScriptManager.ScriptRegistration;
+import daybreak.abilitywar.game.script.setter.Setter;
+import daybreak.abilitywar.game.script.setter.special.LoopCountSetter;
+import daybreak.abilitywar.game.script.setter.special.LoopSetter;
+import daybreak.abilitywar.game.script.setter.special.MessageSetter;
+import daybreak.abilitywar.game.script.setter.special.TimeSetter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,6 +29,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Script Wizard
@@ -36,17 +38,32 @@ import java.util.Arrays;
  */
 public class ScriptWizard implements Listener {
 
-	private final Player p;
+	private static final ItemStack DECO = new ItemBuilder()
+			.type(MaterialX.WHITE_STAINED_GLASS_PANE)
+			.displayName(ChatColor.WHITE.toString())
+			.build();
+
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.build();
+
+	private static final ItemStack NEXT_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.build();
+
+	private final Player player;
 	private final Class<? extends AbstractScript> scriptClass;
 	private final String scriptName;
 
-	public ScriptWizard(Player p, Plugin Plugin, Class<? extends AbstractScript> scriptClass, String scriptName) throws IllegalArgumentException, ScriptException {
-		this.p = p;
+	public ScriptWizard(Player player, Plugin plugin, Class<? extends AbstractScript> scriptClass, String scriptName) throws IllegalArgumentException {
+		this.player = player;
 		this.scriptClass = scriptClass;
 		this.scriptName = scriptName;
 
-		ScriptRegisteration reg = ScriptManager.getRegisteration(scriptClass);
-		for (RequiredData<?> data : reg.getRequiredDatas()) {
+		ScriptRegistration registration = ScriptManager.getRegistration(scriptClass);
+		for (RequiredData<?> data : registration.getRequiredDatas()) {
 			if (data.getSetterClass() == null) {
 				Setter<?> setter = Setter.newInstance(data.getClazz(), data.getKey(), data.getDefault(), this);
 				setters.add(setter);
@@ -56,19 +73,18 @@ public class ScriptWizard implements Listener {
 					setterConstructor = data.getSetterClass().getConstructor(String.class, data.getClazz(), ScriptWizard.class);
 					Setter<?> setter = setterConstructor.newInstance(data.getKey(), data.getDefault(), this);
 					setters.add(setter);
-				} catch (InstantiationException | IllegalAccessException | InvocationTargetException
-						| NoSuchMethodException | SecurityException ex) {
+				} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
 					throw new IllegalArgumentException();
 				}
 			}
 		}
 
-		Bukkit.getPluginManager().registerEvents(this, Plugin);
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	private int playerPage = 1;
 
-	private Inventory scriptGUI;
+	private Inventory gui;
 
 	// Default Setters
 	public TimeSetter timeSetter = new TimeSetter(this);
@@ -82,7 +98,7 @@ public class ScriptWizard implements Listener {
 
 	public void openScriptWizard(int page) {
 		playerPage = page;
-		scriptGUI = Bukkit.createInventory(null, 45, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &0스크립트 편집"));
+		gui = Bukkit.createInventory(null, 45, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &0스크립트 편집"));
 
 		int maxPage = ((setters.size() - 1) / 18) + 1;
 		if (maxPage < page) page = 1;
@@ -91,51 +107,30 @@ public class ScriptWizard implements Listener {
 		int count = 0;
 		for (Setter<?> setter : setters) {
 			if (count / 18 == page - 1) {
-				scriptGUI.setItem((count % 36) + 18, setter.getItem());
+				gui.setItem((count % 36) + 18, setter.getItem());
 			}
 			count++;
 		}
 
-		scriptGUI.setItem(2, timeSetter.getItem());
-		scriptGUI.setItem(3, loopSetter.getItem());
-		scriptGUI.setItem(4, loopCountSetter.getItem());
-		scriptGUI.setItem(5, preRunMessageSetter.getItem());
-		scriptGUI.setItem(6, runMessageSetter.getItem());
+		gui.setItem(2, timeSetter.getItem());
+		gui.setItem(3, loopSetter.getItem());
+		gui.setItem(4, loopCountSetter.getItem());
+		gui.setItem(5, preRunMessageSetter.getItem());
+		gui.setItem(6, runMessageSetter.getItem());
 
-		ItemStack Deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
-		ItemMeta DecoMeta = Deco.getItemMeta();
-		DecoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
-		Deco.setItemMeta(DecoMeta);
-
-		for (Integer i = 0; i < 45; i++) {
-			if (i.equals(0) || i.equals(1) || i.equals(7) || i.equals(8)
-					|| (i >= 9 && i <= 17) || (i >= 36 && i <= 44)) {
-				scriptGUI.setItem(i, Deco);
-			}
+		for (int i = 0; i < 45; i++) {
+			if (i == 0 || i == 1 || i == 7 || i == 8 || (i >= 9 && i <= 17) || i >= 36) gui.setItem(i, DECO);
 		}
 
-		if (page > 1) {
-			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
-			previousPage.setItemMeta(previousMeta);
-			scriptGUI.setItem(39, previousPage);
-		}
-
-		if (page != maxPage) {
-			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
-			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
-			nextPage.setItemMeta(nextMeta);
-			scriptGUI.setItem(41, nextPage);
-		}
+		if (page > 1) gui.setItem(39, PREVIOUS_PAGE);
+		if (page != maxPage) gui.setItem(41, NEXT_PAGE);
 
 		ItemStack pageStack = new ItemStack(Material.PAPER, 1);
 		ItemMeta pageMeta = pageStack.getItemMeta();
 		pageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
 				"&6페이지 &e" + page + " &6/ &e" + maxPage));
 		pageStack.setItemMeta(pageMeta);
-		scriptGUI.setItem(40, pageStack);
+		gui.setItem(40, pageStack);
 
 		ItemStack confirmStack = new ItemStack(Material.PAPER, 1);
 		ItemMeta confirmMeta = confirmStack.getItemMeta();
@@ -144,9 +139,9 @@ public class ScriptWizard implements Listener {
 				ChatColor.translateAlternateColorCodes('&', "&f저장 " + (canSave() ? "&a가능" : "&c불가능"))
 		));
 		confirmStack.setItemMeta(confirmMeta);
-		scriptGUI.setItem(44, confirmStack);
+		gui.setItem(44, confirmStack);
 
-		p.openInventory(scriptGUI);
+		player.openInventory(gui);
 	}
 
 	private boolean canSave() {
@@ -155,18 +150,16 @@ public class ScriptWizard implements Listener {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(scriptGUI)) {
+		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
 
 			ItemStack clicked = e.getCurrentItem();
-			if (clicked != null && !clicked.getType().equals(Material.AIR)
-					&& clicked.hasItemMeta() && clicked.getItemMeta().hasDisplayName()) {
+			if (clicked != null && !clicked.getType().equals(Material.AIR) && clicked.hasItemMeta() && clicked.getItemMeta().hasDisplayName()) {
 				String displayName = clicked.getItemMeta().getDisplayName();
 
 				if (displayName.equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
@@ -178,8 +171,8 @@ public class ScriptWizard implements Listener {
 						Exception exception = null;
 
 						try {
-							ArrayList<Class<?>> classList = new ArrayList<Class<?>>();
-							ArrayList<Object> valueList = new ArrayList<Object>();
+							List<Class<?>> classList = new ArrayList<>();
+							List<Object> valueList = new ArrayList<>();
 
 							//스크립트 이름
 							classList.add(String.class);
@@ -207,20 +200,20 @@ public class ScriptWizard implements Listener {
 								valueList.add(setter.getValue());
 							}
 
-							Constructor<?> constructor = scriptClass.getConstructor(classList.toArray(new Class<?>[classList.size()]));
-							AbstractScript script = (AbstractScript) constructor.newInstance(valueList.toArray(new Object[valueList.size()]));
+							Constructor<?> constructor = scriptClass.getConstructor(classList.toArray(new Class<?>[0]));
+							AbstractScript script = (AbstractScript) constructor.newInstance(valueList.toArray(new Object[0]));
 							ScriptManager.Save(script);
-							ScriptManager.AddScript(script);
+							ScriptManager.addScript(script);
 						} catch (Exception ex) {
 							exception = ex;
 						}
 
-						p.closeInventory();
+						player.closeInventory();
 
 						if (exception == null) {
-							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f스크립트를 저장하였습니다."));
+							player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &f스크립트를 저장하였습니다."));
 						} else {
-							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c스크립트를 저장하던 도중 오류가 발생하였습니다."));
+							player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c스크립트를 저장하던 도중 오류가 발생하였습니다."));
 
 							if (exception.getMessage() != null && !exception.getMessage().isEmpty()) {
 								if (exception instanceof NoSuchMethodException) {
@@ -255,14 +248,14 @@ public class ScriptWizard implements Listener {
 	 */
 	public void safeClose() {
 		safeClose = true;
-		p.closeInventory();
+		player.closeInventory();
 	}
 
 	private boolean safeClose = false;
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(this.scriptGUI)) {
+		if (e.getInventory().equals(this.gui)) {
 			if (safeClose) {
 				safeClose = false;
 			} else {
@@ -276,7 +269,7 @@ public class ScriptWizard implements Listener {
 	}
 
 	public Player getPlayer() {
-		return p;
+		return player;
 	}
 
 }

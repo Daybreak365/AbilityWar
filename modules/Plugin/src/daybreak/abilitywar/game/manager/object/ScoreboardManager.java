@@ -1,35 +1,45 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame.GAME_UPDATE;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
-import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GAME_UPDATE;
+import daybreak.abilitywar.game.AbstractGame.Observer;
+import daybreak.abilitywar.game.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.plugin.EventExecutor;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class ScoreboardManager implements EventExecutor, Observer {
+public class ScoreboardManager implements Listener, Observer {
 
 	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+	private final List<Team> teams = new LinkedList<>();
 	private final Set<UUID> viewers = new HashSet<>();
 
 	public ScoreboardManager(Game game) {
-		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		game.attachObserver(this);
 	}
 
 	public Scoreboard getScoreboard() {
 		return scoreboard;
+	}
+
+	public Team registerNewTeam(String name) {
+		Team team = scoreboard.registerNewTeam(name);
+		teams.add(team);
+		return team;
 	}
 
 	@Override
@@ -41,23 +51,32 @@ public class ScoreboardManager implements EventExecutor, Observer {
 				}
 			}
 		} else if (update == AbstractGame.GAME_UPDATE.END) {
+			HandlerList.unregisterAll(this);
 			for (UUID uuid : viewers) {
 				Player viewer = Bukkit.getPlayer(uuid);
 				if (viewer != null) {
 					viewer.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 				}
 			}
+			for (Team team : teams) {
+				team.unregister();
+			}
 		}
 	}
 
-	@Override
-	public void execute(Listener listener, Event event) {
-		if (event instanceof PlayerJoinEvent) {
-			Player player = ((PlayerJoinEvent) event).getPlayer();
-			if (viewers.add(player.getUniqueId())) {
-				player.setScoreboard(scoreboard);
-			}
+	@EventHandler
+	private void onJoin(PlayerJoinEvent e) {
+		Player player = e.getPlayer();
+		if (viewers.add(player.getUniqueId())) {
+			player.setScoreboard(scoreboard);
 		}
+	}
+
+	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		Player player = e.getPlayer();
+		viewers.remove(player.getUniqueId());
+		player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
 	}
 
 	public interface Handler {

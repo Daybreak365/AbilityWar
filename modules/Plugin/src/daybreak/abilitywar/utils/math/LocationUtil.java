@@ -1,9 +1,9 @@
 package daybreak.abilitywar.utils.math;
 
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame.CustomEntity;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
+import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.CustomEntity;
+import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Boundary;

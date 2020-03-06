@@ -20,17 +20,11 @@ import java.util.List;
 
 public class DeathWizard extends SettingWizard {
 
-	private static ItemStack deco;
 	private static ItemStack eliminate;
 	private static ItemStack abilityReveal;
 	private static ItemStack autoRespawn;
 
 	static {
-		deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
-		ItemMeta decoMeta = deco.getItemMeta();
-		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
-		deco.setItemMeta(decoMeta);
-
 		eliminate = new ItemStack(Material.DIAMOND_SWORD);
 		ItemMeta eliminateMeta = eliminate.getItemMeta();
 		eliminateMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b작업"));
@@ -90,7 +84,7 @@ public class DeathWizard extends SettingWizard {
 					break;
 				}
 				default:
-					gui.setItem(i, deco);
+					gui.setItem(i, DECO);
 					break;
 			}
 		}

@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.config.Configuration;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

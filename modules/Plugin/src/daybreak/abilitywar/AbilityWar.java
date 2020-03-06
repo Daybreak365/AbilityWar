@@ -4,9 +4,8 @@ import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.ability.AbilitySettings;
-import daybreak.abilitywar.game.MainCommand;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
-import daybreak.abilitywar.game.script.ScriptManager;
+import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.installer.Installer;
@@ -90,7 +89,7 @@ public class AbilityWar extends JavaPlugin {
 					logger.log(Level.SEVERE, "콘피그를 불러오는 도중 오류가 발생하였습니다.");
 					Bukkit.getPluginManager().disablePlugin(plugin);
 				}
-				ScriptManager.LoadAll();
+				ScriptManager.loadAll();
 			}
 		});
 

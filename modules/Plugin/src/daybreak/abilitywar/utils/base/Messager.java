@@ -2,8 +2,8 @@ package daybreak.abilitywar.utils.base;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.decorator.TeamGame;
+import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.decorator.TeamGame;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -92,7 +92,7 @@ public class Messager {
 		info.add(formatShortTitle(ChatColor.DARK_PURPLE, ChatColor.WHITE, "팀 정보"));
 		info.add(ChatColor.translateAlternateColorCodes('&', "&5팀 이름&f: &r" + team.getDisplayName() + " &r(" + team.getName() + ")"));
 		StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ", ChatColor.DARK_PURPLE + "팀원" + ChatColor.WHITE + ": " + ChatColor.RESET, ChatColor.WHITE + ".");
-		for (AbstractGame.Participant participant : teamGame.getParticipants(team)) {
+		for (AbstractGame.Participant participant : team.getParticipants()) {
 			joiner.add(ChatColor.YELLOW + participant.getPlayer().getName());
 		}
 		info.add(joiner.toString());

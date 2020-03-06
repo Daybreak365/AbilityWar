@@ -1,7 +1,7 @@
 package daybreak.abilitywar.config;
 
 import com.google.common.base.Charsets;
-import org.apache.commons.lang.Validate;
+import com.google.common.base.Preconditions;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConstructor;
@@ -167,7 +167,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 	}
 
 	public void save(File file) throws IOException {
-		Validate.notNull(file, "File cannot be null");
+		Preconditions.checkNotNull(file, "File cannot be null");
 
 		file.mkdirs();
 		String data = this.saveToString();

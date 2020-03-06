@@ -3,7 +3,7 @@ package daybreak.abilitywar.ability.list;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

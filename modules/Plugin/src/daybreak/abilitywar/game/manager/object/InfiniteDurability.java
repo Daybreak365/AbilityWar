@@ -1,9 +1,10 @@
 package daybreak.abilitywar.game.manager.object;
 
+import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.game.games.mode.AbstractGame;
-import daybreak.abilitywar.game.games.mode.AbstractGame.GAME_UPDATE;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Observer;
+import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GAME_UPDATE;
+import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,41 +16,41 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 public class InfiniteDurability implements Listener, Observer {
 
-	private final HashMap<Material, Boolean> hasDurability;
+	private static final Set<String> toolNames = ImmutableSet.of("AXE", "HOE", "PICKAXE", "SPADE", "SWORD", "BOOTS", "LEGGINGS", "CHESTPLATE", "HELMET");
+	private static final Set<String> itemNames = ImmutableSet.of("BOW", "SHEARS", "FISHING_ROD", "FLINT_AND_STEEL");
+
+	private static final Set<Material> hasDurability;
+
+	static {
+		ImmutableSet.Builder<Material> builder = ImmutableSet.builder();
+		for (Material material : Material.values()) {
+			String name = material.toString();
+			String[] split = name.split("_");
+			if (split.length > 1) {
+				if (toolNames.contains(split[1])) {
+					builder.add(material);
+				}
+			} else {
+				if (itemNames.contains(name)) {
+					builder.add(material);
+				}
+			}
+		}
+		hasDurability = builder.build();
+	}
 
 	public InfiniteDurability() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		HashMap<Material, Boolean> hasDurability = new HashMap<>();
-		for (Material material : Material.values()) {
-			hasDurability.put(material, hasDurability(material));
-		}
-		this.hasDurability = hasDurability;
 	}
-
-	private final List<String> materialTool = Arrays.asList("AXE", "HOE", "PICKAXE", "SPADE", "SWORD", "BOOTS", "LEGGINGS", "CHESTPLATE", "HELMET");
-	private final List<String> materialItem = Arrays.asList("BOW", "SHEARS", "FISHING_ROD", "FLINT_AND_STEEL");
-
-	private boolean hasDurability(Material material) {
-		String materialName = material.toString();
-		String[] split = materialName.split("_");
-		if (split.length > 1) {
-			return materialTool.contains(split[1]);
-		} else {
-			return materialItem.contains(materialName);
-		}
-	}
-
 
 	@EventHandler
 	private void onItemDurability(PlayerInteractEvent e) {
 		if (e.getItem() != null) {
-			if (hasDurability.get(e.getItem().getType())) {
+			if (hasDurability.contains(e.getItem().getType())) {
 				ItemLib.setDurability(e.getItem(), (short) 0);
 			}
 		}
@@ -60,22 +61,22 @@ public class InfiniteDurability implements Listener, Observer {
 		if (e.getEntity() instanceof Player) {
 			Player p = (Player) e.getEntity();
 			ItemStack boots = p.getInventory().getBoots();
-			if (boots != null && hasDurability.get(boots.getType())) {
+			if (boots != null && hasDurability.contains(boots.getType())) {
 				ItemLib.setDurability(boots, (short) 0);
 				p.getInventory().setBoots(boots);
 			}
 			ItemStack leggings = p.getInventory().getLeggings();
-			if (leggings != null && hasDurability.get(leggings.getType())) {
+			if (leggings != null && hasDurability.contains(leggings.getType())) {
 				ItemLib.setDurability(leggings, (short) 0);
 				p.getInventory().setLeggings(leggings);
 			}
 			ItemStack chestplate = p.getInventory().getChestplate();
-			if (chestplate != null && hasDurability.get(chestplate.getType())) {
+			if (chestplate != null && hasDurability.contains(chestplate.getType())) {
 				ItemLib.setDurability(chestplate, (short) 0);
 				p.getInventory().setChestplate(chestplate);
 			}
 			ItemStack helmet = p.getInventory().getHelmet();
-			if (helmet != null && hasDurability.get(helmet.getType())) {
+			if (helmet != null && hasDurability.contains(helmet.getType())) {
 				ItemLib.setDurability(helmet, (short) 0);
 				p.getInventory().setHelmet(helmet);
 			}

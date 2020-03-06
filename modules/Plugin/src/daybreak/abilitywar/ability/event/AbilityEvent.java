@@ -1,7 +1,7 @@
 package daybreak.abilitywar.ability.event;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.game.events.participant.ParticipantEvent;
+import daybreak.abilitywar.game.event.participant.ParticipantEvent;
 
 public abstract class AbilityEvent extends ParticipantEvent {
 

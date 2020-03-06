@@ -6,10 +6,10 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.games.mixability.Mix;
-import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.squirtgunfight.SquirtGun;
+import daybreak.abilitywar.game.AbstractGame.GameTimer;
+import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.list.mixability.Mix;
+import daybreak.abilitywar.game.list.summervacation.SquirtGun;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Messager;
@@ -56,10 +56,10 @@ public class AbilityFactory {
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
 		if (!registeredAbilities.containsKey(abilityClass)) {
 			try {
-				AbilityRegistration registeration = new AbilityRegistration(abilityClass);
-				String name = registeration.getManifest().Name();
+				AbilityRegistration registration = new AbilityRegistration(abilityClass);
+				String name = registration.getManifest().Name();
 				if (!usedNames.containsKey(name)) {
-					registeredAbilities.put(abilityClass, registeration);
+					registeredAbilities.put(abilityClass, registration);
 					usedNames.put(name, abilityClass);
 				} else {
 					Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));

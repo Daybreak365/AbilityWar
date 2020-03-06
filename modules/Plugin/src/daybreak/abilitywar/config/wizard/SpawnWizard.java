@@ -4,7 +4,6 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,11 +25,6 @@ public class SpawnWizard extends SettingWizard {
 
 	@Override
 	void openGUI(Inventory gui) {
-		ItemStack deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
-		ItemMeta decoMeta = deco.getItemMeta();
-		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
-		deco.setItemMeta(decoMeta);
-
 		for (Integer i = 0; i < 27; i++) {
 			if (i.equals(11)) {
 				ItemStack spawn = new ItemStack(Material.COOKED_BEEF, 1);
@@ -66,7 +60,7 @@ public class SpawnWizard extends SettingWizard {
 
 				gui.setItem(i, spawn);
 			} else {
-				gui.setItem(i, deco);
+				gui.setItem(i, DECO);
 			}
 		}
 

@@ -70,11 +70,6 @@ public class InvincibilityWizard extends SettingWizard {
 
 	@Override
 	void openGUI(Inventory gui) {
-		ItemStack deco = MaterialX.WHITE_STAINED_GLASS_PANE.parseItem();
-		ItemMeta decoMeta = deco.getItemMeta();
-		decoMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&f"));
-		deco.setItemMeta(decoMeta);
-
 		for (int i = 0; i < 27; i++) {
 			if (i == 11) {
 				boolean isEnabled = Settings.InvincibilitySettings.isEnabled();
@@ -115,7 +110,7 @@ public class InvincibilityWizard extends SettingWizard {
 
 				gui.setItem(i, stack);
 			} else {
-				gui.setItem(i, deco);
+				gui.setItem(i, DECO);
 			}
 		}
 

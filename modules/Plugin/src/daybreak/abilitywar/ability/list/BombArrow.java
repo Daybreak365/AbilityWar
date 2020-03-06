@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability.list;
 
+import com.google.common.base.Strings;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -7,12 +8,11 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant;
-import daybreak.abilitywar.game.games.mode.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,7 +55,7 @@ public class BombArrow extends AbilityBase {
 		protected void run(int count) {
 			if (stack < maxStack) {
 				stack++;
-				actionbarChannel.update(ChatColor.DARK_RED.toString().concat(StringUtils.repeat("●", stack).concat(StringUtils.repeat("○", maxStack - stack))));
+				actionbarChannel.update(ChatColor.DARK_RED.toString().concat(Strings.repeat("●", stack).concat(Strings.repeat("○", maxStack - stack))));
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, WRECK.isEnabled(getGame()) ? 60 : 140);
@@ -81,7 +81,7 @@ public class BombArrow extends AbilityBase {
 				getPlayer().updateInventory();
 			} else {
 				stack--;
-				actionbarChannel.update(StringUtils.repeat(ChatColor.DARK_RED + "●", stack).concat(StringUtils.repeat(ChatColor.DARK_RED + "○", maxStack - stack)));
+				actionbarChannel.update(Strings.repeat(ChatColor.DARK_RED + "●", stack).concat(Strings.repeat(ChatColor.DARK_RED + "○", maxStack - stack)));
 			}
 		}
 	}

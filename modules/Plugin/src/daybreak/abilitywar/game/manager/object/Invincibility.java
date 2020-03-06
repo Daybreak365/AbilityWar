@@ -2,9 +2,9 @@ package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.game.events.InvincibleEndEvent;
-import daybreak.abilitywar.game.games.mode.AbstractGame.GameTimer;
-import daybreak.abilitywar.game.games.standard.Game;
+import daybreak.abilitywar.game.AbstractGame.GameTimer;
+import daybreak.abilitywar.game.Game;
+import daybreak.abilitywar.game.event.InvincibleEndEvent;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.Bar;
 import daybreak.abilitywar.utils.library.SoundLib;

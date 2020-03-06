@@ -10,8 +10,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
-import daybreak.abilitywar.game.games.changeability.ChangeAbilityWar;
-import daybreak.abilitywar.game.games.standard.DefaultGame;
+import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
+import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.ChatColor;
 
