@@ -5,8 +5,8 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.config.Cache;
 import daybreak.abilitywar.config.CommentedConfiguration;
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.patch.InvalidConfigurationException;
 import daybreak.abilitywar.utils.base.io.FileUtil;
-import org.bukkit.configuration.InvalidConfigurationException;
 
 import java.io.File;
 import java.io.IOException;

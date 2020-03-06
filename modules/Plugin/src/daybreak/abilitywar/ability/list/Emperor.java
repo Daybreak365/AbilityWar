@@ -10,7 +10,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
@@ -27,7 +26,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
@@ -83,27 +81,20 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 			}
 			Vector centerVector = lineTarget.toVector();
 			this.center = getPlayer().getWorld().spawn(lineTarget, ArmorStand.class);
-			if (ServerVersion.getVersionNumber() >= 10) {
-				center.setInvulnerable(true);
-				center.setCollidable(false);
-			}
 			center.setVisible(false);
 
-			EulerAngle eulerAngle = new EulerAngle(Math.toRadians(270), Math.toRadians(270), 0);
 			diff = new HashMap<>();
 			for (ArmorStand armorStand : armorStands) {
-				if (ServerVersion.getVersionNumber() >= 10) {
-					armorStand.setInvulnerable(true);
-					armorStand.setCollidable(false);
-				}
 				armorStand.setBasePlate(false);
 				armorStand.setArms(true);
 				armorStand.setVisible(false);
-				armorStand.setRightArmPose(eulerAngle);
 				armorStand.setGravity(false);
 				EntityEquipment equipment = armorStand.getEquipment();
-				equipment.setItemInMainHand(new ItemStack(Material.SHIELD));
+				equipment.setItemInHand(new ItemStack(Material.DIAMOND_SWORD));
 				equipment.setHelmet(MaterialX.GOLDEN_HELMET.parseItem());
+				equipment.setChestplate(MaterialX.GOLDEN_CHESTPLATE.parseItem());
+				equipment.setLeggings(MaterialX.GOLDEN_LEGGINGS.parseItem());
+				equipment.setBoots(MaterialX.GOLDEN_BOOTS.parseItem());
 				diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector).add(direction.clone()));
 			}
 			gravityFalse = false;

@@ -10,6 +10,7 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Note;
@@ -93,12 +94,12 @@ public class AbilityChanger {
 					}
 				}
 
-				p.sendTitle(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
+				NMSHandler.getNMS().sendTitle(participant.getPlayer(), builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
 			}
 
 			@Override
 			protected void onEnd() {
-				p.resetTitle();
+				NMSHandler.getNMS().clearTitle(participant.getPlayer());
 			}
 		}.setPeriod(TimeUnit.TICKS, 3).start();
 

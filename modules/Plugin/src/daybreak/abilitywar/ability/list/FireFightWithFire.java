@@ -9,7 +9,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -52,7 +51,7 @@ public class FireFightWithFire extends AbilityBase {
 					e.setDamage(0);
 
 					if (!getPlayer().isDead()) {
-						getPlayer().setHealth(Math.min(getPlayer().getHealth() + damage, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+						getPlayer().setHealth(Math.min(getPlayer().getHealth() + damage, getPlayer().getMaxHealth()));
 					}
 				}
 			}
@@ -68,7 +67,7 @@ public class FireFightWithFire extends AbilityBase {
 					e.setDamage(0);
 
 					if (!getPlayer().isDead()) {
-						getPlayer().setHealth(Math.min(getPlayer().getHealth() + damage, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+						getPlayer().setHealth(Math.min(getPlayer().getHealth() + damage, getPlayer().getMaxHealth()));
 					}
 				}
 			}

@@ -55,9 +55,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	}
 
 	@SuppressWarnings("deprecation")
-	private final Objective lifeObjective = ServerVersion.getVersionNumber() >= 13 ?
-			getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy", ChatColor.translateAlternateColorCodes('&', "&c생명"))
-			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
+	private final Objective lifeObjective = getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
 
 	private final AbilityChanger changer = new AbilityChanger(this);
 
@@ -196,23 +194,21 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 		if (isParticipating(player)) {
 			Participant quitParticipant = getParticipant(player);
 			Score score = lifeObjective.getScore(player.getName());
-			if (score.isScoreSet()) {
-				score.setScore(0);
-				noLife.add(quitParticipant);
-				getDeathManager().Operation(quitParticipant);
+			score.setScore(0);
+			noLife.add(quitParticipant);
+			getDeathManager().Operation(quitParticipant);
 
-				Participant winner = null;
-				int count = 0;
-				for (Participant participant : getParticipants()) {
-					if (!noLife.contains(participant)) {
-						count++;
-						winner = participant;
-					}
+			Participant winner = null;
+			int count = 0;
+			for (Participant participant : getParticipants()) {
+				if (!noLife.contains(participant)) {
+					count++;
+					winner = participant;
 				}
+			}
 
-				if (count == 1) {
-					Win(winner);
-				}
+			if (count == 1) {
+				Win(winner);
 			}
 		}
 	}
@@ -224,32 +220,30 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 			public void Operation(Participant victim) {
 				Player victimPlayer = victim.getPlayer();
 				Score score = lifeObjective.getScore(victimPlayer.getName());
-				if (score.isScoreSet()) {
-					int life = score.getScore();
-					if (life >= 1) {
-						score.setScore(--life);
-						if (maxLife <= 10) {
-							victimPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f남은 생명: &c" + Strings.repeat("&c♥", life) + Strings.repeat("&c♡", maxLife - life)));
-						} else {
-							victimPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f남은 생명: &c" + life));
+				int life = score.getScore();
+				if (life >= 1) {
+					score.setScore(--life);
+					if (maxLife <= 10) {
+						victimPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f남은 생명: &c" + Strings.repeat("&c♥", life) + Strings.repeat("&c♡", maxLife - life)));
+					} else {
+						victimPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f남은 생명: &c" + life));
+					}
+				}
+				if (score.getScore() <= 0) {
+					noLife.add(victim);
+					super.Operation(victim);
+
+					Participant winner = null;
+					int count = 0;
+					for (Participant participant : getParticipants()) {
+						if (!noLife.contains(participant)) {
+							count++;
+							winner = participant;
 						}
 					}
-					if (score.getScore() <= 0) {
-						noLife.add(victim);
-						super.Operation(victim);
 
-						Participant winner = null;
-						int count = 0;
-						for (Participant participant : getParticipants()) {
-							if (!noLife.contains(participant)) {
-								count++;
-								winner = participant;
-							}
-						}
-
-						if (count == 1) {
-							Win(winner);
-						}
+					if (count == 1) {
+						Win(winner);
 					}
 				}
 			}

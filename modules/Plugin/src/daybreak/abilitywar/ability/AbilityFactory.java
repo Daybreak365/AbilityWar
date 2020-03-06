@@ -9,7 +9,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mixability.Mix;
-import daybreak.abilitywar.game.list.summervacation.SquirtGun;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Messager;
@@ -124,7 +123,6 @@ public class AbilityFactory {
 		registerAbility(Hermit.class);
 		registerAbility(DevilBoots.class);
 		registerAbility(BombArrow.class);
-		registerAbility(Brewer.class);
 		registerAbility(Imprison.class);
 		registerAbility(SuperNova.class);
 		registerAbility(Celebrity.class);
@@ -145,17 +143,12 @@ public class AbilityFactory {
 		registerAbility(Hedgehog.class);
 		// v2.0.9.2
 		registerAbility(ReligiousLeader.class);
-		// v2.1.3
-		registerAbility(Kidnap.class);
 		// v2.1.4.8
 		registerAbility(VictoryBySword.class);
 		registerAbility(Flector.class);
 		// v2.1.5.8
 		registerAbility(Ghost.class);
 
-		// 게임모드 전용
-		// 즐거운 여름휴가 게임모드
-		registerAbility(SquirtGun.class);
 		// 믹스 능력자 게임모드
 		registerAbility(Mix.class);
 	}

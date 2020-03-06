@@ -10,7 +10,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -89,7 +88,6 @@ public class Curse extends AbilityBase implements TargetHandler {
 		@Override
 		protected void onDurationStart() {
 			armorStand = target.getWorld().spawn(getPlayer().getLocation(), ArmorStand.class);
-			if (ServerVersion.getVersionNumber() >= 10) armorStand.setInvulnerable(true);
 			armorStand.setCustomName(target.getName());
 			armorStand.setCustomNameVisible(true);
 			armorStand.setBasePlate(false);

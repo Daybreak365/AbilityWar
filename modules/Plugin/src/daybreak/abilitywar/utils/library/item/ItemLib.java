@@ -10,19 +10,12 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionType;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -126,80 +119,7 @@ public class ItemLib {
 
 	@SuppressWarnings("deprecation")
 	public static SkullMeta setOwner(SkullMeta meta, String playerName) {
-		if (ServerVersion.getVersionNumber() >= 13) {
-			meta.setOwningPlayer(new OfflinePlayer() {
-
-				@Override
-				public Map<String, Object> serialize() {
-					return null;
-				}
-
-				@Override
-				public void setOp(boolean value) {
-				}
-
-				@Override
-				public boolean isOp() {
-					return false;
-				}
-
-				@Override
-				public void setWhitelisted(boolean value) {
-				}
-
-				@Override
-				public boolean isWhitelisted() {
-					return false;
-				}
-
-				@Override
-				public boolean isOnline() {
-					return false;
-				}
-
-				@Override
-				public boolean isBanned() {
-					return false;
-				}
-
-				@Override
-				public boolean hasPlayedBefore() {
-					return false;
-				}
-
-				@Override
-				public UUID getUniqueId() {
-					return null;
-				}
-
-				@Override
-				public org.bukkit.entity.Player getPlayer() {
-					return null;
-				}
-
-				@Override
-				public String getName() {
-					return playerName;
-				}
-
-				@Override
-				public long getLastPlayed() {
-					return 0;
-				}
-
-				@Override
-				public long getFirstPlayed() {
-					return 0;
-				}
-
-				@Override
-				public Location getBedSpawnLocation() {
-					return null;
-				}
-			});
-		} else {
-			meta.setOwner(playerName);
-		}
+		meta.setOwner(playerName);
 		return meta;
 	}
 
@@ -226,85 +146,9 @@ public class ItemLib {
 		return skull;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static ItemStack setDurability(ItemStack is, short durability) {
-		if (ServerVersion.getVersionNumber() >= 13) {
-			if (is.hasItemMeta() && is.getItemMeta() instanceof Damageable) {
-				Damageable dmg = (Damageable) is.getItemMeta();
-				dmg.setDamage(durability);
-				is.setItemMeta((ItemMeta) dmg);
-			}
-		} else {
-			is.setDurability(durability);
-		}
-
+		is.setDurability(durability);
 		return is;
-	}
-
-	public static class PotionBuilder {
-
-		private PotionType type;
-		private PotionShape shape;
-		private boolean extended = false;
-		private boolean upgraded = false;
-
-		public PotionBuilder(PotionType type, PotionShape shape) {
-			this.type = type;
-			this.shape = shape;
-		}
-
-		public PotionBuilder setType(PotionType type) {
-			this.type = type;
-			this.extended = type.isExtendable() && extended;
-			this.upgraded = type.isUpgradeable() && upgraded;
-			return this;
-		}
-
-		public PotionBuilder setShape(PotionShape shape) {
-			this.shape = shape;
-			return this;
-		}
-
-		public PotionBuilder setExtended(boolean extended) {
-			this.extended = type.isExtendable() && extended;
-			return this;
-		}
-
-		public PotionBuilder setUpgraded(boolean upgraded) {
-			this.upgraded = type.isUpgradeable() && upgraded;
-			return this;
-		}
-
-		/**
-		 * 포션을 ItemStack으로 반환합니다.
-		 *
-		 * @param amount 개수
-		 * @return ItemStack
-		 */
-		public ItemStack build(int amount) {
-			ItemStack stack = new ItemStack(shape.material);
-			stack.setAmount(amount);
-			try {
-				PotionMeta meta = (PotionMeta) stack.getItemMeta();
-				meta.setBasePotionData(new PotionData(type, extended, upgraded));
-				stack.setItemMeta(meta);
-			} catch (Exception ignored) {
-			}
-			return stack;
-		}
-
-		public enum PotionShape {
-			NORMAL(Material.POTION),
-			SPLASH(Material.SPLASH_POTION),
-			LINGERING(Material.LINGERING_POTION);
-
-			final Material material;
-
-			PotionShape(Material material) {
-				this.material = material;
-			}
-		}
-
 	}
 
 	public static void removeItem(Inventory inventory, Material type, int amount) {

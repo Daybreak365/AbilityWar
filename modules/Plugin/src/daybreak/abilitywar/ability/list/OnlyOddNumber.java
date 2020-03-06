@@ -9,7 +9,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 
@@ -55,7 +54,7 @@ public class OnlyOddNumber extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			double doubleMaxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+			double doubleMaxHealth = getPlayer().getMaxHealth();
 			double doubleHealth = getPlayer().getHealth();
 
 			int health = (int) getPlayer().getHealth();

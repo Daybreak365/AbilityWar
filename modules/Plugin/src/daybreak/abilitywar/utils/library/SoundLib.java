@@ -1,12 +1,9 @@
 package daybreak.abilitywar.utils.library;
 
-import com.google.common.base.Enums;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.SoundsHandler;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Note;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -570,22 +567,20 @@ public class SoundLib {
 
 	public static class SimpleSound {
 
-		private final Sound sound;
+		private final String sound;
 
 		private SimpleSound(String name) {
-			this.sound = Enums.getIfPresent(Sound.class, name).orNull();
+			this.sound = name;
 		}
 
 		private SimpleSound(String latestName, String oldName) {
-			this.sound = Enums.getIfPresent(Sound.class, ServerVersion.getVersionNumber() >= 13 ? latestName : oldName).orNull();
+			this.sound = oldName;
 		}
 
 		public void playSound(Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				if (!SoundsHandler.isHandled()) {
-					location.getWorld().playSound(location, this.sound, volume, pitch);
-				} else {
-					SoundsHandler.getSounds().playSound(sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+				if (SoundsHandler.isHandled()) {
+					SoundsHandler.getSounds().playSound(sound, location.getX(), location.getY(), location.getZ(), volume, pitch);
 				}
 			}
 		}
@@ -596,10 +591,8 @@ public class SoundLib {
 
 		public void playSound(Player player, Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				if (!SoundsHandler.isHandled()) {
-					player.playSound(location, this.sound, volume, pitch);
-				} else {
-					SoundsHandler.getSounds().playSound(player, sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+				if (SoundsHandler.isHandled()) {
+					SoundsHandler.getSounds().playSound(player, sound, location.getX(), location.getY(), location.getZ(), volume, pitch);
 				}
 			}
 		}
@@ -653,11 +646,11 @@ public class SoundLib {
 	public static final SimpleInstrument PIANO = new SimpleInstrument(BLOCK_NOTE_BLOCK_HARP);
 	public static final SimpleInstrument SNARE_DRUM = new SimpleInstrument(BLOCK_NOTE_BLOCK_SNARE);
 	public static final SimpleInstrument STICKS = new SimpleInstrument(BLOCK_NOTE_BLOCK_HAT);
-	public static final SimpleInstrument BELL = new SimpleInstrument(BLOCK_NOTE_BLOCK_BELL);
-	public static final SimpleInstrument CHIME = new SimpleInstrument(BLOCK_NOTE_BLOCK_CHIME);
-	public static final SimpleInstrument FLUTE = new SimpleInstrument(BLOCK_NOTE_BLOCK_FLUTE);
-	public static final SimpleInstrument GUITAR = new SimpleInstrument(BLOCK_NOTE_BLOCK_GUITAR);
-	public static final SimpleInstrument XYLOPHONE = new SimpleInstrument(BLOCK_NOTE_BLOCK_XYLOPHONE);
+	public static final SimpleInstrument BELL = new SimpleInstrument(BLOCK_NOTE_BLOCK_HARP);
+	public static final SimpleInstrument CHIME = new SimpleInstrument(BLOCK_NOTE_BLOCK_HARP);
+	public static final SimpleInstrument FLUTE = new SimpleInstrument(BLOCK_NOTE_BLOCK_HARP);
+	public static final SimpleInstrument GUITAR = new SimpleInstrument(BLOCK_NOTE_BLOCK_BASS);
+	public static final SimpleInstrument XYLOPHONE = new SimpleInstrument(BLOCK_NOTE_BLOCK_HARP);
 
 	public static class SimpleInstrument {
 
@@ -690,74 +683,6 @@ public class SoundLib {
 		public void broadcastInstrument(Note note) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				this.playInstrument(player, note);
-			}
-		}
-
-	}
-
-	public static class CustomSound {
-
-		private final String sound;
-
-		public CustomSound(String sound) {
-			this.sound = sound;
-		}
-
-		public void playSound(Location location, float volume, float pitch) {
-			if (this.sound != null) {
-				location.getWorld().playSound(location, this.sound, volume, pitch);
-			}
-		}
-
-		public void playSound(Location location) {
-			this.playSound(location, 5, 1);
-		}
-
-		public void playSound(Player player, Location location, float volume, float pitch) {
-			if (this.sound != null) {
-				player.playSound(location, this.sound, volume, pitch);
-			}
-		}
-
-		public void playSound(Player player, Location location) {
-			this.playSound(player, location, 5, 1);
-		}
-
-		public void playSound(Player player, float volume, float pitch) {
-			this.playSound(player, player.getLocation(), volume, pitch);
-		}
-
-		public void playSound(Player player) {
-			this.playSound(player, 5, 1);
-		}
-
-		public void playSound(Collection<Player> players, Location location, float volume, float pitch) {
-			for (Player player : players) {
-				this.playSound(player, location, volume, pitch);
-			}
-		}
-
-		public void playSound(Collection<Player> players, Location location) {
-			for (Player player : players) {
-				this.playSound(player, location, 5, 1);
-			}
-		}
-
-		public void playSound(Collection<Player> players, float volume, float pitch) {
-			for (Player player : players) {
-				this.playSound(player, player.getLocation(), volume, pitch);
-			}
-		}
-
-		public void playSound(Collection<Player> players) {
-			for (Player player : players) {
-				this.playSound(player);
-			}
-		}
-
-		public void broadcastSound() {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				this.playSound(player);
 			}
 		}
 

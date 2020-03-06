@@ -8,10 +8,8 @@ public class SoundsHandler {
 
 	private static Sounds newInstance(ServerVersion.Version version) {
 		switch (version) {
-			case v1_9_R1:
-				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R1.nms.SoundsImpl();
-			case v1_9_R2:
-				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R2.nms.SoundsImpl();
+			case v1_8_R1:
+				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_8_R1.nms.SoundsImpl();
 		}
 		return null;
 	}

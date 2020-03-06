@@ -12,7 +12,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -88,7 +87,7 @@ public class DiceGod extends AbilityBase implements ActiveHandler {
 			Random r = new Random();
 			if (r.nextInt(6) == 0) {
 				if (!getPlayer().isDead()) {
-					getPlayer().setHealth(Math.min(getPlayer().getHealth() + e.getFinalDamage(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+					getPlayer().setHealth(Math.min(getPlayer().getHealth() + e.getFinalDamage(), getPlayer().getMaxHealth()));
 				}
 				e.setDamage(0);
 			}

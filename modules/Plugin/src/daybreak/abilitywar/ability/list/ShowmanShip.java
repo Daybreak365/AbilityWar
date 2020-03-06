@@ -5,12 +5,9 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -23,18 +20,12 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.FireworkExplodeEvent;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Predicate;
 
-@Support(Version.v1_11_R1)
 @AbilityManifest(Name = "쇼맨쉽", Rank = Rank.B, Species = Species.HUMAN)
 public class ShowmanShip extends AbilityBase {
 
@@ -58,7 +49,6 @@ public class ShowmanShip extends AbilityBase {
 	private final RGB POWERFUL = new RGB(255, 59, 59);
 	private final Circle circle = Circle.of(radius, 100);
 
-	private final Map<Firework, LivingEntity> execution = new HashMap<>();
 	private final Predicate<Entity> strictPredicate = Predicates.STRICT(getPlayer());
 
 	@Scheduled
@@ -79,11 +69,13 @@ public class ShowmanShip extends AbilityBase {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 4, 2, true);
 				color = POWERFUL;
 				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, playerLocation, radius, strictPredicate)) {
-					if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead()) {
-						if (!execution.containsValue(livingEntity)) {
-							Firework firework = FireworkUtil.spawnRandomFirework(livingEntity.getEyeLocation().clone().add(0, 0.5, 0), colors, colors, types, 1);
-							firework.addPassenger(livingEntity);
-							execution.put(firework, livingEntity);
+					if (livingEntity.getHealth() < (livingEntity.getMaxHealth() / 3.3333333333) && !livingEntity.isDead()) {
+						if (!livingEntity.isDead()) {
+							livingEntity.damage(0, getPlayer());
+							if (!livingEntity.isDead()) livingEntity.setHealth(0);
+							Location location = livingEntity.getEyeLocation().clone().add(0, 0.5, 0);
+							for (int i = 0; i < 5; i++)
+								FireworkUtil.spawnRandomFirework(location, colors, colors, types, 1);
 						}
 					}
 				}
@@ -95,22 +87,6 @@ public class ShowmanShip extends AbilityBase {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);
-
-	@SubscribeEvent
-	private void onFireworkExplode(FireworkExplodeEvent e) {
-		if (execution.containsKey(e.getEntity())) {
-			Firework firework = e.getEntity();
-			LivingEntity livingEntity = execution.get(firework);
-			if (!livingEntity.isDead()) {
-				livingEntity.damage(0, getPlayer());
-				livingEntity.getWorld().createExplosion(livingEntity.getLocation(), 2);
-				if (!livingEntity.isDead()) livingEntity.setHealth(0);
-				Location location = livingEntity.getEyeLocation().clone().add(0, 0.5, 0);
-				for (int i = 0; i < 4; i++) FireworkUtil.spawnRandomFirework(location, colors, colors, types, 1);
-			}
-			execution.remove(firework);
-		}
-	}
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {

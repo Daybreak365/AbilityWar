@@ -23,28 +23,17 @@ package daybreak.abilitywar.utils.library;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.TreeSpecies;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Levelled;
-import org.bukkit.block.data.Lightable;
-import org.bukkit.block.data.Powerable;
-import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.Cake;
-import org.bukkit.material.Colorable;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
-import org.bukkit.material.Wood;
 import org.bukkit.material.Wool;
 
 import java.lang.reflect.InvocationTargetException;
@@ -58,12 +47,6 @@ public final class BlockX {
 	public static final int CAKE_SLICES = 6;
 
 	public static boolean isLit(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Lightable)) return false;
-			Lightable lightable = (Lightable) block.getBlockData();
-			return lightable.isLit();
-		}
-
 		return isMaterial(block, "REDSTONE_LAMP_ON", "REDSTONE_TORCH_ON", "BURNING_FURNACE");
 	}
 
@@ -83,13 +66,6 @@ public final class BlockX {
 	 * Can be furnaces or redstone lamps.
 	 */
 	public static void setLit(Block block, boolean lit) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Lightable)) return;
-			Lightable lightable = (Lightable) block.getBlockData();
-			lightable.setLit(lit);
-			return;
-		}
-
 		String name = block.getType().name();
 		if (name.endsWith("FURNACE")) block.setType(Material.getMaterial("BURNING_FURNACE"));
 		else if (name.startsWith("REDSTONE_LAMP")) block.setType(Material.getMaterial("REDSTONE_LAMP_ON"));
@@ -100,12 +76,6 @@ public final class BlockX {
 	 * Wool and Dye. But Dye is not a block itself.
 	 */
 	public static DyeColor getColor(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Colorable)) return null;
-			Colorable colorable = (Colorable) block.getBlockData();
-			return colorable.getColor();
-		}
-
 		BlockState state = block.getState();
 		MaterialData data = state.getData();
 		if (data instanceof Wool) {
@@ -132,7 +102,7 @@ public final class BlockX {
 	}
 
 	public static boolean isNetherWart(Material material) {
-		return MaterialX.isNewVersion() ? material == Material.NETHER_WART : material.name().equals("NETHER_WARTS");
+		return material.name().equals("NETHER_WARTS");
 	}
 
 	public static boolean isCarrot(Material material) {
@@ -144,12 +114,6 @@ public final class BlockX {
 	}
 
 	public static BlockFace getDirection(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Directional)) return BlockFace.SELF;
-			Directional direction = (Directional) block.getBlockData();
-			return direction.getFacing();
-		}
-
 		BlockState state = block.getState();
 		MaterialData data = state.getData();
 		if (data instanceof org.bukkit.material.Directional) {
@@ -159,13 +123,6 @@ public final class BlockX {
 	}
 
 	public static boolean setDirection(Block block, BlockFace facing) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Directional)) return false;
-			Directional direction = (Directional) block.getBlockData();
-			direction.setFacing(facing);
-			return true;
-		}
-
 		BlockState state = block.getState();
 		MaterialData data = state.getData();
 		if (data instanceof org.bukkit.material.Directional) {
@@ -177,24 +134,12 @@ public final class BlockX {
 	}
 
 	public static int getAge(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Ageable)) return 0;
-			Ageable ageable = (Ageable) block.getBlockData();
-			return ageable.getAge();
-		}
-
 		BlockState state = block.getState();
 		MaterialData data = state.getData();
 		return data.getData();
 	}
 
 	public static void setAge(Block block, int age) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Ageable)) return;
-			Ageable ageable = (Ageable) block.getBlockData();
-			ageable.setAge(age);
-		}
-
 		BlockState state = block.getState();
 		MaterialData data = state.getData();
 		data.setData((byte) age);
@@ -241,13 +186,6 @@ public final class BlockX {
 	 * Can be used on cauldron.
 	 */
 	public static boolean setFluidLevel(Block block, int level) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Levelled)) return false;
-			Levelled levelled = (Levelled) block.getBlockData();
-			levelled.setLevel(level);
-			return true;
-		}
-
 		BlockState state = block.getState();
 		MaterialData data = state.getData();
 		data.setData((byte) level);
@@ -256,12 +194,6 @@ public final class BlockX {
 	}
 
 	public static int getFluidLevel(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Levelled)) return -1;
-			Levelled levelled = (Levelled) block.getBlockData();
-			return levelled.getLevel();
-		}
-
 		BlockState state = block.getState();
 		MaterialData data = state.getData();
 		return data.getData();
@@ -278,23 +210,6 @@ public final class BlockX {
 
 	public static void setCakeSlices(Block block, int amount) {
 		if (!isCake(block.getType())) throw new IllegalArgumentException("Block is not a cake: " + block.getType());
-		if (MaterialX.isNewVersion()) {
-			BlockData bd = block.getBlockData();
-			if (bd instanceof org.bukkit.block.data.type.Cake) {
-				org.bukkit.block.data.type.Cake cake = (org.bukkit.block.data.type.Cake) bd;
-
-				if (amount <= cake.getMaximumBites()) {
-					cake.setBites(cake.getBites() + 1);
-				} else {
-					block.breakNaturally();
-					return;
-				}
-
-				block.setBlockData(bd);
-			}
-			return;
-		}
-
 		BlockState state = block.getState();
 		if (state instanceof Cake) {
 			Cake cake = (Cake) state.getData();
@@ -312,21 +227,6 @@ public final class BlockX {
 
 	public static int addCakeSlices(Block block, int slices) {
 		if (!isCake(block.getType())) throw new IllegalArgumentException("Block is not a cake: " + block.getType());
-		if (MaterialX.isNewVersion()) {
-			BlockData bd = block.getBlockData();
-			org.bukkit.block.data.type.Cake cake = (org.bukkit.block.data.type.Cake) bd;
-
-			if (cake.getBites() + slices <= cake.getMaximumBites()) {
-				cake.setBites(cake.getBites() + slices);
-			} else {
-				block.breakNaturally();
-				return cake.getMaximumBites() - cake.getBites();
-			}
-
-			block.setBlockData(bd);
-			return cake.getMaximumBites() - cake.getBites();
-		}
-
 		BlockState state = block.getState();
 		Cake cake = (Cake) state.getData();
 
@@ -338,20 +238,6 @@ public final class BlockX {
 		}
 		state.update();
 		return cake.getSlicesRemaining();
-	}
-
-	public static boolean setWooden(Block block, MaterialX species) {
-		block.setType(species.parseMaterial());
-		if (MaterialX.isNewVersion()) return true;
-
-		TreeSpecies type = species == MaterialX.SPRUCE_LOG ? TreeSpecies.REDWOOD :
-				TreeSpecies.valueOf(species.name().substring(0, species.name().indexOf('_')));
-
-		BlockState state = block.getState();
-		MaterialData data = state.getData();
-		((Wood) data).setSpecies(type);
-		state.update(true);
-		return true;
 	}
 
 	/**
@@ -401,12 +287,6 @@ public final class BlockX {
 	}
 
 	public static boolean isPowered(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Powerable)) return false;
-			Powerable powerable = (Powerable) block.getBlockData();
-			return powerable.isPowered();
-		}
-
 		String name = block.getType().name();
 		if (name.startsWith("REDSTONE_COMPARATOR"))
 			return isMaterial(block, "REDSTONE_COMPARATOR_ON");
@@ -415,24 +295,11 @@ public final class BlockX {
 	}
 
 	public static void setPowered(Block block, boolean powered) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Powerable)) return;
-			Powerable powerable = (Powerable) block.getBlockData();
-			powerable.setPowered(powered);
-			return;
-		}
-
 		String name = block.getType().name();
 		if (name.startsWith("REDSTONE_COMPARATOR")) block.setType(Material.getMaterial("REDSTONE_COMPARATOR_ON"));
 	}
 
 	public static boolean isOpen(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof org.bukkit.block.data.Openable)) return false;
-			org.bukkit.block.data.Openable openable = (org.bukkit.block.data.Openable) block.getBlockData();
-			return openable.isOpen();
-		}
-
 		BlockState state = block.getState();
 		if (!(state instanceof Openable)) return false;
 		Openable openable = (Openable) state.getData();
@@ -440,37 +307,12 @@ public final class BlockX {
 	}
 
 	public static void setOpened(Block block, boolean opened) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof org.bukkit.block.data.Openable)) return;
-			org.bukkit.block.data.Openable openable = (org.bukkit.block.data.Openable) block.getBlockData();
-			openable.setOpen(opened);
-			return;
-		}
-
 		BlockState state = block.getState();
 		if (!(state instanceof Openable)) return;
 		Openable openable = (Openable) state.getData();
 		openable.setOpen(opened);
 		state.setData((MaterialData) openable);
 		state.update();
-	}
-
-	public static BlockFace getRotation(Block block) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Rotatable)) return null;
-			Rotatable rotatable = (Rotatable) block.getBlockData();
-			return rotatable.getRotation();
-		}
-
-		return null;
-	}
-
-	public static void setRotation(Block block, BlockFace facing) {
-		if (MaterialX.isNewVersion()) {
-			if (!(block.getBlockData() instanceof Rotatable)) return;
-			Rotatable rotatable = (Rotatable) block.getBlockData();
-			rotatable.setRotation(facing);
-		}
 	}
 
 	private static boolean isMaterial(Block block, String... materials) {
@@ -481,9 +323,8 @@ public final class BlockX {
 	}
 
 	private static final Set<Material> indestructible = ImmutableSet.of(
-			MaterialX.BARRIER.parseMaterial(), MaterialX.BEDROCK.parseMaterial(), MaterialX.COMMAND_BLOCK.parseMaterial(),
-			MaterialX.CHAIN_COMMAND_BLOCK.parseMaterial(), MaterialX.REPEATING_COMMAND_BLOCK.parseMaterial(), MaterialX.END_PORTAL_FRAME.parseMaterial(),
-			MaterialX.STRUCTURE_BLOCK.parseMaterial()
+			Material.BARRIER, Material.BEDROCK, Material.COMMAND,
+			Material.ENDER_PORTAL_FRAME, Material.ENDER_PORTAL
 	);
 
 	public static boolean isIndestructible(Material type) {
@@ -530,11 +371,7 @@ public final class BlockX {
 	public static void sendBlockChange(Player player, Location location, MaterialX materialX) {
 		Material material = checkMaterial(materialX.parseMaterial());
 		if (material != null) {
-			if (ServerVersion.getVersionNumber() >= 13) {
-				player.sendBlockChange(location, material.createBlockData());
-			} else {
-				player.sendBlockChange(location, material, materialX.getData());
-			}
+			player.sendBlockChange(location, material, materialX.getData());
 		}
 	}
 

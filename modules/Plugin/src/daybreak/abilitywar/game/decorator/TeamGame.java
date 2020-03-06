@@ -46,7 +46,7 @@ public interface TeamGame {
 
 		public boolean add(Participant participant) {
 			if (participants.add(participant)) {
-				scoreboardTeam.addEntry(participant.getPlayer().getName());
+				scoreboardTeam.addPlayer(participant.getPlayer());
 				return true;
 			}
 			return false;
@@ -54,7 +54,7 @@ public interface TeamGame {
 
 		public boolean remove(Participant participant) {
 			if (participants.remove(participant)) {
-				scoreboardTeam.removeEntry(participant.getPlayer().getName());
+				scoreboardTeam.removePlayer(participant.getPlayer());
 				return true;
 			}
 			return false;

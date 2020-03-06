@@ -4,13 +4,12 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
@@ -21,6 +20,7 @@ import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Support(Version.v1_11_R1)
 @AbilityManifest(Name = "호박", Rank = Rank.C, Species = Species.OTHERS)
 public class Pumpkin extends AbilityBase implements ActiveHandler {
 
@@ -162,6 +161,15 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		}
 
 	};
+
+	@SubscribeEvent
+	private void onInventoryClick(InventoryClickEvent e) {
+		if (durationTimer.isRunning() && players.containsKey(e.getWhoClicked()) && e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.PUMPKIN) {
+			if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "호박")) {
+				e.setCancelled(true);
+			}
+		}
+	}
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {

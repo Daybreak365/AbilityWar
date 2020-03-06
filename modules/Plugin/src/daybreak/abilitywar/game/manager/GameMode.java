@@ -12,7 +12,6 @@ import daybreak.abilitywar.game.list.debug.DebugMode;
 import daybreak.abilitywar.game.list.mixability.MixAbility;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.list.standard.WarGame;
-import daybreak.abilitywar.game.list.summervacation.SummerVacation;
 import daybreak.abilitywar.game.list.teamfight.TeamFight;
 import daybreak.abilitywar.game.list.zerotick.ZeroTick;
 import daybreak.abilitywar.game.manager.GameMode.GameRegistration.Flag;
@@ -45,7 +44,6 @@ public class GameMode {
 		registerGameMode(DefaultGame.class);
 		registerGameMode(WarGame.class);
 		registerGameMode(ChangeAbilityWar.class);
-		registerGameMode(SummerVacation.class);
 		registerGameMode(TeamFight.class);
 		registerGameMode(MixAbility.class);
 		registerGameMode(ZeroTick.class);

@@ -50,7 +50,7 @@ public class HigherBeing extends AbilityBase {
 				ParticleLib.LAVA.spawnParticle(e.getEntity().getLocation(), 1, 1, 1, 5);
 			} else if (victimLocationY != damagerLocationY) {
 				e.setCancelled(true);
-				SoundLib.BLOCK_ANVIL_BREAK.playSound(getPlayer());
+				SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
 			}
 		}
 	}

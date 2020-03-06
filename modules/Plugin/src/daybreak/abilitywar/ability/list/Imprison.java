@@ -21,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.HashMap;
@@ -129,26 +128,6 @@ public class Imprison extends AbilityBase implements TargetHandler {
 			MaterialX.GREEN_STAINED_GLASS,
 			MaterialX.BLUE_STAINED_GLASS
 	};
-
-	@SubscribeEvent
-	public void onExplode(BlockExplodeEvent e) {
-		e.blockList().removeIf(new Predicate<Block>() {
-			@Override
-			public boolean test(Block block) {
-				if (blocks.containsKey(block)) {
-					int subtract = blocks.get(block) - 2;
-					if (subtract > 0) {
-						blocks.put(block, subtract);
-						BlockX.setType(block, materials[random.nextInt(materials.length)]);
-						return true;
-					} else {
-						blocks.remove(block);
-					}
-				}
-				return false;
-			}
-		});
-	}
 
 	@SubscribeEvent
 	public void onExplode(EntityExplodeEvent e) {

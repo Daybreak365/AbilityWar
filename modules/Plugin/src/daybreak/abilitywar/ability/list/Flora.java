@@ -17,7 +17,6 @@ import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -81,9 +80,7 @@ public class Flora extends AbilityBase implements ActiveHandler {
 						PotionEffects.SPEED.addPotionEffect(p, 20, 1, true);
 					} else {
 						if (!p.isDead()) {
-							double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-
-							if (p.getHealth() < maxHealth) {
+							if (p.getHealth() < p.getMaxHealth()) {
 								p.setHealth(Math.min(p.getHealth() + 0.04, 20.0));
 							}
 						}

@@ -4,8 +4,6 @@ import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attributable;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -30,14 +28,6 @@ public class DamageUtil {
 		EntityDamageEvent fakeEvent = new EntityDamageEvent(victim, damageCause, damage);
 		Bukkit.getPluginManager().callEvent(fakeEvent);
 		return !fakeEvent.isCancelled();
-	}
-
-	@Beta
-	public static <E extends Entity & Attributable> double getPenetratedDamage(E damager, E victim, double damage) {
-		double attackDamage = damager.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue(), defensePoint = victim.getAttribute(Attribute.GENERIC_ARMOR).getValue();
-		double base = (attackDamage * (1 - (Math.min(20, Math.max(defensePoint / 5, defensePoint - (attackDamage / (2 + (victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue() / 4))))) / 25)));
-		Bukkit.broadcastMessage(defensePoint + "");
-		return base * (damage / base);
 	}
 
 	@Beta

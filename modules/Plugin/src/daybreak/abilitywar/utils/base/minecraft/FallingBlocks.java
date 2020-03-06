@@ -1,7 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 /**
@@ -22,12 +20,7 @@ public class FallingBlocks {
 
 	@SuppressWarnings("deprecation")
 	public static FallingBlock spawnFallingBlock(Location location, Material type, byte data, boolean glowing, Vector velocity, Behavior behavior) {
-		final FallingBlock fallingBlock;
-		if (ServerVersion.getVersionNumber() >= 13)
-			fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
-		else if (ServerVersion.getVersionNumber() >= 11)
-			fallingBlock = location.getWorld().spawnFallingBlock(location, new MaterialData(type, data));
-		else fallingBlock = location.getWorld().spawnFallingBlock(location, type, data);
+		final FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, type, data);
 		if (behavior != null) {
 			Bukkit.getPluginManager().registerEvents(new Listener() {
 				@EventHandler
@@ -43,8 +36,6 @@ public class FallingBlocks {
 			}, AbilityWar.getPlugin());
 		}
 
-		fallingBlock.setGlowing(glowing);
-		if (ServerVersion.getVersionNumber() >= 10) fallingBlock.setInvulnerable(true);
 		fallingBlock.setDropItem(false);
 		if (velocity != null) {
 			fallingBlock.setVelocity(velocity);

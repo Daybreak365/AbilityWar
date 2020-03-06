@@ -1,11 +1,11 @@
 package daybreak.abilitywar.config.wizard;
 
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.patch.InvalidConfigurationException;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;

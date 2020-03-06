@@ -2,10 +2,10 @@ package daybreak.abilitywar.config;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.file.YamlConstructor;
-import org.bukkit.configuration.file.YamlRepresenter;
+import daybreak.abilitywar.config.patch.InvalidConfigurationException;
+import daybreak.abilitywar.config.patch.file.YamlConfiguration;
+import daybreak.abilitywar.config.patch.file.YamlConstructor;
+import daybreak.abilitywar.config.patch.file.YamlRepresenter;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;

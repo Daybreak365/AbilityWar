@@ -94,7 +94,6 @@ public class AbilityList {
 		registerAbility(Hermit.class);
 		registerAbility(DevilBoots.class);
 		registerAbility(BombArrow.class);
-		registerAbility(Brewer.class);
 		registerAbility(Imprison.class);
 		registerAbility(SuperNova.class);
 		registerAbility(Celebrity.class);
@@ -110,7 +109,6 @@ public class AbilityList {
 		registerAbility(Reaper.class);
 		registerAbility(Hedgehog.class);
 		registerAbility(ReligiousLeader.class);
-		registerAbility(Kidnap.class);
 		registerAbility(Flector.class);
 		registerAbility(Ghost.class);
 	}

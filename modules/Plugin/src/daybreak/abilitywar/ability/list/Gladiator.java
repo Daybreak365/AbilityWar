@@ -23,7 +23,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.HashMap;
@@ -175,13 +174,6 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		if (saves.containsKey(e.getBlock())) {
 			e.setCancelled(true);
 			e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&c투기장&f은 부술 수 없습니다!"));
-		}
-	}
-
-	@SubscribeEvent
-	public void onExplode(BlockExplodeEvent e) {
-		if (target != null) {
-			e.blockList().removeIf(saves::containsKey);
 		}
 	}
 

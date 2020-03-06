@@ -220,7 +220,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			if (player.equals(getPlayer()) && hasAbility()) {
 				AbilityBase ability = getAbility();
 				if (!ability.isRestricted()) {
-					Material material = player.getInventory().getItemInMainHand().getType();
+					Material material = player.getItemInHand().getType();
 					ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
 					if (attributes.SKILL_MATERIALS.set.contains(material)) {
 						long current = System.currentTimeMillis();
@@ -242,7 +242,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			if (player.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
 				AbilityBase ability = this.getAbility();
 				if (!ability.isRestricted()) {
-					Material material = player.getInventory().getItemInMainHand().getType();
+					Material material = player.getItemInHand().getType();
 					if (attributes.SKILL_MATERIALS.set.contains(material)) {
 						long current = System.currentTimeMillis();
 						if (current - lastClick >= 250) {

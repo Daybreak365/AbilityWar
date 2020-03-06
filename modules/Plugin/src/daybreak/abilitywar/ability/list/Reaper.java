@@ -22,7 +22,6 @@ import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
@@ -274,7 +273,7 @@ public class Reaper extends AbilityBase implements ActiveHandler {
 					ParticleLib.REDSTONE.spawnParticle(getPlayer(), location, SOUL_COLOUR);
 					if (location.distanceSquared(getPlayer().getLocation()) <= 1.2) {
 						stop(false);
-						int soulGain = (int) e.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+						int soulGain = (int) e.getEntity().getMaxHealth();
 						if (e.getEntity() instanceof Animals) soulGain /= 7;
 						else if (e.getEntity() instanceof Monster) soulGain /= 5;
 						soulCount += soulGain;

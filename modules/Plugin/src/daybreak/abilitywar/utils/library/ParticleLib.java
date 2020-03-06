@@ -24,12 +24,10 @@
 
 package daybreak.abilitywar.utils.library;
 
-import com.google.common.base.Enums;
 import daybreak.abilitywar.config.Configuration;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 /**
@@ -90,15 +88,15 @@ public class ParticleLib {
 
 	public static class SimpleParticle {
 
-		protected final Particle particle;
+		protected final String particle;
 
 		private SimpleParticle(String name) {
-			this.particle = Enums.getIfPresent(Particle.class, name).orNull();
+			this.particle = name;
 		}
 
 		public <T> void spawnParticle(Player player, Location location, float offsetX, float offsetY, float offsetZ, int count, T customData) {
-			if (Configuration.Settings.getVisualEffect() && this.particle != null) {
-				player.spawnParticle(this.particle, location, count, offsetX, offsetY, offsetZ, customData);
+			if (Configuration.Settings.getVisualEffect()) {
+				NMSHandler.getNMS().spawnParticle(player, this.particle, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, 1, count);
 			}
 		}
 
@@ -112,7 +110,7 @@ public class ParticleLib {
 
 		public <T> void spawnParticle(Location location, float offsetX, float offsetY, float offsetZ, int count, T customData) {
 			if (Configuration.Settings.getVisualEffect() && this.particle != null) {
-				location.getWorld().spawnParticle(this.particle, location, count, offsetX, offsetY, offsetZ, customData);
+				NMSHandler.getNMS().spawnParticle(this.particle, (float) location.getX(), (float) location.getY(), (float) location.getZ(), offsetX, offsetY, offsetZ, 1, count);
 			}
 		}
 
@@ -132,27 +130,11 @@ public class ParticleLib {
 		}
 
 		public void spawnParticle(Player player, Location location, ParticleLib.RGB rgb) {
-			if (ServerVersion.getVersionNumber() >= 13) {
-				if (this.particle.getDataType().equals(Particle.DustOptions.class)) {
-					this.spawnParticle(player, location, 0, 0, 0, 0, new Particle.DustOptions(rgb.getColor(), 1));
-				} else {
-					this.spawnParticle(player, location, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
-				}
-			} else {
-				this.spawnParticle(player, location, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
-			}
+			this.spawnParticle(player, location, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
 		}
 
 		public void spawnParticle(Location location, ParticleLib.RGB rgb) {
-			if (ServerVersion.getVersionNumber() >= 13) {
-				if (this.particle.getDataType().equals(Particle.DustOptions.class)) {
-					this.spawnParticle(location, 0, 0, 0, 0, new Particle.DustOptions(rgb.getColor(), 1));
-				} else {
-					this.spawnParticle(location, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
-				}
-			} else {
-				this.spawnParticle(location, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
-			}
+			this.spawnParticle(location, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
 		}
 	}
 

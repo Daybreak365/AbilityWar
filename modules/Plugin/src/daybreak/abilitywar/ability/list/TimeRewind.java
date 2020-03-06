@@ -19,7 +19,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -161,7 +160,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 		private void apply() {
 			player.teleport(location);
 			if (health > 0.0) {
-				player.setHealth(Math.min(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), health));
+				player.setHealth(Math.min(player.getMaxHealth(), health));
 			}
 			player.setFireTicks(fireTicks);
 			player.setFallDistance(fallDistance);

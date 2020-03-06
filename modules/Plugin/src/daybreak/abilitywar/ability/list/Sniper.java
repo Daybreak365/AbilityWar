@@ -65,9 +65,7 @@ public class Sniper extends AbilityBase {
 	private final Timer snipeMode = new Timer() {
 		@Override
 		protected void run(int count) {
-			Material main = getPlayer().getInventory().getItemInMainHand().getType();
-			Material off = getPlayer().getInventory().getItemInOffHand().getType();
-			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersionNumber() >= 14 && (main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)))) {
+			if (getPlayer().getItemInHand() != null && getPlayer().getItemInHand().getType().equals(Material.BOW)) {
 				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 3, true);
 				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(Math.min(0, getPlayer().getVelocity().getY())).setZ(0));
 			}

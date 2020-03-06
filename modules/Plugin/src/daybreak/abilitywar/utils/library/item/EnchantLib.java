@@ -1,7 +1,6 @@
 package daybreak.abilitywar.utils.library.item;
 
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -61,11 +60,7 @@ public class EnchantLib {
 		@SuppressWarnings("deprecation")
 		private SimpleEnchantment(String enchantName, String key, int version) {
 			if (ServerVersion.getVersionNumber() >= version) {
-				if (ServerVersion.getVersionNumber() >= 13) {
-					this.enchantment = Enchantment.getByKey(NamespacedKey.minecraft(key));
-				} else {
-					this.enchantment = Enchantment.getByName(enchantName);
-				}
+				this.enchantment = Enchantment.getByName(enchantName);
 			} else {
 				this.enchantment = null;
 			}

@@ -15,8 +15,6 @@ import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attributable;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
@@ -67,7 +65,7 @@ public class Magician extends AbilityBase {
 						locationMap.put(damageable, damageable.getLocation());
 						if (!damageable.equals(getPlayer())) {
 							if (LocationUtil.isInCircle(center, damageable.getLocation(), 5)) {
-								damageable.damage((damageable instanceof Attributable ? ((Attributable) damageable).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : 0) / 5, getPlayer());
+								damageable.damage(damageable.getMaxHealth() / 5, getPlayer());
 								if (damageable instanceof Player) {
 									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) damageable);
 								}

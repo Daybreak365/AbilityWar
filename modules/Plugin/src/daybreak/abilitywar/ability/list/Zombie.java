@@ -9,14 +9,12 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -100,8 +98,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		protected void onDurationStart() {
 			for (Location location : LocationUtil.getRandomLocations(getPlayer().getLocation(), radius, zombieCount)) {
 				org.bukkit.entity.Zombie zombie = getPlayer().getWorld().spawn(location, org.bukkit.entity.Zombie.class);
-				zombie.setGlowing(true);
-				zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.75);
+				NMSHandler.getNMS().setSpeed(zombie, 0.75);
 				zombies.add(zombie);
 			}
 		}
@@ -109,12 +106,11 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		@Override
 		protected void onDurationProcess(int count) {
 			for (org.bukkit.entity.Zombie zombie : zombies) {
-				if (ServerVersion.getVersionNumber() >= 10) zombie.setInvulnerable(true);
 				zombie.setFireTicks(0);
 				zombie.setTarget(target);
-				AttributeInstance movement = zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-				if (movement.getValue() > 0.3) {
-					movement.setBaseValue(Math.max(0.3, movement.getValue() - 0.0025));
+				double movementSpeed = NMSHandler.getNMS().getSpeed(zombie);
+				if (movementSpeed > 0.3) {
+					NMSHandler.getNMS().setSpeed(zombie, Math.max(0.3, movementSpeed - 0.0025));
 				}
 			}
 		}

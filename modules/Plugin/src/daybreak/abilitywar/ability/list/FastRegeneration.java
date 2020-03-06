@@ -14,7 +14,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -62,7 +61,7 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 			Player player = getPlayer();
 			if (!player.isDead()) {
 				final double playerHealth = player.getHealth();
-				final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+				final double maxHealth = player.getMaxHealth();
 				if (playerHealth < maxHealth) {
 					final double gain;
 					if (playerHealth <= 2) {
