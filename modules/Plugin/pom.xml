@@ -95,6 +95,7 @@
     </dependencies>
 
     <build>
+        <finalName>AbilityWar-${version}</finalName>
         <resources>
             <resource>
                 <directory>resources</directory>
