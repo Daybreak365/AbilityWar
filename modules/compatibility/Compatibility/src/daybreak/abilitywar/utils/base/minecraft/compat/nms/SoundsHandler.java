@@ -10,6 +10,10 @@ public class SoundsHandler {
 		switch (version) {
 			case v1_8_R1:
 				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_8_R1.nms.SoundsImpl();
+			case v1_8_R2:
+				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_8_R2.nms.SoundsImpl();
+			case v1_8_R3:
+				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_8_R3.nms.SoundsImpl();
 		}
 		return null;
 	}

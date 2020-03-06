@@ -69,7 +69,7 @@ public class ServerVersion {
 
 	public enum Version {
 		UNSUPPORTED(-1, -1),
-		v1_8_R1(8, 1), v1_8_R2(8, 2);
+		v1_8_R1(8, 1), v1_8_R2(8, 2), v1_8_R3(8, 3);
 
 		private final int version;
 		private final int release;

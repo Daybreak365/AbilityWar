@@ -12,6 +12,8 @@
         <module>modules/compatibility/Interfaces</module>
         <module>modules/compatibility/Configuration</module>
         <module>modules/compatibility/v1_8_R1</module>
+        <module>modules/compatibility/v1_8_R2</module>
+        <module>modules/compatibility/v1_8_R3</module>
         <module>modules/Plugin</module>
     </modules>
 

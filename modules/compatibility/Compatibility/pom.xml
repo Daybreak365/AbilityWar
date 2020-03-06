@@ -35,6 +35,18 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_8_R2</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>v1_8_R3</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>${craftbukkit-api.version}</version>
