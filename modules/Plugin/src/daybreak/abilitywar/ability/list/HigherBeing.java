@@ -9,14 +9,12 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-@AbilityManifest(Name = "상위존재", Rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(name = "상위존재", rank = Rank.B, Species = Species.OTHERS)
 public class HigherBeing extends AbilityBase {
 
 	public HigherBeing(Participant participant) {
@@ -25,11 +23,6 @@ public class HigherBeing extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f대상과의 높이 차이가 작으면 작을수록 더욱 강한 대미지로 공격합니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f자신보다 높은 위치에 있는 생명체는 공격으로 대미지를 입힐 수 없고,"),
 				ChatColor.translateAlternateColorCodes('&', "&f같은 높이에 있는 생명체는 추가 대미지 없이 공격할 수 있습니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	@SubscribeEvent
@@ -53,10 +46,6 @@ public class HigherBeing extends AbilityBase {
 				SoundLib.BLOCK_ANVIL_BREAK.playSound(getPlayer());
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

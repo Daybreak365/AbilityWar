@@ -29,7 +29,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Iterator;
 
-@AbilityManifest(Name = "뮤즈", Rank = Rank.S, Species = Species.GOD)
+@AbilityManifest(name = "뮤즈", rank = Rank.S, Species = Species.GOD)
 public class Muse extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Muse.class, "Cooldown", 80,
@@ -192,10 +192,6 @@ public class Muse extends AbilityBase implements ActiveHandler {
 				e.setCancelled(true);
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

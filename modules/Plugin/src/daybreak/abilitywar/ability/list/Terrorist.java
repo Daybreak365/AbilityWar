@@ -15,11 +15,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-@AbilityManifest(Name = "테러리스트", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "테러리스트", rank = Rank.A, Species = Species.HUMAN)
 public class Terrorist extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
@@ -81,11 +80,6 @@ public class Terrorist extends AbilityBase implements ActiveHandler {
 				e.setCancelled(true);
 			}
 		}
-	}
-
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

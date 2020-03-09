@@ -15,13 +15,11 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
-@AbilityManifest(Name = "폭발화살", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "폭발화살", rank = Rank.S, Species = Species.HUMAN)
 public class BombArrow extends AbilityBase {
 
 	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 1,
@@ -39,11 +37,6 @@ public class BombArrow extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f7초마다 스택을 1만큼 얻습니다. 스택은 최대 4만큼 중첩됩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쏘면 스택을 1만큼 소모하여 폭발 화살을 쏩니다."),
 				ChatColor.translateAlternateColorCodes('&', "&f스택이 없으면 화살이 나가지 않습니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	private final int maxStack = 4;
@@ -84,10 +77,6 @@ public class BombArrow extends AbilityBase {
 				actionbarChannel.update(Strings.repeat(ChatColor.DARK_RED + "●", stack).concat(Strings.repeat(ChatColor.DARK_RED + "○", maxStack - stack)));
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

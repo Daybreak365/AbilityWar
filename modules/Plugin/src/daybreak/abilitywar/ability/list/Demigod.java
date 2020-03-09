@@ -13,14 +13,12 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.Random;
 
-@AbilityManifest(Name = "데미갓", Rank = Rank.S, Species = Species.DEMIGOD)
+@AbilityManifest(name = "데미갓", rank = Rank.S, Species = Species.DEMIGOD)
 public class Demigod extends AbilityBase {
 
 	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(Demigod.class, "Chance", 30,
@@ -38,11 +36,6 @@ public class Demigod extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f반신반인의 능력자입니다. 공격을 받으면"),
 				ChatColor.translateAlternateColorCodes('&', "&f" + ChanceConfig.getValue() + "% 확률로 5초간 랜덤 버프가 발동됩니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	private final int chance = ChanceConfig.getValue();
@@ -93,10 +86,6 @@ public class Demigod extends AbilityBase {
 				}
 			}
 		}.setPeriod(TimeUnit.TICKS, 1).start();
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

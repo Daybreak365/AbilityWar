@@ -13,12 +13,11 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-@AbilityManifest(Name = "베르투스", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "베르투스", rank = Rank.A, Species = Species.HUMAN)
 public class Virtus extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 5,
@@ -106,10 +105,6 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer()) && Activated) {
 			e.setDamage(e.getDamage() / 4);
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

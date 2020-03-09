@@ -20,7 +20,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -34,7 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(Name = "황제", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "황제", rank = Rank.A, Species = Species.HUMAN)
 public class Emperor extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Emperor.class, "Cooldown", 50,
@@ -182,10 +181,6 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 	private double rotateX(double x, double z, double radians) {

@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@AbilityManifest(Name = "글래디에이터", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "글래디에이터", rank = Rank.S, Species = Species.HUMAN)
 public class Gladiator extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
@@ -164,11 +164,6 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
 
 	@SubscribeEvent
 	public void onBlockBreak(BlockBreakEvent e) {

@@ -79,7 +79,7 @@ public class Messager {
 		List<String> info = Messager.asList(
 				Messager.formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
 				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + (ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
-		info.addAll(ability.getDescription());
+		info.addAll(ability.getExplanation());
 		info.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
 		return info.toArray(new String[0]);
 	}

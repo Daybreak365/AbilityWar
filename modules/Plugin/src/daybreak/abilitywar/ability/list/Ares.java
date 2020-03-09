@@ -16,7 +16,6 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -25,7 +24,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(Name = "아레스", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "아레스", rank = Rank.A, Species = Species.GOD)
 public class Ares extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
@@ -128,10 +127,6 @@ public class Ares extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL) && Duration.isDuration()) {
 			e.setCancelled(true);
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

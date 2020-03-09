@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-@AbilityManifest(Name = "관통화살", Rank = AbilityManifest.Rank.S, Species = AbilityManifest.Species.OTHERS)
+@AbilityManifest(name = "관통화살", rank = AbilityManifest.Rank.S, Species = AbilityManifest.Species.OTHERS)
 public class PenetrationArrow extends AbilityBase {
 
 	public static final SettingObject<Integer> BulletConfig = new SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 5,
@@ -64,11 +64,6 @@ public class PenetrationArrow extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&c절단&f: 투사체를 맞은 대상에게 추가 대미지를 입힙니다."),
 				ChatColor.translateAlternateColorCodes('&', "&5중력&f: 투사체를 맞은 대상 주위 4칸의 생명체를 대상에게 끌어갑니다."),
 				ChatColor.translateAlternateColorCodes('&', "&e풍월&f: 투사체를 맞은 대상을 나에게서 멀리 날려보냅니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		return false;
 	}
 
 	private static final RGB RED = new RGB(219, 64, 66);
@@ -153,10 +148,6 @@ public class PenetrationArrow extends AbilityBase {
 		if (update == Update.RESTRICTION_CLEAR) {
 			actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material material, LivingEntity livingEntity) {
 	}
 
 	private abstract static class ArrowType {

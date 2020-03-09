@@ -11,10 +11,9 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
-@AbilityManifest(Name = "심안", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "심안", rank = Rank.B, Species = Species.HUMAN)
 public class DarkVision extends AbilityBase {
 
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
@@ -47,14 +46,5 @@ public class DarkVision extends AbilityBase {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-	}
 
 }

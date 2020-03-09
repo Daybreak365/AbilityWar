@@ -19,10 +19,9 @@ import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(Name = "해커", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "해커", rank = Rank.A, Species = Species.HUMAN)
 public class Hacker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
@@ -166,10 +165,6 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

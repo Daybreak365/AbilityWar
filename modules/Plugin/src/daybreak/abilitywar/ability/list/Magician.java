@@ -14,12 +14,10 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-@AbilityManifest(Name = "마술사", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "마술사", rank = Rank.A, Species = Species.HUMAN)
 public class Magician extends AbilityBase {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Magician.class, "Cooldown", 8,
@@ -44,11 +42,6 @@ public class Magician extends AbilityBase {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게"),
 				ChatColor.translateAlternateColorCodes('&', "&f최대체력의 1/5 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
@@ -90,10 +83,6 @@ public class Magician extends AbilityBase {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

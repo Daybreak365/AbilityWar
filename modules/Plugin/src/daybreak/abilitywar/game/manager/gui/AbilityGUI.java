@@ -54,7 +54,7 @@ public class AbilityGUI implements Listener {
 
 		values = new TreeMap<>();
 		for (AbilityRegistration registration : AbilityList.values()) {
-			values.put(registration.getManifest().Name(), registration);
+			values.put(registration.getManifest().name(), registration);
 		}
 	}
 
@@ -82,13 +82,13 @@ public class AbilityGUI implements Listener {
 				AbilityManifest manifest = registration.getManifest();
 				ItemStack stack = new ItemStack(Material.IRON_BLOCK);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + manifest.Name()));
+				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + manifest.name()));
 				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
 				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 				meta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&f등급: " + manifest.Rank().getRankName()),
+						ChatColor.translateAlternateColorCodes('&', "&f등급: " + manifest.rank().getRankName()),
 						ChatColor.translateAlternateColorCodes('&', "&f종류: " + manifest.Species().getSpeciesName()),
 						joiner.toString(),
 						"",

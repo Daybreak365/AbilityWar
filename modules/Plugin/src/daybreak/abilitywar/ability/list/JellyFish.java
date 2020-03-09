@@ -9,13 +9,11 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-@AbilityManifest(Name = "해파리", Rank = Rank.A, Species = Species.ANIMAL)
+@AbilityManifest(name = "해파리", rank = Rank.A, Species = Species.ANIMAL)
 public class JellyFish extends AbilityBase {
 
 	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(JellyFish.class, "Duration", 2,
@@ -35,11 +33,6 @@ public class JellyFish extends AbilityBase {
 
 	private final int duration = DurationConfig.getValue();
 
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
-
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer())) {
@@ -51,10 +44,6 @@ public class JellyFish extends AbilityBase {
 				JellyFish.this.getGame().getEffectManager().Stun(p, duration);
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

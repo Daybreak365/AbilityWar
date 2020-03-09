@@ -15,10 +15,8 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 
-@AbilityManifest(Name = "초신성", Rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(name = "초신성", rank = Rank.B, Species = Species.OTHERS)
 public class SuperNova extends AbilityBase {
 
 	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(SuperNova.class, "Size", 10,
@@ -34,11 +32,6 @@ public class SuperNova extends AbilityBase {
 	public SuperNova(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f마지막 순간에 큰 폭발을 일으키고 사망합니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	private final int size = SizeConfig.getValue();
@@ -67,10 +60,6 @@ public class SuperNova extends AbilityBase {
 			this.center = e.getPlayer().getLocation();
 			explosion.start();
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

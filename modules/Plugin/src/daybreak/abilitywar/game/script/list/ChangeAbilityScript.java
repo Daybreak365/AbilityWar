@@ -21,8 +21,8 @@ public class ChangeAbilityScript extends AbstractScript {
 
 	private final ChangeTarget target;
 
-	public ChangeAbilityScript(String ScriptName, int Time, int LoopCount, String PreRunMessage, String RunMessage, ChangeTarget target) {
-		super(ScriptName, Time, LoopCount, PreRunMessage, RunMessage);
+	public ChangeAbilityScript(String scriptName, int time, int loopCount, String preRunMessage, String runMessage, ChangeTarget target) {
+		super(scriptName, time, loopCount, preRunMessage, runMessage);
 		this.target = target;
 	}
 
@@ -54,23 +54,19 @@ public class ChangeAbilityScript extends AbstractScript {
 				list.add(AbilityList.getByString(abilityName));
 			}
 		}
-
 		return list;
 	}
 
 	@Override
 	protected void execute(Game game) {
+		List<Class<? extends AbilityBase>> abilities = setupAbilities();
 		for (Participant participant : target.getParticipant(game)) {
 			Random random = new Random();
 			Player p = participant.getPlayer();
 
-			List<Class<? extends AbilityBase>> Abilities = setupAbilities();
-
-			Class<? extends AbilityBase> abilityClass = Abilities.get(random.nextInt(Abilities.size()));
+			Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
 			try {
 				participant.setAbility(abilityClass);
-				Abilities.remove(abilityClass);
-
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
 			} catch (Exception e) {
 				Messager.sendConsoleErrorMessage(

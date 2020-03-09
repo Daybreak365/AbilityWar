@@ -34,7 +34,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.Random;
 
-@AbilityManifest(Name = "영혼수확자", Rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.HUMAN)
+@AbilityManifest(name = "영혼수확자", rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.HUMAN)
 public class Reaper extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Reaper.class, "Cooldown", 140,
@@ -306,11 +306,6 @@ public class Reaper extends AbilityBase implements ActiveHandler {
 				}
 			}
 		}.setPeriod(TimeUnit.TICKS, 1).start();
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-
 	}
 
 }

@@ -14,8 +14,8 @@ import java.util.List;
 
 public class LocationNoticeScript extends AbstractScript {
 
-	public LocationNoticeScript(String ScriptName, int Time, int LoopCount, String PreRunMessage, String RunMessage) {
-		super(ScriptName, Time, LoopCount, PreRunMessage, RunMessage);
+	public LocationNoticeScript(String scriptName, int time, int loopCount, String preRunMessage, String runMessage) {
+		super(scriptName, time, loopCount, preRunMessage, runMessage);
 	}
 
 	@Override

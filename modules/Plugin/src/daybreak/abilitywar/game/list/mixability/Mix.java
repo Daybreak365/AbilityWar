@@ -2,6 +2,8 @@ package daybreak.abilitywar.game.list.mixability;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.ChatColor;
@@ -11,13 +13,13 @@ import org.bukkit.entity.LivingEntity;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-@AbilityManifest(Name = "믹스", Rank = AbilityManifest.Rank.SPECIAL, Species = AbilityManifest.Species.OTHERS)
-public class Mix extends AbilityBase {
+@AbilityManifest(name = "믹스", rank = AbilityManifest.Rank.SPECIAL, Species = AbilityManifest.Species.OTHERS)
+public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	private static String[] formatAbilityInfo(AbilityBase ability) {
 		List<String> list = Messager.asList(
 				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
-		list.addAll(ability.getDescription());
+		list.addAll(ability.getExplanation());
 		return list.toArray(new String[0]);
 	}
 
@@ -28,10 +30,10 @@ public class Mix extends AbilityBase {
 		removeAbility();
 		this.first = AbilityBase.create(first, getParticipant());
 		this.first.setRestricted(isRestricted() || !getGame().isGameStarted());
-		getDescriptionLine(2).setStrings(formatAbilityInfo(this.first));
+		getExplanation(2).setLines(formatAbilityInfo(this.first));
 		this.second = AbilityBase.create(second, getParticipant());
 		this.second.setRestricted(isRestricted() || !getGame().isGameStarted());
-		getDescriptionLine(4).setStrings(formatAbilityInfo(this.second));
+		getExplanation(4).setLines(formatAbilityInfo(this.second));
 	}
 
 	public boolean hasAbility() {
@@ -57,19 +59,21 @@ public class Mix extends AbilityBase {
 
 	public Mix(Participant participant) {
 		super(participant,
-				new DescriptionLine("믹스"),
-				new DescriptionLine(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------")),
-				new DescriptionLine("능력이 없습니다."),
-				new DescriptionLine(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------")),
-				new DescriptionLine("능력이 없습니다."));
+				new Explanation("믹스"),
+				new Explanation(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------")),
+				new Explanation("능력이 없습니다."),
+				new Explanation(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------")),
+				new Explanation("능력이 없습니다."));
 	}
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (hasAbility()) {
 			boolean abilityUsed = false;
-			if (first.ActiveSkill(materialType, clickType)) abilityUsed = true;
-			if (second.ActiveSkill(materialType, clickType)) abilityUsed = true;
+			if (first instanceof ActiveHandler && ((ActiveHandler) first).ActiveSkill(materialType, clickType))
+				abilityUsed = true;
+			if (second instanceof ActiveHandler && ((ActiveHandler) second).ActiveSkill(materialType, clickType))
+				abilityUsed = true;
 			return abilityUsed;
 		} else {
 			return false;
@@ -79,8 +83,8 @@ public class Mix extends AbilityBase {
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {
 		if (hasAbility()) {
-			first.TargetSkill(materialType, entity);
-			second.TargetSkill(materialType, entity);
+			if (first instanceof TargetHandler) ((TargetHandler) first).TargetSkill(materialType, entity);
+			if (second instanceof TargetHandler) ((TargetHandler) second).TargetSkill(materialType, entity);
 		}
 	}
 

@@ -42,6 +42,7 @@ public class AbilityFactory {
 
 	private static final Map<String, Class<? extends AbilityBase>> usedNames = new HashMap<>();
 	private static final Map<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
+	private static final Map<Class<? extends AbilityBase>, Class<? extends AbilityBase>> alternatives = new HashMap<>();
 
 	/**
 	 * 능력을 등록합니다.
@@ -57,10 +58,14 @@ public class AbilityFactory {
 		if (!registeredAbilities.containsKey(abilityClass)) {
 			try {
 				AbilityRegistration registration = new AbilityRegistration(abilityClass);
-				String name = registration.getManifest().Name();
+				String name = registration.getManifest().name();
 				if (!usedNames.containsKey(name)) {
-					registeredAbilities.put(abilityClass, registration);
-					usedNames.put(name, abilityClass);
+					Class<? extends AbilityBase> registeredClass = registration.getAbilityClass();
+					registeredAbilities.put(registeredClass, registration);
+					usedNames.put(name, registeredClass);
+					if (abilityClass != registeredClass) {
+						alternatives.put(abilityClass, registeredClass);
+					}
 				} else {
 					Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
 				}
@@ -77,15 +82,13 @@ public class AbilityFactory {
 	}
 
 	public static AbilityRegistration getRegistration(Class<? extends AbilityBase> clazz) {
+		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
 		return registeredAbilities.get(clazz);
 	}
 
 	public static boolean isRegistered(Class<? extends AbilityBase> clazz) {
+		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
 		return registeredAbilities.containsKey(clazz);
-	}
-
-	private static boolean containsName(String name) {
-		return usedNames.containsKey(name);
 	}
 
 	static {
@@ -188,15 +191,24 @@ public class AbilityFactory {
 		private final Constructor<? extends AbilityBase> constructor;
 		private final AbilityManifest manifest;
 		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
+		private final Map<String, Field> fields;
 		private final Map<String, SettingObject<?>> settingObjects;
 		private final Set<Field> scheduledTimers;
 		private final int flag;
 
 		@SuppressWarnings("unchecked")
 		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException {
-			if (clazz.isAnnotationPresent(Support.class)) {
+			while (clazz.isAnnotationPresent(Support.class)) {
 				Support supported = clazz.getAnnotation(Support.class);
-				if (!ServerVersion.getVersion().isOver(supported.value())) throw new UnsupportedVersionException();
+				if (ServerVersion.getVersion().isOver(supported.value())) {
+					break;
+				} else {
+					if (clazz.isAnnotationPresent(Alternative.class)) {
+						clazz = Preconditions.checkNotNull(clazz.getAnnotation(Alternative.class).value(), "@Alternative cannot be null");
+					} else {
+						throw new UnsupportedVersionException();
+					}
+				}
 			}
 
 			this.clazz = clazz;
@@ -206,8 +218,8 @@ public class AbilityFactory {
 			if (!clazz.isAnnotationPresent(AbilityManifest.class))
 				throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
 			this.manifest = clazz.getAnnotation(AbilityManifest.class);
-			Preconditions.checkNotNull(manifest.Name());
-			Preconditions.checkNotNull(manifest.Rank());
+			Preconditions.checkNotNull(manifest.name());
+			Preconditions.checkNotNull(manifest.rank());
 			Preconditions.checkNotNull(manifest.Species());
 
 			Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
@@ -222,21 +234,26 @@ public class AbilityFactory {
 			}
 			this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
 
+			Map<String, Field> fields = new HashMap<>();
 			Map<String, SettingObject<?>> settingObjects = new HashMap<>();
 			Set<Field> scheduledTimers = new HashSet<>();
 			for (Field field : clazz.getDeclaredFields()) {
+				fields.put(field.getName(), field);
 				Class<?> type = field.getType();
-				if (type.equals(SettingObject.class)) {
-					if (Modifier.isStatic(field.getModifiers())) {
+				if (Modifier.isStatic(field.getModifiers())) {
+					if (type.equals(SettingObject.class)) {
 						SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
 						settingObjects.put(settingObject.getKey(), settingObject);
 					}
-				} else if (GameTimer.class.isAssignableFrom(type)) {
-					if (!Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(Scheduled.class)) {
-						scheduledTimers.add(field);
+				} else {
+					if (GameTimer.class.isAssignableFrom(type)) {
+						if (!Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(Scheduled.class)) {
+							scheduledTimers.add(field);
+						}
 					}
 				}
 			}
+			this.fields = Collections.unmodifiableMap(fields);
 			this.settingObjects = Collections.unmodifiableMap(settingObjects);
 			this.scheduledTimers = Collections.unmodifiableSet(scheduledTimers);
 
@@ -257,6 +274,10 @@ public class AbilityFactory {
 
 		public AbilityManifest getManifest() {
 			return manifest;
+		}
+
+		public Map<String, Field> getFields() {
+			return fields;
 		}
 
 		public Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> getEventhandlers() {

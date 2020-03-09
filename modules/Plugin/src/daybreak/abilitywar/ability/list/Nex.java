@@ -21,14 +21,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
-@AbilityManifest(Name = "넥스", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "넥스", rank = Rank.A, Species = Species.GOD)
 public class Nex extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
@@ -175,9 +174,5 @@ public class Nex extends AbilityBase implements ActiveHandler {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 4);
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-	}
 
 }

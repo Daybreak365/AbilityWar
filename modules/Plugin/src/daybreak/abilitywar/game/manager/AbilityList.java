@@ -45,7 +45,7 @@ public class AbilityList {
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
 		AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 		if (registration != null) {
-			String name = registration.getManifest().Name();
+			String name = registration.getManifest().name();
 			if (!abilities.containsKey(name)) {
 				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
 				abilities.put(name, registration);
@@ -128,8 +128,8 @@ public class AbilityList {
 		for (AbilityRegistration registration : abilities.values()) {
 			if (registration != null) {
 				AbilityManifest manifest = registration.getManifest();
-				if (manifest.Rank().equals(rank)) {
-					values.add(manifest.Name());
+				if (manifest.rank().equals(rank)) {
+					values.add(manifest.name());
 				}
 			}
 		}
@@ -142,7 +142,7 @@ public class AbilityList {
 			if (registration != null) {
 				AbilityManifest manifest = registration.getManifest();
 				if (manifest.Species().equals(species)) {
-					values.add(manifest.Name());
+					values.add(manifest.name());
 				}
 			}
 		}

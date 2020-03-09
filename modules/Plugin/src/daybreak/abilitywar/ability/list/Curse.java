@@ -5,7 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.ability.decorator.TargetHandler;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -32,8 +31,8 @@ import org.bukkit.inventory.EntityEquipment;
 
 import java.util.function.Predicate;
 
-@AbilityManifest(Name = "컬스", Rank = Rank.A, Species = Species.OTHERS)
-public class Curse extends AbilityBase implements TargetHandler {
+@AbilityManifest(name = "컬스", rank = Rank.A, Species = Species.OTHERS)
+public class Curse extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Curse.class, "Cooldown", 100,
 			"# 쿨타임") {
@@ -143,10 +142,6 @@ public class Curse extends AbilityBase implements TargetHandler {
 				}
 			}
 		}.setPeriod(TimeUnit.TICKS, 1).start();
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 	@SubscribeEvent

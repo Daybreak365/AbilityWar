@@ -14,10 +14,9 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-@AbilityManifest(Name = "버서커", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "버서커", rank = Rank.B, Species = Species.HUMAN)
 public class Berserker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
@@ -113,10 +112,6 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

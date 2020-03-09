@@ -20,14 +20,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AbilityManifest(Name = "뱀파이어", Rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.UNDEAD)
+@AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.UNDEAD)
 public class Vampire extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Vampire.class, "Cool", 160,
@@ -161,11 +160,6 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-
 	}
 
 }

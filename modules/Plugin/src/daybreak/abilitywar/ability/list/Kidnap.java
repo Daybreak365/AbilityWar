@@ -26,7 +26,7 @@ import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 @Support(Version.v1_11_R1)
-@AbilityManifest(Name = "납치", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "납치", rank = Rank.B, Species = Species.HUMAN)
 public class Kidnap extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Kidnap.class, "Cooldown", 30,
@@ -115,11 +115,6 @@ public class Kidnap extends AbilityBase implements TargetHandler {
 				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c지금 공격할 수 없습니다!"));
 			}
 		}
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	@Override

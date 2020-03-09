@@ -14,11 +14,10 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-@AbilityManifest(Name = "에너지 블로커", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "에너지 블로커", rank = Rank.A, Species = Species.HUMAN)
 public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 
 	private boolean projectileBlocking = true;
@@ -103,10 +102,6 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 		if (update == Update.RESTRICTION_CLEAR) {
 			actionbarChannel.update(getState());
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

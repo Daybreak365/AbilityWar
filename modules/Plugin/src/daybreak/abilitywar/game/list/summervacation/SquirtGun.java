@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -20,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -31,8 +31,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.LinkedList;
 import java.util.List;
 
-@AbilityManifest(Name = "물총", Rank = Rank.SPECIAL, Species = Species.SPECIAL)
-public class SquirtGun extends AbilityBase {
+@AbilityManifest(name = "물총", rank = Rank.SPECIAL, Species = Species.SPECIAL)
+public class SquirtGun extends AbilityBase implements ActiveHandler {
 
 	public SquirtGun(Participant participant) {
 		super(participant,
@@ -142,10 +142,6 @@ public class SquirtGun extends AbilityBase {
 		if (e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL)) {
 			e.setDamage(e.getDamage() / 5);
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

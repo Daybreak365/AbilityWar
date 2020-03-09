@@ -20,7 +20,6 @@ import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -29,7 +28,7 @@ import org.bukkit.potion.PotionEffect;
 import java.util.Collection;
 import java.util.LinkedList;
 
-@AbilityManifest(Name = "시간 역행", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "시간 역행", rank = Rank.S, Species = Species.HUMAN)
 public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
@@ -171,10 +170,6 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 			player.addPotionEffects(potionEffects);
 		}
 
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

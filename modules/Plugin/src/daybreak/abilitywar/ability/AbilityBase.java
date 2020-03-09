@@ -9,6 +9,7 @@ import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -20,17 +21,15 @@ import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
+import daybreak.abilitywar.utils.base.RegexReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.FastMath;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -40,13 +39,14 @@ import org.bukkit.event.player.PlayerEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,6 +70,7 @@ import java.util.logging.Logger;
 public abstract class AbilityBase implements EventManager.Observer {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
+	private static final RegexReplacer bracketReplacer = new RegexReplacer("\\[([^\\[\\]]+)\\]");
 
 	public static AbilityBase create(Class<? extends AbilityBase> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		Preconditions.checkNotNull(abilityClass);
@@ -97,7 +98,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 	}
 
 	private final Participant participant;
-	private final DescriptionLine[] description;
+	private final Explanation[] explanation;
 	private final AbilityRegistration registration;
 	private final AbilityManifest manifest;
 	private final AbstractGame game;
@@ -112,17 +113,13 @@ public abstract class AbilityBase implements EventManager.Observer {
 	 * {@link AbilityBase}의 기본 생성자입니다.
 	 *
 	 * @param participant 능력을 소유하는 참가자
-	 * @param description 능력 설명
-	 * @throws IllegalStateException 게임이 진행중이지 않거나 능력이 {@link AbilityFactory}에 등록되지
-	 *                               않았을 경우 예외가 발생합니다.
+	 * @param explanation 능력 설명
+	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
 	 */
-	public AbilityBase(Participant participant, DescriptionLine... description) throws IllegalStateException {
+	public AbilityBase(Participant participant, Explanation... explanation) throws IllegalStateException {
 		this.participant = participant;
-		this.description = description;
-		if (!AbilityWarThread.isGameTaskRunning()) {
-			throw new IllegalStateException("게임이 진행되고 있지 않습니다.");
-		}
-		this.game = AbilityWarThread.getGame();
+		this.explanation = explanation;
+		this.game = participant.getGame();
 		if (!AbilityFactory.isRegistered(getClass())) {
 			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
@@ -142,12 +139,11 @@ public abstract class AbilityBase implements EventManager.Observer {
 	 * {@link AbilityBase}의 기본 생성자입니다.
 	 *
 	 * @param participant 능력을 소유하는 참가자
-	 * @param description 능력 설명
-	 * @throws IllegalStateException 게임이 진행중이지 않거나 능력이 {@link AbilityFactory}에 등록되지
-	 *                               않았을 경우 예외가 발생합니다.
+	 * @param explanation 능력 설명
+	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
 	 */
-	public AbilityBase(Participant participant, String... description) throws IllegalStateException {
-		this(participant, new DescriptionLine(description));
+	public AbilityBase(Participant participant, String... explanation) throws IllegalStateException {
+		this(participant, new Explanation(explanation));
 	}
 
 	@Override
@@ -175,23 +171,6 @@ public abstract class AbilityBase implements EventManager.Observer {
 			}
 		}
 	}
-
-	/**
-	 * 액티브 스킬 발동을 위해 사용됩니다.
-	 *
-	 * @param materialType 플레이어가 클릭할 때 MainHand에 들고 있었던 아이템
-	 * @param clickType    클릭의 종류
-	 * @return 능력 발동 여부
-	 */
-	public abstract boolean ActiveSkill(Material materialType, ClickType clickType);
-
-	/**
-	 * 타겟팅 스킬 발동을 위해 사용됩니다.
-	 *
-	 * @param materialType 플레이어가 클릭할 때 MainHand에 들고 있었던 아이템
-	 * @param entity       타겟팅의 대상, 타겟팅의 대상이 없을 경우 null이 될 수 있습니다. null 체크가 필요합니다.
-	 */
-	public abstract void TargetSkill(Material materialType, LivingEntity entity);
 
 	protected void onUpdate(AbilityBase.Update update) {
 	}
@@ -239,33 +218,74 @@ public abstract class AbilityBase implements EventManager.Observer {
 		return participant;
 	}
 
-	protected final DescriptionLine getDescriptionLine(int index) {
-		return description[index];
-	}
+	private final Function<String, String> explanationFunction = new Function<String, String>() {
+		@Override
+		public String apply(String s) {
+			Field field = registration.getFields().get(s);
+			if (field != null) {
+				if (Modifier.isStatic(field.getModifiers())) {
+					try {
+						return parseString(ReflectionUtil.setAccessible(field).get(null));
+					} catch (IllegalAccessException e) {
+						return "none";
+					}
+				} else {
+					try {
+						return parseString(ReflectionUtil.setAccessible(field).get(AbilityBase.this));
+					} catch (IllegalAccessException e) {
+						return "none";
+					}
+				}
+			} else {
+				return "none";
+			}
+		}
+
+		private String parseString(Object o) {
+			if (o instanceof SettingObject) {
+				return String.valueOf(((SettingObject<?>) o).getValue());
+			} else if (o instanceof AbilityBase) {
+				AbilityBase ability = (AbilityBase) o;
+				if (ability.equals(AbilityBase.this)) {
+					return "none";
+				} else {
+					return String.join("\n", ability.getExplanation());
+				}
+			} else {
+				return String.valueOf(o);
+			}
+		}
+	};
 
 	/**
 	 * 능력의 설명을 반환합니다.
 	 */
-	public final List<String> getDescription() {
+	public final List<String> getExplanation() {
 		List<String> explain = new ArrayList<>();
-		for (DescriptionLine line : description) {
-			Collections.addAll(explain, line.strings);
+		for (Explanation explanation : this.explanation) {
+			for (String line : explanation.lines) {
+				explain.add(bracketReplacer.replaceAll(line, explanationFunction));
+			}
 		}
 		return explain;
+	}
+
+	protected final Explanation getExplanation(int index) {
+		return explanation[index];
 	}
 
 	/**
 	 * 능력의 이름을 반환합니다.
 	 */
 	public final String getName() {
-		return manifest.Name();
+		return manifest.name();
 	}
 
 	/**
 	 * 능력의 등급을 반환합니다.
 	 */
 	public final Rank getRank() {
-		return manifest.Rank();
+		return manifest.rank();
 	}
 
 	/**
@@ -330,20 +350,20 @@ public abstract class AbilityBase implements EventManager.Observer {
 		return channel;
 	}
 
-	public static class DescriptionLine {
+	public static class Explanation {
 
-		private String[] strings;
+		private String[] lines;
 
-		public DescriptionLine(String... strings) {
-			this.strings = strings;
+		public Explanation(String... strings) {
+			this.lines = strings;
 		}
 
-		public void setStrings(String... strings) {
-			this.strings = strings;
+		public void setLines(String... lines) {
+			this.lines = lines;
 		}
 
-		public String[] getStrings() {
-			return strings;
+		public String[] getLines() {
+			return lines;
 		}
 
 	}

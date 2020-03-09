@@ -15,9 +15,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 
-@AbilityManifest(Name = "카오스", Rank = Rank.S, Species = Species.GOD)
+@AbilityManifest(name = "카오스", rank = Rank.S, Species = Species.GOD)
 public class Chaos extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
@@ -94,10 +93,6 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

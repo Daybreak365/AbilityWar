@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -13,7 +14,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -22,8 +22,8 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 @Beta
-@AbilityManifest(Name = "유령", Rank = Rank.A, Species = Species.OTHERS)
-public class Ghost extends AbilityBase {
+@AbilityManifest(name = "유령", rank = Rank.A, Species = Species.OTHERS)
+public class Ghost extends AbilityBase implements ActiveHandler {
 
 	public Ghost(Participant participant) throws IllegalStateException {
 		super(participant,
@@ -113,10 +113,6 @@ public class Ghost extends AbilityBase {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

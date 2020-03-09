@@ -16,7 +16,6 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -25,7 +24,7 @@ import org.bukkit.potion.PotionType;
 import java.util.Random;
 
 @Support(Version.v1_11_R1)
-@AbilityManifest(Name = "양조사", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "양조사", rank = Rank.B, Species = Species.HUMAN)
 public class Brewer extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Brewer.class, "Cooldown", 50,
@@ -68,10 +67,6 @@ public class Brewer extends AbilityBase implements ActiveHandler {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

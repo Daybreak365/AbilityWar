@@ -100,7 +100,7 @@ public class AbilitySettings {
 		public SettingObject(Class<? extends AbilityBase> abilityClass, String key, T defaultValue, String... comments) {
 			AbilityManifest manifest = checkNotNull(abilityClass).getAnnotation(AbilityManifest.class);
 			if (manifest != null) {
-				this.path = "능력." + manifest.Name() + "." + checkNotNull(key);
+				this.path = "능력." + manifest.name() + "." + checkNotNull(key);
 			} else {
 				throw new IllegalArgumentException(abilityClass.getName() + " 클래스에 AbilityManifest 어노테이션이 존재하지 않습니다.");
 			}
@@ -147,17 +147,17 @@ public class AbilitySettings {
 				}
 			}
 
-			Object object = cache.get(this).getValue();
+			Object value = cache.get(this).getValue();
 
-			if (object != null && object.getClass().isAssignableFrom(getDefault().getClass())) {
-				T castedObject = (T) object;
-				if (Condition(castedObject)) {
-					return castedObject;
+			if (value != null && value.getClass().isAssignableFrom(defaultValue.getClass())) {
+				T castedValue = (T) value;
+				if (Condition(castedValue)) {
+					return castedValue;
 				} else {
-					return getDefault();
+					return defaultValue;
 				}
 			} else {
-				return getDefault();
+				return defaultValue;
 			}
 		}
 
@@ -167,6 +167,11 @@ public class AbilitySettings {
 				return true;
 			}
 			return false;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(getValue());
 		}
 
 	}

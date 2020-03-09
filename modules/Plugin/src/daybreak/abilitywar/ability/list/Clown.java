@@ -14,10 +14,9 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(Name = "광대", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "광대", rank = Rank.B, Species = Species.HUMAN)
 public class Clown extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Clown.class, "Cooldown", 60,
@@ -95,10 +94,6 @@ public class Clown extends AbilityBase implements ActiveHandler {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

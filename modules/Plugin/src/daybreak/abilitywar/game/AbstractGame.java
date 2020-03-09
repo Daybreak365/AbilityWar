@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
@@ -219,14 +221,14 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			Player player = e.getPlayer();
 			if (player.equals(getPlayer()) && hasAbility()) {
 				AbilityBase ability = getAbility();
-				if (!ability.isRestricted()) {
+				if (ability instanceof ActiveHandler && !ability.isRestricted()) {
 					Material material = player.getInventory().getItemInMainHand().getType();
 					ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
 					if (attributes.SKILL_MATERIALS.set.contains(material)) {
 						long current = System.currentTimeMillis();
 						if (current - lastClick >= 250) {
 							this.lastClick = current;
-							if (ability.ActiveSkill(material, clickType)) {
+							if (((ActiveHandler) ability).ActiveSkill(material, clickType)) {
 								Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
 								ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 							}
@@ -241,27 +243,29 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			Player player = e.getPlayer();
 			if (player.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
 				AbilityBase ability = this.getAbility();
-				if (!ability.isRestricted()) {
+				if ((ability instanceof ActiveHandler || ability instanceof TargetHandler) && !ability.isRestricted()) {
 					Material material = player.getInventory().getItemInMainHand().getType();
 					if (attributes.SKILL_MATERIALS.set.contains(material)) {
 						long current = System.currentTimeMillis();
 						if (current - lastClick >= 250) {
-							if (ability.ActiveSkill(material, ClickType.RIGHT_CLICK)) {
+							if (ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, ClickType.RIGHT_CLICK)) {
 								Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, ClickType.RIGHT_CLICK));
 								ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
 							}
-							Entity targetEntity = e.getRightClicked();
-							if (targetEntity instanceof LivingEntity) {
-								if (targetEntity instanceof Player) {
-									Player targetPlayer = (Player) targetEntity;
-									if (isParticipating(targetPlayer) && (!(this instanceof DeathManager.Handler) || !((DeathManager.Handler) this).getDeathManager().isExcluded(targetPlayer))) {
+							if (ability instanceof TargetHandler) {
+								Entity targetEntity = e.getRightClicked();
+								if (targetEntity instanceof LivingEntity) {
+									if (targetEntity instanceof Player) {
+										Player targetPlayer = (Player) targetEntity;
+										if (isParticipating(targetPlayer) && (!(this instanceof DeathManager.Handler) || !((DeathManager.Handler) this).getDeathManager().isExcluded(targetPlayer))) {
+											this.lastClick = current;
+											((TargetHandler) ability).TargetSkill(material, targetPlayer);
+										}
+									} else {
+										LivingEntity target = (LivingEntity) targetEntity;
 										this.lastClick = current;
-										ability.TargetSkill(material, targetPlayer);
+										((TargetHandler) ability).TargetSkill(material, target);
 									}
-								} else {
-									LivingEntity target = (LivingEntity) targetEntity;
-									this.lastClick = current;
-									ability.TargetSkill(material, target);
 								}
 							}
 						}
@@ -271,7 +275,6 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		}
 
 		protected AbilityBase ability;
-
 
 		/**
 		 * 플레이어에게 새 능력을 부여합니다.
@@ -338,6 +341,10 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			return player;
 		}
 
+		public AbstractGame getGame() {
+			return AbstractGame.this;
+		}
+
 		public Attributes attributes() {
 			return attributes;
 		}
@@ -376,7 +383,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 		public class SetAttribute<E> {
 
-			private HashSet<E> set;
+			private final Set<E> set;
 
 			@SafeVarargs
 			private SetAttribute(E... defaultElements) {
@@ -404,7 +411,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 		public class ActionbarNotification extends GameTimer {
 
-			private Set<ActionbarChannel> channels = Collections.synchronizedSet(new HashSet<>());
+			private final Set<ActionbarChannel> channels = Collections.synchronizedSet(new HashSet<>());
 			private String lastString = "";
 
 			private ActionbarNotification() {
@@ -420,7 +427,9 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 					}
 				}
 				this.lastString = joiner.toString();
-				NMSHandler.getNMS().sendActionbar(getPlayer(), lastString, 0, 20, 20);
+				if (!lastString.isEmpty()) {
+					NMSHandler.getNMS().sendActionbar(getPlayer(), lastString, 0, 20, 20);
+				}
 			}
 
 			@Override
@@ -437,7 +446,9 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 				if (updated) {
 					update();
 				} else {
-					NMSHandler.getNMS().sendActionbar(getPlayer(), lastString, 0, 20, 20);
+					if (!lastString.isEmpty()) {
+						NMSHandler.getNMS().sendActionbar(getPlayer(), lastString, 0, 20, 20);
+					}
 				}
 			}
 

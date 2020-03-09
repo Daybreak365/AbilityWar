@@ -11,8 +11,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AbilityManifest {
 
-	String Name();
-	Rank Rank();
+	String name();
+
+	Rank rank();
 
 	enum Rank {
 

@@ -223,7 +223,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 			@Override
 			protected void drawAbility(Collection<Participant> selectors) {
 				abilities = AbilitySelectStrategy.EVERY_ABILITY_EXCLUDING_BLACKLISTED.getAbilities();
-				if (getSelectors().size() <= abilities.size()) {
+				if (abilities.size() > 0) {
 					Random random = new Random();
 
 					for (Participant participant : selectors) {
@@ -239,17 +239,15 @@ public class MixAbility extends Game implements DefaultKitHandler {
 									ChatColor.translateAlternateColorCodes('&', "&e/aw yes &f명령어를 사용하여 능력을 확정합니다."),
 									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
 							});
-						} catch (IllegalAccessException | SecurityException |
-								InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							Messager.sendConsoleErrorMessage(
 									ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
 									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
 						}
 					}
 				} else {
-					Messager.broadcastErrorMessage("사용 가능한 능력의 수가 참가자의 수보다 적어 게임을 종료합니다.");
+					Messager.broadcastErrorMessage("사용 가능한 능력이 없습니다.");
 					AbilityWarThread.StopGame();
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7게임이 초기화되었습니다."));
 				}
 			}
 
@@ -300,12 +298,11 @@ public class MixAbility extends Game implements DefaultKitHandler {
 
 	@Override
 	public ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
-		class Strategy extends ParticipantStrategy {
+		class Strategy implements ParticipantStrategy {
 
 			private final Map<String, Participant> participants = new HashMap<>();
 
 			public Strategy(AbstractGame game, Collection<Player> players) {
-				super(game);
 				for (Player player : players) {
 					participants.put(player.getUniqueId().toString(), new MixParticipant(player));
 				}

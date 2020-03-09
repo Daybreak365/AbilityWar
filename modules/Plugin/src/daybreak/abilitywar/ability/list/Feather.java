@@ -15,13 +15,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-@AbilityManifest(Name = "깃털", Rank = Rank.A, Species = Species.OTHERS)
+@AbilityManifest(name = "깃털", rank = Rank.A, Species = Species.OTHERS)
 public class Feather extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80,
@@ -120,10 +119,6 @@ public class Feather extends AbilityBase implements ActiveHandler {
 		} else {
 			dash.stop(false);
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

@@ -16,7 +16,6 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Boundary.CenteredBoundingBox;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
@@ -25,7 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.Set;
 
 @Beta
-@AbilityManifest(Name = "플렉터", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "플렉터", rank = Rank.S, Species = Species.HUMAN)
 public class Flector extends AbilityBase {
 
 	public Flector(Participant participant) {
@@ -34,11 +33,6 @@ public class Flector extends AbilityBase {
 				"반사합니다. 본인이 발사한 투사체는 반사할 수 없으며, ",
 				"다른 플레이어가 발사한 발사체를 반사할 경우 " + ChatColor.YELLOW + "♥" + ChatColor.WHITE + " 만큼의",
 				ChatColor.YELLOW + "추가 체력" + ChatColor.WHITE + "을 얻습니다.");
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.parseMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.parseMaterial(), Material.DIAMOND_SWORD);
@@ -64,11 +58,6 @@ public class Flector extends AbilityBase {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-
 	}
 
 }

@@ -18,10 +18,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(Name = "플로라", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "플로라", rank = Rank.A, Species = Species.GOD)
 public class Flora extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 3,
@@ -164,10 +163,6 @@ public class Flora extends AbilityBase implements ActiveHandler {
 
 		protected abstract Radius next();
 
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

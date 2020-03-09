@@ -8,12 +8,10 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-@AbilityManifest(Name = "홀수강박증", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(name = "홀수강박증", rank = Rank.C, Species = Species.HUMAN)
 public class OnlyOddNumber extends AbilityBase {
 
 	public static final SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 59,
@@ -44,11 +42,6 @@ public class OnlyOddNumber extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% 줄여 받고, 체력이 짝수일 경우 대미지를 " + EvenNumberConfig.getValue() + "% 늘려 받습니다."));
 	}
 
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
-
 	private final int odd = OddNumberConfig.getValue();
 	private final int even = EvenNumberConfig.getValue();
 
@@ -66,10 +59,6 @@ public class OnlyOddNumber extends AbilityBase {
 				e.setDamage(e.getDamage() - ((e.getDamage() / 100) * odd));
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

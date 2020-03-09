@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@AbilityManifest(Name = "유명 인사", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(name = "유명 인사", rank = Rank.C, Species = Species.HUMAN)
 public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,
@@ -156,10 +156,6 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 	private double rotateX(double x, double z, double radians) {

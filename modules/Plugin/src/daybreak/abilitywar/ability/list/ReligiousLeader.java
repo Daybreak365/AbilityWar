@@ -28,7 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(Name = "교주", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "교주", rank = Rank.A, Species = Species.HUMAN)
 public class ReligiousLeader extends AbilityBase implements TargetHandler, ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(ReligiousLeader.class, "Cooldown", 150,

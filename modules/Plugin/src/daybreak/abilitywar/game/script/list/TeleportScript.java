@@ -9,27 +9,27 @@ import org.bukkit.entity.Player;
 
 public class TeleportScript extends AbstractScript {
 
-	private final String WorldName;
-	private final double X;
-	private final double Y;
-	private final double Z;
-	private final float Yaw;
-	private final float Pitch;
+	private final String worldName;
+	private final double x;
+	private final double y;
+	private final double z;
+	private final float yaw;
+	private final float pitch;
 
-	public TeleportScript(String ScriptName, int Time, int LoopCount, String PreRunMessage, String RunMessage, Location location) {
-		super(ScriptName, Time, LoopCount, PreRunMessage, RunMessage);
-		this.WorldName = location.getWorld().getName();
-		this.X = location.getX();
-		this.Y = location.getY();
-		this.Z = location.getZ();
-		this.Yaw = location.getYaw();
-		this.Pitch = location.getPitch();
+	public TeleportScript(String scriptName, int time, int loopCount, String preRunMessage, String runMessage, Location location) {
+		super(scriptName, time, loopCount, preRunMessage, runMessage);
+		this.worldName = location.getWorld().getName();
+		this.x = location.getX();
+		this.y = location.getY();
+		this.z = location.getZ();
+		this.yaw = location.getYaw();
+		this.pitch = location.getPitch();
 	}
 
 	@Override
 	public void execute(Game game) {
 		try {
-			Location l = new Location(Preconditions.checkNotNull(Bukkit.getWorld(WorldName)), X, Y, Z, Yaw, Pitch);
+			Location l = new Location(Preconditions.checkNotNull(Bukkit.getWorld(worldName)), x, y, z, yaw, pitch);
 			for (Player p : Bukkit.getOnlinePlayers()) p.teleport(l);
 		} catch (NullPointerException ignore) {
 		}

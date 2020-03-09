@@ -13,13 +13,12 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.Random;
 
-@AbilityManifest(Name = "다이스 갓", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "다이스 갓", rank = Rank.A, Species = Species.GOD)
 public class DiceGod extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 25,
@@ -93,10 +92,6 @@ public class DiceGod extends AbilityBase implements ActiveHandler {
 				e.setDamage(0);
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

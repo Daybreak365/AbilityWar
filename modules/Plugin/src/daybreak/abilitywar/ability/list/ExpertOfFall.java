@@ -16,11 +16,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-@AbilityManifest(Name = "낙법의 달인", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "낙법의 달인", rank = Rank.B, Species = Species.HUMAN)
 public class ExpertOfFall extends AbilityBase {
 
 	public ExpertOfFall(Participant participant) {
@@ -28,11 +27,6 @@ public class ExpertOfFall extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f수십년간의 고된 수련으로 낙법과 하나가 된 낙법의 달인."),
 				ChatColor.translateAlternateColorCodes('&', "&f낙하해 땅에 닿았을 때 자동으로 물낙법을 하며,"),
 				ChatColor.translateAlternateColorCodes('&', "&f낙하 거리에 비례해 주변 3칸 내의 생명체들에게 대미지를 줍니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	@SubscribeEvent
@@ -66,10 +60,6 @@ public class ExpertOfFall extends AbilityBase {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

@@ -15,10 +15,9 @@ import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(Name = "빠른 회복", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "빠른 회복", rank = Rank.A, Species = Species.HUMAN)
 public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
@@ -133,10 +132,6 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

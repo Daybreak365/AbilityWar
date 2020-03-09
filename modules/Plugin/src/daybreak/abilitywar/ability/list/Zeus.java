@@ -16,7 +16,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -25,7 +24,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import java.util.Iterator;
 
-@AbilityManifest(Name = "제우스", Rank = Rank.S, Species = Species.GOD)
+@AbilityManifest(name = "제우스", rank = Rank.S, Species = Species.GOD)
 public class Zeus extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
@@ -124,10 +123,6 @@ public class Zeus extends AbilityBase implements ActiveHandler {
 				e.setCancelled(true);
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

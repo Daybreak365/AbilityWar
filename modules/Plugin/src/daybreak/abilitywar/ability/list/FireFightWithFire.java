@@ -8,16 +8,14 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import java.util.Random;
 
-@AbilityManifest(Name = "이열치열", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "이열치열", rank = Rank.B, Species = Species.HUMAN)
 public class FireFightWithFire extends AbilityBase {
 
 	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(FireFightWithFire.class, "Chance", 50,
@@ -34,11 +32,6 @@ public class FireFightWithFire extends AbilityBase {
 	public FireFightWithFire(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f화염 대미지를 받을 때, " + ChanceConfig.getValue() + "% 확률로 대미지만큼 체력을 회복합니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	private final Random random = new Random();
@@ -73,10 +66,6 @@ public class FireFightWithFire extends AbilityBase {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

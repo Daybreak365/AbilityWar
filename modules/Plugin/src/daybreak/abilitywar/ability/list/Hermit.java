@@ -11,11 +11,9 @@ import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-@AbilityManifest(Name = "헤르밋", Rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(name = "헤르밋", rank = Rank.C, Species = Species.HUMAN)
 public class Hermit extends AbilityBase {
 
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Hermit.class, "Distance", 15,
@@ -34,11 +32,6 @@ public class Hermit extends AbilityBase {
 				ChatColor.translateAlternateColorCodes('&', "&f또한, 플레이어가 들어왔을 때 신속과 투명 버프가 부여됩니다."));
 	}
 
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
-
 	private final int distance = DistanceConfig.getValue();
 
 	@SubscribeEvent
@@ -53,10 +46,6 @@ public class Hermit extends AbilityBase {
 				PotionEffects.INVISIBILITY.addPotionEffect(getPlayer(), 100, 0, true);
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

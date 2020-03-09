@@ -24,13 +24,12 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.LivingEntity;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-@AbilityManifest(Name = "설인", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "설인", rank = Rank.S, Species = Species.HUMAN)
 public class Yeti extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
@@ -149,10 +148,6 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

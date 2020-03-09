@@ -13,24 +13,18 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.LinkedList;
 
-@AbilityManifest(Name = "악마의 부츠", Rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(name = "악마의 부츠", rank = Rank.B, Species = Species.OTHERS)
 public class DevilBoots extends AbilityBase {
 
 	public DevilBoots(Participant participant) {
 		super(participant,
 				ChatColor.translateAlternateColorCodes('&', "&f신속하게 이동하며 지나가는 자리에 불이 붙습니다. 화염 피해를 받지 않습니다."));
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
 	}
 
 	@Scheduled
@@ -80,10 +74,6 @@ public class DevilBoots extends AbilityBase {
 		for (Block block : blocks) {
 			if (block.getType() == Material.FIRE) block.setType(Material.AIR);
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

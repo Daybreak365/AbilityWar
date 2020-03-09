@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 
-@AbilityManifest(Name = "구속", Rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "구속", rank = Rank.B, Species = Species.HUMAN)
 public class Imprison extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
@@ -84,11 +84,6 @@ public class Imprison extends AbilityBase implements TargetHandler {
 	}.setPeriod(TimeUnit.SECONDS, 10);
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
 
 	private final Map<Block, Integer> blocks = new HashMap<>();
 

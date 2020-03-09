@@ -33,7 +33,7 @@ public class AbilitySettingWizard implements Listener {
 		Map<String, AbilityRegistration> abilities = new TreeMap<>();
 		for (AbilityRegistration registration : AbilityFactory.getRegistrations()) {
 			if (registration.getSettingObjects().size() > 0) {
-				abilities.put(registration.getManifest().Name(), registration);
+				abilities.put(registration.getManifest().name(), registration);
 			}
 		}
 		this.abilities = abilities;
@@ -87,7 +87,7 @@ public class AbilitySettingWizard implements Listener {
 
 			player.openInventory(gui);
 		} else {
-			this.gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', currentAbility.getManifest().Name()));
+			this.gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', currentAbility.getManifest().name()));
 
 			int maxPage = ((currentAbility.getSettingObjects().size() - 1) / 18) + 1;
 			if (maxPage < page || page < 1) page = 1;

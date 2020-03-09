@@ -14,11 +14,10 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.LivingEntity;
 
 import java.util.LinkedList;
 
-@AbilityManifest(Name = "암살자", Rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "암살자", rank = Rank.A, Species = Species.HUMAN)
 public class Assassin extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 10,
@@ -111,10 +110,6 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 		}
 
 		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }

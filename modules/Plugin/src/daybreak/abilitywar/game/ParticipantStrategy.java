@@ -8,30 +8,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class ParticipantStrategy {
+public interface ParticipantStrategy {
 
-	private final AbstractGame game;
+	Collection<AbstractGame.Participant> getParticipants();
 
-	public ParticipantStrategy(AbstractGame game) {
-		this.game = game;
-	}
+	boolean isParticipating(UUID uuid);
 
-	public abstract Collection<AbstractGame.Participant> getParticipants();
+	AbstractGame.Participant getParticipant(UUID uuid);
 
-	public abstract boolean isParticipating(UUID uuid);
+	void addParticipant(Player player) throws UnsupportedOperationException;
 
-	public abstract AbstractGame.Participant getParticipant(UUID uuid);
+	void removeParticipant(UUID uuid) throws UnsupportedOperationException;
 
-	public abstract void addParticipant(Player player) throws UnsupportedOperationException;
-
-	public abstract void removeParticipant(UUID uuid) throws UnsupportedOperationException;
-
-	public static class DEFAULT_MANAGEMENT extends ParticipantStrategy {
+	class DEFAULT_MANAGEMENT implements ParticipantStrategy {
 
 		private final Map<String, Participant> participants = new HashMap<>();
 
 		public DEFAULT_MANAGEMENT(AbstractGame game, Collection<Player> players) {
-			super(game);
 			for (Player player : players) {
 				participants.put(player.getUniqueId().toString(), game.new Participant(player));
 			}

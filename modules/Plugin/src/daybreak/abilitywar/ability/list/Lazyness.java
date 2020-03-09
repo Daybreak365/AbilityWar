@@ -6,13 +6,11 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-@AbilityManifest(Name = "지금의 일은 나중의 나에게", Rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.HUMAN)
+@AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.HUMAN)
 public class Lazyness extends AbilityBase {
 
 	public Lazyness(AbstractGame.Participant participant) {
@@ -38,15 +36,6 @@ public class Lazyness extends AbilityBase {
 	@SubscribeEvent
 	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
-	}
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 	private class DamageTimer extends Timer {

@@ -32,7 +32,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -40,7 +39,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Iterator;
 
-@AbilityManifest(Name = "스나이퍼", Rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "스나이퍼", rank = Rank.S, Species = Species.HUMAN)
 public class Sniper extends AbilityBase {
 
 	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Sniper.class, "Duration", 2,
@@ -78,11 +77,6 @@ public class Sniper extends AbilityBase {
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		return false;
-	}
-
 	@SubscribeEvent
 	public void onProjectileLaunch(EntityShootBowEvent e) {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
@@ -115,10 +109,6 @@ public class Sniper extends AbilityBase {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));
 			}
 		}
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 	public class Bullet<Shooter extends Entity & ProjectileSource> extends Timer {

@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-@AbilityManifest(Name = "카쟈드", Rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "카쟈드", rank = Rank.A, Species = Species.GOD)
 public class Khazhad extends AbilityBase implements ActiveHandler {
 
 	private static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Khazhad.class, "Cooldown", 10, "# 좌클릭 쿨타임") {
@@ -249,10 +249,6 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	private void onProjectileHit(ProjectileHitEvent e) {
 		projectiles.remove(e.getEntity());
-	}
-
-	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
 	}
 
 }
