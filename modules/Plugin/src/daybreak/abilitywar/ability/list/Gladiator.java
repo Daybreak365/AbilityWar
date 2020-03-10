@@ -30,7 +30,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@AbilityManifest(name = "글래디에이터", rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "글래디에이터", rank = Rank.S, species = Species.HUMAN, explain = {
+		"상대방을 철괴로 우클릭하면 부셔지지 않는 투기장이 생성되며 추가 체력을 얻고,",
+		"상대방과 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[CooldownConfig]"
+})
 public class Gladiator extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
@@ -41,12 +44,15 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Gladiator(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 우클릭하면 투기장이 생성되며 그 안에서"),
-				ChatColor.translateAlternateColorCodes('&', "&f1:1 대결을 하게 됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

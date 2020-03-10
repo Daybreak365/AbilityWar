@@ -16,7 +16,6 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -29,7 +28,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Iterator;
 
-@AbilityManifest(name = "뮤즈", rank = Rank.S, Species = Species.GOD)
+@AbilityManifest(name = "뮤즈", rank = Rank.S, species = Species.GOD, explain = {
+		"철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여",
+		"모두가 대미지를 받지 않는 지역을 만들어냅니다. $[CooldownConfig]",
+		"지역은 점점 줄어들며, 지속 시간이 끝나면 사라집니다."
+})
 public class Muse extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Muse.class, "Cooldown", 80,
@@ -40,12 +43,15 @@ public class Muse extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Muse(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여"),
-				ChatColor.translateAlternateColorCodes('&', "&f모두가 대미지를 받지 않는 지역을 만들어냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

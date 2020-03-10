@@ -141,7 +141,7 @@ public class AbilityList {
 		for (AbilityRegistration registration : abilities.values()) {
 			if (registration != null) {
 				AbilityManifest manifest = registration.getManifest();
-				if (manifest.Species().equals(species)) {
+				if (manifest.species().equals(species)) {
 					values.add(manifest.name());
 				}
 			}

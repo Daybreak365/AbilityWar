@@ -43,7 +43,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-@AbilityManifest(name = "관통화살", rank = AbilityManifest.Rank.S, Species = AbilityManifest.Species.OTHERS)
+@AbilityManifest(name = "관통화살", rank = AbilityManifest.Rank.S, species = AbilityManifest.Species.OTHERS, explain = {
+		"활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다.",
+		"투사체에는 특수한 능력이 있으며, 활을 §e$[BulletConfig]번 §f쏠 때마다 능력이 변경됩니다.",
+		"능력을 변경할 때 3초의 재장전 시간이 소요됩니다.",
+		"§c절단§f: 투사체를 맞은 대상에게 추가 대미지를 입힙니다.",
+		"§5중력§f: 투사체를 맞은 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
+		"§e풍월§f: 투사체를 맞은 대상을 멀리 날려보냅니다."
+})
 public class PenetrationArrow extends AbilityBase {
 
 	public static final SettingObject<Integer> BulletConfig = new SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 5,
@@ -57,13 +64,7 @@ public class PenetrationArrow extends AbilityBase {
 	};
 
 	public PenetrationArrow(AbstractGame.Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f투사체에는 특수한 능력이 있으며, 활을 &e" + BulletConfig.getValue() + "번 쏠 때마다 능력이 변경됩니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f능력을 변경할 때 3초의 재장전 시간이 소요됩니다."),
-				ChatColor.translateAlternateColorCodes('&', "&c절단&f: 투사체를 맞은 대상에게 추가 대미지를 입힙니다."),
-				ChatColor.translateAlternateColorCodes('&', "&5중력&f: 투사체를 맞은 대상 주위 4칸의 생명체를 대상에게 끌어갑니다."),
-				ChatColor.translateAlternateColorCodes('&', "&e풍월&f: 투사체를 맞은 대상을 나에게서 멀리 날려보냅니다."));
+		super(participant);
 	}
 
 	private static final RGB RED = new RGB(219, 64, 66);

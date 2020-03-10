@@ -11,12 +11,15 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 
-@AbilityManifest(name = "카오스", rank = Rank.S, Species = Species.GOD)
+@AbilityManifest(name = "카오스", rank = Rank.S, species = Species.GOD, explain = {
+		"시작의 신 카오스.",
+		"철괴를 우클릭하면 5초간 짙은 암흑 속으로 주변의 생명체들을",
+		"모두 끌어당깁니다. $[CooldownConfig]"
+})
 public class Chaos extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
@@ -25,6 +28,11 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -50,23 +58,19 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 	};
 
 	public Chaos(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f시작의 신 카오스."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 5초간 짙은 암흑 속으로 주변의 생명체들을"),
-				ChatColor.translateAlternateColorCodes('&', "&f모두 끌어당깁니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-
-	private final int distance = DistanceConfig.getValue();
-
-	private final DurationTimer Duration = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 
 		private Location center;
+		private int distance;
 
 		@Override
 		public void onDurationStart() {
-			center = getPlayer().getLocation();
+			this.center = getPlayer().getLocation();
+			this.distance = DistanceConfig.getValue();
 		}
 
 		@Override
@@ -84,9 +88,8 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
-					Duration.start();
-
+				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
+					skill.start();
 					return true;
 				}
 			}

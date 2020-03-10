@@ -10,7 +10,6 @@ import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -19,12 +18,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.util.LinkedList;
 
-@AbilityManifest(name = "악마의 부츠", rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(name = "악마의 부츠", rank = Rank.B, species = Species.OTHERS, explain = {
+		"신속하게 이동하며 지나가는 모든 곳에 불이 붙습니다. 화염 피해를 받지 않습니다."
+})
 public class DevilBoots extends AbilityBase {
 
 	public DevilBoots(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f신속하게 이동하며 지나가는 자리에 불이 붙습니다. 화염 피해를 받지 않습니다."));
+		super(participant);
 	}
 
 	@Scheduled

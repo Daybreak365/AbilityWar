@@ -10,14 +10,17 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(name = "빠른 회복", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "빠른 회복", rank = Rank.A, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 빠른 회복 능력을 사용합니다. $[CooldownConfig]",
+		"능력 사용 중 체력을 빠르게 회복하며, 체력이 적을 수록",
+		"더 빠른 속도로 회복합니다."
+})
 public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
@@ -26,6 +29,11 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -41,10 +49,7 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 	};
 
 	public FastRegeneration(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 빠른 회복 능력을 사용합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f능력 사용 중 체력을 빠르게 회복하며, 체력이 적을 수록"),
-				ChatColor.translateAlternateColorCodes('&', "&f더 빠른 속도로 회복합니다."));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

@@ -14,7 +14,6 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -24,7 +23,9 @@ import org.bukkit.potion.PotionType;
 import java.util.Random;
 
 @Support(Version.v1_11_R1)
-@AbilityManifest(name = "양조사", rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "양조사", rank = Rank.B, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 임의의 포션 세 개를 얻습니다. $[CooldownConfig]"
+})
 public class Brewer extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Brewer.class, "Cooldown", 50,
@@ -35,11 +36,15 @@ public class Brewer extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Brewer(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 랜덤한 포션 세개를 얻습니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

@@ -17,7 +17,6 @@ import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -31,7 +30,12 @@ import org.bukkit.inventory.EntityEquipment;
 
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "컬스", rank = Rank.A, Species = Species.OTHERS)
+@AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
+		"주위 15칸 안에 있는 상대를 원거리에서 타겟팅해 $[DurationConfig]초간 지속되는",
+		"저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
+		"대미지의 일부가 상대에게 전이됩니다. $[CooldownConfig]",
+		"대상의 체력이 적을 수록 더욱 큰 대미지를 입힐 수 있습니다."
+})
 public class Curse extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Curse.class, "Cooldown", 100,
@@ -40,6 +44,11 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -55,11 +64,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	};
 
 	public Curse(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f주위 15칸 안에 있는 상대를 원거리에서 타겟팅해 " + DurationConfig.getValue() + "초간 지속되는"),
-				ChatColor.translateAlternateColorCodes('&', "&f저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우"),
-				ChatColor.translateAlternateColorCodes('&', "&f대미지의 일부가 상대의 체력에  상대에게 전이됩니다. ") + Messager.formatCooldown(CooldownConfig.getValue()),
-				ChatColor.translateAlternateColorCodes('&', "&f대상의 체력이 적을 수록 더욱 큰 대미지를 입힐 수 있습니다."));
+		super(participant);
 	}
 
 	private final Predicate<Entity> STRICT = Predicates.STRICT(getPlayer());

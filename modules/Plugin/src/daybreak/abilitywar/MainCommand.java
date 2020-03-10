@@ -121,7 +121,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						if (game.isParticipating(p)) {
 							Participant participant = game.getParticipant(p);
 							if (participant.hasAbility()) {
-								p.sendMessage(Messager.formatAbilityInfo(participant.getAbility()));
+								p.sendMessage(Messager.formatAbilityInfo(participant.getAbility()).toArray(new String[0]));
 							} else {
 								Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c당신에게 능력이 할당되지 않았습니다."));
 							}

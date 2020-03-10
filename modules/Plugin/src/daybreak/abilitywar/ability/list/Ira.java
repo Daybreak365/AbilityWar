@@ -7,14 +7,16 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-@AbilityManifest(name = "이라", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "이라", rank = Rank.A, species = Species.HUMAN, explain = {
+		"다른 생명체에게 $[AttackConfig]번 공격을 당할 때마다 상대방의 위치에 폭발을 일으킵니다.",
+		"자기 자신도 폭발 대미지를 입습니다."
+})
 public class Ira extends AbilityBase {
 
 	public static final SettingObject<Integer> AttackConfig = new SettingObject<Integer>(Ira.class, "AttackTime", 3,
@@ -23,24 +25,23 @@ public class Ira extends AbilityBase {
 
 		@Override
 		public boolean Condition(Integer value) {
-			return value > 1;
+			return value >= 1;
 		}
 
 	};
 
 	public Ira(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f다른 엔티티에게 " + AttackConfig.getValue() + "번 공격을 당할 때마다 상대방의 위치에 폭발을 일으킵니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f자기 자신도 폭발 대미지를 입습니다."));
+		super(participant);
 	}
 
-	private int ExplodeCount = 0;
+	private final int maxStack = AttackConfig.getValue();
+	private int explodeStack = 0;
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (!e.isCancelled() && e.getEntity().equals(getPlayer()) && !e.getDamager().equals(getPlayer())) {
-			if (ExplodeCount >= AttackConfig.getValue() - 1) {
-				ExplodeCount = 0;
+			if (++explodeStack >= maxStack) {
+				explodeStack = 0;
 
 				Entity damager = e.getDamager();
 
@@ -60,8 +61,6 @@ public class Ira extends AbilityBase {
 						damager.setVelocity(damager.getVelocity().setY(0));
 					}
 				}
-			} else {
-				ExplodeCount++;
 			}
 		}
 	}

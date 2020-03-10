@@ -7,6 +7,8 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.RegexReplacer;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
@@ -23,11 +25,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 /**
  * 능력 부여 GUI
@@ -43,6 +49,9 @@ public class AbilityGUI implements Listener {
 			.type(Material.ARROW)
 			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
 			.build();
+
+	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
+	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^()]]+)\\)");
 
 	private final Player p;
 	private final Participant target;
@@ -87,13 +96,32 @@ public class AbilityGUI implements Listener {
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
 				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
-				meta.setLore(Messager.asList(
+				List<String> lore = Messager.asList(
 						ChatColor.translateAlternateColorCodes('&', "&f등급: " + manifest.rank().getRankName()),
-						ChatColor.translateAlternateColorCodes('&', "&f종류: " + manifest.Species().getSpeciesName()),
+						ChatColor.translateAlternateColorCodes('&', "&f종류: " + manifest.species().getSpeciesName()),
 						joiner.toString(),
-						"",
-						ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요.")
-				));
+						"");
+				Function<String, String> valueProvider = new Function<String, String>() {
+					@Override
+					public String apply(String s) {
+						Field field = registration.getFields().get(s);
+						if (field != null) {
+							if (Modifier.isStatic(field.getModifiers())) {
+								try {
+									return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
+								} catch (IllegalAccessException ignored) {
+								}
+							}
+						}
+						return "?";
+					}
+				};
+				for (String explain : manifest.explain()) {
+					lore.add(ChatColor.WHITE.toString().concat(ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(explain, valueProvider), valueProvider)));
+				}
+				lore.add("");
+				lore.add(ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요."));
+				meta.setLore(lore);
 				stack.setItemMeta(meta);
 				abilityGUI.setItem(count % 36, stack);
 			}

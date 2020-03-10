@@ -220,7 +220,7 @@ public class AbilityFactory {
 			this.manifest = clazz.getAnnotation(AbilityManifest.class);
 			Preconditions.checkNotNull(manifest.name());
 			Preconditions.checkNotNull(manifest.rank());
-			Preconditions.checkNotNull(manifest.Species());
+			Preconditions.checkNotNull(manifest.species());
 
 			Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
 			for (Method method : clazz.getDeclaredMethods()) {

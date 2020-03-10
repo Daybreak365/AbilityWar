@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.LocationUtil.Locations;
 import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -34,7 +33,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@AbilityManifest(name = "유명 인사", rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(name = "유명 인사", rank = Rank.C, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[CooldownConfig]",
+		"능력으로 인해 깔린 레드 카펫 위에 있을 때 주변 $[DistanceConfig]칸 이내의 모든 생명체가",
+		"자신을 바라보며, 깔린 레드 카펫은 $[DurationConfig]초 후 사라집니다."
+})
 public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,
@@ -43,6 +46,11 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -68,14 +76,12 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 	};
 
 	public Celebrity(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f능력으로 인해 깔린 레드 카펫 위에 있을 때 주변 " + DistanceConfig.getValue() + "칸 이내의 모든 생명체가"),
-				ChatColor.translateAlternateColorCodes('&', "&f자신을 바라보며, 깔린 레드 카펫은 " + DurationConfig.getValue() + "초 후 사라집니다."));
+		super(participant);
 	}
 
 	private static final double radians = Math.toRadians(90);
-	private final double distance = DistanceConfig.getValue();
+
+	private double distance = DistanceConfig.getValue();
 	private final Map<Block, BlockSnapshot> carpets = new HashMap<>();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {

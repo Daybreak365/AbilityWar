@@ -8,21 +8,21 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-@AbilityManifest(name = "상위존재", rank = Rank.B, Species = Species.OTHERS)
+@AbilityManifest(name = "상위존재", rank = Rank.B, species = Species.OTHERS, explain = {
+		"자신보다 낮은 위치에 있는 생명체를 공격 할 때 더욱 강력하게 공격합니다.",
+		"대상과의 높이 차이가 작으면 작을수록 더욱 강한 대미지로 공격합니다.",
+		"자신보다 높은 위치에 있는 생명체는 공격으로 대미지를 입힐 수 없고,",
+		"같은 높이에 있는 생명체는 추가 대미지 없이 공격할 수 있습니다."
+})
 public class HigherBeing extends AbilityBase {
 
 	public HigherBeing(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f자신보다 낮은 위치에 있는 생명체를 공격 할 때 더욱 강력하게 공격합니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f대상과의 높이 차이가 작으면 작을수록 더욱 강한 대미지로 공격합니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f자신보다 높은 위치에 있는 생명체는 공격으로 대미지를 입힐 수 없고,"),
-				ChatColor.translateAlternateColorCodes('&', "&f같은 높이에 있는 생명체는 추가 대미지 없이 공격할 수 있습니다."));
+		super(participant);
 	}
 
 	@SubscribeEvent

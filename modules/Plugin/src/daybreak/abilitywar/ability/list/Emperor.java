@@ -15,7 +15,6 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Line;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -33,7 +32,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(name = "황제", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "황제", rank = Rank.A, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내",
+		"앞에 있는 모든 생명체와 물체를 밀쳐냅니다. $[CooldownConfig]"
+})
 public class Emperor extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Emperor.class, "Cooldown", 50,
@@ -44,12 +46,15 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Emperor(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내"),
-				ChatColor.translateAlternateColorCodes('&', "&f앞에 있는 모든 생명체와 물체를 밀쳐냅니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final Set<ArmorStand> armorStands = new HashSet<>();

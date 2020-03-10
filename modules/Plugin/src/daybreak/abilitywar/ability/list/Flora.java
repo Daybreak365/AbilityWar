@@ -20,7 +20,12 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(name = "플로라", rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "플로라", rank = Rank.A, species = Species.GOD, explain = {
+		"꽃과 풍요의 여신.",
+		"주변에 있는 모든 플레이어를 §c재생§f시키거나 §b신속 §f효과를 줍니다.",
+		"철괴를 우클릭하면 효과를 뒤바꿉니다. $[CooldownConfig]",
+		"철괴를 좌클릭하면 범위를 변경합니다."
+})
 public class Flora extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Flora.class, "Cooldown", 3,
@@ -31,14 +36,15 @@ public class Flora extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Flora(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f꽃과 풍요의 여신."),
-				ChatColor.translateAlternateColorCodes('&', "&f주변에 있는 모든 플레이어를 재생시키거나 신속 효과를 줍니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 효과를 뒤바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 범위를 변경합니다."));
+		super(participant);
 	}
 
 	private EffectType type = EffectType.SPEED;

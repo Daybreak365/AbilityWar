@@ -12,13 +12,14 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.Random;
 
-@AbilityManifest(name = "데미갓", rank = Rank.S, Species = Species.DEMIGOD)
+@AbilityManifest(name = "데미갓", rank = Rank.S, species = Species.DEMIGOD, explain = {
+		"공격을 받으면 $[ChanceConfig]% 확률로 5초간 임의의 버프가 적용됩니다."
+})
 public class Demigod extends AbilityBase {
 
 	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(Demigod.class, "Chance", 30,
@@ -33,9 +34,7 @@ public class Demigod extends AbilityBase {
 	};
 
 	public Demigod(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f반신반인의 능력자입니다. 공격을 받으면"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + ChanceConfig.getValue() + "% 확률로 5초간 랜덤 버프가 발동됩니다."));
+		super(participant);
 	}
 
 	private final int chance = ChanceConfig.getValue();

@@ -35,7 +35,7 @@ public @interface AbilityManifest {
 
 	}
 
-	Species Species();
+	Species species();
 
 	enum Species {
 
@@ -58,5 +58,7 @@ public @interface AbilityManifest {
 		}
 
 	}
+
+	String[] explain() default {};
 
 }

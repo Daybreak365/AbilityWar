@@ -29,7 +29,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "구속", rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "구속", rank = Rank.B, species = Species.HUMAN, explain = {
+		"상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. $[CooldownConfig]",
+		"10초마다 §e강도 스택§f이 1씩 오르며, 최대 $[MaxSolidityConfig] 스택을 모을 수 있습니다.",
+		"§e강도 스택§f은 능력을 사용하면 초기화됩니다."
+})
 public class Imprison extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
@@ -37,6 +41,11 @@ public class Imprison extends AbilityBase implements TargetHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -60,15 +69,11 @@ public class Imprison extends AbilityBase implements TargetHandler {
 	};
 
 	public Imprison(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f10초마다 &e강도 스택&f이 1씩 오르며, 최대 " + MaxSolidityConfig.getValue() + " 스택을 모을 수 있습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&e강도 스택&f은 능력을 사용하면 초기화되며, "));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	private final int size = SizeConfig.getValue();
 	private final int maxSolidity = MaxSolidityConfig.getValue();
 	private int solidity = 1;
 
@@ -92,7 +97,7 @@ public class Imprison extends AbilityBase implements TargetHandler {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {
-					for (Block block : LocationUtil.getBlocks3D(entity.getLocation(), size, true, true)) {
+					for (Block block : LocationUtil.getBlocks3D(entity.getLocation(), SizeConfig.getValue(), true, true)) {
 						if (!BlockX.isIndestructible(block.getType())) {
 							BlockX.setType(block, MaterialX.WHITE_STAINED_GLASS);
 							blocks.put(block, solidity);

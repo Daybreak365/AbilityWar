@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -75,13 +76,15 @@ public class Messager {
 	/**
 	 * 능력 설명을 구성합니다.
 	 */
-	public static String[] formatAbilityInfo(AbilityBase ability) {
-		List<String> info = Messager.asList(
+	public static List<String> formatAbilityInfo(AbilityBase ability) {
+		List<String> list = Messager.asList(
 				Messager.formatShortTitle(ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
 				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + (ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
-		info.addAll(ability.getExplanation());
-		info.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
-		return info.toArray(new String[0]);
+		for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
+			list.add(iterator.next());
+		}
+		list.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
+		return list;
 	}
 
 	/**

@@ -28,7 +28,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(name = "교주", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "교주", rank = Rank.A, species = Species.HUMAN, explain = {
+		"처음 시작하면 새로운 종교를 창시하며, 이름을 정할 수 있습니다.",
+		"상대방을 철괴로 §6우클릭§f하면 신자로 영입할 수 있습니다.",
+		"신자는 최대 게임에 참가중인 참가자 수의 §e1/2§f만큼 모을 수 있으며,",
+		"신자가 참가자 수의 §e1/4 §f이상 모이면 철괴를 §6좌클릭§f해",
+		"§c이단 심판§f을 시작할 수 있습니다. $[CooldownConfig]",
+		"§c이단 심판§f이 진행중일 때 신자들과 교주는 서로 물리적으로 공격할 수 없으며,",
+		"§f이 종교를 믿지 않는 참가자를 공격할 때 추가 대미지를 주며 심판합니다."
+})
 public class ReligiousLeader extends AbilityBase implements TargetHandler, ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(ReligiousLeader.class, "Cooldown", 150,
@@ -39,16 +47,15 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public ReligiousLeader(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f처음 시작하면 새로운 종교를 창시하며, 상대방을 철괴로 우클릭하면"),
-				ChatColor.translateAlternateColorCodes('&', "&f신자로 영입할 수 있습니다. 신자는 최대 현재 게임에 참가중인"),
-				ChatColor.translateAlternateColorCodes('&', "&f참가자 수의 1/2만큼 모을 수 있으며, 신자가 참가자 수의 1/4 이상 모이면"),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭해 이단 심판을 시작할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f이단 심판이 시작되면 신자들과 교주는 서로 물리적으로 공격할 수 없으며,"),
-				ChatColor.translateAlternateColorCodes('&', "&f신자가 아닌 참가자를 공격할 때 추가 대미지를 주며 심판합니다."));
+		super(participant);
 	}
 
 	private final int maxBelivers = getGame().getParticipants().size() / 2;

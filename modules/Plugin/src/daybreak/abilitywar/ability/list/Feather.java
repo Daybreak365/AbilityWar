@@ -20,7 +20,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-@AbilityManifest(name = "깃털", rank = Rank.A, Species = Species.OTHERS)
+@AbilityManifest(name = "깃털", rank = Rank.A, species = Species.OTHERS, explain = {
+		"철괴를 우클릭하면 $[DurationConfig]초간 §b비행§f할 수 있습니다. $[CooldownConfig]",
+		"§b비행 §f중 웅크리면 바라보는 방향으로 돌진합니다.",
+		"낙하 대미지를 무시합니다."
+})
 public class Feather extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Feather.class, "Cooldown", 80,
@@ -29,6 +33,11 @@ public class Feather extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -44,10 +53,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 	};
 
 	public Feather(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 &b비행&f할 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&b비행 &f중 웅크리면 바라보는 방향으로 돌진합니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f낙하 대미지를 무시합니다."));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

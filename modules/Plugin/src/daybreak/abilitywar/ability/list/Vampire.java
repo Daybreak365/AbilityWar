@@ -15,7 +15,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
 import daybreak.abilitywar.utils.math.geometry.Line;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -26,7 +25,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.UNDEAD)
+@AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.UNDEAD, explain = {
+		"철괴를 우클릭하면 $[DurationConfig]초간 $[DistanceConfig]칸 안에 있는 생명체들에게서",
+		"체력을 §c반칸§f씩 $[DurationConfig]번 흡혈합니다. $[CooldownConfig]",
+		"§e밤§f에는 쿨타임이 더 빠르게 끝나며, 체력을 매번 §c반칸§f씩 더 흡혈합니다."
+})
 public class Vampire extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Vampire.class, "Cool", 160,
@@ -35,6 +38,11 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -61,10 +69,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 	};
 
 	public Vampire(AbstractGame.Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DurationConfig.getValue() + "초간 " + DistanceConfig.getValue() + "칸 안에 있는 생명체들에게서"),
-				ChatColor.translateAlternateColorCodes('&', "&f체력을 &c반칸&f씩 " + DurationConfig.getValue() + "번 흡혈합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&e밤&f에는 쿨타임이 더 빠르게 끝나며, 체력을 매번 &c반칸&f씩 더 흡혈합니다."));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

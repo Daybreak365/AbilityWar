@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.math.NumberUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
@@ -37,15 +36,16 @@ import java.util.function.Predicate;
 
 @Support(Version.v1_11_R1)
 @Alternative(ShowmanShip.Legacy.class)
-@AbilityManifest(name = "쇼맨쉽", rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "쇼맨쉽", rank = Rank.B, species = Species.HUMAN, explain = {
+		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
+		"플레이어는 1명, 플레이어가 아닌 생명체는 0.2명 취급합니다.",
+		"§a0명 이상, 2명 미만 §7: §f나약함  §a2명 이상, 4명 미만 §7: §f힘 II",
+		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 처형"
+})
 public class ShowmanShip extends AbilityBase {
 
 	public ShowmanShip(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f플레이어는 1명, 나머지 생명체는 0.2명 취급합니다."),
-				ChatColor.translateAlternateColorCodes('&', "&a0명 이상, 2명 미만 &7: &f나약함  &a2명 이상, 4명 미만 &7: &f힘 II"),
-				ChatColor.translateAlternateColorCodes('&', "&a4명 이상 &7: &f힘 III 및 체력이 30% 미만인 적 처형"));
+		super(participant);
 	}
 
 	private static final Color[] colors = {
@@ -133,15 +133,16 @@ public class ShowmanShip extends AbilityBase {
 		return point;
 	}
 
-	@AbilityManifest(name = "쇼맨쉽", rank = Rank.B, Species = Species.HUMAN)
+	@AbilityManifest(name = "쇼맨쉽", rank = Rank.B, species = Species.HUMAN, explain = {
+			"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
+			"플레이어는 1명, 플레이어가 아닌 생명체는 0.2명 취급합니다.",
+			"§a0명 이상, 2명 미만 §7: §f나약함  §a2명 이상, 4명 미만 §7: §f힘 II",
+			"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 처형"
+	})
 	public static class Legacy extends AbilityBase {
 
 		public Legacy(Participant participant) {
-			super(participant,
-					ChatColor.translateAlternateColorCodes('&', "&f주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다."),
-					ChatColor.translateAlternateColorCodes('&', "&f플레이어는 1명, 나머지 생명체는 0.2명 취급합니다."),
-					ChatColor.translateAlternateColorCodes('&', "&a0명 이상, 2명 미만 &7: &f나약함  &a2명 이상, 4명 미만 &7: &f힘 II"),
-					ChatColor.translateAlternateColorCodes('&', "&a4명 이상 &7: &f힘 III 및 체력이 30% 미만인 적 처형"));
+			super(participant);
 		}
 
 		private static final Color[] colors = {

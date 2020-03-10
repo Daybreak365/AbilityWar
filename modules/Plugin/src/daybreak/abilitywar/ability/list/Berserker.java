@@ -12,11 +12,15 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-@AbilityManifest(name = "버서커", rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "버서커", rank = Rank.B, species = Species.HUMAN, explain = {
+		"철괴를 우클릭한 후 5초 안에 하는 다음 근접 공격이 강화됩니다. $[CooldownConfig]",
+		"강화된 공격은 $[StrengthConfig]배의 대미지를 내며, 강화된 공격을 사용한 후",
+		"$[DebuffConfig]초간 대미지를 입힐 수 없습니다.",
+		"지속시간 내에 공격하지 못한 경우, 쿨타임을 절반만 갖습니다."
+})
 public class Berserker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
@@ -25,6 +29,11 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -51,14 +60,9 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 	};
 
 	public Berserker(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭한 후 5초 안에 하는 다음 근접 공격이 강화됩니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f강화된 공격은 " + StrengthConfig.getValue() + "배의 대미지를 내며, 강화된 공격을 사용한 후"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + DebuffConfig.getValue() + "초간 대미지를 입힐 수 없습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f지속시간 내에 공격하지 못한 경우, 쿨타임을 절반만 갖습니다."));
+		super(participant);
 	}
 
-	private final double strength = StrengthConfig.getValue();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private class BerserkerTimer extends DurationTimer {
@@ -99,7 +103,8 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	private final int debuffTime = DebuffConfig.getValue();
+	private final double strength = StrengthConfig.getValue();
+	private final int debuff = DebuffConfig.getValue();
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
@@ -109,7 +114,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 				e.setDamage(e.getDamage() * strength);
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 				ParticleLib.SWEEP_ATTACK.spawnParticle(e.getEntity().getLocation(), 1, 1, 1, 5);
-				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), debuffTime * 20, 1, true);
+				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), debuff * 20, 1, true);
 			}
 		}
 	}

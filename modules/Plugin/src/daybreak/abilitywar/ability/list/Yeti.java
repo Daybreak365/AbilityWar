@@ -18,7 +18,6 @@ import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,7 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-@AbilityManifest(name = "설인", rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "설인", rank = Rank.S, species = Species.HUMAN, explain = {
+		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
+		"철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. $[CooldownConfig]"
+})
 public class Yeti extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
@@ -37,6 +39,11 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -52,9 +59,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 	};
 
 	public Yeti(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f눈과 얼음 위에 서있으면 &6힘&f, &b신속 &f버프를 받습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	@Scheduled

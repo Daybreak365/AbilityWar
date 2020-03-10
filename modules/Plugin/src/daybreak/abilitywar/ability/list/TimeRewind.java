@@ -14,7 +14,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.PushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -28,7 +27,9 @@ import org.bukkit.potion.PotionEffect;
 import java.util.Collection;
 import java.util.LinkedList;
 
-@AbilityManifest(name = "시간 역행", rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "시간 역행", rank = Rank.S, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 시간을 역행해 $[TimeConfig]초 전으로 돌아갑니다. $[CooldownConfig]"
+})
 public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
@@ -37,6 +38,11 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -52,8 +58,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 	};
 
 	public TimeRewind(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 시간을 역행해 " + TimeConfig.getValue() + "초 전으로 돌아갑니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

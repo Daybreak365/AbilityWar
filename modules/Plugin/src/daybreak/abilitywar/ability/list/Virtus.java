@@ -11,13 +11,14 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-@AbilityManifest(name = "베르투스", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "베르투스", rank = Rank.A, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 다음 $[DurationConfig]초간 받는 대미지가 75% 감소합니다. $[CooldownConfig]"
+})
 public class Virtus extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Virtus.class, "Duration", 5,
@@ -38,71 +39,53 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Virtus(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다음 " + DurationConfig.getValue() + "&f초간 받는 대미지가 75% 감소합니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-
-	private boolean Activated = false;
-
-	private final Timer Activate = new Timer(DurationConfig.getValue()) {
-
-		@Override
-		public void onStart() {
-			Activated = true;
-		}
-
+	private final Timer skill = new Timer(DurationConfig.getValue()) {
 		@Override
 		public void run(int count) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
 			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 3, 3, 3, 10);
 		}
-
-		@Override
-		public void onEnd() {
-			Activated = false;
-		}
-
 	};
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!cooldownTimer.isCooldown()) {
-					Activate.start();
-
-					cooldownTimer.start();
-
-					return true;
-				}
-			}
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+			skill.start();
+			cooldownTimer.start();
+			return true;
 		}
-
 		return false;
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(getPlayer()) && Activated) {
+		if (skill.isRunning()) {
 			e.setDamage(e.getDamage() / 4);
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if (e.getEntity().equals(getPlayer()) && Activated) {
+		if (skill.isRunning()) {
 			e.setDamage(e.getDamage() / 4);
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamage(EntityDamageByBlockEvent e) {
-		if (e.getEntity().equals(getPlayer()) && Activated) {
+		if (skill.isRunning()) {
 			e.setDamage(e.getDamage() / 4);
 		}
 	}

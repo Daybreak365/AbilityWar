@@ -22,12 +22,13 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 @Beta
-@AbilityManifest(name = "유령", rank = Rank.A, Species = Species.OTHERS)
+@AbilityManifest(name = "유령", rank = Rank.A, species = Species.OTHERS, explain = {
+		"BETA"
+})
 public class Ghost extends AbilityBase implements ActiveHandler {
 
 	public Ghost(Participant participant) throws IllegalStateException {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fBETA"));
+		super(participant);
 	}
 
 	private static final Vector ZERO = new Vector();

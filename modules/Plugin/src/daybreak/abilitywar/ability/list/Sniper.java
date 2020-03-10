@@ -6,7 +6,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -39,22 +38,18 @@ import org.bukkit.util.Vector;
 
 import java.util.Iterator;
 
-@AbilityManifest(name = "스나이퍼", rank = Rank.S, Species = Species.HUMAN)
+@AbilityManifest(name = "스나이퍼", rank = Rank.S, species = Species.HUMAN, explain = {
+		"활을 쏠 때 매우 빠른 속도로 나아가는 특수한 투사체를 쏩니다.",
+		"투사체는 하나의 대상만 공격할 수 있고, 블록에 닿으면 소멸합니다.",
+		"단, 유리나 유리 판과 같은 블록은 뚫고 지나갑니다.",
+		"투사체를 쏘고 난 후 일정 시간동안 재장전을 하며, 재장전 중에는",
+		"활을 쏠 수 없습니다. 활을 들고 있을 경우 빠르게 이동할 수 없으며,",
+		"이동이 제한됩니다."
+})
 public class Sniper extends AbilityBase {
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Sniper.class, "Duration", 2,
-			"# 능력 지속시간") {
-
-		@Override
-		public boolean Condition(Integer value) {
-			return value >= 1;
-		}
-
-	};
-
 	public Sniper(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f스나이퍼가 쏘는 화살은 " + DurationConfig.getValue() + "초간 빠른 속도로 곧게 뻗어나가다 떨어집니다."));
+		super(participant);
 	}
 
 	private static final Material GLASS_PANE = ServerVersion.getVersionNumber() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");

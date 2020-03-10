@@ -17,17 +17,18 @@ import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-@AbilityManifest(name = "에너지 블로커", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "에너지 블로커", rank = Rank.A, species = Species.HUMAN, explain = {
+		"원거리 공격 피해를 1/3로, 근거리 공격 피해를 두 배로 받거나",
+		"원거리 공격 피해를 두 배로, 근거리 공격 피해를 1/3로 받을 수 있습니다.",
+		"철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다.",
+		"철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."
+})
 public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 
 	private boolean projectileBlocking = true;
 
 	public EnergyBlocker(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 1/3로, 근거리 공격 피해를 두 배로 받거나"),
-				ChatColor.translateAlternateColorCodes('&', "&f원거리 공격 피해를 두 배로, 근거리 공격 피해를 1/3로 받을 수 있습니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다."));
+		super(participant);
 	}
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
@@ -59,20 +60,12 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 	private final Timer particle = new Timer() {
 
 		@Override
-		public void onStart() {
-		}
-
-		@Override
 		public void run(int count) {
 			if (projectileBlocking) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), LONG_DISTANCE);
 			} else {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().add(0, 2.2, 0), SHORT_DISTANCE);
 			}
-		}
-
-		@Override
-		public void onEnd() {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);

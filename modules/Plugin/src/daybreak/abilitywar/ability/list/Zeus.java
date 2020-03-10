@@ -12,7 +12,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.math.LocationUtil;
 import daybreak.abilitywar.utils.math.geometry.Circle;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
@@ -24,7 +23,12 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import java.util.Iterator;
 
-@AbilityManifest(name = "제우스", rank = Rank.S, Species = Species.GOD)
+@AbilityManifest(name = "제우스", rank = Rank.S, species = Species.GOD, explain = {
+		"번개의 신 제우스.",
+		"철괴를 우클릭하면 주변에 번개를 떨어뜨리며 폭발을 일으킵니다. $[CooldownConfig]",
+		"번개를 맞은 플레이어는 3초간 기절합니다.",
+		"번개, 폭발 피해를 입지 않습니다."
+})
 public class Zeus extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
@@ -35,14 +39,15 @@ public class Zeus extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Zeus(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f번개의 신 제우스."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변에 번개를 떨어뜨리며 폭발을 일으킵니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f번개를 맞은 플레이어는 3초간 구속됩니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f번개 대미지와 폭발 대미지를 받지 않습니다."));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
@@ -87,9 +92,7 @@ public class Zeus extends AbilityBase implements ActiveHandler {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Skill.start();
-
 					cooldownTimer.start();
-
 					return true;
 				}
 			}

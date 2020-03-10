@@ -103,7 +103,7 @@ public class AbilityChanger {
 		}.setPeriod(TimeUnit.TICKS, 3).start();
 
 		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
-		p.sendMessage(Messager.formatAbilityInfo(participant.getAbility()));
+		p.sendMessage(Messager.formatAbilityInfo(participant.getAbility()).toArray(new String[0]));
 	}
 
 	/**

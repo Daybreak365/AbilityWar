@@ -5,18 +5,18 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-@AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, Species = AbilityManifest.Species.HUMAN)
+@AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
+		"지금 받을 대미지를 3초 뒤의 나에게 미룹니다.",
+		"넉백을 무시합니다."
+})
 public class Lazyness extends AbilityBase {
 
 	public Lazyness(AbstractGame.Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f지금 받을 대미지를 3초 뒤의 나에게 미룹니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f넉백을 무시합니다."));
+		super(participant);
 	}
 
 	@SubscribeEvent

@@ -8,17 +8,17 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 
-@AbilityManifest(name = "바이러스", rank = Rank.C, Species = Species.OTHERS)
+@AbilityManifest(name = "바이러스", rank = Rank.C, species = Species.OTHERS, explain = {
+		"이 능력은 당신을 죽인 사람에게 감염됩니다."
+})
 public class Virus extends AbilityBase {
 
 	public Virus(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f이 능력은 당신을 죽인 사람에게 감염됩니다."));
+		super(participant);
 	}
 
 	@SubscribeEvent

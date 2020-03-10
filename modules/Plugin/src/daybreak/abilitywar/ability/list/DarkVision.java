@@ -10,10 +10,12 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 
-@AbilityManifest(name = "심안", rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "심안", rank = Rank.B, species = Species.HUMAN, explain = {
+		"앞이 보이지 않는 대신, 플레이어의 $[DistanceConfig]칸 안에 있는 모든 생명체는",
+		"발광 효과가 적용됩니다. 또한, 빠르게 달리고 높게 점프할 수 있습니다."
+})
 public class DarkVision extends AbilityBase {
 
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
@@ -27,9 +29,7 @@ public class DarkVision extends AbilityBase {
 	};
 
 	public DarkVision(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f앞이 보이지 않는 대신, 플레이어의 " + DistanceConfig.getValue() + "칸 안에 있는 플레이어들은"),
-				ChatColor.translateAlternateColorCodes('&', "&f발광 효과가 적용됩니다. 또한, 빠르게 달리고 높게 점프할 수 있습니다."));
+		super(participant);
 	}
 
 	private final int distance = DistanceConfig.getValue();

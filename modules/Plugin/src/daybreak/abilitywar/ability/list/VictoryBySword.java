@@ -32,12 +32,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 @Beta
-@AbilityManifest(name = "진검승부", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "진검승부", rank = Rank.A, species = Species.HUMAN, explain = {
+		"BETA"
+})
 public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 	public VictoryBySword(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&fBETA"));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(100);

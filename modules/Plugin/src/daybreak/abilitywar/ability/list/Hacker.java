@@ -21,7 +21,10 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-@AbilityManifest(name = "해커", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "해커", rank = Rank.A, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 자신에게 가장 가까운 플레이어를 해킹해 좌표를 알아내고",
+		"$[DurationConfig]초간 해당 플레이어가 움직이지 못하게 합니다. $[CooldownConfig]"
+})
 public class Hacker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
@@ -30,6 +33,11 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -45,10 +53,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 	};
 
 	public Hacker(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 자신에게 제일 가까운 플레이어를 해킹해 좌표를 알아내고"),
-				ChatColor.translateAlternateColorCodes('&', "&f" + DurationConfig.getValue() + "초간 해당 플레이어가 움직이지 못하게 합니다."),
-				Messager.formatCooldown(CooldownConfig.getValue()));
+		super(participant);
 	}
 
 	private Player target = null;

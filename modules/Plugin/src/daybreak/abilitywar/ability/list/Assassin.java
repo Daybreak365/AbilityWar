@@ -17,7 +17,10 @@ import org.bukkit.entity.Damageable;
 
 import java.util.LinkedList;
 
-@AbilityManifest(name = "암살자", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "암살자", rank = Rank.A, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 $[DistanceConfig]칸 이내에 있는 생명체 $[TeleportCountConfig]명(마리)에게 이동하며",
+		"각각 $[DamageConfig]의 대미지를 줍니다. $[CooldownConfig]"
+})
 public class Assassin extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 10,
@@ -48,6 +51,11 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public static final SettingObject<Integer> TeleportCountConfig = new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
@@ -61,19 +69,22 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 	};
 
 	public Assassin(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 " + DistanceConfig.getValue() + "칸 이내에 있는 엔티티 " + TeleportCountConfig.getValue() + "명(마리)에게 이동하며"),
-				ChatColor.translateAlternateColorCodes('&', "&f각각 " + DamageConfig.getValue() + "의 대미지를 줍니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private LinkedList<Damageable> entities = null;
 
-	private final int distance = DistanceConfig.getValue();
-	private final int damage = DamageConfig.getValue();
 
-	private final Timer durationTimer = new Timer(TeleportCountConfig.getValue()) {
+	private final int damage = DamageConfig.getValue();
+	private final int distance = DistanceConfig.getValue();
+
+	private final Timer skill = new Timer(TeleportCountConfig.getValue()) {
+
+		@Override
+		public void onStart() {
+		}
 
 		@Override
 		public void run(int count) {
@@ -99,7 +110,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 				if (!cooldownTimer.isCooldown()) {
 					this.entities = new LinkedList<>(LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, distance));
 					if (entities.size() > 0) {
-						durationTimer.start();
+						skill.start();
 						cooldownTimer.start();
 						return true;
 					} else {

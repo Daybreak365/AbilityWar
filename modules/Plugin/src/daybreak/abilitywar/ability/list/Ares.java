@@ -13,7 +13,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
@@ -24,7 +23,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(name = "아레스", rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "아레스", rank = Rank.A, species = Species.GOD, explain = {
+		"전쟁의 신 아레스.",
+		"철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 대미지를 주며,",
+		"대미지를 받은 엔티티들을 밀쳐냅니다. $[CooldownConfig]"
+})
 public class Ares extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
@@ -45,6 +48,11 @@ public class Ares extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public static final SettingObject<Boolean> DashConfig = new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false,
@@ -58,18 +66,13 @@ public class Ares extends AbilityBase implements ActiveHandler {
 	};
 
 	public Ares(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f전쟁의 신 아레스."),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 대미지를 주며,"),
-				ChatColor.translateAlternateColorCodes('&', "&f대미지를 받은 엔티티들을 밀쳐냅니다. ") + Messager.formatCooldown(CooldownConfig.getValue()));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	private final DurationTimer Duration = new DurationTimer(20, cooldownTimer) {
+	private final DurationTimer skill = new DurationTimer(20, cooldownTimer) {
 
-		private final boolean dashIntoTheAir = DashConfig.getValue();
-		private final int damagePercent = DamageConfig.getValue();
 		private Set<Damageable> attacked;
 
 		@Override
@@ -85,14 +88,14 @@ public class Ares extends AbilityBase implements ActiveHandler {
 
 			ParticleLib.LAVA.spawnParticle(p.getLocation(), 4, 4, 4, 40);
 
-			if (dashIntoTheAir) {
+			if (DashConfig.getValue()) {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7)));
 			} else {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7).setY(0)));
 			}
 
 			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(p, 4, 4)) {
-				double damage = (damageable.getHealth() / 100) * damagePercent;
+				double damage = (damageable.getHealth() / 100) * DamageConfig.getValue();
 				if (!attacked.contains(damageable)) {
 					damageable.damage(damage, p);
 					attacked.add(damageable);
@@ -111,8 +114,8 @@ public class Ares extends AbilityBase implements ActiveHandler {
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!Duration.isDuration() && !cooldownTimer.isCooldown()) {
-					Duration.start();
+				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
+					skill.start();
 
 					return true;
 				}
@@ -124,7 +127,7 @@ public class Ares extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL) && Duration.isDuration()) {
+		if (e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL) && skill.isDuration()) {
 			e.setCancelled(true);
 		}
 	}

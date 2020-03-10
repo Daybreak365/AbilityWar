@@ -7,11 +7,13 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-@AbilityManifest(name = "홀수강박증", rank = Rank.C, Species = Species.HUMAN)
+@AbilityManifest(name = "홀수강박증", rank = Rank.C, species = Species.HUMAN, explain = {
+		"공격을 받으면 체력에 따라 다른 효과를 받습니다. 체력이 홀수일 경우 대미지를",
+		"$[odd]% 줄여 받고, 체력이 짝수일 경우 대미지를 $[even]% 늘려 받습니다."
+})
 public class OnlyOddNumber extends AbilityBase {
 
 	public static final SettingObject<Integer> OddNumberConfig = new SettingObject<Integer>(OnlyOddNumber.class, "OddNumber", 59,
@@ -37,9 +39,7 @@ public class OnlyOddNumber extends AbilityBase {
 	};
 
 	public OnlyOddNumber(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f공격을 받으면 체력에 따라 다른 효과를 받습니다. &f체력이 홀수일 경우 대미지를"),
-				ChatColor.translateAlternateColorCodes('&', OddNumberConfig.getValue() + "% 줄여 받고, 체력이 짝수일 경우 대미지를 " + EvenNumberConfig.getValue() + "% 늘려 받습니다."));
+		super(participant);
 	}
 
 	private final int odd = OddNumberConfig.getValue();

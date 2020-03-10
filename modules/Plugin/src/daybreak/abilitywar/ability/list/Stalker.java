@@ -30,7 +30,14 @@ import org.bukkit.util.Vector;
 import java.util.Arrays;
 import java.util.List;
 
-@AbilityManifest(name = "스토커", rank = Rank.A, Species = Species.HUMAN)
+@AbilityManifest(name = "스토커", rank = Rank.A, species = Species.HUMAN, explain = {
+		"철괴를 우클릭하면 다른 플레이어가 타게팅할 수 없고 벽을 통과할 수 있는",
+		"상태로 변하여 마지막으로 타격했던 플레이어에게 돌진합니다. $[CooldownConfig]",
+		"동일한 플레이어를 계속 공격하면 §c스택§f이 쌓이며 §8실명 §f효과를 주고,",
+		"다른 플레이어를 공격하면 §c스택§f이 초기화됩니다.",
+		"플레이어를 공격할 때마다 스킬 쿨타임이 §c스택 §f만큼 감소하며, §c1 스택 §f당",
+		"§60.1§f의 추가 대미지를 냅니다."
+})
 public class Stalker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Stalker.class, "Cooldown", 210,
@@ -41,16 +48,15 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
+		}
+
 	};
 
 	public Stalker(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 다른 플레이어가 타게팅할 수 없는 상태로 변하여"),
-				ChatColor.translateAlternateColorCodes('&', "&f마지막으로 때렸던 플레이어에게 돌진합니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f동일한 플레이어를 연속적으로 공격할 때마다 스택이 쌓이며 실명 효과를 주고,"),
-				ChatColor.translateAlternateColorCodes('&', "&f다른 플레이어를 공격하면 스택이 초기화됩니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f플레이어를 공격할 때마다 쿨타임이 스택 만큼 감소하며, 1 스택 당"),
-				ChatColor.translateAlternateColorCodes('&', "&f0.1의 추가 대미지를 냅니다."));
+		super(participant);
 	}
 
 	private static final RGB BLACK = new RGB(0, 0, 0);

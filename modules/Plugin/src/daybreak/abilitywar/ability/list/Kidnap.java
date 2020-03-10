@@ -26,7 +26,12 @@ import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 @Support(Version.v1_11_R1)
-@AbilityManifest(name = "납치", rank = Rank.B, Species = Species.HUMAN)
+@AbilityManifest(name = "납치", rank = Rank.B, species = Species.HUMAN, explain = {
+		"아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. $[CooldownConfig]",
+		"능력 사용중에는 신속 버프를 받고, 납치 대상은 지속 시간동안",
+		"실명에 걸리며 대미지를 받지 않습니다. 대상은 $[DurationConfig]초 뒤에",
+		"자동으로 내려지며, 지속 시간이 끝나기 전에 스스로 내릴 수 없습니다."
+})
 public class Kidnap extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Kidnap.class, "Cooldown", 30,
@@ -35,6 +40,11 @@ public class Kidnap extends AbilityBase implements TargetHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -50,11 +60,7 @@ public class Kidnap extends AbilityBase implements TargetHandler {
 	};
 
 	public Kidnap(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f능력 사용중에는 신속 버프를 받고, 납치 대상은 지속 시간동안"),
-				ChatColor.translateAlternateColorCodes('&', "&f실명에 걸리며 대미지를 받지 않습니다. 대상은 " + DurationConfig.getValue() + "초 뒤에"),
-				ChatColor.translateAlternateColorCodes('&', "&f자동으로 내려지며, 지속 시간이 끝나기 전에 스스로 내릴 수 없습니다."));
+		super(participant);
 	}
 
 	private LivingEntity target = null;

@@ -12,7 +12,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -28,7 +27,12 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(name = "좀비", rank = Rank.A, Species = Species.UNDEAD)
+@AbilityManifest(name = "좀비", rank = Rank.A, species = Species.UNDEAD, explain = {
+		"좀비가 당신을 타게팅하지 않습니다.",
+		"다른 플레이어를 철괴로 우클릭하면 주변 $[RadiusConfig]칸 안에 속도가 점차 줄어드는",
+		"$[ZombieCountConfig]마리의 §5좀비§f를 소환합니다.",
+		"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다."
+})
 public class Zombie extends AbilityBase implements TargetHandler {
 
 	private static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
@@ -68,11 +72,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 	};
 
 	public Zombie(Participant participant) {
-		super(participant,
-				"좀비가 당신을 타게팅하지 않습니다.",
-				"다른 플레이어를 철괴로 우클릭하면 주변 " + RadiusConfig.getValue() + "칸 안에 속도가 점차 줄어드는",
-				ZombieCountConfig.getValue() + "마리의 " + ChatColor.DARK_PURPLE + "좀비" + ChatColor.WHITE + "를 소환합니다.",
-				"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다.");
+		super(participant);
 	}
 
 	private static final RGB DARK_RED = RGB.of(61, 6, 1);

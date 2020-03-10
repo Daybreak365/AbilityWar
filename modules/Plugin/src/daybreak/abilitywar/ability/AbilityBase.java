@@ -9,7 +9,6 @@ import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -41,11 +40,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,7 +71,8 @@ import java.util.logging.Logger;
 public abstract class AbilityBase implements EventManager.Observer {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
-	private static final RegexReplacer bracketReplacer = new RegexReplacer("\\[([^\\[\\]]+)\\]");
+	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
+	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^()]]+)\\)");
 
 	public static AbilityBase create(Class<? extends AbilityBase> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		Preconditions.checkNotNull(abilityClass);
@@ -91,6 +93,12 @@ public abstract class AbilityBase implements EventManager.Observer {
 					}
 				}
 			}
+
+			final String[] explain = abilityBase.manifest.explain();
+			for (int i = 0; i < explain.length; i++) {
+				abilityBase.explanation[i] = SQUARE_BRACKET.replaceAll(explain[i], abilityBase.explanationValueProvider);
+			}
+
 			return abilityBase;
 		} else {
 			throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
@@ -98,9 +106,9 @@ public abstract class AbilityBase implements EventManager.Observer {
 	}
 
 	private final Participant participant;
-	private final Explanation[] explanation;
 	private final AbilityRegistration registration;
 	private final AbilityManifest manifest;
+	private final String[] explanation;
 	private final AbstractGame game;
 	private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 	private final List<GameTimer> timers = new LinkedList<>();
@@ -109,22 +117,62 @@ public abstract class AbilityBase implements EventManager.Observer {
 
 	private boolean restricted;
 
+	private final Function<String, String> explanationValueProvider = new Function<String, String>() {
+		@Override
+		public String apply(String s) {
+			Field field = registration.getFields().get(s);
+			if (field != null) {
+				if (Modifier.isStatic(field.getModifiers())) {
+					try {
+						return parseString(ReflectionUtil.setAccessible(field).get(null));
+					} catch (IllegalAccessException e) {
+						return "none";
+					}
+				} else {
+					try {
+						return parseString(ReflectionUtil.setAccessible(field).get(AbilityBase.this));
+					} catch (IllegalAccessException e) {
+						return "none";
+					}
+				}
+			} else {
+				return "none";
+			}
+		}
+
+		private String parseString(Object o) {
+			if (o instanceof AbilityBase) {
+				AbilityBase ability = (AbilityBase) o;
+				if (ability.equals(AbilityBase.this)) {
+					return "none";
+				} else {
+					StringJoiner joiner = new StringJoiner("\n");
+					for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
+						joiner.add(iterator.next());
+					}
+					return joiner.toString();
+				}
+			} else {
+				return String.valueOf(o);
+			}
+		}
+	};
+
 	/**
 	 * {@link AbilityBase}의 기본 생성자입니다.
 	 *
 	 * @param participant 능력을 소유하는 참가자
-	 * @param explanation 능력 설명
 	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
 	 */
-	public AbilityBase(Participant participant, Explanation... explanation) throws IllegalStateException {
+	protected AbilityBase(Participant participant) throws IllegalStateException {
 		this.participant = participant;
-		this.explanation = explanation;
 		this.game = participant.getGame();
 		if (!AbilityFactory.isRegistered(getClass())) {
 			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
 		this.registration = AbilityFactory.getRegistration(getClass());
 		this.manifest = registration.getManifest();
+		this.explanation = new String[manifest.explain().length];
 		this.eventhandlers = registration.getEventhandlers();
 
 		EventManager eventManager = game.getEventManager();
@@ -133,17 +181,6 @@ public abstract class AbilityBase implements EventManager.Observer {
 		}
 
 		this.restricted = game.isRestricted() || !game.isGameStarted();
-	}
-
-	/**
-	 * {@link AbilityBase}의 기본 생성자입니다.
-	 *
-	 * @param participant 능력을 소유하는 참가자
-	 * @param explanation 능력 설명
-	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
-	 */
-	public AbilityBase(Participant participant, String... explanation) throws IllegalStateException {
-		this(participant, new Explanation(explanation));
 	}
 
 	@Override
@@ -218,60 +255,23 @@ public abstract class AbilityBase implements EventManager.Observer {
 		return participant;
 	}
 
-	private final Function<String, String> explanationFunction = new Function<String, String>() {
-		@Override
-		public String apply(String s) {
-			Field field = registration.getFields().get(s);
-			if (field != null) {
-				if (Modifier.isStatic(field.getModifiers())) {
-					try {
-						return parseString(ReflectionUtil.setAccessible(field).get(null));
-					} catch (IllegalAccessException e) {
-						return "none";
-					}
-				} else {
-					try {
-						return parseString(ReflectionUtil.setAccessible(field).get(AbilityBase.this));
-					} catch (IllegalAccessException e) {
-						return "none";
-					}
-				}
-			} else {
-				return "none";
-			}
-		}
-
-		private String parseString(Object o) {
-			if (o instanceof SettingObject) {
-				return String.valueOf(((SettingObject<?>) o).getValue());
-			} else if (o instanceof AbilityBase) {
-				AbilityBase ability = (AbilityBase) o;
-				if (ability.equals(AbilityBase.this)) {
-					return "none";
-				} else {
-					return String.join("\n", ability.getExplanation());
-				}
-			} else {
-				return String.valueOf(o);
-			}
-		}
-	};
-
 	/**
 	 * 능력의 설명을 반환합니다.
 	 */
-	public final List<String> getExplanation() {
-		List<String> explain = new ArrayList<>();
-		for (Explanation explanation : this.explanation) {
-			for (String line : explanation.lines) {
-				explain.add(bracketReplacer.replaceAll(line, explanationFunction));
-			}
-		}
-		return explain;
-	}
+	public final Iterator<String> getExplanation() {
+		return new Iterator<String>() {
+			private int cursor = 0;
 
-	protected final Explanation getExplanation(int index) {
-		return explanation[index];
+			@Override
+			public boolean hasNext() {
+				return cursor < explanation.length;
+			}
+
+			@Override
+			public String next() {
+				return ROUND_BRACKET.replaceAll(explanation[cursor++], explanationValueProvider);
+			}
+		};
 	}
 
 	/**
@@ -292,7 +292,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 	 * 능력의 종족을 반환합니다.
 	 */
 	public final Species getSpecies() {
-		return manifest.Species();
+		return manifest.species();
 	}
 
 	/**
@@ -348,24 +348,6 @@ public abstract class AbilityBase implements EventManager.Observer {
 		ActionbarChannel channel = participant.actionbar().newChannel();
 		actionbarChannels.add(channel);
 		return channel;
-	}
-
-	public static class Explanation {
-
-		private String[] lines;
-
-		public Explanation(String... strings) {
-			this.lines = strings;
-		}
-
-		public void setLines(String... lines) {
-			this.lines = lines;
-		}
-
-		public String[] getLines() {
-			return lines;
-		}
-
 	}
 
 	public enum ClickType {LEFT_CLICK, RIGHT_CLICK}

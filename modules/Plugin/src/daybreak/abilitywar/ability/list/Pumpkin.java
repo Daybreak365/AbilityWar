@@ -29,7 +29,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@AbilityManifest(name = "호박", rank = Rank.C, Species = Species.OTHERS)
+@AbilityManifest(name = "호박", rank = Rank.C, species = Species.OTHERS, explain = {
+		"철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 $[DurationConfig]초간",
+		"귀속 저주가 걸린 호박을 씌웁니다. $[CooldownConfig]",
+		"§5♪ §f호박 같은 네 얼굴 §5♪"
+})
 public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80,
@@ -38,6 +42,11 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -53,10 +62,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 	};
 
 	public Pumpkin(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 " + DurationConfig.getValue() + "초간"),
-				ChatColor.translateAlternateColorCodes('&', "&f귀속 저주가 걸린 호박을 씌웁니다. " + Messager.formatCooldown(CooldownConfig.getValue())),
-				ChatColor.translateAlternateColorCodes('&', "&f♪ 호박 같은 네 얼굴 ♪"));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());

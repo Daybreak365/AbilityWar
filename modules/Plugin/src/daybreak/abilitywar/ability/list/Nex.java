@@ -15,7 +15,6 @@ import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,7 +26,10 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
-@AbilityManifest(name = "넥스", rank = Rank.A, Species = Species.GOD)
+@AbilityManifest(name = "넥스", rank = Rank.A, species = Species.GOD, explain = {
+		"철괴를 우클릭하면 공중으로 올라갔다 바라보는 방향으로 날아가",
+		"내려 찍으며 주변의 플레이어들에게 대미지를 입히고 날려보냅니다. $[CooldownConfig]"
+})
 public class Nex extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
@@ -35,6 +37,11 @@ public class Nex extends AbilityBase implements ActiveHandler {
 		@Override
 		public boolean Condition(Integer value) {
 			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Messager.formatCooldown(getValue());
 		}
 
 	};
@@ -49,9 +56,7 @@ public class Nex extends AbilityBase implements ActiveHandler {
 	};
 
 	public Nex(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 공중으로 올라갔다 바라보는 방향으로 날아가"),
-				ChatColor.translateAlternateColorCodes('&', "&f내려 찍으며 주변의 플레이어들에게 대미지를 입힙니다. " + Messager.formatCooldown(CooldownConfig.getValue())));
+		super(participant);
 	}
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
@@ -99,8 +104,6 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 10);
 
-	private final int damage = DamageConfig.getValue();
-
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
@@ -124,6 +127,7 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 				if (!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
 					skillEnabled = false;
+					final double damage = DamageConfig.getValue();
 					for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), 5, 5)) {
 						if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
 						d.damage(damage, getPlayer());

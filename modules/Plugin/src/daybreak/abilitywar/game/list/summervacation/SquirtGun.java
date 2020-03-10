@@ -15,7 +15,6 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,17 +30,22 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.LinkedList;
 import java.util.List;
 
-@AbilityManifest(name = "물총", rank = Rank.SPECIAL, Species = Species.SPECIAL)
+@AbilityManifest(name = "물총", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
+		"물 안에서 웅크리면 빠른 속도로 앞으로 나아갑니다.",
+		"활을 쏘면 물총이 나가며, 플레이어를 맞추면 한방에 죽일 수 있습니다. $[THREE_SECONDS_COOL]",
+		"철괴를 우클릭하면 물폭탄을 터뜨리며, 주변 플레이어들에게 피해를 줍니다.",
+		"$[THIRTY_SECONDS_COOL]",
+		"철괴를 좌클릭하면 스펀지로 주변의 물을 빨아들입니다. $[FIFTEEN_SECONDS_COOL]",
+		"시원한 §e여름 §f보내세요!"
+})
 public class SquirtGun extends AbilityBase implements ActiveHandler {
 
+	private static final String THREE_SECONDS_COOL = Messager.formatCooldown(3);
+	private static final String THIRTY_SECONDS_COOL = Messager.formatCooldown(30);
+	private static final String FIFTEEN_SECONDS_COOL = Messager.formatCooldown(15);
+
 	public SquirtGun(Participant participant) {
-		super(participant,
-				ChatColor.translateAlternateColorCodes('&', "&f물 안에서 웅크리면 빠른 속도로 앞으로 나아갑니다."),
-				ChatColor.translateAlternateColorCodes('&', "&f활을 쏘면 물총이 나가며, 플레이어를 맞추면 한방에 죽일 수 있습니다. " + Messager.formatCooldown(3)),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 우클릭하면 물폭탄을 터뜨리며, 주변 플레이어들에게 피해를 줍니다."),
-				ChatColor.translateAlternateColorCodes('&', Messager.formatCooldown(30)),
-				ChatColor.translateAlternateColorCodes('&', "&f철괴를 좌클릭하면 스펀지로 주변의 물을 빨아들입니다. " + Messager.formatCooldown(15)),
-				ChatColor.translateAlternateColorCodes('&', "&f시원한 &e여름 &f보내세요!"));
+		super(participant);
 	}
 
 	private final CooldownTimer bombCool = new CooldownTimer(30, "물폭탄");
