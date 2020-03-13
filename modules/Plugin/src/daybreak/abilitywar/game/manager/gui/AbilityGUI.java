@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.regex.MatchResult;
 
 /**
  * 능력 부여 GUI
@@ -101,10 +102,10 @@ public class AbilityGUI implements Listener {
 						ChatColor.translateAlternateColorCodes('&', "&f종류: " + manifest.species().getSpeciesName()),
 						joiner.toString(),
 						"");
-				Function<String, String> valueProvider = new Function<String, String>() {
+				Function<MatchResult, String> valueProvider = new Function<MatchResult, String>() {
 					@Override
-					public String apply(String s) {
-						Field field = registration.getFields().get(s);
+					public String apply(MatchResult matchResult) {
+						Field field = registration.getFields().get(matchResult.group(1));
 						if (field != null) {
 							if (Modifier.isStatic(field.getModifiers())) {
 								try {

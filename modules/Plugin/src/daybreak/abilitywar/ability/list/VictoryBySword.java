@@ -85,7 +85,6 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				if (LocationUtil.isInCircle(center, e.getFrom(), radius)) {
 					e.setTo(e.getFrom());
 				} else {
-					e.setCancelled(true);
 					player.teleport(center);
 				}
 			}
@@ -98,8 +97,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				if (LocationUtil.isInCircle(center, e.getFrom(), radius)) {
 					e.setTo(e.getFrom());
 				} else {
-					e.setCancelled(true);
-					player.teleport(center);
+					e.setTo(center);
 				}
 			}
 		}

@@ -7,11 +7,16 @@ import org.bukkit.util.Vector;
 
 import java.util.NoSuchElementException;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class Circle extends Shape {
 
 	private static final double TWICE_PI = 2 * Math.PI;
 
 	public static LocationIterator iteratorOf(Location center, double radius, int amount) {
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
+		checkArgument(radius > 0, "The radius must be positive");
+		checkArgument(!Double.isNaN(radius) && Double.isFinite(radius));
 		return new LocationIterator() {
 			private int cursor = 0;
 
@@ -36,6 +41,9 @@ public class Circle extends Shape {
 
 	private Circle(double radius, int amount) {
 		super(amount);
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
+		checkArgument(radius > 0, "The radius must be positive");
+		checkArgument(!Double.isNaN(radius) && Double.isFinite(radius));
 		final double divided = TWICE_PI / amount;
 		for (double radians = divided; size() <= amount; radians += divided) {
 			add(new Vector(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius));

@@ -15,7 +15,7 @@ public class Line extends Shape {
 	public static Vector vectorAt(Location from, Location to, int amount, int index) throws IndexOutOfBoundsException {
 		checkNotNull(from);
 		checkNotNull(to);
-		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
 		if (index > amount || index < 0) {
 			throw new IndexOutOfBoundsException("index must be a number between 0 and amount.");
 		}
@@ -23,14 +23,14 @@ public class Line extends Shape {
 	}
 
 	public static Line between(Location from, Location to, int amount) {
-		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
 		return new Line(checkNotNull(from), checkNotNull(to), amount);
 	}
 
 	public static LocationIterator iteratorBetween(Location from, Location to, int amount) {
 		checkNotNull(from);
 		checkNotNull(to);
-		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
 		return new LocationIterator() {
 			final Vector vector = to.toVector().subtract(from.toVector());
 			final double increment = 1.0 / amount;
@@ -51,13 +51,13 @@ public class Line extends Shape {
 	}
 
 	public static Line of(Vector vector, int amount) {
-		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
 		return new Line(checkNotNull(vector), amount);
 	}
 
 	public static VectorIterator iteratorOf(Vector vector, int amount) {
 		checkNotNull(vector);
-		checkArgument(amount >= 1, "amount must have a value of 1 or greater.");
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
 		return new VectorIterator() {
 			final double increment = 1.0 / amount;
 			private int cursor = 0;

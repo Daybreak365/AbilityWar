@@ -76,15 +76,10 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	private LinkedList<Damageable> entities = null;
 
-
 	private final int damage = DamageConfig.getValue();
 	private final int distance = DistanceConfig.getValue();
 
 	private final Timer skill = new Timer(TeleportCountConfig.getValue()) {
-
-		@Override
-		public void onStart() {
-		}
 
 		@Override
 		public void run(int count) {
@@ -105,18 +100,14 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!cooldownTimer.isCooldown()) {
-					this.entities = new LinkedList<>(LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, distance));
-					if (entities.size() > 0) {
-						skill.start();
-						cooldownTimer.start();
-						return true;
-					} else {
-						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&f" + distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
-					}
-				}
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+			this.entities = new LinkedList<>(LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, distance));
+			if (entities.size() > 0) {
+				skill.start();
+				cooldownTimer.start();
+				return true;
+			} else {
+				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&f" + distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
 			}
 		}
 

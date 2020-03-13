@@ -18,8 +18,8 @@ import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.math.FastMath;
 import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.math.geometry.Line;
+import daybreak.abilitywar.utils.math.geometry.Sphere;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -73,7 +73,7 @@ public class PenetrationArrow extends AbilityBase {
 
 	private final int bulletCount = BulletConfig.getValue();
 
-	private static final Vectors sphere = LocationUtil.getSphere(4, 10);
+	private static final Sphere sphere = Sphere.of(4, 10);
 	private final Random random = new Random();
 	private final List<ArrowType> arrowTypes = Arrays.asList(
 			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&c절단")) {

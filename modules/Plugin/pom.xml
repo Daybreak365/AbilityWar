@@ -124,7 +124,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.google</pattern>
-                                    <shadedPattern>daybreak.abilitywar.utils.base.google</shadedPattern>
+                                    <shadedPattern>daybreak.google</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

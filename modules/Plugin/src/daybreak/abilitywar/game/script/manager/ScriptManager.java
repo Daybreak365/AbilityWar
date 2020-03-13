@@ -185,7 +185,6 @@ public class ScriptManager {
 	}
 
 	private static final Gson gson = new Gson();
-	private static final JsonParser parser = new JsonParser();
 
 	/**
 	 * {@link AbstractScript} 저장
@@ -212,7 +211,7 @@ public class ScriptManager {
 	public static AbstractScript Load(File file) throws ScriptException {
 		try {
 			if (file.exists()) {
-				JsonObject object = Preconditions.checkNotNull(parser.parse(new BufferedReader(new FileReader(file)))).getAsJsonObject();
+				JsonObject object = Preconditions.checkNotNull(JsonParser.parseReader(new BufferedReader(new FileReader(file)))).getAsJsonObject();
 				Class<?> typeClass = ClassUtil.forName(object.get("scriptType").getAsString());
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				Object script = gson.fromJson(br, typeClass);

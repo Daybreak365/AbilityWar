@@ -54,7 +54,6 @@ import java.util.logging.Logger;
 public class Installer {
 
 	private static final Logger logger = Logger.getLogger(Installer.class.getName());
-	private static final JsonParser parser = new JsonParser();
 
 	private final Version pluginVersion;
 	private final Map<Version, UpdateObject> versions;
@@ -88,7 +87,7 @@ public class Installer {
 		}
 
 		HashMap<ExecutorService, Future<UpdateObject>> tasks = new HashMap<>();
-		for (JsonElement element : parser.parse(result).getAsJsonArray()) {
+		for (JsonElement element : JsonParser.parseString(result).getAsJsonArray()) {
 			ExecutorService service = Executors.newSingleThreadExecutor();
 			tasks.put(service, service.submit(new Callable<Installer.UpdateObject>() {
 				@Override

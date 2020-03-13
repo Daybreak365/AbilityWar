@@ -203,9 +203,9 @@ public class LocationUtil {
 			}
 			if (world.getBlockAt(x, y - 1, z).isEmpty()) {
 				while (world.getBlockAt(x, y - 1, z).isEmpty() && y >= 0) y--;
-				return y;
-			} else return y;
-		} else return y;
+			}
+		}
+		return y;
 	}
 
 	/**
@@ -272,21 +272,23 @@ public class LocationUtil {
 		return blocks;
 	}
 
-	public static Locations getRandomLocations(Location center, double radius, int amount) {
-		Random random = new Random();
-		Locations locations = new Locations();
+	public static Locations getRandomLocations(Random random, Location center, double radius, int amount) {
+		Locations locations = new Locations(amount);
 		for (int i = 0; i < amount; i++) {
-			double angle = random.nextDouble() * 360;
-			double x = center.getX() + (random.nextDouble() * radius * FastMath.cos(Math.toRadians(angle)));
-			double z = center.getZ() + (random.nextDouble() * radius * FastMath.sin(Math.toRadians(angle)));
-			Location l = new Location(center.getWorld(), x, center.getWorld().getHighestBlockYAt((int) x, (int) z), z);
-			locations.add(l);
+			double radians = Math.toRadians(random.nextDouble() * 360);
+			double x = center.getX() + (random.nextDouble() * radius * FastMath.cos(radians));
+			double z = center.getZ() + (random.nextDouble() * radius * FastMath.sin(radians));
+			locations.add(new Location(center.getWorld(), x, center.getWorld().getHighestBlockYAt((int) x, (int) z), z));
 		}
 		return locations;
 	}
 
+	public static Locations getRandomLocations(Location center, double radius, int amount) {
+		return getRandomLocations(new Random(), center, radius, amount);
+	}
+
 	public static Vectors getSphere(double scale, int amount) {
-		Vectors vectors = new Vectors();
+		Vectors vectors = new Vectors(amount);
 		if (amount > 0) {
 			for (double a = Math.PI / amount; a <= Math.PI; a += Math.PI / amount) {
 				double radius = FastMath.sin(a) * scale;
@@ -514,6 +516,14 @@ public class LocationUtil {
 	}
 
 	public static class Locations extends ArrayList<Location> {
+
+		public Locations(int initialCapacity) {
+			super(initialCapacity);
+		}
+
+		public Locations() {
+			super();
+		}
 
 		public Locations floor(double referenceY) {
 			for (Location location : this) {

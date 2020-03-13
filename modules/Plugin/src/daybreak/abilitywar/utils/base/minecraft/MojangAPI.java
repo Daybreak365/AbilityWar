@@ -20,8 +20,6 @@ public class MojangAPI {
 	private MojangAPI() {
 	}
 
-	private static final JsonParser parser = new JsonParser();
-
 	public static String getNickname(String uuid) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), StandardCharsets.UTF_8));
 
@@ -31,7 +29,7 @@ public class MojangAPI {
 			result = result.concat(line);
 		}
 
-		JsonArray array = parser.parse(result).getAsJsonArray();
+		JsonArray array = JsonParser.parseString(result).getAsJsonArray();
 		JsonObject nickname = array.get(array.size() - 1).getAsJsonObject();
 		return nickname.get("name").getAsString();
 	}

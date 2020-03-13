@@ -46,10 +46,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.MatchResult;
 
 /**
  * {@link AbilityWar} 플러그인에서 사용하는 <strong>모든 능력</strong>의 기반이 되는 클래스입니다.
@@ -71,6 +71,7 @@ import java.util.logging.Logger;
 public abstract class AbilityBase implements EventManager.Observer {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
+
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
 	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^()]]+)\\)");
 
@@ -81,9 +82,9 @@ public abstract class AbilityBase implements EventManager.Observer {
 			AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 			AbilityBase abilityBase = registration.getConstructor().newInstance(participant);
 			if (registration.getScheduledTimers().size() > 0) {
-				Set<Field> fields = registration.getScheduledTimers();
-				abilityBase.scheduledTimers = new ArrayList<>(fields.size());
-				for (Field field : fields) {
+				Set<Field> scheduledTimers = registration.getScheduledTimers();
+				abilityBase.scheduledTimers = new ArrayList<>(scheduledTimers.size());
+				for (Field field : scheduledTimers) {
 					try {
 						GameTimer timer = (GameTimer) ReflectionUtil.setAccessible(field).get(abilityBase);
 						if (timer != null) {
@@ -94,9 +95,8 @@ public abstract class AbilityBase implements EventManager.Observer {
 				}
 			}
 
-			final String[] explain = abilityBase.manifest.explain();
-			for (int i = 0; i < explain.length; i++) {
-				abilityBase.explanation[i] = SQUARE_BRACKET.replaceAll(explain[i], abilityBase.explanationValueProvider);
+			for (int i = 0; i < abilityBase.explanation.length; i++) {
+				abilityBase.explanation[i] = SQUARE_BRACKET.replaceAll(abilityBase.explanation[i], abilityBase.fieldValueProvider);
 			}
 
 			return abilityBase;
@@ -117,44 +117,24 @@ public abstract class AbilityBase implements EventManager.Observer {
 
 	private boolean restricted;
 
-	private final Function<String, String> explanationValueProvider = new Function<String, String>() {
+	private final Function<MatchResult, String> fieldValueProvider = new Function<MatchResult, String>() {
 		@Override
-		public String apply(String s) {
-			Field field = registration.getFields().get(s);
+		public String apply(MatchResult matchResult) {
+			Field field = registration.getFields().get(matchResult.group(1));
 			if (field != null) {
 				if (Modifier.isStatic(field.getModifiers())) {
 					try {
-						return parseString(ReflectionUtil.setAccessible(field).get(null));
-					} catch (IllegalAccessException e) {
-						return "none";
+						return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
+					} catch (IllegalAccessException ignored) {
 					}
 				} else {
 					try {
-						return parseString(ReflectionUtil.setAccessible(field).get(AbilityBase.this));
-					} catch (IllegalAccessException e) {
-						return "none";
+						return String.valueOf(ReflectionUtil.setAccessible(field).get(AbilityBase.this));
+					} catch (IllegalAccessException ignored) {
 					}
 				}
-			} else {
-				return "none";
 			}
-		}
-
-		private String parseString(Object o) {
-			if (o instanceof AbilityBase) {
-				AbilityBase ability = (AbilityBase) o;
-				if (ability.equals(AbilityBase.this)) {
-					return "none";
-				} else {
-					StringJoiner joiner = new StringJoiner("\n");
-					for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
-						joiner.add(iterator.next());
-					}
-					return joiner.toString();
-				}
-			} else {
-				return String.valueOf(o);
-			}
+			return "?";
 		}
 	};
 
@@ -173,6 +153,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 		this.registration = AbilityFactory.getRegistration(getClass());
 		this.manifest = registration.getManifest();
 		this.explanation = new String[manifest.explain().length];
+		System.arraycopy(manifest.explain(), 0, explanation, 0, explanation.length);
 		this.eventhandlers = registration.getEventhandlers();
 
 		EventManager eventManager = game.getEventManager();
@@ -189,15 +170,15 @@ public abstract class AbilityBase implements EventManager.Observer {
 		Class<? extends Event> eventClass = event.getClass();
 		if (eventhandlers.containsKey(eventClass)) {
 			Pair<Method, SubscribeEvent> pair = eventhandlers.get(eventClass);
-			SubscribeEvent subscribeEvent = pair.getRight();
-			if (subscribeEvent.onlyRelevant()
+			SubscribeEvent subscriber = pair.getRight();
+			if (subscriber.onlyRelevant()
 					&& ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
 					|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
 					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
 					|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
 				return;
 			}
-			if (subscribeEvent.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled()) {
+			if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled()) {
 				return;
 			}
 			Method method = pair.getLeft();
@@ -269,7 +250,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 
 			@Override
 			public String next() {
-				return ROUND_BRACKET.replaceAll(explanation[cursor++], explanationValueProvider);
+				return ROUND_BRACKET.replaceAll(explanation[cursor++], fieldValueProvider);
 			}
 		};
 	}
