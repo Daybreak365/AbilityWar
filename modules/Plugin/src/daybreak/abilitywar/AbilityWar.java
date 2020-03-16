@@ -4,13 +4,14 @@ import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.ability.AbilitySettings;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.installer.Installer;
-import daybreak.abilitywar.utils.math.FastMath;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,7 +20,6 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Ability War 능력자 전쟁 플러그인
@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class AbilityWar extends JavaPlugin {
 
-	private static final Logger logger = Logger.getLogger(AbilityWar.class.getName());
+	private static final Logger logger = Logger.getLogger(AbilityWar.class);
 	private static AbilityWar plugin;
 
 	public static AbilityWar getPlugin() {
@@ -98,13 +98,13 @@ public class AbilityWar extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		AbilityWarThread.StopGame();
+		GameManager.stopGame();
 		try {
 			Configuration.update();
-		} catch (IOException | InvalidConfigurationException e1) {
+		} catch (IOException | InvalidConfigurationException e) {
 			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 		}
-		AbilitySettings.Update();
+		AbilitySettings.update();
 		AddonLoader.disableAll();
 		Messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");
 	}

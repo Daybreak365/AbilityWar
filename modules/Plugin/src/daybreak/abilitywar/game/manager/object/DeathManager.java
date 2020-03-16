@@ -3,8 +3,7 @@ package daybreak.abilitywar.game.manager.object;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.OnDeath;
-import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.AbstractGame.GAME_UPDATE;
+import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.Game;
@@ -179,8 +178,8 @@ public class DeathManager implements Listener, Observer {
 	}
 
 	@Override
-	public void update(GAME_UPDATE update) {
-		if (update.equals(AbstractGame.GAME_UPDATE.END)) {
+	public void update(GameUpdate update) {
+		if (update.equals(GameUpdate.END)) {
 			HandlerList.unregisterAll(this);
 		}
 	}

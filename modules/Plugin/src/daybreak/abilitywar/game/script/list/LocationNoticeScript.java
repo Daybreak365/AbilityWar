@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.script.list;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.script.AbstractScript;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Formatter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -22,7 +22,7 @@ public class LocationNoticeScript extends AbstractScript {
 	protected void execute(Game game) {
 		List<String> msg = new ArrayList<>();
 
-		msg.add(Messager.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "플레이어 위치"));
+		msg.add(Formatter.formatTitle(ChatColor.DARK_AQUA, ChatColor.AQUA, "플레이어 위치"));
 
 		for (Participant participant : game.getParticipants()) {
 			Player player = participant.getPlayer();

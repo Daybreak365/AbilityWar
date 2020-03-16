@@ -12,8 +12,7 @@ import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
-import daybreak.abilitywar.utils.base.Messager;
-import org.bukkit.ChatColor;
+import daybreak.abilitywar.utils.base.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +28,8 @@ public class AbilityList {
 
 	private AbilityList() {
 	}
+
+	private static final Logger logger = Logger.getLogger(AbilityList.class);
 
 	private static final Map<String, AbilityRegistration> abilities = new TreeMap<>();
 
@@ -50,10 +51,10 @@ public class AbilityList {
 				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
 				abilities.put(name, registration);
 			} else {
-				Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
+				logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 			}
 		} else {
-			Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 AbilityFactory에 등록되지 않은 능력입니다."));
+			logger.debug("§e" + abilityClass.getName() + " §f능력은 AbilityFactory에 등록되지 않은 능력입니다.");
 		}
 	}
 

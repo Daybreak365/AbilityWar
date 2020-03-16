@@ -7,7 +7,7 @@ import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -103,7 +103,7 @@ public class AbilityChanger {
 		}.setPeriod(TimeUnit.TICKS, 3).start();
 
 		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
-		p.sendMessage(Messager.formatAbilityInfo(participant.getAbility()).toArray(new String[0]));
+		p.sendMessage(Formatter.formatAbilityInfo(participant.getAbility()).toArray(new String[0]));
 	}
 
 	/**

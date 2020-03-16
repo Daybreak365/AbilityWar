@@ -8,13 +8,13 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.FastMath;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.math.FastMath;
-import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -48,7 +48,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public String toString() {
-			return Messager.formatCooldown(getValue());
+			return Formatter.formatCooldown(getValue());
 		}
 
 	};

@@ -8,8 +8,8 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.entity.LivingEntity;
 
 @AbilityManifest(name = "심안", rank = Rank.B, species = Species.HUMAN, explain = {

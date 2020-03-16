@@ -6,15 +6,15 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.DamageUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -42,7 +42,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public String toString() {
-			return Messager.formatCooldown(getValue());
+			return Formatter.formatCooldown(getValue());
 		}
 
 	};

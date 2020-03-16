@@ -27,8 +27,8 @@ public class DebugMode extends Game implements DefaultKitHandler, AbstractGame.O
 	}
 
 	@Override
-	public void update(GAME_UPDATE update) {
-		if (update == GAME_UPDATE.END) {
+	public void update(GameUpdate update) {
+		if (update == GameUpdate.END) {
 			HandlerList.unregisterAll(this);
 		}
 	}

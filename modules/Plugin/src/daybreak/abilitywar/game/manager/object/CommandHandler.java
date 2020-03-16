@@ -2,9 +2,9 @@ package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ public interface CommandHandler {
 				} else {
 					Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 					if (targetPlayer != null) {
-						AbstractGame game = AbilityWarThread.getGame();
+						AbstractGame game = GameManager.getGame();
 						if (game.isParticipating(targetPlayer)) {
 							AbstractGame.Participant target = game.getParticipant(targetPlayer);
 							AbilityGUI gui = new AbilityGUI(player, target, plugin);
@@ -37,7 +37,7 @@ public interface CommandHandler {
 			case ABLIST:
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2===== &a능력자 목록 &2====="));
 				int count = 0;
-				for (AbstractGame.Participant participant : AbilityWarThread.getGame().getParticipants()) {
+				for (AbstractGame.Participant participant : GameManager.getGame().getParticipants()) {
 					if (participant.hasAbility()) {
 						count++;
 						AbilityBase ability = participant.getAbility();

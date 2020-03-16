@@ -7,18 +7,18 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import daybreak.abilitywar.utils.math.LocationUtil;
-import daybreak.abilitywar.utils.math.LocationUtil.Locations;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
-import daybreak.abilitywar.utils.math.geometry.Circle;
-import daybreak.abilitywar.utils.math.geometry.Line;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,7 +55,7 @@ public class Reaper extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public String toString() {
-			return Messager.formatCooldown(getValue());
+			return Formatter.formatCooldown(getValue());
 		}
 
 	};

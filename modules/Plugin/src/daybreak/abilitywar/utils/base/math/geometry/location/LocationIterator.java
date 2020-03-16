@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.math.geometry.location;
+package daybreak.abilitywar.utils.base.math.geometry.location;
 
 import org.bukkit.Location;
 

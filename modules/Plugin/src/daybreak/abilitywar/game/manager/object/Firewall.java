@@ -5,6 +5,7 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import org.bukkit.Bukkit;
@@ -59,8 +60,8 @@ public class Firewall implements Listener, Observer {
 	}
 
 	@Override
-	public void update(AbstractGame.GAME_UPDATE update) {
-		if (update.equals(AbstractGame.GAME_UPDATE.END)) {
+	public void update(GameUpdate update) {
+		if (update.equals(GameUpdate.END)) {
 			HandlerList.unregisterAll(this);
 		}
 	}

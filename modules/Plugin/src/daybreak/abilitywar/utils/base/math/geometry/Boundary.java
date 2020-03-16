@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.math.geometry;
+package daybreak.abilitywar.utils.base.math.geometry;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;

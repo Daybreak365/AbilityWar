@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.Game;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.game.event.GameCreditEvent;
@@ -17,9 +18,9 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -35,13 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @GameManifest(Name = "믹스 능력자 전쟁", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
 @Beta
 public class MixAbility extends Game implements DefaultKitHandler {
 
-	private static final Logger logger = Logger.getLogger(MixAbility.class.getName());
+	private static final Logger logger = Logger.getLogger(MixAbility.class);
 
 	public MixAbility() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
@@ -67,7 +67,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				}
 
 				if (getParticipants().size() < 1) {
-					AbilityWarThread.StopGame();
+					stop();
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
 				}
 				break;
@@ -178,7 +178,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 				} else {
 					Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 					if (targetPlayer != null) {
-						AbstractGame game = AbilityWarThread.getGame();
+						AbstractGame game = GameManager.getGame();
 						if (game.isParticipating(targetPlayer)) {
 							AbstractGame.Participant target = game.getParticipant(targetPlayer);
 							MixAbilityGUI gui = new MixAbilityGUI(player, target, plugin);
@@ -194,7 +194,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 			case ABLIST:
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2===== &a능력자 목록 &2====="));
 				int count = 0;
-				for (AbstractGame.Participant participant : AbilityWarThread.getGame().getParticipants()) {
+				for (AbstractGame.Participant participant : GameManager.getGame().getParticipants()) {
 					Mix mix = (Mix) participant.getAbility();
 					if (mix.hasAbility()) {
 						count++;
@@ -240,14 +240,13 @@ public class MixAbility extends Game implements DefaultKitHandler {
 									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
 							});
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
-							Messager.sendConsoleErrorMessage(
-									ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
-									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
+							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
 					}
 				} else {
 					Messager.broadcastErrorMessage("사용 가능한 능력이 없습니다.");
-					AbilityWarThread.StopGame();
+					GameManager.stopGame();
 				}
 			}
 
@@ -265,8 +264,8 @@ public class MixAbility extends Game implements DefaultKitHandler {
 							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
 							return true;
 						} catch (Exception e) {
-							Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님의 능력을 변경하는 도중 오류가 발생하였습니다."));
-							Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+							logger.error(ChatColor.YELLOW + p.getName() + ChatColor.WHITE + "님의 능력을 변경하는 도중 오류가 발생하였습니다.");
+							logger.error(ChatColor.WHITE + "문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
 					}
 				} else {

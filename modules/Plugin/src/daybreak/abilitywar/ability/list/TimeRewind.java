@@ -10,7 +10,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.PushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -42,7 +42,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public String toString() {
-			return Messager.formatCooldown(getValue());
+			return Formatter.formatCooldown(getValue());
 		}
 
 	};

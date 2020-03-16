@@ -8,7 +8,7 @@ import daybreak.abilitywar.game.script.setter.special.LoopCountSetter;
 import daybreak.abilitywar.game.script.setter.special.LoopSetter;
 import daybreak.abilitywar.game.script.setter.special.MessageSetter;
 import daybreak.abilitywar.game.script.setter.special.TimeSetter;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -37,6 +37,8 @@ import java.util.List;
  * @author Daybreak 새벽
  */
 public class ScriptWizard implements Listener {
+
+	private static final Logger logger = Logger.getLogger(ScriptWizard.class);
 
 	private static final ItemStack DECO = new ItemBuilder()
 			.type(MaterialX.WHITE_STAINED_GLASS_PANE)
@@ -216,11 +218,7 @@ public class ScriptWizard implements Listener {
 							player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c스크립트를 저장하던 도중 오류가 발생하였습니다."));
 
 							if (exception.getMessage() != null && !exception.getMessage().isEmpty()) {
-								if (exception instanceof NoSuchMethodException) {
-									Messager.sendConsoleErrorMessage(exception.getMessage() + " 메소드가 존재하지 않습니다.");
-								} else {
-									Messager.sendConsoleErrorMessage(exception.getMessage());
-								}
+								logger.error(exception instanceof NoSuchMethodException ? exception.getMessage() + " 메소드가 존재하지 않습니다." : exception.getMessage());
 							}
 						}
 					}

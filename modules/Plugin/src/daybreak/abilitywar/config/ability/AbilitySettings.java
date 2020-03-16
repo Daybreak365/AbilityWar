@@ -46,21 +46,21 @@ public class AbilitySettings {
 			file = FileUtil.newFile("abilitysettings.yml");
 			lastModified = file.lastModified();
 			config = new CommentedConfiguration(file);
-			update();
+			_update();
 		}
 	}
 
 	private static final HashMap<SettingObject<?>, Cache> cache = new HashMap<>();
 
-	public static void Update() {
+	public static void update() {
 		try {
-			update();
+			_update();
 		} catch (IOException | InvalidConfigurationException e) {
 			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 		}
 	}
 
-	private static void update() throws IOException, InvalidConfigurationException {
+	private static void _update() throws IOException, InvalidConfigurationException {
 		if (!isLoaded()) {
 			file = FileUtil.newFile("abilitysettings.yml");
 			lastModified = file.lastModified();
@@ -141,7 +141,7 @@ public class AbilitySettings {
 			}
 			if (lastModified != file.lastModified()) {
 				try {
-					update();
+					_update();
 				} catch (IOException | InvalidConfigurationException e) {
 					logger.log(Level.SEVERE, "콘피그를 다시 불러오는 도중 오류가 발생하였습니다.");
 				}

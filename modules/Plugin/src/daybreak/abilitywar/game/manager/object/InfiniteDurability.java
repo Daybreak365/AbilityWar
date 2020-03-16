@@ -2,8 +2,7 @@ package daybreak.abilitywar.game.manager.object;
 
 import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.AbstractGame.GAME_UPDATE;
+import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Bukkit;
@@ -84,8 +83,8 @@ public class InfiniteDurability implements Listener, Observer {
 	}
 
 	@Override
-	public void update(GAME_UPDATE update) {
-		if (update.equals(AbstractGame.GAME_UPDATE.END)) {
+	public void update(GameUpdate update) {
+		if (update.equals(GameUpdate.END)) {
 			HandlerList.unregisterAll(this);
 		}
 	}

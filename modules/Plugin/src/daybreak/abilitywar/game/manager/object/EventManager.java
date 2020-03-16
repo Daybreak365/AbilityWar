@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
@@ -66,8 +67,8 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 	}
 
 	@Override
-	public void update(AbstractGame.GAME_UPDATE update) {
-		if (update.equals(AbstractGame.GAME_UPDATE.END)) {
+	public void update(GameUpdate update) {
+		if (update.equals(GameUpdate.END)) {
 			HandlerList.unregisterAll(this);
 		}
 	}

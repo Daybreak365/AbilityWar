@@ -1,7 +1,7 @@
-package daybreak.abilitywar.utils.math.geometry;
+package daybreak.abilitywar.utils.base.math.geometry;
 
-import daybreak.abilitywar.utils.math.FastMath;
-import daybreak.abilitywar.utils.math.geometry.location.LocationIterator;
+import daybreak.abilitywar.utils.base.math.FastMath;
+import daybreak.abilitywar.utils.base.math.geometry.location.LocationIterator;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

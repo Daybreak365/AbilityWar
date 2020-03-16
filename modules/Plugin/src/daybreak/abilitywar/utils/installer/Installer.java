@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -109,12 +110,12 @@ public class Installer {
 
 	public void Install(CommandSender sender, UpdateObject update) {
 		try {
-			Messager.sendConsoleMessage(Messager.formatInstall(update));
+			Messager.sendConsoleMessage(Formatter.formatVersionInfo(update));
 			unload(plugin);
 			if (!sender.equals(Bukkit.getConsoleSender())) {
 				Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 시작합니다."));
 			}
-			Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 시작합니다."));
+			sender.sendMessage(Messager.defaultPrefix + "설치를 시작합니다.");
 
 			InputStream input = update.getConnection().getInputStream();
 			URL fileURL = AbilityWar.class.getProtectionDomain().getCodeSource().getLocation();
@@ -132,14 +133,14 @@ public class Installer {
 			if (!sender.equals(Bukkit.getConsoleSender())) {
 				Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
 			}
-			Messager.sendMessage(sender, ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
+			sender.sendMessage(Messager.defaultPrefix + "설치를 완료하였습니다.");
 			load(plugin);
 		} catch (IOException ex) {
 			logger.log(Level.SEVERE, "설치 도중 오류가 발생하였습니다.");
 		}
 	}
 
-	public final class UpdateObject {
+	public static final class UpdateObject {
 
 		private final String version;
 		private final boolean prerelease;
@@ -333,7 +334,7 @@ public class Installer {
 				pluginInitField.set(cl, null);
 
 			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-				Logger.getLogger(Installer.class.getName()).log(Level.SEVERE, null, ex);
+				logger.log(Level.SEVERE, null, ex);
 			}
 
 			try {

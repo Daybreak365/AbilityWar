@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -82,7 +81,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 					Bukkit.broadcastMessage(line);
 				}
 				if (getParticipants().size() < 2) {
-					AbilityWarThread.StopGame();
+					stop();
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&72명&8)"));
 				}
 				break;
@@ -290,8 +289,8 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	}
 
 	@Override
-	public void update(GAME_UPDATE update) {
-		if (update == GAME_UPDATE.END) {
+	public void update(GameUpdate update) {
+		if (update == GameUpdate.END) {
 			HandlerList.unregisterAll(this);
 		}
 	}

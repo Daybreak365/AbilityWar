@@ -20,11 +20,11 @@ public interface ParticipantStrategy {
 
 	void removeParticipant(UUID uuid) throws UnsupportedOperationException;
 
-	class DEFAULT_MANAGEMENT implements ParticipantStrategy {
+	class DefaultManagement implements ParticipantStrategy {
 
 		private final Map<String, Participant> participants = new HashMap<>();
 
-		public DEFAULT_MANAGEMENT(AbstractGame game, Collection<Player> players) {
+		public DefaultManagement(AbstractGame game, Collection<Player> players) {
 			for (Player player : players) {
 				participants.put(player.getUniqueId().toString(), game.new Participant(player));
 			}

@@ -1,6 +1,6 @@
-package daybreak.abilitywar.utils.math;
+package daybreak.abilitywar.utils.base.math;
 
-import daybreak.abilitywar.utils.math.LocationUtil.Locations;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 

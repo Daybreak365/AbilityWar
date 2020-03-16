@@ -6,8 +6,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +26,7 @@ public class Virus extends AbilityBase {
 		Participant participant = e.getParticipant();
 		if (participant.equals(getParticipant())) {
 			Player killer = getPlayer().getKiller();
-			if (killer != null && AbilityWarThread.getGame().isParticipating(killer)) {
+			if (killer != null && GameManager.getGame().isParticipating(killer)) {
 				try {
 					getGame().getParticipant(killer).setAbility(Virus.class);
 				} catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {

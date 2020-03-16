@@ -1,12 +1,10 @@
 package daybreak.abilitywar.utils.base.collect;
 
-/**
- * 두 개의 자료를 동시에 가지고 있는 구조
- *
- * @param <Left>  첫 번째 객체
- * @param <Right> 두 번째 객체
- */
-public class Pair<Left, Right> {
+public class Pair<Left, Right> implements Cloneable {
+
+	public static <Left, Right> Pair<Left, Right> of(Left left, Right right) {
+		return new Pair<>(left, right);
+	}
 
 	private final Left left;
 	private final Right right;
@@ -24,8 +22,9 @@ public class Pair<Left, Right> {
 		return right;
 	}
 
-	public static <Left, Right> Pair<Left, Right> of(Left left, Right right) {
-		return new Pair<>(left, right);
+	@Override
+	public Pair<Left, Right> clone() {
+		return of(left, right);
 	}
 
 }

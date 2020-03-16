@@ -1,6 +1,6 @@
-package daybreak.abilitywar.utils.math.geometry;
+package daybreak.abilitywar.utils.base.math.geometry;
 
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 
 public abstract class Shape extends Vectors {
 

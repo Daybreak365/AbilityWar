@@ -1,13 +1,13 @@
 package daybreak.abilitywar.game.decorator;
 
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public interface Winnable {
 		}
 		builder.append(joiner.toString());
 		Bukkit.broadcastMessage(builder.toString());
-		AbilityWarThread.StopGame();
+		GameManager.stopGame();
 	}
 
 }

@@ -316,7 +316,7 @@ public class Configuration {
 				if (AbstractGame.class.isAssignableFrom(clazz)) {
 					return (Class<? extends AbstractGame>) clazz;
 				}
-			} catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException ignored) {
 			}
 
 			modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());

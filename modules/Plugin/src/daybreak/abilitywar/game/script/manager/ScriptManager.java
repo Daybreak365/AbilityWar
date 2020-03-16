@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import daybreak.abilitywar.game.Game;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.script.AbstractScript;
 import daybreak.abilitywar.game.script.list.ChangeAbilityScript;
 import daybreak.abilitywar.game.script.list.LocationNoticeScript;
@@ -13,8 +14,8 @@ import daybreak.abilitywar.game.script.manager.ScriptException.State;
 import daybreak.abilitywar.game.script.setter.Setter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.io.FileUtil;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.ClassUtil;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
@@ -39,13 +40,15 @@ public class ScriptManager {
 	private ScriptManager() {
 	}
 
+	private static final Logger logger = Logger.getLogger(ScriptManager.class);
+
 	private static final Set<AbstractScript> scripts = new HashSet<>();
 
 	/**
 	 * 모든 스크립트를 시작시킵니다.
 	 */
 	public static void runAll(Game game) {
-		if (AbilityWarThread.isGameTaskRunning()) {
+		if (GameManager.isGameRunning()) {
 			for (AbstractScript script : scripts) {
 				script.start(game);
 			}
@@ -198,10 +201,10 @@ public class ScriptManager {
 				gson.toJson(script, bw);
 				bw.close();
 			} else {
-				Messager.sendConsoleErrorMessage("등록되지 않은 스크립트입니다.");
+				logger.error(script.getClass() + "는 등록되지 않은 스크립트 타입입니다.");
 			}
 		} catch (IOException ioException) {
-			Messager.sendConsoleErrorMessage("스크립트를 저장하는 도중 오류가 발생하였습니다.");
+			logger.error("스크립트를 저장하는 도중 오류가 발생하였습니다.");
 		}
 	}
 
@@ -230,7 +233,7 @@ public class ScriptManager {
 				throw new IOException();
 			}
 		} catch (IOException | NullPointerException | ClassNotFoundException e) {
-			Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + file.getName() + " &f스크립트를 불러오는 도중 오류가 발생하였습니다."));
+			logger.error(ChatColor.YELLOW + file.getName() + ChatColor.WHITE + " 스크립트를 불러오는 도중 오류가 발생하였습니다.");
 			throw new ScriptException(State.NOT_LOADED);
 		}
 	}

@@ -11,8 +11,8 @@ import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.Location;
 
 @AbilityManifest(name = "초신성", rank = Rank.B, species = Species.OTHERS, explain = {

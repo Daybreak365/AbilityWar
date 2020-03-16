@@ -13,7 +13,7 @@ import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.game.manager.object.ScoreboardManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
+
+	private static final Logger logger = Logger.getLogger(Game.class);
 
 	public Game(Collection<Player> players) {
 		super(players);
@@ -94,9 +96,8 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
 							});
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
-							Messager.sendConsoleErrorMessage(
-									ChatColor.translateAlternateColorCodes('&', "&e" + participant.getPlayer().getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
-									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
+							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
 					}
 				} else if (abilities.size() > 0) {
@@ -112,14 +113,13 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
 							});
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
-							Messager.sendConsoleErrorMessage(
-									ChatColor.translateAlternateColorCodes('&', "&e" + participant.getPlayer().getName() + "&f님에게 능력을 할당하는 도중 오류가 발생하였습니다."),
-									ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
+							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
 					}
 				} else {
 					Messager.broadcastErrorMessage("사용 가능한 능력이 없습니다.");
-					AbilityWarThread.StopGame();
+					GameManager.stopGame();
 				}
 			}
 
@@ -141,8 +141,8 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 							return true;
 						} catch (Exception e) {
-							Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님의 능력을 변경하는 도중 오류가 발생하였습니다."));
-							Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&f문제가 발생한 능력: &b" + abilityClass.getName()));
+							logger.error(ChatColor.YELLOW + p.getName() + ChatColor.WHITE + "님의 능력을 변경하는 도중 오류가 발생하였습니다.");
+							logger.error(ChatColor.WHITE + "문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
 					}
 				} else {

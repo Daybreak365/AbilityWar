@@ -8,13 +8,13 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.math.LocationUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -40,9 +40,9 @@ import java.util.List;
 })
 public class SquirtGun extends AbilityBase implements ActiveHandler {
 
-	private static final String THREE_SECONDS_COOL = Messager.formatCooldown(3);
-	private static final String THIRTY_SECONDS_COOL = Messager.formatCooldown(30);
-	private static final String FIFTEEN_SECONDS_COOL = Messager.formatCooldown(15);
+	private static final String THREE_SECONDS_COOL = Formatter.formatCooldown(3);
+	private static final String THIRTY_SECONDS_COOL = Formatter.formatCooldown(30);
+	private static final String FIFTEEN_SECONDS_COOL = Formatter.formatCooldown(15);
 
 	public SquirtGun(Participant participant) {
 		super(participant);

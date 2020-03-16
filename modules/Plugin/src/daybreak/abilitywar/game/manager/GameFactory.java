@@ -1,10 +1,7 @@
 package daybreak.abilitywar.game.manager;
 
 import com.google.common.base.Preconditions;
-import daybreak.abilitywar.config.Configuration;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
-import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
@@ -15,11 +12,9 @@ import daybreak.abilitywar.game.list.standard.WarGame;
 import daybreak.abilitywar.game.list.summervacation.SummerVacation;
 import daybreak.abilitywar.game.list.teamfight.TeamFight;
 import daybreak.abilitywar.game.list.zerotick.ZeroTick;
-import daybreak.abilitywar.game.manager.GameMode.GameRegistration.Flag;
+import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.utils.annotations.Beta;
-import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
-import org.bukkit.ChatColor;
+import daybreak.abilitywar.utils.base.logging.Logger;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -28,31 +23,36 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 게임 모드
- *
- * @author Daybreak 새벽
- */
-public class GameMode {
+public class GameFactory {
 
-	private GameMode() {
+	private GameFactory() {
 	}
+
+	private static final Logger logger = Logger.getLogger(GameFactory.class);
 
 	private static final Map<String, Class<? extends AbstractGame>> usedNames = new LinkedHashMap<>();
 	private static final Map<Class<? extends AbstractGame>, GameRegistration> registeredModes = new HashMap<>();
 
 	static {
-		registerGameMode(DefaultGame.class);
-		registerGameMode(WarGame.class);
-		registerGameMode(ChangeAbilityWar.class);
-		registerGameMode(SummerVacation.class);
-		registerGameMode(TeamFight.class);
-		registerGameMode(MixAbility.class);
-		registerGameMode(ZeroTick.class);
-		if (DeveloperSettings.isEnabled()) GameMode.registerGameMode(DebugMode.class);
+		registerMode(DefaultGame.class);
+		registerMode(WarGame.class);
+		registerMode(ChangeAbilityWar.class);
+		registerMode(SummerVacation.class);
+		registerMode(TeamFight.class);
+		registerMode(MixAbility.class);
+		registerMode(ZeroTick.class);
+		if (DeveloperSettings.isEnabled()) GameFactory.registerMode(DebugMode.class);
 	}
 
-	public static void registerGameMode(Class<? extends AbstractGame> gameClass) {
+	public static GameRegistration getRegistration(Class<? extends AbstractGame> clazz) {
+		return registeredModes.get(clazz);
+	}
+
+	public static boolean isRegistered(Class<? extends AbstractGame> clazz) {
+		return registeredModes.containsKey(clazz);
+	}
+
+	public static void registerMode(Class<? extends AbstractGame> gameClass) {
 		if (!registeredModes.containsKey(gameClass)) {
 			try {
 				GameRegistration registration = new GameRegistration(gameClass);
@@ -63,14 +63,10 @@ public class GameMode {
 						usedNames.put(name, gameClass);
 					}
 				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임모드는 겹치는 이름이 있어 등록되지 않았습니다."));
+					logger.debug("§e" + gameClass.getName() + " §f게임모드는 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
-			} catch (NoSuchMethodException | IllegalAccessException | NullPointerException e) {
-				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
-					Messager.sendConsoleErrorMessage(e.getMessage());
-				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + gameClass.getName() + " &f게임 모드 등록 중 오류가 발생하였습니다."));
-				}
+			} catch (NoSuchMethodException | NullPointerException e) {
+				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + gameClass.getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
 			}
 		}
 	}
@@ -83,18 +79,6 @@ public class GameMode {
 		return usedNames.get(name);
 	}
 
-	public static boolean startGame() {
-		try {
-			AbilityWarThread.StartGame(Settings.getGameMode().newInstance());
-			return true;
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-			Configuration.modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());
-			AbilityWarThread.StartGame(new DefaultGame());
-			return false;
-		}
-	}
-
 	public static class GameRegistration {
 
 		private final Class<? extends AbstractGame> clazz;
@@ -102,7 +86,7 @@ public class GameMode {
 		private final GameManifest manifest;
 		private final int flag;
 
-		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException {
+		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException {
 			this.clazz = clazz;
 			this.constructor = clazz.getConstructor();
 

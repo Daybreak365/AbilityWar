@@ -5,12 +5,12 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.RegexReplacer;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -163,8 +163,8 @@ public class AbilityGUI implements Listener {
 					AbilityRegistration registration = values.get(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
 					try {
 						if (registration != null) {
-							if (AbilityWarThread.isGameTaskRunning()) {
-								AbstractGame game = AbilityWarThread.getGame();
+							if (GameManager.isGameRunning()) {
+								AbstractGame game = GameManager.getGame();
 								if (target != null) {
 									target.setAbility(registration.getAbilityClass());
 									Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님에게 능력을 임의로 부여하였습니다."));

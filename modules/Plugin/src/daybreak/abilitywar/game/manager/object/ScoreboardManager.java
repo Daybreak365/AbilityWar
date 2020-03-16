@@ -1,8 +1,7 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.AbstractGame.GAME_UPDATE;
+import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import org.bukkit.Bukkit;
@@ -43,14 +42,14 @@ public class ScoreboardManager implements Listener, Observer {
 	}
 
 	@Override
-	public void update(GAME_UPDATE update) {
-		if (update == AbstractGame.GAME_UPDATE.START) {
+	public void update(GameUpdate update) {
+		if (update == GameUpdate.START) {
 			for (Player player : Bukkit.getOnlinePlayers()) {
 				if (viewers.add(player.getUniqueId())) {
 					player.setScoreboard(scoreboard);
 				}
 			}
-		} else if (update == AbstractGame.GAME_UPDATE.END) {
+		} else if (update == GameUpdate.END) {
 			HandlerList.unregisterAll(this);
 			for (UUID uuid : viewers) {
 				Player viewer = Bukkit.getPlayer(uuid);

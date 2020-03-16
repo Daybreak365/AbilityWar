@@ -3,10 +3,6 @@ package daybreak.abilitywar.utils.base.concurrent;
 public enum TimeUnit {
 
 	TICKS {
-		public int toMillis(int duration) {
-			return duration * 50;
-		}
-
 		public int toTicks(int duration) {
 			return duration;
 		}
@@ -20,10 +16,6 @@ public enum TimeUnit {
 		}
 	},
 	SECONDS {
-		public int toMillis(int duration) {
-			return duration * 1000;
-		}
-
 		public int toTicks(int duration) {
 			return duration * 20;
 		}
@@ -37,10 +29,6 @@ public enum TimeUnit {
 		}
 	},
 	MINUTES {
-		public int toMillis(int duration) {
-			return duration * 60000;
-		}
-
 		public int toTicks(int duration) {
 			return duration * 1200;
 		}
@@ -53,8 +41,6 @@ public enum TimeUnit {
 			return duration;
 		}
 	};
-
-	public abstract int toMillis(int duration);
 
 	public abstract int toTicks(int duration);
 

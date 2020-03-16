@@ -3,9 +3,9 @@ package daybreak.abilitywar.game.list.mixability;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -136,8 +136,8 @@ public class MixAbilityGUI implements Listener {
 						} else {
 							try {
 								if (abilityClass != null) {
-									if (AbilityWarThread.isGameTaskRunning()) {
-										AbstractGame game = AbilityWarThread.getGame();
+									if (GameManager.isGameRunning()) {
+										AbstractGame game = GameManager.getGame();
 										if (target != null) {
 											Mix mix = (Mix) target.getAbility();
 											mix.setAbility(firstAbility, abilityClass);

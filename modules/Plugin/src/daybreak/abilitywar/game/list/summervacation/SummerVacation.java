@@ -17,7 +17,6 @@ import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -74,7 +73,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &c: &e" + count + "명"));
 				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
 				if (getParticipants().size() < 1) {
-					AbilityWarThread.StopGame();
+					stop();
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
 				}
 				break;

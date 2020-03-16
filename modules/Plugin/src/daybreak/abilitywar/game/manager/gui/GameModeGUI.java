@@ -5,7 +5,7 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.manager.GameMode;
+import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
@@ -55,7 +55,7 @@ public class GameModeGUI implements Listener {
 	private Inventory gui;
 
 	public void openGUI(int page) {
-		int MaxPage = ((GameMode.nameValues().size() - 1) / 18) + 1;
+		int MaxPage = ((GameFactory.nameValues().size() - 1) / 18) + 1;
 		if (MaxPage < page) page = 1;
 		if (page < 1) page = 1;
 		gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &8게임 모드"));
@@ -64,8 +64,8 @@ public class GameModeGUI implements Listener {
 
 		Class<? extends AbstractGame> gameClass = Settings.getGameMode();
 
-		for (String name : GameMode.nameValues()) {
-			Class<? extends AbstractGame> mode = GameMode.getByName(name);
+		for (String name : GameFactory.nameValues()) {
+			Class<? extends AbstractGame> mode = GameFactory.getByName(name);
 
 			if (mode != null) {
 				GameManifest manifest = mode.getAnnotation(GameManifest.class);
@@ -138,7 +138,7 @@ public class GameModeGUI implements Listener {
 				if (e.getCurrentItem().getType().equals(Material.BOOK)) {
 					if (e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 						String modeName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-						Class<? extends AbstractGame> gameMode = GameMode.getByName(modeName);
+						Class<? extends AbstractGame> gameMode = GameFactory.getByName(modeName);
 						if (gameMode != null) {
 							Configuration.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getName());
 						} else {

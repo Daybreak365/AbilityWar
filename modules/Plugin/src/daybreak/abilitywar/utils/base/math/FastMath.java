@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.math;
+package daybreak.abilitywar.utils.base.math;
 
 public class FastMath {
 

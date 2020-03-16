@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
+import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
@@ -15,10 +16,11 @@ import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
-import daybreak.abilitywar.utils.math.geometry.Boundary.BoundingBox;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -52,11 +54,13 @@ import java.util.UUID;
 
 public abstract class AbstractGame extends SimpleTimer implements Listener, EffectManager.Handler, CommandHandler {
 
+	private static final Logger logger = Logger.getLogger(AbstractGame.class);
+
 	public interface Observer {
-		void update(GAME_UPDATE update);
+		void update(GameUpdate update);
 	}
 
-	public enum GAME_UPDATE {START, END}
+	public enum GameUpdate {START, END}
 
 	private final Set<Observer> observers = new HashSet<>();
 
@@ -70,7 +74,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 	private boolean restricted = true;
 	private boolean gameStarted = false;
 
-	private ParticipantStrategy participantStrategy;
+	private final ParticipantStrategy participantStrategy;
 	private final EventManager eventManager = new EventManager(this);
 	private final EffectManager effectManager = new EffectManager(this);
 
@@ -79,8 +83,45 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		this.participantStrategy = newParticipantStrategy(players);
 	}
 
+	@Override
+	public boolean start() {
+		if (GameManager.currentGame == null && super.start()) {
+			GameManager.currentGame = this;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean stop(boolean silent) {
+		if (silent) logger.debug("You cannot stop game silently.");
+		if (GameManager.currentGame == this && super.stop(false)) {
+			GameManager.currentGame = null;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean stop() {
+		if (GameManager.currentGame == this && super.stop(false)) {
+			GameManager.currentGame = null;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean pause() {
+		return false;
+	}
+
+	@Override
+	public boolean resume() {
+		return false;
+	}
+
 	public ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
-		return new ParticipantStrategy.DEFAULT_MANAGEMENT(this, players);
+		return new DefaultManagement(this, players);
 	}
 
 	/**
@@ -175,7 +216,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 	protected void startGame() {
 		this.gameStarted = true;
-		observers.forEach(observer -> observer.update(GAME_UPDATE.START));
+		observers.forEach(observer -> observer.update(GameUpdate.START));
 	}
 
 	@Override
@@ -185,7 +226,8 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			participant.removeAbility();
 		}
 		HandlerList.unregisterAll(this);
-		observers.forEach(observer -> observer.update(GAME_UPDATE.END));
+		observers.forEach(observer -> observer.update(GameUpdate.END));
+		Bukkit.broadcastMessage(ChatColor.GRAY.toString().concat("게임이 중지되었습니다."));
 	}
 
 	public class Participant implements Listener, AbstractGame.Observer {
@@ -201,8 +243,8 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		}
 
 		@Override
-		public void update(GAME_UPDATE update) {
-			if (update.equals(GAME_UPDATE.END)) {
+		public void update(GameUpdate update) {
+			if (update.equals(GameUpdate.END)) {
 				HandlerList.unregisterAll(this);
 			}
 		}

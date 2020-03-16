@@ -1,15 +1,16 @@
-package daybreak.abilitywar.utils.math;
+package daybreak.abilitywar.utils.base.math;
 
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.utils.math.VectorUtil.Vectors;
-import daybreak.abilitywar.utils.math.geometry.Boundary;
-import daybreak.abilitywar.utils.math.geometry.Boundary.BoundingBox;
-import daybreak.abilitywar.utils.math.geometry.Boundary.CenteredBoundingBox;
-import daybreak.abilitywar.utils.thread.AbilityWarThread;
+import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
+import daybreak.abilitywar.utils.base.math.geometry.Boundary;
+import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundaryData;
+import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
+import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -117,7 +118,7 @@ public class LocationUtil {
 					Chunk chunk = world.getChunkAt(x, z);
 					for (Entity e : chunk.getEntities()) {
 						if (!criterion.equals(e) && entityType.isAssignableFrom(e.getClass())) {
-							Boundary.BoundaryData boundaryData = Boundary.BoundaryData.of(e.getType());
+							BoundaryData boundaryData = Boundary.BoundaryData.of(e.getType());
 							Location entityLocation = e.getLocation();
 							double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
 							if (entityX + boundaryData.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < boundingBox.getMaxY() &&
@@ -565,8 +566,8 @@ public class LocationUtil {
 				@Override
 				public boolean test(Entity entity) {
 					if (entity.equals(criterion)) return false;
-					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
-						AbstractGame game = AbilityWarThread.getGame();
+					if (GameManager.isGameRunning() && entity instanceof Player) {
+						AbstractGame game = GameManager.getGame();
 						Player player = (Player) entity;
 						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isExcluded(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
 							return false;
@@ -589,8 +590,8 @@ public class LocationUtil {
 			return new Predicate<Entity>() {
 				@Override
 				public boolean test(Entity entity) {
-					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
-						AbstractGame game = AbilityWarThread.getGame();
+					if (GameManager.isGameRunning() && entity instanceof Player) {
+						AbstractGame game = GameManager.getGame();
 						Player player = (Player) entity;
 						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isExcluded(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
 							return false;
@@ -614,8 +615,8 @@ public class LocationUtil {
 				@Override
 				public boolean test(Entity entity) {
 					if (entity.equals(criterion)) return false;
-					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
-						AbstractGame game = AbilityWarThread.getGame();
+					if (GameManager.isGameRunning() && entity instanceof Player) {
+						AbstractGame game = GameManager.getGame();
 						Player player = (Player) entity;
 						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isExcluded(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
 					}
@@ -628,8 +629,8 @@ public class LocationUtil {
 			return new Predicate<Entity>() {
 				@Override
 				public boolean test(Entity entity) {
-					if (AbilityWarThread.isGameTaskRunning() && entity instanceof Player) {
-						AbstractGame game = AbilityWarThread.getGame();
+					if (GameManager.isGameRunning() && entity instanceof Player) {
+						AbstractGame game = GameManager.getGame();
 						Player player = (Player) entity;
 						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isExcluded(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
 					}

@@ -12,12 +12,11 @@ import daybreak.abilitywar.game.list.mixability.Mix;
 import daybreak.abilitywar.game.list.summervacation.SquirtGun;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
-import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 
 import java.lang.reflect.Constructor;
@@ -39,6 +38,8 @@ public class AbilityFactory {
 
 	private AbilityFactory() {
 	}
+
+	private static final Logger logger = Logger.getLogger(AbilityFactory.class);
 
 	private static final Map<String, Class<? extends AbilityBase>> usedNames = new HashMap<>();
 	private static final Map<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
@@ -67,16 +68,12 @@ public class AbilityFactory {
 						alternatives.put(abilityClass, registeredClass);
 					}
 				} else {
-					Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 겹치는 이름이 있어 등록되지 않았습니다."));
+					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
 			} catch (NoSuchMethodException | IllegalAccessException | NullPointerException e) {
-				if (e.getMessage() != null && !e.getMessage().isEmpty()) {
-					Messager.sendConsoleErrorMessage(e.getMessage());
-				} else {
-					Messager.sendConsoleErrorMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력 등록 중 오류가 발생하였습니다."));
-				}
+				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다."));
 			} catch (UnsupportedVersionException e) {
-				Messager.sendConsoleDebugMessage(ChatColor.translateAlternateColorCodes('&', "&e" + abilityClass.getName() + " &f능력은 이 버전에서 지원되지 않습니다."));
+				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 버전에서 지원되지 않습니다.");
 			}
 		}
 	}
