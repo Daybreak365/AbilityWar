@@ -1,6 +1,7 @@
 package daybreak.abilitywar;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.config.ability.wizard.AbilitySettingWizard;
 import daybreak.abilitywar.config.wizard.DeathWizard;
 import daybreak.abilitywar.config.wizard.GameWizard;
@@ -11,6 +12,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.decorator.TeamGame;
+import daybreak.abilitywar.game.manager.gui.AbilityListGUI;
 import daybreak.abilitywar.game.manager.gui.BlackListGUI;
 import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
@@ -197,6 +199,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				} else {
 					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
 				}
+			} else if (split[0].equalsIgnoreCase("abilities")) {
+				if (sender instanceof Player) {
+					new AbilityListGUI((Player) sender, AbilityWar.getPlugin()).openGUI(1);
+				} else {
+					Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c콘솔에서 사용할 수 없는 명령어입니다!"));
+				}
 			} else if (split[0].equalsIgnoreCase("skip")) {
 				if (sender.isOp()) {
 					if (GameManager.isGameOf(AbilitySelect.Handler.class) && ((AbilitySelect.Handler) GameManager.getGame()).getAbilitySelect() != null) {
@@ -342,7 +350,16 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
 	private void parseConfigCommand(Player p, String label, String[] args) {
 		if (args[0].equalsIgnoreCase("kit")) {
-			new KitWizard(p, plugin).Show();
+			if (args.length > 1) {
+				String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+				if (AbilityFactory.isRegistered(name)) {
+					new KitWizard(p, plugin, AbilityFactory.getRegistration(AbilityFactory.getByName(name))).Show();
+				} else {
+					p.sendMessage(ChatColor.RED + name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
+				}
+			} else {
+				new KitWizard(p, plugin).Show();
+			}
 		} else if (args[0].equalsIgnoreCase("spawn")) {
 			new SpawnWizard(p, plugin).Show();
 		} else if (args[0].equalsIgnoreCase("inv")) {
@@ -442,7 +459,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Player target = Bukkit.getPlayerExact(args[1]);
 						if (target != null) {
 							if (GameManager.getGame().isParticipating(target)) {
-								handler.giveDefaultKit(target);
+								handler.giveDefaultKit(GameManager.getGame().getParticipant(target));
 								SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(target);
 								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
 										"&f" + p.getName() + "&a님이 &f" + target.getName() + "&a님에게 기본템을 다시 지급하였습니다."));
@@ -596,7 +613,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void sendHelpCommand(CommandSender sender, String label, int page) {
-		int allPage = 3;
+		int allPage = 2;
 
 		switch (page) {
 			case 1:
@@ -608,7 +625,10 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Formatter.formatCommand(label, "stop", "능력자 전쟁을 중지시킵니다.", true),
 						Formatter.formatCommand(label, "check", "자신의 능력을 확인합니다.", false),
 						Formatter.formatCommand(label, "yes", "자신의 능력을 확정합니다.", false),
-						Formatter.formatCommand(label, "no", "자신의 능력을 변경합니다.", false)});
+						Formatter.formatCommand(label, "no", "자신의 능력을 변경합니다.", false),
+						Formatter.formatCommand(label, "abilities", "능력자 전쟁 능력 목록을 확인합니다.", false),
+						Formatter.formatCommand(label, "team", "팀 게임의 명령어 목록을 확인합니다.", false),
+						Formatter.formatCommand(label, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false)});
 				break;
 			case 2:
 				sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
@@ -619,17 +639,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Formatter.formatCommand(label, "anew", "모든 유저의 능력을 새로 뽑습니다.", true),
 						Formatter.formatCommand(label, "config", "능력자 전쟁 콘피그 명령어를 확인합니다.", true),
 						Formatter.formatCommand(label, "util", "능력자 전쟁 유틸 명령어를 확인합니다.", true),
-						Formatter.formatCommand(label, "script", "능력자 전쟁 스크립트 편집을 시작합니다.", true)});
-				break;
-			case 3:
-				sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
-						ChatColor.translateAlternateColorCodes('&',
-								"&b/" + label + " help <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
-										+ " 페이지 &7)"),
+						Formatter.formatCommand(label, "script", "능력자 전쟁 스크립트 편집을 시작합니다.", true),
 						Formatter.formatCommand(label, "gamemode", "능력자 전쟁 게임 모드를 설정합니다.", true),
-						Formatter.formatCommand(label, "team", "팀 게임의 명령어 목록을 확인합니다.", false),
-						Formatter.formatCommand(label, "install", "새로운 버전의 다운로드를 시도합니다.", true),
-						Formatter.formatCommand(label, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false)});
+						Formatter.formatCommand(label, "install", "새로운 버전의 다운로드를 시도합니다.", true)});
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -648,6 +660,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 								"&b/" + label + " config <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
 										+ " 페이지 &7)"),
 						Formatter.formatCommand(label + " config", "kit", "능력자 전쟁 기본템을 설정합니다.", true),
+						Formatter.formatCommand(label + " config", "kit <능력 이름>", "능력별 기본템을 설정합니다.", true),
 						Formatter.formatCommand(label + " config", "spawn", "능력자 전쟁 스폰을 설정합니다.", true),
 						Formatter.formatCommand(label + " config", "inv", "초반 무적을 설정합니다.", true),
 						Formatter.formatCommand(label + " config", "game", "게임의 전반적인 부분들을 설정합니다.", true),
@@ -736,7 +749,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 				|| label.equalsIgnoreCase("va") || label.equalsIgnoreCase("능력자")) {
 			switch (args.length) {
 				case 1:
-					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "skip", "anew",
+					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "skip", "anew",
 							"config", "util", "script", "gamemode", "install", "team", "specialthanks");
 					if (args[0].isEmpty()) {
 						return subCommands;

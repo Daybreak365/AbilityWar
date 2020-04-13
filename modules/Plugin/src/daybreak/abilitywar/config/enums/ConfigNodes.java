@@ -1,10 +1,16 @@
 package daybreak.abilitywar.config.enums;
 
+import daybreak.abilitywar.config.Cacher;
+import daybreak.abilitywar.config.serializable.AbilityKit;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.Messager;
 import org.bukkit.Bukkit;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public enum ConfigNodes {
 
@@ -26,8 +32,10 @@ public enum ConfigNodes {
 			"# %d는 순서대로 분, 초로 치환됩니다."),
 	GAME_INVINCIBILITY_BOSSBAR_INFINITE_MESSAGE("게임.초반무적.보스바.무한메시지", "무적이 적용되었습니다.",
 			"# 무적 제한시간이 정해져있지 않은 경우에 보스바에 표시될 메시지를 설정합니다."),
-	GAME_KIT("게임.기본템", Arrays.asList(),
+	GAME_KIT("게임.기본템", Collections.emptyList(),
 			"# 기본템 설정"),
+	GAME_ABILITY_KIT("게임.능력기본템", new AbilityKit(),
+			"# 능력 별 기본템 설정"),
 	GAME_INVENTORY_CLEAR("게임.인벤토리초기화", true,
 			"# 게임 시작시 인벤토리 초기화 여부"),
 	GAME_DRAW_ABILITY("게임.능력추첨", true,
@@ -60,8 +68,17 @@ public enum ConfigNodes {
 			"# 초반 스폰 이동 활성화 여부"),
 	GAME_VISUAL_EFFECT("게임.시각효과", true,
 			"# 파티클 활성화 여부"),
-	GAME_BLACKLIST("게임.블랙리스트", Messager.asList(),
-			"# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
+	GAME_BLACKLIST("게임.블랙리스트", Messager.asList(), new Cacher() {
+		@Override
+		public Object toCache(Object object) {
+			return new HashSet<>((List<?>) object);
+		}
+
+		@Override
+		public Object revertCache(Object object) {
+			return new ArrayList<>((Set<?>) object);
+		}
+	}, "# 능력을 추첨할 때 사용하지 않을 능력을 설정합니다."),
 	GAME_WRECK("게임.WRECK", false,
 			"# true로 설정하면",
 			"# W onderful",
@@ -91,12 +108,18 @@ public enum ConfigNodes {
 
 	private final String path;
 	private final Object defaultValue;
+	private final Cacher nodeHandler;
 	private final String[] comments;
 
-	ConfigNodes(String path, Object defaultValue, String... comments) {
+	ConfigNodes(String path, Object defaultValue, Cacher nodeHandler, String... comments) {
 		this.path = path;
 		this.defaultValue = defaultValue;
+		this.nodeHandler = nodeHandler;
 		this.comments = comments;
+	}
+
+	ConfigNodes(String path, Object defaultValue, String... comments) {
+		this(path, defaultValue, null, comments);
 	}
 
 	public String getPath() {
@@ -105,6 +128,14 @@ public enum ConfigNodes {
 
 	public Object getDefault() {
 		return defaultValue;
+	}
+
+	public boolean hasCacher() {
+		return nodeHandler != null;
+	}
+
+	public Cacher getCacher() {
+		return nodeHandler;
 	}
 
 	public String[] getComments() {

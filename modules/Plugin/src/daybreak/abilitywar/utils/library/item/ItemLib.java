@@ -11,7 +11,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
+import org.bukkit.Statistic;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -21,8 +22,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,20 +60,6 @@ public class ItemLib {
 			} else {
 				return new ItemStack(Material.valueOf(this.materialName), 1, color.getDamage());
 			}
-		}
-
-		public Block setBlock(Location location, ItemColor color) {
-			Block block = location.getBlock();
-			if (ServerVersion.getVersionNumber() >= 13) {
-				block.setType(Material.valueOf(color.name() + "_" + this.materialName));
-			} else {
-				block.setType(Material.valueOf(this.materialName));
-				try {
-					block.getClass().getDeclaredMethod("setData", byte.class).invoke(block, (byte) color.getDamage());
-				} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-				}
-			}
-			return block;
 		}
 
 		public boolean compareType(Material material) {
@@ -124,84 +112,7 @@ public class ItemLib {
 
 	}
 
-	@SuppressWarnings("deprecation")
-	public static SkullMeta setOwner(SkullMeta meta, String playerName) {
-		if (ServerVersion.getVersionNumber() >= 13) {
-			meta.setOwningPlayer(new OfflinePlayer() {
-
-				@Override
-				public Map<String, Object> serialize() {
-					return null;
-				}
-
-				@Override
-				public void setOp(boolean value) {
-				}
-
-				@Override
-				public boolean isOp() {
-					return false;
-				}
-
-				@Override
-				public void setWhitelisted(boolean value) {
-				}
-
-				@Override
-				public boolean isWhitelisted() {
-					return false;
-				}
-
-				@Override
-				public boolean isOnline() {
-					return false;
-				}
-
-				@Override
-				public boolean isBanned() {
-					return false;
-				}
-
-				@Override
-				public boolean hasPlayedBefore() {
-					return false;
-				}
-
-				@Override
-				public UUID getUniqueId() {
-					return null;
-				}
-
-				@Override
-				public org.bukkit.entity.Player getPlayer() {
-					return null;
-				}
-
-				@Override
-				public String getName() {
-					return playerName;
-				}
-
-				@Override
-				public long getLastPlayed() {
-					return 0;
-				}
-
-				@Override
-				public long getFirstPlayed() {
-					return 0;
-				}
-
-				@Override
-				public Location getBedSpawnLocation() {
-					return null;
-				}
-			});
-		} else {
-			meta.setOwner(playerName);
-		}
-		return meta;
-	}
+	private static final ItemStack AIR = new ItemStack(Material.AIR);
 
 	public static ItemStack getSkull(String owner) {
 		ItemStack item = MaterialX.PLAYER_HEAD.parseItem();
@@ -307,18 +218,225 @@ public class ItemLib {
 
 	}
 
-	public static void removeItem(Inventory inventory, Material type, int amount) {
+	@SuppressWarnings("deprecation")
+	public static SkullMeta setOwner(SkullMeta meta, String playerName) {
+		if (ServerVersion.getVersionNumber() >= 13) {
+			meta.setOwningPlayer(new OfflinePlayer() {
+
+				@Override
+				public Map<String, Object> serialize() {
+					return null;
+				}
+
+				@Override
+				public boolean isOp() {
+					return false;
+				}
+
+				@Override
+				public void setOp(boolean value) {
+				}
+
+				@Override
+				public boolean isWhitelisted() {
+					return false;
+				}
+
+				@Override
+				public void setWhitelisted(boolean value) {
+				}
+
+				@Override
+				public boolean isOnline() {
+					return false;
+				}
+
+				@Override
+				public boolean isBanned() {
+					return false;
+				}
+
+				@Override
+				public boolean hasPlayedBefore() {
+					return false;
+				}
+
+				@Override
+				public UUID getUniqueId() {
+					return null;
+				}
+
+				@Override
+				public org.bukkit.entity.Player getPlayer() {
+					return null;
+				}
+
+				@Override
+				public String getName() {
+					return playerName;
+				}
+
+				@Override
+				public long getLastPlayed() {
+					return 0;
+				}
+
+				@Override
+				public long getFirstPlayed() {
+					return 0;
+				}
+
+				@Override
+				public Location getBedSpawnLocation() {
+					return null;
+				}
+
+				@Override
+				public void incrementStatistic(Statistic statistic) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void decrementStatistic(Statistic statistic) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void incrementStatistic(Statistic statistic, int i) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void decrementStatistic(Statistic statistic, int i) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void setStatistic(Statistic statistic, int i) throws IllegalArgumentException {
+				}
+
+				@Override
+				public int getStatistic(Statistic statistic) throws IllegalArgumentException {
+					return 0;
+				}
+
+				@Override
+				public void incrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void decrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
+				}
+
+				@Override
+				public int getStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
+					return 0;
+				}
+
+				@Override
+				public void incrementStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void decrementStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void setStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void incrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void decrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
+				}
+
+				@Override
+				public int getStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
+					return 0;
+				}
+
+				@Override
+				public void incrementStatistic(Statistic statistic, EntityType entityType, int i) throws IllegalArgumentException {
+				}
+
+				@Override
+				public void decrementStatistic(Statistic statistic, EntityType entityType, int i) {
+				}
+
+				@Override
+				public void setStatistic(Statistic statistic, EntityType entityType, int i) {
+				}
+			});
+		} else {
+			meta.setOwner(playerName);
+		}
+		return meta;
+	}
+
+	public static boolean addItem(Inventory inventory, Material type, int amount) {
+		final Map<Integer, ItemStack> updates = new HashMap<>();
 		for (int i = 0; i < inventory.getContents().length; i++) {
 			ItemStack stack = inventory.getItem(i);
-			if (stack == null || !stack.getType().equals(type)) continue;
-			if (stack.getAmount() >= amount) {
-				stack.setAmount(stack.getAmount() - amount);
-				break;
+			if (stack == null || stack.getType() == Material.AIR) {
+				if (amount <= 64) {
+					updates.put(i, new ItemStack(type, amount));
+					amount = 0;
+					break;
+				} else {
+					updates.put(i, new ItemStack(type, 64));
+					amount -= 64;
+				}
 			} else {
-				amount -= stack.getAmount();
-				stack.setAmount(0);
+				if (stack.getType() != type || stack.hasItemMeta()) continue;
+				int left = 64 - stack.getAmount();
+				if (left >= amount) {
+					updates.put(i, new ItemStack(type, stack.getAmount() + amount));
+					amount = 0;
+					break;
+				} else {
+					updates.put(i, new ItemStack(type, 64));
+					amount -= left;
+				}
 			}
 		}
+		if (amount <= 0) {
+			for (Entry<Integer, ItemStack> entry : updates.entrySet()) {
+				inventory.setItem(entry.getKey(), entry.getValue());
+			}
+			return true;
+		} else return false;
+	}
+
+	public static boolean removeItem(Inventory inventory, Material type, int amount) {
+		final Map<Integer, ItemStack> updates = new HashMap<>();
+		for (int i = 0; i < inventory.getContents().length; i++) {
+			ItemStack stack = inventory.getItem(i);
+			if (stack == null || stack.getType() != type) continue;
+			if (stack.getAmount() >= amount) {
+				updates.put(i, new ItemStack(type, stack.getAmount() - amount));
+				amount = 0;
+				break;
+			} else {
+				updates.put(i, AIR);
+				amount -= stack.getAmount();
+			}
+		}
+		if (amount <= 0) {
+			for (Entry<Integer, ItemStack> entry : updates.entrySet()) {
+				inventory.setItem(entry.getKey(), entry.getValue());
+			}
+			return true;
+		} else return false;
+	}
+
+	public static int removeItem(Inventory inventory, Material type) {
+		int amount = 0;
+		for (int i = 0; i < inventory.getContents().length; i++) {
+			ItemStack stack = inventory.getItem(i);
+			if (stack == null || stack.getType() != type) continue;
+			amount += stack.getAmount();
+			inventory.setItem(i, AIR);
+		}
+		return amount;
 	}
 
 }

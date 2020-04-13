@@ -17,6 +17,7 @@ import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -232,17 +233,20 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		startGame();
 	}
 
+	private static final ItemStack WATER_GUN_ITEMSTACK = new ItemBuilder()
+			.type(Material.BOW)
+			.displayName("§b물총")
+			.unbreakable(true)
+			.build();
+
+
 	/**
 	 * 기본 킷 유저 지급
 	 */
 	@Override
-	public void giveDefaultKit(Player player) {
-		ItemStack bow = new ItemStack(Material.BOW);
-		ItemMeta bowMeta = bow.getItemMeta();
-		bowMeta.setUnbreakable(true);
-		bowMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b물총"));
-		bow.setItemMeta(bowMeta);
-		List<ItemStack> defaultKit = Arrays.asList(bow, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
+	public void giveDefaultKit(Participant participant) {
+		Player player = participant.getPlayer();
+		List<ItemStack> defaultKit = Arrays.asList(WATER_GUN_ITEMSTACK, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
 
 		if (Settings.getInventoryClear()) {
 			player.getInventory().clear();

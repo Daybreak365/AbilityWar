@@ -2,6 +2,7 @@ package daybreak.abilitywar.utils.base.math.geometry;
 
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.geometry.location.LocationIterator;
+import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -12,6 +13,50 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class Circle extends Shape {
 
 	private static final double TWICE_PI = 2 * Math.PI;
+
+	public static LocationIterator infiniteIteratorOf(Location center, double radius, int amount) {
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
+		checkArgument(radius > 0, "The radius must be positive");
+		checkArgument(!Double.isNaN(radius) && Double.isFinite(radius));
+		return new LocationIterator() {
+			private int cursor = 0;
+
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public Location next() {
+				if (cursor >= amount) cursor = 0;
+				cursor++;
+				double radians = (TWICE_PI / amount) * cursor;
+				return center.clone().add(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius);
+			}
+		};
+	}
+
+	public static VectorIterator infiniteIteratorOf(double radius, int amount) {
+		checkArgument(amount >= 1, "The amount must be 1 or greater.");
+		checkArgument(radius > 0, "The radius must be positive");
+		checkArgument(!Double.isNaN(radius) && Double.isFinite(radius));
+		return new VectorIterator() {
+			private int cursor = 0;
+
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public Vector next() {
+				if (cursor >= amount) cursor = 0;
+				cursor++;
+				double radians = (TWICE_PI / amount) * cursor;
+				return new Vector(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius);
+			}
+		};
+	}
 
 	public static LocationIterator iteratorOf(Location center, double radius, int amount) {
 		checkArgument(amount >= 1, "The amount must be 1 or greater.");

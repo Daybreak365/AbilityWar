@@ -13,6 +13,7 @@ import java.util.List;
 public class ItemBuilder {
 
 	private Material type;
+	private Boolean unbreakable = null;
 	private byte data;
 	private int amount = 1;
 	private String displayName;
@@ -26,6 +27,11 @@ public class ItemBuilder {
 
 	public ItemBuilder type(Material type) {
 		this.type = type;
+		return this;
+	}
+
+	public ItemBuilder unbreakable(boolean unbreakable) {
+		this.unbreakable = unbreakable;
 		return this;
 	}
 
@@ -65,6 +71,7 @@ public class ItemBuilder {
 			ItemMeta meta = stack.getItemMeta();
 			if (displayName != null) meta.setDisplayName(displayName);
 			if (lore != null) meta.setLore(lore);
+			if (unbreakable != null) meta.setUnbreakable(unbreakable);
 			stack.setItemMeta(meta);
 		}
 		return stack;

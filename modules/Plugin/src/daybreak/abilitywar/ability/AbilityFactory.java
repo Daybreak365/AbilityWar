@@ -88,6 +88,10 @@ public class AbilityFactory {
 		return registeredAbilities.containsKey(clazz);
 	}
 
+	public static boolean isRegistered(String name) {
+		return usedNames.containsKey(name);
+	}
+
 	static {
 		registerAbility(Assassin.class);
 		registerAbility(Feather.class);

@@ -26,7 +26,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -253,28 +252,6 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				}
 			}
 		};
-	}
-
-	/**
-	 * 기본 킷 유저 지급
-	 */
-	@Override
-	public void giveDefaultKit(Player player) {
-		List<ItemStack> DefaultKit = Settings.getDefaultKit();
-
-		if (Settings.getInventoryClear()) {
-			player.getInventory().clear();
-		}
-
-		for (ItemStack is : DefaultKit) {
-			player.getInventory().addItem(is);
-		}
-
-		player.setLevel(0);
-		if (Settings.getStartLevel() > 0) {
-			player.giveExpLevels(Settings.getStartLevel());
-			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(player);
-		}
 	}
 
 	@Override

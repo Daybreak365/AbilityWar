@@ -30,7 +30,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -80,12 +79,10 @@ public class BlackListGUI implements Listener {
 		playerPage = page;
 		int count = 0;
 
-		List<String> blackList = Settings.getBlackList();
-
 		for (String name : abilityNames) {
 			final ItemStack stack;
 
-			if (blackList.contains(name)) {
+			if (Settings.isBlackListed(name)) {
 				stack = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = stack.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));

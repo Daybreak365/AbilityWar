@@ -95,15 +95,6 @@ public class DeathManager implements Listener, Observer {
 				if (operation.getAbilityRemoval()) victim.removeAbility();
 
 				Operation(victim);
-
-				if (autoRespawn) {
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							NMSHandler.getNMS().respawn(victim.getPlayer());
-						}
-					}.runTaskLater(AbilityWar.getPlugin(), 2L);
-				}
 			}
 		}
 	}
@@ -126,8 +117,24 @@ public class DeathManager implements Listener, Observer {
 			case 관전모드:
 				victim.getPlayer().setGameMode(GameMode.SPECTATOR);
 				excludedPlayers.add(victim.getPlayer().getUniqueId());
+				if (autoRespawn) {
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							NMSHandler.getNMS().respawn(victim.getPlayer());
+						}
+					}.runTaskLater(AbilityWar.getPlugin(), 2L);
+				}
 				break;
 			case 없음:
+				if (autoRespawn) {
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							NMSHandler.getNMS().respawn(victim.getPlayer());
+						}
+					}.runTaskLater(AbilityWar.getPlugin(), 2L);
+				}
 				break;
 		}
 	}
