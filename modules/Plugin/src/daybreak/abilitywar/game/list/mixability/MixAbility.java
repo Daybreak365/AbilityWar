@@ -21,14 +21,6 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
-import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,6 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import javax.naming.OperationNotSupportedException;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 @GameManifest(Name = "믹스 능력자 전쟁", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
 @Beta
@@ -47,7 +46,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 	}
 
-	private boolean invincible = Configuration.Settings.InvincibilitySettings.isEnabled();
+	private final boolean invincible = Configuration.Settings.InvincibilitySettings.isEnabled();
 
 	@Override
 	protected void progressGame(int seconds) {

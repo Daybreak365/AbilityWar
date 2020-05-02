@@ -6,6 +6,8 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
+import java.util.Set;
+import java.util.TreeSet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,13 +17,11 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * 관전자 설정 GUI
@@ -113,6 +113,13 @@ public class SpectatorGUI implements Listener {
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if (e.getInventory().equals(this.gui)) {
+			HandlerList.unregisterAll(this);
+		}
+	}
+
+	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 		}
 	}

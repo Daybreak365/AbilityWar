@@ -11,20 +11,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.RegexReplacer;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -35,6 +21,20 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.regex.MatchResult;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 /**
  * 능력 부여 GUI
@@ -149,6 +149,13 @@ public class AbilityGUI implements Listener {
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if (e.getInventory().equals(this.abilityGUI)) {
+			HandlerList.unregisterAll(this);
+		}
+	}
+
+	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 		}
 	}

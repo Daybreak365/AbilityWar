@@ -2,15 +2,15 @@ package daybreak.abilitywar.config.enums;
 
 import daybreak.abilitywar.config.Cacher;
 import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.Messager;
-import org.bukkit.Bukkit;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.bukkit.Bukkit;
 
 public enum ConfigNodes {
 
@@ -88,6 +88,7 @@ public enum ConfigNodes {
 			"# K icking",
 			"# 모드를 활성화합니다.",
 			"# 모든 능력의 쿨타임 90% 감소"),
+	GAME_TEAM_PRESETS("팀게임.팀프리셋", new PresetContainer(), "#"),
 	ABILITY_CHANGE_GAME_PERIOD("체인지능력전쟁.주기", 20,
 			"# 능력 변경 주기 (단위: 초)"),
 	ABILITY_CHANGE_GAME_LIFE("체인지능력전쟁.생명", 3,

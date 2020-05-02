@@ -3,6 +3,10 @@ package daybreak.abilitywar.game.manager.gui;
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,16 +16,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 기여자 목록 GUI
@@ -47,31 +47,11 @@ public class SpecialThanksGUI implements Listener {
 			new SpecialThank("507fc49666fb43489200251f48bf4719", "몇몇 업데이트에 기여하셨습니다.")
 	};
 
-	public static class SpecialThank {
-
-		private String name;
-		private String[] role;
-
-		public SpecialThank(String UUID, String... role) {
-			try {
-				this.name = MojangAPI.getNickname(UUID);
-			} catch (IOException e) {
-				this.name = "ERROR";
-			}
-			this.role = role;
-			for (int i = 0; i < role.length; i++) {
-				role[i] = ChatColor.WHITE + role[i];
-			}
+	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+			HandlerList.unregisterAll(this);
 		}
-
-		public String getName() {
-			return name;
-		}
-
-		public List<String> getRole() {
-			return Arrays.asList(role);
-		}
-
 	}
 
 	private final Player p;
@@ -142,6 +122,33 @@ public class SpecialThanksGUI implements Listener {
 				}
 			}
 		}
+	}
+
+	public static class SpecialThank {
+
+		private String name;
+		private final String[] role;
+
+		public SpecialThank(String UUID, String... role) {
+			try {
+				this.name = MojangAPI.getNickname(UUID);
+			} catch (IOException e) {
+				this.name = "ERROR";
+			}
+			this.role = role;
+			for (int i = 0; i < role.length; i++) {
+				role[i] = ChatColor.WHITE + role[i];
+			}
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public List<String> getRole() {
+			return Arrays.asList(role);
+		}
+
 	}
 
 }

@@ -21,6 +21,19 @@ import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -37,20 +50,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.UUID;
 
 public abstract class AbstractGame extends SimpleTimer implements Listener, EffectManager.Handler, CommandHandler {
 
@@ -78,7 +77,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 	private final EventManager eventManager = new EventManager(this);
 	private final EffectManager effectManager = new EffectManager(this);
 
-	public AbstractGame(Collection<Player> players) {
+	public AbstractGame(Collection<Player> players) throws IllegalArgumentException {
 		super(TaskType.INFINITE, -1);
 		this.participantStrategy = newParticipantStrategy(players);
 	}

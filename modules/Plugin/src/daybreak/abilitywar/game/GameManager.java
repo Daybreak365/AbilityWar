@@ -6,7 +6,7 @@ import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
-
+import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import java.lang.reflect.InvocationTargetException;
 
 public class GameManager {
@@ -25,13 +25,20 @@ public class GameManager {
 		return currentGame;
 	}
 
-	public static boolean startGame() {
+	public static boolean startGame(String[] args) throws IllegalArgumentException {
 		try {
 			GameRegistration registration = GameFactory.getRegistration(Settings.getGameMode());
 			if (registration != null) {
-				return registration.getConstructor().newInstance().start();
+				if (registration.hasFlag(Flag.CONSTRUCTOR_ARGS)) {
+					return registration.getConstructor().newInstance((Object) args).start();
+				} else {
+					return registration.getConstructor().newInstance().start();
+				}
 			}
-		} catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+			if (e.getCause() != null && e.getCause() instanceof IllegalArgumentException) {
+				throw (IllegalArgumentException) e.getCause();
+			}
 		}
 		Configuration.modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());
 		return new DefaultGame().start();

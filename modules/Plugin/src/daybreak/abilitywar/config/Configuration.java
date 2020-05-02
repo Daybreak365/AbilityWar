@@ -3,14 +3,11 @@ package daybreak.abilitywar.config;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.ClassUtil;
-import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.inventory.ItemStack;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +18,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.inventory.ItemStack;
 
 public class Configuration {
 
@@ -47,7 +47,6 @@ public class Configuration {
 				file = FileUtil.newFile("Config.yml");
 				lastModified = file.lastModified();
 				config = new CommentedConfiguration(file);
-				update();
 			} catch (IOException | InvalidConfigurationException e) {
 				error = true;
 			}
@@ -222,6 +221,10 @@ public class Configuration {
 
 		public static Set<String> getBlackList() {
 			return getSet(ConfigNodes.GAME_BLACKLIST);
+		}
+
+		public static PresetContainer getPresetContainer() {
+			return get(ConfigNodes.GAME_TEAM_PRESETS);
 		}
 
 		public static void addBlackListAll(Collection<String> abilityNames) {

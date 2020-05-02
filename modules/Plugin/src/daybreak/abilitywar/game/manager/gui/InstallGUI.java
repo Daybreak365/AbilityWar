@@ -4,6 +4,9 @@ import daybreak.abilitywar.utils.installer.Installer;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
 import daybreak.abilitywar.utils.installer.Version;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,14 +16,11 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class InstallGUI implements Listener {
 
@@ -104,6 +104,13 @@ public class InstallGUI implements Listener {
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if (e.getInventory().equals(gui)) {
+			HandlerList.unregisterAll(this);
+		}
+	}
+
+	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 		}
 	}

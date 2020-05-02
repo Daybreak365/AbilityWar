@@ -2,6 +2,8 @@ package daybreak.abilitywar.game.list.teamfight;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.serializable.team.PresetContainer;
+import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
@@ -13,8 +15,18 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
+import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -26,25 +38,50 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import javax.naming.OperationNotSupportedException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @GameManifest(Name = "팀 전투", Description = {"§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다."})
 public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Observer {
 
-	public TeamFight() {
+	private final TeamPreset preset;
+	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
+
+	public TeamFight(String[] args) throws IllegalArgumentException {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
+		PresetContainer container = Settings.getPresetContainer();
+		if (args.length >= 1) {
+			if (container.hasPreset(args[0])) {
+				this.preset = validatePreset(container.getPreset(args[0]));
+			} else {
+				StringJoiner joiner = new StringJoiner(", ");
+				for (String name : container.getKeys()) {
+					joiner.add(name);
+				}
+				throw new IllegalArgumentException(args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 팀 프리셋입니다. 사용 가능한 프리셋: " + joiner.toString());
+			}
+		} else {
+			if (container.getPresets().size() == 1) {
+				this.preset = validatePreset(new ArrayList<>(container.getPresets()).get(0));
+			} else {
+				if (container.getPresets().size() == 0)
+					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 존재하지 않습니다. '/aw util teampreset' 에서 프리셋을 만들어주세요.");
+				else {
+					StringJoiner joiner = new StringJoiner(", ");
+					for (String name : container.getKeys()) {
+						joiner.add(name);
+					}
+					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 2개 이상 있습니다. '/.. start <팀 프리셋 이름>'과 같은 방법으로 사용할 프리셋을 선택해주세요. 사용 가능한 프리셋: " + joiner.toString());
+				}
+			}
+		}
 		setRestricted(invincible);
 		attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private boolean invincible = Settings.InvincibilitySettings.isEnabled();
+	private TeamPreset validatePreset(TeamPreset preset) {
+		if (!preset.isValid())
+			throw new IllegalArgumentException("프리셋 '" + preset.getName() + "'" + KoreanUtil.getJosa(preset.getName(), Josa.은는) + " 유효하지 않은 프리셋입니다. 프리셋에 설정된 팀의 수가 1개 이상인지 확인해주세요.");
+		return preset;
+	}
 
 	@Override
 	protected void progressGame(int seconds) {
@@ -170,9 +207,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 					setRestricted(false);
 				}
 
-				for (Participant participant : getParticipants()) {
-					setTeam(participant, null);
-				}
+				preset.getDivisionType().divide(this, preset);
 
 				ScriptManager.runAll(this);
 

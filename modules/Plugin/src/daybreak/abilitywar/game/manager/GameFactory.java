@@ -15,7 +15,6 @@ import daybreak.abilitywar.game.list.zerotick.ZeroTick;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.logging.Logger;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,7 +87,14 @@ public class GameFactory {
 
 		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException {
 			this.clazz = clazz;
-			this.constructor = clazz.getConstructor();
+
+			Constructor<? extends AbstractGame> constructor;
+			try {
+				constructor = clazz.getConstructor(String[].class);
+			} catch (NoSuchMethodException ex) {
+				constructor = clazz.getConstructor();
+			}
+			this.constructor = constructor;
 
 			if (!clazz.isAnnotationPresent(GameManifest.class))
 				throw new IllegalArgumentException("GameManifest가 없는 게임 모드입니다.");
@@ -98,6 +104,8 @@ public class GameFactory {
 
 			int flag = 0x0;
 			if (clazz.isAnnotationPresent(Beta.class)) flag |= Flag.BETA;
+			if (this.constructor.getParameterCount() == 1 && this.constructor.getParameterTypes()[0] == String[].class)
+				flag |= Flag.CONSTRUCTOR_ARGS;
 			this.flag = flag;
 		}
 
@@ -119,6 +127,7 @@ public class GameFactory {
 
 		public static class Flag {
 			public static final int BETA = 0x1;
+			public static final int CONSTRUCTOR_ARGS = 0x2;
 		}
 
 	}

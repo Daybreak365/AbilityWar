@@ -9,7 +9,7 @@ public class SpectatorManager {
 	private SpectatorManager() {
 	}
 
-	private static Set<String> spectators = new HashSet<>();
+	private static final Set<String> spectators = new HashSet<>();
 
 	public static boolean isSpectator(String name) {
 		return spectators.contains(name);

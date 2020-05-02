@@ -14,6 +14,11 @@ import daybreak.abilitywar.game.manager.object.ScoreboardManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -21,17 +26,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
-import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-
 public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
 
 	private static final Logger logger = Logger.getLogger(Game.class);
 
-	public Game(Collection<Player> players) {
+	public Game(Collection<Player> players) throws IllegalArgumentException {
 		super(players);
 	}
 

@@ -4,6 +4,10 @@ import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.ability.AbilitySettings;
+import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.serializable.team.PresetContainer;
+import daybreak.abilitywar.config.serializable.team.TeamPreset;
+import daybreak.abilitywar.config.serializable.team.TeamPreset.TeamScheme;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
@@ -12,14 +16,14 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.installer.Installer;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Ability War 능력자 전쟁 플러그인
@@ -27,6 +31,13 @@ import java.util.logging.Level;
  * @author Daybreak 새벽
  */
 public class AbilityWar extends JavaPlugin {
+
+	static {
+		ConfigurationSerialization.registerClass(AbilityKit.class);
+		ConfigurationSerialization.registerClass(PresetContainer.class);
+		ConfigurationSerialization.registerClass(TeamPreset.class);
+		ConfigurationSerialization.registerClass(TeamScheme.class);
+	}
 
 	private static final Logger logger = Logger.getLogger(AbilityWar.class);
 	private static AbilityWar plugin;

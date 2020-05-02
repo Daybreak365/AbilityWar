@@ -18,6 +18,7 @@ import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
+import daybreak.abilitywar.game.manager.gui.TeamPresetGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
@@ -33,6 +34,12 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -40,13 +47,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class MainCommand implements CommandExecutor, TabCompleter {
 
@@ -81,8 +81,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else if (split[0].equalsIgnoreCase("start")) {
 				if (sender.isOp()) {
 					if (!GameManager.isGameRunning()) {
-						if (GameManager.startGame()) {
-							Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + sender.getName() + "&f님이 게임을 시작시켰습니다."));
+						try {
+							if (GameManager.startGame(Arrays.copyOfRange(split, 1, split.length))) {
+								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + sender.getName() + "&f님이 게임을 시작시켰습니다."));
+							}
+						} catch (IllegalArgumentException ex) {
+							Messager.sendErrorMessage(sender, ex.getMessage());
 						}
 					} else {
 						Messager.sendErrorMessage(sender, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 이미 진행되고 있습니다."));
@@ -514,6 +518,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않거나 팀 기능을 사용할 수 있는 게임이 아닙니다."));
 			}
+		} else if (args[0].equalsIgnoreCase("teampreset")) {
+			new TeamPresetGUI(p, plugin).openGUI(1);
 		} else {
 			if (NumberUtil.isInt(args[0])) {
 				sendHelpUtilCommand(p, label, Integer.parseInt(args[0]));
@@ -717,7 +723,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Formatter.formatCommand(label + " util", "resetcool", "플레이어들의 능력 쿨타임을 초기화시킵니다.", true),
 						Formatter.formatCommand(label + " util", "resetduration", "플레이어들의 능력 지속시간을 초기화시킵니다.", true),
 						Formatter.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true),
-						Formatter.formatCommand(label + " util", "team", "팀 유틸 명령어를 확인합니다.", true)});
+						Formatter.formatCommand(label + " util", "team", "팀 유틸 명령어를 확인합니다.", true),
+						Formatter.formatCommand(label + " util", "teampreset", "팀 프리셋 설정 GUI를 엽니다.", true)});
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -768,7 +775,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						}
 					} else if (args[0].equalsIgnoreCase("util")) {
 						List<String> utils = Messager.asList("abi", "spec", "ablist", "blacklist", "resetcool",
-								"resetduration", "kit", "inv", "team");
+								"resetduration", "kit", "inv", "team", "teampreset");
 						if (args[1].isEmpty()) {
 							return utils;
 						} else {

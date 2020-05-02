@@ -11,6 +11,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,17 +29,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 능력 금지 GUI
@@ -152,6 +152,18 @@ public class BlackListGUI implements Listener {
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if (e.getInventory().equals(this.gui)) {
+			HandlerList.unregisterAll(this);
+			try {
+				Configuration.update();
+			} catch (IOException | InvalidConfigurationException e1) {
+				logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
+			}
+		}
+	}
+
+	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 			try {
 				Configuration.update();

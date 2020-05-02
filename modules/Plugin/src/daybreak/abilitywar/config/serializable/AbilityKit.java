@@ -1,20 +1,14 @@
 package daybreak.abilitywar.config.serializable;
 
 import daybreak.abilitywar.config.Configuration.Settings;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.inventory.ItemStack;
 
 public class AbilityKit implements ConfigurationSerializable {
-
-	static {
-		ConfigurationSerialization.registerClass(AbilityKit.class);
-	}
 
 	private final Map<String, List<ItemStack>> kits;
 

@@ -17,6 +17,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.item.ItemLib;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -27,8 +28,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
-
-import java.util.function.Predicate;
 
 @AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
 		"주위 15칸 안에 있는 상대를 원거리에서 타겟팅해 $[DurationConfig]초간 지속되는",
@@ -93,7 +92,8 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationStart() {
 			armorStand = target.getWorld().spawn(getPlayer().getLocation(), ArmorStand.class);
-			if (ServerVersion.getVersionNumber() >= 10) armorStand.setInvulnerable(true);
+			if (ServerVersion.getVersionNumber() >= 10 && ServerVersion.getVersionNumber() < 15)
+				armorStand.setInvulnerable(true);
 			armorStand.setCustomName(target.getName());
 			armorStand.setCustomNameVisible(true);
 			armorStand.setBasePlate(false);
