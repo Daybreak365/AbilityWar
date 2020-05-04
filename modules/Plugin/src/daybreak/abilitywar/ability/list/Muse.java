@@ -16,6 +16,7 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.Iterator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -26,8 +27,6 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import java.util.Iterator;
-
 @AbilityManifest(name = "뮤즈", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여",
 		"모두가 대미지를 받지 않는 지역을 만들어냅니다. $[CooldownConfig]",
@@ -35,11 +34,11 @@ import java.util.Iterator;
 })
 public class Muse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Muse.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Muse.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

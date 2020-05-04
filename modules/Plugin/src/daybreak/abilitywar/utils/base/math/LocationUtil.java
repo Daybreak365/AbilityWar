@@ -11,6 +11,11 @@ import daybreak.abilitywar.utils.base.math.geometry.Boundary;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundaryData;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -21,12 +26,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
 
 /**
  * Location Util
@@ -110,7 +109,7 @@ public class LocationUtil {
 		while (iterator.hasNext()) {
 			Block block = iterator.next();
 			if (block.getType().isOccluding()) return null;
-			boundingBox.setLocation(block.getLocation());
+			boundingBox.setCenter(block.getLocation());
 			Chunk blockChunk = block.getChunk();
 			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
 			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
@@ -142,7 +141,7 @@ public class LocationUtil {
 		while (iterator.hasNext()) {
 			Block block = iterator.next();
 			if (block.getType().isOccluding()) return null;
-			boundingBox.setLocation(block.getLocation());
+			boundingBox.setCenter(block.getLocation());
 			Chunk blockChunk = block.getChunk();
 			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
 			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
@@ -174,7 +173,7 @@ public class LocationUtil {
 		while (iterator.hasNext()) {
 			Block block = iterator.next();
 			if (block.getType().isOccluding()) return null;
-			boundingBox.setLocation(block.getLocation());
+			boundingBox.setCenter(block.getLocation());
 			Chunk blockChunk = block.getChunk();
 			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
 			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
@@ -385,6 +384,27 @@ public class LocationUtil {
 	}
 
 	/**
+	 * 일정 범위 내에 있는 청크들의 커스텀 엔티티 목록을 반환합니다.
+	 *
+	 * @param center     중점
+	 * @param horizontal 수평 거리
+	 * @return 엔티티 목록
+	 */
+	public static List<CustomEntity> collectCustomEntities(Location center, int horizontal) {
+		final List<CustomEntity> entities = new ArrayList<>();
+		if (GameManager.isGameRunning()) {
+			World world = center.getWorld();
+			final int maxX = (center.getBlockX() + horizontal) >> 4, maxZ = (center.getBlockZ() + horizontal) >> 4;
+			for (int x = (center.getBlockX() - horizontal) >> 4; x <= maxX; x++) {
+				for (int z = (center.getBlockZ() - horizontal) >> 4; z <= maxZ; z++) {
+					entities.addAll(GameManager.getGame().getCustomEntities(world.getChunkAt(x, z)));
+				}
+			}
+		}
+		return entities;
+	}
+
+	/**
 	 * 일정 범위 내에 있는 청크들의 엔티티 목록을 반환합니다.
 	 *
 	 * @param center 중심 청크
@@ -479,14 +499,38 @@ public class LocationUtil {
 		return getNearbyEntities(Player.class, l, horizontal, vertical);
 	}
 
+	/**
+	 * 주변에 있는 특정 타입의 커스텀 엔티티 목록을 반환합니다.
+	 *
+	 * @param entityType 탐색할 엔티티 타입
+	 * @param center     중점
+	 * @param horizontal 수평 거리
+	 * @param vertical   수직 거리
+	 * @param predicate  커스텀 조건
+	 * @return 주변에 있는 특정 타입의 커스텀 엔티티 목록
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> ArrayList<T> getNearbyCustomEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<CustomEntity> predicate) {
+		double centerX = center.getX(), centerZ = center.getZ();
+		ArrayList<T> entities = new ArrayList<>();
+		for (CustomEntity e : collectCustomEntities(center, (int) Math.floor(horizontal))) {
+			if (entityType.isAssignableFrom(e.getClass())) {
+				if (distanceSquared2D(centerX, centerZ, e.x(), e.z()) <= (horizontal * horizontal) && NumberUtil.subtract(center.getY(), e.y()) <= vertical && (predicate == null || predicate.test(e))) {
+					entities.add((T) e);
+				}
+			}
+		}
+		return entities;
+	}
+
 	public static boolean doesConflict(BoundingBox a, BoundingBox b) {
 		return a.getMinX() < b.getMaxX() && b.getMinX() < a.getMaxX() && a.getMinY() < b.getMaxY() && b.getMinY() < a.getMaxY() && a.getMinZ() < b.getMaxZ() && b.getMinZ() < a.getMaxZ();
 	}
 
 	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<Entity> predicate) {
 		List<T> entities = new ArrayList<>();
-		World world = boundingBox.getLocation().getWorld();
-		Chunk chunk = boundingBox.getLocation().getChunk();
+		World world = boundingBox.getCenter().getWorld();
+		Chunk chunk = boundingBox.getCenter().getChunk();
 		int chunkX = chunk.getX(), chunkZ = chunk.getZ();
 		for (int x = chunkX - 1; x <= chunkX + 1; x++) {
 			for (int z = chunkZ - 1; z <= chunkZ + 1; z++) {

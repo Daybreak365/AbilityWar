@@ -32,10 +32,10 @@ import org.bukkit.util.Vector;
 })
 public class Nex extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -46,10 +46,10 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Nex.class, "Damage", 20, "# 대미지") {
+	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Nex.class, "Damage", 20, "# 대미지") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

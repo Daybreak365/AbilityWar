@@ -12,6 +12,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import java.util.Iterator;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
@@ -21,8 +22,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import java.util.Iterator;
-
 @AbilityManifest(name = "제우스", rank = Rank.S, species = Species.GOD, explain = {
 		"번개의 신 제우스.",
 		"철괴를 우클릭하면 주변에 번개를 떨어뜨리며 폭발을 일으킵니다. $[CooldownConfig]",
@@ -31,11 +30,11 @@ import java.util.Iterator;
 })
 public class Zeus extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

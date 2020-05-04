@@ -21,6 +21,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
+import java.util.Iterator;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -35,8 +36,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-
-import java.util.Iterator;
 
 @AbilityManifest(name = "스나이퍼", rank = Rank.S, species = Species.HUMAN, explain = {
 		"활을 쏠 때 매우 빠른 속도로 나아가는 특수한 투사체를 쏩니다.",
@@ -171,6 +170,11 @@ public class Sniper extends AbilityBase {
 
 			public ArrowEntity(World world, double x, double y, double z) {
 				getGame().super(world, x, y, z);
+			}
+
+			@Override
+			public Vector getDirection() {
+				return forward.clone();
 			}
 
 			@Override

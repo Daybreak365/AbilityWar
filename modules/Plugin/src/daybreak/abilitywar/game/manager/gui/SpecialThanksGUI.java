@@ -30,12 +30,12 @@ public class SpecialThanksGUI implements Listener {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
 	private static final ItemStack NEXT_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
 	private static final SpecialThank[] SpecialThanks = {
@@ -115,9 +115,9 @@ public class SpecialThanksGUI implements Listener {
 		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
+				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
 					openGUI(currentPage - 1);
-				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
+				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "다음 페이지")) {
 					openGUI(currentPage + 1);
 				}
 			}

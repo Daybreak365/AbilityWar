@@ -1,9 +1,9 @@
 package daybreak.abilitywar;
 
+import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.config.Configuration;
-import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.config.serializable.AbilityKit;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.config.serializable.team.TeamPreset;
@@ -94,7 +94,6 @@ public class AbilityWar extends JavaPlugin {
 			public void run() {
 				AbilityFactory.nameValues();
 				try {
-					AbilitySettings.load();
 					Configuration.update();
 				} catch (IOException | InvalidConfigurationException e) {
 					logger.log(Level.SEVERE, "콘피그를 불러오는 도중 오류가 발생하였습니다.");
@@ -112,10 +111,10 @@ public class AbilityWar extends JavaPlugin {
 		GameManager.stopGame();
 		try {
 			Configuration.update();
+			AbilityBase.abilitySettings.update();
 		} catch (IOException | InvalidConfigurationException e) {
 			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 		}
-		AbilitySettings.update();
 		AddonLoader.disableAll();
 		Messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");
 	}

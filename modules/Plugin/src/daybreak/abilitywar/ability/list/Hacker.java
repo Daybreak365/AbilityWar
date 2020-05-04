@@ -27,11 +27,11 @@ import org.bukkit.entity.Player;
 })
 public class Hacker extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -42,11 +42,11 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Hacker.class, "Duration", 5,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Hacker.class, "Duration", 5,
 			"# 능력 지속시간") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

@@ -22,11 +22,11 @@ import org.bukkit.entity.Player;
 })
 public class Clown extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Clown.class, "Cooldown", 60,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Clown.class, "Cooldown", 60,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -37,11 +37,11 @@ public class Clown extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Clown.class, "Range", 10,
+	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Clown.class, "Range", 10,
 			"# 스킬 범위") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

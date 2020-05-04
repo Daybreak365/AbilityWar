@@ -12,6 +12,9 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
@@ -20,21 +23,17 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-
 @AbilityManifest(name = "마술사", rank = Rank.A, species = Species.HUMAN, explain = {
 		"활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게",
 		"최대체력의 1/5 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[CooldownConfig]"
 })
 public class Magician extends AbilityBase {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Magician.class, "Cooldown", 8,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Magician.class, "Cooldown", 8,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

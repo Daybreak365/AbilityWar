@@ -19,6 +19,8 @@ import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import java.util.ArrayList;
+import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,9 +33,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 @AbilityManifest(name = "영혼수확자", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
 		"생명체가 죽을 경우 그 자리에 60초간 영혼이 남으며,",
 		"가까이 가면 수확할 수 있습니다. 철괴 우클릭 시 수확한 영혼을 모두 방출해",
@@ -45,11 +44,11 @@ import java.util.Random;
 })
 public class Reaper extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Reaper.class, "Cooldown", 140,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Reaper.class, "Cooldown", 140,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -60,11 +59,11 @@ public class Reaper extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Reaper.class, "Distance", 7,
+	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Reaper.class, "Distance", 7,
 			"# 거리 설정") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

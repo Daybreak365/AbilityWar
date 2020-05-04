@@ -18,6 +18,10 @@ import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,11 +32,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 @AbilityManifest(name = "유명 인사", rank = Rank.C, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[CooldownConfig]",
 		"능력으로 인해 깔린 레드 카펫 위에 있을 때 주변 $[DistanceConfig]칸 이내의 모든 생명체가",
@@ -40,11 +39,11 @@ import java.util.Set;
 })
 public class Celebrity extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -55,21 +54,21 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> DistanceConfig = new SettingObject<Double>(Celebrity.class, "Distance", 10.0,
+	public static final SettingObject<Double> DistanceConfig = abilitySettings.new SettingObject<Double>(Celebrity.class, "Distance", 10.0,
 			"# 능력 거리") {
 
 		@Override
-		public boolean Condition(Double value) {
+		public boolean condition(Double value) {
 			return value > 0;
 		}
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Celebrity.class, "Duration", 5,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Celebrity.class, "Duration", 5,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 
@@ -81,7 +80,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	private static final double radians = Math.toRadians(90);
 
-	private double distance = DistanceConfig.getValue();
+	private final double distance = DistanceConfig.getValue();
 	private final Map<Block, BlockSnapshot> carpets = new HashMap<>();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
@@ -103,7 +102,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 			}
 			direction.multiply(0.75);
 			new Timer(30) {
-				Set<String> set = new HashSet<>();
+				final Set<String> set = new HashSet<>();
 
 				@Override
 				protected void run(int count) {

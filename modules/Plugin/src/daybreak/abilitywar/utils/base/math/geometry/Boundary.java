@@ -3,11 +3,10 @@ package daybreak.abilitywar.utils.base.math.geometry;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.EnumMap;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-
-import java.util.EnumMap;
 
 public class Boundary {
 
@@ -172,12 +171,22 @@ public class Boundary {
 	public interface BoundingBox {
 
 		double getMinX();
+
 		double getMinY();
+
 		double getMinZ();
+
 		double getMaxX();
+
 		double getMaxY();
+
 		double getMaxZ();
-		Location getLocation();
+
+		default boolean conflicts(BoundingBox boundingBox) {
+			return getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < getMaxX() && getMinY() < boundingBox.getMaxY() && boundingBox.getMinY() < getMaxY() && getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < getMaxZ();
+		}
+
+		Location getCenter();
 
 	}
 
@@ -190,14 +199,14 @@ public class Boundary {
 		private Location center;
 		private final double minX, minY, minZ, maxX, maxY, maxZ;
 
-		public CenteredBoundingBox(Location center, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+		public CenteredBoundingBox(Location center, double x1, double y1, double z1, double x2, double y2, double z2) {
 			this.center = center;
-			this.minX = minX;
-			this.minY = minY;
-			this.minZ = minZ;
-			this.maxX = maxX;
-			this.maxY = maxY;
-			this.maxZ = maxZ;
+			this.minX = Math.min(x1, x2);
+			this.minY = Math.min(y1, y2);
+			this.minZ = Math.min(z1, z2);
+			this.maxX = Math.max(x1, x2);
+			this.maxY = Math.max(y1, y2);
+			this.maxZ = Math.max(z1, z2);
 		}
 
 		@Override
@@ -231,11 +240,11 @@ public class Boundary {
 		}
 
 		@Override
-		public Location getLocation() {
+		public Location getCenter() {
 			return center;
 		}
 
-		public void setLocation(Location location) {
+		public void setCenter(Location location) {
 			this.center = location;
 		}
 
@@ -263,36 +272,36 @@ public class Boundary {
 
 		@Override
 		public double getMinX() {
-			return getLocation().getX() + minX;
+			return getCenter().getX() + minX;
 		}
 
 		@Override
 		public double getMinY() {
-			return getLocation().getY() + minY;
+			return getCenter().getY() + minY;
 		}
 
 		@Override
 		public double getMinZ() {
-			return getLocation().getZ() + minZ;
+			return getCenter().getZ() + minZ;
 		}
 
 		@Override
 		public double getMaxX() {
-			return getLocation().getX() + maxX;
+			return getCenter().getX() + maxX;
 		}
 
 		@Override
 		public double getMaxY() {
-			return getLocation().getY() + maxY;
+			return getCenter().getY() + maxY;
 		}
 
 		@Override
 		public double getMaxZ() {
-			return getLocation().getZ() + maxZ;
+			return getCenter().getZ() + maxZ;
 		}
 
 		@Override
-		public Location getLocation() {
+		public Location getCenter() {
 			return entity.getLocation();
 		}
 

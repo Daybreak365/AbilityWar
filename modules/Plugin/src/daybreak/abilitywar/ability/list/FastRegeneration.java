@@ -23,11 +23,11 @@ import org.bukkit.entity.Player;
 })
 public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -38,11 +38,11 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(FastRegeneration.class, "Duration", 10,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Duration", 10,
 			"# 지속 시간 (단위: 초)") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

@@ -25,11 +25,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 })
 public class Void extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Void.class, "Cooldown", 100,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Void.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -40,11 +40,11 @@ public class Void extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Void.class, "Duration", 4,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Void.class, "Duration", 4,
 			"# 순간이동 후 무적 지속시간") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

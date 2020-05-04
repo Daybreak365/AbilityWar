@@ -36,12 +36,12 @@ public class AbilityListGUI implements Listener {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
 	private static final ItemStack NEXT_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");

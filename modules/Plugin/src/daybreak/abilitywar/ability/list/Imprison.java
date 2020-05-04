@@ -16,6 +16,10 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,11 +28,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Predicate;
-
 @AbilityManifest(name = "구속", rank = Rank.B, species = Species.HUMAN, explain = {
 		"상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. $[CooldownConfig]",
 		"10초마다 §e강도 스택§f이 1씩 오르며, 최대 $[MaxSolidityConfig] 스택을 모을 수 있습니다.",
@@ -36,10 +35,10 @@ import java.util.function.Predicate;
 })
 public class Imprison extends AbilityBase implements TargetHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -50,19 +49,19 @@ public class Imprison extends AbilityBase implements TargetHandler {
 
 	};
 
-	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(Imprison.class, "Size", 5, "# 유리 구의 크기") {
+	public static final SettingObject<Integer> SizeConfig = abilitySettings.new SettingObject<Integer>(Imprison.class, "Size", 5, "# 유리 구의 크기") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 
 	};
 
-	public static final SettingObject<Integer> MaxSolidityConfig = new SettingObject<Integer>(Imprison.class, "MaxSolidity", 4, "# 최대 강도") {
+	public static final SettingObject<Integer> MaxSolidityConfig = abilitySettings.new SettingObject<Integer>(Imprison.class, "MaxSolidity", 4, "# 최대 강도") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

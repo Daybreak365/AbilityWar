@@ -20,6 +20,12 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -36,13 +42,6 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
 @AbilityManifest(name = "관통화살", rank = AbilityManifest.Rank.S, species = AbilityManifest.Species.OTHERS, explain = {
 		"활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다.",
 		"투사체에는 특수한 능력이 있으며, 활을 §e$[BulletConfig]번 §f쏠 때마다 능력이 변경됩니다.",
@@ -53,11 +52,11 @@ import java.util.Set;
 })
 public class PenetrationArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> BulletConfig = new SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 5,
+	public static final SettingObject<Integer> BulletConfig = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 5,
 			"# 능력 당 화살 개수") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1 && value <= 100 && value % 2 != 0;
 		}
 
@@ -230,6 +229,11 @@ public class PenetrationArrow extends AbilityBase {
 
 			public ArrowEntity(World world, double x, double y, double z) {
 				getGame().super(world, x, y, z);
+			}
+
+			@Override
+			public Vector getDirection() {
+				return forward.clone();
 			}
 
 			@Override

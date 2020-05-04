@@ -17,11 +17,11 @@ import org.bukkit.entity.Damageable;
 })
 public class Hedgehog extends AbilityBase {
 
-	public static final SettingObject<Double> DamageConfig = new SettingObject<Double>(Hedgehog.class, "Damage", 2.0,
+	public static final SettingObject<Double> DamageConfig = abilitySettings.new SettingObject<Double>(Hedgehog.class, "Damage", 2.0,
 			"# 대미지") {
 
 		@Override
-		public boolean Condition(Double value) {
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 

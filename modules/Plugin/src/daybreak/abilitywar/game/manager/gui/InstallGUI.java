@@ -79,7 +79,7 @@ public class InstallGUI implements Listener {
 		if (page > 1) {
 			ItemStack previousPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta previousMeta = previousPage.getItemMeta();
-			previousMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
+			previousMeta.setDisplayName(ChatColor.AQUA + "이전 페이지");
 			previousPage.setItemMeta(previousMeta);
 			gui.setItem(21, previousPage);
 		}
@@ -87,7 +87,7 @@ public class InstallGUI implements Listener {
 		if (page != maxPage) {
 			ItemStack nextPage = new ItemStack(Material.ARROW, 1);
 			ItemMeta nextMeta = nextPage.getItemMeta();
-			nextMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
+			nextMeta.setDisplayName(ChatColor.AQUA + "다음 페이지");
 			nextPage.setItemMeta(nextMeta);
 			gui.setItem(23, nextPage);
 		}

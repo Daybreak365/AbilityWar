@@ -6,6 +6,8 @@ import org.bukkit.util.Vector;
 
 public interface Deflectable {
 
+	Vector getDirection();
+
 	void onDeflect(Participant deflector, Vector newDirection);
 
 	ProjectileSource getShooter();

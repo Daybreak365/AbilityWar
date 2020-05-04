@@ -43,16 +43,21 @@ public class AbilityGUI implements Listener {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
 	private static final ItemStack NEXT_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.displayName(ChatColor.AQUA + "다음 페이지")
+			.build();
+
+	private static final ItemStack REMOVE_ABILITY = new ItemBuilder()
+			.type(Material.BARRIER)
+			.displayName(ChatColor.RED + "능력 제거")
 			.build();
 
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
-	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^()]]+)\\)");
+	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
 
 	private final Player p;
 	private final Participant target;
@@ -129,6 +134,8 @@ public class AbilityGUI implements Listener {
 			count++;
 		}
 
+		abilityGUI.setItem(45, REMOVE_ABILITY);
+
 		if (page > 1) {
 			abilityGUI.setItem(48, PREVIOUS_PAGE);
 		}
@@ -192,10 +199,24 @@ public class AbilityGUI implements Listener {
 					}
 					p.closeInventory();
 				} else {
-					if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
+					if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
 						openGUI(currentPage - 1);
-					} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
+					} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "다음 페이지")) {
 						openGUI(currentPage + 1);
+					} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.RED + "능력 제거")) {
+						if (GameManager.isGameRunning()) {
+							AbstractGame game = GameManager.getGame();
+							if (target != null) {
+								target.removeAbility();
+								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님의 능력을 제거하였습니다."));
+							} else {
+								for (Participant participant : game.getParticipants()) {
+									participant.removeAbility();
+								}
+								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a의 능력을 제거하였습니다."));
+							}
+						}
+						p.closeInventory();
 					}
 				}
 			}

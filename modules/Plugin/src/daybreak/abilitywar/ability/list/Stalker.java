@@ -14,6 +14,8 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -27,9 +29,6 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.List;
-
 @AbilityManifest(name = "스토커", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 다른 플레이어가 타게팅할 수 없고 벽을 통과할 수 있는",
 		"상태로 변하여 마지막으로 타격했던 플레이어에게 돌진합니다. $[CooldownConfig]",
@@ -40,11 +39,11 @@ import java.util.List;
 })
 public class Stalker extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Stalker.class, "Cooldown", 210,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Stalker.class, "Cooldown", 210,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

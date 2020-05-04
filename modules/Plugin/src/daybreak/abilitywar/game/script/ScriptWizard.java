@@ -11,6 +11,11 @@ import daybreak.abilitywar.game.script.setter.special.TimeSetter;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,12 +29,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Script Wizard
@@ -47,12 +46,12 @@ public class ScriptWizard implements Listener {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))
+			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
 	private static final ItemStack NEXT_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
-			.displayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))
+			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
 	private final Player player;
@@ -96,7 +95,7 @@ public class ScriptWizard implements Listener {
 	public MessageSetter runMessageSetter = new MessageSetter("실행 메시지", "&e%ScriptName% &f스크립트가 실행되었습니다.", this);
 	// Default Setters
 
-	private ArrayList<Setter<?>> setters = new ArrayList<Setter<?>>();
+	private final ArrayList<Setter<?>> setters = new ArrayList<Setter<?>>();
 
 	public void openScriptWizard(int page) {
 		playerPage = page;
@@ -164,9 +163,9 @@ public class ScriptWizard implements Listener {
 			if (clicked != null && !clicked.getType().equals(Material.AIR) && clicked.hasItemMeta() && clicked.getItemMeta().hasDisplayName()) {
 				String displayName = clicked.getItemMeta().getDisplayName();
 
-				if (displayName.equals(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"))) {
+				if (displayName.equals(ChatColor.AQUA + "이전 페이지")) {
 					openScriptWizard(playerPage - 1);
-				} else if (displayName.equals(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"))) {
+				} else if (displayName.equals(ChatColor.AQUA + "다음 페이지")) {
 					openScriptWizard(playerPage + 1);
 				} else if (displayName.equals(ChatColor.translateAlternateColorCodes('&', "&a저장"))) {
 					if (canSave()) {

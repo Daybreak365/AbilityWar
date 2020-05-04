@@ -13,7 +13,6 @@ import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -86,7 +85,6 @@ public class AbilityList {
 		registerAbility(Virtus.class);
 		registerAbility(Nex.class);
 		registerAbility(Ira.class);
-		registerAbility(OnlyOddNumber.class);
 		registerAbility(Clown.class);
 		registerAbility(Magician.class);
 		registerAbility(Emperor.class);

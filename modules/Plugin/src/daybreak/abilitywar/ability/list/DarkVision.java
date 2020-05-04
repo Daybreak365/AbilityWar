@@ -18,11 +18,11 @@ import org.bukkit.entity.LivingEntity;
 })
 public class DarkVision extends AbilityBase {
 
-	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(DarkVision.class, "Distance", 30,
+	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(DarkVision.class, "Distance", 30,
 			"# 거리 설정") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

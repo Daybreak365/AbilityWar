@@ -23,11 +23,11 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 })
 public class Berserker extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -38,22 +38,22 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> StrengthConfig = new SettingObject<Double>(Berserker.class, "Strength", 2.5,
+	public static final SettingObject<Double> StrengthConfig = abilitySettings.new SettingObject<Double>(Berserker.class, "Strength", 2.5,
 			"# 공격 강화 배수") {
 
 		@Override
-		public boolean Condition(Double value) {
+		public boolean condition(Double value) {
 			return value >= 2;
 		}
 
 	};
 
-	public static final SettingObject<Integer> DebuffConfig = new SettingObject<Integer>(Berserker.class, "Debuff", 5,
+	public static final SettingObject<Integer> DebuffConfig = abilitySettings.new SettingObject<Integer>(Berserker.class, "Debuff", 5,
 			"# 능력 사용 후 디버프를 받는 시간",
 			"# 단위 : 초") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

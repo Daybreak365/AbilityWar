@@ -11,11 +11,10 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.LinkedList;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
-
-import java.util.LinkedList;
 
 @AbilityManifest(name = "암살자", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 $[DistanceConfig]칸 이내에 있는 생명체 $[TeleportCountConfig]명(마리)에게 이동하며",
@@ -23,31 +22,31 @@ import java.util.LinkedList;
 })
 public class Assassin extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Assassin.class, "Distance", 10,
+	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Distance", 10,
 			"# 스킬 대미지") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value > 0;
 		}
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Assassin.class, "Damage", 9,
+	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Damage", 9,
 			"# 스킬 대미지") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
 	};
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Assassin.class, "Cooldown", 25,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Cooldown", 25,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -58,11 +57,11 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> TeleportCountConfig = new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
+	public static final SettingObject<Integer> TeleportCountConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
 			"# 능력 사용 시 텔레포트 횟수") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

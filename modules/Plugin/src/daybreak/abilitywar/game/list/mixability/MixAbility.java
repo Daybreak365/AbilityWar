@@ -173,7 +173,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 			case ABI:
 				if (args[0].equalsIgnoreCase("@a")) {
 					MixAbilityGUI gui = new MixAbilityGUI(player, plugin);
-					gui.openAbilityGUI(1);
+					gui.openGUI(1);
 				} else {
 					Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 					if (targetPlayer != null) {
@@ -181,7 +181,7 @@ public class MixAbility extends Game implements DefaultKitHandler {
 						if (game.isParticipating(targetPlayer)) {
 							AbstractGame.Participant target = game.getParticipant(targetPlayer);
 							MixAbilityGUI gui = new MixAbilityGUI(player, target, plugin);
-							gui.openAbilityGUI(1);
+							gui.openGUI(1);
 						} else {
 							Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 						}

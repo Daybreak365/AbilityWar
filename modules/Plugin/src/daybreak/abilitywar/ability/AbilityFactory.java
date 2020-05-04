@@ -17,8 +17,6 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
-import org.bukkit.event.Event;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -30,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.event.Event;
 
 /**
  * {@link AbilityBase}를 기반으로 하는 모든 능력을 관리하는 클래스입니다.
@@ -119,7 +118,6 @@ public class AbilityFactory {
 		registerAbility(Virtus.class);
 		registerAbility(Nex.class);
 		registerAbility(Ira.class);
-		registerAbility(OnlyOddNumber.class);
 		registerAbility(Clown.class);
 		registerAbility(Magician.class);
 		registerAbility(Emperor.class);

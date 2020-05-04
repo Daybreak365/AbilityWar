@@ -14,6 +14,8 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.PushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.Collection;
+import java.util.LinkedList;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -24,19 +26,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 @AbilityManifest(name = "시간 역행", rank = Rank.S, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 시간을 역행해 $[TimeConfig]초 전으로 돌아갑니다. $[CooldownConfig]"
 })
 public class TimeRewind extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -47,11 +46,11 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> TimeConfig = new SettingObject<Integer>(TimeRewind.class, "Time", 5,
+	public static final SettingObject<Integer> TimeConfig = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "Time", 5,
 			"# 능력을 사용했을 때 몇초 전으로 돌아갈지 설정합니다.") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

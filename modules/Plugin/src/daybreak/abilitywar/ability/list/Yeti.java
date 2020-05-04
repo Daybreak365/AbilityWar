@@ -18,15 +18,14 @@ import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 @AbilityManifest(name = "설인", rank = Rank.S, species = Species.HUMAN, explain = {
 		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
@@ -34,10 +33,10 @@ import java.util.Map.Entry;
 })
 public class Yeti extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -48,11 +47,11 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = new SettingObject<Integer>(Yeti.class, "Range", 15,
+	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Yeti.class, "Range", 15,
 			"# 스킬 사용 시 눈 지형으로 바꿀 범위") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1 && value <= 50;
 		}
 

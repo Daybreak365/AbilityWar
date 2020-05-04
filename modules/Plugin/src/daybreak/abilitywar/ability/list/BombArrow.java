@@ -26,31 +26,31 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 })
 public class BombArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> StackPeriodConfig = new SettingObject<Integer>(BombArrow.class, "StackPeriod", 7,
+	public static final SettingObject<Integer> StackPeriodConfig = abilitySettings.new SettingObject<Integer>(BombArrow.class, "StackPeriod", 7,
 			"# 몇초마다 스택을 얻을지 설정합니다.") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 
 	};
 
-	public static final SettingObject<Integer> MaxStackConfig = new SettingObject<Integer>(BombArrow.class, "MaxStack", 4,
+	public static final SettingObject<Integer> MaxStackConfig = abilitySettings.new SettingObject<Integer>(BombArrow.class, "MaxStack", 4,
 			"# 최대로 얻을 수 있는 스택 수를 설정합니다.") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 
 	};
 
-	public static final SettingObject<Integer> SizeConfig = new SettingObject<Integer>(BombArrow.class, "Size", 1,
+	public static final SettingObject<Integer> SizeConfig = abilitySettings.new SettingObject<Integer>(BombArrow.class, "Size", 1,
 			"# 화살을 맞췄을 때 얼마나 큰 폭발을 일으킬지 설정합니다.") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

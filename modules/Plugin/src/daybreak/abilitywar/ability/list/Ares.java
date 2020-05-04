@@ -13,15 +13,14 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @AbilityManifest(name = "아레스", rank = Rank.A, species = Species.GOD, explain = {
 		"전쟁의 신 아레스.",
@@ -30,21 +29,21 @@ import java.util.Set;
 })
 public class Ares extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DamageConfig = new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
+	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
 			"# 스킬 대미지 (단위: 백분율)") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
 	};
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Ares.class, "Cooldown", 60,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "Cooldown", 60,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -55,11 +54,11 @@ public class Ares extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Boolean> DashConfig = new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false,
+	public static final SettingObject<Boolean> DashConfig = abilitySettings.new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false,
 			"# true로 설정하면 아레스 능력 사용 시 공중으로 돌진 할 수 있습니다.") {
 
 		@Override
-		public boolean Condition(Boolean value) {
+		public boolean condition(Boolean value) {
 			return true;
 		}
 

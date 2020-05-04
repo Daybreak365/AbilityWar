@@ -37,11 +37,11 @@ import org.bukkit.inventory.EntityEquipment;
 })
 public class Curse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Curse.class, "Cooldown", 100,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Curse.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -52,11 +52,11 @@ public class Curse extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Curse.class, "Duration", 10,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Curse.class, "Duration", 10,
 			"# 지속시간") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

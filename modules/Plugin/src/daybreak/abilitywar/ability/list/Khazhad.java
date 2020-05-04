@@ -22,6 +22,11 @@ import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
 import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -44,23 +49,17 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-
 @AbilityManifest(name = "카쟈드", rank = Rank.A, species = Species.GOD, explain = {
 		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[CooldownConfig]",
 		"§b얼음§f에 맞은 생명체는 2초간 얼어붙으며, 대미지를 입지 않습니다.",
-		"주변을 지나가는 투사체들이 모두 얼어붙어 바닥으로 떨어집니다."
+		"주변을 지나가는 발사체들이 모두 얼어붙어 바닥으로 떨어집니다."
 })
 public class Khazhad extends AbilityBase implements ActiveHandler {
 
-	private static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Khazhad.class, "Cooldown", 10, "# 좌클릭 쿨타임") {
+	private static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Khazhad.class, "Cooldown", 10, "# 좌클릭 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer arg0) {
+		public boolean condition(Integer arg0) {
 			return arg0 >= 0;
 		}
 

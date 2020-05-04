@@ -5,6 +5,8 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.ability.wizard.setter.Setter;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.Map;
+import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,9 +20,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 public class AbilitySettingWizard implements Listener {
 
@@ -66,7 +65,7 @@ public class AbilitySettingWizard implements Listener {
 			if (page > 1) {
 				ItemStack stack = new ItemStack(Material.ARROW, 1);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
+				meta.setDisplayName(ChatColor.AQUA + "이전 페이지");
 				stack.setItemMeta(meta);
 				gui.setItem(48, stack);
 			}
@@ -74,7 +73,7 @@ public class AbilitySettingWizard implements Listener {
 			if (page != maxPage) {
 				ItemStack stack = new ItemStack(Material.ARROW, 1);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
+				meta.setDisplayName(ChatColor.AQUA + "다음 페이지");
 				stack.setItemMeta(meta);
 				gui.setItem(50, stack);
 			}
@@ -104,7 +103,7 @@ public class AbilitySettingWizard implements Listener {
 			if (page > 1) {
 				ItemStack stack = new ItemStack(Material.ARROW, 1);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b이전 페이지"));
+				meta.setDisplayName(ChatColor.AQUA + "이전 페이지");
 				stack.setItemMeta(meta);
 				gui.setItem(21, stack);
 			}
@@ -112,7 +111,7 @@ public class AbilitySettingWizard implements Listener {
 			if (page != maxPage) {
 				ItemStack stack = new ItemStack(Material.ARROW, 1);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b다음 페이지"));
+				meta.setDisplayName(ChatColor.AQUA + "다음 페이지");
 				stack.setItemMeta(meta);
 				gui.setItem(23, stack);
 			}

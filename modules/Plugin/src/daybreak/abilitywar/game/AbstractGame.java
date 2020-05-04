@@ -1,6 +1,8 @@
 package daybreak.abilitywar.game;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
@@ -14,6 +16,7 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.Hashes;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -28,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -595,18 +597,10 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 	public enum RestrictionBehavior {STOP_START, PAUSE_RESUME}
 
-	private final Set<CustomEntity> customEntities = new LinkedHashSet<>();
+	private final SetMultimap<Integer, CustomEntity> customEntities = MultimapBuilder.hashKeys().hashSetValues().build();
 
 	public List<CustomEntity> getCustomEntities(Chunk chunk) {
-		List<CustomEntity> collect = new LinkedList<>();
-		int x = chunk.getX(), z = chunk.getZ();
-		for (CustomEntity customEntity : customEntities) {
-			Chunk that = customEntity.world.getChunkAt((int) customEntity.x >> 4, (int) customEntity.z >> 4);
-			if (that.getX() == x && that.getZ() == z) {
-				collect.add(customEntity);
-			}
-		}
-		return collect;
+		return new ArrayList<>(customEntities.get(Hashes.hashCode(chunk.getX(), chunk.getZ())));
 	}
 
 	public class CustomEntity {
@@ -614,13 +608,15 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		private final CustomEntityBoundingBox boundingBox = new CustomEntityBoundingBox(0, 0, 0, 0, 0, 0);
 		private World world;
 		private double x, y, z;
+		private int lastChunkHash;
 
 		public CustomEntity(World world, double x, double y, double z) {
 			this.world = Preconditions.checkNotNull(world);
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			customEntities.add(this);
+			this.lastChunkHash = Hashes.hashCode((int) x >> 4, (int) z >> 4);
+			customEntities.put(lastChunkHash, this);
 		}
 
 		public World getWorld() {
@@ -636,15 +632,16 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		}
 
 		public double y() {
-			return x;
+			return y;
 		}
 
 		public double z() {
-			return x;
+			return z;
 		}
 
 		public void setX(double x) {
 			this.x = x;
+			updateLocation();
 		}
 
 		public void setY(double y) {
@@ -653,6 +650,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 		public void setZ(double z) {
 			this.z = z;
+			updateLocation();
 		}
 
 		public void setLocation(Location location) {
@@ -660,6 +658,16 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			this.x = location.getX();
 			this.y = location.getY();
 			this.z = location.getZ();
+			updateLocation();
+		}
+
+		private void updateLocation() {
+			final int chunkHash = Hashes.hashCode((int) x >> 4, (int) z >> 4);
+			if (this.lastChunkHash != chunkHash) {
+				customEntities.remove(lastChunkHash, this);
+				this.lastChunkHash = chunkHash;
+				customEntities.put(chunkHash, this);
+			}
 		}
 
 		public Location getLocation() {
@@ -681,7 +689,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		}
 
 		public void remove() {
-			customEntities.remove(this);
+			customEntities.remove(lastChunkHash, this);
 		}
 
 		public class CustomEntityBoundingBox implements BoundingBox {
@@ -728,7 +736,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			}
 
 			@Override
-			public Location getLocation() {
+			public Location getCenter() {
 				return CustomEntity.this.getLocation();
 			}
 

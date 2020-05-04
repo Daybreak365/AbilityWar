@@ -5,20 +5,15 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+import java.util.StringJoiner;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-import java.util.StringJoiner;
-
 @AbilityManifest(name = "믹스", rank = AbilityManifest.Rank.SPECIAL, species = AbilityManifest.Species.OTHERS, explain = {
-		"믹스",
-		"§a--------------------------------",
-		"[firstExplain]",
-		"§a--------------------------------",
-		"[secondExplain]"
+		"$(explain)"
 })
 public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 
@@ -32,17 +27,16 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 	}
 
 	private AbilityBase first;
-	private final Object firstExplain = new Object() {
-		@Override
-		public String toString() {
-			return first != null ? formatAbilityInfo(first) : "능력이 없습니다.";
-		}
-	};
 	private AbilityBase second;
-	private final Object secondExplain = new Object() {
+	private final Object explain = new Object() {
 		@Override
 		public String toString() {
-			return second != null ? formatAbilityInfo(second) : "능력이 없습니다.";
+			StringJoiner joiner = new StringJoiner("\n");
+			joiner.add("§a--------------------------------");
+			joiner.add(first != null ? formatAbilityInfo(first) : "§f능력이 없습니다.");
+			joiner.add("§a--------------------------------");
+			joiner.add(second != null ? formatAbilityInfo(second) : "§f능력이 없습니다.");
+			return joiner.toString();
 		}
 	};
 
@@ -114,10 +108,6 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 				second.setRestricted(true);
 			}
 		}
-	}
-
-	private enum MODE {
-		;
 	}
 
 }

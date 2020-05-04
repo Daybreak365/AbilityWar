@@ -23,11 +23,11 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 })
 public class Terrorist extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -38,11 +38,11 @@ public class Terrorist extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> CountConfig = new SettingObject<Integer>(Terrorist.class, "Count", 15,
+	public static final SettingObject<Integer> CountConfig = abilitySettings.new SettingObject<Integer>(Terrorist.class, "Count", 15,
 			"# TNT 개수") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

@@ -34,11 +34,11 @@ import org.bukkit.projectiles.ProjectileSource;
 })
 public class Kidnap extends AbilityBase implements TargetHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Kidnap.class, "Cooldown", 30,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Cooldown", 30,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -49,11 +49,11 @@ public class Kidnap extends AbilityBase implements TargetHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Kidnap.class, "Duration", 6,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Duration", 6,
 			"# 지속 시간") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

@@ -22,11 +22,11 @@ import org.bukkit.entity.Damageable;
 })
 public class Chaos extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -37,21 +37,21 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Chaos.class, "Duration", 5,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Duration", 5,
 			"# 능력 지속 시간") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 
 	};
 
-	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Chaos.class, "Distance", 5,
+	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Distance", 5,
 			"# 거리 설정") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 

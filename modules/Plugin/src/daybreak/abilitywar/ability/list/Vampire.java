@@ -15,15 +15,14 @@ import daybreak.abilitywar.utils.base.minecraft.DamageUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.UNDEAD, explain = {
 		"철괴를 우클릭하면 $[DurationConfig]초간 $[DistanceConfig]칸 안에 있는 생명체들에게서",
@@ -32,11 +31,11 @@ import java.util.List;
 })
 public class Vampire extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Vampire.class, "Cool", 160,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Cool", 160,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
@@ -47,22 +46,22 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Vampire.class, "Duration", 4,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Duration", 4,
 			"# 지속시간 (초 단위)",
 			"# 지속시간이 변할 경우 흡혈 횟수 또한 동일하게 변경됨. ( 1초 = 1회, 4초 = 4회 )") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 
 	};
 
-	public static final SettingObject<Integer> DistanceConfig = new SettingObject<Integer>(Vampire.class, "Distance", 7,
+	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Distance", 7,
 			"# 스킬 거리 (기본값: 7)") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

@@ -10,13 +10,12 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-
-import java.util.Random;
 
 @AbilityManifest(name = "다이스 갓", rank = Rank.A, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 §c재생 §f/ §b신속 §f/ §6힘 §f/ §3저항 §f/ §8구속 §f/ §7나약함 §f효과 중 하나를",
@@ -25,11 +24,11 @@ import java.util.Random;
 })
 public class DiceGod extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(DiceGod.class, "Cooldown", 25,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(DiceGod.class, "Cooldown", 25,
 			"# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 0;
 		}
 

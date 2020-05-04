@@ -28,6 +28,9 @@ public class FileUtil {
 		File file = new File(mainDirectory.getPath() + "/" + path);
 		try {
 			if (!file.exists()) {
+				if (file.getParentFile() != null && !file.getParentFile().exists()) {
+					file.getParentFile().mkdirs();
+				}
 				file.createNewFile();
 			}
 

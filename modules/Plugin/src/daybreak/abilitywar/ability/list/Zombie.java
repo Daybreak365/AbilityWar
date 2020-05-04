@@ -12,6 +12,8 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -24,9 +26,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @AbilityManifest(name = "좀비", rank = Rank.A, species = Species.UNDEAD, explain = {
 		"좀비가 당신을 타게팅하지 않습니다.",
 		"다른 플레이어를 철괴로 우클릭하면 주변 $[RadiusConfig]칸 안에 속도가 점차 줄어드는",
@@ -35,37 +34,37 @@ import java.util.Set;
 })
 public class Zombie extends AbilityBase implements TargetHandler {
 
-	private static final SettingObject<Integer> CooldownConfig = new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
+	private static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
 
 		@Override
-		public boolean Condition(Integer arg0) {
+		public boolean condition(Integer arg0) {
 			return arg0 >= 0;
 		}
 
 	};
 
-	private static final SettingObject<Integer> DurationConfig = new SettingObject<Integer>(Zombie.class, "Duration", 15, "# 지속시간") {
+	private static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Zombie.class, "Duration", 15, "# 지속시간") {
 
 		@Override
-		public boolean Condition(Integer arg0) {
+		public boolean condition(Integer arg0) {
 			return arg0 >= 1;
 		}
 
 	};
 
-	private static final SettingObject<Double> RadiusConfig = new SettingObject<Double>(Zombie.class, "Radius", 10.0, "# 스킬 반경") {
+	private static final SettingObject<Double> RadiusConfig = abilitySettings.new SettingObject<Double>(Zombie.class, "Radius", 10.0, "# 스킬 반경") {
 
 		@Override
-		public boolean Condition(Double arg0) {
+		public boolean condition(Double arg0) {
 			return arg0 >= 1;
 		}
 
 	};
 
-	private static final SettingObject<Integer> ZombieCountConfig = new SettingObject<Integer>(Zombie.class, "ZombieCount", 15, "# 생성할 좀비 수") {
+	private static final SettingObject<Integer> ZombieCountConfig = abilitySettings.new SettingObject<Integer>(Zombie.class, "ZombieCount", 15, "# 생성할 좀비 수") {
 
 		@Override
-		public boolean Condition(Integer arg0) {
+		public boolean condition(Integer arg0) {
 			return arg0 >= 1;
 		}
 

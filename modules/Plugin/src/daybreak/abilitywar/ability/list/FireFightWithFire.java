@@ -7,24 +7,23 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import java.util.Random;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-
-import java.util.Random;
 
 @AbilityManifest(name = "이열치열", rank = Rank.B, species = Species.HUMAN, explain = {
 		"§c화염 §f대미지를 받을 때, $[ChanceConfig]% 확률로 대미지만큼 체력을 회복합니다."
 })
 public class FireFightWithFire extends AbilityBase {
 
-	public static final SettingObject<Integer> ChanceConfig = new SettingObject<Integer>(FireFightWithFire.class, "Chance", 50,
+	public static final SettingObject<Integer> ChanceConfig = abilitySettings.new SettingObject<Integer>(FireFightWithFire.class, "Chance", 50,
 			"# 공격을 받았을 시 몇 퍼센트 확률로 회복을 할지 설정합니다.",
 			"# 50은 50%를 의미합니다.") {
 
 		@Override
-		public boolean Condition(Integer value) {
+		public boolean condition(Integer value) {
 			return value >= 1 && value <= 100;
 		}
 
