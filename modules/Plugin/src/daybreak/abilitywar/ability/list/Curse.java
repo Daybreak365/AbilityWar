@@ -30,8 +30,8 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
 
 @AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
-		"주위 15칸 안에 있는 상대를 원거리에서 타겟팅해 $[DurationConfig]초간 지속되는",
-		"저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
+		"주위 15칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타겟팅해 $[DurationConfig]초간",
+		"지속되는 저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
 		"대미지의 일부가 상대에게 전이됩니다. $[CooldownConfig]",
 		"대상의 체력이 적을 수록 더욱 큰 대미지를 입힐 수 있습니다."
 })
@@ -70,7 +70,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 15, STRICT);
 			if (player != null) {
 				target = player;

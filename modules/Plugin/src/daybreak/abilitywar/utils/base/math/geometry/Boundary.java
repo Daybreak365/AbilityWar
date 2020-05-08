@@ -186,18 +186,21 @@ public class Boundary {
 			return getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < getMaxX() && getMinY() < boundingBox.getMaxY() && boundingBox.getMinY() < getMaxY() && getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < getMaxZ();
 		}
 
+		BoundingBox expand(double negativeX, double negativeY, double negativeZ, double positiveX, double positiveY, double positiveZ);
+
 		Location getCenter();
 
 	}
 
 	public static class CenteredBoundingBox implements BoundingBox {
 
-		public static CenteredBoundingBox of(Location center, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-			return new CenteredBoundingBox(center, minX, minY, minZ, maxX, maxY, maxZ);
-		}
+		private double minX, minY, minZ, maxX, maxY, maxZ;
 
 		private Location center;
-		private final double minX, minY, minZ, maxX, maxY, maxZ;
+
+		public static CenteredBoundingBox of(Location center, double x1, double y1, double z1, double x2, double y2, double z2) {
+			return new CenteredBoundingBox(center, x1, y1, z1, x2, y2, z2);
+		}
 
 		public CenteredBoundingBox(Location center, double x1, double y1, double z1, double x2, double y2, double z2) {
 			this.center = center;
@@ -240,6 +243,56 @@ public class Boundary {
 		}
 
 		@Override
+		public BoundingBox expand(double negativeX, double negativeY, double negativeZ, double positiveX, double positiveY, double positiveZ) {
+			if (negativeX == 0.0D && negativeY == 0.0D && negativeZ == 0.0D && positiveX == 0.0D && positiveY == 0.0D && positiveZ == 0.0D) {
+				return this;
+			}
+			double newMinX = minX - negativeX, newMinY = minY - negativeY, newMinZ = minZ - negativeZ, newMaxX = maxX + positiveX, newMaxY = maxY + positiveY, newMaxZ = maxZ + positiveZ;
+
+			if (newMinX > newMaxX) {
+				double centerX = center.getX();
+				if (newMaxX >= centerX) {
+					newMinX = newMaxX;
+				} else if (newMinX <= centerX) {
+					newMaxX = newMinX;
+				} else {
+					newMinX = centerX;
+					newMaxX = centerX;
+				}
+			}
+			if (newMinY > newMaxY) {
+				double centerY = center.getY();
+				if (newMaxY >= centerY) {
+					newMinY = newMaxY;
+				} else if (newMinY <= centerY) {
+					newMaxY = newMinY;
+				} else {
+					newMinY = centerY;
+					newMaxY = centerY;
+				}
+			}
+			if (newMinZ > newMaxZ) {
+				double centerZ = center.getZ();
+				if (newMaxZ >= centerZ) {
+					newMinZ = newMaxZ;
+				} else if (newMinZ <= centerZ) {
+					newMaxZ = newMinZ;
+				} else {
+					newMinZ = centerZ;
+					newMaxZ = centerZ;
+				}
+			}
+
+			this.minX = newMinX;
+			this.minY = newMinY;
+			this.minZ = newMinZ;
+			this.maxX = newMaxX;
+			this.maxY = newMaxY;
+			this.maxZ = newMaxZ;
+			return this;
+		}
+
+		@Override
 		public Location getCenter() {
 			return center;
 		}
@@ -258,7 +311,7 @@ public class Boundary {
 		}
 
 		private final Entity entity;
-		private final double minX, minY, minZ, maxX, maxY, maxZ;
+		private double minX, minY, minZ, maxX, maxY, maxZ;
 
 		public EntityBoundingBox(Entity entity, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
 			this.entity = entity;
@@ -298,6 +351,56 @@ public class Boundary {
 		@Override
 		public double getMaxZ() {
 			return getCenter().getZ() + maxZ;
+		}
+
+		@Override
+		public BoundingBox expand(double negativeX, double negativeY, double negativeZ, double positiveX, double positiveY, double positiveZ) {
+			if (negativeX == 0.0D && negativeY == 0.0D && negativeZ == 0.0D && positiveX == 0.0D && positiveY == 0.0D && positiveZ == 0.0D) {
+				return this;
+			}
+			double newMinX = minX - negativeX, newMinY = minY - negativeY, newMinZ = minZ - negativeZ, newMaxX = maxX + positiveX, newMaxY = maxY + positiveY, newMaxZ = maxZ + positiveZ;
+
+			if (newMinX > newMaxX) {
+				double centerX = entity.getLocation().getX();
+				if (newMaxX >= centerX) {
+					newMinX = newMaxX;
+				} else if (newMinX <= centerX) {
+					newMaxX = newMinX;
+				} else {
+					newMinX = centerX;
+					newMaxX = centerX;
+				}
+			}
+			if (newMinY > newMaxY) {
+				double centerY = entity.getLocation().getY();
+				if (newMaxY >= centerY) {
+					newMinY = newMaxY;
+				} else if (newMinY <= centerY) {
+					newMaxY = newMinY;
+				} else {
+					newMinY = centerY;
+					newMaxY = centerY;
+				}
+			}
+			if (newMinZ > newMaxZ) {
+				double centerZ = entity.getLocation().getZ();
+				if (newMaxZ >= centerZ) {
+					newMinZ = newMaxZ;
+				} else if (newMinZ <= centerZ) {
+					newMaxZ = newMinZ;
+				} else {
+					newMinZ = centerZ;
+					newMaxZ = centerZ;
+				}
+			}
+
+			this.minX = newMinX;
+			this.minY = newMinY;
+			this.minZ = newMinZ;
+			this.maxX = newMaxX;
+			this.maxY = newMaxY;
+			this.maxZ = newMaxZ;
+			return this;
 		}
 
 		@Override

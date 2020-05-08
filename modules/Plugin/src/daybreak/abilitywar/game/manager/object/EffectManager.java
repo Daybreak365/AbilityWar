@@ -7,6 +7,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,17 +18,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.EventExecutor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class EffectManager implements EventExecutor {
 
 	private final AbstractGame game;
 
 	public EffectManager(AbstractGame game) {
 		this.game = game;
-		Bukkit.getPluginManager().registerEvent(PlayerMoveEvent.class, game, EventPriority.HIGHEST, this,
-				AbilityWar.getPlugin());
+		Bukkit.getPluginManager().registerEvent(PlayerMoveEvent.class, game, EventPriority.HIGHEST, this, AbilityWar.getPlugin());
 
 		registerCondition(new EffectCondition() {
 			@Override

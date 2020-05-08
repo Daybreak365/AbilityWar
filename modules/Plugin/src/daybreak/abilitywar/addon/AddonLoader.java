@@ -1,15 +1,14 @@
 package daybreak.abilitywar.addon;
 
+import daybreak.abilitywar.addon.Addon.AddonDescription;
 import daybreak.abilitywar.addon.exception.InvalidAddonException;
 import daybreak.abilitywar.utils.base.io.FileUtil;
-
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * 애드온에 직접적으로 엑세스하여 처리하는 로더입니다.
@@ -23,10 +22,6 @@ public class AddonLoader {
 
 	private static final Logger logger = Logger.getLogger(AddonLoader.class.getName());
 	private static final HashMap<String, Addon> addons = new HashMap<>();
-
-	public static Collection<ClassLoader> getClassLoaders() {
-		return addons.values().stream().map(Addon::getClassLoader).collect(Collectors.toList());
-	}
 
 	/**
 	 * 애드온 디렉토리에 있는 모든 애드온을 불러옵니다.
@@ -45,8 +40,12 @@ public class AddonLoader {
 	 */
 	public static Addon load(File file) {
 		try {
-			Addon instance = new Addon.Builder(file).build();
-			String name = instance.getDescription().getName();
+			AddonDescription description = new AddonDescription(file);
+			String name = description.getName();
+			if (!ServerVersion.getVersion().isOver(description.getMinVersion())) {
+				throw new InvalidAddonException(name + ": 이 서버 버전에서 지원되는 애드온이 아닙니다. (최소 " + description.getMinVersion().name() + ")");
+			}
+			Addon instance = new AddonClassLoader(Addon.class.getClassLoader(), description, file).addon;
 			if (checkAddon(name)) {
 				throw new InvalidAddonException(name + ": 중복되는 이름의 애드온이 존재하거나 이미 등록된 애드온입니다.");
 			}
@@ -54,7 +53,7 @@ public class AddonLoader {
 			return instance;
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, "애드온을 불러오는 동안 오류가 발생하였습니다.");
-		} catch (InvalidAddonException e) {
+		} catch (Exception e) {
 			logger.log(Level.SEVERE, e.getMessage());
 		}
 		return null;

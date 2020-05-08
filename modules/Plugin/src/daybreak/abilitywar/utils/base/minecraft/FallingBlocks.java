@@ -2,9 +2,11 @@ package daybreak.abilitywar.utils.base.minecraft;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -51,6 +53,19 @@ public class FallingBlocks {
 		}
 
 		return fallingBlock;
+	}
+
+	public static FallingBlock spawnFallingBlock(Block block, boolean glowing, Vector velocity, Behavior behavior) {
+		if (ServerVersion.getVersionNumber() >= 13)
+			return spawnFallingBlock(block.getLocation(), block.getType(), (byte) 0, glowing, velocity, behavior);
+		else
+			return spawnFallingBlock(block.getLocation(), block.getType(), block.getData(), glowing, velocity, behavior);
+	}
+
+	public static FallingBlock spawnFallingBlock(Location location, MaterialX type, boolean glowing, Vector velocity, Behavior behavior) {
+		if (ServerVersion.getVersionNumber() >= 13)
+			return spawnFallingBlock(location, type.parseMaterial(), (byte) 0, glowing, velocity, behavior);
+		else return spawnFallingBlock(location, type.parseMaterial(), type.getData(), glowing, velocity, behavior);
 	}
 
 	public static FallingBlock spawnFallingBlock(Location location, Material type, byte data, boolean glowing, Behavior behavior) {

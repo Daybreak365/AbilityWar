@@ -9,6 +9,7 @@ import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.config.serializable.team.TeamPreset.TeamScheme;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
@@ -112,6 +113,7 @@ public class AbilityWar extends JavaPlugin {
 		try {
 			Configuration.update();
 			AbilityBase.abilitySettings.update();
+			Synergy.synergySettings.update();
 		} catch (IOException | InvalidConfigurationException e) {
 			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 		}

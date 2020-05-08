@@ -3,19 +3,18 @@ package daybreak.abilitywar.game.manager.object;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameUpdate;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
-
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 public class EventManager implements Listener, EventExecutor, AbstractGame.Observer {
 
@@ -24,23 +23,20 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final HashMap<Class<? extends Event>, Set<Observer>> observers = new HashMap<>();
+	private final HashMap<Class<? extends Event>, CopyOnWriteArrayList<Observer>> observers = new HashMap<>();
 	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends Event> getHandlerListDeclaringClass(Class<? extends Event> eventClass) {
-		try {
-			for (Field field : ReflectionUtil.FieldUtil.getExistingFields(eventClass, HandlerList.class)) {
-				return (Class<? extends Event>) field.getDeclaringClass();
-			}
-		} catch (Exception ignored) {
+		for (Field field : FieldUtil.getAllFields(eventClass, HandlerList.class)) {
+			return (Class<? extends Event>) field.getDeclaringClass();
 		}
 		return null;
 	}
 
 	public void register(Class<? extends Event> eventClass, Observer executor) {
 		if (!observers.containsKey(eventClass))
-			observers.put(eventClass, Collections.synchronizedSet(new HashSet<>()));
+			observers.put(eventClass, new CopyOnWriteArrayList<>());
 
 		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);
 		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {

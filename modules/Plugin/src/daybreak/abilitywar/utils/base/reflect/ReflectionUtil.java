@@ -1,8 +1,7 @@
 package daybreak.abilitywar.utils.base.reflect;
 
 import com.google.common.base.Preconditions;
-import daybreak.abilitywar.addon.AddonLoader;
-
+import daybreak.abilitywar.addon.AddonClassLoader;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class ReflectionUtil {
 			try {
 				return Class.forName(name);
 			} catch (ClassNotFoundException first) {
-				for (ClassLoader classLoader : AddonLoader.getClassLoaders()) {
+				for (ClassLoader classLoader : AddonClassLoader.getLoaders()) {
 					try {
 						return Class.forName(name, true, classLoader);
 					} catch (ClassNotFoundException ignore) {
@@ -58,7 +57,7 @@ public class ReflectionUtil {
 		 * @param fieldType 검색할 {@link Field}의 타입, 모든 {@link Field}를 검색하고 싶다면 {@link Object}.class를 사용하면 됨
 		 * @return 검색한 {@link Field} 목록
 		 */
-		public static List<Field> getExistingFields(Class<?> clazz, Class<?> fieldType) {
+		public static List<Field> getAllFields(Class<?> clazz, Class<?> fieldType) {
 			final List<Field> fields = new ArrayList<>();
 			Class<?> finding = clazz;
 			while (finding != null && finding != Object.class) {

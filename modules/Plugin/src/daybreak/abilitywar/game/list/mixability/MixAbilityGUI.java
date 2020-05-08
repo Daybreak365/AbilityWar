@@ -194,6 +194,7 @@ public class MixAbilityGUI implements Listener {
 								}
 							}
 						} catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+							ex.printStackTrace();
 							if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 								Messager.sendErrorMessage(p, ex.getMessage());
 							} else {

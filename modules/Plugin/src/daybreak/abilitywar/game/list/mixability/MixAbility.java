@@ -2,14 +2,18 @@ package daybreak.abilitywar.game.list.mixability;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
+import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
+import daybreak.abilitywar.game.list.mixability.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
@@ -17,6 +21,7 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -34,16 +39,19 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
 @GameManifest(Name = "믹스 능력자 전쟁", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
 @Beta
-public class MixAbility extends Game implements DefaultKitHandler {
+public class MixAbility extends Game implements DefaultKitHandler, Observer {
 
 	private static final Logger logger = Logger.getLogger(MixAbility.class);
 
 	public MixAbility() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
+		attachObserver(this);
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	private final boolean invincible = Configuration.Settings.InvincibilitySettings.isEnabled();
@@ -197,8 +205,16 @@ public class MixAbility extends Game implements DefaultKitHandler {
 					Mix mix = (Mix) participant.getAbility();
 					if (mix.hasAbility()) {
 						count++;
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-								"&e" + count + ". &f" + participant.getPlayer().getName() + " &7: &c" + mix.getFirst().getName() + " &f+ &c" + mix.getSecond().getName()));
+						if (mix.hasSynergy()) {
+							Synergy synergy = mix.getSynergy();
+							Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+							String name = "&e" + synergy.getName() + " &f(&c" + base.getLeft().getManifest().name() + " &f+ &c" + base.getRight().getManifest().name() + "&f)";
+							player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+									"&e" + count + ". &f" + participant.getPlayer().getName() + " &7: " + name));
+						} else {
+							player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+									"&e" + count + ". &f" + participant.getPlayer().getName() + " &7: &c" + mix.getFirst().getName() + " &f+ &c" + mix.getSecond().getName()));
+						}
 					}
 				}
 				if (count == 0) {
@@ -283,9 +299,17 @@ public class MixAbility extends Game implements DefaultKitHandler {
 			protected String getRevealMessage(Participant victim) {
 				Mix mix = (Mix) victim.getAbility();
 				if (mix.hasAbility()) {
-					String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
-					return ChatColor.translateAlternateColorCodes('&',
-							"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+					if (mix.hasSynergy()) {
+						Synergy synergy = mix.getSynergy();
+						Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+						String name = synergy.getName() + " (" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + ")";
+						return ChatColor.translateAlternateColorCodes('&',
+								"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+					} else {
+						String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+						return ChatColor.translateAlternateColorCodes('&',
+								"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+					}
 				} else {
 					return ChatColor.translateAlternateColorCodes('&',
 							"&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님은 능력이 없습니다.");
@@ -378,6 +402,13 @@ public class MixAbility extends Game implements DefaultKitHandler {
 			return true;
 		}
 
+	}
+
+	@Override
+	public void update(GameUpdate update) {
+		if (update == GameUpdate.END) {
+			HandlerList.unregisterAll(this);
+		}
 	}
 
 }

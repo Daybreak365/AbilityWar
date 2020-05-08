@@ -696,13 +696,13 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 			private double minX, minY, minZ, maxX, maxY, maxZ;
 
-			public CustomEntityBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-				this.minX = minX;
-				this.minY = minY;
-				this.minZ = minZ;
-				this.maxX = maxX;
-				this.maxY = maxY;
-				this.maxZ = maxZ;
+			public CustomEntityBoundingBox(double x1, double y1, double z1, double x2, double y2, double z2) {
+				this.minX = Math.min(x1, x2);
+				this.minY = Math.min(y1, y2);
+				this.minZ = Math.min(z1, z2);
+				this.maxX = Math.max(x1, x2);
+				this.maxY = Math.max(y1, y2);
+				this.maxZ = Math.max(z1, z2);
 			}
 
 			@Override
@@ -733,6 +733,56 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 			@Override
 			public double getMaxZ() {
 				return z + maxZ;
+			}
+
+			@Override
+			public BoundingBox expand(double negativeX, double negativeY, double negativeZ, double positiveX, double positiveY, double positiveZ) {
+				if (negativeX == 0.0D && negativeY == 0.0D && negativeZ == 0.0D && positiveX == 0.0D && positiveY == 0.0D && positiveZ == 0.0D) {
+					return this;
+				}
+				double newMinX = minX - negativeX, newMinY = minY - negativeY, newMinZ = minZ - negativeZ, newMaxX = maxX + positiveX, newMaxY = maxY + positiveY, newMaxZ = maxZ + positiveZ;
+
+				if (newMinX > newMaxX) {
+					double centerX = getLocation().getX();
+					if (newMaxX >= centerX) {
+						newMinX = newMaxX;
+					} else if (newMinX <= centerX) {
+						newMaxX = newMinX;
+					} else {
+						newMinX = centerX;
+						newMaxX = centerX;
+					}
+				}
+				if (newMinY > newMaxY) {
+					double centerY = getLocation().getY();
+					if (newMaxY >= centerY) {
+						newMinY = newMaxY;
+					} else if (newMinY <= centerY) {
+						newMaxY = newMinY;
+					} else {
+						newMinY = centerY;
+						newMaxY = centerY;
+					}
+				}
+				if (newMinZ > newMaxZ) {
+					double centerZ = getLocation().getZ();
+					if (newMaxZ >= centerZ) {
+						newMinZ = newMaxZ;
+					} else if (newMinZ <= centerZ) {
+						newMaxZ = newMinZ;
+					} else {
+						newMinZ = centerZ;
+						newMaxZ = centerZ;
+					}
+				}
+
+				this.minX = newMinX;
+				this.minY = newMinY;
+				this.minZ = newMinZ;
+				this.maxX = newMaxX;
+				this.maxY = newMaxY;
+				this.maxZ = newMaxZ;
+				return this;
 			}
 
 			@Override

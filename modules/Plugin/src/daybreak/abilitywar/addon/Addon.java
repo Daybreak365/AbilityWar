@@ -1,21 +1,17 @@
 package daybreak.abilitywar.addon;
 
+import com.google.common.base.Enums;
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.addon.exception.InvalidAddonException;
-import org.bukkit.plugin.Plugin;
-
+import daybreak.abilitywar.addon.exception.InvalidDescriptionException;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.Properties;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import org.bukkit.plugin.Plugin;
 
 /**
  * 애드온
@@ -25,7 +21,12 @@ import java.util.zip.ZipEntry;
 public abstract class Addon {
 
 	private ClassLoader classLoader;
-	private DescriptionFile description;
+	private AddonDescription description;
+
+	void init(ClassLoader classLoader, AddonDescription description) {
+		this.classLoader = classLoader;
+		this.description = description;
+	}
 
 	protected void onEnable() {
 	}
@@ -43,7 +44,7 @@ public abstract class Addon {
 	/**
 	 * addon.yml에 작성한 애드온의 설명을 받아옵니다.
 	 */
-	public DescriptionFile getDescription() {
+	public AddonDescription getDescription() {
 		return description;
 	}
 
@@ -54,75 +55,42 @@ public abstract class Addon {
 		return classLoader;
 	}
 
-	static class Builder {
+	public static class AddonDescription {
 
-		private final JarFile jarFile;
-		private final URLClassLoader classLoader;
-		private final DescriptionFile descriptionFile;
+		private final String name, main, version;
+		private final Version minVersion;
 
-		Builder(File file) throws IOException {
-			this.jarFile = new JarFile(file);
-			this.classLoader = new URLClassLoader(new URL[]{file.toURI().toURL()}, Addon.class.getClassLoader());
-			this.descriptionFile = new DescriptionFile(jarFile);
-		}
-
-		public Addon build() {
+		AddonDescription(File pluginFile) throws InvalidDescriptionException {
+			JarFile jarFile = null;
 			try {
-				Class<?> main = classLoader.loadClass(descriptionFile.getMain());
-				if (Addon.class.isAssignableFrom(main)) {
-					@SuppressWarnings("unchecked") Constructor<? extends Addon> constructor = (Constructor<? extends Addon>) main.getDeclaredConstructor();
-					Addon instance = constructor.newInstance();
+				jarFile = new JarFile(pluginFile);
+				ZipEntry entry = jarFile.getEntry("addon.yml");
+				if (entry != null) {
+					Properties description = new Properties();
+					description.load(new InputStreamReader(jarFile.getInputStream(entry)));
 
-					instance.classLoader = classLoader;
-					instance.description = descriptionFile;
-
-					Enumeration<JarEntry> entries = jarFile.entries();
-					while (entries.hasMoreElements()) {
-						JarEntry entry = entries.nextElement();
-						if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
-							classLoader.loadClass(entry.getName().replaceAll("/", ".").replace(".class", ""));
-						}
+					this.name = description.getProperty("name", "");
+					this.main = description.getProperty("main", "");
+					this.version = description.getProperty("version", "");
+					this.minVersion = description.containsKey("minVersion") ? Enums.getIfPresent(Version.class, description.getProperty("minVersion")).orNull() : Version.v1_9_R1;
+					if (name.isEmpty() || main.isEmpty() || version.isEmpty()) {
+						throw new InvalidDescriptionException(jarFile.getName() + ": 올바르지 않은 addon.yml입니다.");
 					}
-					classLoader.close();
-					return instance;
+					if (minVersion == null) {
+						throw new InvalidDescriptionException(jarFile.getName() + ": minVersion이 잘못된 값입니다. (" + description.getProperty("minVersion") + ")");
+					}
 				} else {
-					throw new InvalidAddonException(descriptionFile.name + ": 메인 클래스가 Addon을 상속받지 않습니다.");
+					throw new InvalidDescriptionException(new FileNotFoundException(jarFile.getName() + ": addon.yml이 존재하지 않습니다."));
 				}
-			} catch (ClassNotFoundException e) {
-				throw new InvalidAddonException(descriptionFile.name + ": 메인 클래스 '" + descriptionFile.main + "'가 존재하지 않습니다.");
-			} catch (NoSuchMethodException e) {
-				throw new InvalidAddonException(descriptionFile.name + ": 올바른 Constructor가 존재하지 않습니다.");
-			} catch (IllegalAccessException e) {
-				throw new InvalidAddonException(descriptionFile.name + ": 접근할 수 있는 Constructor가 존재하지 않습니다.");
-			} catch (InvocationTargetException e) {
-				throw new InvalidAddonException(descriptionFile.name + ": 메인 인스턴스를 생성하는 도중 오류가 발생하였습니다, " + e.getCause().toString());
-			} catch (InstantiationException | IOException e) {
-				throw new InvalidAddonException(descriptionFile.name + ": 애드온을 불러오는 도중 오류가 발생하였습니다.");
-			}
-		}
-
-	}
-
-	public static class DescriptionFile {
-
-		private final String name;
-		private final String main;
-		private final String version;
-
-		private DescriptionFile(JarFile jarFile) throws InvalidAddonException, IOException {
-			ZipEntry entry = jarFile.getEntry("addon.yml");
-			if (entry != null) {
-				Properties description = new Properties();
-				description.load(new InputStreamReader(jarFile.getInputStream(entry)));
-
-				this.name = description.getProperty("name", "");
-				this.main = description.getProperty("main", "");
-				this.version = description.getProperty("version", "");
-				if (name.isEmpty() || main.isEmpty() || version.isEmpty()) {
-					throw new InvalidAddonException(jarFile.getName() + ": 올바르지 않은 addon.yml입니다.");
+			} catch (IOException ex) {
+				throw new InvalidDescriptionException(ex);
+			} finally {
+				if (jarFile != null) {
+					try {
+						jarFile.close();
+					} catch (IOException ignored) {
+					}
 				}
-			} else {
-				throw new InvalidAddonException(jarFile.getName() + ": addon.yml이 존재하지 않습니다.");
 			}
 		}
 
@@ -136,6 +104,10 @@ public abstract class Addon {
 
 		public String getVersion() {
 			return version;
+		}
+
+		public Version getMinVersion() {
+			return minVersion;
 		}
 
 	}

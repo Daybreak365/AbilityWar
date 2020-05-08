@@ -13,7 +13,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
@@ -63,10 +63,12 @@ public class Terrorist extends AbilityBase implements ActiveHandler {
 				if (!cooldownTimer.isCooldown()) {
 					Location center = getPlayer().getLocation();
 
-					for (Location l : LocationUtil.getRandomLocations(center, 9, count))
-						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
-					for (Location l : circle.toLocations(center).floor(center.getY()))
-						l.getWorld().spawnEntity(l, EntityType.PRIMED_TNT);
+					for (Location l : LocationUtil.getRandomLocations(center, 9, count)) {
+						l.getWorld().spawn(l, TNTPrimed.class).setFuseTicks(50);
+					}
+					for (Location l : circle.toLocations(center).floor(center.getY())) {
+						l.getWorld().spawn(l, TNTPrimed.class).setFuseTicks(50);
+					}
 
 					cooldownTimer.start();
 

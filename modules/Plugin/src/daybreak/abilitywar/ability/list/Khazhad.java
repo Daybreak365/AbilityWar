@@ -94,7 +94,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 					return true;
 				}
 			});
-			BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock);
+			BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
 			new Timer() {
 				@Override
 				protected void run(int count) {

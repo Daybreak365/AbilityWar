@@ -19,7 +19,6 @@
         <module>modules/compatibility/v1_13_R2</module>
         <module>modules/compatibility/v1_14_R1</module>
         <module>modules/compatibility/v1_15_R1</module>
-        <module>modules/Patch</module>
         <module>modules/Plugin</module>
     </modules>
 
@@ -27,7 +26,7 @@
         <encoding>UTF-8</encoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <revision>2.1.7.6</revision>
+        <revision>2.1.7.7</revision>
         <bukkit-api.version>1.15.2-R0.1-SNAPSHOT</bukkit-api.version>
     </properties>
 

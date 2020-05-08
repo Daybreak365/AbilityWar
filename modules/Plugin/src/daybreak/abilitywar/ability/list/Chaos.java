@@ -14,10 +14,11 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 
 @AbilityManifest(name = "카오스", rank = Rank.S, species = Species.GOD, explain = {
 		"시작의 신 카오스.",
-		"철괴를 우클릭하면 5초간 짙은 암흑 속으로 주변의 생명체들을",
+		"철괴를 우클릭하면 $[DurationConfig]초간 짙은 암흑 속으로 주변의 생명체들을",
 		"모두 끌어당깁니다. $[CooldownConfig]"
 })
 public class Chaos extends AbilityBase implements ActiveHandler {
@@ -75,10 +76,10 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public void onDurationProcess(int seconds) {
-			ParticleLib.SMOKE_LARGE.spawnParticle(center, 0, 0, 0, 100);
-			for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), distance, distance)) {
-				damageable.damage(1);
-				damageable.setVelocity(center.toVector().subtract(damageable.getLocation().toVector()).multiply(0.7));
+			ParticleLib.SMOKE_LARGE.spawnParticle(center, 0, 0, 0, 70);
+			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, getPlayer(), distance, distance)) {
+				if (entity instanceof Damageable) ((Damageable) entity).damage(1);
+				entity.setVelocity(center.toVector().subtract(entity.getLocation().toVector()).multiply(0.7));
 			}
 		}
 

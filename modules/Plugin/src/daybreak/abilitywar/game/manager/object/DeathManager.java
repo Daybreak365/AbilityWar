@@ -11,6 +11,9 @@ import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -20,10 +23,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Death Manager
@@ -95,6 +94,8 @@ public class DeathManager implements Listener, Observer {
 				if (operation.getAbilityRemoval()) victim.removeAbility();
 
 				Operation(victim);
+			} else {
+				e.setDeathMessage(null);
 			}
 		}
 	}
