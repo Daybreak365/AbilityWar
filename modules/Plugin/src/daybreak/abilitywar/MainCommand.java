@@ -374,6 +374,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			new DeathWizard(p, plugin).Show();
 		} else if (args[0].equalsIgnoreCase("ability")) {
 			new AbilitySettingWizard(p, plugin).openGUI(1);
+		} else if (args[0].equalsIgnoreCase("teampreset")) {
+			new TeamPresetGUI(p, plugin).openGUI(1);
 		} else {
 			if (NumberUtil.isInt(args[0])) {
 				sendHelpConfigCommand(p, label, Integer.parseInt(args[0]));
@@ -518,8 +520,6 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 			} else {
 				Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c능력자 전쟁이 진행되고 있지 않거나 팀 기능을 사용할 수 있는 게임이 아닙니다."));
 			}
-		} else if (args[0].equalsIgnoreCase("teampreset")) {
-			new TeamPresetGUI(p, plugin).openGUI(1);
 		} else {
 			if (NumberUtil.isInt(args[0])) {
 				sendHelpUtilCommand(p, label, Integer.parseInt(args[0]));
@@ -677,7 +677,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						ChatColor.translateAlternateColorCodes('&',
 								"&b/" + label + " config <페이지> &7로 더 많은 명령어를 확인하세요! ( &b" + page + " 페이지 &7/ &b" + allPage
 										+ " 페이지 &7)"),
-						Formatter.formatCommand(label + " config", "ability", "능력별 설정을 변경합니다.", true)});
+						Formatter.formatCommand(label + " config", "ability", "능력별 설정을 변경합니다.", true),
+						Formatter.formatCommand(label + " config", "teampreset", "팀 프리셋 설정 GUI를 엽니다.", true)});
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -723,8 +724,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						Formatter.formatCommand(label + " util", "resetcool", "플레이어들의 능력 쿨타임을 초기화시킵니다.", true),
 						Formatter.formatCommand(label + " util", "resetduration", "플레이어들의 능력 지속시간을 초기화시킵니다.", true),
 						Formatter.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true),
-						Formatter.formatCommand(label + " util", "team", "팀 유틸 명령어를 확인합니다.", true),
-						Formatter.formatCommand(label + " util", "teampreset", "팀 프리셋 설정 GUI를 엽니다.", true)});
+						Formatter.formatCommand(label + " util", "team", "팀 유틸 명령어를 확인합니다.", true)});
 				break;
 			default:
 				Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -766,7 +766,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 					}
 				case 2:
 					if (args[0].equalsIgnoreCase("config")) {
-						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability");
+						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability", "teampreset");
 						if (args[1].isEmpty()) {
 							return configs;
 						} else {
@@ -775,7 +775,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 						}
 					} else if (args[0].equalsIgnoreCase("util")) {
 						List<String> utils = Messager.asList("abi", "spec", "ablist", "blacklist", "resetcool",
-								"resetduration", "kit", "inv", "team", "teampreset");
+								"resetduration", "kit", "inv", "team");
 						if (args[1].isEmpty()) {
 							return utils;
 						} else {
