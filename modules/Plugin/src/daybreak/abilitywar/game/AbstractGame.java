@@ -206,7 +206,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		this.restricted = restricted;
 		for (Participant participant : getParticipants()) {
 			if (participant.hasAbility()) {
-				participant.ability.setRestricted(restricted);
+				participant.getAbility().setRestricted(restricted);
 			}
 		}
 	}

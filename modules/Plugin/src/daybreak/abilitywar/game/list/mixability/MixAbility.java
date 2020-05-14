@@ -19,7 +19,6 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
@@ -43,7 +42,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
 @GameManifest(Name = "믹스 능력자 전쟁", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
-@Beta
 public class MixAbility extends Game implements DefaultKitHandler, Observer {
 
 	private static final Logger logger = Logger.getLogger(MixAbility.class);

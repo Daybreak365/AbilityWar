@@ -5,12 +5,13 @@ import com.google.common.collect.Table;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.list.Ares;
 import daybreak.abilitywar.ability.list.Assassin;
 import daybreak.abilitywar.ability.list.Chaos;
-import daybreak.abilitywar.ability.list.Emperor;
 import daybreak.abilitywar.ability.list.Imprison;
 import daybreak.abilitywar.ability.list.Khazhad;
 import daybreak.abilitywar.ability.list.Nex;
+import daybreak.abilitywar.ability.list.Reaper;
 import daybreak.abilitywar.ability.list.Sniper;
 import daybreak.abilitywar.ability.list.Stalker;
 import daybreak.abilitywar.ability.list.SuperNova;
@@ -25,10 +26,11 @@ import daybreak.abilitywar.game.list.mixability.synergy.list.DeathGrasp;
 import daybreak.abilitywar.game.list.mixability.synergy.list.DoubleSniper;
 import daybreak.abilitywar.game.list.mixability.synergy.list.Dracula;
 import daybreak.abilitywar.game.list.mixability.synergy.list.EventHorizon;
-import daybreak.abilitywar.game.list.mixability.synergy.list.GrandEmperor;
+import daybreak.abilitywar.game.list.mixability.synergy.list.GrimReaper;
 import daybreak.abilitywar.game.list.mixability.synergy.list.Meteor;
 import daybreak.abilitywar.game.list.mixability.synergy.list.NexAssassin;
 import daybreak.abilitywar.game.list.mixability.synergy.list.Pandemic;
+import daybreak.abilitywar.game.list.mixability.synergy.list.RocketLauncher;
 import daybreak.abilitywar.game.list.mixability.synergy.list.TimeLoop;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -51,11 +53,12 @@ public class SynergyFactory {
 		registerSynergy(Vampire.class, Vampire.class, Dracula.class);
 		registerSynergy(Imprison.class, Imprison.class, Bind.class);
 		registerSynergy(Sniper.class, Sniper.class, DoubleSniper.class);
-		registerSynergy(Emperor.class, Emperor.class, GrandEmperor.class);
 		registerSynergy(Nex.class, Assassin.class, NexAssassin.class);
 		registerSynergy(Chaos.class, Chaos.class, EventHorizon.class);
 		registerSynergy(Nex.class, Stalker.class, DeathGrasp.class);
 		registerSynergy(TimeRewind.class, TimeRewind.class, TimeLoop.class);
+		registerSynergy(Ares.class, Terrorist.class, RocketLauncher.class);
+		registerSynergy(Reaper.class, Reaper.class, GrimReaper.class);
 	}
 
 	private SynergyFactory() {

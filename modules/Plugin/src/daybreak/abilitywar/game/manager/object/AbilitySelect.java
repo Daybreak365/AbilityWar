@@ -7,17 +7,16 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.naming.OperationNotSupportedException;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public abstract class AbilitySelect extends GameTimer {
 
@@ -46,7 +45,11 @@ public abstract class AbilitySelect extends GameTimer {
 
 	public AbilitySelect(AbstractGame game, Collection<Participant> selectors, int changeCount) {
 		game.super(TaskType.INFINITE, -1);
-		this.selectorData = new SelectorData(Preconditions.checkNotNull(selectors), changeCount);
+		this.selectorData = new SelectorData(Preconditions.checkNotNull(filterSelectors(selectors)), changeCount);
+	}
+
+	protected Collection<Participant> filterSelectors(Collection<Participant> selectors) {
+		return selectors;
 	}
 
 	@Override

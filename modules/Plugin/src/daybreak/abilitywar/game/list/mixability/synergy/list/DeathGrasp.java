@@ -77,14 +77,14 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 			int distance = 6 - count;
 
 			if (ServerVersion.getVersionNumber() >= 13) {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
 					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
 					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);
 					FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
 				}
 			} else {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
 					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
 					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);

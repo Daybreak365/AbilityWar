@@ -11,14 +11,17 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "해커", rank = Rank.A, species = Species.HUMAN, explain = {
@@ -148,12 +151,14 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1);
 
+	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer());
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					Player target = LocationUtil.getNearestPlayer(getPlayer());
+					Player target = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), STRICT_PREDICATE);
 
 					if (target != null) {
 						this.target = target;

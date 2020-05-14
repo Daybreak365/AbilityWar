@@ -9,6 +9,7 @@ import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
+import daybreak.abilitywar.ability.event.PreAbilityRestrictionEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
@@ -20,6 +21,7 @@ import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.EventManager;
+import daybreak.abilitywar.game.manager.object.EventManager.EventObserver;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.RegexReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
@@ -34,10 +36,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
@@ -69,7 +73,7 @@ import org.bukkit.event.player.PlayerEvent;
  *
  * @author Daybreak 새벽
  */
-public abstract class AbilityBase implements EventManager.Observer {
+public abstract class AbilityBase {
 
 	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
 
@@ -112,7 +116,7 @@ public abstract class AbilityBase implements EventManager.Observer {
 	private final AbilityManifest manifest;
 	private final String[] explanation;
 	private final AbstractGame game;
-	private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
+	private final Map<Class<? extends Event>, EventObserver> eventhandlers;
 	private final List<GameTimer> timers = new LinkedList<>();
 	private List<GameTimer> scheduledTimers = null;
 	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
@@ -156,40 +160,38 @@ public abstract class AbilityBase implements EventManager.Observer {
 		this.manifest = registration.getManifest();
 		this.explanation = new String[manifest.explain().length];
 		System.arraycopy(manifest.explain(), 0, explanation, 0, explanation.length);
-		this.eventhandlers = registration.getEventhandlers();
-
 		EventManager eventManager = game.getEventManager();
-		for (Class<? extends Event> eventClass : eventhandlers.keySet()) {
-			eventManager.register(eventClass, this);
+		eventhandlers = new HashMap<>();
+		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
+			Pair<Method, SubscribeEvent> pair = entry.getValue();
+			EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
+				@Override
+				protected void onEvent(Event event) {
+					if (restricted) return;
+					if (subscriber.onlyRelevant()
+							&& ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
+							|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
+							|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
+							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
+						return;
+					}
+					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled())
+						return;
+					try {
+						ReflectionUtil.setAccessible(method).invoke(AbilityBase.this, event);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+						logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
+					}
+				}
+			};
+			eventhandlers.put(entry.getKey(), observer);
+		}
+
+		for (EventObserver value : eventhandlers.values()) {
+			eventManager.register(value);
 		}
 
 		this.restricted = game.isRestricted() || !game.isGameStarted();
-	}
-
-	@Override
-	public void onEvent(Event event) {
-		if (restricted) return;
-		Class<? extends Event> eventClass = event.getClass();
-		if (eventhandlers.containsKey(eventClass)) {
-			Pair<Method, SubscribeEvent> pair = eventhandlers.get(eventClass);
-			SubscribeEvent subscriber = pair.getRight();
-			if (subscriber.onlyRelevant()
-					&& ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
-					|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
-					|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
-					|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
-				return;
-			}
-			if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled()) {
-				return;
-			}
-			Method method = pair.getLeft();
-			try {
-				ReflectionUtil.setAccessible(method).invoke(this, event);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-				logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
-			}
-		}
 	}
 
 	protected void onUpdate(AbilityBase.Update update) {
@@ -210,7 +212,9 @@ public abstract class AbilityBase implements EventManager.Observer {
 	public final void destroy() {
 		onUpdate(Update.ABILITY_DESTROY);
 		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
-		game.getEventManager().unregisterAll(this);
+		for (EventObserver value : eventhandlers.values()) {
+			game.getEventManager().unregister(value);
+		}
 		for (GameTimer timer : timers) {
 			if (timer instanceof Timer) ((Timer) timer).destroyed = true;
 			timer.stop(true);
@@ -297,9 +301,12 @@ public abstract class AbilityBase implements EventManager.Observer {
 	/**
 	 * 능력의 제한 여부를 설정합니다.
 	 */
-	public final void setRestricted(boolean restricted) {
-		this.restricted = restricted;
-		if (restricted) {
+	public final void setRestricted(boolean toSet) {
+		PreAbilityRestrictionEvent event = new PreAbilityRestrictionEvent(this, toSet);
+		Bukkit.getPluginManager().callEvent(event);
+		toSet = event.isRestricted();
+		this.restricted = toSet;
+		if (toSet) {
 			for (GameTimer timer : timers) {
 				if (timer.getBehavior() == RestrictionBehavior.STOP_START) {
 					timer.stop(true);

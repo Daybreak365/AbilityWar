@@ -2,6 +2,7 @@ package daybreak.abilitywar.game;
 
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.manager.GameFactory;
@@ -38,6 +39,9 @@ public class GameManager {
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 			if (e.getCause() != null && e.getCause() instanceof IllegalArgumentException) {
 				throw (IllegalArgumentException) e.getCause();
+			}
+			if (DeveloperSettings.isEnabled()) {
+				e.printStackTrace();
 			}
 		}
 		Configuration.modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());

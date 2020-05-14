@@ -55,19 +55,22 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 				for (String name : container.getKeys()) {
 					joiner.add(name);
 				}
+				super.onEnd();
 				throw new IllegalArgumentException(args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 팀 프리셋입니다. 사용 가능한 프리셋: " + joiner.toString());
 			}
 		} else {
 			if (container.getPresets().size() == 1) {
 				this.preset = validatePreset(new ArrayList<>(container.getPresets()).get(0));
 			} else {
-				if (container.getPresets().size() == 0)
+				if (container.getPresets().size() == 0) {
+					super.onEnd();
 					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 존재하지 않습니다. '/aw util teampreset' 에서 프리셋을 만들어주세요.");
-				else {
+				} else {
 					StringJoiner joiner = new StringJoiner(", ");
 					for (String name : container.getKeys()) {
 						joiner.add(name);
 					}
+					super.onEnd();
 					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 2개 이상 있습니다. '/.. start <팀 프리셋 이름>'과 같은 방법으로 사용할 프리셋을 선택해주세요. 사용 가능한 프리셋: " + joiner.toString());
 				}
 			}
@@ -296,7 +299,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 		if (isParticipating(player)) {
 			Participant participant = getParticipant(e.getPlayer());
 			if (participant.attributes().TEAM_CHAT.getValue()) {
-				e.setFormat(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &e" + player.getName() + "&f: &r" + e.getMessage()));
+				e.setFormat(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &e" + player.getName() + "&f: &r" + e.getMessage().replaceAll("%", "%%")));
 				Set<Player> recipients = e.getRecipients();
 				recipients.clear();
 				if (hasTeam(participant)) {

@@ -7,6 +7,8 @@ import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.debug.DebugMode;
 import daybreak.abilitywar.game.list.mixability.MixAbility;
+import daybreak.abilitywar.game.list.mixability.changemix.ChangeMix;
+import daybreak.abilitywar.game.list.oneability.OneAbility;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.list.standard.WarGame;
 import daybreak.abilitywar.game.list.summervacation.SummerVacation;
@@ -40,6 +42,8 @@ public class GameFactory {
 		registerMode(TeamFight.class);
 		registerMode(MixAbility.class);
 		registerMode(ZeroTick.class);
+		registerMode(OneAbility.class);
+		registerMode(ChangeMix.class);
 		if (DeveloperSettings.isEnabled()) GameFactory.registerMode(DebugMode.class);
 	}
 

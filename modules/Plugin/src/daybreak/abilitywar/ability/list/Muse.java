@@ -11,16 +11,19 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Iterator;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -63,6 +66,8 @@ public class Muse extends AbilityBase implements ActiveHandler {
 	private static final Note A = Note.natural(1, Tone.A);
 	private double currentRadius;
 	private Location center = null;
+
+	private static final Predicate<Entity> ONLY_PARTICIPANTS = Predicates.PARTICIPANTS();
 
 	private final DurationTimer skill = new DurationTimer(120, cooldownTimer) {
 
@@ -122,12 +127,12 @@ public class Muse extends AbilityBase implements ActiveHandler {
 
 				if (soundCount % 5 == 0) {
 					soundCount = 1;
-					for (LivingEntity livingEntity : LocationUtil.getLivingEntitiesInCircle(center, currentRadius, LocationUtil.Predicates.PARTICIPANTS())) {
+					for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, center, currentRadius, ONLY_PARTICIPANTS)) {
 						PotionEffects.GLOWING.addPotionEffect(livingEntity, 4, 0, true);
 						if (livingEntity instanceof Player) SoundLib.BELL.playInstrument((Player) livingEntity, A);
 					}
 				} else {
-					for (LivingEntity livingEntity : LocationUtil.getLivingEntitiesInCircle(center, currentRadius, LocationUtil.Predicates.PARTICIPANTS())) {
+					for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, center, currentRadius, ONLY_PARTICIPANTS)) {
 						PotionEffects.GLOWING.addPotionEffect(livingEntity, 4, 0, true);
 					}
 				}
@@ -139,7 +144,7 @@ public class Muse extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public void onDurationEnd() {
-			for (Player player : LocationUtil.getPlayersInCircle(center, currentRadius, LocationUtil.Predicates.PARTICIPANTS())) {
+			for (Player player : LocationUtil.getEntitiesInCircle(Player.class, center, currentRadius, ONLY_PARTICIPANTS)) {
 				SoundLib.BELL.playInstrument(player, D);
 				SoundLib.BELL.playInstrument(player, FSharp);
 				SoundLib.BELL.playInstrument(player, A);

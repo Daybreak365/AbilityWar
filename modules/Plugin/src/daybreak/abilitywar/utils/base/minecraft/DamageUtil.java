@@ -2,41 +2,48 @@ package daybreak.abilitywar.utils.base.minecraft;
 
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DamageUtil {
 
 	private DamageUtil() {
 	}
 
+	private static <T extends EntityDamageEvent> boolean canDamage(T event, Entity victim) {
+		Bukkit.getPluginManager().callEvent(event);
+		if (event.isCancelled()) return false;
+		else {
+			if (victim instanceof Player) {
+				GameMode gameMode = ((Player) victim).getGameMode();
+				return gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE;
+			} else return true;
+		}
+	}
+
 	public static boolean canDamage(Entity damager, Entity victim, EntityDamageEvent.DamageCause damageCause, double damage) {
-		EntityDamageByEntityEvent fakeEvent = new EntityDamageByEntityEvent(damager, victim, damageCause, damage);
-		Bukkit.getPluginManager().callEvent(fakeEvent);
-		return !fakeEvent.isCancelled();
+		return canDamage(new EntityDamageByEntityEvent(damager, victim, damageCause, damage), victim);
 	}
 
 	public static boolean canDamage(Entity victim, EntityDamageEvent.DamageCause damageCause, double damage) {
-		EntityDamageEvent fakeEvent = new EntityDamageEvent(victim, damageCause, damage);
-		Bukkit.getPluginManager().callEvent(fakeEvent);
-		return !fakeEvent.isCancelled();
+		return canDamage(new EntityDamageEvent(victim, damageCause, damage), victim);
 	}
 
 	@Beta
 	public static <E extends Entity & Attributable> double getPenetratedDamage(E damager, E victim, double damage) {
 		double attackDamage = damager.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue(), defensePoint = victim.getAttribute(Attribute.GENERIC_ARMOR).getValue();
 		double base = (attackDamage * (1 - (Math.min(20, Math.max(defensePoint / 5, defensePoint - (attackDamage / (2 + (victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS).getValue() / 4))))) / 25)));
-		Bukkit.broadcastMessage(defensePoint + "");
 		return base * (damage / base);
 	}
 

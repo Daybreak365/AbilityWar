@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.list.summervacation;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.Configuration.Settings.SummerVacationSettings;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
@@ -14,10 +15,16 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,15 +34,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 신나는 여름 휴가
@@ -165,6 +167,14 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 							}
 						}
 					}
+				}
+				if (DeathSettings.getAutoRespawn()) {
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							NMSHandler.getNMS().respawn(victim.getPlayer());
+						}
+					}.runTaskLater(AbilityWar.getPlugin(), 2L);
 				}
 			}
 		};

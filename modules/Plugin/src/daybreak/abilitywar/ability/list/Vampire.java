@@ -9,6 +9,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.DamageUtil;
@@ -17,10 +18,12 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 
@@ -71,6 +74,12 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
+	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer()).and(new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			return DamageUtil.canDamage(getPlayer(), entity, EntityDamageEvent.DamageCause.MAGIC, 1);
+		}
+	});
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final int distance = DistanceConfig.getValue();
 	private final Circle circle = Circle.of(distance, distance * 15);
@@ -82,21 +91,20 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		int blood;
 
 		public void Target() {
-			targets = LocationUtil.getNearbyDamageableEntities(getPlayer(), distance, 250);
+			targets = LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), distance, 250, STRICT_PREDICATE);
 			instrumentListeners = new ArrayList<>();
 			for (Damageable damageable : targets) {
-				if (!damageable.isDead() && DamageUtil.canDamage(getPlayer(), damageable, EntityDamageEvent.DamageCause.MAGIC, 1)) {
-					damageable.damage(0);
-					final int amount;
-					if (isNight(getPlayer().getWorld().getTime())) {
-						amount = 2;
-					} else {
-						amount = 1;
-					}
-					damageable.setHealth(Math.max(damageable.getHealth() - amount, 0));
-					blood += amount;
-					if (damageable instanceof Player) instrumentListeners.add((Player) damageable);
+				if (damageable.isDead()) continue;
+				damageable.damage(0);
+				final int amount;
+				if (isNight(getPlayer().getWorld().getTime())) {
+					amount = 2;
+				} else {
+					amount = 1;
 				}
+				damageable.setHealth(Math.max(damageable.getHealth() - amount, 0));
+				blood += amount;
+				if (damageable instanceof Player) instrumentListeners.add((Player) damageable);
 			}
 		}
 

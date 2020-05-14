@@ -89,31 +89,29 @@ public class TimeLoop extends Synergy {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if (cooldownTimer.isCooldown()) return;
 		if (e.getEntity() instanceof Player) {
 			Player entity = (Player) e.getEntity();
-			if (!entity.equals(getPlayer()) && getGame().isParticipating(entity)) {
+			if (getGame().isParticipating(entity)) {
 				Participant participant = getGame().getParticipant(entity);
 				if (loggers.containsKey(participant) && loggers.get(participant).isRewinding()) {
 					e.setCancelled(true);
 				}
 			}
 		}
+		if (cooldownTimer.isCooldown()) return;
 		if (e.getEntity().equals(getPlayer()) && getPlayer().getHealth() - e.getFinalDamage() <= 0) {
 			e.setCancelled(true);
 			for (PlayerLogger value : loggers.values()) {
 				value.rewind();
 			}
 			cooldownTimer.start();
-			inCombat.stop(false);
 		}
 	}
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (cooldownTimer.isCooldown() || e.getEntity().equals(e.getDamager())) return;
 		onEntityDamage(e);
-		if (cooldownTimer.isCooldown()) return;
+		if (cooldownTimer.isCooldown() || e.getEntity().equals(e.getDamager())) return;
 		if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
 			Player damager = (Player) e.getDamager();
 			if (getGame().isParticipating(damager)) {
@@ -210,6 +208,7 @@ public class TimeLoop extends Synergy {
 				SoundLib.BELL.playInstrument(player, Note.natural(0, Tone.D));
 				SoundLib.BELL.playInstrument(player, Note.sharp(0, Tone.F));
 				SoundLib.BELL.playInstrument(player, Note.natural(1, Tone.A));
+				inCombat.stop(false);
 			}
 		}.setPeriod(TimeUnit.TICKS, 1);
 

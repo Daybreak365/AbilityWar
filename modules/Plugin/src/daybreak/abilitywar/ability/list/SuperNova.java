@@ -11,7 +11,7 @@ import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import org.bukkit.Location;
 
@@ -42,7 +42,7 @@ public class SuperNova extends AbilityBase {
 		@Override
 		public void run(int seconds) {
 			double count = ((size + 1) - seconds) / 1.2;
-			for (Location location : LocationUtil.getSphere(count, 5).toLocations(center)) {
+			for (Location location : Sphere.of(count, 5).toLocations(center)) {
 				location.getWorld().createExplosion(location, 2);
 				ParticleLib.SPELL.spawnParticle(location, 0, 0, 0, 1);
 			}

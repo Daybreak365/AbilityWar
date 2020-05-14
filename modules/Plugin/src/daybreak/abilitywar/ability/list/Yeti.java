@@ -101,7 +101,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		public void run(int sec) {
 			Location playerLocation = getPlayer().getLocation();
 			World world = getPlayer().getWorld();
-			for (Block block : LocationUtil.getBlocks2D(center, count, true, false)) {
+			for (Block block : LocationUtil.getBlocks2D(center, count, true, false, true)) {
 				block = world.getBlockAt(block.getX(), LocationUtil.getFloorYAt(world, playerLocation.getY(), block.getX(), block.getZ()), block.getZ());
 				Block belowBlock = block.getRelative(BlockFace.DOWN);
 				Material type = belowBlock.getType();

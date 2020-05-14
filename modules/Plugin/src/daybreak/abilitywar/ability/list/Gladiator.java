@@ -109,7 +109,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		@Override
 		public void run(int count) {
 			if (totalCount <= 10) {
-				for (Block block : LocationUtil.getBlocks2D(center, buildCount, true, false)) {
+				for (Block block : LocationUtil.getBlocks2D(center, buildCount, true, false, true)) {
 					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
 					if (random.nextInt(5) <= 1) {
 						BlockX.setType(block, MaterialX.STONE_BRICKS);
@@ -125,17 +125,17 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 
 				buildCount++;
 			} else if (totalCount <= 15) {
-				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 2, true, false)) {
+				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 2, true, false, true)) {
 					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
 					BlockX.setType(block, MaterialX.IRON_BARS);
 				}
 
-				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 1, true, false)) {
+				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 1, true, false, true)) {
 					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
 					BlockX.setType(block, MaterialX.IRON_BARS);
 				}
 			} else if (totalCount <= 26) {
-				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, 6, 0), buildCount, true, false)) {
+				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, 6, 0), buildCount, true, false, true)) {
 					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
 					if (random.nextInt(5) <= 1) {
 						BlockX.setType(block, MaterialX.STONE_BRICKS);

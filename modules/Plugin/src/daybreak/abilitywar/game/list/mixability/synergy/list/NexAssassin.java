@@ -110,14 +110,14 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 			int distance = 6 - count;
 
 			if (ServerVersion.getVersionNumber() >= 13) {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
 					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
 					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);
 					FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
 				}
 			} else {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true)) {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
 					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
 					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);
@@ -265,7 +265,6 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 					} else {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&f" + distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
 					}
-					return true;
 				}
 			}
 		}

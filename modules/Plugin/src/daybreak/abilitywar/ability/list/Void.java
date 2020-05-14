@@ -10,9 +10,12 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -61,12 +64,14 @@ public class Void extends AbilityBase implements ActiveHandler {
 		}
 	};
 
+	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer());
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					Player target = LocationUtil.getNearestPlayer(getPlayer());
+					Player target = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), STRICT_PREDICATE);
 
 					if (target != null) {
 						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f에게 텔레포트합니다."));

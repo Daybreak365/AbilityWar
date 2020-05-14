@@ -6,9 +6,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.decorator.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundaryData;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
 import java.util.ArrayList;
@@ -92,47 +90,6 @@ public class LocationUtil {
 		return entities;
 	}
 
-	public static List<LivingEntity> getLivingEntitiesInCircle(Location center, double radius, Predicate<Entity> predicate) {
-		return getEntitiesInCircle(LivingEntity.class, center, radius, predicate);
-	}
-
-	public static List<Player> getPlayersInCircle(Location center, double radius, Predicate<Entity> predicate) {
-		return getEntitiesInCircle(Player.class, center, radius, predicate);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T extends Entity> T getEntityLookingAt(Class<T> entityType, LivingEntity criterion, int maxDistance, Predicate<Entity> predicate) {
-		if (criterion == null || maxDistance <= 0) return null;
-		World world = criterion.getWorld();
-		Iterator<Block> iterator = new BlockIterator(criterion, maxDistance);
-		CenteredBoundingBox boundingBox = CenteredBoundingBox.of(null, 0, 0, 0, 1, 1, 1);
-		while (iterator.hasNext()) {
-			Block block = iterator.next();
-			if (block.getType().isOccluding()) return null;
-			boundingBox.setCenter(block.getLocation());
-			Chunk blockChunk = block.getChunk();
-			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
-			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
-				for (int z = blockChunkZ - 1; z <= blockChunkZ + 1; z++) {
-					Chunk chunk = world.getChunkAt(x, z);
-					for (Entity e : chunk.getEntities()) {
-						if (!criterion.equals(e) && entityType.isAssignableFrom(e.getClass())) {
-							BoundaryData boundaryData = Boundary.BoundaryData.of(e.getType());
-							Location entityLocation = e.getLocation();
-							double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
-							if (entityX + boundaryData.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < boundingBox.getMaxY() &&
-									boundingBox.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityZ + boundaryData.getMaxZ() &&
-									(predicate == null || predicate.test(e))) {
-								return (T) e;
-							}
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
 	@SuppressWarnings("unchecked")
 	public static <T extends Entity> T getEntityLookingAt(Class<T> entityType, CenteredBoundingBox boundingBox, LivingEntity criterion, int maxDistance, Predicate<Entity> predicate) {
 		if (criterion == null || maxDistance <= 0) return null;
@@ -163,6 +120,11 @@ public class LocationUtil {
 			}
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends Entity> T getEntityLookingAt(Class<T> entityType, LivingEntity criterion, int maxDistance, Predicate<Entity> predicate) {
+		return getEntityLookingAt(entityType, CenteredBoundingBox.of(null, 0, 0, 0, 1, 1, 1), criterion, maxDistance, predicate);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -211,16 +173,14 @@ public class LocationUtil {
 	/**
 	 * 3차원 공간에서 범위 안에 있는 블록들을 {@link ArrayList}로  반환합니다.
 	 *
-	 * @param center  중심
-	 * @param radius  범위
-	 * @param hollow  참일 경우 바깥 부분의 블록들만 가져옵니다.
-	 * @param alsoAir 참일 경우 블록이 비어있어도 가져옵니다.
+	 * @param center     중심
+	 * @param radius     범위
+	 * @param hollow     참일 경우 바깥 부분의 블록들만 가져옵니다.
+	 * @param includeAir 참일 경우 블록이 비어있어도 가져옵니다.
 	 */
-	public static List<Block> getBlocks3D(Location center, int radius, boolean hollow, boolean alsoAir) {
+	public static List<Block> getBlocks3D(Location center, int radius, boolean hollow, boolean includeAir) {
 		List<Block> blocks = new ArrayList<>();
-		int blockX = center.getBlockX();
-		int blockY = center.getBlockY();
-		int blockZ = center.getBlockZ();
+		final int blockX = center.getBlockX(), blockY = center.getBlockY(), blockZ = center.getBlockZ();
 		for (int x = blockX - radius; x <= blockX + radius; x++) {
 			for (int y = blockY - radius; y <= blockY + radius; y++) {
 				for (int z = blockZ - radius; z <= blockZ + radius; z++) {
@@ -228,7 +188,7 @@ public class LocationUtil {
 					double distanceSquared = center.distanceSquared(block.getLocation());
 					if (distanceSquared <= (radius * radius) && !(hollow && distanceSquared < ((radius - 1) * (radius - 1)))) {
 						if (block.isEmpty()) {
-							if (alsoAir) {
+							if (includeAir) {
 								blocks.add(block);
 							}
 						} else {
@@ -245,30 +205,32 @@ public class LocationUtil {
 	 * 평면상에서 범위 안에 있는 블록들을 {@link ArrayList}로  반환합니다.
 	 *
 	 * @param center        중심
-	 * @param horizontal    범위
+	 * @param radius        범위
 	 * @param hollow        참일 경우 바깥 부분의 블록들만 가져옵니다.
 	 * @param highestBlocks 참일 경우 각 위치에서 가장 높은 위치에 있는 블록들을 가져옵니다. 이 경우 모든 블록이 같은 평면 위에 있지 않을 수 있습니다.
 	 */
-	public static List<Block> getBlocks2D(Location center, int horizontal, boolean hollow, boolean highestBlocks) {
+	public static List<Block> getBlocks2D(Location center, int radius, boolean hollow, boolean highestBlocks, boolean includeAir) {
 		List<Block> blocks = new ArrayList<>();
-
-		int blockX = center.getBlockX();
-		int blockZ = center.getBlockZ();
-
-		for (int x = blockX - horizontal; x <= blockX + horizontal; x++) {
-			for (int z = blockZ - horizontal; z <= blockZ + horizontal; z++) {
+		final int blockX = center.getBlockX(), blockZ = center.getBlockZ();
+		for (int x = blockX - radius; x <= blockX + radius; x++) {
+			for (int z = blockZ - radius; z <= blockZ + radius; z++) {
 				Block block = highestBlocks ? center.getWorld().getHighestBlockAt(x, z) : center.getWorld().getBlockAt(x, center.getBlockY(), z);
 				Location compare = center.clone();
 				compare.setY(0);
 				Location blockCompare = block.getLocation().clone();
 				blockCompare.setY(0);
 				double distance = compare.distanceSquared(blockCompare);
-				if (distance <= (horizontal * horizontal) && !(hollow && distance < ((horizontal - 1) * (horizontal - 1)))) {
-					blocks.add(block);
+				if (distance <= (radius * radius) && !(hollow && distance < ((radius - 1) * (radius - 1)))) {
+					if (block.isEmpty()) {
+						if (includeAir) {
+							blocks.add(block);
+						}
+					} else {
+						blocks.add(block);
+					}
 				}
 			}
 		}
-
 		return blocks;
 	}
 
@@ -285,22 +247,6 @@ public class LocationUtil {
 
 	public static Locations getRandomLocations(Location center, double radius, int amount) {
 		return getRandomLocations(new Random(), center, radius, amount);
-	}
-
-	public static Vectors getSphere(double scale, int amount) {
-		Vectors vectors = new Vectors(amount);
-		if (amount > 0) {
-			for (double a = Math.PI / amount; a <= Math.PI; a += Math.PI / amount) {
-				double radius = FastMath.sin(a) * scale;
-				double y = FastMath.cos(a) * scale;
-				for (double b = Math.PI / amount; b < Math.PI * 2; b += Math.PI / amount) {
-					double x = FastMath.cos(b) * radius;
-					double z = FastMath.sin(b) * radius;
-					vectors.add(new Vector(x, y, z));
-				}
-			}
-		}
-		return vectors;
 	}
 
 	/**
@@ -331,34 +277,6 @@ public class LocationUtil {
 
 		return current;
 	}
-
-	/**
-	 * 중점에서 가장 가까이에 있는 특정 타입의 엔티티를 반환합니다.
-	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
-	 * 만약 게임모드 종류가 팀 게임이고 중심 엔티티와 탐색된 엔티티가 플레이어일 경우 둘이 동일한 팀에 소속되었다면 포함하지 않습니다.
-	 * 가장 가까이에 있는 특정 타입의 엔티티를 찾을 수 없을 경우 null을 반환합니다.
-	 *
-	 * @param entityType 탐색할 엔티티 타입
-	 * @param center     중심 엔티티 (엔티티의 위치가 중점)
-	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
-	 */
-	public static <E extends Entity> E getNearestEntity(Class<E> entityType, Entity center) {
-		return getNearestEntity(entityType, center.getLocation(), Predicates.STRICT(center));
-	}
-
-	/**
-	 * 중심 플레이어에게서 가장 가까이에 있는 플레이어를 반환합니다.
-	 * 만약 탐색된 플레이어가 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
-	 * 만약 게임모드 종류가 팀 게임일 경우 탐색된 플레이어와 중심 플레이어가 동일한 팀에 소속되었다면 포함하지 않습니다.
-	 * 가장 가까이에 있는 플레이어를 찾을 수 없을 경우 null을 반환합니다.
-	 *
-	 * @param center 중심 플레이어 (플레이어의 위치가 중점)
-	 * @return 중점에서 가장 가까이에 있는 플레이어
-	 */
-	public static Player getNearestPlayer(Player center) {
-		return getNearestEntity(Player.class, center);
-	}
-
 
 	/**
 	 * 일정 범위 내에 있는 청크들의 엔티티 목록을 반환합니다.
@@ -521,10 +439,6 @@ public class LocationUtil {
 			}
 		}
 		return entities;
-	}
-
-	public static boolean doesConflict(BoundingBox a, BoundingBox b) {
-		return a.getMinX() < b.getMaxX() && b.getMinX() < a.getMaxX() && a.getMinY() < b.getMaxY() && b.getMinY() < a.getMaxY() && a.getMinZ() < b.getMaxZ() && b.getMinZ() < a.getMaxZ();
 	}
 
 	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<Entity> predicate) {
