@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability.list;
 
+import com.google.common.collect.ImmutableMap;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -7,19 +8,26 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.PreAbilityRestrictionEvent;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -32,7 +40,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -40,27 +47,75 @@ import org.bukkit.inventory.ItemStack;
 
 @Beta
 @AbilityManifest(name = "진검승부", rank = Rank.A, species = Species.HUMAN, explain = {
-		"BETA"
+		"다른 플레이어를 철괴로 우클릭하면 대상과의 진검승부를 시작합니다.",
+		"진검승부가 시작되면 지름이 5칸인 링이 생성되며, 링 밖으로 나갈 수",
+		"없고, 일시적으로 체력이 모두 회복되며 인벤토리 내의 모든 아이템이",
+		"일시적으로 제거됩니다. 진검승부 중에는 상대의 능력이 비활성화 되며,",
+		"상호 간의 공격 대미지 이외의 대미지는 받지 않습니다.",
+		"능력 사용 후 $[DurationConfig]초가 지나거나 둘 중 한명이 죽은 경우",
+		"진검승부가 종료되며, 체력이 능력 사용 전의 상태로 회복되고",
+		"모든 아이템이 되돌아옵니다."
 })
 public class VictoryBySword extends AbilityBase implements TargetHandler {
+
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Cooldown", 110,
+			"# 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+
+	};
+
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Duration", 60,
+			"# 능력 지속시간") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 5;
+		}
+
+	};
 
 	public VictoryBySword(Participant participant) {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(100);
+	private static final ImmutableMap<Integer, Note> notes = ImmutableMap.<Integer, Note>builder()
+			.put(9, Note.natural(0, Tone.C))
+			.put(8, Note.natural(0, Tone.D))
+			.put(7, Note.flat(0, Tone.E))
+			.put(6, Note.natural(0, Tone.F))
+			.put(5, Note.natural(1, Tone.G))
+			.put(4, Note.flat(1, Tone.A))
+			.put(3, Note.natural(1, Tone.B))
+			.put(2, Note.natural(1, Tone.C))
+			.put(1, Note.natural(1, Tone.G))
+			.build();
 
 	private Ring ring = null;
+	private static final Note C = Note.natural(0, Tone.C);
+	private static final Note EFlat = Note.flat(0, Tone.E);
+
+	private static final RGB COLOR = new RGB(138, 25, 115);
+	private static final Note G = Note.natural(0, Tone.G);
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer());
+	private final int duration = DurationConfig.getValue();
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {
-		if (entity instanceof Player && getGame().isParticipating((Player) entity) && !cooldownTimer.isCooldown() && ring == null) {
+		if (entity instanceof Player && STRICT_PREDICATE.test(entity) && !cooldownTimer.isCooldown() && ring == null) {
 			this.ring = new Ring(cooldownTimer, 5, (Player) entity);
 			ring.start();
 		}
 	}
-
-	private static final RGB COLOR = new RGB(138, 25, 115);
 
 	public class Ring extends DurationTimer implements Listener {
 
@@ -75,14 +130,16 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		private final double targetHealth;
 
 		public Ring(CooldownTimer cooldownTimer, double radius, Player target) {
-			super(1200, cooldownTimer);
+			super(duration * 20, cooldownTimer);
 			this.radius = radius;
 			this.center = getPlayer().getLocation().clone();
 			this.locations = Circle.of(radius, (int) (radius * 30)).toLocations(center).floor(center.getY());
 			this.target = target;
+			this.targetParticipant = getGame().getParticipant(target);
+			getParticipant().attributes().TARGETABLE.setValue(false);
+			targetParticipant.attributes().TARGETABLE.setValue(false);
 			this.contents = getPlayer().getInventory().getContents();
 			this.targetContents = target.getInventory().getContents();
-			this.targetParticipant = getGame().getParticipant(target);
 			getPlayer().getInventory().clear();
 			target.getInventory().clear();
 			if (targetParticipant.hasAbility()) {
@@ -97,8 +154,6 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 		@Override
 		protected void onDurationStart() {
-			getParticipant().attributes().TARGETABLE.setValue(false);
-			targetParticipant.attributes().TARGETABLE.setValue(false);
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		}
 
@@ -138,7 +193,9 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 			}
 			if (entity.equals(getPlayer()) || entity.equals(target)) {
 				if (damager.equals(getPlayer()) || damager.equals(target)) {
+					Player entityPlayer = (Player) entity;
 					e.setCancelled(false);
+					SoundLib.PIANO.playInstrument(damager.equals(getPlayer()) ? getPlayer() : target, notes.get(Math.max(1, Math.min(9, (int) ((entityPlayer.getHealth() / entityPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) * 10)))));
 				} else {
 					e.setCancelled(true);
 					if (damager instanceof Player) damager.sendMessage(ChatColor.RED + "진검승부 중인 상대를 공격할 수 없습니다!");
@@ -168,11 +225,6 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				e.setRestricted(true);
 		}
 
-		@EventHandler
-		private void onItemPickup(EntityPickupItemEvent e) {
-
-		}
-
 		@Override
 		protected void onDurationProcess(int count) {
 			getPlayer().getInventory().clear();
@@ -188,7 +240,27 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 		@EventHandler
 		protected void onDeath(PlayerDeathEvent e) {
-			if (target.equals(e.getEntity()) || getPlayer().equals(e.getEntity())) stop(false);
+			if (target.equals(e.getEntity())) {
+				new Timer(3) {
+					@Override
+					protected void run(int count) {
+						SoundLib.PIANO.playInstrument(getPlayer(), C);
+						SoundLib.PIANO.playInstrument(getPlayer(), EFlat);
+						SoundLib.PIANO.playInstrument(getPlayer(), G);
+					}
+				}.setPeriod(TimeUnit.TICKS, 7).start();
+				stop(false);
+			} else if (getPlayer().equals(e.getEntity())) {
+				new Timer(3) {
+					@Override
+					protected void run(int count) {
+						SoundLib.PIANO.playInstrument(target, C);
+						SoundLib.PIANO.playInstrument(target, EFlat);
+						SoundLib.PIANO.playInstrument(target, G);
+					}
+				}.setPeriod(TimeUnit.TICKS, 7).start();
+				stop(false);
+			}
 		}
 
 		@Override

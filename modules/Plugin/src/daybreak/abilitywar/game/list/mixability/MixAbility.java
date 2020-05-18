@@ -41,7 +41,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
-@GameManifest(Name = "믹스 능력자 전쟁", Description = {"§f두가지의 능력을 섞어서 사용하는 게임 모드입니다."})
+@GameManifest(Name = "믹스 능력자 전쟁", Description = {
+		"§f두 능력이 섞이면 어떻게 될까?",
+		"§f지금 바로 믹스!",
+		"",
+		"§f두가지의 능력으로 펼치는 능력자 전쟁입니다."
+})
 public class MixAbility extends Game implements DefaultKitHandler, Observer {
 
 	private static final Logger logger = Logger.getLogger(MixAbility.class);
@@ -58,14 +63,14 @@ public class MixAbility extends Game implements DefaultKitHandler, Observer {
 	protected void progressGame(int seconds) {
 		switch (seconds) {
 			case 1:
-				List<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&6==== &e게임 참여자 목록 &6===="));
+				List<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&5==== &d게임 참여자 목록 &5===="));
 				int count = 0;
 				for (Participant p : getParticipants()) {
 					count++;
-					lines.add(ChatColor.translateAlternateColorCodes('&', "&a" + count + ". &f" + p.getPlayer().getName()));
+					lines.add(ChatColor.translateAlternateColorCodes('&', "&d" + count + ". &f" + p.getPlayer().getName()));
 				}
-				lines.add(ChatColor.translateAlternateColorCodes('&', "&e총 인원수 : " + count + "명"));
-				lines.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
+				lines.add(ChatColor.translateAlternateColorCodes('&', "&5총 인원수 : " + count + "명"));
+				lines.add(ChatColor.translateAlternateColorCodes('&', "&5=========================="));
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);
@@ -78,9 +83,9 @@ public class MixAbility extends Game implements DefaultKitHandler, Observer {
 				break;
 			case 3:
 				lines = Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
+						ChatColor.translateAlternateColorCodes('&', "&5MixAbility &f- &d믹스 능력자 전쟁"),
 						ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-						ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
+						ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"),
 						ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908")
 				);
 
@@ -125,10 +130,10 @@ public class MixAbility extends Game implements DefaultKitHandler, Observer {
 				break;
 			case 14:
 				for (String line : Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-						ChatColor.translateAlternateColorCodes('&', "&f             &cMixAbility &f- &6믹스 능력자  "),
+						ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
+						ChatColor.translateAlternateColorCodes('&', "&f            &5MixAbility &f- &d믹스 능력자 전쟁  "),
 						ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
-						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"))) {
+						ChatColor.translateAlternateColorCodes('&', "&d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"))) {
 					Bukkit.broadcastMessage(line);
 				}
 

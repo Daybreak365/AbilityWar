@@ -35,7 +35,10 @@ import org.bukkit.event.HandlerList;
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "단일전", Description = {"§f모두 같은 능력으로 싸워보세요!"})
+@GameManifest(Name = "단일전", Description = {
+		"§f하나의 능력, 다양한 전략.",
+		"§f모두 같은 능력으로 펼치는 능력자 전쟁!"
+})
 public class OneAbility extends Game implements DefaultKitHandler, Observer {
 
 	private static final Logger logger = Logger.getLogger(OneAbility.class);

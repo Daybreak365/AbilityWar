@@ -82,7 +82,7 @@ public class TeamPresetGUI implements Listener {
 			for (TeamPreset preset : Settings.getPresetContainer().getPresets()) {
 				final ItemStack stack = MaterialX.WHITE_WOOL.parseItem();
 				ItemMeta im = stack.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + preset.getName()));
+				im.setDisplayName(ChatColor.AQUA + preset.getName());
 				List<String> lore = new ArrayList<>(7 + preset.getDivisionType().lore.size() + preset.getSchemes().size());
 				lore.add(ChatColor.RED + "삭제" + ChatColor.WHITE + "하려면 우클릭하세요.");
 				lore.add(ChatColor.DARK_GREEN + "팀 목록" + ChatColor.WHITE + "을 수정하려면 좌클릭하세요.");

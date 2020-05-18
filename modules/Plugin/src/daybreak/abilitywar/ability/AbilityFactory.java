@@ -9,6 +9,10 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mixability.Mix;
+import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
+import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
+import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
+import daybreak.abilitywar.game.list.murdermystery.ability.extra.Police;
 import daybreak.abilitywar.game.list.summervacation.SquirtGun;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
@@ -143,7 +147,7 @@ public class AbilityFactory {
 		registerAbility(Vampire.class);
 		registerAbility(PenetrationArrow.class);
 		// v2.0.8.8
-		registerAbility(Reaper.class);
+		registerAbility(SoulReaper.class);
 		registerAbility(Hedgehog.class);
 		// v2.0.9.2
 		registerAbility(ReligiousLeader.class);
@@ -160,6 +164,12 @@ public class AbilityFactory {
 		registerAbility(SquirtGun.class);
 		// 믹스 능력자 게임모드
 		registerAbility(Mix.class);
+
+		// 머더 미스터리 게임모드
+		registerAbility(Murderer.class);
+		registerAbility(Detective.class);
+		registerAbility(Innocent.class);
+		registerAbility(Police.class);
 	}
 
 	/**

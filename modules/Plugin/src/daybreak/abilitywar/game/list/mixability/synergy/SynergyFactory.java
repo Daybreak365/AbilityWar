@@ -11,7 +11,6 @@ import daybreak.abilitywar.ability.list.Chaos;
 import daybreak.abilitywar.ability.list.Imprison;
 import daybreak.abilitywar.ability.list.Khazhad;
 import daybreak.abilitywar.ability.list.Nex;
-import daybreak.abilitywar.ability.list.Reaper;
 import daybreak.abilitywar.ability.list.Sniper;
 import daybreak.abilitywar.ability.list.Stalker;
 import daybreak.abilitywar.ability.list.SuperNova;
@@ -26,7 +25,6 @@ import daybreak.abilitywar.game.list.mixability.synergy.list.DeathGrasp;
 import daybreak.abilitywar.game.list.mixability.synergy.list.DoubleSniper;
 import daybreak.abilitywar.game.list.mixability.synergy.list.Dracula;
 import daybreak.abilitywar.game.list.mixability.synergy.list.EventHorizon;
-import daybreak.abilitywar.game.list.mixability.synergy.list.GrimReaper;
 import daybreak.abilitywar.game.list.mixability.synergy.list.Meteor;
 import daybreak.abilitywar.game.list.mixability.synergy.list.NexAssassin;
 import daybreak.abilitywar.game.list.mixability.synergy.list.Pandemic;
@@ -58,7 +56,6 @@ public class SynergyFactory {
 		registerSynergy(Nex.class, Stalker.class, DeathGrasp.class);
 		registerSynergy(TimeRewind.class, TimeRewind.class, TimeLoop.class);
 		registerSynergy(Ares.class, Terrorist.class, RocketLauncher.class);
-		registerSynergy(Reaper.class, Reaper.class, GrimReaper.class);
 	}
 
 	private SynergyFactory() {

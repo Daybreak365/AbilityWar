@@ -81,20 +81,17 @@ public class Feather extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 5);
 
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
-					durationTimer.start();
-
-					return true;
-				}
+	private final Timer dash = new Timer() {
+		@Override
+		protected void run(int count) {
+			if (getPlayer().isFlying()) {
+				getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.25));
+				ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), .4, .4, .4, 5, 0.001);
+			} else {
+				stop(false);
 			}
 		}
-
-		return false;
-	}
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@SubscribeEvent
 	private void onEntityDamage(EntityDamageEvent e) {
@@ -105,17 +102,14 @@ public class Feather extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private final Timer dash = new Timer() {
-		@Override
-		protected void run(int count) {
-			if (getPlayer().isFlying()) {
-				getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.25));
-				ParticleLib.CLOUD.spawnParticle(getPlayer().getLocation(), 0, 0, 0, 1);
-			} else {
-				stop(false);
-			}
+	@Override
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
+			durationTimer.start();
+			return true;
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+		return false;
+	}
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onToogleSneak(PlayerToggleSneakEvent e) {

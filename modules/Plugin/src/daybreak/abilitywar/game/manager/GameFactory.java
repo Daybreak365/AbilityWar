@@ -8,6 +8,7 @@ import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.debug.DebugMode;
 import daybreak.abilitywar.game.list.mixability.MixAbility;
 import daybreak.abilitywar.game.list.mixability.changemix.ChangeMix;
+import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.oneability.OneAbility;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.list.standard.WarGame;
@@ -16,7 +17,10 @@ import daybreak.abilitywar.game.list.teamfight.TeamFight;
 import daybreak.abilitywar.game.list.zerotick.ZeroTick;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +48,7 @@ public class GameFactory {
 		registerMode(ZeroTick.class);
 		registerMode(OneAbility.class);
 		registerMode(ChangeMix.class);
+		registerMode(MurderMystery.class);
 		if (DeveloperSettings.isEnabled()) GameFactory.registerMode(DebugMode.class);
 	}
 
@@ -68,7 +73,9 @@ public class GameFactory {
 				} else {
 					logger.debug("§e" + gameClass.getName() + " §f게임모드는 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
-			} catch (NoSuchMethodException | NullPointerException e) {
+			} catch (UnsupportedVersionException e) {
+				logger.debug("§e" + gameClass.getName() + " §f게임 모드는 이 버전에서 지원되지 않습니다.");
+			} catch (Exception e) {
 				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + gameClass.getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
 			}
 		}
@@ -89,7 +96,13 @@ public class GameFactory {
 		private final GameManifest manifest;
 		private final int flag;
 
-		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException {
+		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException {
+			if (clazz.isAnnotationPresent(Support.class)) {
+				Support supported = clazz.getAnnotation(Support.class);
+				if (!ServerVersion.getVersion().isOver(supported.value())) {
+					throw new UnsupportedVersionException();
+				}
+			}
 			this.clazz = clazz;
 
 			Constructor<? extends AbstractGame> constructor;

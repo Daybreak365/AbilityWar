@@ -30,7 +30,9 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
 
 /**
  * 파티클 라이브러리
@@ -42,7 +44,7 @@ import org.bukkit.entity.Player;
 public class ParticleLib {
 
 	public static final SimpleParticle BARRIER = new SimpleParticle("BARRIER");
-	public static final SimpleParticle BLOCK_CRACK = new SimpleParticle("BLOCK_CRACK");
+	public static final BlockParticle BLOCK_CRACK = new BlockParticle("BLOCK_CRACK");
 	public static final SimpleParticle BLOCK_DUST = new SimpleParticle("BLOCK_DUST");
 	public static final SimpleParticle CLOUD = new SimpleParticle("CLOUD");
 	public static final SimpleParticle CRIT = new SimpleParticle("CRIT");
@@ -96,13 +98,23 @@ public class ParticleLib {
 			this.particle = Enums.getIfPresent(Particle.class, name).orNull();
 		}
 
-		public <T> void spawnParticle(Player player, Location location, float offsetX, float offsetY, float offsetZ, int count, T customData) {
+		public <T> void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, T customData) {
+			if (Configuration.Settings.getVisualEffect() && this.particle != null) {
+				player.spawnParticle(this.particle, location, count, offsetX, offsetY, offsetZ, extra, customData);
+			}
+		}
+
+		public <T> void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, T customData) {
 			if (Configuration.Settings.getVisualEffect() && this.particle != null) {
 				player.spawnParticle(this.particle, location, count, offsetX, offsetY, offsetZ, customData);
 			}
 		}
 
-		public void spawnParticle(Player player, Location location, float offsetX, float offsetY, float offsetZ, int count) {
+		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, double extra) {
+			this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, null);
+		}
+
+		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count) {
 			this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, null);
 		}
 
@@ -110,13 +122,23 @@ public class ParticleLib {
 			this.spawnParticle(player, location, 0, 0, 0, 1);
 		}
 
-		public <T> void spawnParticle(Location location, float offsetX, float offsetY, float offsetZ, int count, T customData) {
+		public <T> void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, T customData) {
+			if (Configuration.Settings.getVisualEffect() && this.particle != null) {
+				location.getWorld().spawnParticle(this.particle, location, count, offsetX, offsetY, offsetZ, extra, customData);
+			}
+		}
+
+		public <T> void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, T customData) {
 			if (Configuration.Settings.getVisualEffect() && this.particle != null) {
 				location.getWorld().spawnParticle(this.particle, location, count, offsetX, offsetY, offsetZ, customData);
 			}
 		}
 
-		public void spawnParticle(Location location, float offsetX, float offsetY, float offsetZ, int count) {
+		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, double extra) {
+			this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, null);
+		}
+
+		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count) {
 			this.spawnParticle(location, offsetX, offsetY, offsetZ, count, null);
 		}
 
@@ -202,6 +224,78 @@ public class ParticleLib {
 
 		public void setBlue(int blue) {
 			this.blue = blue;
+		}
+
+	}
+
+	public static class BlockParticle extends ParticleLib.SimpleParticle {
+
+		private BlockParticle(String name) {
+			super(name);
+		}
+
+		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, Block block) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, block.getBlockData());
+			} else {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(block.getType(), block.getData()));
+			}
+		}
+
+		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, Block block) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, block.getBlockData());
+			} else {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, new MaterialData(block.getType(), block.getData()));
+			}
+		}
+
+		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, MaterialX material) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, material.parseMaterial().createBlockData());
+			} else {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(material.parseMaterial(), material.getData()));
+			}
+		}
+
+		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, MaterialX material) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, material.parseMaterial().createBlockData());
+			} else {
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, new MaterialData(material.parseMaterial(), material.getData()));
+			}
+		}
+
+		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, Block block) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, block.getBlockData());
+			} else {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(block.getType(), block.getData()));
+			}
+		}
+
+		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, Block block) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, block.getBlockData());
+			} else {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, new MaterialData(block.getType(), block.getData()));
+			}
+		}
+
+		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, MaterialX material) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, material.parseMaterial().createBlockData());
+			} else {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(material.parseMaterial(), material.getData()));
+			}
+		}
+
+		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, MaterialX material) {
+			if (ServerVersion.getVersionNumber() >= 13) {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, material.parseMaterial().createBlockData());
+			} else {
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, new MaterialData(material.parseMaterial(), material.getData()));
+			}
 		}
 
 	}

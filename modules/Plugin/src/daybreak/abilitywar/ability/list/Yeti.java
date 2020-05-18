@@ -5,9 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
-import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -131,12 +129,14 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onAbilityDestroy(AbilityDestroyEvent e) {
-		for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
-			Block key = entry.getKey();
-			if (key.getType() == Material.PACKED_ICE || key.getType() == Material.OBSIDIAN || key.getType() == Material.SNOW_BLOCK || key.getType() == Material.SNOW) {
-				entry.getValue().apply();
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.ABILITY_DESTROY) {
+			for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
+				Block key = entry.getKey();
+				if (key.getType() == Material.PACKED_ICE || key.getType() == Material.OBSIDIAN || key.getType() == Material.SNOW_BLOCK || key.getType() == Material.SNOW) {
+					entry.getValue().apply();
+				}
 			}
 		}
 	}

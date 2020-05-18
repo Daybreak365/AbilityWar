@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -71,7 +72,7 @@ public class Zeus extends AbilityBase implements ActiveHandler {
 					if (!d.equals(getPlayer())) {
 						d.damage(d.getHealth() / 5, getPlayer());
 						if (d instanceof Player) {
-							Zeus.this.getGame().getEffectManager().Stun((Player) d, 60);
+							Stun.apply(getGame().getParticipant(d.getUniqueId()), TimeUnit.SECONDS, 3);
 						}
 					}
 				}

@@ -13,7 +13,6 @@ import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.EffectManager;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Hashes;
@@ -53,7 +52,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-public abstract class AbstractGame extends SimpleTimer implements Listener, EffectManager.Handler, CommandHandler {
+public abstract class AbstractGame extends SimpleTimer implements Listener, CommandHandler {
 
 	private static final Logger logger = Logger.getLogger(AbstractGame.class);
 
@@ -77,7 +76,6 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 
 	private final ParticipantStrategy participantStrategy;
 	private final EventManager eventManager = new EventManager(this);
-	private final EffectManager effectManager = new EffectManager(this);
 
 	public AbstractGame(Collection<Player> players) throws IllegalArgumentException {
 		super(TaskType.INFINITE, -1);
@@ -135,15 +133,6 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 	}
 
 	/**
-	 * EffectManager를 반환합니다.
-	 * <p>
-	 * null을 반환하지 않습니다.
-	 */
-	public EffectManager getEffectManager() {
-		return effectManager;
-	}
-
-	/**
 	 * 참여자 목록을 반환합니다.
 	 *
 	 * @return 참여자 목록
@@ -194,8 +183,12 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 		return participantStrategy.isParticipating(uuid);
 	}
 
-	public void addParticipant(Player player) {
+	public void addParticipant(Player player) throws UnsupportedOperationException {
 		participantStrategy.addParticipant(player);
+	}
+
+	public void removeParticipant(UUID uuid) throws UnsupportedOperationException {
+		participantStrategy.removeParticipant(uuid);
 	}
 
 	public boolean isRestricted() {
@@ -300,7 +293,11 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 								if (targetEntity instanceof LivingEntity) {
 									if (targetEntity instanceof Player) {
 										Player targetPlayer = (Player) targetEntity;
-										if (isParticipating(targetPlayer) && (!(this instanceof DeathManager.Handler) || !((DeathManager.Handler) this).getDeathManager().isExcluded(targetPlayer))) {
+										if (isParticipating(targetPlayer)) {
+											if (this instanceof DeathManager.Handler && ((DeathManager.Handler) this).getDeathManager().isExcluded(targetPlayer))
+												return;
+											if (!getParticipant(targetPlayer).attributes.TARGETABLE.getValue()) return;
+
 											this.lastClick = current;
 											((TargetHandler) ability).TargetSkill(material, targetPlayer);
 										}
@@ -525,6 +522,10 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Effe
 				public void unregister() {
 					channels.remove(this);
 					ActionbarNotification.this.update();
+				}
+
+				public boolean isValid() {
+					return channels.contains(this);
 				}
 
 			}

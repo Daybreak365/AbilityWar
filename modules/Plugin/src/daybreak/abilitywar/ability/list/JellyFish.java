@@ -7,9 +7,10 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(name = "해파리", rank = Rank.A, species = Species.ANIMAL, explain = {
@@ -36,17 +37,17 @@ public class JellyFish extends AbilityBase {
 		super(participant);
 	}
 
-	private final int stunTick = DurationConfig.getValue();
+	private final int stunDuration = DurationConfig.getValue();
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer())) {
 			Entity entity = e.getEntity();
-			if (entity instanceof Player) {
-				Player p = (Player) entity;
+			if (getGame().isParticipating(entity.getUniqueId())) {
+				Participant target = getGame().getParticipant(entity.getUniqueId());
 				SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
-				SoundLib.ENTITY_ITEM_PICKUP.playSound(p);
-				JellyFish.this.getGame().getEffectManager().Stun(p, stunTick);
+				SoundLib.ENTITY_ITEM_PICKUP.playSound(target.getPlayer());
+				Stun.apply(target, TimeUnit.TICKS, stunDuration);
 			}
 		}
 	}

@@ -11,7 +11,6 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Location;
@@ -30,7 +29,7 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 		"좀비가 당신을 타게팅하지 않습니다.",
 		"다른 플레이어를 철괴로 우클릭하면 주변 $[RadiusConfig]칸 안에 속도가 점차 줄어드는",
 		"$[ZombieCountConfig]마리의 §5좀비§f를 소환합니다.",
-		"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다."
+		"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다. $[CooldownConfig]"
 })
 public class Zombie extends AbilityBase implements TargetHandler {
 
@@ -74,8 +73,6 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		super(participant);
 	}
 
-	private static final RGB DARK_RED = RGB.of(61, 6, 1);
-
 	@SubscribeEvent
 	private void onMobTarget(EntityTargetLivingEntityEvent e) {
 		if (getPlayer().equals(e.getTarget()) && e.getEntityType().equals(EntityType.ZOMBIE)) {
@@ -86,7 +83,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 	private final double radius = RadiusConfig.getValue();
 	private final int zombieCount = ZombieCountConfig.getValue();
 	private final Set<org.bukkit.entity.Zombie> zombies = new HashSet<>(zombieCount);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(100);
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private Player target;
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 

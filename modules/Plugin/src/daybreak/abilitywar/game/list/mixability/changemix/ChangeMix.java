@@ -40,7 +40,12 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
-@GameManifest(Name = "체인지! 믹스 전쟁", Description = {"§f믹스 능력자 전쟁, 그리고 체인지! 능력자 전쟁을 동시에 즐겨보세요."})
+@GameManifest(Name = "체인지! 믹스 전쟁", Description = {
+		"§f믹스, 그리고 체인지!",
+		"§f정신 없이 즐기는 두가지 게임의 조합",
+		"",
+		"§6● §f체인지 능력 전쟁 전용 콘피그가 적용됩니다. Config.yml을 확인해보세요."
+})
 @Beta
 public class ChangeMix extends MixAbility implements DefaultKitHandler, Observer, Winnable {
 

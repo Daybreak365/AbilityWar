@@ -7,7 +7,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
-import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -113,10 +112,12 @@ public class Imprison extends AbilityBase implements TargetHandler {
 		}
 	}
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onAbilityDestroy(AbilityDestroyEvent e) {
-		for (Block block : blocks.keySet()) {
-			block.setType(Material.AIR);
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.ABILITY_DESTROY) {
+			for (Block block : blocks.keySet()) {
+				block.setType(Material.AIR);
+			}
 		}
 	}
 
