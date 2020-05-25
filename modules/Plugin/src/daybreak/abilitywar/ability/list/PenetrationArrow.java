@@ -10,8 +10,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
@@ -52,7 +52,7 @@ import org.bukkit.util.Vector;
 })
 public class PenetrationArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> BulletConfig = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 5,
+	public static final SettingObject<Integer> BulletConfig = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 3,
 			"# 능력 당 화살 개수") {
 
 		@Override
@@ -75,27 +75,27 @@ public class PenetrationArrow extends AbilityBase {
 	private static final Sphere sphere = Sphere.of(4, 10);
 	private final Random random = new Random();
 	private final List<ArrowType> arrowTypes = Arrays.asList(
-			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&c절단")) {
+			new ArrowType(ChatColor.RED + "절단") {
 				@Override
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
-					new Parabola<>(getPlayer(), OnHitBehavior.CUT, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, powerLevel, RED).start();
+					new Parabola<>(getPlayer(), OnHitBehavior.CUT, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getPitch(), powerLevel, RED).start();
 				}
 			},
-			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&5중력")) {
+			new ArrowType(ChatColor.DARK_PURPLE + "중력") {
 				@Override
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.D));
-					new Parabola<>(getPlayer(), OnHitBehavior.GRAVITY, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, powerLevel, PURPLE).start();
+					new Parabola<>(getPlayer(), OnHitBehavior.GRAVITY, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getPitch(), powerLevel, PURPLE).start();
 				}
 			},
-			new ArrowType(ChatColor.translateAlternateColorCodes('&', "&e풍월")) {
+			new ArrowType(ChatColor.YELLOW + "풍월") {
 				@Override
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
-					SoundLib.XYLOPHONE.playInstrument(getPlayer(), Note.flat(1, Note.Tone.B));
-					new Parabola<>(getPlayer(), OnHitBehavior.WIND, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getDirection().getY() * 90, powerLevel, YELLOW).start();
+					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Note.Tone.B));
+					new Parabola<>(getPlayer(), OnHitBehavior.WIND, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getPitch(), powerLevel, YELLOW).start();
 				}
 			}
 	);
@@ -164,13 +164,48 @@ public class PenetrationArrow extends AbilityBase {
 
 	private static final double GRAVITATIONAL_CONSTANT = 3;
 
+	public interface OnHitBehavior {
+		OnHitBehavior CUT = new OnHitBehavior() {
+			@Override
+			public void onHit(Damageable damager, Damageable victim) {
+				ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
+				if (victim instanceof LivingEntity) {
+					((LivingEntity) victim).setNoDamageTicks(0);
+				}
+				victim.damage(5, damager);
+			}
+		};
+		OnHitBehavior GRAVITY = new OnHitBehavior() {
+			@Override
+			public void onHit(Damageable damager, Damageable victim) {
+				for (Location location : sphere.toLocations(victim.getLocation())) {
+					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
+				}
+				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, victim.getLocation(), 4, 4, Predicates.STRICT(damager))) {
+					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
+				}
+			}
+		};
+		OnHitBehavior WIND = new OnHitBehavior() {
+			@Override
+			public void onHit(Damageable damager, Damageable victim) {
+				Vector vector = damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-1);
+				if (vector.length() > 0.01) {
+					vector.normalize().multiply(2);
+				}
+				victim.setVelocity(vector.setY(0));
+			}
+		};
+
+		void onHit(Damageable damager, Damageable victim);
+	}
+
 	public class Parabola<Shooter extends Entity & Damageable & ProjectileSource> extends Timer {
 
 		private final Shooter shooter;
 		private final OnHitBehavior onHitBehavior;
 		private final CustomEntity entity;
 		private final double velocity;
-		private final double sin;
 		private final int powerEnchant;
 		private final Vector forward;
 
@@ -183,7 +218,6 @@ public class PenetrationArrow extends AbilityBase {
 			this.onHitBehavior = onHitBehavior;
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 			this.velocity = Math.sqrt((arrowVelocity.getX() * arrowVelocity.getX()) + (arrowVelocity.getY() * arrowVelocity.getY()) + (arrowVelocity.getZ() * arrowVelocity.getZ()));
-			this.sin = FastMath.sin(Math.toRadians(angle));
 			this.powerEnchant = powerEnchant;
 			this.forward = arrowVelocity.setY(arrowVelocity.getY() * 0.7);
 			this.color = color;
@@ -197,14 +231,18 @@ public class PenetrationArrow extends AbilityBase {
 
 		@Override
 		protected void run(int i) {
-			time += 0.03;
-			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time) + (velocity * sin * time) * 0.7;
+			time += 0.025;
+			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time);
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
 			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 8); iterator.hasNext(); ) {
 				Location location = iterator.next();
+				if (location.getY() < 0) {
+					stop(false);
+					return;
+				}
 				entity.setLocation(location);
 				for (Damageable damageable : LocationUtil.getConflictingDamageables(entity.getBoundingBox())) {
-					if (!shooter.equals(damageable) && !attacked.contains(damageable)) {
+					if (damageable.isValid() && !damageable.isDead() && !shooter.equals(damageable) && !attacked.contains(damageable)) {
 						damageable.damage(EnchantLib.getDamageWithPowerEnchantment(Math.round(2.5 * velocity * 10) / 10.0, powerEnchant), getPlayer());
 						onHitBehavior.onHit(shooter, damageable);
 						attacked.add(damageable);
@@ -250,38 +288,6 @@ public class PenetrationArrow extends AbilityBase {
 
 		}
 
-	}
-
-	public interface OnHitBehavior {
-		OnHitBehavior CUT = new OnHitBehavior() {
-			@Override
-			public void onHit(Damageable damager, Damageable victim) {
-				ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
-				if (victim instanceof LivingEntity) {
-					((LivingEntity) victim).setNoDamageTicks(0);
-				}
-				victim.damage(5, damager);
-			}
-		};
-		OnHitBehavior GRAVITY = new OnHitBehavior() {
-			@Override
-			public void onHit(Damageable damager, Damageable victim) {
-				for (Location location : sphere.toLocations(victim.getLocation())) {
-					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
-				}
-				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(victim.getLocation(), 4, 4)) {
-					damageable.setVelocity(victim.getLocation().toVector().subtract(damageable.getLocation().toVector()).multiply(0.75));
-				}
-			}
-		};
-		OnHitBehavior WIND = new OnHitBehavior() {
-			@Override
-			public void onHit(Damageable damager, Damageable victim) {
-				victim.setVelocity(damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-0.35).setY(0));
-			}
-		};
-
-		void onHit(Damageable damager, Damageable victim);
 	}
 
 }

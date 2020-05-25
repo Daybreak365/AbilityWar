@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.manager.gui;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
@@ -191,11 +192,8 @@ public class AbilityGUI implements Listener {
 							}
 						}
 					} catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-						if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-							Messager.sendErrorMessage(p, ex.getMessage());
-						} else {
-							Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
-						}
+						Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
+						if (DeveloperSettings.isEnabled()) ex.printStackTrace();
 					}
 					p.closeInventory();
 				} else {

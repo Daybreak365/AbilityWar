@@ -106,7 +106,7 @@ public class AbilityList {
 		registerAbility(Lazyness.class);
 		registerAbility(Vampire.class);
 		registerAbility(PenetrationArrow.class);
-		registerAbility(SoulReaper.class);
+		registerAbility(SoulEncroach.class);
 		registerAbility(Hedgehog.class);
 		registerAbility(ReligiousLeader.class);
 		registerAbility(Kidnap.class);

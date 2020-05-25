@@ -3,15 +3,18 @@ package daybreak.abilitywar.ability.list;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.Scheduled;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.base.math.geometry.Wing;
 import daybreak.abilitywar.utils.base.minecraft.DamageUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -19,6 +22,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -26,13 +30,25 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 @AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.UNDEAD, explain = {
-		"철괴를 우클릭하면 $[DurationConfig]초간 $[DistanceConfig]칸 안에 있는 생명체들에게서",
+		"철괴를 우클릭하면 $[DurationConfig]초간 주위 $[DistanceConfig]칸 안에 있는 생명체들에게서",
 		"체력을 §c반칸§f씩 $[DurationConfig]번 흡혈합니다. $[CooldownConfig]",
-		"§e밤§f에는 쿨타임이 더 빠르게 끝나며, 체력을 매번 §c반칸§f씩 더 흡혈합니다."
+		"§e밤§f에는 쿨타임이 더 빠르게 끝나며, 체력을 매번 §c반칸§f씩 더 흡혈해",
+		"§c한칸§f씩 흡혈합니다. 능력 사용 중에는 땅 위에서 느리게 날 수 있습니다."
 })
 public class Vampire extends AbilityBase implements ActiveHandler {
+
+	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Distance", 12,
+			"# 스킬 거리 (기본값: 12)") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
 
 	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Cool", 160,
 			"# 쿨타임") {
@@ -59,16 +75,26 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		}
 
 	};
-
-	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Distance", 7,
-			"# 스킬 거리 (기본값: 7)") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-	};
+	private static final Pair<Wing, Wing> VAMPIRE_WING = Wing.of(new boolean[][]{
+			{false, false, false, false, false, false, false, false, false, false, false, false},
+			{false, false, false, false, false, false, false, false, false, false, false, false},
+			{false, false, false, false, false, false, false, false, false, false, false, false},
+			{false, false, false, false, false, false, false, false, false, false, false, false},
+			{false, false, false, false, true, true, true, true, true, false, false, false},
+			{false, false, true, true, true, true, false, false, false, false, false, false},
+			{false, true, true, true, true, true, false, false, false, false, false, false},
+			{true, true, true, true, true, true, true, false, false, false, false, false},
+			{true, true, true, true, true, true, true, true, true, true, false, false},
+			{true, true, false, true, true, true, true, true, true, true, true, false},
+			{true, true, false, true, true, true, true, true, true, true, true, true},
+			{true, false, true, false, true, true, true, true, true, true, true, false},
+			{true, true, true, false, true, false, true, false, false, false, false, false},
+			{true, true, true, true, true, true, true, false, false, false, false, false},
+			{true, true, true, false, false, false, false, false, false, false, false, false},
+			{false, true, false, false, false, false, false, false, false, false, false, false},
+			{false, false, false, false, false, false, false, false, false, false, false, false},
+			{false, false, false, false, false, false, false, false, false, false, false, false}
+	});
 
 	public Vampire(AbstractGame.Participant participant) {
 		super(participant);
@@ -85,18 +111,21 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 	private final Circle circle = Circle.of(distance, distance * 15);
 	private static final RGB COLOR_BLOOD_RED = new RGB(138, 7, 7);
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 10, cooldownTimer) {
-		int count;
-		List<Damageable> targets;
-		List<Player> instrumentListeners;
-		int blood;
+		private int count;
+		private double blood;
+		private List<Damageable> targets;
+		private List<Player> instrumentListeners;
+		private Wing leftWing, rightWing;
 
 		public void Target() {
-			targets = LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), distance, 250, STRICT_PREDICATE);
-			instrumentListeners = new ArrayList<>();
+			this.targets = LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), distance, 250, STRICT_PREDICATE);
+			this.instrumentListeners = new ArrayList<>();
+			this.leftWing = VAMPIRE_WING.getLeft().clone();
+			this.rightWing = VAMPIRE_WING.getRight().clone();
 			for (Damageable damageable : targets) {
 				if (damageable.isDead()) continue;
 				damageable.damage(0);
-				final int amount;
+				final double amount;
 				if (isNight(getPlayer().getWorld().getTime())) {
 					amount = 2;
 				} else {
@@ -115,6 +144,9 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationProcess(int seconds) {
+			getPlayer().setFlySpeed(0.1f);
+			getPlayer().setAllowFlight(true);
+			getPlayer().setFlying(true);
 			if (count % 5 == 0) {
 				instrumentListeners.add(getPlayer());
 				SoundLib.PIANO.playInstrument(instrumentListeners, Note.natural(0, Note.Tone.B));
@@ -145,11 +177,49 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 				Location startLocation = target.getLocation();
 				ParticleLib.HEART.spawnParticle(startLocation.clone().add(Line.vectorAt(startLocation, getPlayer().getLocation(), 10, count - 1)));
 			}
+
+			float yaw = getPlayer().getLocation().getYaw();
+			for (Location loc : leftWing.rotateAroundAxisY(-yaw + 30).toLocations(getPlayer().getLocation().clone().subtract(0, 0.5, 0))) {
+				ParticleLib.REDSTONE.spawnParticle(loc, COLOR_BLOOD_RED);
+			}
+			leftWing.rotateAroundAxisY(yaw - 30);
+			for (Location loc : rightWing.rotateAroundAxisY(-yaw - 30).toLocations(getPlayer().getLocation().clone().subtract(0, 0.5, 0))) {
+				ParticleLib.REDSTONE.spawnParticle(loc, COLOR_BLOOD_RED);
+			}
+			rightWing.rotateAroundAxisY(yaw + 30);
+			final Location playerLocation = getPlayer().getLocation();
+			final double floorY = LocationUtil.getFloorYAt(getPlayer().getWorld(), playerLocation.getY(), playerLocation.getBlockX(), playerLocation.getBlockZ()) + 2;
+			getPlayer().setVelocity(getPlayer().getVelocity().setY(floorY > playerLocation.getY() ? 0.05 : (floorY == playerLocation.getY() ? 0 : -0.05)));
 		}
+
+		@Override
+		public void onDurationEnd() {
+			getPlayer().setFlying(false);
+			GameMode mode = getPlayer().getGameMode();
+			getPlayer().setAllowFlight(mode != GameMode.SURVIVAL && mode != GameMode.ADVENTURE);
+		}
+
+		@Override
+		protected void onDurationSilentEnd() {
+			getPlayer().setFlying(false);
+			GameMode mode = getPlayer().getGameMode();
+			getPlayer().setAllowFlight(mode != GameMode.SURVIVAL && mode != GameMode.ADVENTURE);
+		}
+
 	}.setPeriod(TimeUnit.TICKS, 2);
 
 	private boolean isNight(long time) {
 		return time > 12300 && time < 23850;
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onMove(PlayerMoveEvent e) {
+		if (!skill.isRunning()) return;
+		final Location playerLocation = getPlayer().getLocation();
+		final double floorY = LocationUtil.getFloorYAt(getPlayer().getWorld(), playerLocation.getY(), playerLocation.getBlockX(), playerLocation.getBlockZ()) + 3;
+		if ((e.getFrom().getY() < floorY && e.getTo().getY() > floorY) || (e.getFrom().getY() > floorY && e.getTo().getY() > e.getFrom().getY())) {
+			e.getTo().setY(e.getFrom().getY());
+		}
 	}
 
 	@Scheduled

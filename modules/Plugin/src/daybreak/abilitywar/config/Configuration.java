@@ -1,6 +1,7 @@
 package daybreak.abilitywar.config;
 
 import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.config.serializable.AbilityKit;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
@@ -360,7 +361,11 @@ public class Configuration {
 		}
 
 		public static boolean isWRECKEnabled() {
-			return getBoolean(ConfigNodes.GAME_WRECK);
+			return getBoolean(ConfigNodes.GAME_WRECK_ENABLE);
+		}
+
+		public static CooldownDecrease getCooldownDecrease() {
+			return CooldownDecrease.getIfPresent(getString(ConfigNodes.GAME_WRECK_DECREASE));
 		}
 
 	}

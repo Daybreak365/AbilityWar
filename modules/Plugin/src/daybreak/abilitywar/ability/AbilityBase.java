@@ -10,6 +10,7 @@ import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
 import daybreak.abilitywar.ability.event.PreAbilityRestrictionEvent;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
@@ -351,13 +352,12 @@ public abstract class AbilityBase {
 	public final class CooldownTimer extends Timer {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
-		private final String abilityName;
-		private final boolean sendActionbar = true;
+		private final String name;
 
-		public CooldownTimer(int cooldown, String abilityName) {
-			super(TaskType.REVERSE, (WRECK.isEnabled(getGame()) ? (cooldown / 10) : cooldown));
+		public CooldownTimer(int cooldown, String name) {
+			super(TaskType.REVERSE, (int) (WRECK.isEnabled(getGame()) ? (cooldown / 100.0) * (100 - Settings.getCooldownDecrease().getPercentage()) : cooldown));
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
-			this.abilityName = abilityName;
+			this.name = name;
 		}
 
 		public CooldownTimer(int cooldown) {
@@ -386,9 +386,8 @@ public abstract class AbilityBase {
 		public void onEnd() {
 			Player player = getPlayer();
 			if (player != null) {
-				String message = ChatColor.translateAlternateColorCodes('&', "&a능력을 다시 사용할 수 있습니다.");
-				player.sendMessage(message);
-				actionbarChannel.update(message, 2);
+				player.sendMessage("§a능력을 다시 사용할 수 있습니다.");
+				actionbarChannel.update("§a능력을 다시 사용할 수 있습니다.", 2);
 			}
 		}
 
@@ -403,8 +402,8 @@ public abstract class AbilityBase {
 		}
 
 		public String toString(ChatColor timeColor) {
-			if (!abilityName.isEmpty()) {
-				return ChatColor.RED.toString() + abilityName + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
+			if (name != null && !name.isEmpty()) {
+				return ChatColor.RED.toString() + name + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
 			} else {
 				return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
 			}
@@ -432,14 +431,14 @@ public abstract class AbilityBase {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private final int duration;
-		private final String abilityName;
+		private final String name;
 		private final CooldownTimer cooldownTimer;
 		private int period = 20;
 
-		public DurationTimer(int duration, CooldownTimer cooldownTimer, String abilityName) {
+		public DurationTimer(int duration, CooldownTimer cooldownTimer, String name) {
 			super(TaskType.REVERSE, duration);
 			this.duration = duration;
-			this.abilityName = abilityName;
+			this.name = name;
 			this.cooldownTimer = cooldownTimer;
 		}
 
@@ -517,9 +516,8 @@ public abstract class AbilityBase {
 			if (player != null) {
 				onDurationEnd();
 
-				String message = ChatColor.translateAlternateColorCodes('&', "&6지속 시간&f이 종료되었습니다.");
-				player.sendMessage(message);
-				actionbarChannel.update(message, 2);
+				player.sendMessage("§6지속 시간§f이 종료되었습니다.");
+				actionbarChannel.update("§6지속 시간§f이 종료되었습니다.", 2);
 
 				if (cooldownTimer != null) {
 					cooldownTimer.start();
@@ -539,8 +537,8 @@ public abstract class AbilityBase {
 		}
 
 		public final String toString(ChatColor timeColor) {
-			if (!abilityName.isEmpty()) {
-				return ChatColor.GOLD.toString() + abilityName + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
+			if (name != null && !name.isEmpty()) {
+				return ChatColor.GOLD.toString() + name + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
 			} else {
 				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
 			}

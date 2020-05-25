@@ -147,7 +147,7 @@ public class AbilityFactory {
 		registerAbility(Vampire.class);
 		registerAbility(PenetrationArrow.class);
 		// v2.0.8.8
-		registerAbility(SoulReaper.class);
+		registerAbility(SoulEncroach.class);
 		registerAbility(Hedgehog.class);
 		// v2.0.9.2
 		registerAbility(ReligiousLeader.class);

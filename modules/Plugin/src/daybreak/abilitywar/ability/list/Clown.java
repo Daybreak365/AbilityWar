@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 })
 public class Clown extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Clown.class, "Cooldown", 60,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Clown.class, "Cooldown", 45,
 			"# 쿨타임") {
 
 		@Override

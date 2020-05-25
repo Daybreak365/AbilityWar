@@ -225,8 +225,8 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	protected void startGame() {
 		super.startGame();
 		if (wreck.isEnabled()) {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&cW&6R&eE&aC&bK &f모드가 활성화되었습니다!"));
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c모든 능력의 쿨타임이 90% 감소합니다."));
+			Bukkit.broadcastMessage("§cW§6R§eE§aC§bK §f모드가 활성화되었습니다!");
+			Bukkit.broadcastMessage("§c모든 능력의 쿨타임이 §4" + Settings.getCooldownDecrease().getPercentage() + "% §c감소합니다.");
 		}
 		Bukkit.getPluginManager().callEvent(new GameStartEvent(this));
 	}

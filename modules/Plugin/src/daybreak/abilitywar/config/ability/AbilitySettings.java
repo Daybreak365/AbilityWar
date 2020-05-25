@@ -155,6 +155,15 @@ public class AbilitySettings {
 				}
 			}
 
+			if (!cache.containsKey(this)) {
+				Object value = config.get(path);
+				if (value != null) {
+					cache.put(this, new Cache(false, value));
+				} else {
+					config.set(path, defaultValue);
+					cache.put(this, new Cache(false, defaultValue));
+				}
+			}
 			Object value = cache.get(this).getValue();
 
 			if (value != null && value.getClass().isAssignableFrom(defaultValue.getClass())) {

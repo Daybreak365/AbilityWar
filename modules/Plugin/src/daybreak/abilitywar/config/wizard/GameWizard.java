@@ -3,11 +3,14 @@ package daybreak.abilitywar.config.wizard;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -69,10 +72,17 @@ public class GameWizard extends SettingWizard {
 			switch (i) {
 				case 4:
 					ItemMeta wreckMeta = wreck.getItemMeta();
-					wreckMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-							"&7상태 : " + (Settings.isWRECKEnabled() ? "&a활성화" : "&c비활성화"))));
+					List<String> lore = Messager.asList("§7상태 : " + (Settings.isWRECKEnabled() ? "§a활성화" : "§c비활성화"));
+					lore.add("");
+					CooldownDecrease cooldownDecrease = Settings.getCooldownDecrease();
+					for (CooldownDecrease value : CooldownDecrease.values()) {
+						lore.add((value.equals(cooldownDecrease) ? ChatColor.GREEN : ChatColor.DARK_GRAY) + value.getDisplayName() + " " + ChatColor.GRAY + value.getLore());
+					}
+					lore.add("");
+					lore.add("§c좌클릭§f으로 활성화/비활성화");
+					lore.add("§c우클릭§f으로 쿨타임 감소율 변경");
+					wreckMeta.setLore(lore);
 					wreck.setItemMeta(wreckMeta);
-
 					gui.setItem(i, wreck);
 					break;
 				case 12:
@@ -167,8 +177,13 @@ public class GameWizard extends SettingWizard {
 						Show();
 						break;
 					case "§bWRECK":
-						Configuration.modifyProperty(ConfigNodes.GAME_WRECK, !Settings.isWRECKEnabled());
-						Show();
+						if (e.getClick() == ClickType.LEFT) {
+							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, !Settings.isWRECKEnabled());
+							Show();
+						} else if (e.getClick() == ClickType.RIGHT) {
+							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, Settings.getCooldownDecrease().next().name());
+							Show();
+						}
 						break;
 					case "§b초반 지급 레벨":
 						int startLevel = Settings.getStartLevel();

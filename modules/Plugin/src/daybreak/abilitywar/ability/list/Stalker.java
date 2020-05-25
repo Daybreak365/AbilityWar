@@ -80,6 +80,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void run(int count) {
+			getPlayer().setSpectatorTarget(null);
 			Location targetLocation = target.getLocation();
 			Location playerLocation = p.getLocation();
 			for (int i = 0; i < 10; i++) {
