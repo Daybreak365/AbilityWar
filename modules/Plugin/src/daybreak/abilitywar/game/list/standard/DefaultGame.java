@@ -13,21 +13,20 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.List;
+import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
 
-import javax.naming.OperationNotSupportedException;
-import java.util.List;
-
 /**
  * 게임 관리 클래스
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "게임", Description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
+@GameManifest(name = "게임", description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
 public class DefaultGame extends Game implements DefaultKitHandler, Observer {
 
 	public DefaultGame() {

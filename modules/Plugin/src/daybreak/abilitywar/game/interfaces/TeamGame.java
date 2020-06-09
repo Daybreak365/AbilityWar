@@ -1,13 +1,12 @@
-package daybreak.abilitywar.game.decorator;
+package daybreak.abilitywar.game.interfaces;
 
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.object.ScoreboardManager;
-import org.bukkit.ChatColor;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.bukkit.ChatColor;
 
 public interface TeamGame {
 

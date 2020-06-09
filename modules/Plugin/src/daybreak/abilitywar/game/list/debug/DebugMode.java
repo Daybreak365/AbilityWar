@@ -9,7 +9,7 @@ import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 
-@GameManifest(Name = "Debug Mode", Description = {})
+@GameManifest(name = "Debug Mode", description = {})
 public class DebugMode extends Game implements DefaultKitHandler, AbstractGame.Observer {
 
 	public DebugMode() {

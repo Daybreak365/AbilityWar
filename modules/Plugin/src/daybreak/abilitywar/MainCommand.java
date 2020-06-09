@@ -11,7 +11,7 @@ import daybreak.abilitywar.config.wizard.SpawnWizard;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.decorator.TeamGame;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.manager.gui.AbilityListGUI;
 import daybreak.abilitywar.game.manager.gui.BlackListGUI;
 import daybreak.abilitywar.game.manager.gui.GameModeGUI;
@@ -264,7 +264,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 										File file = new File("plugins/" + plugin.getName() + "/Script/" + split[2] + ".yml");
 										if (!file.exists()) {
 											ScriptWizard wizard = new ScriptWizard(p, plugin, scriptClass, split[2]);
-											wizard.openScriptWizard(1);
+											wizard.openGUI(1);
 										} else {
 											p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + split[2] + ".yml &f스크립트 파일이 이미 존재합니다."));
 										}

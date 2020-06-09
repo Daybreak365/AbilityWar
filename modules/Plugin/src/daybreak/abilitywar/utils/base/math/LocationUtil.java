@@ -4,7 +4,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.decorator.TeamGame;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;

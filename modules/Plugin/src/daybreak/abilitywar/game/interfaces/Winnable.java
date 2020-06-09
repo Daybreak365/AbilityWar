@@ -1,20 +1,18 @@
-package daybreak.abilitywar.game.decorator;
+package daybreak.abilitywar.game.interfaces;
 
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.StringJoiner;
-
-public interface Winnable {
+public interface Winnable extends iGame {
 
 	default void Win(Participant... winners) {
 		Messager.clearChat();
@@ -33,7 +31,7 @@ public interface Winnable {
 		}
 		builder.append(joiner.toString());
 		Bukkit.broadcastMessage(builder.toString());
-		GameManager.stopGame();
+		stop();
 	}
 
 }

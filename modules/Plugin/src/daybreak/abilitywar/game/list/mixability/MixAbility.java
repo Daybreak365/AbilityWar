@@ -41,7 +41,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
-@GameManifest(Name = "믹스 능력자 전쟁", Description = {
+@GameManifest(name = "믹스 능력자 전쟁", description = {
 		"§f두 능력이 섞이면 어떻게 될까?",
 		"§f지금 바로 믹스!",
 		"",

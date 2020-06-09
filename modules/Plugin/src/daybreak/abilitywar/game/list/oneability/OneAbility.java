@@ -35,7 +35,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "단일전", Description = {
+@GameManifest(name = "단일전", description = {
 		"§f하나의 능력, 다양한 전략.",
 		"§f모두 같은 능력으로 펼치는 능력자 전쟁!"
 })

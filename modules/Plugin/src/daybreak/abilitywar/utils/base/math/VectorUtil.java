@@ -1,14 +1,17 @@
 package daybreak.abilitywar.utils.base.math;
 
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
+import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
 
 public class VectorUtil {
 
 	public static Vector rotateAroundAxis(Vector vector, Vector axis, double angle) {
+		if (angle < 0) {
+			final double abs = Math.abs(angle);
+			angle = 360 - (abs % 360);
+		}
 		double radians = Math.toRadians(angle);
 		double x = vector.getX(), y = vector.getY(), z = vector.getZ();
 		double axisX = axis.getX(), axisY = axis.getY(), axisZ = axis.getZ();
@@ -51,6 +54,10 @@ public class VectorUtil {
 		}
 
 		public Vectors rotateAroundAxis(Vector axis, double angle) {
+			if (angle < 0) {
+				final double abs = Math.abs(angle);
+				angle = 360 - (abs % 360);
+			}
 			double radians = Math.toRadians(angle), sin = FastMath.sin(radians), cos = FastMath.cos(radians);
 			for (Vector vector : this) {
 				double x = vector.getX(), y = vector.getY(), z = vector.getZ(), axisX = axis.getX(), axisY = axis.getY(), axisZ = axis.getZ(), dot = vector.dot(axis);

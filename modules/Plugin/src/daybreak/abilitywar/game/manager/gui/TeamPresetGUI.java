@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class TeamPresetGUI implements Listener {
 
@@ -212,13 +214,23 @@ public class TeamPresetGUI implements Listener {
 						if (!Settings.getPresetContainer().hasPreset(name)) {
 							Settings.getPresetContainer().addPreset(new TeamPreset(name, DivisionType.EQUAL));
 							this.state = State.GUI;
-							openGUI(1);
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									openGUI(1);
+								}
+							}.runTask(AbilityWar.getPlugin());
 						} else {
 							p.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 이미 존재하는 프리셋 이름입니다.");
 						}
 					} else {
 						this.state = State.GUI;
-						openGUI(1);
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								openGUI(1);
+							}
+						}.runTask(AbilityWar.getPlugin());
 					}
 					break;
 				}
@@ -235,7 +247,12 @@ public class TeamPresetGUI implements Listener {
 						}
 					} else {
 						this.state = State.GUI;
-						openGUI(1);
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								openGUI(1);
+							}
+						}.runTask(AbilityWar.getPlugin());
 					}
 					break;
 				}
@@ -245,7 +262,12 @@ public class TeamPresetGUI implements Listener {
 						editing.addScheme(new TeamScheme(schemeName, ChatColor.translateAlternateColorCodes('&', name)));
 					}
 					this.state = State.GUI;
-					openGUI(1);
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							openGUI(1);
+						}
+					}.runTask(AbilityWar.getPlugin());
 					break;
 			}
 		}

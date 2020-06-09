@@ -88,16 +88,16 @@ public class ScriptWizard implements Listener {
 	private Inventory gui;
 
 	// Default Setters
-	public TimeSetter timeSetter = new TimeSetter(this);
-	public LoopSetter loopSetter = new LoopSetter(this);
-	public LoopCountSetter loopCountSetter = new LoopCountSetter(this);
-	public MessageSetter preRunMessageSetter = new MessageSetter("실행 예고 메시지", "&e%Time%&f초 후에 &e%ScriptName% &f스크립트가 실행됩니다.", this);
-	public MessageSetter runMessageSetter = new MessageSetter("실행 메시지", "&e%ScriptName% &f스크립트가 실행되었습니다.", this);
+	public final TimeSetter timeSetter = new TimeSetter(this);
+	public final LoopSetter loopSetter = new LoopSetter(this);
+	public final LoopCountSetter loopCountSetter = new LoopCountSetter(this);
+	public final MessageSetter preRunMessageSetter = new MessageSetter("실행 예고 메시지", "&e%Time%&f초 후에 &e%ScriptName% &f스크립트가 실행됩니다.", this);
+	public final MessageSetter runMessageSetter = new MessageSetter("실행 메시지", "&e%ScriptName% &f스크립트가 실행되었습니다.", this);
 	// Default Setters
 
-	private final ArrayList<Setter<?>> setters = new ArrayList<Setter<?>>();
+	private final List<Setter<?>> setters = new ArrayList<>();
 
-	public void openScriptWizard(int page) {
+	public void openGUI(int page) {
 		playerPage = page;
 		gui = Bukkit.createInventory(null, 45, ChatColor.translateAlternateColorCodes('&', "&c" + scriptName + " &0스크립트 편집"));
 
@@ -164,9 +164,9 @@ public class ScriptWizard implements Listener {
 				String displayName = clicked.getItemMeta().getDisplayName();
 
 				if (displayName.equals(ChatColor.AQUA + "이전 페이지")) {
-					openScriptWizard(playerPage - 1);
+					openGUI(playerPage - 1);
 				} else if (displayName.equals(ChatColor.AQUA + "다음 페이지")) {
-					openScriptWizard(playerPage + 1);
+					openGUI(playerPage + 1);
 				} else if (displayName.equals(ChatColor.translateAlternateColorCodes('&', "&a저장"))) {
 					if (canSave()) {
 						Exception exception = null;

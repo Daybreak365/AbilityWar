@@ -154,11 +154,8 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		private ItemStack getPumpkin(int time) {
 			ItemStack stack = MaterialX.CARVED_PUMPKIN.parseItem();
 			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6호박"));
-			meta.setLore(Arrays.asList(
-					ChatColor.translateAlternateColorCodes('&', "&d♪ &f호박 같은 네 얼굴 &d♪"),
-					ChatColor.translateAlternateColorCodes('&', "&f남은 시간&5: &d" + time + "초")
-			));
+			meta.setDisplayName("§6호박");
+			meta.setLore(Arrays.asList("§d♪ §f호박 같은 네 얼굴 §d♪", "§f남은 시간§5: §d" + time + "초"));
 			stack.setItemMeta(meta);
 			EnchantLib.BINDING_CURSE.addUnsafeEnchantment(stack, 1);
 			return stack;

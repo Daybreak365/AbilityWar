@@ -158,6 +158,8 @@ public class AbilityFactory {
 		registerAbility(Flector.class);
 		// v2.1.5.8
 		registerAbility(Ghost.class);
+		// v2.1.8.2
+		registerAbility(Lunar.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

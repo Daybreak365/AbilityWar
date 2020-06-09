@@ -41,6 +41,7 @@ public class AbilityWar extends JavaPlugin {
 	}
 
 	private static final Logger logger = Logger.getLogger(AbilityWar.class);
+	private static final long mainThreadId = Thread.currentThread().getId();
 	private static AbilityWar plugin;
 
 	public static AbilityWar getPlugin() {
@@ -48,6 +49,10 @@ public class AbilityWar extends JavaPlugin {
 			return plugin;
 		}
 		throw new IllegalStateException("플러그인이 아직 초기화되지 않았습니다.");
+	}
+
+	public static boolean isMainThread() {
+		return Thread.currentThread().getId() == mainThreadId;
 	}
 
 	private Installer installer = null;

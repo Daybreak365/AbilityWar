@@ -64,7 +64,7 @@ public class GameFactory {
 		if (!registeredModes.containsKey(gameClass)) {
 			try {
 				GameRegistration registration = new GameRegistration(gameClass);
-				String name = registration.getManifest().Name();
+				String name = registration.getManifest().name();
 				if (!usedNames.containsKey(name)) {
 					if (!registration.hasFlag(Flag.BETA) || DeveloperSettings.isEnabled()) {
 						registeredModes.put(gameClass, registration);
@@ -116,8 +116,8 @@ public class GameFactory {
 			if (!clazz.isAnnotationPresent(GameManifest.class))
 				throw new IllegalArgumentException("GameManifest가 없는 게임 모드입니다.");
 			this.manifest = clazz.getAnnotation(GameManifest.class);
-			Preconditions.checkNotNull(manifest.Name());
-			Preconditions.checkNotNull(manifest.Description());
+			Preconditions.checkNotNull(manifest.name());
+			Preconditions.checkNotNull(manifest.description());
 
 			int flag = 0x0;
 			if (clazz.isAnnotationPresent(Beta.class)) flag |= Flag.BETA;

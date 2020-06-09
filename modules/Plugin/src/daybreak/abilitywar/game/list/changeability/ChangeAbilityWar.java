@@ -7,8 +7,8 @@ import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSetting
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.decorator.Winnable;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
@@ -39,7 +39,7 @@ import org.bukkit.scoreboard.Score;
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "체인지 능력 전쟁", Description = {"§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.", "§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.", "§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
+@GameManifest(name = "체인지 능력 전쟁", description = {"§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.", "§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.", "§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.", "§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "", "§a● §f스크립트가 적용되지 않습니다.",
 		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f체인지 능력 전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
 public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler, Observer {
 

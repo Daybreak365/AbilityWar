@@ -3,15 +3,14 @@ package daybreak.abilitywar.utils.base;
 import com.google.common.base.Strings;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.decorator.TeamGame;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
-import org.bukkit.ChatColor;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
+import org.bukkit.ChatColor;
 
 public class Formatter {
 

@@ -7,8 +7,8 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.decorator.Winnable;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.list.mixability.Mix;
 import daybreak.abilitywar.game.list.mixability.MixAbility;
 import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
@@ -40,7 +40,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
-@GameManifest(Name = "체인지! 믹스 전쟁", Description = {
+@GameManifest(name = "체인지! 믹스 전쟁", description = {
 		"§f믹스, 그리고 체인지!",
 		"§f정신 없이 즐기는 두가지 게임의 조합",
 		"",

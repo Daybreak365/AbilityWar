@@ -2,6 +2,10 @@ package daybreak.abilitywar.game.script.setter;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.script.ScriptWizard;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
@@ -9,11 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.EventExecutor;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Setter
@@ -62,7 +62,14 @@ public abstract class Setter<T> implements EventExecutor {
 	}
 
 	protected void updateGUI() {
-		wizard.openScriptWizard(wizard.getPlayerPage());
+		if (!AbilityWar.isMainThread()) {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					wizard.openGUI(wizard.getPlayerPage());
+				}
+			}.runTask(AbilityWar.getPlugin());
+		} else wizard.openGUI(wizard.getPlayerPage());
 	}
 
 	public abstract void onClick(ClickType click);

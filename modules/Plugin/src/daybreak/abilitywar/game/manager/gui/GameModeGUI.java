@@ -76,7 +76,7 @@ public class GameModeGUI implements Listener {
 						is = MaterialX.ENCHANTED_BOOK.parseItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-						List<String> lore = Messager.asList(manifest.Description());
+						List<String> lore = Messager.asList(manifest.description());
 						lore.add(ChatColor.translateAlternateColorCodes('&', "&7선택된 게임모드입니다."));
 						im.setLore(lore);
 						is.setItemMeta(im);
@@ -84,7 +84,7 @@ public class GameModeGUI implements Listener {
 						is = MaterialX.BOOK.parseItem();
 						ItemMeta im = is.getItemMeta();
 						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-						List<String> lore = Messager.asList(manifest.Description());
+						List<String> lore = Messager.asList(manifest.description());
 						lore.add(ChatColor.translateAlternateColorCodes('&', "&b» &f이 게임모드를 선택하려면 클릭하세요."));
 						im.setLore(lore);
 						is.setItemMeta(im);

@@ -10,7 +10,6 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -36,9 +35,15 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 @AbilityManifest(name = "영혼 잠식", rank = Rank.S, species = Species.GOD, explain = {
-		"BETA"
+		"철괴를 우클릭하면 마지막으로 타격했던 플레이어가 $[DistanceConfig]칸 이내에 있는 경우에 한하여",
+		"3초간 대상의 영혼에 잠식하여 타겟팅할 수 없는 상태로 변합니다. $[CooldownConfig]",
+		"영혼 잠식이 끝나면 영혼에서 빠져나오며 바라보는 방향으로 짧게 돌진하고",
+		"대상에게 대미지를 줍니다. 대상의 체력이 적을수록 더욱 큰 피해를 입히며,",
+		"잠식 도중 웅크리면 즉시 빠져나올 수 있습니다. 영혼에서 빠져나오며 입힌 피해로",
+		"대상을 죽일 경우 잃은 체력의 절반을 회복하고 능력 쿨타임이 즉시 초기화되며,",
+		"주변 $[DistanceConfig]칸 이내의 가장 가까운 플레이어가 자동으로 대상으로 설정되고",
+		"다음 스킬이 강화됩니다."
 })
-@Beta
 public class SoulEncroach extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(SoulEncroach.class, "Cooldown", 120,
@@ -150,6 +155,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	});
 	private static final RGB BLACK = RGB.of(1, 1, 1), WHITE = RGB.of(250, 250, 250);
 
+	private final int distance = DistanceConfig.getValue(), distanceSquared = distance * distance;
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final Predicate<Entity> STRICT = Predicates.STRICT(getPlayer());
 	private final ActionbarChannel noticeChannel = newActionbarChannel();
@@ -236,7 +242,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 						return !entity.equals(criterion);
 					}
 				}));
-				if (nearest == null || nearest.getLocation().distanceSquared(getPlayer().getLocation()) <= 36) {
+				if (nearest == null || nearest.getLocation().distanceSquared(getPlayer().getLocation()) <= distanceSquared) {
 					lastVictim = nearest;
 				}
 			} else {
@@ -265,18 +271,12 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 			if (lastVictim != null) {
 				if (getGame().getParticipant(lastVictim).attributes().TARGETABLE.getValue()) {
 					final double distanceSquared = getPlayer().getWorld().equals(lastVictim.getWorld()) ? getPlayer().getLocation().distanceSquared(lastVictim.getLocation()) : Double.MAX_VALUE;
-					if (distanceSquared <= 36) {
+					if (distanceSquared <= this.distanceSquared) {
 						skillTimer.start();
 						return true;
-					} else {
-						getPlayer().sendMessage("§c대상이 너무 멀리 있습니다. §7(§f6칸 이내에서 사용§7)");
-					}
-				} else {
-					getPlayer().sendMessage("§4대상이 타게팅 가능한 상태가 아닙니다.");
-				}
-			} else {
-				getPlayer().sendMessage("§4마지막으로 때렸던 플레이어가 존재하지 않습니다.");
-			}
+					} else getPlayer().sendMessage("§c대상이 너무 멀리 있습니다. §7(§f" + distance + "칸 이내에서 사용§7)");
+				} else getPlayer().sendMessage("§4대상이 타게팅 가능한 상태가 아닙니다.");
+			} else getPlayer().sendMessage("§4마지막으로 때렸던 플레이어가 존재하지 않습니다.");
 		}
 		return false;
 	}
@@ -293,16 +293,16 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 		}
 	}
 
+	private void gainHealth(double amount) {
+		if (!getPlayer().isDead()) {
+			getPlayer().setHealth(Math.min(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), getPlayer().getHealth() + amount));
+		}
+	}
+
 	@SubscribeEvent(onlyRelevant = true)
 	private void onSneak(PlayerToggleSneakEvent e) {
 		if (skillTimer.isRunning()) {
 			skillTimer.stop(false);
-		}
-	}
-
-	private void gainHealth(double amount) {
-		if (!getPlayer().isDead()) {
-			getPlayer().setHealth(Math.min(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), getPlayer().getHealth() + amount));
 		}
 	}
 

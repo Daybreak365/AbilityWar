@@ -23,7 +23,7 @@ import org.bukkit.entity.LivingEntity;
 @AbilityManifest(name = "암살자", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 $[DistanceConfig]칸 이내에 있는 생명체 $[TeleportCountConfig]명(마리)에게 이동하며",
 		"각각 $[DamageConfig]의 대미지를 줍니다. $[CooldownConfig]",
-		"대미지를 받은 플레이어는 3초간 추가로 출혈 대미지를 받습니다."
+		"대미지를 받은 생명체는 3초간 추가로 출혈 피해를 입습니다."
 })
 public class Assassin extends AbilityBase implements ActiveHandler {
 

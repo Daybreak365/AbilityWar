@@ -7,8 +7,8 @@ import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.decorator.TeamGame;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
@@ -38,7 +38,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-@GameManifest(Name = "팀 전투", Description = {"§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다."})
+@GameManifest(name = "팀 전투", description = {"§f능력자 전쟁을 팀 대항전으로 플레이할 수 있습니다."})
 public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Observer {
 
 	private final TeamPreset preset;

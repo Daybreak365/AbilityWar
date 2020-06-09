@@ -8,7 +8,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.decorator.Winnable;
+import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
 import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
@@ -64,7 +64,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-@GameManifest(Name = "머더 미스터리", Description = {
+@GameManifest(name = "머더 미스터리", description = {
 
 })
 @Support(Version.v1_12_R1)

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public abstract class Command {
 
@@ -63,6 +64,12 @@ public abstract class Command {
 			@Override
 			protected boolean test(CommandSender sender) {
 				return sender.isOp();
+			}
+		},
+		PLAYER("콘솔에서 사용할 수 없는 명령어입니다.") {
+			@Override
+			protected boolean test(CommandSender sender) {
+				return sender instanceof Player;
 			}
 		};
 

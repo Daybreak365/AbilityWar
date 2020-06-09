@@ -6,8 +6,8 @@ import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.decorator.Winnable;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
@@ -16,6 +16,8 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.List;
+import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -26,15 +28,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import javax.naming.OperationNotSupportedException;
-import java.util.List;
-
 /**
  * 게임 관리 클래스
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "능력자 전쟁", Description = {"§f우승 조건이 있는 능력자 전쟁 플러그인의 기본 게임입니다."})
+@GameManifest(name = "능력자 전쟁", description = {"§f우승 조건이 있는 능력자 전쟁 플러그인의 기본 게임입니다."})
 public class WarGame extends Game implements DefaultKitHandler, Winnable, Observer {
 
 	public WarGame() {

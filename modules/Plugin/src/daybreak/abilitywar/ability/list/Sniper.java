@@ -82,8 +82,8 @@ public class Sniper extends AbilityBase {
 				Arrow arrow = (Arrow) e.getProjectile();
 				new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
-				this.reload = new Timer(15) {
-					private final ProgressBar progressBar = new ProgressBar(15, 15);
+				this.reload = new Timer(25) {
+					private final ProgressBar progressBar = new ProgressBar(25, 15);
 
 					@Override
 					protected void run(int count) {
@@ -97,7 +97,7 @@ public class Sniper extends AbilityBase {
 						actionbarChannel.update(null);
 						SoundLib.BLOCK_STONE_PRESSURE_PLATE_CLICK_ON.playSound(getPlayer());
 					}
-				}.setPeriod(TimeUnit.TICKS, 4);
+				}.setPeriod(TimeUnit.TICKS, 2);
 				reload.start();
 			} else {
 				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));

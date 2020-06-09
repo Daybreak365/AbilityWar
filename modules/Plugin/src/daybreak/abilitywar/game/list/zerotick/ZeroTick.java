@@ -14,6 +14,8 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.List;
+import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,15 +23,12 @@ import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
 
-import javax.naming.OperationNotSupportedException;
-import java.util.List;
-
 /**
  * 게임 관리 클래스
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "제로틱", Description = {"§f공격 쿨타임 따위는 존재하지 않는 게임 모드!", "§f공격 속도 제한 없이 시원하게 싸워보세요!"})
+@GameManifest(name = "제로틱", description = {"§f공격 쿨타임 따위는 존재하지 않는 게임 모드!", "§f공격 속도 제한 없이 시원하게 싸워보세요!"})
 public class ZeroTick extends Game implements DefaultKitHandler, Observer {
 
 	public ZeroTick() {

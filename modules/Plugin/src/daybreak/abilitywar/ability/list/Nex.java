@@ -61,29 +61,47 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!cooldownTimer.isCooldown()) {
-					for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
-						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
-					}
-					SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
-					Skill.start();
-					cooldownTimer.start();
-					return true;
+	private final Timer fallBlockTimer = new Timer(5) {
+
+		Location center;
+
+		@Override
+		public void onStart() {
+			this.center = getPlayer().getLocation();
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public void run(int count) {
+			int distance = 6 - count;
+
+			if (ServerVersion.getVersionNumber() >= 13) {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, true)) {
+					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+					if (block.getType() == Material.AIR) continue;
+					Location location = block.getLocation().add(0, 1, 0);
+					FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
+				}
+			} else {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, true)) {
+					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
+					if (block.getType() == Material.AIR) continue;
+					Location location = block.getLocation().add(0, 1, 0);
+					FallingBlocks.spawnFallingBlock(location, block.getType(), block.getData(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
+				}
+			}
+
+			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+				if (!damageable.equals(getPlayer())) {
+					damageable.setVelocity(center.toVector().subtract(damageable.getLocation().toVector()).multiply(-1).setY(1.2));
 				}
 			}
 		}
 
-		return false;
-	}
-
+	}.setPeriod(TimeUnit.TICKS, 4);
 	private boolean noFallDamage = false;
 	private boolean skillEnabled = false;
-
-	private final Timer Skill = new Timer(4) {
+	private final Timer skill = new Timer(4) {
 
 		@Override
 		public void onStart() {
@@ -140,43 +158,23 @@ public class Nex extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private final Timer fallBlockTimer = new Timer(5) {
-
-		Location center;
-
-		@Override
-		public void onStart() {
-			this.center = getPlayer().getLocation();
-		}
-
-		@SuppressWarnings("deprecation")
-		@Override
-		public void run(int count) {
-			int distance = 6 - count;
-
-			if (ServerVersion.getVersionNumber() >= 13) {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
-					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
-					if (block.getType() == Material.AIR) continue;
-					Location location = block.getLocation().add(0, 1, 0);
-					FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
-				}
-			} else {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
-					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
-					if (block.getType() == Material.AIR) continue;
-					Location location = block.getLocation().add(0, 1, 0);
-					FallingBlocks.spawnFallingBlock(location, block.getType(), block.getData(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
-				}
-			}
-
-			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
-				if (!damageable.equals(getPlayer())) {
-					damageable.setVelocity(center.toVector().subtract(damageable.getLocation().toVector()).multiply(-1).setY(1.2));
+	@Override
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT)) {
+			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+				if (!cooldownTimer.isCooldown()) {
+					for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
+						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
+					}
+					SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
+					skill.start();
+					cooldownTimer.start();
+					return true;
 				}
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 4);
+		return false;
+	}
 
 }

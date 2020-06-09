@@ -10,7 +10,6 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.PreAbilityRestrictionEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -45,12 +44,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
-@Beta
 @AbilityManifest(name = "진검승부", rank = Rank.A, species = Species.HUMAN, explain = {
-		"다른 플레이어를 철괴로 우클릭하면 대상과의 진검승부를 시작합니다.",
-		"진검승부가 시작되면 지름이 5칸인 링이 생성되며, 링 밖으로 나갈 수",
-		"없고, 일시적으로 체력이 모두 회복되며 인벤토리 내의 모든 아이템이",
-		"일시적으로 제거됩니다. 진검승부 중에는 상대의 능력이 비활성화 되며,",
+		"다른 플레이어를 철괴로 우클릭하면 대상과의 진검승부를 시작합니다. $[CooldownConfig]",
+		"진검승부가 시작되면 밖으로 나갈 수 없는 지름 5칸의 링이 생성",
+		"되고, 일시적으로 체력이 모두 회복되며 인벤토리 내의 모든 아이템이",
+		"제거됩니다. 진검승부 중에는 대상의 능력이 비활성화 되며,",
 		"상호 간의 공격 대미지 이외의 대미지는 받지 않습니다.",
 		"능력 사용 후 $[DurationConfig]초가 지나거나 둘 중 한명이 죽은 경우",
 		"진검승부가 종료되며, 체력이 능력 사용 전의 상태로 회복되고",
@@ -102,9 +100,9 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 	private Ring ring = null;
 	private static final Note C = Note.natural(0, Tone.C);
 	private static final Note EFlat = Note.flat(0, Tone.E);
+	private static final Note G = Note.natural(0, Tone.G);
 
 	private static final RGB COLOR = new RGB(138, 25, 115);
-	private static final Note G = Note.natural(0, Tone.G);
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer());
 	private final int duration = DurationConfig.getValue();

@@ -5,6 +5,8 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ public interface CommandHandler {
 							Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 						}
 					} else {
-						Messager.sendErrorMessage(player, args[0] + "은(는) 존재하지 않는 플레이어입니다.");
+						Messager.sendErrorMessage(player, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
 					}
 				}
 				break;

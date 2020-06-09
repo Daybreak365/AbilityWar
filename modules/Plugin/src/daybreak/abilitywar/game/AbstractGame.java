@@ -11,6 +11,7 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
+import daybreak.abilitywar.game.interfaces.iGame;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EventManager;
@@ -52,7 +53,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-public abstract class AbstractGame extends SimpleTimer implements Listener, CommandHandler {
+public abstract class AbstractGame extends SimpleTimer implements iGame, Listener, CommandHandler {
 
 	private static final Logger logger = Logger.getLogger(AbstractGame.class);
 
@@ -119,7 +120,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Comm
 		return false;
 	}
 
-	public ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
+	protected ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
 		return new DefaultManagement(this, players);
 	}
 
@@ -137,7 +138,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Comm
 	 *
 	 * @return 참여자 목록
 	 */
-	public Collection<Participant> getParticipants() {
+	public final Collection<Participant> getParticipants() {
 		return participantStrategy.getParticipants();
 	}
 
@@ -169,7 +170,7 @@ public abstract class AbstractGame extends SimpleTimer implements Listener, Comm
 	 * @param player 대상 플레이어
 	 * @return 대상 플레이어의 참여 여부
 	 */
-	public boolean isParticipating(Player player) {
+	public final boolean isParticipating(Player player) {
 		return participantStrategy.isParticipating(player.getUniqueId());
 	}
 

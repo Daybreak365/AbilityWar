@@ -27,7 +27,7 @@ public abstract class AbstractScript {
 
 	public void start(Game game) {
 		if (timer == null || !timer.isRunning()) {
-			timer = game.new GameTimer(TaskType.INFINITE, -1) {
+			timer = game.new GameTimer(TaskType.REVERSE, period) {
 				int count = loopCount;
 
 				@Override

@@ -12,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
 /**
@@ -27,8 +26,6 @@ public class FallingBlocks {
 		final FallingBlock fallingBlock;
 		if (ServerVersion.getVersionNumber() >= 13)
 			fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
-		else if (ServerVersion.getVersionNumber() >= 11)
-			fallingBlock = location.getWorld().spawnFallingBlock(location, new MaterialData(type, data));
 		else fallingBlock = location.getWorld().spawnFallingBlock(location, type, data);
 		if (behavior != null) {
 			Bukkit.getPluginManager().registerEvents(new Listener() {

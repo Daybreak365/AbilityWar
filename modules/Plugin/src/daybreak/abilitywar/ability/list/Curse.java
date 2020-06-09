@@ -16,6 +16,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import java.util.function.Predicate;
 import org.bukkit.Location;
@@ -30,7 +31,7 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
 
 @AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
-		"주위 15칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타겟팅해 $[DurationConfig]초간",
+		"주위 13칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타겟팅해 $[DurationConfig]초간",
 		"지속되는 저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
 		"대미지의 일부가 상대에게 전이됩니다. $[CooldownConfig]",
 		"대상의 체력이 적을 수록 더욱 큰 대미지를 입힐 수 있습니다."
@@ -71,7 +72,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
-			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 15, STRICT);
+			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 13, STRICT);
 			if (player != null) {
 				target = player;
 				skill.start();
@@ -151,7 +152,13 @@ public class Curse extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		onEntityDamage(e);
+		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
+			e.setCancelled(true);
+			target.damage(e.getDamage() * (2.3 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
+			if (e.getDamager() instanceof Player) {
+				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound((Player) e.getDamager());
+			}
+		}
 	}
 
 	@SubscribeEvent
@@ -163,7 +170,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
 			e.setCancelled(true);
-			target.damage(e.getDamage() * (6 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
+			target.damage(e.getDamage() * (2.3 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
 		}
 	}
 

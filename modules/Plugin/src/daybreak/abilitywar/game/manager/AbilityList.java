@@ -112,6 +112,7 @@ public class AbilityList {
 		registerAbility(Kidnap.class);
 		registerAbility(Flector.class);
 		registerAbility(Ghost.class);
+		registerAbility(Lunar.class);
 	}
 
 	public static Collection<AbilityRegistration> values() {

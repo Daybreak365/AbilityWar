@@ -6,8 +6,8 @@ import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.Configuration.Settings.SummerVacationSettings;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.decorator.Winnable;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
@@ -44,7 +44,7 @@ import org.bukkit.scoreboard.Score;
  *
  * @author Daybreak 새벽
  */
-@GameManifest(Name = "신나는 여름 휴가", Description = {"§f신나는 물총싸움 뿌슝빠슝! 지금 바로 즐겨보세요!", "", "§a● §f스크립트가 적용되지 않습니다.",
+@GameManifest(name = "신나는 여름 휴가", description = {"§f신나는 물총싸움 뿌슝빠슝! 지금 바로 즐겨보세요!", "", "§a● §f스크립트가 적용되지 않습니다.",
 		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f신나는 여름 휴가 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
 public class SummerVacation extends Game implements Winnable, DefaultKitHandler {
 
