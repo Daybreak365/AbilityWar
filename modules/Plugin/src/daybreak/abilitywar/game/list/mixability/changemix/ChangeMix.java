@@ -165,7 +165,7 @@ public class ChangeMix extends MixAbility implements DefaultKitHandler, Observer
 				}
 
 				if (invincible) {
-					getInvincibility().Start(false);
+					getInvincibility().start(false);
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 					setRestricted(false);

@@ -41,6 +41,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -425,8 +426,8 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	}
 
 	@Override
-	public void executeCommand(CommandType commandType, Player player, String[] args, Plugin plugin) {
-		player.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
+	public void executeCommand(CommandType commandType, CommandSender sender, String[] args, Plugin plugin) {
+		sender.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
 	}
 
 }

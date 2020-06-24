@@ -22,6 +22,7 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -37,6 +38,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
@@ -165,7 +167,7 @@ public class MixAbility extends Game implements DefaultKitHandler, Observer {
 				}
 
 				if (invincible) {
-					getInvincibility().Start(false);
+					getInvincibility().start(false);
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 					setRestricted(false);
@@ -179,30 +181,30 @@ public class MixAbility extends Game implements DefaultKitHandler, Observer {
 	}
 
 	@Override
-	public void executeCommand(CommandType commandType, Player player, String[] args, Plugin plugin) {
+	public void executeCommand(CommandType commandType, CommandSender sender, String[] args, Plugin plugin) {
 		switch (commandType) {
-			case ABI:
-				if (args[0].equalsIgnoreCase("@a")) {
-					MixAbilityGUI gui = new MixAbilityGUI(player, plugin);
-					gui.openGUI(1);
-				} else {
-					Player targetPlayer = Bukkit.getPlayerExact(args[0]);
-					if (targetPlayer != null) {
-						AbstractGame game = GameManager.getGame();
-						if (game.isParticipating(targetPlayer)) {
-							AbstractGame.Participant target = game.getParticipant(targetPlayer);
-							MixAbilityGUI gui = new MixAbilityGUI(player, target, plugin);
-							gui.openGUI(1);
-						} else {
-							Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
-						}
+			case ABI: {
+				if (sender instanceof Player) {
+					Player player = (Player) sender;
+					if (args[0].equalsIgnoreCase("@a")) {
+						MixAbilityGUI gui = new MixAbilityGUI(player, plugin);
+						gui.openGUI(1);
 					} else {
-						Messager.sendErrorMessage(player, args[0] + "은(는) 존재하지 않는 플레이어입니다.");
+						Player targetPlayer = Bukkit.getPlayerExact(args[0]);
+						if (targetPlayer != null) {
+							AbstractGame game = GameManager.getGame();
+							if (game.isParticipating(targetPlayer)) {
+								new MixAbilityGUI(player, game.getParticipant(targetPlayer), plugin).openGUI(1);
+							} else
+								Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+						} else
+							Messager.sendErrorMessage(player, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
 					}
-				}
-				break;
-			case ABLIST:
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2===== &a능력자 목록 &2====="));
+				} else Messager.sendErrorMessage(sender, "콘솔에서 사용할 수 없는 명령어입니다.");
+			}
+			break;
+			case ABLIST: {
+				sender.sendMessage("§2===== §a능력자 목록 §2=====");
 				int count = 0;
 				for (AbstractGame.Participant participant : GameManager.getGame().getParticipants()) {
 					Mix mix = (Mix) participant.getAbility();
@@ -211,24 +213,18 @@ public class MixAbility extends Game implements DefaultKitHandler, Observer {
 						if (mix.hasSynergy()) {
 							Synergy synergy = mix.getSynergy();
 							Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
-							String name = "&e" + synergy.getName() + " &f(&c" + base.getLeft().getManifest().name() + " &f+ &c" + base.getRight().getManifest().name() + "&f)";
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-									"&e" + count + ". &f" + participant.getPlayer().getName() + " &7: " + name));
+							String name = "§e" + synergy.getName() + " §f(§c" + base.getLeft().getManifest().name() + " §f+ §c" + base.getRight().getManifest().name() + "§f)";
+							sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: " + name);
 						} else {
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&',
-									"&e" + count + ". &f" + participant.getPlayer().getName() + " &7: &c" + mix.getFirst().getName() + " &f+ &c" + mix.getSecond().getName()));
+							sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: §c" + mix.getFirst().getName() + " §f+ §c" + mix.getSecond().getName());
 						}
 					}
 				}
-				if (count == 0) {
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자가 발견되지 않았습니다."));
-				}
-
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2========================"));
-
-				Bukkit.broadcastMessage(
-						ChatColor.translateAlternateColorCodes('&', "&f" + player.getName() + "&a님이 플레이어들의 능력을 확인하였습니다."));
-				break;
+				if (count == 0) sender.sendMessage("§f능력자가 발견되지 않았습니다.");
+				sender.sendMessage("§2========================");
+				Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 참가자들의 능력을 확인하였습니다.");
+			}
+			break;
 		}
 	}
 
@@ -253,9 +249,9 @@ public class MixAbility extends Game implements DefaultKitHandler, Observer {
 							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
 
 							p.sendMessage(new String[]{
-									ChatColor.translateAlternateColorCodes('&', "&a능력이 할당되었습니다. &e/aw check&f로 확인 할 수 있습니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/aw yes &f명령어를 사용하여 능력을 확정합니다."),
-									ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
+									"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
+									"§e/aw yes §f명령어를 사용하여 능력을 확정합니다.",
+									"§e/aw no §f명령어를 사용하여 능력을 변경합니다."
 							});
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");

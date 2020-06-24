@@ -7,15 +7,14 @@ import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.script.AbstractScript;
 import daybreak.abilitywar.utils.base.logging.Logger;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 public class ChangeAbilityScript extends AbstractScript {
 
@@ -52,7 +51,7 @@ public class ChangeAbilityScript extends AbstractScript {
 	private List<Class<? extends AbilityBase>> setupAbilities() {
 		List<Class<? extends AbilityBase>> list = new ArrayList<>();
 		for (String abilityName : AbilityList.nameValues()) {
-			if (!Settings.isBlackListed(abilityName)) {
+			if (!Settings.isBlacklisted(abilityName)) {
 				list.add(AbilityList.getByString(abilityName));
 			}
 		}

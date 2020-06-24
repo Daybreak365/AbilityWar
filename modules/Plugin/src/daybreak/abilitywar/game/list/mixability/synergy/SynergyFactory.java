@@ -31,18 +31,18 @@ import daybreak.abilitywar.game.list.mixability.synergy.list.Pandemic;
 import daybreak.abilitywar.game.list.mixability.synergy.list.RocketLauncher;
 import daybreak.abilitywar.game.list.mixability.synergy.list.TimeLoop;
 import daybreak.abilitywar.utils.base.collect.Pair;
-import daybreak.abilitywar.utils.base.logging.Logger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * {@link Synergy}를 기반으로 하는 모든 능력을 관리하는 클래스입니다.
  */
 public class SynergyFactory {
 
-	private static final Logger logger = Logger.getLogger(SynergyFactory.class);
 	private static final Table<AbilityRegistration, AbilityRegistration, AbilityRegistration> synergies = HashBasedTable.create();
 	private static final Map<AbilityRegistration, Pair<AbilityRegistration, AbilityRegistration>> synergyBases = new HashMap<>();
+	private static final Map<String, AbilityRegistration> usedNames = new HashMap<>();
 
 	static {
 		registerSynergy(SuperNova.class, Virus.class, Pandemic.class);
@@ -61,6 +61,22 @@ public class SynergyFactory {
 	private SynergyFactory() {
 	}
 
+	public static Set<AbilityRegistration> getSynergies() {
+		return synergyBases.keySet();
+	}
+
+	public static boolean isSynergy(AbilityRegistration registration) {
+		return synergyBases.containsKey(registration);
+	}
+
+	public static AbilityRegistration getByName(String name) {
+		return usedNames.get(name);
+	}
+
+	public static boolean isRegistered(String name) {
+		return usedNames.containsKey(name);
+	}
+
 	public static void registerSynergy(Class<? extends AbilityBase> first, Class<? extends AbilityBase> second, Class<? extends Synergy> synergy) {
 		AbilityFactory.registerAbility(synergy);
 		if (AbilityFactory.isRegistered(first) && AbilityFactory.isRegistered(second) && AbilityFactory.isRegistered(synergy)) {
@@ -71,6 +87,7 @@ public class SynergyFactory {
 				synergies.put(firstReg, secondReg, synergyReg);
 				synergies.put(secondReg, firstReg, synergyReg);
 				synergyBases.put(synergyReg, Pair.of(firstReg, secondReg));
+				usedNames.put(synergyReg.getManifest().name(), synergyReg);
 			}
 		}
 	}

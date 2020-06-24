@@ -25,7 +25,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 
 @AbilityManifest(name = "마술사", rank = Rank.A, species = Species.HUMAN, explain = {
 		"활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게",
-		"최대체력의 1/5 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[CooldownConfig]"
+		"최대체력의 30% 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[CooldownConfig]"
 })
 public class Magician extends AbilityBase {
 
@@ -64,7 +64,7 @@ public class Magician extends AbilityBase {
 						locationMap.put(damageable, damageable.getLocation());
 						if (!damageable.equals(getPlayer())) {
 							if (LocationUtil.isInCircle(center, damageable.getLocation(), 5)) {
-								damageable.damage((damageable instanceof Attributable ? ((Attributable) damageable).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : 0) / 5, getPlayer());
+								damageable.damage((damageable instanceof Attributable ? ((Attributable) damageable).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : 0) * 0.3, getPlayer());
 								if (damageable instanceof Player) {
 									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) damageable);
 								}

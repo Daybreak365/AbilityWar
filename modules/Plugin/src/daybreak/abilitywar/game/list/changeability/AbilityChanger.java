@@ -11,16 +11,15 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
-import org.bukkit.Note;
-import org.bukkit.Note.Tone;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
+import org.bukkit.Note;
+import org.bukkit.Note.Tone;
+import org.bukkit.entity.Player;
 
 public class AbilityChanger {
 
@@ -44,7 +43,7 @@ public class AbilityChanger {
 	private List<Class<? extends AbilityBase>> setupAbilities() {
 		List<Class<? extends AbilityBase>> list = new ArrayList<>();
 		for (String abilityName : AbilityList.nameValues()) {
-			if (!Settings.isBlackListed(abilityName)) {
+			if (!Settings.isBlacklisted(abilityName)) {
 				list.add(AbilityList.getByString(abilityName));
 			}
 		}

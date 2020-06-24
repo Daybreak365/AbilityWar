@@ -1,6 +1,8 @@
 package daybreak.abilitywar.utils.base.minecraft.compat.v1_14_R1.nms;
 
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.server.v1_14_R1.EntityArmorStand;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
 import net.minecraft.server.v1_14_R1.IChatBaseComponent;
@@ -16,9 +18,6 @@ import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class HologramImpl implements Hologram {
 
 	private final EntityArmorStand armorStand;
@@ -33,6 +32,7 @@ public class HologramImpl implements Hologram {
 		armorStand.setInvisible(true);
 		armorStand.setCustomNameVisible(true);
 		armorStand.setCustomName(ChatSerializer.a("{\"text\":\"" + text + "\"}"));
+		armorStand.setMarker(true);
 	}
 
 	HologramImpl(World world, double x, double y, double z) {

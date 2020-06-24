@@ -21,6 +21,7 @@ import java.util.Random;
 import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -227,6 +228,12 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		if (wreck.isEnabled()) {
 			Bukkit.broadcastMessage("§cW§6R§eE§aC§bK §f모드가 활성화되었습니다!");
 			Bukkit.broadcastMessage("§c모든 능력의 쿨타임이 §4" + Settings.getCooldownDecrease().getPercentage() + "% §c감소합니다.");
+		}
+		if (Settings.isDefaultMaxHealthEnabled()) {
+			for (Participant participant : getParticipants()) {
+				participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Settings.getDefaultMaxHealth());
+				participant.getPlayer().setHealth(participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+			}
 		}
 		Bukkit.getPluginManager().callEvent(new GameStartEvent(this));
 	}

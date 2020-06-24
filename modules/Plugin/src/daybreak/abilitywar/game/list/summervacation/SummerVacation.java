@@ -29,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -297,11 +298,11 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	}
 
 	@Override
-	public void executeCommand(CommandType commandType, Player player, String[] args, Plugin plugin) {
+	public void executeCommand(CommandType commandType, CommandSender sender, String[] args, Plugin plugin) {
 		if (commandType == CommandType.ABI) {
-			player.sendMessage(ChatColor.RED + "이 게임모드에서 사용할 수 없는 명령어입니다.");
+			sender.sendMessage(ChatColor.RED + "이 게임모드에서 사용할 수 없는 명령어입니다.");
 		} else {
-			super.executeCommand(commandType, player, args, plugin);
+			super.executeCommand(commandType, sender, args, plugin);
 		}
 	}
 

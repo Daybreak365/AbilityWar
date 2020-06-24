@@ -44,7 +44,7 @@ public class MixAbilityChanger {
 	private List<Class<? extends AbilityBase>> setupAbilities() {
 		List<Class<? extends AbilityBase>> list = new ArrayList<>();
 		for (String abilityName : AbilityList.nameValues()) {
-			if (!Settings.isBlackListed(abilityName)) {
+			if (!Settings.isBlacklisted(abilityName)) {
 				list.add(AbilityList.getByString(abilityName));
 			}
 		}

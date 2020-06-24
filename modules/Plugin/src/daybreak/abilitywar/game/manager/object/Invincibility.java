@@ -41,7 +41,7 @@ public class Invincibility implements EventExecutor {
 
 	private GameTimer timer;
 
-	public boolean Start(boolean isInfinite) {
+	public boolean start(boolean isInfinite) {
 		if (timer == null || !timer.isRunning()) {
 			if (!isInfinite) {
 				this.timer = new InvincibilityTimer(duration);
@@ -54,7 +54,7 @@ public class Invincibility implements EventExecutor {
 		return false;
 	}
 
-	public boolean Start(final int duration) {
+	public boolean start(final int duration) {
 		if (timer == null || !timer.isRunning()) {
 			this.timer = new InvincibilityTimer(duration);
 			timer.start();
@@ -63,7 +63,7 @@ public class Invincibility implements EventExecutor {
 		return false;
 	}
 
-	public boolean Stop() {
+	public boolean stop() {
 		if (timer != null && timer.isRunning()) {
 			timer.stop(false);
 			timer = null;
@@ -72,15 +72,16 @@ public class Invincibility implements EventExecutor {
 		return false;
 	}
 
-	public boolean isInvincible() {
+	public boolean isEnabled() {
 		return this.timer != null && this.timer.isRunning();
 	}
 
 	@Override
 	public void execute(Listener listener, Event event) {
-		if (isInvincible() && event instanceof EntityDamageEvent) {
+		if (!isEnabled()) return;
+		if (event instanceof EntityDamageEvent) {
 			EntityDamageEvent e = (EntityDamageEvent) event;
-			if (e.getEntity() instanceof Player && game.isParticipating((Player) e.getEntity())) {
+			if (e.getEntity() instanceof Player && game.isParticipating(e.getEntity().getUniqueId())) {
 				e.setCancelled(true);
 			}
 		}

@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -22,7 +23,8 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 
 @AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
 		"지금 받을 대미지를 3초 뒤의 나에게 미루고, 넉백을 무시합니다.",
-		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.65배로 줄여 받습니다. $[CooldownConfig]"
+		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.65배로 줄여 받습니다.",
+		"$[CooldownConfig]"
 })
 public class Lazyness extends AbilityBase implements ActiveHandler {
 
@@ -59,6 +61,9 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent(ignoreCancelled = true, priority = Priority.HIGHEST)
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getDamager() instanceof Arrow) {
+			e.getDamager().remove();
+		}
 		onEntityDamage(e);
 	}
 

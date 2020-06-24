@@ -82,7 +82,7 @@ public class BlackListGUI implements Listener {
 		for (String name : abilityNames) {
 			final ItemStack stack;
 
-			if (Settings.isBlackListed(name)) {
+			if (Settings.isBlacklisted(name)) {
 				stack = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = stack.getItemMeta();
 				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
@@ -188,11 +188,11 @@ public class BlackListGUI implements Listener {
 					if (ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
 						String stripItemName = ChatColor.stripColor(itemName);
 						if (MaterialX.RED_WOOL.compareType(e.getCurrentItem())) {
-							Settings.removeBlackList(stripItemName);
+							Settings.removeBlacklist(stripItemName);
 							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 							openGUI(playerPage);
 						} else if (MaterialX.LIME_WOOL.compareType(e.getCurrentItem())) {
-							Settings.addBlackList(stripItemName);
+							Settings.addBlacklist(stripItemName);
 							SoundLib.BLOCK_ANVIL_LAND.playSound(p);
 							openGUI(playerPage);
 						}
@@ -216,10 +216,10 @@ public class BlackListGUI implements Listener {
 
 	private void blacklist(ClickType clickType, Collection<String> abilityNames) {
 		if (clickType.equals(ClickType.LEFT)) {
-			Settings.addBlackListAll(abilityNames);
+			Settings.addBlacklist(abilityNames);
 			SoundLib.BLOCK_ANVIL_LAND.playSound(p);
 		} else if (clickType.equals(ClickType.RIGHT)) {
-			Settings.removeBlackListAll(abilityNames);
+			Settings.removeBlacklist(abilityNames);
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 		}
 		openGUI(playerPage);

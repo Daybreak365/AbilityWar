@@ -192,7 +192,9 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationProcess(int count) {
 			getPlayer().setFlySpeed(0f);
-			getPlayer().setSpectatorTarget(null);
+			if (getPlayer().getGameMode() == GameMode.SPECTATOR) {
+				getPlayer().setSpectatorTarget(null);
+			}
 			final Location headLocation = lastVictim.getEyeLocation().clone().add(0, 1.5, 0);
 			final double distanceSquared = getPlayer().getWorld().equals(headLocation.getWorld()) ? getPlayer().getLocation().distanceSquared(headLocation) : Double.MAX_VALUE;
 			if (distanceSquared > 49) {

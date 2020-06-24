@@ -207,7 +207,7 @@ public class Dracula extends Synergy implements ActiveHandler {
 		super(participant);
 	}
 
-	private boolean isNight(long time) {
+	private static boolean isNight(long time) {
 		return time > 12300 && time < 23850;
 	}
 

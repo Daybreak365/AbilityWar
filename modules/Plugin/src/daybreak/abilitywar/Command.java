@@ -5,17 +5,19 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public abstract class Command {
 
-	private final Condition[] conditions;
+	private Set<Condition> conditions;
 	private Map<String, Command> subCommands = null;
 
 	public Command(Condition... conditions) {
-		this.conditions = conditions;
+		this.conditions = new HashSet<>(Arrays.asList(conditions));
 	}
 
 	public Command() {
@@ -25,17 +27,21 @@ public abstract class Command {
 	public final void addSubCommand(String label, Command command) {
 		if (subCommands == null) subCommands = new HashMap<>();
 		subCommands.putIfAbsent(label.toLowerCase(), command);
+		if (this.conditions != null) {
+			if (command.conditions == null) command.conditions = new HashSet<>(conditions);
+			else command.conditions.addAll(conditions);
+		}
 	}
 
 	public final boolean hasSubCommands() {
 		return subCommands != null;
 	}
 
-	public final void handle(final CommandSender sender, final String command, final String[] args) {
+	public final void handleCommand(final CommandSender sender, final String command, final String[] args) {
 		if (args.length > 0 && hasSubCommands()) {
 			String label = args[0].toLowerCase();
 			if (subCommands.containsKey(label)) {
-				subCommands.get(label).handle(sender, command, Arrays.copyOfRange(args, 1, args.length));
+				subCommands.get(label).handleCommand(sender, command, Arrays.copyOfRange(args, 1, args.length));
 				return;
 			}
 		}

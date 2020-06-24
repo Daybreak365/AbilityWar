@@ -64,7 +64,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 			} else {
 				if (container.getPresets().size() == 0) {
 					super.onEnd();
-					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 존재하지 않습니다. '/aw util teampreset' 에서 프리셋을 만들어주세요.");
+					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 존재하지 않습니다. '/aw config teampreset' 에서 프리셋을 만들어주세요.");
 				} else {
 					StringJoiner joiner = new StringJoiner(", ");
 					for (String name : container.getKeys()) {
@@ -204,7 +204,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 				}
 
 				if (invincible) {
-					getInvincibility().Start(false);
+					getInvincibility().start(false);
 				} else {
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
 					setRestricted(false);

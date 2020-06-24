@@ -26,6 +26,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -165,7 +166,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 				count++;
 			} else {
 				if (!getPlayer().isDead()) {
-					getPlayer().setHealth(Math.min(getPlayer().getHealth() + blood, 20));
+					getPlayer().setHealth(Math.min(getPlayer().getHealth() + blood, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 				}
 				blood = 0;
 				count = 1;

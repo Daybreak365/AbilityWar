@@ -1,7 +1,5 @@
 package daybreak.abilitywar.ability;
 
-import org.bukkit.ChatColor;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,11 +15,11 @@ public @interface AbilityManifest {
 
 	enum Rank {
 
-		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&cSPECIAL 등급")),
-		S(ChatColor.translateAlternateColorCodes('&', "&dS 등급")),
-		A(ChatColor.translateAlternateColorCodes('&', "&aA 등급")),
-		B(ChatColor.translateAlternateColorCodes('&', "&bB 등급")),
-		C(ChatColor.translateAlternateColorCodes('&', "&eC 등급"));
+		SPECIAL("§cSPECIAL 등급"),
+		S("§dS 등급"),
+		A("§aA 등급"),
+		B("§bB 등급"),
+		C("§eC 등급");
 
 		private final String rankName;
 
@@ -39,13 +37,13 @@ public @interface AbilityManifest {
 
 	enum Species {
 
-		SPECIAL(ChatColor.translateAlternateColorCodes('&', "&e특별 능력")),
-		HUMAN(ChatColor.translateAlternateColorCodes('&', "&f인간")),
-		GOD(ChatColor.translateAlternateColorCodes('&', "&c신")),
-		DEMIGOD(ChatColor.translateAlternateColorCodes('&', "&7데미&c갓")),
-		ANIMAL(ChatColor.translateAlternateColorCodes('&', "&2동물")),
-		UNDEAD(ChatColor.translateAlternateColorCodes('&', "&c언데드")),
-		OTHERS(ChatColor.translateAlternateColorCodes('&', "&8기타"));
+		SPECIAL("§e특별 능력"),
+		HUMAN("§f인간"),
+		GOD("§c신"),
+		DEMIGOD("§c반신§7반인"),
+		ANIMAL("§2동물"),
+		UNDEAD("§c언데드"),
+		OTHERS("§8기타");
 
 		private final String speciesName;
 

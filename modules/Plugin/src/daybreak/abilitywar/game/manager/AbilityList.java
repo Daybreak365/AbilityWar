@@ -32,6 +32,10 @@ public class AbilityList {
 
 	private static final Map<String, AbilityRegistration> abilities = new TreeMap<>();
 
+	public static boolean isRegistered(String name) {
+		return abilities.containsKey(name);
+	}
+
 	/**
 	 * 능력을 등록합니다.
 	 * <p>

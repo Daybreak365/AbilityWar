@@ -62,51 +62,51 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final Timer skill = new Timer() {
 		GameMode originalMode;
-		Player p;
 		Player target;
 
 		@Override
 		protected void onStart() {
-			p = getPlayer();
 			target = lastVictim;
 			for (int i = 0; i < 30; i++) {
-				ParticleLib.SPELL_MOB.spawnParticle(p.getLocation().add(Vector.getRandom()), BLACK);
+				ParticleLib.SPELL_MOB.spawnParticle(getPlayer().getLocation().add(Vector.getRandom()), BLACK);
 			}
-			originalMode = p.getGameMode();
+			originalMode = getPlayer().getGameMode();
 			getParticipant().attributes().TARGETABLE.setValue(false);
-			p.setGameMode(GameMode.SPECTATOR);
-			SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(p);
+			getPlayer().setGameMode(GameMode.SPECTATOR);
+			SoundLib.ITEM_CHORUS_FRUIT_TELEPORT.playSound(getPlayer());
 		}
 
 		@Override
 		protected void run(int count) {
-			getPlayer().setSpectatorTarget(null);
+			if (getPlayer().getGameMode() == GameMode.SPECTATOR) {
+				getPlayer().setSpectatorTarget(null);
+			}
 			Location targetLocation = target.getLocation();
-			Location playerLocation = p.getLocation();
+			Location playerLocation = getPlayer().getLocation();
 			for (int i = 0; i < 10; i++) {
 				ParticleLib.SPELL_MOB.spawnParticle(playerLocation.clone().add(Vector.getRandom()), BLACK);
 			}
-			p.setVelocity(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.7));
+			getPlayer().setVelocity(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.7));
 			if (playerLocation.distanceSquared(targetLocation) < 1.0) {
 				stop(false);
-				p.teleport(target);
+				getPlayer().teleport(target);
 			}
 		}
 
 		@Override
 		protected void onEnd() {
-			p.setGameMode(originalMode);
-			p.setVelocity(new Vector());
+			getPlayer().setGameMode(originalMode);
+			getPlayer().setVelocity(new Vector());
 			for (int i = 0; i < 30; i++) {
-				ParticleLib.SPELL_MOB.spawnParticle(p.getLocation().add(Vector.getRandom()), BLACK);
+				ParticleLib.SPELL_MOB.spawnParticle(getPlayer().getLocation().add(Vector.getRandom()), BLACK);
 			}
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
 
 		@Override
 		protected void onSilentEnd() {
-			p.setGameMode(originalMode);
-			p.setVelocity(new Vector());
+			getPlayer().setGameMode(originalMode);
+			getPlayer().setVelocity(new Vector());
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);

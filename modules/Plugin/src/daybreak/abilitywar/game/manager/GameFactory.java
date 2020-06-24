@@ -56,6 +56,10 @@ public class GameFactory {
 		return registeredModes.get(clazz);
 	}
 
+	public static boolean isRegistered(String name) {
+		return usedNames.containsKey(name);
+	}
+
 	public static boolean isRegistered(Class<? extends AbstractGame> clazz) {
 		return registeredModes.containsKey(clazz);
 	}

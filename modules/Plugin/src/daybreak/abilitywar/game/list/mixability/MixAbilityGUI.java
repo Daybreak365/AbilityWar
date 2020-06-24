@@ -189,7 +189,7 @@ public class MixAbilityGUI implements Listener {
 											Mix mix = (Mix) participant.getAbility();
 											mix.setAbility(firstAbility.getAbilityClass(), registration.getAbilityClass());
 										}
-										Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a에게 능력을 임의로 부여하였습니다."));
+										Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f모든 참가자&a에게 능력을 임의로 부여하였습니다."));
 									}
 								}
 							}
@@ -220,7 +220,7 @@ public class MixAbilityGUI implements Listener {
 									Mix mix = (Mix) participant.getAbility();
 									mix.removeAbility();
 								}
-								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f전체 유저&a의 능력을 제거하였습니다."));
+								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f모든 참가자&a의 능력을 제거하였습니다."));
 							}
 						}
 						p.closeInventory();

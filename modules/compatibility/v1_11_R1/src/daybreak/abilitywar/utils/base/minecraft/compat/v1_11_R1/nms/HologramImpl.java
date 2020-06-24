@@ -1,6 +1,8 @@
 package daybreak.abilitywar.utils.base.minecraft.compat.v1_11_R1.nms;
 
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.server.v1_11_R1.EntityArmorStand;
 import net.minecraft.server.v1_11_R1.EntityPlayer;
 import net.minecraft.server.v1_11_R1.PacketPlayOutEntityDestroy;
@@ -13,9 +15,6 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_11_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class HologramImpl implements Hologram {
 
@@ -31,6 +30,8 @@ public class HologramImpl implements Hologram {
 		armorStand.setInvisible(true);
 		armorStand.setCustomNameVisible(true);
 		armorStand.setCustomName(text);
+		armorStand.getDataWatcher().set(EntityArmorStand.a, (byte) (armorStand.getDataWatcher().get(EntityArmorStand.a) | 16));
+		armorStand.setSize(0F, 0F);
 	}
 
 	HologramImpl(World world, double x, double y, double z) {

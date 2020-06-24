@@ -219,7 +219,7 @@ public abstract class AbilitySelect extends GameTimer {
 			public List<Class<? extends AbilityBase>> getAbilities() {
 				ArrayList<Class<? extends AbilityBase>> abilities = new ArrayList<>();
 				for (String name : AbilityList.nameValues()) {
-					if (!Configuration.Settings.isBlackListed(name)) {
+					if (!Configuration.Settings.isBlacklisted(name)) {
 						abilities.add(AbilityList.getByString(name));
 					}
 				}

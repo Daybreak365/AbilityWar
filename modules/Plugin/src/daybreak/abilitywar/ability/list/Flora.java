@@ -89,7 +89,7 @@ public class Flora extends AbilityBase implements ActiveHandler {
 							double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 
 							if (p.getHealth() < maxHealth) {
-								p.setHealth(Math.min(p.getHealth() + 0.04, 20.0));
+								p.setHealth(Math.min(p.getHealth() + 0.04, p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 							}
 						}
 					}
