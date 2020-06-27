@@ -5,14 +5,14 @@ import org.bukkit.ChatColor;
 
 public abstract class LogType {
 
-	public static final LogType DEBUG = new LogType(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "DEBUG" + ChatColor.DARK_GRAY + "]") {
+	public static final LogType DEBUG = new LogType(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "디버그" + ChatColor.DARK_GRAY + "]") {
 		@Override
 		boolean isLoggable() {
 			return DeveloperSettings.isEnabled();
 		}
 	};
 
-	public static final LogType ERROR = new LogType(ChatColor.DARK_RED + "[" + ChatColor.RED + "ERROR" + ChatColor.DARK_RED + "]") {
+	public static final LogType ERROR = new LogType(ChatColor.DARK_RED + "[" + ChatColor.RED + "오류" + ChatColor.DARK_RED + "]") {
 		@Override
 		boolean isLoggable() {
 			return true;

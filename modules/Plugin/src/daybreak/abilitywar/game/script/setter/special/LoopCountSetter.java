@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.script.setter.special;
 
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.setter.Setter;
+import java.util.Arrays;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
@@ -9,8 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Arrays;
 
 public class LoopCountSetter extends Setter<Integer> {
 
@@ -55,20 +54,20 @@ public class LoopCountSetter extends Setter<Integer> {
 		if (getWizard().loopSetter.getValue()) {
 			if (getValue() > 0) {
 				loopCountMeta.setLore(Arrays.asList(
-						ChatColor.translateAlternateColorCodes('&', "&e" + getValue() + "번 &f반복 실행됩니다."),
-						ChatColor.translateAlternateColorCodes('&', "&c우클릭    &6» &e+ 1회"),
-						ChatColor.translateAlternateColorCodes('&', "&c좌클릭    &6» &e- 1회"),
-						ChatColor.translateAlternateColorCodes('&', "&cQ         &6» &e무한반복 토글")
+						"§e" + getValue() + "번 §f반복 실행됩니다.",
+						"§c우클릭    §6» §e+ 1회",
+						"§c좌클릭    §6» §e- 1회",
+						"§cQ         §6» §e무한반복 토글"
 				));
 			} else {
 				loopCountMeta.setLore(Arrays.asList(
-						ChatColor.translateAlternateColorCodes('&', "&e무한 &f반복됩니다."),
-						ChatColor.translateAlternateColorCodes('&', "&cQ         &6» &e무한반복 토글")
+						"§e무한 §f반복됩니다.",
+						"§cQ         §6» §e무한반복 토글"
 				));
 			}
 		} else {
 			loopCountMeta.setLore(Arrays.asList(
-					ChatColor.translateAlternateColorCodes('&', "&f반복 실행이 활성화되지 않아 사용할 수 없는 설정입니다.")
+					"§f반복 실행이 활성화되지 않아 사용할 수 없는 설정입니다."
 			));
 		}
 

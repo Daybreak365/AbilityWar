@@ -1,23 +1,22 @@
 package daybreak.abilitywar.utils.base;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class Messager {
 
 	private Messager() {
 	}
 
-	public static final String defaultPrefix = ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》&f");
+	public static final String defaultPrefix = "§2《§aAbilityWar§2》§f";
 	private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
 	public static List<String> asList(String... strings) {

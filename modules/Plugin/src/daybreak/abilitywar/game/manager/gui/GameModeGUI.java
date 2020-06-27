@@ -7,12 +7,12 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -58,7 +58,7 @@ public class GameModeGUI implements Listener {
 		int maxPage = ((GameFactory.nameValues().size() - 1) / 18) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &8게임 모드"));
+		gui = Bukkit.createInventory(null, 27, "§cAbilityWar §8게임 모드");
 		this.playerPage = page;
 		int count = 0;
 
@@ -75,17 +75,17 @@ public class GameModeGUI implements Listener {
 					if (gameClass.equals(mode)) {
 						is = MaterialX.ENCHANTED_BOOK.parseItem();
 						ItemMeta im = is.getItemMeta();
-						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
+						im.setDisplayName("§b" + name);
 						List<String> lore = Messager.asList(manifest.description());
-						lore.add(ChatColor.translateAlternateColorCodes('&', "&7선택된 게임모드입니다."));
+						lore.add("§7선택된 게임모드입니다.");
 						im.setLore(lore);
 						is.setItemMeta(im);
 					} else {
 						is = MaterialX.BOOK.parseItem();
 						ItemMeta im = is.getItemMeta();
-						im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
+						im.setDisplayName("§b" + name);
 						List<String> lore = Messager.asList(manifest.description());
-						lore.add(ChatColor.translateAlternateColorCodes('&', "&b» &f이 게임모드를 선택하려면 클릭하세요."));
+						lore.add("§b» §f이 게임모드를 선택하려면 클릭하세요.");
 						im.setLore(lore);
 						is.setItemMeta(im);
 					}
@@ -104,8 +104,7 @@ public class GameModeGUI implements Listener {
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
-				"&6페이지 &e" + page + " &6/ &e" + maxPage));
+		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		gui.setItem(22, stack);
 
@@ -154,7 +153,7 @@ public class GameModeGUI implements Listener {
 						if (gameMode != null) {
 							Configuration.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getName());
 						} else {
-							Messager.sendErrorMessage(p, ChatColor.translateAlternateColorCodes('&', "&c" + modeName + " &f클래스는 등록되지 않았습니다."));
+							Messager.sendErrorMessage(p, "§c" + modeName + " §f클래스는 등록되지 않았습니다.");
 						}
 
 						openGUI(playerPage);

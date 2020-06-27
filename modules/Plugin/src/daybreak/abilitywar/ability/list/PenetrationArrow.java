@@ -3,11 +3,14 @@ package daybreak.abilitywar.ability.list;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -116,10 +119,11 @@ public class PenetrationArrow extends AbilityBase {
 				}
 				arrowType.launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
 				arrowBullet--;
-				actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
+				actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
 				if (arrowBullet <= 0) {
-					this.reload = new Timer(15) {
-						private final ProgressBar progressBar = new ProgressBar(15, 15);
+					final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0) * 15.0) : 15;
+					this.reload = new Timer(reloadCount) {
+						private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
 						@Override
 						protected void run(int count) {
@@ -132,13 +136,13 @@ public class PenetrationArrow extends AbilityBase {
 							arrowType = arrowTypes.get(random.nextInt(arrowTypes.size()));
 							arrowBullet = bulletCount;
 							PenetrationArrow.this.reload = null;
-							actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
+							actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
 						}
 					}.setPeriod(TimeUnit.TICKS, 4);
 					reload.start();
 				}
 			} else {
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));
+				getPlayer().sendMessage("§b재장전 §f중입니다.");
 			}
 		}
 	}
@@ -146,7 +150,7 @@ public class PenetrationArrow extends AbilityBase {
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f능력: " + arrowType.name + "   &f화살: &e" + arrowBullet + "&f개"));
+			actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
 		}
 	}
 

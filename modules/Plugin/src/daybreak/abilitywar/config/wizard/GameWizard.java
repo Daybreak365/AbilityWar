@@ -68,9 +68,9 @@ public class GameWizard extends SettingWizard {
 		this.abilityDraw = new ItemStack(Material.DISPENSER);
 		{
 			ItemMeta meta = abilityDraw.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b능력 추첨"));
-			meta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
-					"", ChatColor.translateAlternateColorCodes('&', "&7상태 : " + (Settings.getDrawAbility() ? "&a활성화" : "&c비활성화"))));
+			meta.setDisplayName("§b능력 추첨");
+			meta.setLore(Messager.asList("§a활성화§f하면 게임을 시작할 때 능력을 추첨합니다.",
+					"", "§7상태 : " + (Settings.getDrawAbility() ? "§a활성화" : "§c비활성화")));
 			abilityDraw.setItemMeta(meta);
 		}
 		this.maxHealth = MaterialX.GOLDEN_APPLE.parseItem();
@@ -109,8 +109,7 @@ public class GameWizard extends SettingWizard {
 				break;
 				case 12: {
 					ItemMeta foodMeta = food.getItemMeta();
-					foodMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-							"&7상태 : " + (Settings.getNoHunger() ? "&a활성화" : "&c비활성화"))));
+					foodMeta.setLore(Messager.asList("§7상태 : " + (Settings.getNoHunger() ? "§a활성화" : "§c비활성화")));
 					food.setItemMeta(foodMeta);
 
 					gui.setItem(i, food);
@@ -119,14 +118,13 @@ public class GameWizard extends SettingWizard {
 				case 14: {
 					ItemMeta levelMeta = level.getItemMeta();
 					levelMeta.setLore(Messager.asList(
-							ChatColor.translateAlternateColorCodes('&',
-									"&7초반 지급 레벨 : &a" + Settings.getStartLevel() + "레벨"),
-							" ", ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1레벨"),
-							ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 5레벨"),
-							ChatColor.translateAlternateColorCodes('&', "&c좌클릭         &6» &e- 1레벨"),
-							ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 좌클릭 &6» &e- 5레벨"),
-							ChatColor.translateAlternateColorCodes('&', "&c휠클릭         &6» &e+ 10000레벨"),
-							ChatColor.translateAlternateColorCodes('&', "&cQ              &6» &e- 10000레벨")));
+							"§7초반 지급 레벨 : §a" + Settings.getStartLevel() + "레벨",
+							" ", "§c우클릭         §6» §e+ 1레벨",
+							"§cSHIFT + 우클릭 §6» §e+ 5레벨",
+							"§c좌클릭         §6» §e- 1레벨",
+							"§cSHIFT + 좌클릭 §6» §e- 5레벨",
+							"§c휠클릭         §6» §e+ 10000레벨",
+							"§cQ              §6» §e- 10000레벨"));
 					level.setItemMeta(levelMeta);
 
 					gui.setItem(i, level);
@@ -134,8 +132,7 @@ public class GameWizard extends SettingWizard {
 				break;
 				case 20: {
 					ItemMeta durabilityMeta = durability.getItemMeta();
-					durabilityMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-							"&7상태 : " + (Settings.getInfiniteDurability() ? "&a활성화" : "&c비활성화"))));
+					durabilityMeta.setLore(Messager.asList("§7상태 : " + (Settings.getInfiniteDurability() ? "§a활성화" : "§c비활성화")));
 					durability.setItemMeta(durabilityMeta);
 
 					gui.setItem(i, durability);
@@ -144,11 +141,9 @@ public class GameWizard extends SettingWizard {
 				case 22: {
 					ItemMeta firewallMeta = firewall.getItemMeta();
 					firewallMeta.setLore(Messager.asList(
-							ChatColor.translateAlternateColorCodes('&',
-									"&a활성화&f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다."),
-							ChatColor.translateAlternateColorCodes('&', "&c관리자 권한&f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."), "",
-							ChatColor.translateAlternateColorCodes('&',
-									"&7상태 : " + (Settings.getFirewall() ? "&a활성화" : "&c비활성화"))));
+							"§a활성화§f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다.",
+							"§c관리자 권한§f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다.", "",
+							"§7상태 : " + (Settings.getFirewall() ? "§a활성화" : "§c비활성화")));
 					firewall.setItemMeta(firewallMeta);
 
 					gui.setItem(i, firewall);
@@ -156,8 +151,7 @@ public class GameWizard extends SettingWizard {
 				break;
 				case 24: {
 					ItemMeta clearWeatherMeta = clearWeather.getItemMeta();
-					clearWeatherMeta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-							"&7상태 : " + (Settings.getClearWeather() ? "&a활성화" : "&c비활성화"))));
+					clearWeatherMeta.setLore(Messager.asList("§7상태 : " + (Settings.getClearWeather() ? "§a활성화" : "§c비활성화")));
 					clearWeather.setItemMeta(clearWeatherMeta);
 
 					gui.setItem(i, clearWeather);
@@ -166,9 +160,8 @@ public class GameWizard extends SettingWizard {
 				case 30: {
 					ItemMeta visualEffectMeta = visualEffect.getItemMeta();
 					visualEffectMeta.setLore(Messager.asList(
-							ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다."), "",
-							ChatColor.translateAlternateColorCodes('&',
-									"&7상태 : " + (Settings.getVisualEffect() ? "&a활성화" : "&c비활성화"))));
+							"§a활성화§f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다.", "",
+							"§7상태 : " + (Settings.getVisualEffect() ? "§a활성화" : "§c비활성화")));
 					visualEffect.setItemMeta(visualEffectMeta);
 
 					gui.setItem(i, visualEffect);
@@ -177,9 +170,8 @@ public class GameWizard extends SettingWizard {
 				case 32: {
 					ItemMeta abilityDrawMeta = abilityDraw.getItemMeta();
 					abilityDrawMeta.setLore(
-							Messager.asList(ChatColor.translateAlternateColorCodes('&', "&a활성화&f하면 게임을 시작할 때 능력을 추첨합니다."),
-									"", ChatColor.translateAlternateColorCodes('&',
-											"&7상태 : " + (Settings.getDrawAbility() ? "&a활성화" : "&c비활성화"))));
+							Messager.asList("§a활성화§f하면 게임을 시작할 때 능력을 추첨합니다.",
+									"", "§7상태 : " + (Settings.getDrawAbility() ? "§a활성화" : "§c비활성화")));
 					abilityDraw.setItemMeta(abilityDrawMeta);
 
 					gui.setItem(i, abilityDraw);

@@ -33,13 +33,13 @@ public class LoopSetter extends Setter<Boolean> {
 		loopMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 		if (this.getValue()) {
 			loopMeta.setLore(Messager.asList(
-					ChatColor.translateAlternateColorCodes('&', "&a반복 실행"),
-					ChatColor.translateAlternateColorCodes('&', "&7한번 실행")
+					"§a반복 실행",
+					"§7한번 실행"
 			));
 		} else {
 			loopMeta.setLore(Messager.asList(
-					ChatColor.translateAlternateColorCodes('&', "&7반복 실행"),
-					ChatColor.translateAlternateColorCodes('&', "&a한번 실행")
+					"§7반복 실행",
+					"§a한번 실행"
 			));
 		}
 

@@ -1,4 +1,4 @@
-package daybreak.abilitywar.game.list.mixability.synergy;
+package daybreak.abilitywar.game.list.mix.synergy;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.ability.AbilitySettings;

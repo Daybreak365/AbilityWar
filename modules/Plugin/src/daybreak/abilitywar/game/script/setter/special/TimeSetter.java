@@ -4,15 +4,14 @@ import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.setter.Setter;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TimeSetter extends Setter<Integer> {
 
@@ -54,16 +53,16 @@ public class TimeSetter extends Setter<Integer> {
 		List<String> Lore = new ArrayList<String>();
 
 		if (getWizard().loopSetter.getValue()) {
-			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 후 &e" + TimeUtil.parseTimeAsString(this.getValue()) + "&f마다 실행됩니다."));
+			Lore.add("§f게임 시작 후 §e" + TimeUtil.parseTimeAsString(this.getValue()) + "§f마다 실행됩니다.");
 		} else {
-			Lore.add(ChatColor.translateAlternateColorCodes('&', "&f게임 시작 &e" + TimeUtil.parseTimeAsString(this.getValue()) + " &f후에 실행됩니다."));
+			Lore.add("§f게임 시작 §e" + TimeUtil.parseTimeAsString(this.getValue()) + " §f후에 실행됩니다.");
 		}
 
 		Lore.add("");
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1초"));
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 1분"));
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&c좌클릭         &6» &e- 1초"));
-		Lore.add(ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 좌클릭 &6» &e- 1분"));
+		Lore.add("§c우클릭         §6» §e+ 1초");
+		Lore.add("§cSHIFT + 우클릭 §6» §e+ 1분");
+		Lore.add("§c좌클릭         §6» §e- 1초");
+		Lore.add("§cSHIFT + 좌클릭 §6» §e- 1분");
 
 		watchMeta.setLore(Lore);
 

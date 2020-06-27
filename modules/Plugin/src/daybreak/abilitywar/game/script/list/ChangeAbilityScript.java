@@ -27,25 +27,22 @@ public class ChangeAbilityScript extends AbstractScript {
 		this.target = target;
 	}
 
-	public enum ChangeTarget implements Serializable {
+	@Override
+	protected void execute(Game game) {
+		List<Class<? extends AbilityBase>> abilities = setupAbilities();
+		for (Participant participant : target.getParticipant(game)) {
+			Random random = new Random();
+			Player p = participant.getPlayer();
 
-		모든_플레이어 {
-			@Override
-			public Collection<Participant> getParticipant(Game game) {
-				return game.getParticipants();
+			Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
+			try {
+				participant.setAbility(abilityClass);
+				p.sendMessage("§a당신의 능력이 변경되었습니다. §e/ability check§f로 확인 할 수 있습니다.");
+			} catch (Exception e) {
+				logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
+				logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 			}
-		},
-		랜덤_플레이어 {
-			@Override
-			public Collection<Participant> getParticipant(Game game) {
-				Random random = new Random();
-				List<Participant> participants = new ArrayList<>(game.getParticipants());
-				return Collections.singletonList(participants.get(random.nextInt(participants.size())));
-			}
-		};
-
-		public abstract Collection<Participant> getParticipant(Game game);
-
+		}
 	}
 
 	private List<Class<? extends AbilityBase>> setupAbilities() {
@@ -58,22 +55,25 @@ public class ChangeAbilityScript extends AbstractScript {
 		return list;
 	}
 
-	@Override
-	protected void execute(Game game) {
-		List<Class<? extends AbilityBase>> abilities = setupAbilities();
-		for (Participant participant : target.getParticipant(game)) {
-			Random random = new Random();
-			Player p = participant.getPlayer();
+	public enum ChangeTarget implements Serializable {
 
-			Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
-			try {
-				participant.setAbility(abilityClass);
-				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/ability check&f로 확인 할 수 있습니다."));
-			} catch (Exception e) {
-				logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
-				logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
+		모든_플레이어 {
+			@Override
+			public Collection<? extends Participant> getParticipant(Game game) {
+				return game.getParticipants();
 			}
-		}
+		},
+		랜덤_플레이어 {
+			@Override
+			public Collection<? extends Participant> getParticipant(Game game) {
+				Random random = new Random();
+				List<Participant> participants = new ArrayList<>(game.getParticipants());
+				return Collections.singletonList(participants.get(random.nextInt(participants.size())));
+			}
+		};
+
+		public abstract Collection<? extends Participant> getParticipant(Game game);
+
 	}
 
 }

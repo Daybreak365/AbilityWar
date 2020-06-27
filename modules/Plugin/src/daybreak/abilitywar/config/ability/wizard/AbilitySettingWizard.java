@@ -44,7 +44,7 @@ public class AbilitySettingWizard implements Listener {
 
 	public void openGUI(int page) {
 		if (currentAbility == null) {
-			this.gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "능력 목록"));
+			this.gui = Bukkit.createInventory(null, 54, "능력 목록");
 			int maxPage = ((abilities.size() - 1) / 36) + 1;
 			if (maxPage < page || page < 1) page = 1;
 			this.currentPage = page;
@@ -54,7 +54,7 @@ public class AbilitySettingWizard implements Listener {
 				if (count / 36 == page - 1) {
 					ItemStack stack = new ItemStack(Material.BOOK);
 					ItemMeta meta = stack.getItemMeta();
-					meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + ability));
+					meta.setDisplayName("§b" + ability);
 					stack.setItemMeta(meta);
 
 					gui.setItem(count % 36, stack);
@@ -80,13 +80,13 @@ public class AbilitySettingWizard implements Listener {
 
 			ItemStack stack = new ItemStack(Material.PAPER, 1);
 			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+			meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 			stack.setItemMeta(meta);
 			gui.setItem(49, stack);
 
 			player.openInventory(gui);
 		} else {
-			this.gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', currentAbility.getManifest().name()));
+			this.gui = Bukkit.createInventory(null, 27, currentAbility.getManifest().name());
 
 			int maxPage = ((currentAbility.getSettingObjects().size() - 1) / 18) + 1;
 			if (maxPage < page || page < 1) page = 1;
@@ -118,13 +118,13 @@ public class AbilitySettingWizard implements Listener {
 
 			ItemStack stack = new ItemStack(Material.PAPER, 1);
 			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+			meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 			stack.setItemMeta(meta);
 			gui.setItem(22, stack);
 
 			ItemStack quit = MaterialX.OAK_DOOR.parseItem();
 			ItemMeta quitMeta = stack.getItemMeta();
-			quitMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c나가기"));
+			quitMeta.setDisplayName("§c나가기");
 			quit.setItemMeta(quitMeta);
 			gui.setItem(26, quit);
 

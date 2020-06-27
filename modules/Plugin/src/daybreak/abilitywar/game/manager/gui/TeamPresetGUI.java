@@ -77,7 +77,7 @@ public class TeamPresetGUI implements Listener {
 		if (editing == null) {
 			int maxPage = ((Settings.getPresetContainer().getPresets().size() - 1) / 36) + 1;
 			if (maxPage < page || page < 1) page = 1;
-			gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&8&l팀 프리셋 설정"));
+			gui = Bukkit.createInventory(null, 54, "§8§l팀 프리셋 설정");
 			playerPage = page;
 			int count = 0;
 
@@ -114,13 +114,13 @@ public class TeamPresetGUI implements Listener {
 
 			ItemStack stack = new ItemStack(Material.PAPER, 1);
 			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+			meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 			stack.setItemMeta(meta);
 			gui.setItem(49, stack);
 		} else {
 			int maxPage = ((editing.getSchemes().size() - 1) / 36) + 1;
 			if (maxPage < page || page < 1) page = 1;
-			gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&8&l" + editing.getName() + " - 팀 목록 설정"));
+			gui = Bukkit.createInventory(null, 54, "§8§l" + editing.getName() + " - 팀 목록 설정");
 			playerPage = page;
 			int count = 0;
 
@@ -172,7 +172,7 @@ public class TeamPresetGUI implements Listener {
 
 			ItemStack stack = new ItemStack(Material.PAPER, 1);
 			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+			meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 			stack.setItemMeta(meta);
 			gui.setItem(49, stack);
 		}
@@ -241,7 +241,7 @@ public class TeamPresetGUI implements Listener {
 							this.schemeName = name;
 							this.state = State.NEW_SCHEME_DISPLAY_NAME;
 							p.sendMessage(ChatColor.WHITE + "프리셋에 새로 추가할 " + ChatColor.GREEN + "팀" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "별명" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
-							p.sendMessage(ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "&로 색코드 사용 가능" + ChatColor.DARK_GRAY + ")");
+							p.sendMessage(ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "§로 색코드 사용 가능" + ChatColor.DARK_GRAY + ")");
 						} else {
 							p.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 프리셋에 이미 존재하는 팀 이름입니다.");
 						}

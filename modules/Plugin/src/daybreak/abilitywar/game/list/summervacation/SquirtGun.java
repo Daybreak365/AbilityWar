@@ -15,6 +15,8 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.LinkedList;
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -27,9 +29,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import java.util.LinkedList;
-import java.util.List;
-
 @AbilityManifest(name = "물총", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
 		"물 안에서 웅크리면 빠른 속도로 앞으로 나아갑니다.",
 		"활을 쏘면 물총이 나가며, 플레이어를 맞추면 한방에 죽일 수 있습니다. $[THREE_SECONDS_COOL]",
@@ -40,9 +39,7 @@ import java.util.List;
 })
 public class SquirtGun extends AbilityBase implements ActiveHandler {
 
-	private static final String THREE_SECONDS_COOL = Formatter.formatCooldown(3);
-	private static final String THIRTY_SECONDS_COOL = Formatter.formatCooldown(30);
-	private static final String FIFTEEN_SECONDS_COOL = Formatter.formatCooldown(15);
+	private static final String THREE_SECONDS_COOL = Formatter.formatCooldown(3), THIRTY_SECONDS_COOL = Formatter.formatCooldown(30), FIFTEEN_SECONDS_COOL = Formatter.formatCooldown(15);
 
 	public SquirtGun(Participant participant) {
 		super(participant);

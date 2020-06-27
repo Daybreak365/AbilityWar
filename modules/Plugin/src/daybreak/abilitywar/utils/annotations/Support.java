@@ -1,7 +1,6 @@
 package daybreak.abilitywar.utils.annotations;
 
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,6 +12,8 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Support {
 
-	ServerVersion.Version value();
+	Version min();
+
+	Version max() default Version.v1_16_R1;
 
 }

@@ -6,6 +6,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
@@ -16,7 +17,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -75,7 +75,7 @@ public class BlackListGUI implements Listener {
 		int maxPage = ((abilityNames.size() - 1) / 36) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c&l✖ &8&l능력 블랙리스트 &c&l✖"));
+		gui = Bukkit.createInventory(null, 54, "§c§l✖ §8§l능력 블랙리스트 §c§l✖");
 		playerPage = page;
 		int count = 0;
 
@@ -85,16 +85,16 @@ public class BlackListGUI implements Listener {
 			if (Settings.isBlacklisted(name)) {
 				stack = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = stack.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-				im.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&7이 능력은 능력을 추첨할 때 예외됩니다."),
-						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 해제하려면 클릭하세요.")));
+				im.setDisplayName("§b" + name);
+				im.setLore(Messager.asList("§7이 능력은 능력을 추첨할 때 예외됩니다.",
+						"§b» §f예외 처리를 해제하려면 클릭하세요."));
 				stack.setItemMeta(im);
 			} else {
 				stack = ItemLib.WOOL.getItemStack(ItemColor.LIME);
 				ItemMeta im = stack.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + name));
-				im.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&', "&7이 능력은 능력을 추첨할 때 예외되지 않습니다."),
-						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 하려면 클릭하세요.")));
+				im.setDisplayName("§b" + name);
+				im.setLore(Messager.asList("§7이 능력은 능력을 추첨할 때 예외되지 않습니다.",
+						"§b» §f예외 처리를 하려면 클릭하세요."));
 				stack.setItemMeta(im);
 			}
 
@@ -130,8 +130,8 @@ public class BlackListGUI implements Listener {
 			String rankName = rank.getRankName();
 			rankMeta.setDisplayName(rankName);
 			rankMeta.setLore(Messager.asList(
-					ChatColor.translateAlternateColorCodes('&', "&f모든 " + rankName + " &f능력을 예외 처리 하려면 좌클릭,"),
-					ChatColor.translateAlternateColorCodes('&', "&f모든 " + rankName + " &f능력을 예외 처리 해제하려면 우클릭을 해주세요.")));
+					"§f모든 " + rankName + " §f능력을 예외 처리 하려면 좌클릭,",
+					"§f모든 " + rankName + " §f능력을 예외 처리 해제하려면 우클릭을 해주세요."));
 			rankItem.setItemMeta(rankMeta);
 			gui.setItem(rankCount, rankItem);
 			rankCount++;
@@ -142,7 +142,7 @@ public class BlackListGUI implements Listener {
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		gui.setItem(49, stack);
 

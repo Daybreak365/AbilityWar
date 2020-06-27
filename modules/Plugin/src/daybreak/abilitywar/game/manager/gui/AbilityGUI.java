@@ -88,7 +88,7 @@ public class AbilityGUI implements Listener {
 			page = 1;
 		if (page < 1)
 			page = 1;
-		abilityGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&c능력 부여"));
+		abilityGUI = Bukkit.createInventory(null, 54, "§c능력 부여");
 		currentPage = page;
 		int count = 0;
 
@@ -98,14 +98,14 @@ public class AbilityGUI implements Listener {
 				AbilityManifest manifest = registration.getManifest();
 				ItemStack stack = new ItemStack(Material.IRON_BLOCK);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + manifest.name()));
+				meta.setDisplayName("§b" + manifest.name());
 				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
 				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 				List<String> lore = Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&f등급: " + manifest.rank().getRankName()),
-						ChatColor.translateAlternateColorCodes('&', "&f종류: " + manifest.species().getSpeciesName()),
+						"§f등급: " + manifest.rank().getRankName(),
+						"§f종류: " + manifest.species().getSpeciesName(),
 						joiner.toString(),
 						"");
 				Function<MatchResult, String> valueProvider = new Function<MatchResult, String>() {
@@ -127,7 +127,7 @@ public class AbilityGUI implements Listener {
 					lore.add(ChatColor.WHITE.toString().concat(ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(explain, valueProvider), valueProvider)));
 				}
 				lore.add("");
-				lore.add(ChatColor.translateAlternateColorCodes('&', "&2» &f이 능력을 부여하려면 클릭하세요."));
+				lore.add("§2» §f이 능력을 부여하려면 클릭하세요.");
 				meta.setLore(lore);
 				stack.setItemMeta(meta);
 				abilityGUI.setItem(count % 36, stack);
@@ -147,7 +147,7 @@ public class AbilityGUI implements Listener {
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		abilityGUI.setItem(49, stack);
 
@@ -206,12 +206,12 @@ public class AbilityGUI implements Listener {
 							AbstractGame game = GameManager.getGame();
 							if (target != null) {
 								target.removeAbility();
-								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f" + target.getPlayer().getName() + "&a님의 능력을 제거하였습니다."));
+								Bukkit.broadcastMessage("§e" + p.getName() + "§a님이 §f" + target.getPlayer().getName() + "§a님의 능력을 제거하였습니다.");
 							} else {
 								for (Participant participant : game.getParticipants()) {
 									participant.removeAbility();
 								}
-								Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&a님이 &f모든 참가자&a의 능력을 제거하였습니다."));
+								Bukkit.broadcastMessage("§e" + p.getName() + "§a님이 §f모든 참가자§a의 능력을 제거하였습니다.");
 							}
 						}
 						p.closeInventory();

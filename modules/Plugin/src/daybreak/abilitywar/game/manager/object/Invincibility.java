@@ -127,8 +127,7 @@ public class Invincibility implements EventExecutor {
 					bossBar.setTitle(String.format(bossbarMessage, time[0], time[1])).setProgress(Math.min(count / (double) getMaximumCount(), 1.0));
 				}
 				if (count == (getMaximumCount()) / 2 || (count <= 5 && count >= 1)) {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
-							"&a무적이 &f" + TimeUtil.parseTimeAsString(count) + " &a후에 해제됩니다."));
+					Bukkit.broadcastMessage("§a무적이 §f" + TimeUtil.parseTimeAsString(count) + " §a후에 해제됩니다.");
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				}
 			}

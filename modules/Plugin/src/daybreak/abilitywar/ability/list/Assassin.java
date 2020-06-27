@@ -15,7 +15,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.LinkedList;
 import java.util.function.Predicate;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -112,7 +111,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 				cooldownTimer.start();
 				return true;
 			} else {
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&f" + distance + "칸 이내에 &a엔티티&f가 존재하지 않습니다."));
+				getPlayer().sendMessage("§f" + distance + "칸 이내에 §a엔티티§f가 존재하지 않습니다.");
 			}
 		}
 

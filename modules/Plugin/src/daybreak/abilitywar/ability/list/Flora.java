@@ -14,7 +14,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -80,16 +79,15 @@ public class Flora extends AbilityBase implements ActiveHandler {
 				ParticleLib.REDSTONE.spawnParticle(location.subtract(0, y - 1, 0), type.color);
 			}
 
-			for (Player p : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {
-				if (LocationUtil.isInCircle(center, p.getLocation(), radius.radius)) {
+			for (Player player : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {
+				if (LocationUtil.isInCircle(center, player.getLocation(), radius.radius)) {
 					if (type.equals(EffectType.SPEED)) {
-						PotionEffects.SPEED.addPotionEffect(p, 20, 1, true);
+						PotionEffects.SPEED.addPotionEffect(player, 20, 1, true);
 					} else {
-						if (!p.isDead()) {
-							double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-
-							if (p.getHealth() < maxHealth) {
-								p.setHealth(Math.min(p.getHealth() + 0.04, p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+						if (!player.isDead()) {
+							final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+							if (player.getHealth() < maxHealth) {
+								player.setHealth(Math.min(player.getHealth() + 0.04, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 							}
 						}
 					}
@@ -113,13 +111,13 @@ public class Flora extends AbilityBase implements ActiveHandler {
 						type = EffectType.SPEED;
 					}
 
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', type.name + "&f으로 변경되었습니다."));
+					p.sendMessage(type.name + "§f으로 변경되었습니다.");
 
 					cooldownTimer.start();
 				}
 			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
 				radius = radius.next();
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6범위 설정&f: " + radius.radius));
+				getPlayer().sendMessage("§6범위 설정§f: " + radius.radius);
 			}
 		}
 
@@ -128,8 +126,8 @@ public class Flora extends AbilityBase implements ActiveHandler {
 
 	private enum EffectType {
 
-		REGENERATION(ChatColor.translateAlternateColorCodes('&', "&c재생"), ParticleLib.RGB.of(255, 93, 82)),
-		SPEED(ChatColor.translateAlternateColorCodes('&', "&b신속"), ParticleLib.RGB.of(46, 219, 202));
+		REGENERATION("§c재생", ParticleLib.RGB.of(255, 93, 82)),
+		SPEED("§b신속", ParticleLib.RGB.of(46, 219, 202));
 
 		private final String name;
 		private final ParticleLib.RGB color;

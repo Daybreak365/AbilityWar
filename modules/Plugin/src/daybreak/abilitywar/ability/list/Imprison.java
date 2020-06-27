@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
@@ -81,7 +80,7 @@ public class Imprison extends AbilityBase implements TargetHandler {
 		protected void run(int count) {
 			if (solidity < maxSolidity) {
 				solidity++;
-				actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f강도: &c" + solidity));
+				actionbarChannel.update("§f강도: §c" + solidity);
 			}
 		}
 	}.setPeriod(TimeUnit.SECONDS, 10);
@@ -102,7 +101,7 @@ public class Imprison extends AbilityBase implements TargetHandler {
 						}
 					}
 					solidity = 1;
-					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f강도: &c" + solidity));
+					actionbarChannel.update("§f강도: §c" + solidity);
 
 					cooldownTimer.start();
 				}

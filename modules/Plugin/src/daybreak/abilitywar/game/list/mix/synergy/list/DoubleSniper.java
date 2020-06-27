@@ -1,4 +1,4 @@
-package daybreak.abilitywar.game.list.mixability.synergy.list;
+package daybreak.abilitywar.game.list.mix.synergy.list;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -9,7 +9,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -23,7 +23,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import java.util.Iterator;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -103,7 +102,7 @@ public class DoubleSniper extends Synergy {
 				}.setPeriod(TimeUnit.TICKS, 4);
 				reload.start();
 			} else {
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));
+				getPlayer().sendMessage("§b재장전 §f중입니다.");
 			}
 		}
 	}

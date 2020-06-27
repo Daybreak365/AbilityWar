@@ -90,14 +90,14 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 	protected void progressGame(int seconds) {
 		switch (seconds) {
 			case 1:
-				List<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&6==== &e게임 참여자 목록 &6===="));
+				List<String> lines = Messager.asList("§6==== §e게임 참여자 목록 §6====");
 				int count = 0;
 				for (Participant p : getParticipants()) {
 					count++;
-					lines.add(ChatColor.translateAlternateColorCodes('&', "&a" + count + ". &f" + p.getPlayer().getName()));
+					lines.add("§a" + count + ". §f" + p.getPlayer().getName());
 				}
-				lines.add(ChatColor.translateAlternateColorCodes('&', "&e총 인원수 : " + count + "명"));
-				lines.add(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
+				lines.add("§e총 인원수 : " + count + "명");
+				lines.add("§6==========================");
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);
@@ -105,15 +105,15 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 
 				if (getParticipants().size() < 1) {
 					stop();
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
+					Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§71명§8)");
 				}
 				break;
 			case 3:
 				lines = Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &f- &6능력자 전쟁"),
-						ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-						ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
-						ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908")
+						"§cAbilityWar §f- §6능력자 전쟁",
+						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
+						"§b개발자 §7: §fDaybreak 새벽",
+						"§9디스코드 §7: §f새벽§7#5908"
 				);
 
 				GameCreditEvent event = new GameCreditEvent();
@@ -127,8 +127,8 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 			case 5:
 				if (Settings.getDrawAbility()) {
 					for (String line : Messager.asList(
-							ChatColor.translateAlternateColorCodes('&', "&f플러그인에 총 &b" + AbilityList.nameValues().size() + "개&f의 능력이 등록되어 있습니다."),
-							ChatColor.translateAlternateColorCodes('&', "&7능력을 무작위로 할당합니다..."))) {
+							"§f플러그인에 총 §b" + AbilityList.nameValues().size() + "개§f의 능력이 등록되어 있습니다.",
+							"§7능력을 무작위로 할당합니다...")) {
 						Bukkit.broadcastMessage(line);
 					}
 					try {
@@ -139,40 +139,40 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 				break;
 			case 7:
 				if (Settings.getDrawAbility()) {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f모든 참가자가 능력을 &b확정&f했습니다."));
+					Bukkit.broadcastMessage("§f모든 참가자가 능력을 §b확정§f했습니다.");
 				} else {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f능력자 게임 설정에 따라 &b능력&f을 추첨하지 않습니다."));
+					Bukkit.broadcastMessage("§f능력자 게임 설정에 따라 §b능력§f을 추첨하지 않습니다.");
 				}
 				break;
 			case 9:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e잠시 후 게임이 시작됩니다."));
+				Bukkit.broadcastMessage("§e잠시 후 게임이 시작됩니다.");
 				break;
 			case 11:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c5&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§e게임이 §c5§e초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 12:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c4&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§e게임이 §c4§e초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 13:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c3&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§e게임이 §c3§e초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 14:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c2&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§e게임이 §c2§e초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 15:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e게임이 &c1&e초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§e게임이 §c1§e초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 16:
 				for (String line : Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-						ChatColor.translateAlternateColorCodes('&', "&f             &cAbilityWar &f- &6능력자 전쟁  "),
-						ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
-						ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"))) {
+						"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+						"§f             §cAbilityWar §f- §6능력자 전쟁  ",
+						"§f                    게임 시작                ",
+						"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
 					Bukkit.broadcastMessage(line);
 				}
 
@@ -186,15 +186,15 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 				}
 
 				if (Settings.getNoHunger()) {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
+					Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");
 				} else {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4배고픔 무제한&c이 적용되지 않습니다."));
+					Bukkit.broadcastMessage("§4배고픔 무제한§c이 적용되지 않습니다.");
 				}
 
 				if (Settings.getInfiniteDurability()) {
 					attachObserver(new InfiniteDurability());
 				} else {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4내구도 무제한&c이 적용되지 않습니다."));
+					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}
 
 				if (Settings.getClearWeather()) {
@@ -206,7 +206,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 				if (invincible) {
 					getInvincibility().start(false);
 				} else {
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
+					Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
 					setRestricted(false);
 				}
 
@@ -240,7 +240,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 		if (hasTeam(participant)) {
 			Team oldTeam = getTeam(participant);
 			oldTeam.remove(participant);
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', oldTeam.getDisplayName() + "&f 팀에서 나왔습니다."));
+			player.sendMessage(oldTeam.getDisplayName() + "§f 팀에서 나왔습니다.");
 		}
 		if (team == null) {
 			do {
@@ -253,8 +253,8 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 				team = newTeam(teamName, ChatColor.GREEN + "개인팀");
 			}
 		}
-		player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f당신의 팀이 " + team.getDisplayName() + "&f" +
-				KoreanUtil.getJosa(team.getDisplayName().replaceAll("_", ""), KoreanUtil.Josa.으로로) + " 설정되었습니다."));
+		player.sendMessage("§f당신의 팀이 " + team.getDisplayName() + "§f" +
+				KoreanUtil.getJosa(team.getDisplayName().replaceAll("_", ""), KoreanUtil.Josa.으로로) + " 설정되었습니다.");
 		team.add(participant);
 		participantTeamMap.put(participant, team);
 	}
@@ -299,7 +299,7 @@ public class TeamFight extends Game implements DefaultKitHandler, TeamGame, Obse
 		if (isParticipating(player)) {
 			Participant participant = getParticipant(e.getPlayer());
 			if (participant.attributes().TEAM_CHAT.getValue()) {
-				e.setFormat(ChatColor.translateAlternateColorCodes('&', "&5[&d팀&5] &e" + player.getName() + "&f: &r" + e.getMessage().replaceAll("%", "%%")));
+				e.setFormat("§5[§d팀§5] §e" + player.getName() + "§f: §r" + e.getMessage().replaceAll("%", "%%"));
 				Set<Player> recipients = e.getRecipients();
 				recipients.clear();
 				if (hasTeam(participant)) {

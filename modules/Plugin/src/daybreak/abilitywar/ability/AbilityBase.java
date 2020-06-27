@@ -29,6 +29,7 @@ import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.io.FileUtil;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -47,7 +48,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -76,7 +76,7 @@ import org.bukkit.event.player.PlayerEvent;
  */
 public abstract class AbilityBase {
 
-	private static final Logger logger = Logger.getLogger(AbilityBase.class.getName());
+	private static final Logger logger = Logger.getLogger(AbilityBase.class);
 
 	public static final AbilitySettings abilitySettings = new AbilitySettings(FileUtil.newFile("abilitysettings.yml"));
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");

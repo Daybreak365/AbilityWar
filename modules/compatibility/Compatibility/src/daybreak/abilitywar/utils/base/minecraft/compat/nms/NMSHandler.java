@@ -27,6 +27,8 @@ public class NMSHandler {
 				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_14_R1.nms.NMSImpl();
 			case v1_15_R1:
 				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_15_R1.nms.NMSImpl();
+			case v1_16_R1:
+				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_16_R1.nms.NMSImpl();
 			default:
 				throw new UnsupportedVersionException(version);
 		}

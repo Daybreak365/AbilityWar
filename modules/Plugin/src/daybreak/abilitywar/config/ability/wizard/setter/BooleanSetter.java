@@ -2,13 +2,12 @@ package daybreak.abilitywar.config.ability.wizard.setter;
 
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BooleanSetter extends Setter {
 
@@ -31,7 +30,7 @@ public class BooleanSetter extends Setter {
 		woolMeta.setDisplayName(ChatColor.WHITE + settingObject.getKey());
 		String[] comments = settingObject.getComments();
 		List<String> lore = new ArrayList<>(comments.length + 1);
-		lore.add(ChatColor.translateAlternateColorCodes('&', "&9값&f: " + settingObject.getValue()));
+		lore.add("§9값§f: " + settingObject.getValue());
 		for (String comment : comments) {
 			lore.add(ChatColor.GRAY + comment);
 		}

@@ -54,8 +54,8 @@ public class LocationSetter extends Setter<Location> {
 		Setting = true;
 		getWizard().safeClose();
 		Player p = getWizard().getPlayer();
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f지정할 &6위치&f를 클릭해주세요. &e좌클릭&f은 클릭한 블록의 위치를 저장하고,"));
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e우클릭&f은 클릭한 블록 위의 위치를 저장합니다."));
+		p.sendMessage("§f지정할 §6위치§f를 클릭해주세요. §e좌클릭§f은 클릭한 블록의 위치를 저장하고,");
+		p.sendMessage("§e우클릭§f은 클릭한 블록 위의 위치를 저장합니다.");
 	}
 
 	@Override
@@ -70,14 +70,14 @@ public class LocationSetter extends Setter<Location> {
 			double Y = l.getY();
 			double Z = l.getZ();
 			locMeta.setLore(Messager.asList(
-					ChatColor.translateAlternateColorCodes('&', "&a월드&f: " + world),
-					ChatColor.translateAlternateColorCodes('&', "&bX&f: " + X),
-					ChatColor.translateAlternateColorCodes('&', "&bY&f: " + Y),
-					ChatColor.translateAlternateColorCodes('&', "&bZ&f: " + Z)
+					"§a월드§f: " + world,
+					"§bX§f: " + X,
+					"§bY§f: " + Y,
+					"§bZ§f: " + Z
 			));
 		} else {
 			locMeta.setLore(Messager.asList(
-					ChatColor.translateAlternateColorCodes('&', "&f지정된 위치가 없습니다.")
+					"§f지정된 위치가 없습니다."
 			));
 		}
 

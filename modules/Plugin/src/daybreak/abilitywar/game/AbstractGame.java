@@ -65,9 +65,6 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 
 	private final Set<Observer> observers = new HashSet<>();
 
-	/**
-	 * 게임이 종료될 때 등록 해제되어야 하는 {@link Listener}를 등록합니다.
-	 */
 	public final void attachObserver(Observer observer) {
 		observers.add(observer);
 	}
@@ -75,7 +72,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 	private boolean restricted = true;
 	private boolean gameStarted = false;
 
-	private final ParticipantStrategy participantStrategy;
+	protected final ParticipantStrategy participantStrategy;
 	private final EventManager eventManager = new EventManager(this);
 
 	public AbstractGame(Collection<Player> players) throws IllegalArgumentException {
@@ -138,7 +135,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 	 *
 	 * @return 참여자 목록
 	 */
-	public final Collection<Participant> getParticipants() {
+	public Collection<? extends Participant> getParticipants() {
 		return participantStrategy.getParticipants();
 	}
 
@@ -149,7 +146,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 	 * @return 존재할 경우 {@link Participant}를 반환합니다. 존재하지 않을 경우 null을 반환합니다.
 	 * null을 반환할 수 있습니다.
 	 */
-	public final Participant getParticipant(Player player) {
+	public Participant getParticipant(Player player) {
 		return participantStrategy.getParticipant(player.getUniqueId());
 	}
 
@@ -160,7 +157,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 	 * @return 존재할 경우 {@link Participant}를 반환합니다. 존재하지 않을 경우 null을 반환합니다.
 	 * null을 반환할 수 있습니다.
 	 */
-	public final Participant getParticipant(UUID uuid) {
+	public Participant getParticipant(UUID uuid) {
 		return participantStrategy.getParticipant(uuid);
 	}
 
@@ -225,93 +222,97 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 		Bukkit.broadcastMessage(ChatColor.GRAY.toString().concat("게임이 중지되었습니다."));
 	}
 
-	public class Participant implements Listener, AbstractGame.Observer {
+	public class Participant implements AbstractGame.Observer {
 
 		private final Attributes attributes = new Attributes();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
 		private Player player;
+		private final Listener listener;
 
 		protected Participant(Player player) {
 			this.player = player;
-			attachObserver(this);
-			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		}
+			this.listener = new Listener() {
 
-		@Override
-		public void update(GameUpdate update) {
-			if (update.equals(GameUpdate.END)) {
-				HandlerList.unregisterAll(this);
-			}
-		}
+				private long lastClick = System.currentTimeMillis();
 
-		private long lastClick = System.currentTimeMillis();
-
-		@EventHandler
-		public void onPlayerLogin(PlayerLoginEvent e) {
-			if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-				this.player = e.getPlayer();
-			}
-		}
-
-		@EventHandler
-		public void onPlayerInteract(PlayerInteractEvent e) {
-			Player player = e.getPlayer();
-			if (player.equals(getPlayer()) && hasAbility()) {
-				AbilityBase ability = getAbility();
-				if (ability instanceof ActiveHandler && !ability.isRestricted()) {
-					Material material = player.getInventory().getItemInMainHand().getType();
-					ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
-					if (attributes.SKILL_MATERIALS.set.contains(material)) {
-						long current = System.currentTimeMillis();
-						if (current - lastClick >= 250) {
-							this.lastClick = current;
-							if (((ActiveHandler) ability).ActiveSkill(material, clickType)) {
-								Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
-								ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
-							}
-						}
+				@EventHandler
+				public void onPlayerLogin(PlayerLoginEvent e) {
+					if (e.getPlayer().getUniqueId().equals(Participant.this.player.getUniqueId())) {
+						Participant.this.player = e.getPlayer();
 					}
 				}
-			}
-		}
 
-		@EventHandler
-		public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
-			Player player = e.getPlayer();
-			if (player.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
-				AbilityBase ability = this.getAbility();
-				if ((ability instanceof ActiveHandler || ability instanceof TargetHandler) && !ability.isRestricted()) {
-					Material material = player.getInventory().getItemInMainHand().getType();
-					if (attributes.SKILL_MATERIALS.set.contains(material)) {
-						long current = System.currentTimeMillis();
-						if (current - lastClick >= 250) {
-							if (ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, ClickType.RIGHT_CLICK)) {
-								Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, ClickType.RIGHT_CLICK));
-								ability.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&d능력을 사용하였습니다."));
-							}
-							if (ability instanceof TargetHandler) {
-								Entity targetEntity = e.getRightClicked();
-								if (targetEntity instanceof LivingEntity) {
-									if (targetEntity instanceof Player) {
-										Player targetPlayer = (Player) targetEntity;
-										if (isParticipating(targetPlayer)) {
-											if (this instanceof DeathManager.Handler && ((DeathManager.Handler) this).getDeathManager().isExcluded(targetPlayer))
-												return;
-											if (!getParticipant(targetPlayer).attributes.TARGETABLE.getValue()) return;
-
-											this.lastClick = current;
-											((TargetHandler) ability).TargetSkill(material, targetPlayer);
-										}
-									} else {
-										LivingEntity target = (LivingEntity) targetEntity;
-										this.lastClick = current;
-										((TargetHandler) ability).TargetSkill(material, target);
+				@EventHandler
+				public void onPlayerInteract(PlayerInteractEvent e) {
+					Player player = e.getPlayer();
+					if (player.equals(getPlayer()) && hasAbility()) {
+						AbilityBase ability = getAbility();
+						if (ability instanceof ActiveHandler && !ability.isRestricted()) {
+							Material material = player.getInventory().getItemInMainHand().getType();
+							ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
+							if (attributes.SKILL_MATERIALS.set.contains(material)) {
+								long current = System.currentTimeMillis();
+								if (current - lastClick >= 250) {
+									this.lastClick = current;
+									if (((ActiveHandler) ability).ActiveSkill(material, clickType)) {
+										Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
+										ability.getPlayer().sendMessage("§d능력을 사용하였습니다.");
 									}
 								}
 							}
 						}
 					}
 				}
+
+				@EventHandler
+				public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
+					Player player = e.getPlayer();
+					if (player.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
+						AbilityBase ability = getAbility();
+						if ((ability instanceof ActiveHandler || ability instanceof TargetHandler) && !ability.isRestricted()) {
+							Material material = player.getInventory().getItemInMainHand().getType();
+							if (attributes.SKILL_MATERIALS.set.contains(material)) {
+								long current = System.currentTimeMillis();
+								if (current - lastClick >= 250) {
+									if (ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, ClickType.RIGHT_CLICK)) {
+										Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, ClickType.RIGHT_CLICK));
+										ability.getPlayer().sendMessage("§d능력을 사용하였습니다.");
+									}
+									if (ability instanceof TargetHandler) {
+										Entity targetEntity = e.getRightClicked();
+										if (targetEntity instanceof LivingEntity) {
+											if (targetEntity instanceof Player) {
+												Player targetPlayer = (Player) targetEntity;
+												if (isParticipating(targetPlayer)) {
+													if (AbstractGame.this instanceof DeathManager.Handler && ((DeathManager.Handler) AbstractGame.this).getDeathManager().isExcluded(targetPlayer))
+														return;
+													if (!getParticipant(targetPlayer).attributes.TARGETABLE.getValue())
+														return;
+
+													this.lastClick = current;
+													((TargetHandler) ability).TargetSkill(material, targetPlayer);
+												}
+											} else {
+												LivingEntity target = (LivingEntity) targetEntity;
+												this.lastClick = current;
+												((TargetHandler) ability).TargetSkill(material, target);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			attachObserver(this);
+			Bukkit.getPluginManager().registerEvents(listener, AbilityWar.getPlugin());
+		}
+
+		@Override
+		public void update(GameUpdate update) {
+			if (update.equals(GameUpdate.END)) {
+				HandlerList.unregisterAll(listener);
 			}
 		}
 

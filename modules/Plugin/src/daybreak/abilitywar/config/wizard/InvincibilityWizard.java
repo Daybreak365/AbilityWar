@@ -9,7 +9,7 @@ import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
-import org.bukkit.ChatColor;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -17,12 +17,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
-
 public class InvincibilityWizard extends SettingWizard {
 
 	public InvincibilityWizard(Player player, Plugin plugin) {
-		super(player, 27, ChatColor.translateAlternateColorCodes('&', "&2&l초반 무적 설정"), plugin);
+		super(player, 27, "§2§l초반 무적 설정", plugin);
 	}
 
 	private Unit unit = Unit.MINUTE;
@@ -76,34 +74,33 @@ public class InvincibilityWizard extends SettingWizard {
 				ItemColor color = isEnabled ? ItemColor.LIME : ItemColor.RED;
 				ItemStack stack = ItemLib.WOOL.getItemStack(color);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적"));
-				meta.setLore(Messager.asList(ChatColor.translateAlternateColorCodes('&',
-						"&7상태 : " + (isEnabled ? "&a활성화" : "&c비활성화"))));
+				meta.setDisplayName("§b초반 무적");
+				meta.setLore(Messager.asList("§7상태 : " + (isEnabled ? "§a활성화" : "§c비활성화")));
 				stack.setItemMeta(meta);
 
 				gui.setItem(i, stack);
 			} else if (i == 14) {
 				ItemStack stack = MaterialX.CLOCK.parseItem();
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b초반 무적 시간"));
+				meta.setDisplayName("§b초반 무적 시간");
 				meta.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7지속 시간 : &a" + TimeUtil.parseTimeAsString(InvincibilitySettings.getDuration())),
+						"§7지속 시간 : §a" + TimeUtil.parseTimeAsString(InvincibilitySettings.getDuration()),
 						" ",
-						ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1" + unit.getName()),
-						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 5" + unit.getName()),
-						ChatColor.translateAlternateColorCodes('&', "&c좌클릭         &6» &e- 1" + unit.getName()),
-						ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 좌클릭 &6» &e- 5" + unit.getName())));
+						"§c우클릭         §6» §e+ 1" + unit.getName(),
+						"§cSHIFT + 우클릭 §6» §e+ 5" + unit.getName(),
+						"§c좌클릭         §6» §e- 1" + unit.getName(),
+						"§cSHIFT + 좌클릭 §6» §e- 5" + unit.getName()));
 				stack.setItemMeta(meta);
 
 				gui.setItem(i, stack);
 			} else if (i == 15) {
 				ItemStack stack = MaterialX.PAPER.parseItem();
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b단위"));
+				meta.setDisplayName("§b단위");
 
-				List<String> lore = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&f초반 무적 시간을 조정할 때 어떤 단위로 조정할지 설정합니다."), "");
+				List<String> lore = Messager.asList("§f초반 무적 시간을 조정할 때 어떤 단위로 조정할지 설정합니다.", "");
 				for (Unit unit : Unit.values()) {
-					lore.add(ChatColor.translateAlternateColorCodes('&', (unit.equals(this.unit) ? "&a" : "&7") + unit.getName()));
+					lore.add((unit.equals(this.unit) ? "§a" : "§7") + unit.getName());
 				}
 				meta.setLore(lore);
 				stack.setItemMeta(meta);

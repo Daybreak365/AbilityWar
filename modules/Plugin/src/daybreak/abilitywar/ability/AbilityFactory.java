@@ -8,7 +8,7 @@ import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.list.mixability.Mix;
+import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
 import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
@@ -73,8 +73,10 @@ public class AbilityFactory {
 				} else {
 					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
-			} catch (NoSuchMethodException | IllegalAccessException | NullPointerException e) {
+			} catch (NoSuchMethodException | NullPointerException e) {
 				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다."));
+			} catch (IllegalAccessException e) {
+				logger.error(abilityClass.getName() + " 능력 클래스에 public 생성자가 존재하지 않습니다.");
 			} catch (UnsupportedVersionException e) {
 				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 버전에서 지원되지 않습니다.");
 			}
@@ -209,21 +211,13 @@ public class AbilityFactory {
 
 		@SuppressWarnings("unchecked")
 		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException {
-			while (clazz.isAnnotationPresent(Support.class)) {
+			if (clazz.isAnnotationPresent(Support.class)) {
 				Support supported = clazz.getAnnotation(Support.class);
-				if (ServerVersion.getVersion().isOver(supported.value())) {
-					break;
-				} else {
-					if (clazz.isAnnotationPresent(Alternative.class)) {
-						clazz = Preconditions.checkNotNull(clazz.getAnnotation(Alternative.class).value(), "@Alternative cannot be null");
-					} else {
-						throw new UnsupportedVersionException();
-					}
+				if (!(ServerVersion.getVersion().isAboveOrEqual(supported.min()) && ServerVersion.getVersion().isBelowOrEqual(supported.max()))) {
+					throw new UnsupportedVersionException();
 				}
 			}
-
 			this.clazz = clazz;
-
 			this.constructor = clazz.getConstructor(Participant.class);
 
 			if (!clazz.isAnnotationPresent(AbilityManifest.class))

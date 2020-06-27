@@ -52,7 +52,6 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -68,7 +67,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @GameManifest(name = "머더 미스터리", description = {
 
 })
-@Support(Version.v1_12_R1)
+@Support(min = Version.v1_12_R1)
 @Beta
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
 
@@ -135,14 +134,14 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		if (count <= 13) {
 			switch (count) {
 				case 1:
-					List<String> lines = Messager.asList(ChatColor.translateAlternateColorCodes('&', "&4==== &c게임 참가자 목록 &4===="));
+					List<String> lines = Messager.asList("§4==== §c게임 참가자 목록 §4====");
 					int partCount = 0;
 					for (Participant p : getParticipants()) {
 						partCount++;
-						lines.add(ChatColor.translateAlternateColorCodes('&', "&c" + partCount + ". &f" + p.getPlayer().getName()));
+						lines.add("§c" + partCount + ". §f" + p.getPlayer().getName());
 					}
-					lines.add(ChatColor.translateAlternateColorCodes('&', "&c총 인원수 : " + partCount + "명"));
-					lines.add(ChatColor.translateAlternateColorCodes('&', "&4=========================="));
+					lines.add("§c총 인원수 : " + partCount + "명");
+					lines.add("§4==========================");
 
 					for (String line : lines) {
 						Bukkit.broadcastMessage(line);
@@ -150,15 +149,15 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 
 					if (getParticipants().size() < 2) {
 						stop();
-						Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&72명&8)"));
+						Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§72명§8)");
 					}
 					break;
 				case 3:
 					for (String line : Messager.asList(
-							ChatColor.translateAlternateColorCodes('&', "&4MurderMystery &f- &c머더 미스터리"),
-							ChatColor.translateAlternateColorCodes('&', "&e버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-							ChatColor.translateAlternateColorCodes('&', "&b개발자 &7: &fDaybreak 새벽"),
-							ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &f새벽&7#5908"))) {
+							"§4MurderMystery §f- §c머더 미스터리",
+							"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
+							"§b개발자 §7: §fDaybreak 새벽",
+							"§9디스코드 §7: §f새벽§7#5908")) {
 						Bukkit.broadcastMessage(line);
 					}
 					break;
@@ -192,34 +191,34 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 					}
 					break;
 				case 6:
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c잠시 후 게임이 시작됩니다."));
+					Bukkit.broadcastMessage("§c잠시 후 게임이 시작됩니다.");
 					break;
 				case 8:
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c게임이 &45&c초 후에 시작됩니다."));
+					Bukkit.broadcastMessage("§c게임이 §45§c초 후에 시작됩니다.");
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 					break;
 				case 9:
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c게임이 &44&c초 후에 시작됩니다."));
+					Bukkit.broadcastMessage("§c게임이 §44§c초 후에 시작됩니다.");
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 					break;
 				case 10:
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c게임이 &43&c초 후에 시작됩니다."));
+					Bukkit.broadcastMessage("§c게임이 §43§c초 후에 시작됩니다.");
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 					break;
 				case 11:
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c게임이 &42&c초 후에 시작됩니다."));
+					Bukkit.broadcastMessage("§c게임이 §42§c초 후에 시작됩니다.");
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 					break;
 				case 12:
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c게임이 &41&c초 후에 시작됩니다."));
+					Bukkit.broadcastMessage("§c게임이 §41§c초 후에 시작됩니다.");
 					SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 					break;
 				case 13:
 					for (String line : Messager.asList(
-							ChatColor.translateAlternateColorCodes('&', "&c■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-							ChatColor.translateAlternateColorCodes('&', "&f            &4MurderMystery &f- &c머더 미스터리"),
-							ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
-							ChatColor.translateAlternateColorCodes('&', "&c■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"))) {
+							"§c■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+							"§f            §4MurderMystery §f- §c머더 미스터리",
+							"§f                    게임 시작                ",
+							"§c■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
 						Bukkit.broadcastMessage(line);
 					}
 					if (Settings.getSpawnEnable()) {
@@ -248,11 +247,6 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 				}
 			}
 		}
-	}
-
-	@EventHandler
-	private void onFoodLevelChange(FoodLevelChangeEvent e) {
-		e.setFoodLevel(20);
 	}
 
 	@EventHandler
@@ -370,7 +364,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 					}
 				}.setPeriod(TimeUnit.TICKS, 8).start();
 			}
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e시민&5이 우승했습니다!"));
+			Bukkit.broadcastMessage("§e시민§5이 우승했습니다!");
 			GameManager.stopGame();
 		} else if (!innocentLeft) {
 			Win(murderers.toArray(new Participant[0]));
@@ -426,7 +420,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	}
 
 	@Override
-	public void executeCommand(CommandType commandType, CommandSender sender, String[] args, Plugin plugin) {
+	public void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
 		sender.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
 	}
 

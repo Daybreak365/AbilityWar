@@ -384,14 +384,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 		mainCommand.addSubCommand("config", configCommand);
 		final Command utilCommand = new Command(Condition.OP) {
 			{
-				addSubCommand("abi", new Command(Condition.PLAYER) {
+				addSubCommand("abi", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (GameManager.isGameRunning()) {
-							if (args.length < 1) {
-								Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a>");
-							} else
-								GameManager.getGame().executeCommand(CommandHandler.CommandType.ABI, sender, args, plugin);
+							GameManager.getGame().executeCommand(CommandHandler.CommandType.ABI, sender, command, args, plugin);
 						} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 						return true;
 					}
@@ -454,7 +451,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (GameManager.isGameRunning()) {
-							GameManager.getGame().executeCommand(CommandHandler.CommandType.ABLIST, sender, args, plugin);
+							GameManager.getGame().executeCommand(CommandHandler.CommandType.ABLIST, sender, command, args, plugin);
 						} else {
 							Messager.sendErrorMessage(sender, "§c게임이 진행되고 있지 않습니다.");
 						}

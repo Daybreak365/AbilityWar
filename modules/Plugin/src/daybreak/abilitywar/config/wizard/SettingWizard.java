@@ -1,8 +1,11 @@
 package daybreak.abilitywar.config.wizard;
 
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
+import java.io.IOException;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -15,10 +18,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class SettingWizard {
 

@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -66,8 +65,8 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 
 		@Override
 		public void run(int count) {
-			target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
-			getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4[&c투기장&4] &f" + count + "초 후에 투기장이 삭제됩니다."));
+			target.sendMessage("§4[§c투기장§4] §f" + count + "초 후에 투기장이 삭제됩니다.");
+			getPlayer().sendMessage("§4[§c투기장§4] §f" + count + "초 후에 투기장이 삭제됩니다.");
 		}
 
 		@Override
@@ -174,7 +173,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 	public void onBlockBreak(BlockBreakEvent e) {
 		if (saves.containsKey(e.getBlock())) {
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&c투기장&f은 부술 수 없습니다!"));
+			e.getPlayer().sendMessage("§c투기장§f은 부술 수 없습니다!");
 		}
 	}
 

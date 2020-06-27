@@ -65,7 +65,7 @@ public class SpectatorGUI implements Listener {
 		if (maxPage < page)
 			page = 1;
 		if (page < 1) page = 1;
-		gui = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&b플레이어 &f목록"));
+		gui = Bukkit.createInventory(null, 54, "§b플레이어 §f목록");
 		currentPage = page;
 
 		int count = 0;
@@ -75,19 +75,19 @@ public class SpectatorGUI implements Listener {
 			if (SpectatorManager.isSpectator(player)) {
 				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
 				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
+				im.setDisplayName("§b" + player);
 				im.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7이 플레이어는 게임에서 예외됩니다."),
-						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 해제하려면 클릭하세요.")
+						"§7이 플레이어는 게임에서 예외됩니다.",
+						"§b» §f예외 처리를 해제하려면 클릭하세요."
 				));
 				is.setItemMeta(im);
 			} else {
 				is = ItemLib.WOOL.getItemStack(ItemColor.LIME);
 				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + player));
+				im.setDisplayName("§b" + player);
 				im.setLore(Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7이 플레이어는 게임에서 예외되지 않습니다."),
-						ChatColor.translateAlternateColorCodes('&', "&b» &f예외 처리를 하려면 클릭하세요.")
+						"§7이 플레이어는 게임에서 예외되지 않습니다.",
+						"§b» §f예외 처리를 하려면 클릭하세요."
 				));
 				is.setItemMeta(im);
 			}
@@ -103,7 +103,7 @@ public class SpectatorGUI implements Listener {
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		gui.setItem(49, stack);
 

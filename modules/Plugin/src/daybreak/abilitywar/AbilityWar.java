@@ -9,7 +9,7 @@ import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.config.serializable.team.TeamPreset.TeamScheme;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;

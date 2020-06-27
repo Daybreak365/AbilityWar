@@ -47,8 +47,8 @@ public class MessageSetter extends Setter<String> {
 		setting = true;
 		getWizard().safeClose();
 		Player p = getWizard().getPlayer();
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f변경할 &6메시지&f를 채팅창에 입력해주세요. 취소하려면 &e%&f를 입력해주세요."));
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&f메시지를 'none'으로 설정하면 메시지가 전송되지 않습니다."));
+		p.sendMessage("§f변경할 §6메시지§f를 채팅창에 입력해주세요. 취소하려면 §e%§f를 입력해주세요.");
+		p.sendMessage("§f메시지를 'none'으로 설정하면 메시지가 전송되지 않습니다.");
 	}
 
 	@Override
@@ -57,9 +57,9 @@ public class MessageSetter extends Setter<String> {
 		ItemMeta stringMeta = string.getItemMeta();
 		stringMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 		stringMeta.setLore(Messager.asList(
-				ChatColor.translateAlternateColorCodes('&', "&f\"" + this.getValue() + "&f\""),
+				"§f\"" + this.getValue() + "§f\"",
 				"",
-				ChatColor.translateAlternateColorCodes('&', "&6메시지&f를 변경하려면 클릭하세요.")
+				"§6메시지§f를 변경하려면 클릭하세요."
 		));
 
 		string.setItemMeta(stringMeta);

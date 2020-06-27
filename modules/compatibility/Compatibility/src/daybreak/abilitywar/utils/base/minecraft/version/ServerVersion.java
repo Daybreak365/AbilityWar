@@ -1,13 +1,12 @@
 package daybreak.abilitywar.utils.base.minecraft.version;
 
 import com.google.common.base.Enums;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 
 /**
  * Server Version
@@ -75,7 +74,8 @@ public class ServerVersion {
 		v1_12_R1(12, 1),
 		v1_13_R1(13, 1), v1_13_R2(13, 2),
 		v1_14_R1(14, 1),
-		v1_15_R1(15, 1);
+		v1_15_R1(15, 1),
+		v1_16_R1(16, 1);
 
 		private final int version;
 		private final int release;
@@ -93,8 +93,12 @@ public class ServerVersion {
 			return release;
 		}
 
-		public boolean isOver(ServerVersion.Version other) {
+		public boolean isAboveOrEqual(Version other) {
 			return version >= other.version && (version != other.version || release >= other.release);
+		}
+
+		public boolean isBelowOrEqual(Version other) {
+			return version <= other.version && (version != other.version || release <= other.release);
 		}
 
 	}

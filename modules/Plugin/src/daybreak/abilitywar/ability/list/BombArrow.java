@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -72,7 +73,7 @@ public class BombArrow extends AbilityBase {
 				actionbarChannel.update(ChatColor.DARK_RED.toString().concat(Strings.repeat("●", stack).concat(Strings.repeat("○", Math.max(maxStack - stack, 0)))));
 			}
 		}
-	}.setPeriod(TimeUnit.SECONDS, WRECK.isEnabled(getGame()) ? StackPeriodConfig.getValue() / 2 : StackPeriodConfig.getValue());
+	}.setPeriod(TimeUnit.SECONDS, WRECK.isEnabled(getGame()) ? (int) (StackPeriodConfig.getValue() / (Settings.getCooldownDecrease().getPercentage() / 25.0)) : StackPeriodConfig.getValue());
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 

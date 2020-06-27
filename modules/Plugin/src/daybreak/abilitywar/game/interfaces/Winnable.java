@@ -16,7 +16,7 @@ public interface Winnable extends iGame {
 
 	default void Win(Participant... winners) {
 		Messager.clearChat();
-		StringBuilder builder = new StringBuilder(ChatColor.translateAlternateColorCodes('&', "&5&l우승자&f: "));
+		StringBuilder builder = new StringBuilder("§5§l우승자§f: ");
 		StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE, ChatColor.LIGHT_PURPLE.toString(), ChatColor.WHITE + ".");
 		for (Participant participant : winners) {
 			Player p = participant.getPlayer();

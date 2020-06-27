@@ -1,6 +1,8 @@
 package daybreak.abilitywar.game.script.setter;
 
 import daybreak.abilitywar.game.script.ScriptWizard;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
@@ -8,9 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Enum Setter
@@ -78,9 +77,9 @@ public class EnumSetter extends Setter<Object> {
 			}
 		}
 
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f전체 상수&7: &a" + (maxNumber + 1) + "&f개, 현재 상수&7: &a" + (number + 1) + "&f번째"));
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f이전 상수로 변경하려면 &c좌클릭&f하세요."));
-		enumItemLore.add(ChatColor.translateAlternateColorCodes('&', "&f다음 상수로 변경하려면 &c우클릭&f하세요."));
+		enumItemLore.add("§f전체 상수§7: §a" + (maxNumber + 1) + "§f개, 현재 상수§7: §a" + (number + 1) + "§f번째");
+		enumItemLore.add("§f이전 상수로 변경하려면 §c좌클릭§f하세요.");
+		enumItemLore.add("§f다음 상수로 변경하려면 §c우클릭§f하세요.");
 
 		enumItemMeta.setLore(enumItemLore);
 

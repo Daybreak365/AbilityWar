@@ -1,16 +1,15 @@
 package daybreak.abilitywar.game;
 
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import org.bukkit.entity.Player;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.entity.Player;
 
 public interface ParticipantStrategy {
 
-	Collection<AbstractGame.Participant> getParticipants();
+	Collection<? extends Participant> getParticipants();
 
 	boolean isParticipating(UUID uuid);
 
@@ -31,7 +30,7 @@ public interface ParticipantStrategy {
 		}
 
 		@Override
-		public Collection<AbstractGame.Participant> getParticipants() {
+		public Collection<? extends Participant> getParticipants() {
 			return participants.values();
 		}
 
@@ -41,7 +40,7 @@ public interface ParticipantStrategy {
 		}
 
 		@Override
-		public AbstractGame.Participant getParticipant(UUID uuid) {
+		public Participant getParticipant(UUID uuid) {
 			return participants.get(uuid.toString());
 		}
 

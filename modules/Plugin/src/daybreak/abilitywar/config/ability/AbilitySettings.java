@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.config.Cache;
 import daybreak.abilitywar.config.CommentedConfiguration;
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.configuration.InvalidConfigurationException;
 
 import static com.google.common.base.Preconditions.checkNotNull;

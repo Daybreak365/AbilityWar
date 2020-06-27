@@ -18,15 +18,20 @@ import org.bukkit.plugin.Plugin;
 
 public interface CommandHandler {
 
-	default void executeCommand(CommandType commandType, CommandSender sender, String[] args, Plugin plugin) {
+	default void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
 		switch (commandType) {
 			case ABI: {
+				if (args.length == 0) {
+					if (sender instanceof Player)
+						Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> §7또는 §f/" + command + " util abi <대상/@a> [능력]");
+					else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [능력]");
+					return;
+				}
 				if (args.length == 1) {
 					if (sender instanceof Player) {
 						Player player = (Player) sender;
 						if (args[0].equalsIgnoreCase("@a")) {
-							AbilityGUI gui = new AbilityGUI(player, plugin);
-							gui.openGUI(1);
+							new AbilityGUI(player, plugin).openGUI(1);
 						} else {
 							Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 							if (targetPlayer != null) {
@@ -38,7 +43,7 @@ public interface CommandHandler {
 							} else
 								Messager.sendErrorMessage(player, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
 						}
-					} else Messager.sendErrorMessage(sender, "콘솔에서 사용할 수 없는 명령어입니다.");
+					} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [능력]");
 				} else {
 					String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 

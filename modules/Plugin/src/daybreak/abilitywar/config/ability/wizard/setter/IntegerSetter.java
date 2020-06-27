@@ -2,14 +2,13 @@ package daybreak.abilitywar.config.ability.wizard.setter;
 
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class IntegerSetter extends Setter {
 
@@ -45,16 +44,16 @@ public class IntegerSetter extends Setter {
 		woolMeta.setDisplayName(ChatColor.WHITE + settingObject.getKey());
 		String[] comments = settingObject.getComments();
 		List<String> lore = new ArrayList<>(comments.length + 6);
-		lore.add(ChatColor.translateAlternateColorCodes('&', "&9값&f: " + settingObject.getValue()));
+		lore.add("§9값§f: " + settingObject.getValue());
 		for (String comment : comments) {
 			lore.add(ChatColor.GRAY + comment);
 		}
 		lore.addAll(Arrays.asList(
 				"",
-				ChatColor.translateAlternateColorCodes('&', "&c우클릭         &6» &e+ 1"),
-				ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 우클릭 &6» &e+ 20"),
-				ChatColor.translateAlternateColorCodes('&', "&c좌클릭         &6» &e- 1"),
-				ChatColor.translateAlternateColorCodes('&', "&cSHIFT + 좌클릭 &6» &e- 20")
+				"§c우클릭         §6» §e+ 1",
+				"§cSHIFT + 우클릭 §6» §e+ 20",
+				"§c좌클릭         §6» §e- 1",
+				"§cSHIFT + 좌클릭 §6» §e- 20"
 		));
 		woolMeta.setLore(lore);
 		wool.setItemMeta(woolMeta);

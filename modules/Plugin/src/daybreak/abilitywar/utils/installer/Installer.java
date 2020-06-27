@@ -6,20 +6,7 @@ import com.google.gson.JsonParser;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.event.Event;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredListener;
-
+import daybreak.abilitywar.utils.base.logging.Logger;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +32,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredListener;
 
 /**
  * 깃헙 자동 업데이트
@@ -113,7 +111,7 @@ public class Installer {
 			Messager.sendConsoleMessage(Formatter.formatVersionInfo(update));
 			unload(plugin);
 			if (!sender.equals(Bukkit.getConsoleSender())) {
-				Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 시작합니다."));
+				Messager.sendConsoleMessage("§f설치를 시작합니다.");
 			}
 			sender.sendMessage(Messager.defaultPrefix + "설치를 시작합니다.");
 
@@ -131,7 +129,7 @@ public class Installer {
 			output.close();
 
 			if (!sender.equals(Bukkit.getConsoleSender())) {
-				Messager.sendConsoleMessage(ChatColor.translateAlternateColorCodes('&', "&f설치를 완료하였습니다."));
+				Messager.sendConsoleMessage("§f설치를 완료하였습니다.");
 			}
 			sender.sendMessage(Messager.defaultPrefix + "설치를 완료하였습니다.");
 			load(plugin);

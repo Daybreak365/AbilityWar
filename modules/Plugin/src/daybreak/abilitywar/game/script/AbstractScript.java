@@ -8,12 +8,8 @@ import org.bukkit.ChatColor;
 
 public abstract class AbstractScript {
 
-	private final String scriptType;
-	private final String name;
-	private final int period;
-	private final int loopCount;
-	private final String preMessage;
-	private final String runMessage;
+	private final String scriptType, name, preMessage, runMessage;
+	private final int period, loopCount;
 	private transient GameTimer timer = null;
 
 	public AbstractScript(String name, int period, int loopCount, String preMessage, String runMessage) {
@@ -89,8 +85,7 @@ public abstract class AbstractScript {
 	}
 
 	private String getPreRunMessage(int time) {
-		return ChatColor.translateAlternateColorCodes('&',
-				preMessage.replaceAll("%Time%", String.valueOf(time)).replaceAll("%ScriptName%", name));
+		return ChatColor.translateAlternateColorCodes('&', preMessage.replaceAll("%Time%", String.valueOf(time)).replaceAll("%ScriptName%", name));
 	}
 
 	private String getRunMessage() {

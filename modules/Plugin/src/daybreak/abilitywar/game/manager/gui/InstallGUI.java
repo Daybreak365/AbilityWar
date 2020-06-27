@@ -39,7 +39,7 @@ public class InstallGUI implements Listener {
 	private int playerPage = 1;
 
 	public void openGUI(int page) {
-		gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&0&l버전 목록"));
+		gui = Bukkit.createInventory(null, 27, "§0§l버전 목록");
 		int maxPage = ((versions.size() - 1) / 18) + 1;
 		if (maxPage < page || page < 1) page = 1;
 		playerPage = page;
@@ -51,24 +51,24 @@ public class InstallGUI implements Listener {
 			if (installer.getPluginVersion().equals(version)) {
 				is = MaterialX.ENCHANTED_BOOK.parseItem();
 				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + version.getVersionString()));
+				im.setDisplayName("§b" + version.getVersionString());
 				im.setLore(Arrays.asList(
-						ChatColor.translateAlternateColorCodes('&', "&7현재 플러그인 버전입니다."),
-						ChatColor.translateAlternateColorCodes('&', "&b태그&f: " + update.getTag()),
-						ChatColor.translateAlternateColorCodes('&', "&b버전&f: " + (update.isPrerelease() ? "&3PRE-RELEASE&f " : "") + update.getVersion()),
-						ChatColor.translateAlternateColorCodes('&', "&b파일 크기&f: " + (update.getFileSize() / 1024) + "KB"),
-						ChatColor.translateAlternateColorCodes('&', "&b다운로드 횟수&f: " + update.getDownloadCount())));
+						"§7현재 플러그인 버전입니다.",
+						"§b태그§f: " + update.getTag(),
+						"§b버전§f: " + (update.isPrerelease() ? "§3PRE-RELEASE§f " : "" + update.getVersion()),
+						"§b파일 크기§f: " + (update.getFileSize() / 1024) + "KB",
+						"§b다운로드 횟수§f: " + update.getDownloadCount()));
 				is.setItemMeta(im);
 			} else {
 				is = MaterialX.BOOK.parseItem();
 				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + version.getVersionString()));
+				im.setDisplayName("§b" + version.getVersionString());
 				im.setLore(Arrays.asList(
-						ChatColor.translateAlternateColorCodes('&', "&b» &f이 버전을 설치하려면 클릭하세요."),
-						ChatColor.translateAlternateColorCodes('&', "&b태그&f: " + update.getTag()),
-						ChatColor.translateAlternateColorCodes('&', "&b버전&f: " + (update.isPrerelease() ? "&3PRE-RELEASE&f " : "") + update.getVersion()),
-						ChatColor.translateAlternateColorCodes('&', "&b파일 크기&f: " + (update.getFileSize() / 1024) + "KB"),
-						ChatColor.translateAlternateColorCodes('&', "&b다운로드 횟수&f: " + update.getDownloadCount())));
+						"§b» §f이 버전을 설치하려면 클릭하세요.",
+						"§b태그§f: " + update.getTag(),
+						"§b버전§f: " + (update.isPrerelease() ? "§3PRE-RELEASE§f " : "" + update.getVersion()),
+						"§b파일 크기§f: " + (update.getFileSize() / 1024) + "KB",
+						"§b다운로드 횟수§f: " + update.getDownloadCount()));
 				is.setItemMeta(im);
 			}
 
@@ -94,7 +94,7 @@ public class InstallGUI implements Listener {
 
 		ItemStack Page = new ItemStack(Material.PAPER, 1);
 		ItemMeta PageMeta = Page.getItemMeta();
-		PageMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+		PageMeta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		Page.setItemMeta(PageMeta);
 		gui.setItem(22, Page);
 

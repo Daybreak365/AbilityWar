@@ -9,6 +9,7 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -158,7 +159,7 @@ public class LocationUtil {
 	}
 
 	public static int getFloorYAt(World world, double referenceY, int x, int z) {
-		int y = world.getHighestBlockYAt(x, z);
+		int y = getHighestBlockYAt(world, x, z);
 		if (y > referenceY) {
 			for (int yCheck = y; yCheck >= referenceY; yCheck--) {
 				if (world.getBlockAt(x, yCheck, z).isEmpty()) y = yCheck;
@@ -168,6 +169,14 @@ public class LocationUtil {
 			}
 		}
 		return y;
+	}
+
+	public static int getHighestBlockYAt(World world, int x, int z) {
+		return ServerVersion.getVersionNumber() >= 15 ? (world.getHighestBlockYAt(x, z) + 1) : world.getHighestBlockYAt(x, z);
+	}
+
+	public static int getHighestBlockYAt(World world, Location location) {
+		return ServerVersion.getVersionNumber() >= 15 ? (world.getHighestBlockYAt(location) + 1) : world.getHighestBlockYAt(location);
 	}
 
 	/**
@@ -240,7 +249,7 @@ public class LocationUtil {
 			double radians = Math.toRadians(random.nextDouble() * 360);
 			double x = center.getX() + (random.nextDouble() * radius * FastMath.cos(radians));
 			double z = center.getZ() + (random.nextDouble() * radius * FastMath.sin(radians));
-			locations.add(new Location(center.getWorld(), x, center.getWorld().getHighestBlockYAt((int) x, (int) z), z));
+			locations.add(new Location(center.getWorld(), x, getHighestBlockYAt(center.getWorld(), (int) x, (int) z), z));
 		}
 		return locations;
 	}

@@ -14,7 +14,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -25,7 +24,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-@Support(Version.v1_11_R1)
+@Support(min = Version.v1_11_R1)
 @AbilityManifest(name = "납치", rank = Rank.B, species = Species.HUMAN, explain = {
 		"아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. $[CooldownConfig]",
 		"능력 사용중에는 신속 버프를 받고, 납치 대상은 지속 시간동안",
@@ -118,7 +117,7 @@ public class Kidnap extends AbilityBase implements TargetHandler {
 			}
 			if (damager.equals(target) && getPlayer().equals(e.getEntity())) {
 				e.setCancelled(true);
-				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c지금 공격할 수 없습니다!"));
+				target.sendMessage("§c지금 공격할 수 없습니다!");
 			}
 		}
 	}
@@ -141,7 +140,7 @@ public class Kidnap extends AbilityBase implements TargetHandler {
 	private void onKidnapStart(KidnapStartEvent e) {
 		if (skill.isRunning() && e.getEntity().equals(target)) {
 			e.setCancelled(true);
-			e.setCancelMessage(ChatColor.translateAlternateColorCodes('&', "&c이미 다른 플레이어가 납치 중인 대상입니다."));
+			e.setCancelMessage("§c이미 다른 플레이어가 납치 중인 대상입니다.");
 		}
 	}
 

@@ -16,7 +16,6 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Arrays;
 import java.util.List;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -119,7 +118,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				skill.start();
 				return true;
 			} else {
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4마지막으로 때렸던 플레이어가 존재하지 않습니다."));
+				getPlayer().sendMessage("§4마지막으로 때렸던 플레이어가 존재하지 않습니다.");
 			}
 		}
 		return false;

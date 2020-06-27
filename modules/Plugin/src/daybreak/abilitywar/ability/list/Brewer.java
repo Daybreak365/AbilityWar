@@ -21,7 +21,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionType;
 
-@Support(Version.v1_11_R1)
+@Support(min = Version.v1_11_R1)
 @AbilityManifest(name = "양조사", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 임의의 포션 세 개를 얻습니다. $[CooldownConfig]"
 })

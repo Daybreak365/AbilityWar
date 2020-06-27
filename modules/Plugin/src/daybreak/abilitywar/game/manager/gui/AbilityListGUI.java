@@ -66,7 +66,7 @@ public class AbilityListGUI implements Listener {
 		int maxPage = ((values.size() - 1) / 36) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		abilityGUI = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&cAbilityWar &e능력 목록"));
+		abilityGUI = Bukkit.createInventory(null, 54, "§cAbilityWar §e능력 목록");
 		currentPage = page;
 		int count = 0;
 
@@ -76,14 +76,14 @@ public class AbilityListGUI implements Listener {
 				AbilityManifest manifest = registration.getManifest();
 				ItemStack stack = new ItemStack(Material.IRON_BLOCK);
 				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b" + manifest.name()));
+				meta.setDisplayName("§b" + manifest.name());
 				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
 				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 				List<String> lore = Messager.asList(
-						ChatColor.translateAlternateColorCodes('&', "&f등급: " + manifest.rank().getRankName()),
-						ChatColor.translateAlternateColorCodes('&', "&f종류: " + manifest.species().getSpeciesName()),
+						"§f등급: " + manifest.rank().getRankName(),
+						"§f종류: " + manifest.species().getSpeciesName(),
 						joiner.toString(),
 						"");
 				Function<MatchResult, String> valueProvider = new Function<MatchResult, String>() {
@@ -121,7 +121,7 @@ public class AbilityListGUI implements Listener {
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		abilityGUI.setItem(49, stack);
 

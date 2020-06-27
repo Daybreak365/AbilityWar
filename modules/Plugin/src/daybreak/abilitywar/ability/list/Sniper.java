@@ -6,9 +6,12 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -22,7 +25,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import java.util.Iterator;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -82,8 +84,9 @@ public class Sniper extends AbilityBase {
 				Arrow arrow = (Arrow) e.getProjectile();
 				new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
-				this.reload = new Timer(25) {
-					private final ProgressBar progressBar = new ProgressBar(25, 15);
+				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0) * 25.0) : 25;
+				this.reload = new Timer(reloadCount) {
+					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
 					@Override
 					protected void run(int count) {
@@ -100,7 +103,7 @@ public class Sniper extends AbilityBase {
 				}.setPeriod(TimeUnit.TICKS, 2);
 				reload.start();
 			} else {
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&b재장전 &f중입니다."));
+				getPlayer().sendMessage("§b재장전 §f중입니다.");
 			}
 		}
 	}

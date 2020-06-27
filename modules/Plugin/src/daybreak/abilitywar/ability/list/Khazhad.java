@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -187,7 +186,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		protected void run(int count) {
 			target.teleport(teleport);
 			if (actionbarChannel != null)
-				actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&b빙결&f: " + (getCount() / 20.0) + "초"));
+				actionbarChannel.update("§b빙결§f: " + (getCount() / 20.0) + "초");
 		}
 
 		@Override

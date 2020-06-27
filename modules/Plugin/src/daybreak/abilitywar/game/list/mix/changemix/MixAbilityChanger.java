@@ -1,4 +1,4 @@
-package daybreak.abilitywar.game.list.mixability.changemix;
+package daybreak.abilitywar.game.list.mix.changemix;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration.Settings;
@@ -6,7 +6,7 @@ import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSetting
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.Game;
-import daybreak.abilitywar.game.list.mixability.Mix;
+import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
@@ -102,7 +102,7 @@ public class MixAbilityChanger {
 			}
 		}.setPeriod(TimeUnit.TICKS, 3).start();
 
-		p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&d&l능력 &5&l체인지!"));
+		p.sendMessage("§d§l능력 §5§l체인지!");
 		p.sendMessage(Formatter.formatAbilityInfo(participant.getAbility()).toArray(new String[0]));
 	}
 

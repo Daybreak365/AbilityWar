@@ -1,4 +1,4 @@
-package daybreak.abilitywar.game.list.mixability.synergy.list;
+package daybreak.abilitywar.game.list.mix.synergy.list;
 
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -7,39 +7,37 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Arrays;
-import java.util.List;
-import org.bukkit.ChatColor;
+import java.util.Iterator;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Note;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
-@AbilityManifest(name = "죽음의 손아귀", rank = Rank.A, species = Species.OTHERS, explain = {
-
+@AbilityManifest(name = "유성", rank = Rank.A, species = Species.OTHERS, explain = {
+		"철괴를 우클릭하면 공중으로 올라갔다 바라보는 방향으로 날아가",
+		"내려 찍으며 주변의 플레이어들에게 대미지를 입히고 날려보내고,",
+		"내려 찍은 위치에 큰 폭발을 일으킵니다. $[CooldownConfig]",
+		"폭발 대미지를 입지 않습니다."
 })
-public class DeathGrasp extends Synergy implements ActiveHandler {
+public class Meteor extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(Meteor.class, "Cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -53,7 +51,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "Damage", 30, "# 대미지") {
+	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(Meteor.class, "Damage", 20, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -62,6 +60,30 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 
 	};
 	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final Timer explosion = new Timer(2) {
+
+		Location center;
+
+		@Override
+		public void onStart() {
+			center = getPlayer().getLocation();
+		}
+
+		@Override
+		public void run(int count) {
+			double playerY = getPlayer().getLocation().getY();
+			for (Iterator<Location> iterator = Circle.iteratorOf(center, 2 * (5 - getCount()), 7); iterator.hasNext(); ) {
+				Location loc = iterator.next();
+				loc.setY(LocationUtil.getFloorYAt(loc.getWorld(), playerY, loc.getBlockX(), loc.getBlockZ()));
+				loc.getWorld().createExplosion(loc, 3);
+			}
+		}
+
+		@Override
+		public void onEnd() {
+		}
+
+	}.setPeriod(TimeUnit.TICKS, 2);
 	private final Timer fallBlockTimer = new Timer(5) {
 
 		Location center;
@@ -100,72 +122,13 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 4);
-	private final List<Runnable> SOUND_RUNNABLES = Arrays.asList(
-			() -> SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.G)),
-			() -> {
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.G));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.B));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.D));
-			},
-			() -> {
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.G));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.B));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.C));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.E));
-			},
-			() -> {
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.sharp(0, Note.Tone.F));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.A));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.C));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.E));
-			},
-			() -> {
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.G));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.B));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.D));
-			},
-			() -> {
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.G));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.B));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.D));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(1, Note.Tone.G));
-			},
-			() -> {
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.G));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.B));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.sharp(0, Note.Tone.D));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(1, Note.Tone.G));
-			},
-			() -> {
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.A));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Note.Tone.D));
-				SoundLib.PIANO.playInstrument(getPlayer(), Note.sharp(1, Note.Tone.F));
-			}
-	);
 	private boolean noFallDamage = false;
 	private boolean skillEnabled = false;
-	private Player lastVictim = null;
-	private final Timer follow = new Timer(60) {
 
-		private Player target;
-
-		@Override
-		public void onStart() {
-			this.target = lastVictim;
-		}
-
-		@Override
-		protected void run(int count) {
-			getPlayer().setVelocity(target.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(3.5));
-		}
-	}.setPeriod(TimeUnit.TICKS, 4);
 	private final Timer Skill = new Timer(4) {
 
-		private Player target;
-
 		@Override
 		public void onStart() {
-			this.target = lastVictim;
 			noFallDamage = true;
 			getPlayer().setVelocity(getPlayer().getVelocity().add(new Vector(0, 4, 0)));
 		}
@@ -177,13 +140,13 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 		@Override
 		public void onEnd() {
 			skillEnabled = true;
-			follow.start();
+			Vector playerDirection = getPlayer().getLocation().getDirection();
+			getPlayer().setVelocity(getPlayer().getVelocity().add(playerDirection.normalize().multiply(8).setY(-4)));
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 10);
-	private int stack = 0;
 
-	public DeathGrasp(Participant participant) {
+	public Meteor(Participant participant) {
 		super(participant);
 	}
 
@@ -192,17 +155,13 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					if (lastVictim != null) {
-						for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
-							SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
-						}
-						SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
-						Skill.start();
-						cooldownTimer.start();
-						return true;
-					} else {
-						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4마지막으로 때렸던 플레이어가 존재하지 않습니다."));
+					for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
+						SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
 					}
+					SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
+					Skill.start();
+					cooldownTimer.start();
+					return true;
 				}
 			}
 		}
@@ -239,33 +198,18 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 						d.damage(damage, getPlayer());
 					}
 					SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer());
-					follow.stop(false);
+
 					fallBlockTimer.start();
+					explosion.start();
 				}
 			}
 		}
 	}
 
-	@SubscribeEvent
-	private void onAttack(EntityDamageByEntityEvent e) {
-		Entity damager = e.getDamager();
-		if ((damager.equals(getPlayer()) || (damager instanceof Projectile && getPlayer().equals(((Projectile) damager).getShooter()))) && e.getEntity() instanceof Player && !getPlayer().equals(e.getEntity())) {
-			Player victim = (Player) e.getEntity();
-			if (getGame().isParticipating(victim)) {
-				if (victim.equals(lastVictim)) {
-					stack++;
-				} else {
-					lastVictim = victim;
-					stack = 1;
-				}
-
-				double ceil = Math.ceil(stack / 3.0);
-				int soundNumber = (int) (ceil - ((Math.ceil(ceil / SOUND_RUNNABLES.size()) - 1) * SOUND_RUNNABLES.size())) - 1;
-				SOUND_RUNNABLES.get(soundNumber).run();
-				cooldownTimer.setCount(Math.max(0, cooldownTimer.getCount() - stack));
-				PotionEffects.BLINDNESS.addPotionEffect(victim, 20, 0, true);
-				e.setDamage(e.getDamage() + (stack * .1));
-			}
+	@SubscribeEvent(onlyRelevant = true)
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+		if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+			e.setCancelled(true);
 		}
 	}
 

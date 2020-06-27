@@ -68,7 +68,7 @@ public class SpecialThanksGUI implements Listener {
 		int maxPage = ((SpecialThanks.length - 1) / 18) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		gui = Bukkit.createInventory(null, 27, ChatColor.translateAlternateColorCodes('&', "&c&l✿ &0&lSpecial Thanks &c&l✿"));
+		gui = Bukkit.createInventory(null, 27, "§c§l✿ §0§lSpecial Thanks §c§l✿");
 		currentPage = page;
 		int count = 0;
 
@@ -76,11 +76,11 @@ public class SpecialThanksGUI implements Listener {
 			ItemStack stack = ItemLib.getSkull(thank.getName());
 			SkullMeta meta = (SkullMeta) stack.getItemMeta();
 			if (!thank.getName().equals("ERROR")) {
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e" + thank.getName()));
+				meta.setDisplayName("§e" + thank.getName());
 				meta.setLore(thank.getRole());
 			} else {
-				meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c오류"));
-				meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes('&', "&bMojang API&f에 연결할 수 없습니다.")));
+				meta.setDisplayName("§c오류");
+				meta.setLore(Collections.singletonList("§bMojang API§f에 연결할 수 없습니다."));
 			}
 
 			stack.setItemMeta(meta);
@@ -96,7 +96,7 @@ public class SpecialThanksGUI implements Listener {
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
-		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6페이지 &e" + page + " &6/ &e" + maxPage));
+		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		gui.setItem(22, stack);
 

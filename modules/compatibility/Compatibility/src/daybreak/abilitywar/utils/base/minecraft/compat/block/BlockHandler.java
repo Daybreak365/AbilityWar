@@ -81,6 +81,13 @@ public class BlockHandler {
 							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_15_R1.block.BlockSnapshotImpl(block);
 						}
 					};
+				case v1_16_R1:
+					return new SnapshotSupplier() {
+						@Override
+						public BlockSnapshot createSnapshot(Block block) {
+							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_16_R1.block.BlockSnapshotImpl(block);
+						}
+					};
 				default:
 					throw new UnsupportedVersionException(version);
 			}

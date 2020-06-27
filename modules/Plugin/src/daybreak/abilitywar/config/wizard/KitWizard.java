@@ -6,6 +6,9 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,10 +16,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class KitWizard extends SettingWizard {
 
@@ -32,12 +31,12 @@ public class KitWizard extends SettingWizard {
 	private final AbilityRegistration registration;
 
 	public KitWizard(Player player, Plugin plugin, AbilityRegistration registration) {
-		super(player, 45, ChatColor.translateAlternateColorCodes('&', "&2&l" + registration.getManifest().name() + " 킷 설정"), plugin);
+		super(player, 45, "§2§l" + registration.getManifest().name() + " 킷 설정", plugin);
 		this.registration = registration;
 	}
 
 	public KitWizard(Player player, Plugin plugin) {
-		super(player, 45, ChatColor.translateAlternateColorCodes('&', "&2&l게임 킷 설정"), plugin);
+		super(player, 45, "§2§l게임 킷 설정", plugin);
 		this.registration = null;
 	}
 
@@ -80,22 +79,22 @@ public class KitWizard extends SettingWizard {
 						}
 						if (registration == null) {
 							Configuration.modifyProperty(ConfigNodes.GAME_KIT, stacks);
-							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정을 마쳤습니다."));
+							p.sendMessage("§2게임 킷 §a설정을 마쳤습니다.");
 						} else {
 							Settings.getAbilityKit().setKits(registration.getAbilityClass().getName(), stacks);
 							Configuration.updateProperty(ConfigNodes.GAME_ABILITY_KIT);
-							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2" + registration.getManifest().name() + " 킷 &a설정을 마쳤습니다."));
+							p.sendMessage("§2" + registration.getManifest().name() + " 킷 §a설정을 마쳤습니다.");
 						}
 						p.closeInventory();
 						break;
 					case "§c초기화":
 						if (registration == null) {
 							Configuration.modifyProperty(ConfigNodes.GAME_KIT, Collections.emptyList());
-							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2게임 킷 &a설정이 초기화되었습니다."));
+							p.sendMessage("§2게임 킷 §a설정이 초기화되었습니다.");
 						} else {
 							Settings.getAbilityKit().setKits(registration.getAbilityClass().getName(), Collections.emptyList());
 							Configuration.updateProperty(ConfigNodes.GAME_ABILITY_KIT);
-							p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2" + registration.getManifest().name() + " 킷 &a설정이 초기화되었습니다."));
+							p.sendMessage("§2" + registration.getManifest().name() + " 킷 §a설정이 초기화되었습니다.");
 						}
 						p.closeInventory();
 						break;

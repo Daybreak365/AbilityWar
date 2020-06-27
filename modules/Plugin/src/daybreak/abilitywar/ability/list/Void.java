@@ -13,7 +13,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import java.util.function.Predicate;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -74,13 +73,13 @@ public class Void extends AbilityBase implements ActiveHandler {
 					Player target = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), STRICT_PREDICATE);
 
 					if (target != null) {
-						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f에게 텔레포트합니다."));
+						getPlayer().sendMessage("§e" + target.getName() + "§f에게 텔레포트합니다.");
 						getPlayer().teleport(target);
 						ParticleLib.DRAGON_BREATH.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 20);
 						skill.start();
 						cooldownTimer.start();
 					} else {
-						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
+						getPlayer().sendMessage("§a가장 가까운 플레이어§f가 존재하지 않습니다.");
 					}
 				}
 			}

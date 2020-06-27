@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,41 +46,41 @@ public class DeathManager implements Listener, Observer {
 		Player killerPlayer = victimPlayer.getKiller();
 		if (victimPlayer.getLastDamageCause() != null) {
 			if (killerPlayer != null) {
-				e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&a" + killerPlayer.getName() + "&f님이 &c" + victimPlayer.getName() + "&f님을 죽였습니다."));
+				e.setDeathMessage("§a" + killerPlayer.getName() + "§f님이 §c" + victimPlayer.getName() + "§f님을 죽였습니다.");
 			} else {
 				switch (victimPlayer.getLastDamageCause().getCause()) {
 					case CONTACT:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 찔려 죽었습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 찔려 죽었습니다.");
 						break;
 					case FALL:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어져 죽었습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 떨어져 죽었습니다.");
 						break;
 					case FALLING_BLOCK:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 떨어지는 블록에 맞아 죽었습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 떨어지는 블록에 맞아 죽었습니다.");
 						break;
 					case SUFFOCATION:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 끼여 죽었습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 끼여 죽었습니다.");
 						break;
 					case DROWNING:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 익사했습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 익사했습니다.");
 						break;
 					case ENTITY_EXPLOSION:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 폭발했습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 폭발했습니다.");
 						break;
 					case LAVA:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 용암에 빠져 죽었습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 용암에 빠져 죽었습니다.");
 						break;
 					case FIRE:
 					case FIRE_TICK:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 노릇노릇하게 구워졌습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 노릇노릇하게 구워졌습니다.");
 						break;
 					default:
-						e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
+						e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 죽었습니다.");
 						break;
 				}
 			}
 		} else {
-			e.setDeathMessage(ChatColor.translateAlternateColorCodes('&', "&c" + victimPlayer.getName() + "&f님이 죽었습니다."));
+			e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 죽었습니다.");
 		}
 
 		if (game.isParticipating(victimPlayer)) {
@@ -103,9 +102,9 @@ public class DeathManager implements Listener, Observer {
 	protected String getRevealMessage(Participant victim) {
 		if (victim.hasAbility()) {
 			String name = victim.getAbility().getName();
-			return ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님의 능력은 &e" + name + "&f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.");
+			return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
 		} else {
-			return ChatColor.translateAlternateColorCodes('&', "&f[&c능력&f] &c" + victim.getPlayer().getName() + "&f님은 능력이 없습니다.");
+			return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님은 능력이 없습니다.";
 		}
 	}
 
@@ -167,8 +166,8 @@ public class DeathManager implements Listener, Observer {
 	 */
 	public final void Eliminate(Participant participant) {
 		Player player = participant.getPlayer();
-		player.kickPlayer(Messager.defaultPrefix + "\n" + ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
-		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + player.getName() + "&f님이 탈락하셨습니다."));
+		player.kickPlayer(Messager.defaultPrefix + "\n" + "§f탈락하셨습니다.");
+		Bukkit.broadcastMessage("§c" + player.getName() + "§f님이 탈락하셨습니다.");
 	}
 
 	/**

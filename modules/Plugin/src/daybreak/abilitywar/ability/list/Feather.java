@@ -12,7 +12,6 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -97,7 +96,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (!e.isCancelled() && getPlayer().equals(e.getEntity()) && e.getCause().equals(DamageCause.FALL)) {
 			e.setCancelled(true);
-			getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a낙하 대미지를 받지 않습니다."));
+			getPlayer().sendMessage("§a낙하 대미지를 받지 않습니다.");
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 		}
 	}

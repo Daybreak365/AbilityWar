@@ -6,8 +6,8 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.debug.DebugMode;
-import daybreak.abilitywar.game.list.mixability.MixAbility;
-import daybreak.abilitywar.game.list.mixability.changemix.ChangeMix;
+import daybreak.abilitywar.game.list.mix.MixGame;
+import daybreak.abilitywar.game.list.mix.changemix.ChangeMix;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.oneability.OneAbility;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
@@ -44,7 +44,7 @@ public class GameFactory {
 		registerMode(ChangeAbilityWar.class);
 		registerMode(SummerVacation.class);
 		registerMode(TeamFight.class);
-		registerMode(MixAbility.class);
+		registerMode(MixGame.class);
 		registerMode(ZeroTick.class);
 		registerMode(OneAbility.class);
 		registerMode(ChangeMix.class);
@@ -103,7 +103,7 @@ public class GameFactory {
 		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException {
 			if (clazz.isAnnotationPresent(Support.class)) {
 				Support supported = clazz.getAnnotation(Support.class);
-				if (!ServerVersion.getVersion().isOver(supported.value())) {
+				if (!(ServerVersion.getVersion().isAboveOrEqual(supported.min()) && ServerVersion.getVersion().isBelowOrEqual(supported.max()))) {
 					throw new UnsupportedVersionException();
 				}
 			}

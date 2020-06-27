@@ -45,7 +45,7 @@ public class StringSetter extends Setter<String> {
 	public void onClick(ClickType click) {
 		Setting = true;
 		getWizard().safeClose();
-		getWizard().getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&f변경할 &6텍스트&f를 채팅창에 입력해주세요. 취소하려면 &e%&f를 입력해주세요."));
+		getWizard().getPlayer().sendMessage("§f변경할 §6텍스트§f를 채팅창에 입력해주세요. 취소하려면 §e%§f를 입력해주세요.");
 	}
 
 	@Override
@@ -54,9 +54,9 @@ public class StringSetter extends Setter<String> {
 		ItemMeta stringMeta = string.getItemMeta();
 		stringMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 		stringMeta.setLore(Messager.asList(
-				ChatColor.translateAlternateColorCodes('&', "&f\"" + this.getValue() + "&f\""),
+				"§f\"" + this.getValue() + "§f\"",
 				"",
-				ChatColor.translateAlternateColorCodes('&', "&6텍스트&f를 변경하려면 클릭하세요.")
+				"§6텍스트§f를 변경하려면 클릭하세요."
 		));
 
 		string.setItemMeta(stringMeta);

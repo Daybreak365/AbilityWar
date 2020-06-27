@@ -8,18 +8,16 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.manager.SpectatorManager;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * 게임 진행 중 접속을 제한하는 방화벽
@@ -73,13 +71,13 @@ public class Firewall implements Listener, Observer {
 			for (Predicate<Player> predicate : predicates) {
 				if (!predicate.test(p)) return;
 			}
-			e.disallow(Result.KICK_OTHER, ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
-					+ "\n" + ChatColor.translateAlternateColorCodes('&', "&f게임 진행중이므로 접속할 수 없습니다."));
+			e.disallow(Result.KICK_OTHER, "§2《§aAbilityWar§2》"
+					+ "\n" + "§f게임 진행중이므로 접속할 수 없습니다.");
 		}
 		if (DeathSettings.getOperation().equals(OnDeath.탈락)) {
 			if (handler.getDeathManager().isExcluded(p) && !p.isOp()) {
-				e.disallow(Result.KICK_OTHER, ChatColor.translateAlternateColorCodes('&', "&2《&aAbilityWar&2》")
-						+ "\n" + ChatColor.translateAlternateColorCodes('&', "&f탈락하셨습니다."));
+				e.disallow(Result.KICK_OTHER, "§2《§aAbilityWar§2》"
+						+ "\n" + "§f탈락하셨습니다.");
 			}
 		}
 	}

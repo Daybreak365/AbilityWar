@@ -15,7 +15,6 @@ import daybreak.abilitywar.utils.base.Formatter;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -63,34 +62,17 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 	private boolean nameSelecting = false;
 	private String religionName = null;
 
-	private void sendMessage(String message) {
-		getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&5[&d교주&5] &f" + message));
-	}
-
-	private void newReligion(String name) {
-		religionName = name;
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&5" + name + "&f가 창시되었습니다."));
-			}
-		}.runTask(AbilityWar.getPlugin());
-		actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&5" + religionName + " &d신자 수&f: &e" + belivers.size()));
-	}
-
-	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-
 	private final Timer nameSelect = new Timer(30) {
 		@Override
 		protected void onStart() {
 			sendMessage("창시할 종교의 이름을 채팅창에 입력하세요. (최대 10글자)");
-			sendMessage("예시: &e'능력자'&f를 입력했다면, 종교의 이름은 &e'능력자교'&f가 됩니다.");
+			sendMessage("예시: §e'능력자'§f를 입력했다면, 종교의 이름은 §e'능력자교'§f가 됩니다.");
 			nameSelecting = true;
 		}
 
 		@Override
 		protected void run(int count) {
-			actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&5종교&d의 이름을 정하세요: &e" + count + ""));
+			actionbarChannel.update("§5종교§d의 이름을 정하세요: §e" + count + "");
 		}
 
 		@Override
@@ -101,15 +83,10 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 		}
 
 	};
-
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-
-	private boolean inquisition = false;
-
 	private final DurationTimer skill = new DurationTimer(10, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4" + religionName + " &c이단 심판이 시작되었습니다."));
+			Bukkit.broadcastMessage("§4" + religionName + " §c이단 심판이 시작되었습니다.");
 			inquisition = true;
 		}
 
@@ -119,16 +96,37 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 
 		@Override
 		protected void onDurationEnd() {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4" + religionName + " &c이단 심판이 끝났습니다."));
+			Bukkit.broadcastMessage("§4" + religionName + " §c이단 심판이 끝났습니다.");
 			inquisition = false;
 		}
 
 		@Override
 		protected void onDurationSilentEnd() {
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4" + religionName + " &c이단 심판이 끝났습니다."));
+			Bukkit.broadcastMessage("§4" + religionName + " §c이단 심판이 끝났습니다.");
 			inquisition = false;
 		}
 	};
+
+	private final ActionbarChannel actionbarChannel = newActionbarChannel();
+
+	private void sendMessage(String message) {
+		getPlayer().sendMessage("§5[§d교주§5] §f" + message);
+	}
+
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+
+	private boolean inquisition = false;
+
+	private void newReligion(String name) {
+		religionName = name;
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				Bukkit.broadcastMessage("§5" + name + "§f가 창시되었습니다.");
+			}
+		}.runTask(AbilityWar.getPlugin());
+		actionbarChannel.update("§5" + religionName + " §d신자 수§f: §e" + belivers.size());
+	}
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
@@ -155,7 +153,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 	private void onNewReligion(NewReligionEvent e) {
 		if (!e.getLeader().equals(getParticipant()) && e.getName().equals(religionName)) {
 			e.setCancelled(true);
-			e.setCancelMessage(ChatColor.translateAlternateColorCodes('&', "&c이미 다른 플레이어가 사용 중인 이름입니다."));
+			e.setCancelMessage("§c이미 다른 플레이어가 사용 중인 이름입니다.");
 		}
 	}
 
@@ -185,7 +183,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 			if (isReligious(damager)) {
 				if (isReligious(entity)) {
 					e.setCancelled(true);
-					damager.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5이단 심판 &d중에 &f같은 종교&d의 신자를 때릴 수 없습니다."));
+					damager.sendMessage("§5이단 심판 §d중에 §f같은 종교§d의 신자를 때릴 수 없습니다.");
 				} else {
 					entity.getWorld().strikeLightningEffect(entity.getLocation());
 					e.setDamage(e.getDamage() * 1.5);
@@ -220,9 +218,9 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 			if (belivers.size() < maxBelivers) {
 				Player target = (Player) entity;
 				if (getGame().isParticipating(target) && belivers.add(getGame().getParticipant(target))) {
-					sendMessage("&e" + target.getName() + "&f님은 이제 &5" + religionName + "&f를 믿습니다. &f( &5" + religionName + " &d신자 수&f: &e" + belivers.size() + " &f)");
-					target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + getPlayer().getName() + "&f님이 당신을 포섭했습니다: &5" + religionName + " &f만세!"));
-					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&5" + religionName + " &d신자 수&f: &e" + belivers.size()));
+					sendMessage("§e" + target.getName() + "§f님은 이제 §5" + religionName + "§f를 믿습니다. §f( §5" + religionName + " §d신자 수§f: §e" + belivers.size() + " §f)");
+					target.sendMessage("§e" + getPlayer().getName() + "§f님이 당신을 포섭했습니다: §5" + religionName + " §f만세!");
+					actionbarChannel.update("§5" + religionName + " §d신자 수§f: §e" + belivers.size());
 				}
 			} else {
 				sendMessage("신자 수가 최대치에 도달하여 더이상 모을 수 없습니다.");

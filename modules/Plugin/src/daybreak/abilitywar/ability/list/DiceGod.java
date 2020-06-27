@@ -11,7 +11,6 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import java.util.Random;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -52,27 +51,27 @@ public class DiceGod extends AbilityBase implements ActiveHandler {
 			Random random = new Random();
 			switch (random.nextInt(6)) {
 				case 0:
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c재생 &f효과를 받았습니다."));
+					p.sendMessage("§c재생 §f효과를 받았습니다.");
 					PotionEffects.REGENERATION.addPotionEffect(p, 200, 2, true);
 					break;
 				case 1:
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b신속 &f효과를 받았습니다."));
+					p.sendMessage("§b신속 §f효과를 받았습니다.");
 					PotionEffects.SPEED.addPotionEffect(p, 200, 2, true);
 					break;
 				case 2:
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6힘 &f효과를 받았습니다."));
+					p.sendMessage("§6힘 §f효과를 받았습니다.");
 					PotionEffects.INCREASE_DAMAGE.addPotionEffect(p, 200, 2, true);
 					break;
 				case 3:
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&3저항 &f효과를 받았습니다."));
+					p.sendMessage("§3저항 §f효과를 받았습니다.");
 					PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(p, 200, 2, true);
 					break;
 				case 4:
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8구속 &f효과를 받았습니다."));
+					p.sendMessage("§8구속 §f효과를 받았습니다.");
 					PotionEffects.SLOW.addPotionEffect(p, 200, 1, true);
 					break;
 				case 5:
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7나약함 &f효과를 받았습니다."));
+					p.sendMessage("§7나약함 §f효과를 받았습니다.");
 					PotionEffects.WEAKNESS.addPotionEffect(p, 200, 1, true);
 					break;
 			}

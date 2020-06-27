@@ -4,9 +4,15 @@ import com.google.common.base.Enums;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.logging.Level;
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,13 +27,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Item 라이브러리
@@ -96,7 +95,7 @@ public class ItemLib {
 		RED((short) 14),
 		BLACK((short) 15);
 
-		private short damage;
+		private final short damage;
 
 		ItemColor(short damage) {
 			this.damage = damage;

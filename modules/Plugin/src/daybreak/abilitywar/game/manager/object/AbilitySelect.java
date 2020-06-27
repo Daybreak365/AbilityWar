@@ -15,41 +15,27 @@ import java.util.List;
 import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public abstract class AbilitySelect extends GameTimer {
 
-	private static final class SelectorData {
-
-		private final Collection<Participant> selectors;
-		private final int changeCount;
-
-		private SelectorData(Collection<Participant> selectors, int changeCount) {
-			this.selectors = selectors;
-			this.changeCount = changeCount;
-		}
-
-		private Map<Participant, Integer> newMap() {
-			Map<Participant, Integer> map = new HashMap<>();
-			for (Participant participant : selectors) {
-				map.put(participant, changeCount);
-			}
-			return map;
-		}
-
+	public AbilitySelect(AbstractGame game, Collection<? extends Participant> selectors, int changeCount) {
+		game.super(TaskType.INFINITE, -1);
+		this.selectorData = new SelectorData(Preconditions.checkNotNull(filterSelectors(selectors)), changeCount);
 	}
 
 	private final SelectorData selectorData;
 	private Map<Participant, Integer> selectorMap = null;
 
-	public AbilitySelect(AbstractGame game, Collection<Participant> selectors, int changeCount) {
-		game.super(TaskType.INFINITE, -1);
-		this.selectorData = new SelectorData(Preconditions.checkNotNull(filterSelectors(selectors)), changeCount);
+	protected Collection<? extends Participant> filterSelectors(Collection<? extends Participant> selectors) {
+		return selectors;
 	}
 
-	protected Collection<Participant> filterSelectors(Collection<Participant> selectors) {
-		return selectors;
+	/**
+	 * 능력을 선택할 {@link Participant} 목록을 반환합니다.
+	 */
+	public final Collection<? extends Participant> getSelectors() {
+		return Collections.unmodifiableCollection(selectorData.selectors);
 	}
 
 	@Override
@@ -60,10 +46,25 @@ public abstract class AbilitySelect extends GameTimer {
 	}
 
 	/**
-	 * 능력을 선택할 {@link Participant} 목록을 반환합니다.
+	 * 능력 선택 중 {@link Participant}의 능력을 변경합니다.
 	 */
-	public final Collection<Participant> getSelectors() {
-		return Collections.unmodifiableCollection(selectorData.selectors);
+	public final void alterAbility(Participant participant) {
+		if (isSelector(participant) && !hasDecided(participant)) {
+			updateRemainingChangeCount(participant, selectorMap.get(participant) - 1);
+			if (changeAbility(participant)) {
+				Player p = participant.getPlayer();
+
+				if (!hasDecided(participant)) {
+					p.sendMessage(new String[]{
+							"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
+							"§e/aw yes §f명령어를 사용하여 능력을 확정합니다.",
+							"§e/aw no §f명령어를 사용하여 능력을 변경합니다."
+					});
+				} else {
+					p.sendMessage("§a당신의 능력이 변경되었습니다. §e/aw check§f로 확인 할 수 있습니다.");
+				}
+			}
+		}
 	}
 
 	/**
@@ -81,24 +82,18 @@ public abstract class AbilitySelect extends GameTimer {
 	}
 
 	/**
-	 * 능력 선택 중 {@link Participant}의 능력을 변경합니다.
+	 * {@link Participant}에게 남은 능력 변경 횟수를 설정합니다.
 	 */
-	public final void alterAbility(Participant participant) {
-		if (isSelector(participant) && !hasDecided(participant)) {
-			updateRemainingChangeCount(participant, selectorMap.get(participant) - 1);
-			if (changeAbility(participant)) {
-				Player p = participant.getPlayer();
+	private void updateRemainingChangeCount(Participant participant, int count) {
+		selectorMap.put(participant, count);
 
-				if (!hasDecided(participant)) {
-					p.sendMessage(new String[]{
-							ChatColor.translateAlternateColorCodes('&', "&a능력이 할당되었습니다. &e/aw check&f로 확인 할 수 있습니다."),
-							ChatColor.translateAlternateColorCodes('&', "&e/aw yes &f명령어를 사용하여 능력을 확정합니다."),
-							ChatColor.translateAlternateColorCodes('&', "&e/aw no &f명령어를 사용하여 능력을 변경합니다.")
-					});
-				} else {
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a당신의 능력이 변경되었습니다. &e/aw check&f로 확인 할 수 있습니다."));
-				}
-			}
+		if (count == 0) {
+			Player p = participant.getPlayer();
+
+			p.sendMessage("§6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요.");
+
+			Bukkit.broadcastMessage("§e" + p.getName() + "§f님이 능력을 확정하셨습니다.");
+			Bukkit.broadcastMessage("§a남은 인원 §7: §f" + getLeftPlayers() + "명");
 		}
 	}
 
@@ -109,25 +104,23 @@ public abstract class AbilitySelect extends GameTimer {
 	}
 
 	/**
-	 * {@link Participant}에게 남은 능력 변경 횟수를 설정합니다.
-	 */
-	private void updateRemainingChangeCount(Participant participant, int count) {
-		selectorMap.put(participant, count);
-
-		if (count == 0) {
-			Player p = participant.getPlayer();
-
-			p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요."));
-
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e" + p.getName() + "&f님이 능력을 확정하셨습니다."));
-			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&a남은 인원 &7: &f" + getLeftPlayers() + "명"));
-		}
-	}
-
-	/**
 	 * 참가자들의 초기 능력을 설정합니다.
 	 */
-	protected abstract void drawAbility(Collection<Participant> selectors);
+	protected abstract void drawAbility(Collection<? extends Participant> selectors);
+
+	/**
+	 * 모든 참가자의 능력을 강제로 결정합니다.
+	 *
+	 * @param admin 출력할 관리자의 이름
+	 */
+	public final void Skip(String admin) {
+		for (Participant p : getSelectors())
+			if (!hasDecided(p))
+				decideAbility(p);
+
+		Bukkit.broadcastMessage("§f관리자 §e" + admin + "§f님이 모든 플레이어의 능력을 강제로 확정시켰습니다.");
+		this.stop(false);
+	}
 
 	/**
 	 * 능력 선택 중 {@link Participant}의 능력을 변경합니다.
@@ -149,30 +142,36 @@ public abstract class AbilitySelect extends GameTimer {
 		return selectorMap != null && selectorMap.containsKey(participant);
 	}
 
-	/**
-	 * 모든 참가자의 능력을 강제로 결정합니다.
-	 *
-	 * @param admin 출력할 관리자의 이름
-	 */
-	public final void Skip(String admin) {
-		for (Participant p : getSelectors())
-			if (!hasDecided(p))
-				decideAbility(p);
-
-		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f관리자 &e" + admin + "&f님이 모든 플레이어의 능력을 강제로 확정시켰습니다."));
-		this.stop(false);
-	}
-
 	@Override
 	public void run(int count) {
 		if (!hasEveryoneSelected()) {
 			if (count % 20 == 0) {
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c아직 모든 유저가 능력을 확정하지 않았습니다."));
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c/aw yes 또는 /aw no 명령어로 능력을 확정해주세요."));
+				Bukkit.broadcastMessage("§c아직 모든 유저가 능력을 확정하지 않았습니다.");
+				Bukkit.broadcastMessage("§c/aw yes 또는 /aw no 명령어로 능력을 확정해주세요.");
 			}
 		} else {
 			this.stop(false);
 		}
+	}
+
+	private static final class SelectorData {
+
+		private final Collection<? extends Participant> selectors;
+		private final int changeCount;
+
+		private SelectorData(Collection<? extends Participant> selectors, int changeCount) {
+			this.selectors = selectors;
+			this.changeCount = changeCount;
+		}
+
+		private Map<Participant, Integer> newMap() {
+			Map<Participant, Integer> map = new HashMap<>();
+			for (Participant participant : selectors) {
+				map.put(participant, changeCount);
+			}
+			return map;
+		}
+
 	}
 
 	@Override

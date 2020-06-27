@@ -1,4 +1,4 @@
-package daybreak.abilitywar.game.list.mixability;
+package daybreak.abilitywar.game.list.mix;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
@@ -6,8 +6,8 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
-import daybreak.abilitywar.game.list.mixability.synergy.SynergyFactory;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -23,7 +23,7 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	private static String formatAbilityInfo(AbilityBase ability) {
 		StringJoiner joiner = new StringJoiner("\n");
-		joiner.add(ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
+		joiner.add("§b" + ability.getName() + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 		for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
 			joiner.add(ChatColor.RESET + iterator.next());
 		}

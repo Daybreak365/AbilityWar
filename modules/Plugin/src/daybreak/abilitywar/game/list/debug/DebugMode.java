@@ -19,8 +19,8 @@ public class DebugMode extends Game implements DefaultKitHandler, AbstractGame.O
 	}
 
 	@Override
-	protected void progressGame(int i) {
-		if (i == 1) {
+	protected void progressGame(int seconds) {
+		if (seconds == 1) {
 			setRestricted(false);
 			startGame();
 		}

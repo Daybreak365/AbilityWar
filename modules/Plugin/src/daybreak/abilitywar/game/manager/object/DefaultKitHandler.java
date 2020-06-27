@@ -4,12 +4,11 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.Collection;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Collection;
-import java.util.List;
 
 public interface DefaultKitHandler {
 
@@ -35,7 +34,7 @@ public interface DefaultKitHandler {
 		}
 	}
 
-	default void giveDefaultKit(Collection<Participant> participants) {
+	default void giveDefaultKit(Collection<? extends Participant> participants) {
 		for (Participant p : participants) {
 			giveDefaultKit(p);
 		}

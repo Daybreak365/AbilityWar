@@ -129,9 +129,9 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 				NMSHandler.getNMS().clearTitle(getPlayer());
 
 				int X = (int) target.getLocation().getX(), Y = (int) target.getLocation().getY(), Z = (int) target.getLocation().getZ();
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + "&f님은 &aX " + X + "&f, &aY " + Y + "&f, &aZ " + Z + "&f에 있습니다."));
+				getPlayer().sendMessage("§e" + target.getName() + "§f님은 §aX " + X + "§f, §aY " + Y + "§f, §aZ " + Z + "§f에 있습니다.");
 
-				target.sendMessage(ChatColor.translateAlternateColorCodes('&', "&5해킹당했습니다!"));
+				target.sendMessage("§5해킹당했습니다!");
 				Stun.apply(getGame().getParticipant(target), TimeUnit.SECONDS, stunDuration);
 				particleShow.start();
 			}
@@ -153,8 +153,8 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 				progressBar.step();
 
 				NMSHandler.getNMS().sendTitle(getPlayer(),
-						ChatColor.translateAlternateColorCodes('&', "&e" + target.getName() + " &f해킹중..."),
-						ChatColor.translateAlternateColorCodes('&', progressBar.toString() + " &f" + this.count + "%"),
+						"§e" + target.getName() + " §f해킹중...",
+						progressBar.toString() + " §f" + this.count + "%",
 						0, 5, 0
 				);
 				targetActionbar.update(progressBar.toString("A", ChatColor.DARK_PURPLE + ChatColor.MAGIC.toString(), ChatColor.WHITE + ChatColor.MAGIC.toString()));
@@ -181,7 +181,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 						return true;
 					} else {
-						getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&a가장 가까운 플레이어&f가 존재하지 않습니다."));
+						getPlayer().sendMessage("§a가장 가까운 플레이어§f가 존재하지 않습니다.");
 					}
 				}
 			}

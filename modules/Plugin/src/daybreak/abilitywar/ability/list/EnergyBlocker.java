@@ -12,7 +12,6 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -38,10 +37,10 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 		if (materialType.equals(Material.IRON_INGOT)) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				projectileBlocking = !projectileBlocking;
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', getState() + "로 변경되었습니다."));
+				getPlayer().sendMessage(getState() + "로 변경되었습니다.");
 				actionbarChannel.update(getState());
 			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
-				getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&6현재 상태&f: ") + getState());
+				getPlayer().sendMessage("§6현재 상태§f: " + getState());
 			}
 		}
 
@@ -49,8 +48,8 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 	}
 
 	public String getState() {
-		if (projectileBlocking) return ChatColor.translateAlternateColorCodes('&', "&b원거리 &f1/3 배&7, &a근거리 &f두 배");
-		else return ChatColor.translateAlternateColorCodes('&', "&b원거리 &f두 배&7, &a근거리 &f1/3 배");
+		if (projectileBlocking) return "§b원거리 §f1/3 배§7, §a근거리 §f두 배";
+		else return "§b원거리 §f두 배§7, §a근거리 §f1/3 배";
 	}
 
 	private static final RGB LONG_DISTANCE = RGB.of(116, 237, 167);

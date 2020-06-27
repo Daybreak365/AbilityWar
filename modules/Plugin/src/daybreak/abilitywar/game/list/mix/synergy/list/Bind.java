@@ -1,4 +1,4 @@
-package daybreak.abilitywar.game.list.mixability.synergy.list;
+package daybreak.abilitywar.game.list.mix.synergy.list;
 
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -9,7 +9,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.list.mixability.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -89,7 +88,7 @@ public class Bind extends Synergy implements ActiveHandler {
 		protected void run(int count) {
 			if (solidity < maxSolidity) {
 				solidity++;
-				actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f강도: &c" + solidity));
+				actionbarChannel.update("§f강도: §c" + solidity);
 			}
 		}
 	}.setPeriod(TimeUnit.SECONDS, 10);
@@ -114,7 +113,7 @@ public class Bind extends Synergy implements ActiveHandler {
 						}
 					}
 					solidity = 1;
-					actionbarChannel.update(ChatColor.translateAlternateColorCodes('&', "&f강도: &c" + solidity));
+					actionbarChannel.update("§f강도: §c" + solidity);
 
 					cooldownTimer.start();
 				}

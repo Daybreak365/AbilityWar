@@ -25,8 +25,8 @@ public class Formatter {
 	public static String formatTitle(int length, ChatColor bracketColor, ChatColor titleColor, String title) {
 		String base = Strings.repeat("_", length);
 		int pivot = base.length() / 2;
-		String center = ChatColor.translateAlternateColorCodes('&', "[ " + titleColor + title + bracketColor + " ]&m&l");
-		String result = ChatColor.translateAlternateColorCodes('&', bracketColor + "&m&l" + base.substring(0, Math.max(0, (pivot - center.length() / 2))) + "&r" + bracketColor);
+		String center = "[ " + titleColor + title + bracketColor + " ]§m§l";
+		String result = bracketColor + "§m§l" + base.substring(0, Math.max(0, (pivot - center.length() / 2))) + "§r" + bracketColor;
 		result += center + base.substring(pivot + center.length() / 2);
 		return result;
 	}
@@ -46,9 +46,9 @@ public class Formatter {
 	public static List<String> formatVersionInfo(UpdateObject update) {
 		List<String> info = new ArrayList<>();
 		info.add(formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "버전 정보"));
-		info.add(ChatColor.translateAlternateColorCodes('&', "&b" + update.getTag() + " &f릴리즈 &f(&7v" + update.getVersion() + "&f) " + "(&7" + (update.getFileSize() / 1024) + "KB&f)"));
+		info.add("§b" + update.getTag() + " §f릴리즈 §f(§7v" + update.getVersion() + "§f) " + "(§7" + (update.getFileSize() / 1024) + "KB§f)");
 		Collections.addAll(info, update.getUpdates());
-		info.add(ChatColor.translateAlternateColorCodes('&', "&2-----------------------------------------------------"));
+		info.add("§2-----------------------------------------------------");
 		return info;
 	}
 
@@ -58,11 +58,11 @@ public class Formatter {
 	public static List<String> formatAbilityInfo(AbilityBase ability) {
 		List<String> list = Messager.asList(
 				formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
-				ChatColor.translateAlternateColorCodes('&', "&b" + ability.getName() + " " + (ability.isRestricted() ? "&f[&7능력 비활성화됨&f]" : "&f[&a능력 활성화됨&f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName()));
+				"§b" + ability.getName() + " " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 		for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
 			list.add(iterator.next());
 		}
-		list.add(ChatColor.translateAlternateColorCodes('&', "&a--------------------------------"));
+		list.add("§a--------------------------------");
 		return list;
 	}
 
@@ -72,13 +72,13 @@ public class Formatter {
 	public static List<String> formatTeamInfo(TeamGame teamGame, TeamGame.Team team) {
 		List<String> info = new ArrayList<>();
 		info.add(formatTitle(32, ChatColor.DARK_PURPLE, ChatColor.WHITE, "팀 정보"));
-		info.add(ChatColor.translateAlternateColorCodes('&', "&5팀 이름&f: &r" + team.getDisplayName() + " &r(" + team.getName() + ")"));
+		info.add("§5팀 이름§f: §r" + team.getDisplayName() + " §r(" + team.getName() + ")");
 		StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ", ChatColor.DARK_PURPLE + "팀원" + ChatColor.WHITE + ": " + ChatColor.RESET, ChatColor.WHITE + ".");
 		for (AbstractGame.Participant participant : team.getParticipants()) {
 			joiner.add(ChatColor.YELLOW + participant.getPlayer().getName());
 		}
 		info.add(joiner.toString());
-		info.add(ChatColor.translateAlternateColorCodes('&', "&5-------------------------------"));
+		info.add("§5-------------------------------");
 		return info;
 	}
 

@@ -6,7 +6,6 @@ import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.Configuration.Settings.SummerVacationSettings;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
@@ -58,7 +57,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 	@SuppressWarnings("deprecation")
 	private final Objective killObjective = ServerVersion.getVersionNumber() >= 13 ?
-			getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy", ChatColor.translateAlternateColorCodes('&', "&c킬 횟수"))
+			getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy", "§c킬 횟수")
 			: getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy");
 
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
@@ -69,16 +68,16 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 			case 1: {
 				int count = 0;
 
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6==== &f게임 참여자 목록 &6===="));
+				Bukkit.broadcastMessage("§6==== §f게임 참여자 목록 §6====");
 				for (Participant p : getParticipants()) {
 					count++;
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c" + count + ". &f" + p.getPlayer().getName()));
+					Bukkit.broadcastMessage("§c" + count + ". §f" + p.getPlayer().getName());
 				}
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f총 인원수 &c: &e" + count + "명"));
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6=========================="));
+				Bukkit.broadcastMessage("§f총 인원수 §c: §e" + count + "명");
+				Bukkit.broadcastMessage("§6==========================");
 				if (getParticipants().size() < 1) {
 					stop();
-					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. &8(&71명&8)"));
+					Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§71명§8)");
 				}
 				break;
 			}
@@ -96,27 +95,27 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 				break;
 			case 13:
 				scoreboardSetup();
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&7스코어보드 &f설정중..."));
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e잠시 후 &f게임이 시작됩니다."));
+				Bukkit.broadcastMessage("§7스코어보드 §f설정중...");
+				Bukkit.broadcastMessage("§e잠시 후 §f게임이 시작됩니다.");
 				break;
 			case 16:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &e5&f초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§f게임이 §e5§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 17:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &e4&f초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§f게임이 §e4§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 18:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &e3&f초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§f게임이 §e3§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 19:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &e2&f초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§f게임이 §e2§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 20:
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&f게임이 &e1&f초 후에 시작됩니다."));
+				Bukkit.broadcastMessage("§f게임이 §e1§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 21:
@@ -128,7 +127,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	private void scoreboardSetup() {
 		killObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		if (ServerVersion.getVersionNumber() >= 13)
-			killObjective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c킬 횟수"));
+			killObjective.setDisplayName("§c킬 횟수");
 		for (Participant p : getParticipants()) {
 			Score score = killObjective.getScore(p.getPlayer().getName());
 			score.setScore(0);
@@ -183,17 +182,10 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 	public void broadcastPluginDescription() {
 		List<String> msg = Messager.asList(
-				ChatColor.translateAlternateColorCodes('&', "&eSummer Vacation &f- &c여름 휴가"),
-				ChatColor.translateAlternateColorCodes('&', "&e플러그인 버전 &7: &f" + AbilityWar.getPlugin().getDescription().getVersion()),
-				ChatColor.translateAlternateColorCodes('&', "&b모드 개발자 &7: &fDaybreak 새벽"),
-				ChatColor.translateAlternateColorCodes('&', "&9디스코드 &7: &fDayBreak&7#5908"));
-
-		GameCreditEvent event = new GameCreditEvent();
-		Bukkit.getPluginManager().callEvent(event);
-
-		for (String str : event.getCreditList()) {
-			msg.add(str);
-		}
+				"§eSummer Vacation §f- §c여름 휴가",
+				"§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
+				"§b모드 개발자 §7: §fDaybreak 새벽",
+				"§9디스코드 §7: §fDayBreak§7#5908");
 
 		for (String m : msg) {
 			Bukkit.broadcastMessage(m);
@@ -201,15 +193,15 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	}
 
 	public void broadcastAbilityReady() {
-		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&e신나는 여름 휴가 &f모드에서는 모든 플레이어의 능력이 물총으로 고정됩니다."));
+		Bukkit.broadcastMessage("§e신나는 여름 휴가 §f모드에서는 모든 플레이어의 능력이 물총으로 고정됩니다.");
 	}
 
 	public void GameStart() {
 		for (String m : Messager.asList(
-				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"),
-				ChatColor.translateAlternateColorCodes('&', "&f           &eSummer Vacation &f- &c여름 휴가 "),
-				ChatColor.translateAlternateColorCodes('&', "&f                    게임 시작                "),
-				ChatColor.translateAlternateColorCodes('&', "&e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"))) {
+				"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+				"§f           §eSummer Vacation §f- §c여름 휴가 ",
+				"§f                    게임 시작                ",
+				"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
 			Bukkit.broadcastMessage(m);
 		}
 		SoundLib.ENTITY_PLAYER_SPLASH.broadcastSound();
@@ -222,11 +214,11 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 			}
 		}
 
-		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&2배고픔 무제한&a이 적용됩니다."));
+		Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");
 
 		glow.start();
 
-		Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&4초반 무적&c이 적용되지 않습니다."));
+		Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
 		for (Participant participant : this.getParticipants()) {
 			if (participant.hasAbility()) {
 				participant.getAbility().setRestricted(false);
@@ -270,7 +262,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		ItemStack boots = new ItemStack(Material.IRON_BOOTS);
 		ItemMeta bootsMeta = boots.getItemMeta();
 		bootsMeta.setUnbreakable(true);
-		bootsMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&e오리발"));
+		bootsMeta.setDisplayName("§e오리발");
 		boots.setItemMeta(bootsMeta);
 		boots.addEnchantment(Enchantment.BINDING_CURSE, 1);
 		boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3);
@@ -278,7 +270,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		ItemStack helmet = new ItemStack(Material.IRON_HELMET);
 		ItemMeta helmetMeta = helmet.getItemMeta();
 		helmetMeta.setUnbreakable(true);
-		helmetMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&b안경"));
+		helmetMeta.setDisplayName("§b안경");
 		helmet.setItemMeta(helmetMeta);
 		helmet.addEnchantment(Enchantment.BINDING_CURSE, 1);
 
@@ -298,11 +290,11 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	}
 
 	@Override
-	public void executeCommand(CommandType commandType, CommandSender sender, String[] args, Plugin plugin) {
+	public void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
 		if (commandType == CommandType.ABI) {
 			sender.sendMessage(ChatColor.RED + "이 게임모드에서 사용할 수 없는 명령어입니다.");
 		} else {
-			super.executeCommand(commandType, sender, args, plugin);
+			super.executeCommand(commandType, sender, command, args, plugin);
 		}
 	}
 
