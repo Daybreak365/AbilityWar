@@ -26,5 +26,5 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 
 | 마인크래프트 버전 | 권장 플러그인 버전 |
 |:----:|:----:|
-| MC 1.9.x ~ 1.15.x | [v2.1.7.8](https://github.com/DayBreak365/AbilityWar/releases/download/20200508/AbilityWar-2.1.7.8.jar) |
+| MC 1.9.x ~ 1.16.x | [v2.1.8.5](https://github.com/DayBreak365/AbilityWar/releases/download/20200627/AbilityWar-2.1.8.5.jar) |
 | MC 1.8.x | [v2.1.6.8-legacy](https://drive.google.com/uc?export=download&confirm=no_antivirus&id=1CYY7oH0IpEkH1vmL7--6fOfJ0skDgp3S) |
