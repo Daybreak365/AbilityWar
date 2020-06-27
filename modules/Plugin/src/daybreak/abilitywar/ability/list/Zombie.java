@@ -8,10 +8,12 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Location;
@@ -32,6 +34,7 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 		"$[ZombieCountConfig]마리의 §5좀비§f를 소환합니다.",
 		"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다. $[CooldownConfig]"
 })
+@Support(min = Version.v1_9_R1, max = Version.v1_14_R1)
 public class Zombie extends AbilityBase implements TargetHandler {
 
 	private static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
