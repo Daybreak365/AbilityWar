@@ -83,6 +83,14 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 		}
 
 	};
+
+	private final ActionbarChannel actionbarChannel = newActionbarChannel();
+
+	private void sendMessage(String message) {
+		getPlayer().sendMessage("§5[§d교주§5] §f" + message);
+	}
+
+	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final DurationTimer skill = new DurationTimer(10, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
@@ -106,14 +114,6 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 			inquisition = false;
 		}
 	};
-
-	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-
-	private void sendMessage(String message) {
-		getPlayer().sendMessage("§5[§d교주§5] §f" + message);
-	}
-
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 
 	private boolean inquisition = false;
 
