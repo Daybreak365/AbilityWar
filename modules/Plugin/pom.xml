@@ -26,28 +26,33 @@
     </repositories>
 
     <dependencies>
-		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
-			<artifactId>Compatibility</artifactId>
-			<version>${revision}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>${bukkit-api.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.google.code.gson</groupId>
-					<artifactId>gson</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>Compatibility</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>${bukkit-api.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
@@ -95,6 +100,7 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>src</sourceDirectory>
         <finalName>AbilityWar-${version}</finalName>
         <resources>
             <resource>
@@ -103,6 +109,20 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
@@ -119,6 +139,7 @@
                                     <include>daybreak.abilitywar:**</include>
                                     <include>com.google.guava:guava</include>
                                     <include>com.google.code.gson:gson</include>
+                                    <include>org.jetbrains.kotlin:**</include>
                                 </includes>
                             </artifactSet>
                             <relocations>

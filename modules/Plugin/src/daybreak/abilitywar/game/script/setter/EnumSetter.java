@@ -66,7 +66,7 @@ public class EnumSetter extends Setter<Object> {
 		ItemMeta enumItemMeta = enumItem.getItemMeta();
 		enumItemMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 
-		List<String> enumItemLore = new ArrayList<String>();
+		List<String> enumItemLore = new ArrayList<>();
 
 		Object[] enumConstants = enumClass.getEnumConstants();
 

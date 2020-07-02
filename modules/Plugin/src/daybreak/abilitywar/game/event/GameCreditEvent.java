@@ -1,11 +1,10 @@
 package daybreak.abilitywar.game.event;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 public class GameCreditEvent extends Event {
 
@@ -20,10 +19,10 @@ public class GameCreditEvent extends Event {
 		return handlers;
 	}
 
-	private final List<String> creditList = new ArrayList<String>();
+	private final List<String> creditList = new ArrayList<>();
 
 	public List<String> getCreditList() {
-		return new ArrayList<String>(creditList);
+		return new ArrayList<>(creditList);
 	}
 
 	public void addCredit(String... strings) {

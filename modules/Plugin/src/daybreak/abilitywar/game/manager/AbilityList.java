@@ -117,6 +117,7 @@ public class AbilityList {
 		registerAbility(Flector.class);
 		registerAbility(Ghost.class);
 		registerAbility(Lunar.class);
+		registerAbility(Apology.class);
 	}
 
 	public static Collection<AbilityRegistration> values() {

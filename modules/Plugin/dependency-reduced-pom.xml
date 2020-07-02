@@ -11,6 +11,7 @@
   <artifactId>Plugin</artifactId>
   <version>${revision}</version>
   <build>
+    <sourceDirectory>src</sourceDirectory>
     <resources>
       <resource>
         <filtering>true</filtering>
@@ -19,6 +20,20 @@
     </resources>
     <finalName>AbilityWar-${version}</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.1</version>
@@ -35,6 +50,7 @@
                   <include>daybreak.abilitywar:**</include>
                   <include>com.google.guava:guava</include>
                   <include>com.google.code.gson:gson</include>
+                  <include>org.jetbrains.kotlin:**</include>
                 </includes>
               </artifactSet>
               <relocations>

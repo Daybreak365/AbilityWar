@@ -250,7 +250,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 						if (ability instanceof ActiveHandler && !ability.isRestricted()) {
 							Material material = player.getInventory().getItemInMainHand().getType();
 							ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
-							if (attributes.SKILL_MATERIALS.set.contains(material)) {
+							if (ability.getRegistration().getMaterials().contains(material)) {
 								long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
 									this.lastClick = current;
@@ -271,7 +271,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 						AbilityBase ability = getAbility();
 						if ((ability instanceof ActiveHandler || ability instanceof TargetHandler) && !ability.isRestricted()) {
 							Material material = player.getInventory().getItemInMainHand().getType();
-							if (attributes.SKILL_MATERIALS.set.contains(material)) {
+							if (ability.getRegistration().getMaterials().contains(material)) {
 								long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
 									if (ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, ClickType.RIGHT_CLICK)) {
@@ -394,7 +394,6 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 		public class Attributes {
 			public final Attribute<Boolean> TEAM_CHAT = new Attribute<>(false);
 			public final Attribute<Boolean> TARGETABLE = new Attribute<>(true);
-			public final SetAttribute<Material> SKILL_MATERIALS = new SetAttribute<>(Material.IRON_INGOT, Material.GOLD_INGOT);
 		}
 
 		public class Attribute<T> {

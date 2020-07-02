@@ -50,7 +50,7 @@ public class TimeSetter extends Setter<Integer> {
 		ItemMeta watchMeta = watch.getItemMeta();
 		watchMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 
-		List<String> Lore = new ArrayList<String>();
+		List<String> Lore = new ArrayList<>();
 
 		if (getWizard().loopSetter.getValue()) {
 			Lore.add("§f게임 시작 후 §e" + TimeUtil.parseTimeAsString(this.getValue()) + "§f마다 실행됩니다.");
