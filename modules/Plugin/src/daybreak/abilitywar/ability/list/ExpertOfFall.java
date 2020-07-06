@@ -20,8 +20,8 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(name = "낙법의 달인", rank = Rank.B, species = Species.HUMAN, explain = {
 		"수십년간의 고된 수련으로 낙법과 하나가 된 낙법의 달인.",
-		"낙하해 땅에 닿았을 때 자동으로 물낙법을 하며,",
-		"낙하 거리에 비례해 주변 3칸 내의 생명체들에게 대미지를 줍니다."
+		"낙하해 땅에 닿았을 때 자동으로 물낙법을 하며, 낙하 거리에 비례해",
+		"주변 4칸 내의 생명체들에게 대미지를 줍니다."
 })
 public class ExpertOfFall extends AbilityBase {
 
@@ -30,7 +30,7 @@ public class ExpertOfFall extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	public void onEntityDamage(EntityDamageEvent e) {
+	private void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			if (e.getCause().equals(DamageCause.FALL)) {
 				e.setCancelled(true);
@@ -54,9 +54,11 @@ public class ExpertOfFall extends AbilityBase {
 				SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
 
 				Block belowBlock = block.getRelative(BlockFace.DOWN);
-				FallingBlocks.spawnFallingBlock(belowBlock.getLocation().add(0, 1, 0), belowBlock.getType(), false, getPlayer().getLocation().toVector().subtract(belowBlock.getLocation().toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
-				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), 3, 3)) {
-					damageable.damage(getPlayer().getFallDistance() / 1.4, getPlayer());
+				for (int i = 0; i < 3; i++) {
+					FallingBlocks.spawnFallingBlock(belowBlock.getLocation().add(0, 1, 0), belowBlock.getType(), false, getPlayer().getLocation().toVector().subtract(belowBlock.getLocation().toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
+				}
+				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), 4, 4)) {
+					damageable.damage(Math.min(getPlayer().getFallDistance() / 0.85, 25) * (1 - (getPlayer().getLocation().distanceSquared(damageable.getLocation()) / 16)), getPlayer());
 				}
 			}
 		}

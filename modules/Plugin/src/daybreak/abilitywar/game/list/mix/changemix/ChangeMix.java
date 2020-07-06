@@ -95,10 +95,9 @@ public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnabl
 				msg.add("§b모드 개발자 §7: §fDaybreak 새벽");
 				msg.add("§9디스코드 §7: §f새벽§7#5908");
 
-				GameCreditEvent event = new GameCreditEvent();
+				GameCreditEvent event = new GameCreditEvent(this);
 				Bukkit.getPluginManager().callEvent(event);
-
-				msg.addAll(event.getCreditList());
+				msg.addAll(event.getCredits());
 
 				for (String m : msg) {
 					Bukkit.broadcastMessage(m);

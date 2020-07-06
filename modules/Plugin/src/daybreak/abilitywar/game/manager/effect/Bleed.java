@@ -37,7 +37,7 @@ public class Bleed {
 		private final Player player;
 
 		private ParticipantBleed(Participant participant, TimeUnit timeUnit, int duration) {
-			super(participant, "§c출혈", TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
+			super(participant, "§c출혈", TaskType.REVERSE, timeUnit.toTicks(duration) / 5);
 			this.player = participant.getPlayer();
 			setPeriod(TimeUnit.TICKS, 5);
 		}
@@ -83,7 +83,7 @@ public class Bleed {
 		private final LivingEntity livingEntity;
 
 		private LivingEntityBleed(AbstractGame game, LivingEntity livingEntity, TimeUnit timeUnit, int duration) {
-			game.super(TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
+			game.super(TaskType.REVERSE, timeUnit.toTicks(duration) / 5);
 			this.livingEntity = livingEntity;
 			setPeriod(TimeUnit.TICKS, 5);
 		}

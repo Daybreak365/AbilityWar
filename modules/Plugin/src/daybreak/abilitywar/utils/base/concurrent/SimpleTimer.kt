@@ -84,6 +84,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 	protected abstract fun run(count: Int)
 	protected open fun onEnd() {}
 	protected open fun onSilentEnd() {}
+	protected open fun onCountSet() {}
 
 	enum class TaskType {
 		INFINITE {

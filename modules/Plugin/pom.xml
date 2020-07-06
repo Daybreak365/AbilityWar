@@ -101,7 +101,7 @@
 
     <build>
         <sourceDirectory>src</sourceDirectory>
-        <finalName>AbilityWar-${version}</finalName>
+        <finalName>AbilityWar-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>resources</directory>

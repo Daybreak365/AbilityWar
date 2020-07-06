@@ -7,9 +7,8 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionClearEvent;
-import daybreak.abilitywar.ability.event.AbilityRestrictionSetEvent;
-import daybreak.abilitywar.ability.event.PreAbilityRestrictionEvent;
+import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
+import daybreak.abilitywar.ability.event.AbilityRestrictionEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame;
@@ -302,12 +301,11 @@ public abstract class AbilityBase {
 	/**
 	 * 능력의 제한 여부를 설정합니다.
 	 */
-	public final void setRestricted(boolean toSet) {
-		PreAbilityRestrictionEvent event = new PreAbilityRestrictionEvent(this, toSet);
+	public final void setRestricted(final boolean toSet) {
+		AbilityPreRestrictionEvent event = new AbilityPreRestrictionEvent(this, toSet);
 		Bukkit.getPluginManager().callEvent(event);
-		toSet = event.isRestricted();
-		this.restricted = toSet;
-		if (toSet) {
+		this.restricted = event.getNewStatus();
+		if (event.getNewStatus()) {
 			for (GameTimer timer : timers) {
 				if (timer.getBehavior() == RestrictionBehavior.STOP_START) {
 					timer.stop(true);
@@ -320,7 +318,7 @@ public abstract class AbilityBase {
 				channel.update(null);
 			}
 			onUpdate(Update.RESTRICTION_SET);
-			Bukkit.getPluginManager().callEvent(new AbilityRestrictionSetEvent(this));
+			Bukkit.getPluginManager().callEvent(new AbilityRestrictionEvent(this, true));
 		} else {
 			while (!pausedTimers.isEmpty()) {
 				pausedTimers.poll().resume();
@@ -331,7 +329,7 @@ public abstract class AbilityBase {
 				}
 			}
 			onUpdate(Update.RESTRICTION_CLEAR);
-			Bukkit.getPluginManager().callEvent(new AbilityRestrictionClearEvent(this));
+			Bukkit.getPluginManager().callEvent(new AbilityRestrictionEvent(this, false));
 		}
 	}
 
@@ -394,6 +392,11 @@ public abstract class AbilityBase {
 		@Override
 		public void onSilentEnd() {
 			actionbarChannel.update(null);
+		}
+
+		@Override
+		public void onCountSet() {
+			actionbarChannel.update(toString());
 		}
 
 		@Override

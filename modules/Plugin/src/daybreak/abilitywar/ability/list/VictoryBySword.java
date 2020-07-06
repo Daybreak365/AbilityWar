@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
-import daybreak.abilitywar.ability.event.PreAbilityRestrictionEvent;
+import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -218,9 +218,9 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		}
 
 		@EventHandler
-		private void onPreAbilityRestriction(PreAbilityRestrictionEvent e) {
-			if ((e.getAbility().getParticipant().equals(targetParticipant) || e.getAbility().getParticipant().equals(getParticipant())) && !e.isRestricted())
-				e.setRestricted(true);
+		private void onPreAbilityRestriction(AbilityPreRestrictionEvent e) {
+			if ((e.getAbility().getParticipant().equals(targetParticipant) || e.getAbility().getParticipant().equals(getParticipant())) && !e.getNewStatus())
+				e.setNewStatus(true);
 		}
 
 		@Override

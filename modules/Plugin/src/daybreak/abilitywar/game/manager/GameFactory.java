@@ -8,6 +8,7 @@ import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.debug.DebugMode;
 import daybreak.abilitywar.game.list.mix.MixGame;
 import daybreak.abilitywar.game.list.mix.changemix.ChangeMix;
+import daybreak.abilitywar.game.list.mix.debug.MixDebugMode;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.oneability.OneAbility;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
@@ -49,7 +50,10 @@ public class GameFactory {
 		registerMode(OneAbility.class);
 		registerMode(ChangeMix.class);
 		registerMode(MurderMystery.class);
-		if (DeveloperSettings.isEnabled()) GameFactory.registerMode(DebugMode.class);
+		if (DeveloperSettings.isEnabled()) {
+			registerMode(DebugMode.class);
+			registerMode(MixDebugMode.class);
+		}
 	}
 
 	public static GameRegistration getRegistration(Class<? extends AbstractGame> clazz) {

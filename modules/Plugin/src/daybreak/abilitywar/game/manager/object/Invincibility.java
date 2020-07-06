@@ -1,10 +1,10 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.Game;
-import daybreak.abilitywar.game.event.InvincibleEndEvent;
+import daybreak.abilitywar.game.event.InvincibilityStatusChangeEvent;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.Bar;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -26,11 +26,9 @@ import org.bukkit.plugin.EventExecutor;
  */
 public class Invincibility implements EventExecutor {
 
-	private final int duration = Settings.InvincibilitySettings.getDuration();
-
-	private final boolean isBossbarEnabled = Settings.InvincibilitySettings.isBossbarEnabled();
-	private final String bossbarMessage = Settings.InvincibilitySettings.getBossbarMessage();
-	private final String bossbarInfiniteMessage = Settings.InvincibilitySettings.getBossbarInfiniteMessage();
+	private final int duration = InvincibilitySettings.getDuration();
+	private final boolean isBossbarEnabled = InvincibilitySettings.isBossbarEnabled();
+	private final String bossbarMessage = InvincibilitySettings.getBossbarMessage(), bossbarInfiniteMessage = InvincibilitySettings.getBossbarInfiniteMessage();
 	private final Game game;
 
 	public Invincibility(Game game) {
@@ -117,6 +115,7 @@ public class Invincibility implements EventExecutor {
 		protected void onStart() {
 			game.setRestricted(true);
 			Bukkit.broadcastMessage(startMessage);
+			Bukkit.getPluginManager().callEvent(new InvincibilityStatusChangeEvent(game, true));
 		}
 
 		@Override
@@ -141,7 +140,7 @@ public class Invincibility implements EventExecutor {
 			game.setRestricted(false);
 			Bukkit.broadcastMessage(ChatColor.GREEN + "무적이 해제되었습니다. 지금부터 대미지를 입습니다.");
 			SoundLib.ENTITY_ENDER_DRAGON_GROWL.broadcastSound();
-			Bukkit.getPluginManager().callEvent(new InvincibleEndEvent(game));
+			Bukkit.getPluginManager().callEvent(new InvincibilityStatusChangeEvent(game, false));
 		}
 
 		@Override

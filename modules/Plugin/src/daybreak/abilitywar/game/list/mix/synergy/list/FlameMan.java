@@ -29,6 +29,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -145,10 +146,15 @@ public class FlameMan extends Synergy implements ActiveHandler {
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			DamageCause cause = e.getCause();
-			if (cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK) || cause.equals(DamageCause.LAVA)) {
+			if (cause.equals(DamageCause.FIRE) || cause.equals(DamageCause.FIRE_TICK) || cause.equals(DamageCause.LAVA) || cause.equals(DamageCause.HOT_FLOOR)) {
 				e.setCancelled(true);
 			}
 		}
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
 	}
 
 	@Override

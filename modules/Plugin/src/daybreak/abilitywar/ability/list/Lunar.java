@@ -10,7 +10,6 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.Stun;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -42,7 +41,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.util.Vector;
 
-@Beta
 @AbilityManifest(name = "루나", rank = Rank.A, species = Species.OTHERS, explain = {
 		"생명체를 근접 공격할 때마다 해당 생명체에게 §e표식§f을 부여하고",
 		"시간을 점점 밤으로 바꿉니다. 저녁에 철괴를 우클릭하면 주변 6칸 이내의 모든",

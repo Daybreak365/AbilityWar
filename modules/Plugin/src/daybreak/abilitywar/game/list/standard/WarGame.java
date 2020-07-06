@@ -72,9 +72,9 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 						"§9디스코드 §7: §f새벽§7#5908"
 				);
 
-				GameCreditEvent event = new GameCreditEvent();
+				GameCreditEvent event = new GameCreditEvent(this);
 				Bukkit.getPluginManager().callEvent(event);
-				lines.addAll(event.getCreditList());
+				lines.addAll(event.getCredits());
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);

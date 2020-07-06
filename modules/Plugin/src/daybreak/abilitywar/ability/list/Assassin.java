@@ -26,7 +26,7 @@ import org.bukkit.entity.LivingEntity;
 })
 public class Assassin extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Distance", 10,
+	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Distance", 8,
 			"# 스킬 대미지") {
 
 		@Override
@@ -36,7 +36,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Damage", 9,
+	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Damage", 8,
 			"# 스킬 대미지") {
 
 		@Override
@@ -46,7 +46,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Cooldown", 25,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Cooldown", 35,
 			"# 쿨타임") {
 
 		@Override

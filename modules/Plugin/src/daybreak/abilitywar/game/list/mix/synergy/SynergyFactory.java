@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.list.Ares;
 import daybreak.abilitywar.ability.list.Assassin;
+import daybreak.abilitywar.ability.list.Celebrity;
 import daybreak.abilitywar.ability.list.Chaos;
 import daybreak.abilitywar.ability.list.DevilBoots;
 import daybreak.abilitywar.ability.list.Imprison;
@@ -14,6 +15,7 @@ import daybreak.abilitywar.ability.list.Khazhad;
 import daybreak.abilitywar.ability.list.Muse;
 import daybreak.abilitywar.ability.list.Nex;
 import daybreak.abilitywar.ability.list.PenetrationArrow;
+import daybreak.abilitywar.ability.list.ShowmanShip;
 import daybreak.abilitywar.ability.list.Sniper;
 import daybreak.abilitywar.ability.list.Stalker;
 import daybreak.abilitywar.ability.list.SuperNova;
@@ -33,6 +35,7 @@ import daybreak.abilitywar.game.list.mix.synergy.list.NexAssassin;
 import daybreak.abilitywar.game.list.mix.synergy.list.Pandemic;
 import daybreak.abilitywar.game.list.mix.synergy.list.PenetrationSniper;
 import daybreak.abilitywar.game.list.mix.synergy.list.RocketLauncher;
+import daybreak.abilitywar.game.list.mix.synergy.list.ShowTime;
 import daybreak.abilitywar.game.list.mix.synergy.list.TimeLoop;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import java.util.HashMap;
@@ -62,6 +65,7 @@ public class SynergyFactory {
 		registerSynergy(DevilBoots.class, Yeti.class, FlameMan.class);
 		registerSynergy(Sniper.class, PenetrationArrow.class, PenetrationSniper.class);
 		registerSynergy(Muse.class, Muse.class, Bless.class);
+		registerSynergy(ShowmanShip.class, Celebrity.class, ShowTime.class);
 	}
 
 	private SynergyFactory() {

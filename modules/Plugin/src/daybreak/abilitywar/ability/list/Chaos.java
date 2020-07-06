@@ -28,7 +28,7 @@ import org.bukkit.entity.Entity;
 })
 public class Chaos extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Cooldown", 80,
+	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
