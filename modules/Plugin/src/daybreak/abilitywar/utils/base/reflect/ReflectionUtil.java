@@ -72,6 +72,13 @@ public class ReflectionUtil {
 		}
 
 		@SuppressWarnings("unchecked")
+		public static <T> T getStaticValue(Class<?> clazz, String field) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+			Preconditions.checkNotNull(clazz);
+			Preconditions.checkNotNull(field);
+			return (T) setAccessible(clazz.getDeclaredField(field)).get(null);
+		}
+
+		@SuppressWarnings("unchecked")
 		public static <T> T getValue(Class<?> clazz, Object object, String field) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
 			Preconditions.checkNotNull(clazz);
 			Preconditions.checkNotNull(object);

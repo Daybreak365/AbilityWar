@@ -205,9 +205,15 @@ public class Configuration {
 		public static boolean getClearWeather() {
 			return getBoolean(ConfigNodes.GAME_CLEAR_WEATHER);
 		}
+
+		public static boolean getNoBlindFire() {
+			return getBoolean(ConfigNodes.GAME_NO_BLIND_FIRE);
+		}
+
 		public static Location getSpawnLocation() {
 			return getLocation(ConfigNodes.GAME_SPAWN_LOCATION);
 		}
+
 		public static boolean getSpawnEnable() {
 			return getBoolean(ConfigNodes.GAME_SPAWN_ENABLE);
 		}

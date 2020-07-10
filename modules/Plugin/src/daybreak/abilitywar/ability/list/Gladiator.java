@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -19,9 +20,11 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -30,11 +33,11 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 
 @AbilityManifest(name = "글래디에이터", rank = Rank.S, species = Species.HUMAN, explain = {
 		"상대방을 철괴로 우클릭하면 부셔지지 않는 투기장이 생성되며 추가 체력을 얻고,",
-		"상대방과 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[CooldownConfig]"
+		"상대방과 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
 })
 public class Gladiator extends AbilityBase implements TargetHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
 			"# 쿨타임") {
 
 		@Override
@@ -53,16 +56,11 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	private final Map<Block, BlockSnapshot> saves = new HashMap<>();
 
 	private final Timer clearField = new Timer(20) {
-
-		@Override
-		public void onStart() {
-		}
-
 		@Override
 		public void run(int count) {
 			target.sendMessage("§4[§c투기장§4] §f" + count + "초 후에 투기장이 삭제됩니다.");
@@ -86,11 +84,19 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			saves.clear();
 			target = null;
 		}
-
 	};
 
 	private Player target = null;
 	private final Random random = new Random();
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer()) || entity.equals(target)) return false;
+			return (!(entity instanceof Player)) || (getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
+		}
+	};
 
 	private final Timer createField = new Timer(26) {
 
@@ -116,10 +122,8 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 						BlockX.setType(block, MaterialX.MOSSY_STONE_BRICKS);
 					}
 				}
-				for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, center, buildCount, 6)) {
-					if (!getPlayer().equals(livingEntity) && !target.equals(livingEntity)) {
-						livingEntity.setVelocity(livingEntity.getLocation().toVector().clone().subtract(center.toVector()).normalize());
-					}
+				for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, center, buildCount, 6, predicate)) {
+					livingEntity.setVelocity(livingEntity.getLocation().toVector().clone().subtract(center.toVector()).normalize());
 				}
 
 				buildCount++;
@@ -167,6 +171,13 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			clearField.start();
 		}
 
+		@Override
+		protected void onSilentEnd() {
+			for (BlockSnapshot blockSnapshot : saves.values()) {
+				blockSnapshot.apply();
+			}
+			saves.clear();
+		}
 	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@SubscribeEvent

@@ -8,7 +8,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -38,7 +39,25 @@ public class Apology extends AbilityBase {
 			"그러니까 누가 맞을 짓을 하ㄹ...",
 			"아파요? 아프니까 청ㅊ.. (읍읍)"
 	};
-	private final Predicate<Entity> STRICT = Predicates.STRICT(getPlayer());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private final Map<UUID, DamageStacker> damageStackers = new HashMap<>();
 	private final Random random = new Random();
 
@@ -55,7 +74,7 @@ public class Apology extends AbilityBase {
 				damager = getPlayer();
 			}
 		}
-		if (getPlayer().equals(damager) && e.getEntity() instanceof Player && STRICT.test(e.getEntity())) {
+		if (getPlayer().equals(damager) && e.getEntity() instanceof Player && predicate.test(e.getEntity())) {
 			if (damageStackers.containsKey(e.getEntity().getUniqueId())) {
 				damageStackers.get(e.getEntity().getUniqueId()).addDamage(e.getFinalDamage());
 			} else {

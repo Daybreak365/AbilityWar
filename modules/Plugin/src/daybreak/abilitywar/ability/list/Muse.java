@@ -8,10 +8,10 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -32,12 +32,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 @AbilityManifest(name = "뮤즈", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여",
-		"모두가 대미지를 받지 않는 지역을 만들어냅니다. $[CooldownConfig]",
+		"모두가 대미지를 받지 않는 지역을 만들어냅니다. $[COOLDOWN_CONFIG]",
 		"지역은 점점 줄어들며, 지속 시간이 끝나면 사라집니다."
 })
 public class Muse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Muse.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Muse.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -56,18 +56,21 @@ public class Muse extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private static final Note D = Note.natural(0, Tone.D), FSharp = Note.sharp(1, Tone.F), LowA = Note.natural(0, Tone.A), A = Note.natural(1, Tone.A);
 
 	private static final Circle headCircle = Circle.of(0.5, 10);
 	private static final RGB PINK = RGB.of(255, 189, 235);
-	private static final Note D = Note.natural(0, Tone.D);
-	private static final Note FSharp = Note.sharp(1, Tone.F);
-	private static final Note LowA = Note.natural(0, Tone.A);
-	private static final Note A = Note.natural(1, Tone.A);
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			return (!(entity instanceof Player)) || (getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
+		}
+	};
 	private double currentRadius;
 	private Location center = null;
-
-	private static final Predicate<Entity> ONLY_PARTICIPANTS = Predicates.PARTICIPANTS();
 
 	private final DurationTimer skill = new DurationTimer(120, cooldownTimer) {
 
@@ -115,7 +118,7 @@ public class Muse extends AbilityBase implements ActiveHandler {
 						break;
 				}
 
-				SoundLib.BELL.playInstrument(LocationUtil.getNearbyPlayers(center, 20, 20), note);
+				SoundLib.BELL.playInstrument(LocationUtil.getNearbyEntities(Player.class, center, 20, 20, ONLY_PARTICIPANTS), note);
 			} else {
 				if (currentRadius > 1) currentRadius -= 0.115;
 				double playerY = getPlayer().getLocation().getY();

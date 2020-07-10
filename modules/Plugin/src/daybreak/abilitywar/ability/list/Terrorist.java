@@ -18,12 +18,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(name = "테러리스트", rank = Rank.A, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 자신의 주위에 §cTNT §f$[CountConfig] X 2개를 소환합니다. $[CooldownConfig]",
+		"철괴를 우클릭하면 자신의 주위에 §cTNT §f$[CountConfig] X 2개를 소환합니다. $[COOLDOWN_CONFIG]",
 		"폭발 대미지를 입지 않습니다."
 })
 public class Terrorist extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -53,7 +53,7 @@ public class Terrorist extends AbilityBase implements ActiveHandler {
 	}
 
 	private final int count = CountConfig.getValue();
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final Circle circle = Circle.of(10, count);
 
 	@Override

@@ -5,29 +5,29 @@ import org.bukkit.ChatColor;
 
 public enum CooldownDecrease {
 
-	LARGO("라르고", 25) {
+	_25("라르고", 25) {
 		public CooldownDecrease next() {
-			return ANDANTE;
+			return _50;
 		}
 	},
-	ANDANTE("안단테", 50) {
+	_50("안단테", 50) {
 		public CooldownDecrease next() {
-			return MODERATO;
+			return _75;
 		}
 	},
-	MODERATO("모데라토", 75) {
+	_75("모데라토", 75) {
 		public CooldownDecrease next() {
-			return ALLEGRO;
+			return _90;
 		}
 	},
-	ALLEGRO("알레그로", 90) {
+	_90("알레그로", 90) {
 		public CooldownDecrease next() {
-			return PRESTO;
+			return _100;
 		}
 	},
-	PRESTO("프레스토", 100) {
+	_100("프레스토", 100) {
 		public CooldownDecrease next() {
-			return LARGO;
+			return _25;
 		}
 	};
 
@@ -41,7 +41,7 @@ public enum CooldownDecrease {
 	}
 
 	public static CooldownDecrease getIfPresent(String name) {
-		return Enums.getIfPresent(CooldownDecrease.class, name).or(CooldownDecrease.ALLEGRO);
+		return Enums.getIfPresent(CooldownDecrease.class, name).or(CooldownDecrease._90);
 	}
 
 	public String getDisplayName() {

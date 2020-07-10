@@ -28,66 +28,6 @@
             <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_9_R1</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_9_R2</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_10_R1</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_11_R1</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_12_R1</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_13_R1</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_13_R2</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>daybreak.abilitywar</groupId>
-            <artifactId>v1_14_R1</artifactId>
-			<version>${revision}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
-			<artifactId>v1_15_R1</artifactId>
-			<version>${revision}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
-			<artifactId>v1_16_R1</artifactId>
-			<version>${revision}</version>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>

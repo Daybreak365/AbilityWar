@@ -41,7 +41,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 @Beta
 public class FlameMan extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(FlameMan.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(FlameMan.class, "Cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -114,7 +114,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 			count++;
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	public FlameMan(Participant participant) {
 		super(participant);

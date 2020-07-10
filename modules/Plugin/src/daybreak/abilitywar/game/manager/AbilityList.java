@@ -13,6 +13,7 @@ import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -94,10 +95,8 @@ public class AbilityList {
 		registerAbility(Emperor.class);
 		registerAbility(Pumpkin.class);
 		registerAbility(Virus.class);
-		registerAbility(Hermit.class);
 		registerAbility(DevilBoots.class);
 		registerAbility(BombArrow.class);
-		registerAbility(Brewer.class);
 		registerAbility(Imprison.class);
 		registerAbility(SuperNova.class);
 		registerAbility(Celebrity.class);
@@ -118,6 +117,27 @@ public class AbilityList {
 		registerAbility(Ghost.class);
 		registerAbility(Lunar.class);
 		registerAbility(Apology.class);
+		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getVersion().name() + ".Hermit");
+	}
+
+	/**
+	 * 능력을 등록합니다.
+	 * <p>
+	 * 능력을 등록하기 전, AbilityManifest 어노테이션이 클래스에 존재하는지, 겹치는 이름은 없는지, 생성자는 올바른지 확인해주시길
+	 * 바랍니다.
+	 * <p>
+	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
+	 *
+	 * @param className 능력 클래스 이름
+	 */
+	public static void registerAbility(String className) {
+		try {
+			registerAbility(Class.forName(className).asSubclass(AbilityBase.class));
+		} catch (ClassNotFoundException e) {
+			logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + className + " §f클래스는 존재하지 않습니다."));
+		} catch (ClassCastException e) {
+			logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + className + " §f클래스는 AbilityBase를 확장하지 않습니다."));
+		}
 	}
 
 	public static Collection<AbilityRegistration> values() {

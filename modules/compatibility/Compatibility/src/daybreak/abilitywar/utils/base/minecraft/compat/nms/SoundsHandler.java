@@ -7,13 +7,11 @@ public class SoundsHandler {
 	private static final Sounds sounds = newInstance(ServerVersion.getVersion());
 
 	private static Sounds newInstance(ServerVersion.Version version) {
-		switch (version) {
-			case v1_9_R1:
-				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R1.nms.SoundsImpl();
-			case v1_9_R2:
-				return new daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R2.nms.SoundsImpl();
+		try {
+			return (Sounds) Class.forName("daybreak.abilitywar.utils.base.minecraft.compat." + version.name() + ".nms.SoundsImpl").getConstructor().newInstance();
+		} catch (Exception ex) {
+			return null;
 		}
-		return null;
 	}
 
 	public static boolean isHandled() {

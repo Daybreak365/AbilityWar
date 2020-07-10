@@ -74,8 +74,11 @@ public class ScoreboardManager implements Listener, Observer {
 	private void onQuit(PlayerQuitEvent e) {
 		Player player = e.getPlayer();
 		viewers.remove(player.getUniqueId());
-		if (player.isValid()) {
-			player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+		try {
+			if (player.isValid() && player.isOnline()) {
+				player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+			}
+		} catch (IllegalStateException ignored) {
 		}
 	}
 

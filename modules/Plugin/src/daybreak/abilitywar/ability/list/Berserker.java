@@ -16,14 +16,14 @@ import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(name = "버서커", rank = Rank.B, species = Species.HUMAN, explain = {
-		"철괴를 우클릭한 후 5초 안에 하는 다음 근접 공격이 강화됩니다. $[CooldownConfig]",
+		"철괴를 우클릭한 후 5초 안에 하는 다음 근접 공격이 강화됩니다. $[COOLDOWN_CONFIG]",
 		"강화된 공격은 $[StrengthConfig]배의 대미지를 내며, 강화된 공격을 사용한 후",
 		"$[DebuffConfig]초간 대미지를 입힐 수 없습니다.",
 		"지속시간 내에 공격하지 못한 경우, 쿨타임을 절반만 갖습니다."
 })
 public class Berserker extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -63,7 +63,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	private class BerserkerTimer extends DurationTimer {
 

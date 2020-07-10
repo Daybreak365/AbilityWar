@@ -9,12 +9,14 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
@@ -49,13 +51,13 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 @AbilityManifest(name = "카쟈드", rank = Rank.A, species = Species.GOD, explain = {
-		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[CooldownConfig]",
+		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[COOLDOWN_CONFIG]",
 		"§b얼음§f에 맞은 생명체는 2초간 얼어붙으며, 대미지를 입지 않습니다.",
 		"주변을 지나가는 발사체들이 모두 얼어붙어 바닥으로 떨어집니다."
 })
 public class Khazhad extends AbilityBase implements ActiveHandler {
 
-	private static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Khazhad.class, "Cooldown", 10, "# 좌클릭 쿨타임") {
+	private static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Khazhad.class, "Cooldown", 10, "# 좌클릭 쿨타임") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -73,47 +75,54 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-	private final Predicate<Entity> strictPredicate = Predicates.STRICT(getPlayer());
-
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.LEFT_CLICK) && !cooldownTimer.isCooldown()) {
-			FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
-				@Override
-				public boolean onEntityChangeBlock(FallingBlock fallingBlock) {
-					Block block = fallingBlock.getLocation().getBlock();
-					for (int x = -1; x < 1; x++) {
-						for (int y = -1; y < 1; y++) {
-							for (int z = -1; z < 1; z++) {
-								block.getRelative(x, y, z).setType(Material.PACKED_ICE);
-							}
-						}
-					}
-					return true;
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
 				}
-			});
-			BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
-			new Timer() {
-				@Override
-				protected void run(int count) {
-					if (fallingBlock.isValid() && !fallingBlock.isDead()) {
-						for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, boundingBox, strictPredicate)) {
-							if (frozenEntities.add(livingEntity)) {
-								new Frost(livingEntity).start();
-							}
-						}
-					} else {
-						stop(false);
-					}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
 				}
-			}.setPeriod(TimeUnit.TICKS, 1).start();
-
-			cooldownTimer.start();
+			}
 			return true;
 		}
-		return false;
-	}
+	};
+	@Scheduled
+	private final Timer passive = new Timer() {
+		@Override
+		protected void run(int count) {
+			Location center = getPlayer().getLocation();
+			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, center, 7, 7, null)) {
+				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7)) {
+					projectiles.add(projectile);
+					projectile.setVelocity(projectile.getVelocity().multiply(0.1));
+					new Timer(3) {
+						@Override
+						protected void onStart() {
+							projectile.getLocation().getBlock().setType(Material.ICE);
+						}
+
+						@Override
+						protected void run(int count) {
+						}
+
+						@Override
+						protected void onEnd() {
+							projectile.getLocation().getBlock().setType(Material.AIR);
+						}
+					}.start();
+				}
+			}
+		}
+	}.setPeriod(TimeUnit.TICKS, 1);
 
 	private static final Set<LivingEntity> frozenEntities = new HashSet<>();
 
@@ -221,34 +230,44 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	@Scheduled
-	private final Timer passive = new Timer() {
-		@Override
-		protected void run(int count) {
-			Location center = getPlayer().getLocation();
-			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, center, 7, 7)) {
-				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7)) {
-					projectiles.add(projectile);
-					projectile.setVelocity(projectile.getVelocity().multiply(0.1));
-					new Timer(3) {
-						@Override
-						protected void onStart() {
-							projectile.getLocation().getBlock().setType(Material.ICE);
+	@Override
+	public boolean ActiveSkill(Material materialType, ClickType clickType) {
+		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.LEFT_CLICK) && !cooldownTimer.isCooldown()) {
+			FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
+				@Override
+				public boolean onEntityChangeBlock(FallingBlock fallingBlock) {
+					Block block = fallingBlock.getLocation().getBlock();
+					for (int x = -1; x < 1; x++) {
+						for (int y = -1; y < 1; y++) {
+							for (int z = -1; z < 1; z++) {
+								block.getRelative(x, y, z).setType(Material.PACKED_ICE);
+							}
 						}
-
-						@Override
-						protected void run(int count) {
-						}
-
-						@Override
-						protected void onEnd() {
-							projectile.getLocation().getBlock().setType(Material.AIR);
-						}
-					}.start();
+					}
+					return true;
 				}
-			}
+			});
+			BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
+			new Timer() {
+				@Override
+				protected void run(int count) {
+					if (fallingBlock.isValid() && !fallingBlock.isDead()) {
+						for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, boundingBox, predicate)) {
+							if (frozenEntities.add(livingEntity)) {
+								new Frost(livingEntity).start();
+							}
+						}
+					} else {
+						stop(false);
+					}
+				}
+			}.setPeriod(TimeUnit.TICKS, 1).start();
+
+			cooldownTimer.start();
+			return true;
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+		return false;
+	}
 
 	@SubscribeEvent
 	private void onProjectileHit(ProjectileHitEvent e) {

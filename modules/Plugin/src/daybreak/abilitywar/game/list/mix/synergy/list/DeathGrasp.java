@@ -7,7 +7,9 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -18,6 +20,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -38,7 +41,7 @@ import org.bukkit.util.Vector;
 })
 public class DeathGrasp extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "Cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -60,7 +63,28 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 		}
 
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final Timer fallBlockTimer = new Timer(5) {
 
 		Location center;
@@ -91,7 +115,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 				}
 			}
 
-			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(center, 5, 5)) {
+			for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, center, 5, 5, predicate)) {
 				if (!damageable.equals(getPlayer())) {
 					damageable.setVelocity(center.toVector().subtract(damageable.getLocation().toVector()).multiply(-1).setY(1.2));
 				}
@@ -192,7 +216,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					if (lastVictim != null) {
-						for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 5, 5)) {
+						for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 5, 5, null)) {
 							SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
 						}
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
@@ -233,7 +257,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 				if (!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
 					skillEnabled = false;
 					final double damage = DamageConfig.getValue();
-					for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer(), 5, 5)) {
+					for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
 						if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
 						d.damage(damage, getPlayer());
 					}

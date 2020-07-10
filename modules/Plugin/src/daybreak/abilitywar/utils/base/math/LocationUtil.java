@@ -392,6 +392,7 @@ public class LocationUtil {
 	 * @param vertical   수직 거리
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
+	@Deprecated
 	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Entity center, double horizontal, double vertical) {
 		return getNearbyEntities(entityType, center.getLocation(), horizontal, vertical, Predicates.STRICT(center));
 	}
@@ -406,22 +407,27 @@ public class LocationUtil {
 	 * @param vertical   수직 거리
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
+	@Deprecated
 	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Location center, double horizontal, double vertical) {
 		return getNearbyEntities(entityType, center, horizontal, vertical, Predicates.PARTICIPANTS());
 	}
 
+	@Deprecated
 	public static ArrayList<Damageable> getNearbyDamageableEntities(Player p, double horizontal, double vertical) {
 		return getNearbyEntities(Damageable.class, p, horizontal, vertical);
 	}
 
+	@Deprecated
 	public static ArrayList<Damageable> getNearbyDamageableEntities(Location l, double horizontal, double vertical) {
 		return getNearbyEntities(Damageable.class, l, horizontal, vertical);
 	}
 
+	@Deprecated
 	public static ArrayList<Player> getNearbyPlayers(Player p, double horizontal, double vertical) {
 		return getNearbyEntities(Player.class, p, horizontal, vertical);
 	}
 
+	@Deprecated
 	public static ArrayList<Player> getNearbyPlayers(Location l, double horizontal, double vertical) {
 		return getNearbyEntities(Player.class, l, horizontal, vertical);
 	}
@@ -475,14 +481,6 @@ public class LocationUtil {
 		return entities;
 	}
 
-	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox) {
-		return getConflictingEntities(entityType, boundingBox, Predicates.PARTICIPANTS());
-	}
-
-	public static List<Damageable> getConflictingDamageables(BoundingBox boundingBox) {
-		return getConflictingEntities(Damageable.class, boundingBox);
-	}
-
 	public static class Locations extends ArrayList<Location> {
 
 		public Locations(int initialCapacity) {
@@ -523,6 +521,7 @@ public class LocationUtil {
 
 	}
 
+	@Deprecated
 	public static class Predicates {
 
 		private Predicates() {

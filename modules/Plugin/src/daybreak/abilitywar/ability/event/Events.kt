@@ -3,9 +3,10 @@ package daybreak.abilitywar.ability.event
 import daybreak.abilitywar.ability.AbilityBase
 import daybreak.abilitywar.ability.AbilityBase.ClickType
 import org.bukkit.Material
+import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 
-class AbilityActiveSkillEvent(ability: AbilityBase, val materialType: Material, val clickType: ClickType) : AbilityEvent(ability) {
+class AbilityActiveSkillEvent(ability: AbilityBase, val material: Material, val clickType: ClickType) : AbilityEvent(ability) {
 	private companion object Handlers {
 		@JvmStatic
 		val handlerList = HandlerList()
@@ -13,6 +14,27 @@ class AbilityActiveSkillEvent(ability: AbilityBase, val materialType: Material, 
 
 	override fun getHandlers(): HandlerList {
 		return handlerList
+	}
+}
+
+class AbilityPreActiveSkillEvent(ability: AbilityBase, val material: Material, val clickType: ClickType) : AbilityEvent(ability), Cancellable {
+	private companion object Handlers {
+		@JvmStatic
+		val handlerList = HandlerList()
+	}
+
+	override fun getHandlers(): HandlerList {
+		return handlerList
+	}
+
+	private var cancelled: Boolean = false
+
+	override fun setCancelled(cancelled: Boolean) {
+		this.cancelled = cancelled
+	}
+
+	override fun isCancelled(): Boolean {
+		return cancelled
 	}
 }
 

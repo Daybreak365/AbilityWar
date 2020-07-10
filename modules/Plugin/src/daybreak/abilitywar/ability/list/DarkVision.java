@@ -7,10 +7,15 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import java.util.function.Predicate;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "심안", rank = Rank.B, species = Species.HUMAN, explain = {
 		"앞이 보이지 않는 대신, 플레이어의 $[DistanceConfig]칸 안에 있는 모든 생명체는",
@@ -32,6 +37,26 @@ public class DarkVision extends AbilityBase {
 		super(participant);
 	}
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
 	private final int distance = DistanceConfig.getValue();
 
 	@Scheduled
@@ -41,7 +66,7 @@ public class DarkVision extends AbilityBase {
 			PotionEffects.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 5, true);
 			PotionEffects.JUMP.addPotionEffect(getPlayer(), 5, 1, true);
-			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer(), distance, distance)) {
+			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate)) {
 				PotionEffects.GLOWING.addPotionEffect(entity, 10, 0, true);
 			}
 		}

@@ -9,6 +9,7 @@ import daybreak.abilitywar.ability.AbilityBase.ClickType;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
+import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.iGame;
@@ -253,10 +254,14 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 							if (ability.getRegistration().getMaterials().contains(material)) {
 								long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
-									this.lastClick = current;
-									if (((ActiveHandler) ability).ActiveSkill(material, clickType)) {
-										Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
-										ability.getPlayer().sendMessage("§d능력을 사용하였습니다.");
+									AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(ability, material, clickType);
+									Bukkit.getPluginManager().callEvent(preEvent);
+									if (!preEvent.isCancelled()) {
+										this.lastClick = current;
+										if (((ActiveHandler) ability).ActiveSkill(material, clickType)) {
+											Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, clickType));
+											ability.getPlayer().sendMessage("§d능력을 사용하였습니다.");
+										}
 									}
 								}
 							}

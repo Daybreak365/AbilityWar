@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
@@ -15,21 +16,23 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 @AbilityManifest(name = "마술사", rank = Rank.A, species = Species.HUMAN, explain = {
 		"활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게",
-		"최대체력의 30% 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[CooldownConfig]"
+		"최대체력의 30% 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[COOLDOWN_CONFIG]"
 })
 public class Magician extends AbilityBase {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Magician.class, "Cooldown", 8,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Magician.class, "Cooldown", 8,
 			"# 쿨타임") {
 
 		@Override
@@ -48,8 +51,17 @@ public class Magician extends AbilityBase {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final Circle circle = Circle.of(5, 70);
+
+	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			return getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue();
+		}
+	};
 
 	@SubscribeEvent
 	public void onProjectileHit(ProjectileHitEvent e) {
@@ -57,9 +69,9 @@ public class Magician extends AbilityBase {
 			if (getPlayer().equals(e.getEntity().getShooter())) {
 				if (!cooldownTimer.isCooldown()) {
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
-					Location center = e.getEntity().getLocation();
-					HashMap<Damageable, Location> locationMap = new HashMap<>();
-					ArrayList<Damageable> damageables = LocationUtil.getNearbyDamageableEntities(center, 5, 5);
+					final Location center = e.getEntity().getLocation();
+					final HashMap<Damageable, Location> locationMap = new HashMap<>();
+					final ArrayList<Damageable> damageables = LocationUtil.getNearbyEntities(Damageable.class, center, 5, 5, ONLY_PARTICIPANTS);
 					for (Damageable damageable : damageables) {
 						locationMap.put(damageable, damageable.getLocation());
 						if (!damageable.equals(getPlayer())) {

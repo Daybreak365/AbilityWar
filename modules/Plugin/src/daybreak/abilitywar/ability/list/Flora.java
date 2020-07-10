@@ -8,26 +8,29 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "플로라", rank = Rank.A, species = Species.GOD, explain = {
 		"꽃과 풍요의 여신.",
 		"주변에 있는 모든 플레이어를 §c재생§f시키거나 §b신속 §f효과를 줍니다.",
-		"철괴를 우클릭하면 효과를 뒤바꿉니다. $[CooldownConfig]",
+		"철괴를 우클릭하면 효과를 뒤바꿉니다. $[COOLDOWN_CONFIG]",
 		"철괴를 좌클릭하면 범위를 변경합니다."
 })
 public class Flora extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Flora.class, "Cooldown", 3,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flora.class, "Cooldown", 3,
 			"# 쿨타임") {
 
 		@Override
@@ -48,6 +51,15 @@ public class Flora extends AbilityBase implements ActiveHandler {
 
 	private EffectType type = EffectType.SPEED;
 	private Radius radius = Radius.BIG;
+
+	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			return getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue();
+		}
+	};
 
 	@Scheduled
 	private final Timer passive = new Timer() {
@@ -79,16 +91,14 @@ public class Flora extends AbilityBase implements ActiveHandler {
 				ParticleLib.REDSTONE.spawnParticle(location.subtract(0, y - 1, 0), type.color);
 			}
 
-			for (Player player : LocationUtil.getNearbyPlayers(center, radius.radius, 200)) {
-				if (LocationUtil.isInCircle(center, player.getLocation(), radius.radius)) {
-					if (type.equals(EffectType.SPEED)) {
-						PotionEffects.SPEED.addPotionEffect(player, 20, 1, true);
-					} else {
-						if (!player.isDead()) {
-							final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-							if (player.getHealth() < maxHealth) {
-								player.setHealth(Math.min(player.getHealth() + 0.04, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
-							}
+			for (Player player : LocationUtil.getEntitiesInCircle(Player.class, center, radius.radius, ONLY_PARTICIPANTS)) {
+				if (type.equals(EffectType.SPEED)) {
+					PotionEffects.SPEED.addPotionEffect(player, 20, 1, true);
+				} else {
+					if (!player.isDead()) {
+						final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+						if (player.getHealth() < maxHealth) {
+							player.setHealth(Math.min(player.getHealth() + 0.04, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 						}
 					}
 				}
@@ -97,7 +107,7 @@ public class Flora extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {

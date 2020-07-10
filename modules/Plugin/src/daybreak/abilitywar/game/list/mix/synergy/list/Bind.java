@@ -9,11 +9,12 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.HashMap;
@@ -24,19 +25,20 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 @AbilityManifest(name = "결박", rank = Rank.B, species = Species.HUMAN, explain = {
 		"주위 15칸 안에 있는 생명체를 원거리에서 철괴 우클릭으로 타겟팅해",
-		"세 겹의 유리막 속에 가둡니다. $[CooldownConfig]",
+		"세 겹의 유리막 속에 가둡니다. $[COOLDOWN_CONFIG]",
 		"10초마다 §e강도 스택§f이 1씩 오르며, 최대 $[MaxSolidityConfig] 스택을 모을 수 있습니다.",
 		"§e강도 스택§f은 능력을 사용하면 초기화됩니다."
 })
 public class Bind extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(Bind.class, "Cooldown", 25, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "Cooldown", 25, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -74,12 +76,30 @@ public class Bind extends Synergy implements ActiveHandler {
 			MaterialX.GREEN_STAINED_GLASS,
 			MaterialX.BLUE_STAINED_GLASS
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	private final int maxSolidity = MaxSolidityConfig.getValue();
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	private final Map<Block, Integer> blocks = new HashMap<>();
-	private final Predicate<Entity> STRICT = Predicates.STRICT(getPlayer());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private final Random random = new Random();
 	private int solidity = 1;
 	@Scheduled
@@ -100,7 +120,7 @@ public class Bind extends Synergy implements ActiveHandler {
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
-			LivingEntity entity = LocationUtil.getEntityLookingAt(LivingEntity.class, getPlayer(), 15, STRICT);
+			LivingEntity entity = LocationUtil.getEntityLookingAt(LivingEntity.class, getPlayer(), 15, predicate);
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {
 					final int size = SizeConfig.getValue();

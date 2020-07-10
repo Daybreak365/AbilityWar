@@ -11,6 +11,7 @@ import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -37,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -296,6 +298,10 @@ public abstract class AbilityBase {
 		return restricted;
 	}
 
+	public List<GameTimer> getTimers() {
+		return Collections.unmodifiableList(timers);
+	}
+
 	private final Queue<GameTimer> pausedTimers = new LinkedList<>();
 
 	/**
@@ -347,15 +353,23 @@ public abstract class AbilityBase {
 	 *
 	 * @author Daybreak 새벽
 	 */
-	public final class CooldownTimer extends Timer {
+	public class CooldownTimer extends Timer {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private final String name;
 
-		public CooldownTimer(int cooldown, String name) {
-			super(TaskType.REVERSE, (int) (WRECK.isEnabled(getGame()) ? (cooldown / 100.0) * (100 - Settings.getCooldownDecrease().getPercentage()) : cooldown));
+		public CooldownTimer(int cooldown, String name, CooldownDecrease maxDecrease) {
+			super(TaskType.REVERSE, (int) (WRECK.isEnabled(getGame()) ? (cooldown / 100.0) * Math.max(Settings.getCooldownDecrease() == CooldownDecrease._100 ? 100 : (100 - maxDecrease.getPercentage()), 100 - Settings.getCooldownDecrease().getPercentage()) : cooldown));
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 			this.name = name;
+		}
+
+		public CooldownTimer(int cooldown, String name) {
+			this(cooldown, name, CooldownDecrease._100);
+		}
+
+		public CooldownTimer(int cooldown, CooldownDecrease maxDecrease) {
+			this(cooldown, "", maxDecrease);
 		}
 
 		public CooldownTimer(int cooldown) {
@@ -575,6 +589,11 @@ public abstract class AbilityBase {
 		@Override
 		public Timer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
 			super.setInitialDelay(timeUnit, initialDelay);
+			return this;
+		}
+
+		public Timer setBehavior(RestrictionBehavior behavior) {
+			super.setBehavior(behavior);
 			return this;
 		}
 

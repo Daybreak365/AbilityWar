@@ -17,7 +17,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 @AbilityManifest(name = "베르투스", rank = Rank.A, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 다음 $[DurationConfig]초간 받는 대미지가 75% 감소합니다. $[CooldownConfig]"
+		"철괴를 우클릭하면 다음 $[DurationConfig]초간 받는 대미지가 75% 감소합니다. $[COOLDOWN_CONFIG]"
 })
 public class Virtus extends AbilityBase implements ActiveHandler {
 
@@ -31,7 +31,7 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Virtus.class, "Cooldown", 70,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Virtus.class, "Cooldown", 70,
 			"# 쿨타임") {
 
 		@Override
@@ -50,7 +50,7 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final Timer skill = new Timer(DurationConfig.getValue()) {
 		@Override
 		public void run(int count) {

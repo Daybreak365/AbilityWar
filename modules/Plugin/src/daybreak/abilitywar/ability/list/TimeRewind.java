@@ -27,11 +27,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 
 @AbilityManifest(name = "시간 역행", rank = Rank.S, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 시간을 역행해 $[TimeConfig]초 전으로 돌아갑니다. $[CooldownConfig]"
+		"철괴를 우클릭하면 시간을 역행해 $[TimeConfig]초 전으로 돌아갑니다. $[COOLDOWN_CONFIG]"
 })
 public class TimeRewind extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -60,7 +60,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	private final int time = TimeConfig.getValue();
 

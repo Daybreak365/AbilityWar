@@ -50,55 +50,6 @@ public class AbilityFactory {
 	private static final Map<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
 	private static final Map<Class<? extends AbilityBase>, Class<? extends AbilityBase>> alternatives = new HashMap<>();
 
-	/**
-	 * 능력을 등록합니다.
-	 * <p>
-	 * 능력을 등록하기 전, AbilityManifest 어노테이션이 클래스에 존재하는지, 겹치는 이름은 없는지, 생성자는 올바른지 확인해주시길
-	 * 바랍니다.
-	 * <p>
-	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
-	 *
-	 * @param abilityClass 능력 클래스
-	 */
-	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
-		if (!registeredAbilities.containsKey(abilityClass)) {
-			try {
-				AbilityRegistration registration = new AbilityRegistration(abilityClass);
-				String name = registration.getManifest().name();
-				if (!usedNames.containsKey(name)) {
-					Class<? extends AbilityBase> registeredClass = registration.getAbilityClass();
-					registeredAbilities.put(registeredClass, registration);
-					usedNames.put(name, registeredClass);
-					if (abilityClass != registeredClass) {
-						alternatives.put(abilityClass, registeredClass);
-					}
-				} else {
-					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
-				}
-			} catch (NoSuchMethodException | NullPointerException e) {
-				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다."));
-			} catch (IllegalAccessException e) {
-				logger.error(abilityClass.getName() + " 능력 클래스에 public 생성자가 존재하지 않습니다.");
-			} catch (UnsupportedVersionException e) {
-				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 버전에서 지원되지 않습니다.");
-			}
-		}
-	}
-
-	public static AbilityRegistration getRegistration(Class<? extends AbilityBase> clazz) {
-		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
-		return registeredAbilities.get(clazz);
-	}
-
-	public static boolean isRegistered(Class<? extends AbilityBase> clazz) {
-		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
-		return registeredAbilities.containsKey(clazz);
-	}
-
-	public static boolean isRegistered(String name) {
-		return usedNames.containsKey(name);
-	}
-
 	static {
 		registerAbility(Assassin.class);
 		registerAbility(Feather.class);
@@ -131,10 +82,8 @@ public class AbilityFactory {
 		registerAbility(Emperor.class);
 		registerAbility(Pumpkin.class);
 		registerAbility(Virus.class);
-		registerAbility(Hermit.class);
 		registerAbility(DevilBoots.class);
 		registerAbility(BombArrow.class);
-		registerAbility(Brewer.class);
 		registerAbility(Imprison.class);
 		registerAbility(SuperNova.class);
 		registerAbility(Celebrity.class);
@@ -166,6 +115,8 @@ public class AbilityFactory {
 		registerAbility(Lunar.class);
 		// v2.1.8.6
 		registerAbility(Apology.class);
+		// v2.1.8.8
+		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getVersion().name() + ".Hermit");
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -178,6 +129,77 @@ public class AbilityFactory {
 		registerAbility(Detective.class);
 		registerAbility(Innocent.class);
 		registerAbility(Police.class);
+	}
+
+	/**
+	 * 능력을 등록합니다.
+	 * <p>
+	 * 능력을 등록하기 전, AbilityManifest 어노테이션이 클래스에 존재하는지, 겹치는 이름은 없는지, 생성자는 올바른지 확인해주시길
+	 * 바랍니다.
+	 * <p>
+	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
+	 *
+	 * @param abilityClass 능력 클래스
+	 */
+	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
+		if (!registeredAbilities.containsKey(abilityClass)) {
+			try {
+				AbilityRegistration registration = new AbilityRegistration(abilityClass);
+				String name = registration.getManifest().name();
+				if (!usedNames.containsKey(name)) {
+					Class<? extends AbilityBase> registeredClass = registration.getAbilityClass();
+					registeredAbilities.put(registeredClass, registration);
+					usedNames.put(name, registeredClass);
+					if (abilityClass != registeredClass) {
+						alternatives.put(abilityClass, registeredClass);
+					}
+				} else {
+					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
+				}
+			} catch (NoSuchMethodException | NullPointerException e) {
+				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다."));
+			} catch (IllegalAccessException e) {
+				logger.error(abilityClass.getName() + " 능력 클래스에 public 생성자가 존재하지 않습니다.");
+			} catch (UnsupportedVersionException e) {
+				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 버전에서 지원되지 않습니다.");
+			} catch (Exception e) {
+				logger.error("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다.");
+			}
+		}
+	}
+
+	public static AbilityRegistration getRegistration(Class<? extends AbilityBase> clazz) {
+		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
+		return registeredAbilities.get(clazz);
+	}
+
+	public static boolean isRegistered(Class<? extends AbilityBase> clazz) {
+		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
+		return registeredAbilities.containsKey(clazz);
+	}
+
+	public static boolean isRegistered(String name) {
+		return usedNames.containsKey(name);
+	}
+
+	/**
+	 * 능력을 등록합니다.
+	 * <p>
+	 * 능력을 등록하기 전, AbilityManifest 어노테이션이 클래스에 존재하는지, 겹치는 이름은 없는지, 생성자는 올바른지 확인해주시길
+	 * 바랍니다.
+	 * <p>
+	 * 이미 등록된 능력일 경우 다시 등록이 되지 않습니다.
+	 *
+	 * @param className 능력 클래스 이름
+	 */
+	public static void registerAbility(String className) {
+		try {
+			registerAbility(Class.forName(className).asSubclass(AbilityBase.class));
+		} catch (ClassNotFoundException e) {
+			logger.error("§e" + className + " §f클래스는 존재하지 않습니다.");
+		} catch (ClassCastException e) {
+			logger.error("§e" + className + " §f클래스는 AbilityBase를 확장하지 않습니다.");
+		}
 	}
 
 	/**

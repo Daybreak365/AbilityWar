@@ -8,16 +8,21 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -25,12 +30,13 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 @AbilityManifest(name = "아레스", rank = Rank.A, species = Species.GOD, explain = {
 		"전쟁의 신 아레스.",
 		"철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 대미지를 주며,",
-		"대미지를 받은 엔티티들을 밀쳐냅니다. $[CooldownConfig]"
+		"대미지를 받은 엔티티들을 밀쳐냅니다. $[COOLDOWN_CONFIG]"
 })
 public class Ares extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "DamagePercent", 75,
-			"# 스킬 대미지 (단위: 백분율)") {
+	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "DamagePercent", 50,
+			"# 스킬 대미지 (단위: 백분율)",
+			"# 10으로 설정한 경우 대상의 최대 체력 10% 만큼의 대미지를 줍니다.") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -39,7 +45,7 @@ public class Ares extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "Cooldown", 60,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ares.class, "Cooldown", 60,
 			"# 쿨타임") {
 
 		@Override
@@ -68,8 +74,26 @@ public class Ares extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer skill = new DurationTimer(20, cooldownTimer) {
 
 		private Set<Damageable> attacked;
@@ -77,14 +101,12 @@ public class Ares extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationStart() {
 			attacked = new HashSet<>();
-			Collection<Player> nearby = LocationUtil.getNearbyPlayers(getPlayer().getLocation(), 10, 10);
-			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(nearby);
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, null));
 		}
 
 		@Override
 		public void onDurationProcess(int seconds) {
-			Player p = getPlayer();
-
+			final Player p = getPlayer();
 			ParticleLib.LAVA.spawnParticle(p.getLocation(), 4, 4, 4, 40);
 
 			if (DashConfig.getValue()) {
@@ -93,17 +115,18 @@ public class Ares extends AbilityBase implements ActiveHandler {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7).setY(0)));
 			}
 
-			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(p, 4, 4)) {
-				double damage = (damageable.getHealth() / 100) * DamageConfig.getValue();
-				if (!attacked.contains(damageable)) {
-					damageable.damage(damage, p);
-					attacked.add(damageable);
+			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, p.getLocation(), 4, 4, predicate)) {
+				if (!attacked.contains(livingEntity)) {
+					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue(), p);
+					attacked.add(livingEntity);
 					SoundLib.BLOCK_ANVIL_LAND.playSound(p, 0.5f, 1);
-				} else {
-					damageable.damage(damage / 5, p);
+					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
+				} else if (seconds % 2 == 0) {
+					livingEntity.setNoDamageTicks(0);
+					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue()) / 5, p);
+					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
 				}
-
-				damageable.setVelocity(p.getLocation().toVector().subtract(damageable.getLocation().toVector()).multiply(-1).setY(1));
+				livingEntity.setVelocity(livingEntity.getLocation().toVector().subtract(p.getLocation().toVector()).multiply(0.5).setY(0.5));
 			}
 		}
 

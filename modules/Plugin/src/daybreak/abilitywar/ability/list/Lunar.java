@@ -9,12 +9,13 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Crescent;
@@ -44,7 +45,7 @@ import org.bukkit.util.Vector;
 @AbilityManifest(name = "루나", rank = Rank.A, species = Species.OTHERS, explain = {
 		"생명체를 근접 공격할 때마다 해당 생명체에게 §e표식§f을 부여하고",
 		"시간을 점점 밤으로 바꿉니다. 저녁에 철괴를 우클릭하면 주변 6칸 이내의 모든",
-		"생명체에게 §e표식§f 2개를 부여하고 4초간 구속 효과를 줍니다. $[CooldownConfig]",
+		"생명체에게 §e표식§f 2개를 부여하고 4초간 구속 효과를 줍니다. $[COOLDOWN_CONFIG]",
 		"§e표식§f이 부여될 때마다 해당 생명체를 나에게 조금 끌어옵니다.",
 		"§e표식§f을 5개 이상 쌓으면 0.75초간 기절시키며 스킬 쿨타임이 10초 감소합니다.",
 		"근접 공격으로 §e표식§f을 5개 이상 쌓은 경우, 0.4배의 대미지를 추가로 줍니다.",
@@ -53,7 +54,7 @@ import org.bukkit.util.Vector;
 })
 public class Lunar extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Lunar.class, "Cool", 50,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lunar.class, "Cool", 50,
 			"# 쿨타임") {
 
 		@Override
@@ -77,14 +78,32 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 			Note.natural(1, Tone.A),
 			Note.sharp(1, Tone.C)
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	public Lunar(Participant participant) {
 		super(participant);
 	}
 
 	private final Map<UUID, Stack> stackMap = new HashMap<>();
-	private final Predicate<Entity> STRICT = Predicates.STRICT(getPlayer());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private int particleSide = 45;
 
 	private static boolean isNight(long time) {
@@ -203,7 +222,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onStart() {
 			new SoundTimer(getPlayer()).start();
-			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), radius, radius, STRICT)) {
+			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), radius, radius, predicate)) {
 				if (entity instanceof Player) {
 					new SoundTimer((Player) entity).start();
 				}

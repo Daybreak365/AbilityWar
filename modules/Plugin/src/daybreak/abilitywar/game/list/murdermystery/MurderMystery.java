@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
@@ -284,12 +283,12 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 			if (entityPart.hasAbility() && entityPart.getAbility() instanceof Detective) {
 				new GameTimer(TaskType.INFINITE, -1) {
 					private final Location center = entityPart.getPlayer().getLocation();
-					private final Predicate<Entity> PREDICATE = Predicates.STRICT(entityPart.getPlayer()).and(new Predicate<Entity>() {
+					private final Predicate<Entity> predicate = new Predicate<Entity>() {
 						@Override
 						public boolean test(Entity entity) {
-							return !(getParticipant(entity.getUniqueId()).getAbility() instanceof Murderer) && !deadPlayers.contains(entity.getUniqueId());
+							return isParticipating(entity.getUniqueId()) && !deadPlayers.contains(entity.getUniqueId()) && !(getParticipant(entity.getUniqueId()).getAbility() instanceof Murderer);
 						}
-					});
+					};
 					private final ArmorStand stand = entityPart.getPlayer().getWorld().spawn(center, ArmorStand.class);
 
 					@Override
@@ -303,7 +302,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 
 					@Override
 					protected void run(int count) {
-						for (Player player : LocationUtil.getNearbyEntities(Player.class, center, 1, 1, PREDICATE)) {
+						for (Player player : LocationUtil.getNearbyEntities(Player.class, center, 1, 1, predicate)) {
 							try {
 								getParticipant(player).setAbility(Detective.class);
 							} catch (IllegalAccessException | InstantiationException | InvocationTargetException ignored) {

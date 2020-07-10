@@ -61,7 +61,7 @@ public class Boundary {
 	public static final BoundaryData ZOMBIE = new BoundaryData("ZOMBIE", -0.300000012, 0, -0.300000012, 0.300000012, 1.950000048, 0.300000012);
 	public static final BoundaryData SLIME = new BoundaryData("SLIME", -0.520199955, 0, -0.520199955, 0.520199955, 1.040399909, 0.520199955);
 	public static final BoundaryData GHAST = new BoundaryData("GHAST", -2, 0, -2, 2, 4, 2);
-	public static final BoundaryData PIG_ZOMBIE = new BoundaryData("PIG_ZOMBIE", -0.300000012, 0, -0.300000012, 0.300000012, 1.950000048, 0.300000012);
+	public static final BoundaryData ZOMBIFIED_PIGLIN = new BoundaryData(new String[]{"PIG_ZOMBIE", "ZOMBIFIED_PIGLIN"}, -0.30000001192092896, 0.0, -0.30000001192092896, 0.30000001192092896, 1.9500000476837158, 0.30000001192092896);
 	public static final BoundaryData ENDERMAN = new BoundaryData("ENDERMAN", -0.300000012, 0, -0.300000012, 0.300000012, 2.900000095, 0.300000012);
 	public static final BoundaryData CAVE_SPIDER = new BoundaryData("CAVE_SPIDER", -0.349999994, 0, -0.349999994, 0.349999994, 0.5, 0.349999994);
 	public static final BoundaryData SILVERFISH = new BoundaryData("SILVERFISH", -0.200000003, 0, -0.200000003, 0.200000003, 0.300000012, 0.200000003);
@@ -84,6 +84,7 @@ public class Boundary {
 	public static final BoundaryData SNOWMAN = new BoundaryData("SNOWMAN", -0.349999994, 0, -0.349999994, 0.349999994, 1.899999976, 0.349999994);
 	public static final BoundaryData OCELOT = new BoundaryData("OCELOT", -0.300000012, 0, -0.300000012, 0.300000012, 0.699999988, 0.300000012);
 	public static final BoundaryData IRON_GOLEM = new BoundaryData("IRON_GOLEM", -0.699999988, 0, -0.699999988, 0.699999988, 2.700000048, 0.699999988);
+	public static final BoundaryData HOGLIN = new BoundaryData("HOGLIN", -0.6982421875, 0.0, -0.6982421875, 0.6982421875, 1.399999976158142, 0.6982421875);
 	public static final BoundaryData HORSE = new BoundaryData("HORSE", -0.698242188, 0, -0.698242188, 0.698242188, 1.600000024, 0.698242188);
 	public static final BoundaryData RABBIT = new BoundaryData("RABBIT", -0.200000003, 0, -0.200000003, 0.200000003, 0.5, 0.200000003);
 	public static final BoundaryData POLAR_BEAR = new BoundaryData("POLAR_BEAR", -0.699999988, 0, -0.699999988, 0.699999988, 1.399999976, 0.699999988);
@@ -109,6 +110,9 @@ public class Boundary {
 	public static final BoundaryData WANDERING_TRADER = new BoundaryData("WANDERING_TRADER", -0.300000012, 0, -0.300000012, 0.300000012, 1.950000048, 0.300000012);
 	public static final BoundaryData FOX = new BoundaryData("FOX", -0.300000012, 0, -0.300000012, 0.300000012, 0.699999988, 0.300000012);
 	public static final BoundaryData BEE = new BoundaryData("BEE", -0.349999994, 0, -0.349999994, 0.349999994, 0.600000024, 0.349999994);
+	public static final BoundaryData PIGLIN = new BoundaryData("PIGLIN", -0.30000001192092896, 0.0, -0.30000001192092896, 0.30000001192092896, 1.9500000476837158, 0.30000001192092896);
+	public static final BoundaryData STRIDER = new BoundaryData("STRIDER", -0.44999998807907104, 0.0, -0.44999998807907104, 0.44999998807907104, 1.7000000476837158, 0.44999998807907104);
+	public static final BoundaryData ZOGLIN = new BoundaryData("ZOGLIN", -0.6982421875, 0.0, -0.6982421875, 0.6982421875, 1.399999976158142, 0.6982421875);
 	public static final BoundaryData PLAYER = new BoundaryData("PLAYER", -0.300000012, 0, -0.300000012, 0.300000012, 1.799999952, 0.300000012);
 	public static final BoundaryData UNKNOWN = new BoundaryData(0, 0, 0, 0, 0, 0);
 
@@ -119,6 +123,21 @@ public class Boundary {
 		}
 
 		private final double minX, minY, minZ, maxX, maxY, maxZ;
+
+		private BoundaryData(String[] entityTypes, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+			for (String entityType : entityTypes) {
+				Optional<EntityType> type = Enums.getIfPresent(EntityType.class, entityType);
+				if (type.isPresent()) {
+					BOUNDARY_DATA_MAP.put(type.get(), this);
+				}
+			}
+			this.minX = minX;
+			this.minY = minY;
+			this.minZ = minZ;
+			this.maxX = maxX;
+			this.maxY = maxY;
+			this.maxZ = maxZ;
+		}
 
 		private BoundaryData(String entityType, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
 			Optional<EntityType> type = Enums.getIfPresent(EntityType.class, entityType);

@@ -7,7 +7,9 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -16,11 +18,14 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -30,12 +35,12 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 @AbilityManifest(name = "로켓런쳐", rank = Rank.S, species = Species.OTHERS, explain = {
 		"전쟁의 신 아레스.",
 		"철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 대미지를 주며,",
-		"대미지를 받은 엔티티들을 밀쳐냅니다. $[CooldownConfig]",
+		"대미지를 받은 엔티티들을 밀쳐냅니다. $[COOLDOWN_CONFIG]",
 		"또한 돌진 중 주위에 큰 폭발을 일으키며, 폭발 대미지를 받지 않습니다."
 })
 public class RocketLauncher extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "DamagePercent", 75,
+	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "DamagePercent", 50,
 			"# 스킬 대미지 (단위: 백분율)") {
 
 		@Override
@@ -45,7 +50,7 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "Cooldown", 60,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "Cooldown", 60,
 			"# 쿨타임") {
 
 		@Override
@@ -69,7 +74,28 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 		}
 
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer skill = new DurationTimer(20, cooldownTimer) {
 
 		private VectorIterator circle;
@@ -79,8 +105,7 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 		protected void onDurationStart() {
 			this.circle = Circle.infiniteIteratorOf(4, 10);
 			attacked = new HashSet<>();
-			Collection<Player> nearby = LocationUtil.getNearbyPlayers(getPlayer().getLocation(), 10, 10);
-			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(nearby);
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, null));
 		}
 
 		@Override
@@ -95,17 +120,18 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7).setY(0)));
 			}
 
-			for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(p, 4, 4)) {
-				double damage = (damageable.getHealth() / 100) * DamageConfig.getValue();
-				if (!attacked.contains(damageable)) {
-					damageable.damage(damage, p);
-					attacked.add(damageable);
+			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, p.getLocation(), 4, 4, predicate)) {
+				if (!attacked.contains(livingEntity)) {
+					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue(), p);
+					attacked.add(livingEntity);
 					SoundLib.BLOCK_ANVIL_LAND.playSound(p, 0.5f, 1);
-				} else {
-					damageable.damage(damage / 5, p);
+					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
+				} else if (seconds % 2 == 0) {
+					livingEntity.setNoDamageTicks(0);
+					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue()) / 5, p);
+					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
 				}
-
-				damageable.setVelocity(p.getLocation().toVector().subtract(damageable.getLocation().toVector()).multiply(-1).setY(1));
+				livingEntity.setVelocity(livingEntity.getLocation().toVector().subtract(p.getLocation().toVector()).multiply(0.5).setY(0.5));
 			}
 			for (int i = 0; i < 6; i++) {
 				getPlayer().getWorld().createExplosion(getPlayer().getLocation().clone().add(VectorUtil.rotateAroundAxis(VectorUtil.rotateAroundAxisY(circle.next(), getPlayer().getLocation().getYaw()), VectorUtil.rotateAroundAxisY(getPlayer().getLocation().getDirection().clone().normalize().setY(0), 90), getPlayer().getLocation().getPitch() + 90)), 3);

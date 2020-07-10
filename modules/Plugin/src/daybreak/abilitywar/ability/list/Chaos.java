@@ -7,10 +7,11 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -19,16 +20,17 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "카오스", rank = Rank.S, species = Species.GOD, explain = {
 		"태초의 신 카오스.",
 		"철괴를 우클릭하면 $[DurationConfig]초간 짙은 암흑 속으로 주변",
 		"$[DurationConfig]칸 이내의 모든 물체와 생명체들을 끌어당기며",
-		"대미지를 줍니다. $[CooldownConfig]"
+		"대미지를 줍니다. $[COOLDOWN_CONFIG]"
 })
 public class Chaos extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Chaos.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -69,8 +71,26 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 
 	private static final RGB BLACK = RGB.of(1, 1, 1);
 	private final int distance = DistanceConfig.getValue();
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private final Circle CIRCLE = Circle.of(distance, distance * 4);
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 
@@ -93,7 +113,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 			for (Location loc : sCircle.rotateAroundAxisX(5).rotateAroundAxisZ(-5).rotateAroundAxisY(-6).toLocations(center)) {
 				ParticleLib.REDSTONE.spawnParticle(loc, BLACK);
 			}
-			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, center, distance, distance, STRICT_PREDICATE)) {
+			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, center, distance, distance, predicate)) {
 				if (entity instanceof Damageable) ((Damageable) entity).damage(1);
 				entity.setVelocity(center.toVector().subtract(entity.getLocation().toVector()).multiply(0.7));
 			}

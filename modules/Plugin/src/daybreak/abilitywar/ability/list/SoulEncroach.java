@@ -9,11 +9,13 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Points;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -36,7 +38,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 @AbilityManifest(name = "영혼 잠식", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 마지막으로 타격했던 플레이어가 $[DistanceConfig]칸 이내에 있는 경우에 한하여",
-		"3초간 대상의 영혼에 잠식하여 타겟팅할 수 없는 상태로 변합니다. $[CooldownConfig]",
+		"3초간 대상의 영혼에 잠식하여 타겟팅할 수 없는 상태로 변합니다. $[COOLDOWN_CONFIG]",
 		"영혼 잠식이 끝나면 영혼에서 빠져나오며 바라보는 방향으로 짧게 돌진하고",
 		"대상에게 대미지를 줍니다. 대상의 체력이 적을수록 더욱 큰 피해를 입히며,",
 		"잠식 도중 웅크리면 즉시 빠져나올 수 있습니다. 영혼에서 빠져나오며 입힌 피해로",
@@ -46,7 +48,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 })
 public class SoulEncroach extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(SoulEncroach.class, "Cooldown", 120,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SoulEncroach.class, "Cooldown", 120,
 			"# 쿨타임") {
 
 		@Override
@@ -156,8 +158,26 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	private static final RGB BLACK = RGB.of(1, 1, 1), WHITE = RGB.of(250, 250, 250);
 
 	private final int distance = DistanceConfig.getValue(), distanceSquared = distance * distance;
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-	private final Predicate<Entity> STRICT = Predicates.STRICT(getPlayer());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private final ActionbarChannel noticeChannel = newActionbarChannel();
 	private int killCount = 0;
 	private Player lastVictim = null;
@@ -236,7 +256,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 					}
 				}.setPeriod(TimeUnit.TICKS, 2).start();
 				gainHealth((getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - getPlayer().getHealth()) / 2.0);
-				Player nearest = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), STRICT.and(new Predicate<Entity>() {
+				Player nearest = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate.and(new Predicate<Entity>() {
 					private final Entity criterion = lastVictim;
 
 					@Override

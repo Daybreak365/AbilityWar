@@ -17,15 +17,21 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.10.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Interfaces</artifactId>
-            <version>${revision}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+			<artifactId>craftbukkit</artifactId>
+			<version>1.10.2-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>Interfaces</artifactId>
+			<version>${revision}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>Plugin</artifactId>
+			<version>${revision}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

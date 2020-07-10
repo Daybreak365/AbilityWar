@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -18,10 +19,12 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -31,13 +34,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-@AbilityManifest(name = "황제", rank = Rank.A, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "황제", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내",
-		"앞에 있는 모든 생명체와 물체를 밀쳐냅니다. $[CooldownConfig]"
+		"앞에 있는 모든 생명체와 물체를 밀쳐냅니다. $[COOLDOWN_CONFIG]"
 })
 public class Emperor extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Emperor.class, "Cooldown", 50,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Emperor.class, "Cooldown", 50,
 			"# 쿨타임") {
 
 		@Override
@@ -58,8 +61,19 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 
 	private final Set<ArmorStand> armorStands = new HashSet<>();
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (armorStands.contains(entity)) return false;
+			return (!(entity instanceof Player)) || (getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
+		}
+	};
+
 	private static final double radians = Math.toRadians(90);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer skill = new DurationTimer(140, cooldownTimer) {
 
 		private Vector direction;
@@ -130,10 +144,8 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 				gravityFalse = true;
 			}
 			for (ArmorStand armorStand : armorStands) {
-				for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, armorStand.getLocation(), 1.8, 1.8)) {
-					if (!armorStands.contains(entity) && !entity.equals(getPlayer())) {
-						entity.setVelocity(push);
-					}
+				for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, armorStand.getLocation(), 1.8, 1.8, predicate)) {
+					entity.setVelocity(push);
 				}
 			}
 		}

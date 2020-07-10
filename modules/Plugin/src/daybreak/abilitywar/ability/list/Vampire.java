@@ -7,11 +7,13 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Wing;
@@ -35,7 +37,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 @AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.UNDEAD, explain = {
 		"철괴를 우클릭하면 $[DurationConfig]초간 주위 $[DistanceConfig]칸 안에 있는 생명체들에게서",
-		"체력을 §c반칸§f씩 $[DurationConfig]번 흡혈합니다. $[CooldownConfig]",
+		"체력을 §c반칸§f씩 $[DurationConfig]번 흡혈합니다. $[COOLDOWN_CONFIG]",
 		"§e밤§f에는 쿨타임이 더 빠르게 끝나며, 체력을 매번 §c반칸§f씩 더 흡혈해",
 		"§c한칸§f씩 흡혈합니다. 능력 사용 중에는 땅 위에서 느리게 날 수 있습니다."
 })
@@ -51,7 +53,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Cool", 160,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Vampire.class, "Cool", 160,
 			"# 쿨타임") {
 
 		@Override
@@ -101,13 +103,29 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer()).and(new Predicate<Entity>() {
+	private final Predicate<Entity> STRICT_PREDICATE = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
-			return DamageUtil.canDamage(getPlayer(), entity, EntityDamageEvent.DamageCause.MAGIC, 1);
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (!DamageUtil.canDamage(getPlayer(), entity, EntityDamageEvent.DamageCause.MAGIC, 1)) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
 		}
-	});
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	};
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final int distance = DistanceConfig.getValue();
 	private final Circle circle = Circle.of(distance, distance * 15);
 	private static final RGB COLOR_BLOOD_RED = new RGB(138, 7, 7);

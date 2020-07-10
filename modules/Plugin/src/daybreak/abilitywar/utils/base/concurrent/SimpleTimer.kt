@@ -74,7 +74,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 
 	open fun resume(): Boolean {
 		if (isPaused) {
-			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task!!, initialDelay.toLong(), period.toLong())
+			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task!!, 0, period.toLong())
 			return true
 		}
 		return false

@@ -31,13 +31,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 		"상대방을 철괴로 §6우클릭§f하면 신자로 영입할 수 있습니다.",
 		"신자는 최대 게임에 참가중인 참가자 수의 §e1/2§f만큼 모을 수 있으며,",
 		"신자가 참가자 수의 §e1/4 §f이상 모이면 철괴를 §6좌클릭§f해",
-		"§c이단 심판§f을 시작할 수 있습니다. $[CooldownConfig]",
+		"§c이단 심판§f을 시작할 수 있습니다. $[COOLDOWN_CONFIG]",
 		"§c이단 심판§f이 진행중일 때 신자들과 교주는 서로 물리적으로 공격할 수 없으며,",
 		"§f이 종교를 믿지 않는 참가자를 공격할 때 추가 대미지를 주며 심판합니다."
 })
 public class ReligiousLeader extends AbilityBase implements TargetHandler, ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(ReligiousLeader.class, "Cooldown", 150,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(ReligiousLeader.class, "Cooldown", 150,
 			"# 쿨타임") {
 
 		@Override
@@ -90,7 +90,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 		getPlayer().sendMessage("§5[§d교주§5] §f" + message);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer skill = new DurationTimer(10, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {

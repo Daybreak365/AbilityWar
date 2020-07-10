@@ -7,9 +7,14 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import org.bukkit.entity.Damageable;
+import java.util.function.Predicate;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "고슴도치", rank = Rank.C, species = Species.ANIMAL, explain = {
 		"가시로 가까이에 있는 모든 생명체를 찌릅니다.",
@@ -31,17 +36,38 @@ public class Hedgehog extends AbilityBase {
 		super(participant);
 	}
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
 	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
 		protected void run(int count) {
 			if (!getPlayer().isDead()) {
 				double damage = DamageConfig.getValue();
-				for (Damageable damageable : LocationUtil.getNearbyDamageableEntities(getPlayer(), 1.5, 1.5)) {
-					damageable.damage(damage, getPlayer());
+				for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 1.5, 1.5, predicate)) {
+					livingEntity.setNoDamageTicks(0);
+					livingEntity.damage(damage, getPlayer());
 				}
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 10);
+	}.setPeriod(TimeUnit.TICKS, 7);
 
 }

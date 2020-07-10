@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -17,11 +18,13 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -48,6 +51,15 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 	private final CooldownTimer bombCool = new CooldownTimer(30, "물폭탄");
 	private final CooldownTimer spongeCool = new CooldownTimer(15, "스펀지");
 
+	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			return getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue();
+		}
+	};
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT)) {
@@ -57,7 +69,7 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 					for (Block b : LocationUtil.getBlocks3D(center, 2, false, true)) {
 						b.setType(Material.WATER);
 					}
-					for (Player p : LocationUtil.getNearbyPlayers(center, 5, 5)) {
+					for (Player p : LocationUtil.getNearbyEntities(Player.class, center, 5, 5, ONLY_PARTICIPANTS)) {
 						if (!p.equals(getPlayer())) {
 							p.damage(20, getPlayer());
 						}

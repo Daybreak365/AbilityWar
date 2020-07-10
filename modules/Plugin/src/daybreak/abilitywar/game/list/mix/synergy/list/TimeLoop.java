@@ -34,11 +34,11 @@ import org.bukkit.potion.PotionEffect;
 		"다른 플레이어가 나를 공격하거나, 내가 다른 플레이어를 공격한 경우",
 		"전투 시간이 연장됩니다. 전투에 참여한 플레이어를 공격한 플레이어,",
 		"전투에 참여한 플레이어가 공격한 플레이어는 모두",
-		"전투에 참여한 것으로 간주됩니다. $[CooldownConfig]"
+		"전투에 참여한 것으로 간주됩니다. $[COOLDOWN_CONFIG]"
 })
 public class TimeLoop extends Synergy {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(TimeLoop.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(TimeLoop.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -52,7 +52,7 @@ public class TimeLoop extends Synergy {
 		}
 
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final Map<Participant, PlayerLogger> loggers = new HashMap<>();
 	@Scheduled
 	private final Timer save = new Timer() {

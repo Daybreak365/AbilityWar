@@ -8,14 +8,15 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
@@ -51,7 +52,7 @@ import org.bukkit.event.entity.FireworkExplodeEvent;
 import org.bukkit.util.Vector;
 
 @AbilityManifest(name = "쇼 타임", rank = Rank.A, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[CooldownConfig]",
+		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
 		"능력으로 인해 깔린 레드 카펫 위에 있을 때 같은 월드의 모든 생명체가",
 		"자신을 바라보며, 깔린 레드 카펫은 $[DurationConfig]초 후 사라집니다.",
 		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받으며,",
@@ -63,7 +64,7 @@ import org.bukkit.util.Vector;
 @Support(min = Version.v1_11_R1)
 public class ShowTime extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(ShowTime.class, "Cooldown", 40,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "Cooldown", 40,
 			"# 쿨타임") {
 
 		@Override
@@ -95,7 +96,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 	};
 	private static final int radius = 7;
 	private final Map<Block, BlockSnapshot> carpets = new HashMap<>();
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
@@ -172,8 +173,35 @@ public class ShowTime extends Synergy implements ActiveHandler {
 	private final RGB POWERFUL = new RGB(255, 59, 59);
 	private final Circle circle = Circle.of(radius, 100);
 	private final Map<Firework, LivingEntity> execution = new HashMap<>();
-	private final Predicate<Entity> strictPredicate = Predicates.STRICT(getPlayer());
-	private final Predicate<Entity> unequalPredicate = Predicates.PARTICIPANTS_UNEQUAL(getPlayer());
+	private final Predicate<Entity> strictPredicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+	private final Predicate<Entity> unequalPredicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			return (!(entity instanceof Player)) || (getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
+		}
+	};
+
 	@Scheduled
 	private final Timer passive = new Timer() {
 

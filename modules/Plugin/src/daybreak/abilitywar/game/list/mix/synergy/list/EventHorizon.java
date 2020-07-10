@@ -8,7 +8,9 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -20,21 +22,23 @@ import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import java.util.LinkedList;
+import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 @AbilityManifest(name = "사건의 지평선", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 $[DurationConfig]초간 짙은 암흑 속으로 주변의 모든 생명체와",
-		"투사체, 블록들을 강한 힘으로 끌어당깁니다. $[CooldownConfig]"
+		"투사체, 블록들을 강한 힘으로 끌어당깁니다. $[COOLDOWN_CONFIG]"
 })
 public class EventHorizon extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(EventHorizon.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(EventHorizon.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -60,7 +64,26 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 	};
 	private static final RGB BLACK = RGB.of(1, 1, 1);
 	private static final Sphere sphere = Sphere.of(10, 10);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private Location center;
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 
@@ -82,7 +105,7 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 			for (Location loc : sphere.toLocations(center)) {
 				ParticleLib.REDSTONE.spawnParticle(loc, BLACK);
 			}
-			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, center, distance, distance)) {
+			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, center, distance, distance, predicate)) {
 				if (!entity.equals(getPlayer()) && !entity.hasMetadata("EventHorizon")) {
 					if (entity instanceof Damageable) ((Damageable) entity).damage(1);
 					entity.setVelocity(center.toVector().subtract(entity.getLocation().toVector()).multiply(1.2));

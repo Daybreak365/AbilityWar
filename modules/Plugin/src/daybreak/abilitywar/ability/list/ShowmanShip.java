@@ -7,10 +7,11 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
@@ -57,7 +58,50 @@ public class ShowmanShip extends AbilityBase {
 	private final Circle circle = Circle.of(radius, 100);
 
 	private final Map<Firework, LivingEntity> execution = new HashMap<>();
-	private final Predicate<Entity> strictPredicate = Predicates.STRICT(getPlayer());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+	private final Predicate<Entity> notEqualPredicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			return (!(entity instanceof Player)) || (getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
+		}
+	};
+
+	@SubscribeEvent
+	private void onFireworkExplode(FireworkExplodeEvent e) {
+		if (execution.containsKey(e.getEntity())) {
+			Firework firework = e.getEntity();
+			LivingEntity livingEntity = execution.get(firework);
+			if (!livingEntity.isDead()) {
+				livingEntity.damage(0, getPlayer());
+				livingEntity.getWorld().createExplosion(livingEntity.getLocation(), 2);
+				if (!livingEntity.isDead()) livingEntity.setHealth(0);
+				Location location = livingEntity.getEyeLocation().clone().add(0, 0.5, 0);
+				for (int i = 0; i < 4; i++) FireworkUtil.spawnRandomFirework(location, colors, colors, types, 1);
+			}
+			execution.remove(firework);
+		}
+	}
 
 	@Scheduled
 	private final Timer passive = new Timer() {
@@ -76,7 +120,7 @@ public class ShowmanShip extends AbilityBase {
 			} else {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 4, 2, true);
 				color = POWERFUL;
-				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, playerLocation, radius, strictPredicate)) {
+				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, playerLocation, radius, predicate)) {
 					if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead()) {
 						if (!execution.containsValue(livingEntity)) {
 							Firework firework = FireworkUtil.spawnRandomFirework(livingEntity.getEyeLocation().clone().add(0, 0.5, 0), colors, colors, types, 1);
@@ -94,31 +138,13 @@ public class ShowmanShip extends AbilityBase {
 
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	@SubscribeEvent
-	private void onFireworkExplode(FireworkExplodeEvent e) {
-		if (execution.containsKey(e.getEntity())) {
-			Firework firework = e.getEntity();
-			LivingEntity livingEntity = execution.get(firework);
-			if (!livingEntity.isDead()) {
-				livingEntity.damage(0, getPlayer());
-				livingEntity.getWorld().createExplosion(livingEntity.getLocation(), 2);
-				if (!livingEntity.isDead()) livingEntity.setHealth(0);
-				Location location = livingEntity.getEyeLocation().clone().add(0, 0.5, 0);
-				for (int i = 0; i < 4; i++) FireworkUtil.spawnRandomFirework(location, colors, colors, types, 1);
-			}
-			execution.remove(firework);
-		}
-	}
-
-	private final Predicate<Entity> unequalPredicate = Predicates.PARTICIPANTS_UNEQUAL(getPlayer());
-
 	private double getPoint(int horizontal, int vertical) {
 		Location center = getPlayer().getLocation();
 		double centerX = center.getX(), centerZ = center.getZ();
 		double point = 0;
 		for (Entity entity : LocationUtil.collectEntities(center, horizontal)) {
 			Location entityLocation = entity.getLocation();
-			if (LocationUtil.distanceSquared2D(centerX, centerZ, entityLocation.getX(), entityLocation.getZ()) <= (horizontal * horizontal) && NumberUtil.subtract(center.getY(), entityLocation.getY()) <= vertical && (unequalPredicate == null || unequalPredicate.test(entity))) {
+			if (LocationUtil.distanceSquared2D(centerX, centerZ, entityLocation.getX(), entityLocation.getZ()) <= (horizontal * horizontal) && NumberUtil.subtract(center.getY(), entityLocation.getY()) <= vertical && (notEqualPredicate == null || notEqualPredicate.test(entity))) {
 				if (entity instanceof Player) {
 					point += 1.0;
 				} else if (entity instanceof LivingEntity) {

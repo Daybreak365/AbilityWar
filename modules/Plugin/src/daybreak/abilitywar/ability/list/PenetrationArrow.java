@@ -10,11 +10,12 @@ import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
@@ -29,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -109,6 +111,47 @@ public class PenetrationArrow extends AbilityBase {
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
+		}
+	}
+
+	private abstract static class ArrowType {
+
+		private final String name;
+
+		private ArrowType(String name) {
+			this.name = name;
+		}
+
+		protected abstract void launchArrow(Arrow arrow, int powerEnchant);
+
+	}
+
+	private static final double GRAVITATIONAL_CONSTANT = 3;
+
 	@SubscribeEvent
 	private void onProjectileLaunch(EntityShootBowEvent e) {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
@@ -121,7 +164,7 @@ public class PenetrationArrow extends AbilityBase {
 				arrowBullet--;
 				actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
 				if (arrowBullet <= 0) {
-					final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0) * 15.0) : 15;
+					final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.3) * 15.0) : 15;
 					this.reload = new Timer(reloadCount) {
 						private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -147,31 +190,10 @@ public class PenetrationArrow extends AbilityBase {
 		}
 	}
 
-	@Override
-	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR) {
-			actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
-		}
-	}
-
-	private abstract static class ArrowType {
-
-		private final String name;
-
-		private ArrowType(String name) {
-			this.name = name;
-		}
-
-		protected abstract void launchArrow(Arrow arrow, int powerEnchant);
-
-	}
-
-	private static final double GRAVITATIONAL_CONSTANT = 3;
-
 	public interface OnHitBehavior {
 		OnHitBehavior CUT = new OnHitBehavior() {
 			@Override
-			public void onHit(Damageable damager, Damageable victim) {
+			public void onHit(PenetrationArrow ability, Damageable damager, Damageable victim) {
 				ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
 				if (victim instanceof LivingEntity) {
 					((LivingEntity) victim).setNoDamageTicks(0);
@@ -181,18 +203,36 @@ public class PenetrationArrow extends AbilityBase {
 		};
 		OnHitBehavior GRAVITY = new OnHitBehavior() {
 			@Override
-			public void onHit(Damageable damager, Damageable victim) {
+			public void onHit(PenetrationArrow ability, Damageable damager, Damageable victim) {
 				for (Location location : sphere.toLocations(victim.getLocation())) {
 					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
 				}
-				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, victim.getLocation(), 4, 4, Predicates.STRICT(damager))) {
+				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, victim.getLocation(), 4, 4, new Predicate<Entity>() {
+					@Override
+					public boolean test(Entity entity) {
+						if (entity.equals(damager)) return false;
+						if (entity instanceof Player) {
+							if (!ability.getGame().isParticipating(entity.getUniqueId())
+									|| (ability.getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) ability.getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+									|| !ability.getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+								return false;
+							}
+							if (ability.getGame() instanceof TeamGame) {
+								final TeamGame teamGame = (TeamGame) ability.getGame();
+								final Participant entityParticipant = ability.getGame().getParticipant(entity.getUniqueId()), participant = ability.getGame().getParticipant(damager.getUniqueId());
+								return participant == null || !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+							}
+						}
+						return true;
+					}
+				})) {
 					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
 				}
 			}
 		};
 		OnHitBehavior WIND = new OnHitBehavior() {
 			@Override
-			public void onHit(Damageable damager, Damageable victim) {
+			public void onHit(PenetrationArrow ability, Damageable damager, Damageable victim) {
 				Vector vector = damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-1);
 				if (vector.length() > 0.01) {
 					vector.normalize().multiply(2);
@@ -201,7 +241,7 @@ public class PenetrationArrow extends AbilityBase {
 			}
 		};
 
-		void onHit(Damageable damager, Damageable victim);
+		void onHit(PenetrationArrow ability, Damageable damager, Damageable victim);
 	}
 
 	public class Parabola<Shooter extends Entity & Damageable & ProjectileSource> extends Timer {
@@ -245,10 +285,10 @@ public class PenetrationArrow extends AbilityBase {
 					return;
 				}
 				entity.setLocation(location);
-				for (Damageable damageable : LocationUtil.getConflictingDamageables(entity.getBoundingBox())) {
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
 					if (damageable.isValid() && !damageable.isDead() && !shooter.equals(damageable) && !attacked.contains(damageable)) {
 						damageable.damage(EnchantLib.getDamageWithPowerEnchantment(Math.round(2.5 * velocity * 10) / 10.0, powerEnchant), getPlayer());
-						onHitBehavior.onHit(shooter, damageable);
+						onHitBehavior.onHit(PenetrationArrow.this, shooter, damageable);
 						attacked.add(damageable);
 					}
 				}

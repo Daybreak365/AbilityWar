@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
@@ -46,14 +47,22 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	private final AbilitySelect abilitySelect = newAbilitySelect();
 	private final Listener listener = new Listener() {
 		@EventHandler
-		public void onWeatherChange(WeatherChangeEvent e) {
+		private void onWeatherChange(WeatherChangeEvent e) {
 			if (Settings.getClearWeather() && e.toWeatherState()) e.setCancelled(true);
 		}
 
 		@EventHandler
-		public void onFoodLevelChange(FoodLevelChangeEvent e) {
+		private void onFoodLevelChange(FoodLevelChangeEvent e) {
 			if (Settings.getNoHunger()) {
 				e.setFoodLevel(19);
+			}
+		}
+
+		@EventHandler
+		private void onShootBow(EntityShootBowEvent e) {
+			if (Settings.getNoBlindFire() && e.getForce() < 0.75) {
+				if (e.getEntity() instanceof Player) e.getEntity().sendMessage("§c게임 설정에 따라, 활을 약하게 쏠 수 없습니다.");
+				e.setCancelled(true);
 			}
 		}
 	};

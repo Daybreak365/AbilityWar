@@ -11,12 +11,13 @@ import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
@@ -35,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -115,6 +117,26 @@ public class PenetrationSniper extends Synergy {
 		super(participant);
 	}
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
 	@SubscribeEvent
 	public void onProjectileLaunch(EntityShootBowEvent e) {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
@@ -125,7 +147,7 @@ public class PenetrationSniper extends Synergy {
 				}
 				arrowType.launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
-				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0) * 25.0) : 25;
+				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * 25.0) : 25;
 				this.reload = new Timer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -150,42 +172,6 @@ public class PenetrationSniper extends Synergy {
 		}
 	}
 
-	public interface OnHitBehavior {
-		OnHitBehavior CUT = new OnHitBehavior() {
-			@Override
-			public void onHit(Damageable damager, Damageable victim) {
-				ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
-				if (victim instanceof LivingEntity) {
-					((LivingEntity) victim).setNoDamageTicks(0);
-				}
-				victim.damage(5, damager);
-			}
-		};
-		OnHitBehavior GRAVITY = new OnHitBehavior() {
-			@Override
-			public void onHit(Damageable damager, Damageable victim) {
-				for (Location location : sphere.toLocations(victim.getLocation())) {
-					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
-				}
-				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, victim.getLocation(), 4, 4, Predicates.STRICT(damager))) {
-					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
-				}
-			}
-		};
-		OnHitBehavior WIND = new OnHitBehavior() {
-			@Override
-			public void onHit(Damageable damager, Damageable victim) {
-				Vector vector = damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-1);
-				if (vector.length() > 0.01) {
-					vector.normalize().multiply(2);
-				}
-				victim.setVelocity(vector.setY(0));
-			}
-		};
-
-		void onHit(Damageable damager, Damageable victim);
-	}
-
 	private abstract static class ArrowType {
 
 		private final String name;
@@ -196,6 +182,60 @@ public class PenetrationSniper extends Synergy {
 
 		protected abstract void launchArrow(Arrow arrow, int powerEnchant);
 
+	}
+
+	public interface OnHitBehavior {
+		OnHitBehavior CUT = new OnHitBehavior() {
+			@Override
+			public void onHit(PenetrationSniper ability, Damageable damager, Damageable victim) {
+				ParticleLib.SWEEP_ATTACK.spawnParticle(victim.getLocation(), 1, 1, 1, 3);
+				if (victim instanceof LivingEntity) {
+					((LivingEntity) victim).setNoDamageTicks(0);
+				}
+				victim.damage(5, damager);
+			}
+		};
+		OnHitBehavior GRAVITY = new OnHitBehavior() {
+			@Override
+			public void onHit(PenetrationSniper ability, Damageable damager, Damageable victim) {
+				for (Location location : sphere.toLocations(victim.getLocation())) {
+					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
+				}
+				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, victim.getLocation(), 4, 4, new Predicate<Entity>() {
+					@Override
+					public boolean test(Entity entity) {
+						if (entity.equals(damager)) return false;
+						if (entity instanceof Player) {
+							if (!ability.getGame().isParticipating(entity.getUniqueId())
+									|| (ability.getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) ability.getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+									|| !ability.getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+								return false;
+							}
+							if (ability.getGame() instanceof TeamGame) {
+								final TeamGame teamGame = (TeamGame) ability.getGame();
+								final Participant entityParticipant = ability.getGame().getParticipant(entity.getUniqueId()), participant = ability.getGame().getParticipant(damager.getUniqueId());
+								return participant == null || !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+							}
+						}
+						return true;
+					}
+				})) {
+					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
+				}
+			}
+		};
+		OnHitBehavior WIND = new OnHitBehavior() {
+			@Override
+			public void onHit(PenetrationSniper ability, Damageable damager, Damageable victim) {
+				Vector vector = damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-1);
+				if (vector.length() > 0.01) {
+					vector.normalize().multiply(2);
+				}
+				victim.setVelocity(vector.setY(0));
+			}
+		};
+
+		void onHit(PenetrationSniper ability, Damageable damager, Damageable victim);
 	}
 
 	public class Bullet<Shooter extends Entity & Damageable & ProjectileSource> extends Timer {
@@ -237,10 +277,10 @@ public class PenetrationSniper extends Synergy {
 					block.breakNaturally();
 					SoundLib.BLOCK_GLASS_BREAK.playSound(block.getLocation(), 3, 1);
 				}
-				for (Damageable damageable : LocationUtil.getConflictingDamageables(entity.getBoundingBox())) {
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable) && damageable.isValid() && !damageable.isDead() && !attacked.contains(damageable)) {
 						damageable.damage(EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant), shooter);
-						onHitBehavior.onHit(shooter, damageable);
+						onHitBehavior.onHit(PenetrationSniper.this, shooter, damageable);
 						attacked.add(damageable);
 					}
 				}

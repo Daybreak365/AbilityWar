@@ -20,13 +20,13 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 @AbilityManifest(name = "깃털", rank = Rank.A, species = Species.OTHERS, explain = {
-		"철괴를 우클릭하면 $[DurationConfig]초간 §b비행§f할 수 있습니다. $[CooldownConfig]",
+		"철괴를 우클릭하면 $[DurationConfig]초간 §b비행§f할 수 있습니다. $[COOLDOWN_CONFIG]",
 		"§b비행 §f중 웅크리면 바라보는 방향으로 돌진합니다.",
 		"낙하 대미지를 무시합니다."
 })
 public class Feather extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Feather.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Feather.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -55,7 +55,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer durationTimer = new DurationTimer(DurationConfig.getValue() * 4, cooldownTimer) {
 
 		@Override

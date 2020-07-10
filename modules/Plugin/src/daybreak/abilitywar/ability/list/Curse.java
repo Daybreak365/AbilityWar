@@ -8,10 +8,11 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -33,12 +34,12 @@ import org.bukkit.inventory.EntityEquipment;
 @AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
 		"주위 13칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타겟팅해 $[DurationConfig]초간",
 		"지속되는 저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
-		"대미지의 일부가 상대에게 전이됩니다. $[CooldownConfig]",
+		"대미지의 일부가 상대에게 전이됩니다. $[COOLDOWN_CONFIG]",
 		"대상의 체력이 적을 수록 더욱 큰 대미지를 입힐 수 있습니다."
 })
 public class Curse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Curse.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Curse.class, "Cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -67,12 +68,36 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final Predicate<Entity> STRICT = Predicates.STRICT(getPlayer());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+
+	private static final RGB BLACK = RGB.of(1, 1, 1);
+
+	private Player target = null;
+	private ArmorStand armorStand = null;
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
-			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 13, STRICT);
+			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 13, predicate);
 			if (player != null) {
 				target = player;
 				skill.start();
@@ -80,13 +105,6 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		}
 		return false;
 	}
-
-	private static final RGB BLACK = RGB.of(1, 1, 1);
-
-	private Player target = null;
-	private ArmorStand armorStand = null;
-
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 10, cooldownTimer) {
 		private int particle;
 

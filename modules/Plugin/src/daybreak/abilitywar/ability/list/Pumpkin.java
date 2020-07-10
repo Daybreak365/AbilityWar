@@ -8,6 +8,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -19,10 +21,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -30,12 +34,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 @AbilityManifest(name = "호박", rank = Rank.C, species = Species.OTHERS, explain = {
 		"철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 $[DurationConfig]초간",
-		"귀속 저주가 걸린 호박을 씌웁니다. $[CooldownConfig]",
+		"귀속 저주가 걸린 호박을 씌웁니다. $[COOLDOWN_CONFIG]",
 		"§5♪ §f호박 같은 네 얼굴 §5♪"
 })
 public class Pumpkin extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -64,7 +68,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	private final Timer music = new Timer(32) {
 
@@ -122,6 +126,26 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 3);
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
 	private Map<Player, ItemStack> players;
 
 	private final DurationTimer durationTimer = new DurationTimer(DurationConfig.getValue(), cooldownTimer) {
@@ -129,7 +153,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onDurationStart() {
 			players = new HashMap<>();
-			for (Player p : LocationUtil.getNearbyPlayers(getPlayer(), 30, 30)) {
+			for (Player p : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 30, 30, predicate)) {
 				players.put(p, p.getInventory().getHelmet());
 			}
 			music.start();

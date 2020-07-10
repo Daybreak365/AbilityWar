@@ -6,15 +6,16 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -27,56 +28,74 @@ import org.bukkit.util.Vector;
 })
 public class Ghost extends AbilityBase implements ActiveHandler {
 
+	public static final SettingObject<Integer> COOLDOWN_INCREASE_CONFIG = abilitySettings.new SettingObject<Integer>(Ghost.class, "CooldownIncrease", 3,
+			"# 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+
+	};
+
+	private static final Vector ZERO_VECTOR = new Vector();
+
 	public Ghost(Participant participant) throws IllegalStateException {
 		super(participant);
 	}
 
-	private static final Vector ZERO = new Vector();
-
+	private final int cooldownIncrease = COOLDOWN_INCREASE_CONFIG.getValue();
 	private Location targetLocation;
-
 	private final Timer skill = new Timer() {
-		GameMode originalMode;
-		Player p;
+		private GameMode originalMode;
+		private float flySpeed;
 
 		@Override
 		protected void onStart() {
-			this.p = getPlayer();
-			originalMode = p.getGameMode();
+			this.originalMode = getPlayer().getGameMode();
+			this.flySpeed = getPlayer().getFlySpeed();
 			getParticipant().attributes().TARGETABLE.setValue(false);
-			p.setGameMode(GameMode.SPECTATOR);
+			getPlayer().setGameMode(GameMode.SPECTATOR);
 		}
 
 		@Override
 		protected void run(int count) {
+			if (getPlayer().getSpectatorTarget() != null) getPlayer().setSpectatorTarget(null);
+			getPlayer().setFlySpeed(0f);
 			if (targetLocation != null && count <= 30) {
-				Location playerLocation = p.getLocation();
-				p.setVelocity(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.5));
+				final Location playerLocation = getPlayer().getLocation();
+				getPlayer().setVelocity(validateVector(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.5)));
 				if (playerLocation.distanceSquared(targetLocation) < 1) {
 					stop(false);
-					p.teleport(targetLocation.setDirection(getPlayer().getLocation().getDirection()));
+					getPlayer().teleport(targetLocation.setDirection(getPlayer().getLocation().getDirection()));
 				}
 			} else {
 				stop(true);
 				if (targetLocation != null)
-					p.teleport(targetLocation.setDirection(getPlayer().getLocation().getDirection()));
+					getPlayer().teleport(targetLocation.setDirection(getPlayer().getLocation().getDirection()));
 			}
 		}
 
 		@Override
 		protected void onEnd() {
-			p.setGameMode(originalMode);
-			p.setVelocity(ZERO);
-			getParticipant().attributes().TARGETABLE.setValue(true);
+			onSilentEnd();
 		}
 
 		@Override
 		protected void onSilentEnd() {
-			p.setGameMode(originalMode);
-			p.setVelocity(ZERO);
+			getPlayer().setGameMode(originalMode);
+			getPlayer().setVelocity(ZERO_VECTOR);
+			getPlayer().setFlySpeed(flySpeed);
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
+	private CooldownTimer cooldownTimer = null;
+	private int currentCooldown = 0;
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onMove(PlayerMoveEvent e) {
@@ -92,26 +111,43 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 		if (skill.isRunning() && getPlayer().getGameMode() == GameMode.SPECTATOR) e.setCancelled(true);
 	}
 
+	private static Vector validateVector(Vector vector) {
+		if (Math.abs(vector.getX()) > Double.MAX_VALUE) vector.setX(0);
+		if (Math.abs(vector.getY()) > Double.MAX_VALUE) vector.setY(0);
+		if (Math.abs(vector.getZ()) > Double.MAX_VALUE) vector.setZ(0);
+		return vector;
+	}
+
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {
 		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isRunning()) {
-			Block lastEmpty = null;
-			try {
-				for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection(), 1, 7); iterator.hasNext(); ) {
-					Block block = iterator.next();
-					if (!block.getType().isSolid()) {
-						lastEmpty = block;
+			if (cooldownTimer == null) {
+				Block lastEmpty = null;
+				try {
+					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection(), 1, 7); iterator.hasNext(); ) {
+						Block block = iterator.next();
+						if (!block.getType().isSolid()) {
+							lastEmpty = block;
+						}
 					}
+				} catch (IllegalStateException ignored) {
 				}
-			} catch (IllegalStateException ignored) {
-			}
-			if (lastEmpty != null) {
-				this.targetLocation = lastEmpty.getLocation();
-				skill.start();
-				return true;
-			} else {
-				getPlayer().sendMessage(ChatColor.RED + "바라보는 방향에 이동할 수 있는 곳이 없습니다.");
-			}
+				if (lastEmpty != null) {
+					this.targetLocation = lastEmpty.getLocation();
+					skill.start();
+					cooldownTimer = new CooldownTimer(currentCooldown += cooldownIncrease) {
+						@Override
+						public void onEnd() {
+							super.onEnd();
+							Ghost.this.cooldownTimer = null;
+						}
+					};
+					cooldownTimer.start();
+					return true;
+				} else {
+					getPlayer().sendMessage(ChatColor.RED + "바라보는 방향에 이동할 수 있는 곳이 없습니다.");
+				}
+			} else cooldownTimer.isCooldown();
 		}
 		return false;
 	}

@@ -1,6 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft.compat.block;
 
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import org.bukkit.block.Block;
 
@@ -16,81 +17,17 @@ public class BlockHandler {
 
 		BlockSnapshot createSnapshot(Block block);
 
-		static SnapshotSupplier newInstance(ServerVersion.Version version) {
-			switch (version) {
-				case v1_9_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_9_R2:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R2.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_10_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_10_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_11_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_11_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_12_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_12_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_13_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_13_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_13_R2:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_13_R2.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_14_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_14_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_15_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_15_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				case v1_16_R1:
-					return new SnapshotSupplier() {
-						@Override
-						public BlockSnapshot createSnapshot(Block block) {
-							return new daybreak.abilitywar.utils.base.minecraft.compat.v1_16_R1.block.BlockSnapshotImpl(block);
-						}
-					};
-				default:
-					throw new UnsupportedVersionException(version);
-			}
+		static SnapshotSupplier newInstance(Version version) {
+			return new SnapshotSupplier() {
+				@Override
+				public BlockSnapshot createSnapshot(Block block) {
+					try {
+						return (BlockSnapshot) Class.forName("daybreak.abilitywar.utils.base.minecraft.compat." + version.name() + ".block.BlockSnapshotImpl").getConstructor(Block.class).newInstance(block);
+					} catch (Exception ex) {
+						throw new UnsupportedVersionException(version);
+					}
+				}
+			};
 		}
 
 	}

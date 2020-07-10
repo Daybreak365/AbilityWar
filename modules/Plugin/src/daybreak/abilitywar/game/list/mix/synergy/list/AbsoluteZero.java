@@ -10,11 +10,12 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
@@ -56,16 +57,16 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 @AbilityManifest(name = "절대 영도", rank = Rank.S, species = Species.OTHERS, explain = {
-		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[LeftCooldownConfig]",
+		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[LeftCOOLDOWN_CONFIG]",
 		"§b얼음§f에 맞은 생명체는 2초간 얼어붙으며, 대미지를 입지 않습니다.",
 		"주변을 지나가는 발사체들이 모두 얼어붙어 바닥으로 떨어집니다.",
 		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
-		"철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. $[CooldownConfig]",
+		"철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]",
 		"우클릭 능력 사용시 주위에 있었던 모든 플레이어를 6초간 얼립니다."
 })
 public class AbsoluteZero extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "Cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -89,7 +90,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	};
 
-	private static final SettingObject<Integer> LeftCooldownConfig = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "LeftCooldown", 10, "# 좌클릭 쿨타임") {
+	private static final SettingObject<Integer> LeftCOOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "LeftCooldown", 10, "# 좌클릭 쿨타임") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -173,9 +174,27 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);
-	private final CooldownTimer yetiCooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-	private final CooldownTimer cooldownTimer = new CooldownTimer(LeftCooldownConfig.getValue());
-	private final Predicate<Entity> strictPredicate = Predicates.STRICT(getPlayer());
+	private final CooldownTimer yetiCooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(LeftCOOLDOWN_CONFIG.getValue());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private final List<Projectile> projectiles = new ArrayList<Projectile>() {
 		@Override
 		public boolean add(Projectile projectile) {
@@ -188,7 +207,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 		@Override
 		protected void run(int count) {
 			Location center = getPlayer().getLocation();
-			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, center, 7, 7)) {
+			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, center, 7, 7, null)) {
 				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7)) {
 					projectiles.add(projectile);
 					projectile.setVelocity(projectile.getVelocity().multiply(0.1));
@@ -252,7 +271,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 						@Override
 						protected void run(int count) {
 							if (fallingBlock.isValid() && !fallingBlock.isDead()) {
-								for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, boundingBox, strictPredicate)) {
+								for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, boundingBox, predicate)) {
 									if (frozenEntities.add(livingEntity)) {
 										new Frost(livingEntity).start();
 									}
@@ -270,7 +289,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 				if (!yetiCooldownTimer.isCooldown()) {
 					iceMaker.start();
 					yetiCooldownTimer.start();
-					for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer(), range, range)) {
+					for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
 						if (entity instanceof Player && !getGame().isParticipating((Player) entity)) continue;
 						new Frost(entity, 6).start();
 					}

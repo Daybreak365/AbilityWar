@@ -32,12 +32,12 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 		"좀비가 당신을 타게팅하지 않습니다.",
 		"다른 플레이어를 철괴로 우클릭하면 주변 $[RadiusConfig]칸 안에 속도가 점차 줄어드는",
 		"$[ZombieCountConfig]마리의 §5좀비§f를 소환합니다.",
-		"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다. $[CooldownConfig]"
+		"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다. $[COOLDOWN_CONFIG]"
 })
 @Support(min = Version.v1_9_R1, max = Version.v1_14_R1)
 public class Zombie extends AbilityBase implements TargetHandler {
 
-	private static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
+	private static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -92,7 +92,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 	private final double radius = RadiusConfig.getValue();
 	private final int zombieCount = ZombieCountConfig.getValue();
 	private final Set<org.bukkit.entity.Zombie> zombies = new HashSet<>(zombieCount);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private Player target;
 	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 

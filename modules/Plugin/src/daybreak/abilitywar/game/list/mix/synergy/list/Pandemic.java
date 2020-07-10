@@ -8,7 +8,9 @@ import daybreak.abilitywar.ability.list.Virus;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
+import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -16,7 +18,9 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import java.lang.reflect.InvocationTargetException;
+import java.util.function.Predicate;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "팬데믹", rank = Rank.A, species = Species.OTHERS, explain = {
@@ -35,6 +39,27 @@ public class Pandemic extends Synergy {
 		}
 
 	};
+
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
+
 	private final int size = SizeConfig.getValue();
 	private Location center;
 	private final SimpleTimer explosion = new SimpleTimer(TaskType.REVERSE, size) {
@@ -46,7 +71,7 @@ public class Pandemic extends Synergy {
 				location.getWorld().createExplosion(location, 2);
 				ParticleLib.SPELL.spawnParticle(location, 0, 0, 0, 1);
 			}
-			for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), size, size)) {
+			for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), size, size, predicate)) {
 				if (getGame().isParticipating(player)) {
 					try {
 						getGame().getParticipant(player).setAbility(Virus.class);

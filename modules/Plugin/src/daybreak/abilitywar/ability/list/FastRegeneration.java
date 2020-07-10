@@ -17,13 +17,13 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "빠른 회복", rank = Rank.A, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 빠른 회복 능력을 사용합니다. $[CooldownConfig]",
+		"철괴를 우클릭하면 빠른 회복 능력을 사용합니다. $[COOLDOWN_CONFIG]",
 		"능력 사용 중 체력을 빠르게 회복하며, 체력이 적을 수록",
 		"더 빠른 속도로 회복합니다."
 })
 public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
 			"# 쿨타임") {
 
 		@Override
@@ -52,7 +52,7 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	private final DurationTimer healthGain = new DurationTimer(DurationConfig.getValue() * 2, cooldownTimer) {
 

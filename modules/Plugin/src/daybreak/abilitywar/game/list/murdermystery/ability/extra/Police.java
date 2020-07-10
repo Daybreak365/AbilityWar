@@ -10,10 +10,13 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.manager.effect.Stun;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import java.util.function.Predicate;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -32,6 +35,16 @@ public class Police extends AbilityBase {
 	public Police(Participant participant) {
 		super(participant);
 	}
+
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			return (!(entity instanceof Player)) || (getGame().isParticipating(entity.getUniqueId())
+					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
+		}
+	};
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -116,7 +129,7 @@ public class Police extends AbilityBase {
 				MurderMystery murderMystery = (MurderMystery) getGame();
 				if (murderMystery.consumeGold(getParticipant(), 3)) {
 					getPlayer().sendMessage("§6전기 충격 §f능력을 사용했습니다.");
-					for (Player player : LocationUtil.getNearbyPlayers(getPlayer(), 7, 7)) {
+					for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 7, 7, predicate)) {
 						Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, 30);
 						player.sendMessage("§6전기 충격!");
 					}

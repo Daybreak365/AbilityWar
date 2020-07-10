@@ -10,11 +10,12 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.interfaces.TeamGame;
+import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
-import daybreak.abilitywar.utils.base.math.LocationUtil.Predicates;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -45,7 +46,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
 @AbilityManifest(name = "진검승부", rank = Rank.A, species = Species.HUMAN, explain = {
-		"다른 플레이어를 철괴로 우클릭하면 대상과의 진검승부를 시작합니다. $[CooldownConfig]",
+		"다른 플레이어를 철괴로 우클릭하면 대상과의 진검승부를 시작합니다. $[COOLDOWN_CONFIG]",
 		"진검승부가 시작되면 밖으로 나갈 수 없는 지름 5칸의 링이 생성",
 		"되고, 일시적으로 체력이 모두 회복되며 인벤토리 내의 모든 아이템이",
 		"제거됩니다. 진검승부 중에는 대상의 능력이 비활성화 되며,",
@@ -56,7 +57,7 @@ import org.bukkit.inventory.ItemStack;
 })
 public class VictoryBySword extends AbilityBase implements TargetHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Cooldown", 110,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Cooldown", 110,
 			"# 쿨타임") {
 
 		@Override
@@ -103,13 +104,31 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 	private static final Note G = Note.natural(0, Tone.G);
 
 	private static final RGB COLOR = new RGB(138, 25, 115);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
-	private final Predicate<Entity> STRICT_PREDICATE = Predicates.STRICT(getPlayer());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof TeamGame) {
+					final TeamGame teamGame = (TeamGame) getGame();
+					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				}
+			}
+			return true;
+		}
+	};
 	private final int duration = DurationConfig.getValue();
 
 	@Override
 	public void TargetSkill(Material materialType, LivingEntity entity) {
-		if (entity instanceof Player && STRICT_PREDICATE.test(entity) && !cooldownTimer.isCooldown() && ring == null) {
+		if (entity instanceof Player && predicate.test(entity) && !cooldownTimer.isCooldown() && ring == null) {
 			this.ring = new Ring(cooldownTimer, 5, (Player) entity);
 			ring.start();
 		}

@@ -24,11 +24,11 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 @AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
 		"지금 받을 대미지를 3초 뒤의 나에게 미루고, 넉백을 무시합니다.",
 		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.65배로 줄여 받습니다.",
-		"$[CooldownConfig]"
+		"$[COOLDOWN_CONFIG]"
 })
 public class Lazyness extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Lazyness.class, "Cooldown", 30,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lazyness.class, "Cooldown", 30,
 			"# 쿨타임") {
 
 		@Override
@@ -48,7 +48,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 	}
 
 	private final Set<DamageTimer> timers = new CopyOnWriteArraySet<>();
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	@SubscribeEvent(ignoreCancelled = true, priority = Priority.HIGHEST)
 	private void onEntityDamage(EntityDamageEvent e) {

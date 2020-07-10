@@ -27,11 +27,11 @@ import org.bukkit.block.BlockFace;
 
 @AbilityManifest(name = "설인", rank = Rank.S, species = Species.HUMAN, explain = {
 		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
-		"철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. $[CooldownConfig]"
+		"철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]"
 })
 public class Yeti extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -141,7 +141,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {

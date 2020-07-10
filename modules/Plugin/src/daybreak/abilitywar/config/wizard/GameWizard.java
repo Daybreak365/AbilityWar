@@ -19,21 +19,27 @@ import org.bukkit.plugin.Plugin;
 
 public class GameWizard extends SettingWizard {
 
-	private final ItemStack food, wreck, level, durability, firewall, clearWeather, visualEffect, abilityDraw, maxHealth;
+	private final ItemStack wreck, noBlindFire, food, level, durability, firewall, clearWeather, visualEffect, abilityDraw, maxHealth;
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, "§2§l게임 진행 설정", plugin);
-		this.food = new ItemStack(Material.COOKED_BEEF, 1);
-		{
-			ItemMeta meta = food.getItemMeta();
-			meta.setDisplayName("§b배고픔 무제한");
-			food.setItemMeta(meta);
-		}
 		this.wreck = new ItemStack(Material.NETHER_STAR, 1);
 		{
 			ItemMeta meta = wreck.getItemMeta();
 			meta.setDisplayName("§bWRECK");
 			wreck.setItemMeta(meta);
+		}
+		this.noBlindFire = new ItemStack(Material.BOW, 1);
+		{
+			ItemMeta meta = noBlindFire.getItemMeta();
+			meta.setDisplayName("§b활 난사 금지");
+			noBlindFire.setItemMeta(meta);
+		}
+		this.food = new ItemStack(Material.COOKED_BEEF, 1);
+		{
+			ItemMeta meta = food.getItemMeta();
+			meta.setDisplayName("§b배고픔 무제한");
+			food.setItemMeta(meta);
 		}
 		this.level = MaterialX.EXPERIENCE_BOTTLE.parseItem();
 		{
@@ -115,6 +121,16 @@ public class GameWizard extends SettingWizard {
 					gui.setItem(i, food);
 				}
 				break;
+				case 13: {
+					ItemMeta meta = noBlindFire.getItemMeta();
+					meta.setLore(Messager.asList(
+							"§a활성화§f하면 게임이 진행되는 동안 활시위를 일정량 이상 당겨야만 활을 쏠 수 있습니다.", "",
+							"§7상태 : " + (Settings.getNoBlindFire() ? "§a활성화" : "§c비활성화")));
+					noBlindFire.setItemMeta(meta);
+
+					gui.setItem(i, noBlindFire);
+				}
+				break;
 				case 14: {
 					ItemMeta levelMeta = level.getItemMeta();
 					levelMeta.setLore(Messager.asList(
@@ -160,7 +176,8 @@ public class GameWizard extends SettingWizard {
 				case 30: {
 					ItemMeta visualEffectMeta = visualEffect.getItemMeta();
 					visualEffectMeta.setLore(Messager.asList(
-							"§a활성화§f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다.", "",
+							"§a활성화§f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다.",
+							"§4주의§f: §c비활성화를 추천하지 않습니다.", "",
 							"§7상태 : " + (Settings.getVisualEffect() ? "§a활성화" : "§c비활성화")));
 					visualEffect.setItemMeta(visualEffectMeta);
 
@@ -205,10 +222,6 @@ public class GameWizard extends SettingWizard {
 		if (currentItem != null) {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
-					case "§b배고픔 무제한":
-						Configuration.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
-						Show();
-						break;
 					case "§bWRECK":
 						if (e.getClick() == ClickType.LEFT) {
 							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, !Settings.isWRECKEnabled());
@@ -217,6 +230,14 @@ public class GameWizard extends SettingWizard {
 							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, Settings.getCooldownDecrease().next().name());
 							Show();
 						}
+						break;
+					case "§b배고픔 무제한":
+						Configuration.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
+						Show();
+						break;
+					case "§b활 난사 금지":
+						Configuration.modifyProperty(ConfigNodes.GAME_NO_BLIND_FIRE, !Settings.getNoBlindFire());
+						Show();
 						break;
 					case "§b초반 지급 레벨":
 						int startLevel = Settings.getStartLevel();

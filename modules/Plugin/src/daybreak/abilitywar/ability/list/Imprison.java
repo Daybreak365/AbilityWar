@@ -27,13 +27,13 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 @AbilityManifest(name = "구속", rank = Rank.B, species = Species.HUMAN, explain = {
-		"상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. $[CooldownConfig]",
+		"상대방을 철괴로 우클릭하면 대상을 유리막 속에 가둡니다. $[COOLDOWN_CONFIG]",
 		"10초마다 §e강도 스택§f이 1씩 오르며, 최대 $[MaxSolidityConfig] 스택을 모을 수 있습니다.",
 		"§e강도 스택§f은 능력을 사용하면 초기화됩니다."
 })
 public class Imprison extends AbilityBase implements TargetHandler {
 
-	public static final SettingObject<Integer> CooldownConfig = abilitySettings.new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -69,7 +69,7 @@ public class Imprison extends AbilityBase implements TargetHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(CooldownConfig.getValue());
+	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
 	private final int maxSolidity = MaxSolidityConfig.getValue();
 	private int solidity = 1;
