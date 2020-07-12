@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -25,7 +24,6 @@ public class DevilBoots extends AbilityBase {
 		super(participant);
 	}
 
-	@Scheduled
 	private final Timer speed = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -69,7 +67,9 @@ public class DevilBoots extends AbilityBase {
 
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.ABILITY_DESTROY) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			speed.start();
+		} else if (update == Update.ABILITY_DESTROY) {
 			for (Block block : blocks) {
 				if (block.getType() == Material.FIRE) block.setType(Material.AIR);
 			}

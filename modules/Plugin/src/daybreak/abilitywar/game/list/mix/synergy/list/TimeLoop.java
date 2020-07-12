@@ -3,7 +3,6 @@ package daybreak.abilitywar.game.list.mix.synergy.list;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -54,7 +53,7 @@ public class TimeLoop extends Synergy {
 	};
 	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final Map<Participant, PlayerLogger> loggers = new HashMap<>();
-	@Scheduled
+
 	private final Timer save = new Timer() {
 		@Override
 		public void run(int count) {
@@ -64,6 +63,14 @@ public class TimeLoop extends Synergy {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 2);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			save.start();
+		}
+	}
+
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	private final Timer inCombat = new Timer(10) {
 		@Override
@@ -87,7 +94,7 @@ public class TimeLoop extends Synergy {
 		super(participant);
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = 6)
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
 			Player entity = (Player) e.getEntity();
@@ -108,7 +115,7 @@ public class TimeLoop extends Synergy {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = 6)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
 		if (cooldownTimer.isCooldown() || e.getEntity().equals(e.getDamager())) return;

@@ -97,8 +97,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 					case 1:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
-								Formatter.formatCommand(command, "start", "능력자 전쟁을 시작시킵니다.", true),
-								Formatter.formatCommand(command, "stop", "능력자 전쟁을 중지시킵니다.", true),
+								Formatter.formatCommand(command, "start", "게임을 시작시킵니다.", true),
+								Formatter.formatCommand(command, "stop", "게임을 중지시킵니다.", true),
 								Formatter.formatCommand(command, "check", "자신의 능력을 확인합니다.", false),
 								Formatter.formatCommand(command, "yes", "자신의 능력을 확정합니다.", false),
 								Formatter.formatCommand(command, "no", "자신의 능력을 변경합니다.", false),

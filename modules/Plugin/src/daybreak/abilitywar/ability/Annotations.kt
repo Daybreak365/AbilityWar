@@ -4,7 +4,6 @@ import org.bukkit.Material
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
-import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.annotation.AnnotationTarget.FUNCTION
 
 @Retention(RUNTIME)
@@ -28,10 +27,6 @@ annotation class AbilityManifest(val name: String, val rank: Rank, val species: 
 		OTHERS("§8기타");
 	}
 }
-
-@Retention(RUNTIME)
-@Target(FIELD)
-annotation class Scheduled
 
 @Retention(RUNTIME)
 @Target(CLASS)

@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -59,7 +58,7 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 			return "현재 " + (particleShowState ? "취약한 공격" : "방어 중인 공격") + "이 머리 위에 파티클로 뜹니다.";
 		}
 	};
-	@Scheduled
+
 	private final Timer particle = particleShowState ? new Timer() {
 
 		@Override
@@ -112,6 +111,7 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			actionbarChannel.update(getState());
+			particle.start();
 		}
 	}
 

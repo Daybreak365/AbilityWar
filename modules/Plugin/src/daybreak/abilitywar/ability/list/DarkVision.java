@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.interfaces.TeamGame;
@@ -59,7 +58,6 @@ public class DarkVision extends AbilityBase {
 
 	private final int distance = DistanceConfig.getValue();
 
-	@Scheduled
 	private final Timer darkVision = new Timer() {
 		@Override
 		public void run(int count) {
@@ -71,5 +69,12 @@ public class DarkVision extends AbilityBase {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			darkVision.start();
+		}
+	}
 
 }

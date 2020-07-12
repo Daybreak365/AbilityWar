@@ -3,7 +3,6 @@ package daybreak.abilitywar.game.list.mix.synergy.list;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -64,7 +63,6 @@ public class FlameMan extends Synergy implements ActiveHandler {
 		}
 
 	};
-	@Scheduled
 	private final Timer speed = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -72,7 +70,6 @@ public class FlameMan extends Synergy implements ActiveHandler {
 		}
 	};
 	private final LinkedList<Block> blocks = new LinkedList<>();
-	@Scheduled
 	private final Timer buff = new Timer() {
 		@Override
 		public void run(int count) {
@@ -159,7 +156,10 @@ public class FlameMan extends Synergy implements ActiveHandler {
 
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.ABILITY_DESTROY) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			speed.start();
+			buff.start();
+		} else if (update == Update.ABILITY_DESTROY) {
 			for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
 				if (MaterialX.MAGMA_BLOCK.compareType(key) || key.getType() == Material.LAVA || MaterialX.LAVA.compareType(key) || key.getType() == Material.FIRE) {

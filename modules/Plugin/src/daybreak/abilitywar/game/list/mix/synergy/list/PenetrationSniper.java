@@ -4,7 +4,6 @@ import com.google.common.collect.Iterables;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
@@ -69,9 +68,8 @@ public class PenetrationSniper extends Synergy {
 	private static final RGB PURPLE = new RGB(138, 9, 173);
 	private static final RGB YELLOW = new RGB(255, 246, 122);
 	private static final Sphere sphere = Sphere.of(4, 10);
-	private static final double GRAVITATIONAL_CONSTANT = 3;
 	private static final Circle CIRCLE = Circle.of(0.5, 15);
-	@Scheduled
+
 	private final Timer snipeMode = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -83,6 +81,14 @@ public class PenetrationSniper extends Synergy {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			snipeMode.start();
+		}
+	}
+
 	private final Random random = new Random();
 	private final List<ArrowType> arrowTypes = Arrays.asList(
 			new ArrowType(ChatColor.RED + "절단") {

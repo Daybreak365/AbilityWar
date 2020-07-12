@@ -3,7 +3,6 @@ package daybreak.abilitywar.game.list.mix.synergy.list;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -102,7 +101,7 @@ public class Bind extends Synergy implements ActiveHandler {
 	};
 	private final Random random = new Random();
 	private int solidity = 1;
-	@Scheduled
+
 	private final Timer stackAdder = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -144,7 +143,9 @@ public class Bind extends Synergy implements ActiveHandler {
 
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.ABILITY_DESTROY) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			stackAdder.start();
+		} else if (update == Update.ABILITY_DESTROY) {
 			for (Block block : blocks.keySet()) {
 				block.setType(Material.AIR);
 			}

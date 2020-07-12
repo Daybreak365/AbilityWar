@@ -1,10 +1,8 @@
 package daybreak.abilitywar.game.list.mix.synergy.list;
 
-import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -52,8 +50,8 @@ public class DoubleSniper extends Synergy {
 
 	private static final Material GLASS_PANE = ServerVersion.getVersionNumber() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
 	private static final RGB BULLET_COLOR = new RGB(43, 209, 224);
-	@Scheduled
-	private final AbilityBase.Timer snipeMode = new Timer() {
+
+	private final Timer snipeMode = new Timer() {
 		@Override
 		protected void run(int count) {
 			Material main = getPlayer().getInventory().getItemInMainHand().getType();
@@ -64,6 +62,14 @@ public class DoubleSniper extends Synergy {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			snipeMode.start();
+		}
+	}
+
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	private Timer reload = null;
 

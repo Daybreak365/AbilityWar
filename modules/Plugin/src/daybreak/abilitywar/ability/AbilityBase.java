@@ -37,7 +37,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.MatchResult;
@@ -83,53 +81,11 @@ public abstract class AbilityBase {
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
 	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
 
-	public static AbilityBase create(Class<? extends AbilityBase> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Preconditions.checkNotNull(abilityClass);
-		Preconditions.checkNotNull(participant);
-		if (AbilityFactory.isRegistered(abilityClass)) {
-			AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
-			AbilityBase abilityBase = registration.getConstructor().newInstance(participant);
-			if (registration.getScheduledTimers().size() > 0) {
-				Set<Field> scheduledTimers = registration.getScheduledTimers();
-				abilityBase.scheduledTimers = new ArrayList<>(scheduledTimers.size());
-				for (Field field : scheduledTimers) {
-					try {
-						GameTimer timer = (GameTimer) ReflectionUtil.setAccessible(field).get(abilityBase);
-						if (timer != null) {
-							abilityBase.scheduledTimers.add(timer);
-						}
-					} catch (IllegalAccessException ignored) {
-					}
-				}
-			}
-
-			for (int i = 0; i < abilityBase.explanation.length; i++) {
-				abilityBase.explanation[i] = SQUARE_BRACKET.replaceAll(abilityBase.explanation[i], abilityBase.fieldValueProvider);
-			}
-
-			return abilityBase;
-		} else {
-			throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
-		}
-	}
-
-	private final Participant participant;
-	private final AbilityRegistration registration;
-	private final AbilityManifest manifest;
-	private final String[] explanation;
-	private final AbstractGame game;
-	private final Map<Class<? extends Event>, EventObserver> eventhandlers;
-	private final List<GameTimer> timers = new LinkedList<>();
-	private List<GameTimer> scheduledTimers = null;
-	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
-
-	private boolean restricted;
-
 	private final Function<MatchResult, String> fieldValueProvider = new Function<MatchResult, String>() {
 		@Override
 		public String apply(MatchResult matchResult) {
-			Field field = registration.getFields().get(matchResult.group(1));
-			if (field != null) {
+			try {
+				final Field field = AbilityBase.this.getClass().getDeclaredField(matchResult.group(1));
 				if (Modifier.isStatic(field.getModifiers())) {
 					try {
 						return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
@@ -141,10 +97,34 @@ public abstract class AbilityBase {
 					} catch (IllegalAccessException ignored) {
 					}
 				}
+			} catch (NoSuchFieldException ignored) {
 			}
 			return "?";
 		}
 	};
+
+	private final Participant participant;
+	private final AbilityRegistration registration;
+	private final AbilityManifest manifest;
+	private String[] explanation = null;
+	private final AbstractGame game;
+	private final Map<Class<? extends Event>, EventObserver> eventhandlers;
+	private final List<GameTimer> timers = new LinkedList<>();
+	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
+
+	private boolean restricted;
+
+	public static <T extends AbilityBase> T create(Class<T> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Preconditions.checkNotNull(abilityClass);
+		Preconditions.checkNotNull(participant);
+		if (AbilityFactory.isRegistered(abilityClass)) {
+			AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
+			AbilityBase abilityBase = registration.getConstructor().newInstance(participant);
+			return abilityClass.cast(abilityBase);
+		} else {
+			throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
+		}
+	}
 
 	/**
 	 * {@link AbilityBase}의 기본 생성자입니다.
@@ -160,8 +140,6 @@ public abstract class AbilityBase {
 		}
 		this.registration = AbilityFactory.getRegistration(getClass());
 		this.manifest = registration.getManifest();
-		this.explanation = new String[manifest.explain().length];
-		System.arraycopy(manifest.explain(), 0, explanation, 0, explanation.length);
 		EventManager eventManager = game.getEventManager();
 		eventhandlers = new HashMap<>();
 		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
@@ -196,7 +174,7 @@ public abstract class AbilityBase {
 		this.restricted = game.isRestricted() || !game.isGameStarted();
 	}
 
-	protected void onUpdate(AbilityBase.Update update) {
+	protected void onUpdate(Update update) {
 	}
 
 	public enum Update {
@@ -248,6 +226,14 @@ public abstract class AbilityBase {
 	 * 능력의 설명을 반환합니다.
 	 */
 	public final Iterator<String> getExplanation() {
+		if (explanation == null) {
+			this.explanation = new String[manifest.explain().length];
+			System.arraycopy(manifest.explain(), 0, explanation, 0, explanation.length);
+			for (int i = 0; i < explanation.length; i++) {
+				explanation[i] = SQUARE_BRACKET.replaceAll(explanation[i], fieldValueProvider);
+			}
+		}
+
 		return new Iterator<String>() {
 			private int cursor = 0;
 
@@ -328,11 +314,6 @@ public abstract class AbilityBase {
 		} else {
 			while (!pausedTimers.isEmpty()) {
 				pausedTimers.poll().resume();
-			}
-			if (scheduledTimers != null) {
-				for (GameTimer timer : scheduledTimers) {
-					timer.start();
-				}
 			}
 			onUpdate(Update.RESTRICTION_CLEAR);
 			Bukkit.getPluginManager().callEvent(new AbilityRestrictionEvent(this, false));

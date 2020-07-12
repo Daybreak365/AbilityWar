@@ -203,8 +203,8 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public void TargetSkill(Material material, LivingEntity entity) {
+		if (material.equals(Material.IRON_INGOT)) {
 			if (entity != null) {
 				if (entity instanceof Player) {
 					if (!cooldownTimer.isCooldown()) {

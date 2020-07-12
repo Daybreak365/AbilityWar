@@ -127,7 +127,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 	private final int duration = DurationConfig.getValue();
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
+	public void TargetSkill(Material material, LivingEntity entity) {
 		if (entity instanceof Player && predicate.test(entity) && !cooldownTimer.isCooldown() && ring == null) {
 			this.ring = new Ring(cooldownTimer, 5, (Player) entity);
 			ring.start();

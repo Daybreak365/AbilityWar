@@ -37,7 +37,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
 @AbilityManifest(name = "죽음의 손아귀", rank = Rank.A, species = Species.OTHERS, explain = {
-
+		"철괴를 우클릭하면 공중으로 올라갔다 마지막으로 때린 플레이어의 방향으로 날아가",
+		"내려 찍으며 주변의 플레이어들에게 대미지를 입히고 날려보냅니다. $[COOLDOWN_CONFIG]"
 })
 public class DeathGrasp extends Synergy implements ActiveHandler {
 
@@ -100,14 +101,14 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 			int distance = 6 - count;
 
 			if (ServerVersion.getVersionNumber() >= 13) {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, true)) {
 					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
 					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);
 					FallingBlocks.spawnFallingBlock(location, block.getType(), false, getPlayer().getLocation().toVector().subtract(location.toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
 				}
 			} else {
-				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, false)) {
+				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, true)) {
 					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
 					if (block.getType() == Material.AIR) continue;
 					Location location = block.getLocation().add(0, 1, 0);

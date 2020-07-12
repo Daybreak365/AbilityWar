@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -181,7 +180,6 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	private final ActionbarChannel noticeChannel = newActionbarChannel();
 	private int killCount = 0;
 	private Player lastVictim = null;
-	@Scheduled
 	private final Timer notice = new Timer() {
 		private Player last;
 
@@ -337,6 +335,13 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	private void onPlayerTeleport(PlayerTeleportEvent e) {
 		if (e.getCause() == TeleportCause.PLUGIN) return;
 		if (skillTimer.isRunning() && getPlayer().getGameMode() == GameMode.SPECTATOR) e.setCancelled(true);
+	}
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			notice.start();
+		}
 	}
 
 }

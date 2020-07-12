@@ -1,5 +1,8 @@
 package daybreak.abilitywar.config.ability;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.config.Cache;
@@ -8,11 +11,11 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 import org.bukkit.configuration.InvalidConfigurationException;
 
@@ -26,13 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AbilitySettings {
 
 	private static final Logger logger = Logger.getLogger(Configuration.class.getName());
-
-	private final File configFile;
-	private final CommentedConfiguration config;
-	private final Set<SettingObject<?>> settings = new HashSet<>();
-	private final Map<SettingObject<?>, Cache> cache = new HashMap<>();
-	private long lastModified;
-	private boolean error = false;
+	private static final Map<String, AbilitySettings> abilitySettings = new HashMap<>();
+	private final Table<String, String, SettingObject<?>> settings = HashBasedTable.create();
 
 	public AbilitySettings(File configFile) {
 		this.configFile = configFile;
@@ -60,10 +58,42 @@ public class AbilitySettings {
 		} catch (IOException | InvalidConfigurationException e) {
 			this.error = true;
 		}
+		abilitySettings.put(configFile.getName(), this);
 	}
 
-	private void registerSetting(SettingObject<?> object) {
-		settings.add(object);
+	private final File configFile;
+	private final CommentedConfiguration config;
+
+	public static Collection<AbilitySettings> getAbilitySettings() {
+		return abilitySettings.values();
+	}
+
+	private final Map<SettingObject<?>, Cache> cache = new HashMap<>();
+	private long lastModified;
+	private boolean error = false;
+
+	public static AbilitySettings getAbilitySetting(String fileName) {
+		return abilitySettings.get(fileName);
+	}
+
+	public File getConfigFile() {
+		return configFile;
+	}
+
+	private void registerSetting(String name, SettingObject<?> object) {
+		settings.put(name, object.key, object);
+	}
+
+	public Table<String, String, SettingObject<?>> getSettings() {
+		return Tables.unmodifiableTable(settings);
+	}
+
+	public Map<String, SettingObject<?>> getSettings(String name) {
+		return Collections.unmodifiableMap(settings.row(name));
+	}
+
+	public SettingObject<?> getSetting(String name, String key) {
+		return settings.get(name, key);
 	}
 
 	public boolean isError() {
@@ -90,7 +120,7 @@ public class AbilitySettings {
 
 		cache.clear();
 		lastModified = configFile.lastModified();
-		for (SettingObject<?> setting : settings) {
+		for (SettingObject<?> setting : settings.values()) {
 			Object value = config.get(setting.getPath());
 			if (value != null) {
 				cache.put(setting, new Cache(false, value));
@@ -104,13 +134,12 @@ public class AbilitySettings {
 
 	public abstract class SettingObject<T> {
 
-		private final String key;
-		private final String path;
+		private final String key, path;
 		private final T defaultValue;
 		private final String[] comments;
 
 		public SettingObject(Class<? extends AbilityBase> abilityClass, String key, T defaultValue, String... comments) {
-			AbilityManifest manifest = checkNotNull(abilityClass).getAnnotation(AbilityManifest.class);
+			final AbilityManifest manifest = checkNotNull(abilityClass).getAnnotation(AbilityManifest.class);
 			if (manifest != null) {
 				this.path = "능력." + manifest.name() + "." + checkNotNull(key);
 			} else {
@@ -120,7 +149,7 @@ public class AbilitySettings {
 			this.key = key;
 			this.defaultValue = checkNotNull(defaultValue);
 			this.comments = comments;
-			registerSetting(this);
+			registerSetting(manifest.name(), this);
 		}
 
 		public String getKey() {

@@ -1,12 +1,13 @@
 package daybreak.abilitywar.config.ability.wizard;
 
-import daybreak.abilitywar.ability.AbilityFactory;
-import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.ability.wizard.setter.Setter;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,6 +17,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,19 +25,27 @@ import org.bukkit.plugin.Plugin;
 
 public class AbilitySettingWizard implements Listener {
 
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.AQUA + "이전 페이지")
+			.build();
+
+	private static final ItemStack NEXT_PAGE = new ItemBuilder()
+			.type(Material.ARROW)
+			.displayName(ChatColor.AQUA + "다음 페이지")
+			.build();
+
+	private static final ItemStack QUIT = new ItemBuilder()
+			.type(MaterialX.BIRCH_DOOR)
+			.displayName(ChatColor.AQUA + "나가기")
+			.build();
+
 	private final Player player;
-	private final Map<String, AbilityRegistration> abilities;
-	private AbilityRegistration currentAbility = null;
+	private AbilitySettings abilitySettings = null;
+	private Pair<String, Map<String, SettingObject<?>>> settings = null;
 
 	public AbilitySettingWizard(Player player, Plugin plugin) {
 		this.player = player;
-		Map<String, AbilityRegistration> abilities = new TreeMap<>();
-		for (AbilityRegistration registration : AbilityFactory.getRegistrations()) {
-			if (registration.getSettingObjects().size() > 0) {
-				abilities.put(registration.getManifest().name(), registration);
-			}
-		}
-		this.abilities = abilities;
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -43,93 +53,90 @@ public class AbilitySettingWizard implements Listener {
 	private Inventory gui;
 
 	public void openGUI(int page) {
-		if (currentAbility == null) {
-			this.gui = Bukkit.createInventory(null, 54, "능력 목록");
-			int maxPage = ((abilities.size() - 1) / 36) + 1;
-			if (maxPage < page || page < 1) page = 1;
-			this.currentPage = page;
+		if (abilitySettings != null) {
+			if (settings == null) {
+				this.gui = Bukkit.createInventory(null, 54, "능력 목록");
+				final Set<String> rowKeySet = abilitySettings.getSettings().rowKeySet();
+				int maxPage = ((rowKeySet.size() - 1) / 36) + 1;
+				if (maxPage < page || page < 1) page = 1;
+				this.currentPage = page;
 
-			int count = 0;
-			for (String ability : abilities.keySet()) {
-				if (count / 36 == page - 1) {
-					ItemStack stack = new ItemStack(Material.BOOK);
-					ItemMeta meta = stack.getItemMeta();
-					meta.setDisplayName("§b" + ability);
-					stack.setItemMeta(meta);
-
-					gui.setItem(count % 36, stack);
+				int count = 0;
+				for (String ability : rowKeySet) {
+					if (count / 36 == page - 1) {
+						final ItemStack stack = new ItemStack(Material.BOOK);
+						final ItemMeta meta = stack.getItemMeta();
+						meta.setDisplayName(ChatColor.AQUA + ability);
+						stack.setItemMeta(meta);
+						gui.setItem(count % 36, stack);
+					}
+					count++;
 				}
-				count++;
-			}
 
-			if (page > 1) {
-				ItemStack stack = new ItemStack(Material.ARROW, 1);
-				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.AQUA + "이전 페이지");
+				if (page > 1) gui.setItem(48, PREVIOUS_PAGE);
+				if (page != maxPage) gui.setItem(50, NEXT_PAGE);
+
+				gui.setItem(53, QUIT);
+
+				final ItemStack stack = new ItemStack(Material.PAPER, 1);
+				final ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 				stack.setItemMeta(meta);
-				gui.setItem(48, stack);
-			}
+				gui.setItem(49, stack);
+			} else {
+				this.gui = Bukkit.createInventory(null, 27, settings.getLeft());
 
-			if (page != maxPage) {
-				ItemStack stack = new ItemStack(Material.ARROW, 1);
-				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.AQUA + "다음 페이지");
+				int maxPage = ((settings.getRight().size() - 1) / 18) + 1;
+				if (maxPage < page || page < 1) page = 1;
+				this.currentPage = page;
+
+				int count = 0;
+				for (SettingObject<?> settingObject : settings.getRight().values()) {
+					if (count / 18 == page - 1) {
+						gui.setItem(count % 18, Setter.getInstance(settingObject).getItem(settingObject));
+					}
+					count++;
+				}
+
+				if (page > 1) gui.setItem(21, PREVIOUS_PAGE);
+				if (page != maxPage) gui.setItem(23, NEXT_PAGE);
+
+				gui.setItem(26, QUIT);
+
+				final ItemStack stack = new ItemStack(Material.PAPER, 1);
+				final ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 				stack.setItemMeta(meta);
-				gui.setItem(50, stack);
+				gui.setItem(22, stack);
 			}
-
-			ItemStack stack = new ItemStack(Material.PAPER, 1);
-			ItemMeta meta = stack.getItemMeta();
-			meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
-			stack.setItemMeta(meta);
-			gui.setItem(49, stack);
-
-			player.openInventory(gui);
 		} else {
-			this.gui = Bukkit.createInventory(null, 27, currentAbility.getManifest().name());
-
-			int maxPage = ((currentAbility.getSettingObjects().size() - 1) / 18) + 1;
+			this.gui = Bukkit.createInventory(null, 18, "능력 설정 파일 목록");
+			int maxPage = ((AbilitySettings.getAbilitySettings().size() - 1) / 9) + 1;
 			if (maxPage < page || page < 1) page = 1;
 			this.currentPage = page;
 
 			int count = 0;
-			for (SettingObject<?> settingObject : currentAbility.getSettingObjects().values()) {
-				if (count / 18 == page - 1) {
-					gui.setItem(count % 18, Setter.getInstance(settingObject).getItem(settingObject));
+			for (AbilitySettings abilitySettings : AbilitySettings.getAbilitySettings()) {
+				if (count / 9 == page - 1) {
+					final ItemStack stack = new ItemStack(Material.PAPER);
+					final ItemMeta meta = stack.getItemMeta();
+					meta.setDisplayName(abilitySettings.getConfigFile().getName());
+					stack.setItemMeta(meta);
+					gui.setItem(count % 9, stack);
 				}
 				count++;
 			}
 
-			if (page > 1) {
-				ItemStack stack = new ItemStack(Material.ARROW, 1);
-				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.AQUA + "이전 페이지");
-				stack.setItemMeta(meta);
-				gui.setItem(21, stack);
-			}
+			if (page > 1) gui.setItem(12, PREVIOUS_PAGE);
+			if (page != maxPage) gui.setItem(14, NEXT_PAGE);
 
-			if (page != maxPage) {
-				ItemStack stack = new ItemStack(Material.ARROW, 1);
-				ItemMeta meta = stack.getItemMeta();
-				meta.setDisplayName(ChatColor.AQUA + "다음 페이지");
-				stack.setItemMeta(meta);
-				gui.setItem(23, stack);
-			}
-
-			ItemStack stack = new ItemStack(Material.PAPER, 1);
-			ItemMeta meta = stack.getItemMeta();
+			final ItemStack stack = new ItemStack(Material.PAPER, 1);
+			final ItemMeta meta = stack.getItemMeta();
 			meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 			stack.setItemMeta(meta);
-			gui.setItem(22, stack);
-
-			ItemStack quit = MaterialX.OAK_DOOR.parseItem();
-			ItemMeta quitMeta = stack.getItemMeta();
-			quitMeta.setDisplayName("§c나가기");
-			quit.setItemMeta(quitMeta);
-			gui.setItem(26, quit);
-
-			player.openInventory(gui);
+			gui.setItem(13, stack);
 		}
+		player.openInventory(gui);
 	}
 
 	@EventHandler
@@ -140,13 +147,20 @@ public class AbilitySettingWizard implements Listener {
 	}
 
 	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			HandlerList.unregisterAll(this);
+		}
+	}
+
+	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
 		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
 
-			ItemStack clicked = e.getCurrentItem();
+			final ItemStack clicked = e.getCurrentItem();
 			if (clicked != null && !clicked.getType().equals(Material.AIR) && clicked.hasItemMeta() && clicked.getItemMeta().hasDisplayName()) {
-				String stripName = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
+				final String stripName = ChatColor.stripColor(clicked.getItemMeta().getDisplayName());
 				if (clicked.getType().equals(Material.ARROW)) {
 					if (stripName.equals("이전 페이지")) {
 						openGUI(currentPage - 1);
@@ -156,22 +170,30 @@ public class AbilitySettingWizard implements Listener {
 						return;
 					}
 				}
-				if (currentAbility == null) {
-					if (abilities.containsKey(stripName)) {
-						this.currentAbility = abilities.get(stripName);
-						openGUI(1);
-					}
-				} else {
-					if (MaterialX.OAK_DOOR.compareType(clicked) && stripName.equals("나가기")) {
-						currentAbility = null;
-						openGUI(1);
+				if (abilitySettings != null) {
+					if (settings == null) {
+						if (MaterialX.BIRCH_DOOR.compareType(clicked) && stripName.equals("나가기")) {
+							abilitySettings = null;
+							openGUI(1);
+						} else if (clicked.getType() == Material.BOOK) {
+							this.settings = Pair.of(stripName, abilitySettings.getSettings(stripName));
+							openGUI(1);
+						}
 					} else {
-						SettingObject<?> settingObject = currentAbility.getSettingObjects().get(stripName);
-						if (settingObject != null) {
-							if (Setter.getInstance(settingObject).onClick(settingObject, e.getClick()))
-								openGUI(currentPage);
+						if (MaterialX.BIRCH_DOOR.compareType(clicked) && stripName.equals("나가기")) {
+							settings = null;
+							openGUI(1);
+						} else {
+							final SettingObject<?> settingObject = abilitySettings.getSetting(settings.getLeft(), stripName);
+							if (settingObject != null) {
+								if (Setter.getInstance(settingObject).onClick(settingObject, e.getClick()))
+									openGUI(currentPage);
+							}
 						}
 					}
+				} else {
+					this.abilitySettings = AbilitySettings.getAbilitySetting(stripName);
+					openGUI(1);
 				}
 			}
 		}

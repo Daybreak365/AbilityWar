@@ -5,7 +5,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
@@ -31,7 +30,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 })
 public class Murderer extends AbilityBase {
 
-	@Scheduled
 	private final Timer PASSIVE = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -85,6 +83,7 @@ public class Murderer extends AbilityBase {
 					}
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 50).start();
+			PASSIVE.start();
 		}
 	}
 

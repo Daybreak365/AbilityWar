@@ -5,7 +5,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -64,7 +63,6 @@ public class BombArrow extends AbilityBase {
 	private int stack = 0;
 	private final int maxStack = MaxStackConfig.getValue();
 
-	@Scheduled
 	private final Timer stackAdder = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -74,6 +72,13 @@ public class BombArrow extends AbilityBase {
 			}
 		}
 	}.setPeriod(TimeUnit.SECONDS, WRECK.isEnabled(getGame()) ? (int) (StackPeriodConfig.getValue() / (Settings.getCooldownDecrease().getPercentage() / 25.0)) : StackPeriodConfig.getValue());
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			stackAdder.start();
+		}
+	}
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 

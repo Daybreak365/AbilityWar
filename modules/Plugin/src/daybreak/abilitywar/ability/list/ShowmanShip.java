@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.interfaces.TeamGame;
@@ -103,7 +102,6 @@ public class ShowmanShip extends AbilityBase {
 		}
 	}
 
-	@Scheduled
 	private final Timer passive = new Timer() {
 
 		@Override
@@ -137,6 +135,13 @@ public class ShowmanShip extends AbilityBase {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			passive.start();
+		}
+	}
 
 	private double getPoint(int horizontal, int vertical) {
 		Location center = getPlayer().getLocation();

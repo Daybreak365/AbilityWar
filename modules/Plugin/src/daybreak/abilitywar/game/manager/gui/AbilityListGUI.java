@@ -81,22 +81,23 @@ public class AbilityListGUI implements Listener {
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
 				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
-				List<String> lore = Messager.asList(
+				final List<String> lore = Messager.asList(
 						"§f등급: " + manifest.rank().getRankName(),
 						"§f종류: " + manifest.species().getSpeciesName(),
 						joiner.toString(),
 						"");
-				Function<MatchResult, String> valueProvider = new Function<MatchResult, String>() {
+				final Function<MatchResult, String> valueProvider = new Function<MatchResult, String>() {
 					@Override
 					public String apply(MatchResult matchResult) {
-						Field field = registration.getFields().get(matchResult.group(1));
-						if (field != null) {
+						try {
+							final Field field = registration.getAbilityClass().getDeclaredField(matchResult.group(1));
 							if (Modifier.isStatic(field.getModifiers())) {
 								try {
 									return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
 								} catch (IllegalAccessException ignored) {
 								}
 							}
+						} catch (NoSuchFieldException ignored) {
 						}
 						return "?";
 					}

@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -74,7 +73,6 @@ public class Imprison extends AbilityBase implements TargetHandler {
 	private final int maxSolidity = MaxSolidityConfig.getValue();
 	private int solidity = 1;
 
-	@Scheduled
 	private final Timer stackAdder = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -90,8 +88,8 @@ public class Imprison extends AbilityBase implements TargetHandler {
 	private final Map<Block, Integer> blocks = new HashMap<>();
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public void TargetSkill(Material material, LivingEntity entity) {
+		if (material.equals(Material.IRON_INGOT)) {
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {
 					for (Block block : LocationUtil.getBlocks3D(entity.getLocation(), SizeConfig.getValue(), true, true)) {
@@ -113,7 +111,9 @@ public class Imprison extends AbilityBase implements TargetHandler {
 
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.ABILITY_DESTROY) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			stackAdder.start();
+		} else if (update == Update.ABILITY_DESTROY) {
 			for (Block block : blocks.keySet()) {
 				block.setType(Material.AIR);
 			}

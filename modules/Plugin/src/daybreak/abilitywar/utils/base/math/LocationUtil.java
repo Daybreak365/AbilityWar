@@ -7,6 +7,7 @@ import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary;
+import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundaryData;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -457,20 +458,48 @@ public class LocationUtil {
 	}
 
 	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<Entity> predicate) {
-		List<T> entities = new ArrayList<>();
-		World world = boundingBox.getCenter().getWorld();
-		Chunk chunk = boundingBox.getCenter().getChunk();
+		final List<T> entities = new ArrayList<>();
+		final World world = boundingBox.getCenter().getWorld();
+		final Chunk chunk = boundingBox.getCenter().getChunk();
 		int chunkX = chunk.getX(), chunkZ = chunk.getZ();
 		for (int x = chunkX - 1; x <= chunkX + 1; x++) {
 			for (int z = chunkZ - 1; z <= chunkZ + 1; z++) {
 				for (Entity e : world.getChunkAt(x, z).getEntities()) {
 					if (entityType.isAssignableFrom(e.getClass())) {
 						@SuppressWarnings("unchecked") T entity = (T) e;
-						Boundary.BoundaryData boundaryData = Boundary.BoundaryData.of(entity.getType());
+						BoundaryData boundaryData = BoundaryData.of(entity.getType());
 						Location entityLocation = entity.getLocation();
 						double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
 						if (entityX + boundaryData.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < boundingBox.getMaxY() &&
 								boundingBox.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityZ + boundaryData.getMaxZ() &&
+								(predicate == null || predicate.test(entity))) {
+							entities.add(entity);
+						}
+					}
+				}
+			}
+		}
+		return entities;
+	}
+
+	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, Entity base, Predicate<Entity> predicate) {
+		final List<T> entities = new ArrayList<>();
+		final Location baseLocation = base.getLocation();
+		final World world = baseLocation.getWorld();
+		final Chunk chunk = baseLocation.getChunk();
+		final int chunkX = chunk.getX(), chunkZ = chunk.getZ();
+		final double baseX = baseLocation.getX(), baseY = baseLocation.getY(), baseZ = baseLocation.getZ();
+		BoundaryData baseBoundary = BoundaryData.of(base.getType());
+		for (int x = chunkX - 1; x <= chunkX + 1; x++) {
+			for (int z = chunkZ - 1; z <= chunkZ + 1; z++) {
+				for (Entity e : world.getChunkAt(x, z).getEntities()) {
+					if (entityType.isAssignableFrom(e.getClass())) {
+						@SuppressWarnings("unchecked") T entity = (T) e;
+						final BoundaryData boundaryData = BoundaryData.of(entity.getType());
+						final Location entityLocation = entity.getLocation();
+						final double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
+						if (entityX + boundaryData.getMinX() < baseX + baseBoundary.getMaxX() && baseX + baseBoundary.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < baseY + baseBoundary.getMaxY() &&
+								baseY + baseBoundary.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < baseZ + baseBoundary.getMaxZ() && baseZ + baseBoundary.getMinZ() < entityZ + boundaryData.getMaxZ() &&
 								(predicate == null || predicate.test(entity))) {
 							entities.add(entity);
 						}

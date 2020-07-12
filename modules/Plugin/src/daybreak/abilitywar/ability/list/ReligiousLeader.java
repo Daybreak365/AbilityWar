@@ -213,8 +213,8 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-		if (materialType.equals(Material.IRON_INGOT) && religionName != null && entity instanceof Player) {
+	public void TargetSkill(Material material, LivingEntity entity) {
+		if (material.equals(Material.IRON_INGOT) && religionName != null && entity instanceof Player) {
 			if (belivers.size() < maxBelivers) {
 				Player target = (Player) entity;
 				if (getGame().isParticipating(target) && belivers.add(getGame().getParticipant(target))) {

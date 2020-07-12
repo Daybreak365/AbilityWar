@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
@@ -59,7 +58,6 @@ public class Sniper extends AbilityBase {
 	private static final Material GLASS_PANE = ServerVersion.getVersionNumber() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
 	private static final RGB BULLET_COLOR = new RGB(43, 209, 224);
 
-	@Scheduled
 	private final Timer snipeMode = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -71,6 +69,13 @@ public class Sniper extends AbilityBase {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			snipeMode.start();
+		}
+	}
 
 	private Timer reload = null;
 

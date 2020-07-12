@@ -85,8 +85,8 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 		protected void onDurationStart() {
 			Location playerLocation = getPlayer().getLocation();
 			direction = playerLocation.getDirection();
-			Location lineTarget = playerLocation.clone().add(direction.clone().setY(0).normalize().multiply(3));
-			for (Vector vector : Line.between(playerLocation, lineTarget, 4)) {
+			Location lineTarget = playerLocation.clone().add(direction.clone().setY(0).normalize().multiply(3.75));
+			for (Vector vector : Line.between(playerLocation, lineTarget, 5)) {
 				final double originX = vector.getX();
 				final double originZ = vector.getZ();
 				armorStands.add(getPlayer().getWorld().spawn(playerLocation.clone().add(vector.clone()
@@ -98,7 +98,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 						.setZ(rotateZ(originX, originZ, radians * 3))), ArmorStand.class)
 				);
 			}
-			Vector centerVector = lineTarget.toVector();
+			final Vector centerVector = lineTarget.toVector();
 			this.center = getPlayer().getWorld().spawn(lineTarget, ArmorStand.class);
 			if (ServerVersion.getVersionNumber() >= 10) {
 				center.setInvulnerable(true);
@@ -106,7 +106,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 			}
 			center.setVisible(false);
 
-			EulerAngle eulerAngle = new EulerAngle(Math.toRadians(270), Math.toRadians(270), 0);
+			final EulerAngle eulerAngle = new EulerAngle(Math.toRadians(270), Math.toRadians(270), 0);
 			diff = new HashMap<>();
 			for (ArmorStand armorStand : armorStands) {
 				if (ServerVersion.getVersionNumber() >= 10) {
@@ -118,7 +118,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 				armorStand.setVisible(false);
 				armorStand.setRightArmPose(eulerAngle);
 				armorStand.setGravity(false);
-				EntityEquipment equipment = armorStand.getEquipment();
+				final EntityEquipment equipment = armorStand.getEquipment();
 				equipment.setItemInMainHand(new ItemStack(Material.SHIELD));
 				equipment.setHelmet(MaterialX.GOLDEN_HELMET.parseItem());
 				diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector).add(direction.clone()));
@@ -144,7 +144,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 				gravityFalse = true;
 			}
 			for (ArmorStand armorStand : armorStands) {
-				for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, armorStand.getLocation(), 1.8, 1.8, predicate)) {
+				for (Entity entity : LocationUtil.getConflictingEntities(Entity.class, armorStand, predicate)) {
 					entity.setVelocity(push);
 				}
 			}

@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -59,7 +58,6 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	@Scheduled
 	private final Timer buff = new Timer() {
 
 		@Override
@@ -131,7 +129,9 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.ABILITY_DESTROY) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			buff.start();
+		} else if (update == Update.ABILITY_DESTROY) {
 			for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
 				if (key.getType() == Material.PACKED_ICE || key.getType() == Material.OBSIDIAN || key.getType() == Material.SNOW_BLOCK || key.getType() == Material.SNOW) {

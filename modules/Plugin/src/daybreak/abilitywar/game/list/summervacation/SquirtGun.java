@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -101,7 +100,6 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 
 	private final List<Arrow> arrows = new LinkedList<>();
 
-	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -111,6 +109,13 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 			PotionEffects.NIGHT_VISION.addPotionEffect(getPlayer(), 400, 0, true);
 		}
 	}.setPeriod(TimeUnit.TICKS, 3);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			passive.start();
+		}
+	}
 
 	@SubscribeEvent
 	public void onProjectileLaunch(ProjectileLaunchEvent e) {

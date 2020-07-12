@@ -7,7 +7,6 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
@@ -29,10 +28,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 
@@ -48,7 +45,6 @@ public class AbilityFactory {
 
 	private static final Map<String, Class<? extends AbilityBase>> usedNames = new HashMap<>();
 	private static final Map<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
-	private static final Map<Class<? extends AbilityBase>, Class<? extends AbilityBase>> alternatives = new HashMap<>();
 
 	static {
 		registerAbility(Assassin.class);
@@ -150,9 +146,6 @@ public class AbilityFactory {
 					Class<? extends AbilityBase> registeredClass = registration.getAbilityClass();
 					registeredAbilities.put(registeredClass, registration);
 					usedNames.put(name, registeredClass);
-					if (abilityClass != registeredClass) {
-						alternatives.put(abilityClass, registeredClass);
-					}
 				} else {
 					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
@@ -169,12 +162,10 @@ public class AbilityFactory {
 	}
 
 	public static AbilityRegistration getRegistration(Class<? extends AbilityBase> clazz) {
-		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
 		return registeredAbilities.get(clazz);
 	}
 
 	public static boolean isRegistered(Class<? extends AbilityBase> clazz) {
-		if (alternatives.containsKey(clazz)) clazz = alternatives.get(clazz);
 		return registeredAbilities.containsKey(clazz);
 	}
 
@@ -232,14 +223,11 @@ public class AbilityFactory {
 		private final Constructor<? extends AbilityBase> constructor;
 		private final AbilityManifest manifest;
 		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
-		private final Map<String, Field> fields;
 		private final Map<String, SettingObject<?>> settingObjects;
-		private final Set<Field> scheduledTimers;
 		private final ImmutableSet<Material> materials;
 		private final int flag;
 
 
-		@SuppressWarnings("unchecked")
 		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException {
 			if (clazz.isAnnotationPresent(Support.class)) {
 				Support supported = clazz.getAnnotation(Support.class);
@@ -263,34 +251,23 @@ public class AbilityFactory {
 				if (subscribeEvent != null) {
 					Class<?>[] parameters = method.getParameterTypes();
 					if (parameters.length == 1 && Event.class.isAssignableFrom(parameters[0])) {
-						eventhandlers.putIfAbsent((Class<? extends Event>) parameters[0], Pair.of(method, subscribeEvent));
+						eventhandlers.putIfAbsent(parameters[0].asSubclass(Event.class), Pair.of(method, subscribeEvent));
 					}
 				}
 			}
 			this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
 
-			final Map<String, Field> fields = new HashMap<>();
 			final Map<String, SettingObject<?>> settingObjects = new HashMap<>();
-			final Set<Field> scheduledTimers = new HashSet<>();
 			for (Field field : clazz.getDeclaredFields()) {
-				fields.put(field.getName(), field);
 				final Class<?> type = field.getType();
 				if (Modifier.isStatic(field.getModifiers())) {
-					if (type.equals(SettingObject.class)) {
+					if (SettingObject.class.isAssignableFrom(type)) {
 						SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
 						settingObjects.put(settingObject.getKey(), settingObject);
 					}
-				} else {
-					if (GameTimer.class.isAssignableFrom(type)) {
-						if (!Modifier.isStatic(field.getModifiers()) && field.isAnnotationPresent(Scheduled.class)) {
-							scheduledTimers.add(field);
-						}
-					}
 				}
 			}
-			this.fields = Collections.unmodifiableMap(fields);
 			this.settingObjects = Collections.unmodifiableMap(settingObjects);
-			this.scheduledTimers = Collections.unmodifiableSet(scheduledTimers);
 
 			Materials materials = clazz.getAnnotation(Materials.class);
 			this.materials = materials != null ? ImmutableSet.<Material>builder().add(materials.materials()).build() : DEFAULT_MATERIALS;
@@ -314,20 +291,12 @@ public class AbilityFactory {
 			return manifest;
 		}
 
-		public Map<String, Field> getFields() {
-			return fields;
-		}
-
 		public Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> getEventhandlers() {
 			return eventhandlers;
 		}
 
 		public Map<String, SettingObject<?>> getSettingObjects() {
 			return settingObjects;
-		}
-
-		public Set<Field> getScheduledTimers() {
-			return scheduledTimers;
 		}
 
 		public ImmutableSet<Material> getMaterials() {

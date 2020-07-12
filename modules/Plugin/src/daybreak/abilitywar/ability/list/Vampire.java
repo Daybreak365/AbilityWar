@@ -2,7 +2,6 @@ package daybreak.abilitywar.ability.list;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -241,7 +240,6 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -253,6 +251,13 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 10);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			passive.start();
+		}
+	}
 
 	@Override
 	public boolean ActiveSkill(Material materialType, ClickType clickType) {

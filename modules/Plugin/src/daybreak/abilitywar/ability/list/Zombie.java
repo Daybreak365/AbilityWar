@@ -156,8 +156,8 @@ public class Zombie extends AbilityBase implements TargetHandler {
 	}
 
 	@Override
-	public void TargetSkill(Material materialType, LivingEntity entity) {
-		if (materialType == Material.IRON_INGOT && entity instanceof Player && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public void TargetSkill(Material material, LivingEntity entity) {
+		if (material == Material.IRON_INGOT && entity instanceof Player && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			this.target = (Player) entity;
 			skill.start();
 		}

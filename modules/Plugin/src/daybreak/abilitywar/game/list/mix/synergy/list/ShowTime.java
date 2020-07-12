@@ -3,7 +3,6 @@ package daybreak.abilitywar.game.list.mix.synergy.list;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -202,7 +201,6 @@ public class ShowTime extends Synergy implements ActiveHandler {
 		}
 	};
 
-	@Scheduled
 	private final Timer passive = new Timer() {
 
 		@Override
@@ -236,6 +234,13 @@ public class ShowTime extends Synergy implements ActiveHandler {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			passive.start();
+		}
+	}
 
 	public ShowTime(Participant participant) {
 		super(participant);

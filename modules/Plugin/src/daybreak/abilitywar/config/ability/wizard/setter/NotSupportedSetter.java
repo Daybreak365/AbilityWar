@@ -3,7 +3,6 @@ package daybreak.abilitywar.config.ability.wizard.setter;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
@@ -29,11 +28,14 @@ public class NotSupportedSetter extends Setter {
 		for (String comment : comments) {
 			lore.add(ChatColor.GRAY + comment);
 		}
-		lore.addAll(Arrays.asList(
-				"",
-				"§c지원되지 않는 데이터 타입입니다.",
-				"§c콘피그에서 직접 변경해주세요."
-		));
+		lore.add("");
+		if (settingObject.getValue() == null) {
+			lore.add("§c지원되지 않는 데이터 타입입니다.");
+		} else {
+			lore.add("§c지원되지 않는 데이터 타입입니다: " + settingObject.getValue().getClass().getSimpleName());
+		}
+		lore.add("§c콘피그에서 직접 변경해주세요.");
+
 		woolMeta.setLore(lore);
 		wool.setItemMeta(woolMeta);
 		return wool;

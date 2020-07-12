@@ -4,7 +4,6 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -104,7 +103,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	};
 	private static final Set<LivingEntity> frozenEntities = new HashSet<>();
-	@Scheduled
+
 	private final Timer buff = new Timer() {
 
 		@Override
@@ -202,7 +201,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			return super.add(projectile);
 		}
 	};
-	@Scheduled
+
 	private final Timer passive = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -237,7 +236,10 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	@Override
 	protected void onUpdate(Update update) {
-		if (update == Update.ABILITY_DESTROY) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			buff.start();
+			passive.start();
+		} else if (update == Update.ABILITY_DESTROY) {
 			for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
 				if (key.getType() == Material.PACKED_ICE || key.getType() == Material.OBSIDIAN || key.getType() == Material.SNOW_BLOCK || key.getType() == Material.SNOW) {

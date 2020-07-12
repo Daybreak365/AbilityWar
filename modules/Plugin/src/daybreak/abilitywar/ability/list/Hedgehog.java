@@ -4,7 +4,6 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
-import daybreak.abilitywar.ability.Scheduled;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.interfaces.TeamGame;
@@ -56,7 +55,6 @@ public class Hedgehog extends AbilityBase {
 		}
 	};
 
-	@Scheduled
 	private final Timer passive = new Timer() {
 		@Override
 		protected void run(int count) {
@@ -69,5 +67,12 @@ public class Hedgehog extends AbilityBase {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 7);
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			passive.start();
+		}
+	}
 
 }
