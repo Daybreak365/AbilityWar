@@ -5,7 +5,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -21,6 +20,7 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -73,8 +73,7 @@ public class PenetrationSniper extends Synergy {
 	private final Timer snipeMode = new Timer() {
 		@Override
 		protected void run(int count) {
-			Material main = getPlayer().getInventory().getItemInMainHand().getType();
-			Material off = getPlayer().getInventory().getItemInOffHand().getType();
+			final Material main = getPlayer().getInventory().getItemInMainHand().getType(), off = getPlayer().getInventory().getItemInOffHand().getType();
 			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersionNumber() >= 14 && (main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)))) {
 				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 3, true);
 				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(Math.min(0, getPlayer().getVelocity().getY())).setZ(0));
@@ -95,7 +94,7 @@ public class PenetrationSniper extends Synergy {
 				@Override
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
-					new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), powerLevel, OnHitBehavior.CUT, BULLET_COLOR, RED).start();
+					new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), powerLevel, OnHitBehavior.CUT, BULLET_COLOR, RED).start();
 				}
 			},
 			new ArrowType(ChatColor.DARK_PURPLE + "중력") {
@@ -103,7 +102,7 @@ public class PenetrationSniper extends Synergy {
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(0, Note.Tone.D));
-					new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), powerLevel, OnHitBehavior.GRAVITY, BULLET_COLOR, PURPLE).start();
+					new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), powerLevel, OnHitBehavior.GRAVITY, BULLET_COLOR, PURPLE).start();
 				}
 			},
 			new ArrowType(ChatColor.YELLOW + "풍월") {
@@ -111,7 +110,7 @@ public class PenetrationSniper extends Synergy {
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					SoundLib.PIANO.playInstrument(getPlayer(), Note.flat(1, Note.Tone.B));
-					new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), powerLevel, OnHitBehavior.WIND, BULLET_COLOR, YELLOW).start();
+					new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), powerLevel, OnHitBehavior.WIND, BULLET_COLOR, YELLOW).start();
 				}
 			}
 	);
@@ -123,27 +122,7 @@ public class PenetrationSniper extends Synergy {
 		super(participant);
 	}
 
-	private final Predicate<Entity> predicate = new Predicate<Entity>() {
-		@Override
-		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
-			if (entity instanceof Player) {
-				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-					return false;
-				}
-				if (getGame() instanceof TeamGame) {
-					final TeamGame teamGame = (TeamGame) getGame();
-					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
-				}
-			}
-			return true;
-		}
-	};
-
-	@SubscribeEvent
+	@SubscribeEvent(ignoreCancelled = true)
 	public void onProjectileLaunch(EntityShootBowEvent e) {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
@@ -153,7 +132,7 @@ public class PenetrationSniper extends Synergy {
 				}
 				arrowType.launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
-				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * 25.0) : 25;
+				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (WRECK.calculateDecreasedAmount(20) * 25.0) : 25;
 				this.reload = new Timer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -244,9 +223,9 @@ public class PenetrationSniper extends Synergy {
 		void onHit(PenetrationSniper ability, Damageable damager, Damageable victim);
 	}
 
-	public class Bullet<Shooter extends Entity & Damageable & ProjectileSource> extends Timer {
+	public class Bullet extends Timer {
 
-		private final Shooter shooter;
+		private final LivingEntity shooter;
 		private final CustomEntity entity;
 		private final Vector forward;
 		private final Iterator<Vector> circle;
@@ -256,19 +235,42 @@ public class PenetrationSniper extends Synergy {
 		private final RGB color, abilityColor;
 		private final Set<Damageable> attacked = new HashSet<>();
 		private Location lastLocation;
+		private final Predicate<Entity> predicate;
 
-		private Bullet(Shooter shooter, Location startLocation, Vector arrowVelocity, int powerEnchant, OnHitBehavior onHitBehavior, RGB color, RGB abilityColor) {
+		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int powerEnchant, OnHitBehavior onHitBehavior, RGB color, RGB abilityColor) {
 			super(80);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(10);
-			this.circle = Iterables.cycle(CIRCLE.clone().rotateAroundAxisY(-getPlayer().getLocation().getYaw()).rotateAroundAxis(VectorUtil.rotateAroundAxisY(getPlayer().getLocation().getDirection().setY(0).normalize(), 90), getPlayer().getLocation().getPitch() + 90)).iterator();
+			this.circle = Iterables.cycle(CIRCLE.clone().rotateAroundAxisY(-shooter.getLocation().getYaw()).rotateAroundAxis(VectorUtil.rotateAroundAxisY(shooter.getLocation().getDirection().setY(0).normalize(), 90), shooter.getLocation().getPitch() + 90)).iterator();
 			this.onHitBehavior = onHitBehavior;
 			this.powerEnchant = powerEnchant;
 			this.color = color;
 			this.abilityColor = abilityColor;
 			this.lastLocation = startLocation;
+			this.predicate = new Predicate<Entity>() {
+				@Override
+				public boolean test(Entity entity) {
+					if (entity.equals(shooter)) return false;
+					if (entity instanceof Player) {
+						if (!getGame().isParticipating(entity.getUniqueId())
+								|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+								|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+							return false;
+						}
+						if (getGame() instanceof TeamGame) {
+							final TeamGame teamGame = (TeamGame) getGame();
+							final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+							final Participant participant = getGame().getParticipant(shooter.getUniqueId());
+							if (participant != null) {
+								return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+							}
+						}
+					}
+					return true;
+				}
+			};
 		}
 
 		@Override
@@ -285,7 +287,7 @@ public class PenetrationSniper extends Synergy {
 				}
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable) && damageable.isValid() && !damageable.isDead() && !attacked.contains(damageable)) {
-						damageable.damage(EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant), shooter);
+						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
 						onHitBehavior.onHit(PenetrationSniper.this, shooter, damageable);
 						attacked.add(damageable);
 					}
@@ -322,8 +324,7 @@ public class PenetrationSniper extends Synergy {
 			@Override
 			public void onDeflect(Participant deflector, Vector newDirection) {
 				stop(false);
-				Player deflectedPlayer = deflector.getPlayer();
-				new Bullet<>(deflectedPlayer, lastLocation, newDirection, powerEnchant, onHitBehavior, color, abilityColor).start();
+				new Bullet(deflector.getPlayer(), lastLocation, newDirection, powerEnchant, onHitBehavior, color, abilityColor).start();
 			}
 
 			@Override

@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.list.mix
 
 import daybreak.abilitywar.ability.AbilityBase
+import daybreak.abilitywar.ability.AbilityBase.Update.ABILITY_DESTROY
 import daybreak.abilitywar.ability.AbilityBase.Update.RESTRICTION_CLEAR
 import daybreak.abilitywar.ability.AbilityBase.Update.RESTRICTION_SET
 import daybreak.abilitywar.ability.AbilityManifest
@@ -65,11 +66,15 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 		removeAbility()
 		val synergyReg = SynergyFactory.getSynergy(first, second)
 		if (synergyReg != null) {
-			synergy = create(synergyReg.abilityClass, participant) as Synergy
+			synergy = create(synergyReg.abilityClass, participant).apply { isRestricted = this@Mix.isRestricted || !getGame().isGameStarted } as Synergy
 		} else {
-			this.first = create(first, participant)
-			this.second = create(second, participant)
+			this.first = create(first, participant).apply { isRestricted = this@Mix.isRestricted || !game.isGameStarted }
+			this.second = create(second, participant).apply { isRestricted = this@Mix.isRestricted || !game.isGameStarted }
 		}
+	}
+
+	override fun usesMaterial(material: Material): Boolean {
+		return synergy?.usesMaterial(material) ?: false || first?.usesMaterial(material) ?: false || second?.usesMaterial(material) ?: false
 	}
 
 	fun hasSynergy(): Boolean {
@@ -129,6 +134,15 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 				synergy?.isRestricted = true
 				first?.isRestricted = true
 				second?.isRestricted = true
+			}
+		} else if (update == ABILITY_DESTROY) {
+			if (hasAbility()) {
+				synergy?.destroy()
+				synergy = null
+				first?.destroy()
+				first = null
+				second?.destroy()
+				second = null
 			}
 		}
 	}

@@ -23,13 +23,16 @@ import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
 
@@ -59,10 +62,12 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		}
 
 		@EventHandler
-		private void onShootBow(EntityShootBowEvent e) {
-			if (Settings.getNoBlindFire() && e.getForce() < 0.75) {
-				if (e.getEntity() instanceof Player) e.getEntity().sendMessage("§c게임 설정에 따라, 활을 약하게 쏠 수 없습니다.");
-				e.setCancelled(true);
+		private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+			if (Settings.isArrowDamageDistanceProportional() && e.getDamager() instanceof Arrow) {
+				final ProjectileSource shooter = ((Arrow) e.getDamager()).getShooter();
+				if (shooter instanceof Entity) {
+					e.setDamage(e.getDamage() * (Math.max(0.3, Math.min(100, e.getEntity().getLocation().distanceSquared(((Entity) shooter).getLocation())) / 100)));
+				}
 			}
 		}
 	};

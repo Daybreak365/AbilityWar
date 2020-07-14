@@ -2,10 +2,7 @@ package daybreak.abilitywar.utils.base.math;
 
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
-import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.interfaces.TeamGame;
-import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundaryData;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
@@ -20,10 +17,8 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
@@ -383,57 +378,6 @@ public class LocationUtil {
 	}
 
 	/**
-	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
-	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
-	 * 만약 게임모드 종류가 팀 게임이고 중심 엔티티와 탐색된 엔티티가 플레이어일 경우 둘이 동일한 팀에 소속되었다면 포함하지 않습니다.
-	 *
-	 * @param entityType 탐색할 엔티티 타입
-	 * @param center     중심 엔티티 (엔티티의 위치가 중점)
-	 * @param horizontal 수평 거리
-	 * @param vertical   수직 거리
-	 * @return 주변에 있는 특정 타입의 엔티티 목록
-	 */
-	@Deprecated
-	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Entity center, double horizontal, double vertical) {
-		return getNearbyEntities(entityType, center.getLocation(), horizontal, vertical, Predicates.STRICT(center));
-	}
-
-	/**
-	 * 주변에 있는 특정 타입의 엔티티 목록을 반환합니다.
-	 * 만약 탐색된 엔티티가 플레이어일 경우, 게임에 참여하고 있지 않거나 탈락한 경우, 그리고 타게팅이 불가능한 경우 포함하지 않습니다.
-	 *
-	 * @param entityType 탐색할 엔티티 타입
-	 * @param center     중점
-	 * @param horizontal 수평 거리
-	 * @param vertical   수직 거리
-	 * @return 주변에 있는 특정 타입의 엔티티 목록
-	 */
-	@Deprecated
-	public static <E extends Entity> ArrayList<E> getNearbyEntities(Class<E> entityType, Location center, double horizontal, double vertical) {
-		return getNearbyEntities(entityType, center, horizontal, vertical, Predicates.PARTICIPANTS());
-	}
-
-	@Deprecated
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Player p, double horizontal, double vertical) {
-		return getNearbyEntities(Damageable.class, p, horizontal, vertical);
-	}
-
-	@Deprecated
-	public static ArrayList<Damageable> getNearbyDamageableEntities(Location l, double horizontal, double vertical) {
-		return getNearbyEntities(Damageable.class, l, horizontal, vertical);
-	}
-
-	@Deprecated
-	public static ArrayList<Player> getNearbyPlayers(Player p, double horizontal, double vertical) {
-		return getNearbyEntities(Player.class, p, horizontal, vertical);
-	}
-
-	@Deprecated
-	public static ArrayList<Player> getNearbyPlayers(Location l, double horizontal, double vertical) {
-		return getNearbyEntities(Player.class, l, horizontal, vertical);
-	}
-
-	/**
 	 * 주변에 있는 특정 타입의 커스텀 엔티티 목록을 반환합니다.
 	 *
 	 * @param entityType 탐색할 엔티티 타입
@@ -546,92 +490,6 @@ public class LocationUtil {
 				location.add(x, y, z);
 			}
 			return this;
-		}
-
-	}
-
-	@Deprecated
-	public static class Predicates {
-
-		private Predicates() {
-		}
-
-		public static Predicate<Entity> STRICT(Entity criterion) {
-			return new Predicate<Entity>() {
-				@Override
-				public boolean test(Entity entity) {
-					if (entity.equals(criterion)) return false;
-					if (GameManager.isGameRunning() && entity instanceof Player) {
-						AbstractGame game = GameManager.getGame();
-						Player player = (Player) entity;
-						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isExcluded(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
-							return false;
-						}
-						if (game instanceof TeamGame && criterion instanceof Player) {
-							TeamGame teamGame = (TeamGame) game;
-							Participant criteriaParticipant = game.getParticipant((Player) criterion);
-							if (criteriaParticipant != null) {
-								Participant participant = game.getParticipant(player);
-								return !teamGame.hasTeam(participant) || !teamGame.hasTeam(criteriaParticipant) || (!teamGame.getTeam(participant).equals(teamGame.getTeam(criteriaParticipant)));
-							}
-						}
-					}
-					return true;
-				}
-			};
-		}
-
-		public static Predicate<Entity> PARTICIPANTS_EXCLUDING_TEAMS(Entity criterion) {
-			return new Predicate<Entity>() {
-				@Override
-				public boolean test(Entity entity) {
-					if (GameManager.isGameRunning() && entity instanceof Player) {
-						AbstractGame game = GameManager.getGame();
-						Player player = (Player) entity;
-						if (!game.isParticipating(player) || (game instanceof DeathManager.Handler && ((DeathManager.Handler) game).getDeathManager().isExcluded(player)) || !game.getParticipant(player).attributes().TARGETABLE.getValue()) {
-							return false;
-						}
-						if (game instanceof TeamGame && criterion instanceof Player) {
-							TeamGame teamGame = (TeamGame) game;
-							Participant criteriaParticipant = game.getParticipant((Player) criterion);
-							if (criteriaParticipant != null) {
-								Participant participant = game.getParticipant(player);
-								return !teamGame.hasTeam(participant) || !teamGame.hasTeam(criteriaParticipant) || (!teamGame.getTeam(participant).equals(teamGame.getTeam(criteriaParticipant)));
-							}
-						}
-					}
-					return true;
-				}
-			};
-		}
-
-		public static Predicate<Entity> PARTICIPANTS_UNEQUAL(Entity criterion) {
-			return new Predicate<Entity>() {
-				@Override
-				public boolean test(Entity entity) {
-					if (entity.equals(criterion)) return false;
-					if (GameManager.isGameRunning() && entity instanceof Player) {
-						AbstractGame game = GameManager.getGame();
-						Player player = (Player) entity;
-						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isExcluded(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
-					}
-					return true;
-				}
-			};
-		}
-
-		public static Predicate<Entity> PARTICIPANTS() {
-			return new Predicate<Entity>() {
-				@Override
-				public boolean test(Entity entity) {
-					if (GameManager.isGameRunning() && entity instanceof Player) {
-						AbstractGame game = GameManager.getGame();
-						Player player = (Player) entity;
-						return game.isParticipating(player) && (!(game instanceof DeathManager.Handler) || !((DeathManager.Handler) game).getDeathManager().isExcluded(player)) && game.getParticipant(player).attributes().TARGETABLE.getValue();
-					}
-					return true;
-				}
-			};
 		}
 
 	}

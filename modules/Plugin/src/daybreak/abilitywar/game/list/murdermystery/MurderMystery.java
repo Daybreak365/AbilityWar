@@ -6,6 +6,8 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
+import daybreak.abilitywar.game.Category;
+import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.interfaces.Winnable;
@@ -21,7 +23,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -66,6 +68,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @GameManifest(name = "머더 미스터리", description = {
 
 })
+@Category(GameCategory.MINIGAME)
 @Support(min = Version.v1_12_R1)
 @Beta
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
@@ -336,7 +339,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				NMSHandler.getNMS().respawn(entity);
+				NMS.respawn(entity);
 				entity.setGameMode(GameMode.SPECTATOR);
 			}
 		}.runTaskLater(AbilityWar.getPlugin(), 3L);
@@ -420,7 +423,8 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 
 	@Override
 	public void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
-		sender.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
+		if (commandType == CommandType.ABILITY_CHECK) super.executeCommand(commandType, sender, command, args, plugin);
+		else sender.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
 	}
 
 }

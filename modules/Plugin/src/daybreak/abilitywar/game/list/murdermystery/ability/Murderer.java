@@ -10,7 +10,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -50,7 +50,7 @@ public class Murderer extends AbilityBase {
 			inventory.clear();
 			getPlayer().getInventory().setHeldItemSlot(0);
 			((MurderMystery) getGame()).updateGold(getParticipant());
-			NMSHandler.getNMS().sendTitle(getPlayer(), "§e역할§f: §5머더", "§f모든 §a시민§f과 §5탐정§f을 죽이세요!", 10, 80, 10);
+			NMS.sendTitle(getPlayer(), "§e역할§f: §5머더", "§f모든 §a시민§f과 §5탐정§f을 죽이세요!", 10, 80, 10);
 			new Timer(1) {
 				@Override
 				protected void run(int count) {
@@ -58,7 +58,7 @@ public class Murderer extends AbilityBase {
 
 				@Override
 				protected void onEnd() {
-					NMSHandler.getNMS().clearTitle(getPlayer());
+					NMS.clearTitle(getPlayer());
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
 			getPlayer().sendMessage("§e50초 §f뒤에 §4살인자§c의 검§f을 얻습니다.");
@@ -69,7 +69,7 @@ public class Murderer extends AbilityBase {
 					inventory.setItem(1, Items.MURDERER_SWORD.getStack());
 					getPlayer().sendMessage("§4살인자§c의 검§f을 들고 있을 때 더 빠르게 움직일 수 있습니다.");
 					for (Player player : Bukkit.getOnlinePlayers()) {
-						NMSHandler.getNMS().sendTitle(player, "§4머더§c가 검을 얻었습니다.", "", 10, 80, 10);
+						NMS.sendTitle(player, "§4머더§c가 검을 얻었습니다.", "", 10, 80, 10);
 						new Timer(1) {
 							@Override
 							protected void run(int count) {
@@ -77,7 +77,7 @@ public class Murderer extends AbilityBase {
 
 							@Override
 							protected void onEnd() {
-								NMSHandler.getNMS().clearTitle(player);
+								NMS.clearTitle(player);
 							}
 						}.setInitialDelay(TimeUnit.SECONDS, 5).start();
 					}

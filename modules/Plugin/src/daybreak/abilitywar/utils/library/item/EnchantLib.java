@@ -129,4 +129,8 @@ public class EnchantLib {
 		return damage + ((damage / 100) * (powerLevel > 0 ? 25 + (powerLevel * 25) : 0));
 	}
 
+	public static float getDamageWithPowerEnchantment(float damage, int powerLevel) {
+		return damage + ((damage / 100) * (powerLevel > 0 ? 25 + (powerLevel * 25) : 0));
+	}
+
 }

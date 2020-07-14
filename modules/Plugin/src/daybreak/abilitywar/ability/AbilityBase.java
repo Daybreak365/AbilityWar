@@ -9,7 +9,6 @@ import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionEvent;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame;
@@ -50,6 +49,7 @@ import java.util.logging.Level;
 import java.util.regex.MatchResult;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -80,6 +80,54 @@ public abstract class AbilityBase {
 	public static final AbilitySettings abilitySettings = new AbilitySettings(FileUtil.newFile("abilitysettings.yml"));
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
 	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
+
+	/**
+	 * {@link AbilityBase}의 기본 생성자입니다.
+	 *
+	 * @param participant 능력을 소유하는 참가자
+	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
+	 */
+	protected AbilityBase(Participant participant) throws IllegalStateException {
+		this.participant = participant;
+		this.game = participant.getGame();
+		if (!AbilityFactory.isRegistered(getClass())) {
+			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
+		}
+		this.registration = AbilityFactory.getRegistration(getClass());
+		this.manifest = registration.getManifest();
+		EventManager eventManager = game.getEventManager();
+		eventhandlers = new HashMap<>();
+		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
+			final Pair<Method, SubscribeEvent> pair = entry.getValue();
+			final EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
+				@Override
+				protected void onEvent(Event event) {
+					if (restricted) return;
+					if (subscriber.onlyRelevant()
+							&& ((event instanceof AbilityEvent && !AbilityBase.this.equals(((AbilityEvent) event).getAbility()))
+							|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
+							|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
+							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
+						return;
+					}
+					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled())
+						return;
+					try {
+						ReflectionUtil.setAccessible(method).invoke(AbilityBase.this, event);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+						logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
+					}
+				}
+			};
+			eventhandlers.put(entry.getKey(), observer);
+		}
+
+		for (EventObserver value : eventhandlers.values()) {
+			eventManager.register(value);
+		}
+
+		this.restricted = game.isRestricted() || !game.isGameStarted();
+	}
 
 	private final Function<MatchResult, String> fieldValueProvider = new Function<MatchResult, String>() {
 		@Override
@@ -126,54 +174,6 @@ public abstract class AbilityBase {
 		}
 	}
 
-	/**
-	 * {@link AbilityBase}의 기본 생성자입니다.
-	 *
-	 * @param participant 능력을 소유하는 참가자
-	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
-	 */
-	protected AbilityBase(Participant participant) throws IllegalStateException {
-		this.participant = participant;
-		this.game = participant.getGame();
-		if (!AbilityFactory.isRegistered(getClass())) {
-			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
-		}
-		this.registration = AbilityFactory.getRegistration(getClass());
-		this.manifest = registration.getManifest();
-		EventManager eventManager = game.getEventManager();
-		eventhandlers = new HashMap<>();
-		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
-			Pair<Method, SubscribeEvent> pair = entry.getValue();
-			EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
-				@Override
-				protected void onEvent(Event event) {
-					if (restricted) return;
-					if (subscriber.onlyRelevant()
-							&& ((event instanceof AbilityEvent && !equals(((AbilityEvent) event).getAbility()))
-							|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
-							|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
-							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
-						return;
-					}
-					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled())
-						return;
-					try {
-						ReflectionUtil.setAccessible(method).invoke(AbilityBase.this, event);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-						logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
-					}
-				}
-			};
-			eventhandlers.put(entry.getKey(), observer);
-		}
-
-		for (EventObserver value : eventhandlers.values()) {
-			eventManager.register(value);
-		}
-
-		this.restricted = game.isRestricted() || !game.isGameStarted();
-	}
-
 	protected void onUpdate(Update update) {
 	}
 
@@ -204,7 +204,7 @@ public abstract class AbilityBase {
 		}
 	}
 
-	public AbilityRegistration getRegistration() {
+	public final AbilityRegistration getRegistration() {
 		return registration;
 	}
 
@@ -284,8 +284,12 @@ public abstract class AbilityBase {
 		return restricted;
 	}
 
-	public List<GameTimer> getTimers() {
+	public final List<GameTimer> getTimers() {
 		return Collections.unmodifiableList(timers);
+	}
+
+	public boolean usesMaterial(Material material) {
+		return registration.getMaterials().contains(material);
 	}
 
 	private final Queue<GameTimer> pausedTimers = new LinkedList<>();
@@ -294,7 +298,7 @@ public abstract class AbilityBase {
 	 * 능력의 제한 여부를 설정합니다.
 	 */
 	public final void setRestricted(final boolean toSet) {
-		AbilityPreRestrictionEvent event = new AbilityPreRestrictionEvent(this, toSet);
+		final AbilityPreRestrictionEvent event = new AbilityPreRestrictionEvent(this, toSet);
 		Bukkit.getPluginManager().callEvent(event);
 		this.restricted = event.getNewStatus();
 		if (event.getNewStatus()) {
@@ -340,7 +344,7 @@ public abstract class AbilityBase {
 		private final String name;
 
 		public CooldownTimer(int cooldown, String name, CooldownDecrease maxDecrease) {
-			super(TaskType.REVERSE, (int) (WRECK.isEnabled(getGame()) ? (cooldown / 100.0) * Math.max(Settings.getCooldownDecrease() == CooldownDecrease._100 ? 100 : (100 - maxDecrease.getPercentage()), 100 - Settings.getCooldownDecrease().getPercentage()) : cooldown));
+			super(TaskType.REVERSE, (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(maxDecrease.getPercentage()) : cooldown));
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 			this.name = name;
 		}

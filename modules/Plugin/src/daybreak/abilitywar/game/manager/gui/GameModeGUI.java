@@ -4,8 +4,10 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.manager.GameFactory;
+import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -17,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -41,12 +44,18 @@ public class GameModeGUI implements Listener {
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
+	protected static final ItemStack DECO = new ItemBuilder()
+			.type(MaterialX.GRAY_STAINED_GLASS_PANE)
+			.displayName(ChatColor.WHITE.toString())
+			.build();
+
 	private static final Logger logger = Logger.getLogger(GameModeGUI.class.getName());
 
-	private final Player p;
+	private final Player player;
+	private GameCategory category = GameCategory.GAME;
 
-	public GameModeGUI(Player p, Plugin Plugin) {
-		this.p = p;
+	public GameModeGUI(Player player, Plugin Plugin) {
+		this.player = player;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 
@@ -55,60 +64,66 @@ public class GameModeGUI implements Listener {
 	private Inventory gui;
 
 	public void openGUI(int page) {
-		int maxPage = ((GameFactory.nameValues().size() - 1) / 18) + 1;
+		int maxPage = ((GameFactory.getByCategory(category).size() - 1) / 18) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		gui = Bukkit.createInventory(null, 27, "§cAbilityWar §8게임 모드");
+		gui = Bukkit.createInventory(null, 36, "§cAbilityWar §8게임 모드 (" + category.getDisplayName() + ")");
 		this.playerPage = page;
 		int count = 0;
 
-		Class<? extends AbstractGame> gameClass = Settings.getGameMode();
+		final Class<? extends AbstractGame> gameClass = Settings.getGameMode();
 
-		for (String name : GameFactory.nameValues()) {
-			Class<? extends AbstractGame> mode = GameFactory.getByName(name);
-
-			if (mode != null) {
-				GameManifest manifest = mode.getAnnotation(GameManifest.class);
-				if (manifest != null) {
-					ItemStack is;
-
-					if (gameClass.equals(mode)) {
-						is = MaterialX.ENCHANTED_BOOK.parseItem();
-						ItemMeta im = is.getItemMeta();
-						im.setDisplayName("§b" + name);
-						List<String> lore = Messager.asList(manifest.description());
-						lore.add("§7선택된 게임모드입니다.");
-						im.setLore(lore);
-						is.setItemMeta(im);
-					} else {
-						is = MaterialX.BOOK.parseItem();
-						ItemMeta im = is.getItemMeta();
-						im.setDisplayName("§b" + name);
-						List<String> lore = Messager.asList(manifest.description());
-						lore.add("§b» §f이 게임모드를 선택하려면 클릭하세요.");
-						im.setLore(lore);
-						is.setItemMeta(im);
-					}
-
-					if (count / 18 == page - 1) {
-						gui.setItem(count % 18, is);
-					}
-					count++;
-				}
+		for (final GameRegistration registration : GameFactory.getByCategory(category)) {
+			final Class<? extends AbstractGame> mode = registration.getGameClass();
+			final GameManifest manifest = registration.getManifest();
+			final ItemStack stack;
+			if (gameClass.equals(mode)) {
+				stack = MaterialX.ENCHANTED_BOOK.parseItem();
+				ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§b" + manifest.name());
+				List<String> lore = Messager.asList(manifest.description());
+				lore.add("§7선택된 게임모드입니다.");
+				meta.setLore(lore);
+				stack.setItemMeta(meta);
+			} else {
+				stack = MaterialX.BOOK.parseItem();
+				ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§b" + manifest.name());
+				List<String> lore = Messager.asList(manifest.description());
+				lore.add("§b» §f이 게임모드를 선택하려면 클릭하세요.");
+				meta.setLore(lore);
+				stack.setItemMeta(meta);
 			}
+
+			if (count / 18 == page - 1) {
+				gui.setItem(count % 18, stack);
+			}
+			count++;
 		}
 
-		if (page > 1) gui.setItem(21, PREVIOUS_PAGE);
+		final GameCategory[] categories = GameCategory.values();
+		for (int i = 0; i < categories.length; i++) {
+			final GameCategory gameCategory = categories[i];
+			final ItemStack stack = new ItemStack(gameCategory.getIcon());
+			if (category.equals(gameCategory)) stack.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+			final ItemMeta meta = stack.getItemMeta();
+			meta.setDisplayName(ChatColor.WHITE + gameCategory.getDisplayName());
+			stack.setItemMeta(meta);
+			gui.setItem(27 + i, stack);
+		}
 
-		if (page != maxPage) gui.setItem(23, NEXT_PAGE);
+		for (int i = 18; i <= 26; i++) gui.setItem(i, DECO);
+
+		if (page > 1) gui.setItem(30, PREVIOUS_PAGE);
+		if (page != maxPage) gui.setItem(32, NEXT_PAGE);
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
-		gui.setItem(22, stack);
+		gui.setItem(31, stack);
 
-		p.openInventory(gui);
+		player.openInventory(gui);
 	}
 
 	@EventHandler
@@ -125,7 +140,7 @@ public class GameModeGUI implements Listener {
 
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 			try {
 				Configuration.update();
@@ -140,24 +155,33 @@ public class GameModeGUI implements Listener {
 		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
+				final String displayName = e.getCurrentItem().getItemMeta().getDisplayName();
+				final String stripName = ChatColor.stripColor(displayName);
+				if (displayName.equals(ChatColor.AQUA + "이전 페이지")) {
 					openGUI(playerPage - 1);
-				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "다음 페이지")) {
+				} else if (displayName.equals(ChatColor.AQUA + "다음 페이지")) {
 					openGUI(playerPage + 1);
 				}
 
 				if (e.getCurrentItem().getType().equals(Material.BOOK)) {
-					if (e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-						String modeName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-						Class<? extends AbstractGame> gameMode = GameFactory.getByName(modeName);
-						if (gameMode != null) {
-							Configuration.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getName());
-						} else {
-							Messager.sendErrorMessage(p, "§c" + modeName + " §f클래스는 등록되지 않았습니다.");
-						}
-
-						openGUI(playerPage);
+					final GameRegistration gameMode = GameFactory.getByName(stripName);
+					if (gameMode != null) {
+						Configuration.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getGameClass().getName());
+					} else {
+						Messager.sendErrorMessage(player, "§c" + stripName + " §f클래스는 등록되지 않았습니다.");
 					}
+
+					openGUI(playerPage);
+				} else if (e.getSlot() >= 27 && e.getSlot() <= 29) {
+					if (category.getDisplayName().equals(stripName)) return;
+					for (GameCategory value : GameCategory.values()) {
+						if (value.getDisplayName().equals(stripName)) {
+							this.category = value;
+							break;
+						}
+					}
+					openGUI(1);
+
 				}
 			}
 		}

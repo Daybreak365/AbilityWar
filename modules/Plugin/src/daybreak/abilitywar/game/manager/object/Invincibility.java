@@ -8,6 +8,8 @@ import daybreak.abilitywar.game.event.InvincibilityStatusChangeEvent;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.Bar;
 import daybreak.abilitywar.utils.library.SoundLib;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -31,10 +33,25 @@ public class Invincibility implements EventExecutor {
 	private final String bossbarMessage = InvincibilitySettings.getBossbarMessage(), bossbarInfiniteMessage = InvincibilitySettings.getBossbarInfiniteMessage();
 	private final Game game;
 
+	private final Set<Observer> observers = new HashSet<>();
+
 	public Invincibility(Game game) {
 		this.game = game;
-		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, game, EventPriority.HIGH, this,
-				AbilityWar.getPlugin());
+		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, game, EventPriority.HIGH, this, AbilityWar.getPlugin());
+	}
+
+	public final void attachObserver(Observer observer) {
+		observers.add(observer);
+	}
+
+	public interface Observer {
+		void onStart();
+
+		void onEnd();
+	}
+
+	public interface Handler {
+		Invincibility getInvincibility();
 	}
 
 	private GameTimer timer;
@@ -85,10 +102,6 @@ public class Invincibility implements EventExecutor {
 		}
 	}
 
-	public interface Handler {
-		Invincibility getInvincibility();
-	}
-
 	private class InvincibilityTimer extends GameTimer {
 
 		private Bar bossBar = null;
@@ -114,6 +127,9 @@ public class Invincibility implements EventExecutor {
 		@Override
 		protected void onStart() {
 			game.setRestricted(true);
+			for (Observer observer : observers) {
+				observer.onStart();
+			}
 			Bukkit.broadcastMessage(startMessage);
 			Bukkit.getPluginManager().callEvent(new InvincibilityStatusChangeEvent(game, true));
 		}
@@ -136,6 +152,9 @@ public class Invincibility implements EventExecutor {
 		protected void onEnd() {
 			if (bossBar != null) {
 				bossBar.remove();
+			}
+			for (Observer observer : observers) {
+				observer.onEnd();
 			}
 			game.setRestricted(false);
 			Bukkit.broadcastMessage(ChatColor.GREEN + "무적이 해제되었습니다. 지금부터 대미지를 입습니다.");

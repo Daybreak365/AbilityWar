@@ -30,6 +30,7 @@ import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
 import daybreak.abilitywar.game.manager.gui.TeamPresetGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
+import daybreak.abilitywar.game.manager.object.CommandHandler.CommandType;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.game.script.AbstractScript;
@@ -157,24 +158,9 @@ public class Commands implements CommandExecutor, TabCompleter {
 		mainCommand.addSubCommand("check", new Command(Condition.PLAYER) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				Player player = (Player) sender;
 				if (GameManager.isGameRunning()) {
-					AbstractGame game = GameManager.getGame();
-					if (game.isParticipating(player)) {
-						Participant participant = game.getParticipant(player);
-						if (participant.hasAbility()) {
-							for (String line : Formatter.formatAbilityInfo(participant.getAbility())) {
-								player.sendMessage(line);
-							}
-						} else {
-							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
-						}
-					} else {
-						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
-					}
-				} else {
-					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
-				}
+					GameManager.getGame().executeCommand(CommandType.ABILITY_CHECK, sender, command, args, plugin);
+				} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 				return true;
 			}
 		});
@@ -740,7 +726,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 				} else {
 					String name = String.join(" ", args);
 					if (GameFactory.isRegistered(name)) {
-						GameRegistration registration = GameFactory.getRegistration(GameFactory.getByName(name));
+						final GameRegistration registration = GameFactory.getByName(name);
 						Configuration.modifyProperty(ConfigNodes.GAME_MODE, registration.getGameClass().getName());
 						sender.sendMessage("§2게임 모드§a가 §f" + registration.getManifest().name() + "§a" + KoreanUtil.getJosa(registration.getManifest().name(), Josa.으로로) + " 변경되었습니다.");
 					} else

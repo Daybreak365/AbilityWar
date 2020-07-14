@@ -1,15 +1,14 @@
 package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.SoundsHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.Sounds;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import java.util.Collection;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-
-import java.util.Collection;
 
 /**
  * 소리 라이브러리
@@ -582,10 +581,10 @@ public class SoundLib {
 
 		public void playSound(Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				if (!SoundsHandler.isHandled()) {
+				if (!Sounds.isHandled()) {
 					location.getWorld().playSound(location, this.sound, volume, pitch);
 				} else {
-					SoundsHandler.getSounds().playSound(sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+					Sounds.playSound(sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
 				}
 			}
 		}
@@ -596,10 +595,10 @@ public class SoundLib {
 
 		public void playSound(Player player, Location location, float volume, float pitch) {
 			if (this.sound != null) {
-				if (!SoundsHandler.isHandled()) {
+				if (!Sounds.isHandled()) {
 					player.playSound(location, this.sound, volume, pitch);
 				} else {
-					SoundsHandler.getSounds().playSound(player, sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
+					Sounds.playSound(player, sound.name(), location.getX(), location.getY(), location.getZ(), volume, pitch);
 				}
 			}
 		}

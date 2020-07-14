@@ -2,7 +2,7 @@ package daybreak.abilitywar.utils.base.minecraft.compat.nms;
 
 import org.bukkit.entity.Player;
 
-public interface Sounds {
+public interface iSounds {
 
 	void playSound(Player player, String sound, double x, double y, double z, float volume, float pitch);
 

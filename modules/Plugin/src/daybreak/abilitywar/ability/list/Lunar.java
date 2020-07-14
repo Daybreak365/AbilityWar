@@ -19,8 +19,8 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Crescent;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.iHologram;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -263,14 +263,14 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 	private class Stack extends Timer {
 
 		private final LivingEntity entity;
-		private final Hologram hologram;
+		private final iHologram hologram;
 		private int stack = 0;
 
 		private Stack(LivingEntity entity) {
 			super(30);
 			setPeriod(TimeUnit.TICKS, 4);
 			this.entity = entity;
-			this.hologram = NMSHandler.getNMS().newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 5 - stack)));
+			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 5 - stack)));
 			hologram.display(getPlayer());
 			stackMap.put(entity.getUniqueId(), this);
 			addStack();

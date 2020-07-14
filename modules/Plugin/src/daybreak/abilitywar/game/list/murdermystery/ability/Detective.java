@@ -11,7 +11,7 @@ import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import org.bukkit.Material;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -40,7 +40,7 @@ public class Detective extends AbilityBase {
 			inventory.setItem(1, Items.DETECTIVE_BOW.getStack());
 			inventory.setItem(2, new ItemStack(Material.ARROW));
 			((MurderMystery) getGame()).updateGold(getParticipant());
-			NMSHandler.getNMS().sendTitle(getPlayer(), "§e역할§f: §5탐정", "§c머더§f로부터 §a시민§f들을 보호하세요!", 10, 80, 10);
+			NMS.sendTitle(getPlayer(), "§e역할§f: §5탐정", "§c머더§f로부터 §a시민§f들을 보호하세요!", 10, 80, 10);
 			new Timer(1) {
 				@Override
 				protected void run(int count) {
@@ -48,7 +48,7 @@ public class Detective extends AbilityBase {
 
 				@Override
 				protected void onEnd() {
-					NMSHandler.getNMS().clearTitle(getPlayer());
+					NMS.clearTitle(getPlayer());
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
 		}

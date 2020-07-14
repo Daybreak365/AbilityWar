@@ -10,7 +10,7 @@ import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -121,7 +121,7 @@ public class DeathManager implements Listener, Observer {
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							NMSHandler.getNMS().respawn(victim.getPlayer());
+							NMS.respawn(victim.getPlayer());
 						}
 					}.runTaskLater(AbilityWar.getPlugin(), 2L);
 				}
@@ -131,7 +131,7 @@ public class DeathManager implements Listener, Observer {
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							NMSHandler.getNMS().respawn(victim.getPlayer());
+							NMS.respawn(victim.getPlayer());
 						}
 					}.runTaskLater(AbilityWar.getPlugin(), 2L);
 				}

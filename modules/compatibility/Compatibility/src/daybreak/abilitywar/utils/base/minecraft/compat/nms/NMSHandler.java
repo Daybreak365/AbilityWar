@@ -4,19 +4,20 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 
+@Deprecated
 public class NMSHandler {
 
-	private static final NMS nms = newInstance(ServerVersion.getVersion());
+	private static final iNMS nms = newInstance(ServerVersion.getVersion());
 
-	private static NMS newInstance(Version version) {
+	private static iNMS newInstance(Version version) {
 		try {
-			return (NMS) Class.forName("daybreak.abilitywar.utils.base.minecraft.compat." + version.name() + ".nms.NMSImpl").getConstructor().newInstance();
+			return (iNMS) Class.forName("daybreak.abilitywar.utils.base.minecraft.compat." + version.name() + ".nms.NMSImpl").getConstructor().newInstance();
 		} catch (Exception ex) {
 			throw new UnsupportedVersionException(version);
 		}
 	}
 
-	public static NMS getNMS() {
+	public static iNMS getNMS() {
 		return nms;
 	}
 

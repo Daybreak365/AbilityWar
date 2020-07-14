@@ -9,7 +9,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -107,13 +107,13 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 			timers.remove(this);
 			SoundLib.ENTITY_PLAYER_HURT.playSound(getPlayer());
 			double toDamage = damage;
-			final float absorptionHearts = NMSHandler.getNMS().getAbsorptionHearts(getPlayer());
+			final float absorptionHearts = NMS.getAbsorptionHearts(getPlayer());
 			if (!getPlayer().isDead()) {
 				if (absorptionHearts > 0) {
 					if (toDamage <= absorptionHearts) {
-						NMSHandler.getNMS().setAbsorptionHearts(getPlayer(), (float) (absorptionHearts - toDamage));
+						NMS.setAbsorptionHearts(getPlayer(), (float) (absorptionHearts - toDamage));
 					} else {
-						NMSHandler.getNMS().setAbsorptionHearts(getPlayer(), 0);
+						NMS.setAbsorptionHearts(getPlayer(), 0);
 						toDamage -= absorptionHearts;
 						getPlayer().setHealth(Math.max(getPlayer().getHealth() - toDamage, 0.0));
 					}

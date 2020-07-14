@@ -19,7 +19,7 @@ import org.bukkit.plugin.Plugin;
 
 public class GameWizard extends SettingWizard {
 
-	private final ItemStack wreck, noBlindFire, food, level, durability, firewall, clearWeather, visualEffect, abilityDraw, maxHealth;
+	private final ItemStack wreck, arrowDamage, food, level, durability, firewall, clearWeather, visualEffect, abilityDraw, maxHealth;
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, "§2§l게임 진행 설정", plugin);
@@ -29,11 +29,11 @@ public class GameWizard extends SettingWizard {
 			meta.setDisplayName("§bWRECK");
 			wreck.setItemMeta(meta);
 		}
-		this.noBlindFire = new ItemStack(Material.BOW, 1);
+		this.arrowDamage = new ItemStack(Material.BOW, 1);
 		{
-			ItemMeta meta = noBlindFire.getItemMeta();
-			meta.setDisplayName("§b활 난사 금지");
-			noBlindFire.setItemMeta(meta);
+			ItemMeta meta = arrowDamage.getItemMeta();
+			meta.setDisplayName("§b화살 거리 비례 대미지");
+			arrowDamage.setItemMeta(meta);
 		}
 		this.food = new ItemStack(Material.COOKED_BEEF, 1);
 		{
@@ -85,7 +85,7 @@ public class GameWizard extends SettingWizard {
 			meta.setDisplayName("§b기본 최대 체력");
 			meta.setLore(Messager.asList("§a활성화§f하면 게임을 시작할 때 모든 플레이어의 최대 체력을 설정합니다.",
 					"", "§7상태 : " + (Settings.isDefaultMaxHealthEnabled() ? "§a활성화" : "§c비활성화"),
-					"§fSHIFT + 우클릭으로 §a활성화§f/§c비활성화 §f여부를 변경하세요.", "",
+					"§fSHIFT + 좌클릭으로 §a활성화§f/§c비활성화 §f여부를 변경하세요.", "",
 					"§7기본 최대 체력 : §f" + Settings.getDefaultMaxHealth(),
 					"§c우클릭         §6» §e+ 1",
 					"§c좌클릭         §6» §e- 1"));
@@ -122,13 +122,13 @@ public class GameWizard extends SettingWizard {
 				}
 				break;
 				case 13: {
-					ItemMeta meta = noBlindFire.getItemMeta();
+					final ItemMeta meta = arrowDamage.getItemMeta();
 					meta.setLore(Messager.asList(
-							"§a활성화§f하면 게임이 진행되는 동안 활시위를 일정량 이상 당겨야만 활을 쏠 수 있습니다.", "",
-							"§7상태 : " + (Settings.getNoBlindFire() ? "§a활성화" : "§c비활성화")));
-					noBlindFire.setItemMeta(meta);
+							"§a활성화§f하면 게임이 진행되는 동안 화살의 대미지가 거리 비례 대미지로 변경됩니다.", "",
+							"§7상태 : " + (Settings.isArrowDamageDistanceProportional() ? "§a활성화" : "§c비활성화")));
+					arrowDamage.setItemMeta(meta);
 
-					gui.setItem(i, noBlindFire);
+					gui.setItem(i, arrowDamage);
 				}
 				break;
 				case 14: {
@@ -198,7 +198,7 @@ public class GameWizard extends SettingWizard {
 					ItemMeta meta = maxHealth.getItemMeta();
 					meta.setLore(Messager.asList("§a활성화§f하면 게임을 시작할 때 모든 플레이어의 최대 체력을 설정합니다.",
 							"", "§7상태 : " + (Settings.isDefaultMaxHealthEnabled() ? "§a활성화" : "§c비활성화"),
-							"§7SHIFT + 우클릭§f으로 §a활성화§f/§c비활성화 §f여부를 변경하세요.", "",
+							"§7SHIFT + 좌클릭§f으로 §a활성화§f/§c비활성화 §f여부를 변경하세요.", "",
 							"§7기본 최대 체력 : §f" + Settings.getDefaultMaxHealth(),
 							"§c우클릭         §6» §e+ 1",
 							"§c좌클릭         §6» §e- 1"));
@@ -235,8 +235,8 @@ public class GameWizard extends SettingWizard {
 						Configuration.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
 						Show();
 						break;
-					case "§b활 난사 금지":
-						Configuration.modifyProperty(ConfigNodes.GAME_NO_BLIND_FIRE, !Settings.getNoBlindFire());
+					case "§b화살 거리 비례 대미지":
+						Configuration.modifyProperty(ConfigNodes.GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE, !Settings.isArrowDamageDistanceProportional());
 						Show();
 						break;
 					case "§b초반 지급 레벨":

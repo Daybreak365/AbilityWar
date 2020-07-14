@@ -4,6 +4,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
+import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
@@ -32,6 +33,7 @@ import org.bukkit.entity.Player;
 		"",
 		"§f두가지의 능력으로 펼치는 능력자 전쟁입니다."
 })
+@GameAliases({"믹능전", "믹스"})
 public class MixGame extends AbstractMix implements DefaultKitHandler {
 
 	private static final Logger logger = Logger.getLogger(MixGame.class);

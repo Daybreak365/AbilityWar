@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import java.lang.reflect.Field;
@@ -251,7 +251,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 						if (ability instanceof ActiveHandler && !ability.isRestricted()) {
 							Material material = player.getInventory().getItemInMainHand().getType();
 							ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
-							if (ability.getRegistration().getMaterials().contains(material)) {
+							if (ability.usesMaterial(material)) {
 								long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
 									AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(ability, material, clickType);
@@ -276,7 +276,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 						AbilityBase ability = getAbility();
 						if ((ability instanceof ActiveHandler || ability instanceof TargetHandler) && !ability.isRestricted()) {
 							Material material = player.getInventory().getItemInMainHand().getType();
-							if (ability.getRegistration().getMaterials().contains(material)) {
+							if (ability.usesMaterial(material)) {
 								long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
 									if (ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, ClickType.RIGHT_CLICK)) {
@@ -474,7 +474,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 				}
 				this.lastString = joiner.toString();
 				if (!lastString.isEmpty()) {
-					NMSHandler.getNMS().sendActionbar(getPlayer(), lastString, 0, 20, 20);
+					NMS.sendActionbar(getPlayer(), lastString, 0, 20, 20);
 				}
 			}
 
@@ -493,7 +493,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 					update();
 				} else {
 					if (!lastString.isEmpty()) {
-						NMSHandler.getNMS().sendActionbar(getPlayer(), lastString, 0, 20, 20);
+						NMS.sendActionbar(getPlayer(), lastString, 0, 20, 20);
 					}
 				}
 			}

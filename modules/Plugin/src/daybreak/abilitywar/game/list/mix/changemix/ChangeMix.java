@@ -5,6 +5,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
+import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
@@ -45,6 +46,7 @@ import org.bukkit.scoreboard.Score;
 		"",
 		"§6● §f체인지 능력 전쟁 전용 콘피그가 적용됩니다. Config.yml을 확인해보세요."
 })
+@GameAliases("체믹")
 @Beta
 public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnable {
 

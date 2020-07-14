@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
 import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -145,7 +145,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 					if (getPlayer().equals(entity)) continue;
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						Vector direction = getPlayer().getEyeLocation().toVector().subtract(entity.getEyeLocation().toVector());
-						NMSHandler.getNMS().rotateHead(player, entity, LocationUtil.getYaw(direction), LocationUtil.getPitch(direction));
+						NMS.rotateHead(player, entity, LocationUtil.getYaw(direction), LocationUtil.getPitch(direction));
 					}
 				}
 			}

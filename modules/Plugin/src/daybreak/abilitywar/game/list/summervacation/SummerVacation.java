@@ -4,7 +4,10 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.Configuration.Settings.SummerVacationSettings;
+import daybreak.abilitywar.game.Category;
+import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.Game;
+import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
@@ -14,7 +17,7 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -46,6 +49,8 @@ import org.bukkit.scoreboard.Score;
  */
 @GameManifest(name = "신나는 여름 휴가", description = {"§f신나는 물총싸움 뿌슝빠슝! 지금 바로 즐겨보세요!", "", "§a● §f스크립트가 적용되지 않습니다.",
 		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f신나는 여름 휴가 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
+@GameAliases("여름휴가")
+@Category(GameCategory.MINIGAME)
 public class SummerVacation extends Game implements Winnable, DefaultKitHandler {
 
 	public SummerVacation() {
@@ -172,7 +177,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					new BukkitRunnable() {
 						@Override
 						public void run() {
-							NMSHandler.getNMS().respawn(victim.getPlayer());
+							NMS.respawn(victim.getPlayer());
 						}
 					}.runTaskLater(AbilityWar.getPlugin(), 2L);
 				}

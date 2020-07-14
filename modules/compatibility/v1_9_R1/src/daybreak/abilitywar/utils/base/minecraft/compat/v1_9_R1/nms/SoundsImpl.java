@@ -1,6 +1,8 @@
 package daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R1.nms;
 
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.Sounds;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.iSounds;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.server.v1_9_R1.MinecraftKey;
 import net.minecraft.server.v1_9_R1.PacketPlayOutNamedSoundEffect;
 import net.minecraft.server.v1_9_R1.SoundCategory;
@@ -10,10 +12,7 @@ import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class SoundsImpl implements Sounds {
+public class SoundsImpl implements iSounds {
 
 	private final Map<String, SoundEffect> soundMap = new HashMap<>();
 

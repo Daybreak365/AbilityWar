@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft.compat.v1_9_R2.nms;
 
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.iHologram;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.iNMS;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand;
@@ -19,7 +19,7 @@ import org.bukkit.craftbukkit.v1_9_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class NMSImpl implements NMS {
+public class NMSImpl implements iNMS {
 
 	@Override
 	public void respawn(Player player) {
@@ -62,12 +62,12 @@ public class NMSImpl implements NMS {
 	}
 
 	@Override
-	public Hologram newHologram(World world, double x, double y, double z, String text) {
+	public iHologram newHologram(World world, double x, double y, double z, String text) {
 		return new HologramImpl(world, x, y, z, text);
 	}
 
 	@Override
-	public Hologram newHologram(World world, double x, double y, double z) {
+	public iHologram newHologram(World world, double x, double y, double z) {
 		return new HologramImpl(world, x, y, z);
 	}
 

@@ -5,7 +5,6 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
-import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -17,6 +16,7 @@ import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -36,6 +36,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -61,8 +62,7 @@ public class Sniper extends AbilityBase {
 	private final Timer snipeMode = new Timer() {
 		@Override
 		protected void run(int count) {
-			Material main = getPlayer().getInventory().getItemInMainHand().getType();
-			Material off = getPlayer().getInventory().getItemInOffHand().getType();
+			final Material main = getPlayer().getInventory().getItemInMainHand().getType(), off = getPlayer().getInventory().getItemInOffHand().getType();
 			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersionNumber() >= 14 && (main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)))) {
 				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 3, true);
 				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(Math.min(0, getPlayer().getVelocity().getY())).setZ(0));
@@ -81,27 +81,7 @@ public class Sniper extends AbilityBase {
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
-	private final Predicate<Entity> predicate = new Predicate<Entity>() {
-		@Override
-		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
-			if (entity instanceof Player) {
-				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-					return false;
-				}
-				if (getGame() instanceof TeamGame) {
-					final TeamGame teamGame = (TeamGame) getGame();
-					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
-				}
-			}
-			return true;
-		}
-	};
-
-	@SubscribeEvent
+	@SubscribeEvent(ignoreCancelled = true)
 	public void onProjectileLaunch(EntityShootBowEvent e) {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
@@ -110,9 +90,9 @@ public class Sniper extends AbilityBase {
 					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
 				}
 				Arrow arrow = (Arrow) e.getProjectile();
-				new Bullet<>(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
+				new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
-				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (Math.max(((100 - Settings.getCooldownDecrease().getPercentage()) / 100.0), 0.85) * 25.0) : 25;
+				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (WRECK.calculateDecreasedAmount(20) * 25.0) : 25;
 				this.reload = new Timer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -136,16 +116,17 @@ public class Sniper extends AbilityBase {
 		}
 	}
 
-	public class Bullet<Shooter extends Entity & ProjectileSource> extends Timer {
+	public class Bullet extends Timer {
 
-		private final Shooter shooter;
+		private final LivingEntity shooter;
 		private final CustomEntity entity;
 		private final Vector forward;
 		private final int powerEnchant;
+		private final Predicate<Entity> predicate;
 
 		private final RGB color;
 
-		private Bullet(Shooter shooter, Location startLocation, Vector arrowVelocity, int powerEnchant, RGB color) {
+		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int powerEnchant, RGB color) {
 			super(160);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
@@ -154,6 +135,28 @@ public class Sniper extends AbilityBase {
 			this.powerEnchant = powerEnchant;
 			this.color = color;
 			this.lastLocation = startLocation;
+			this.predicate = new Predicate<Entity>() {
+				@Override
+				public boolean test(Entity entity) {
+					if (entity.equals(shooter)) return false;
+					if (entity instanceof Player) {
+						if (!getGame().isParticipating(entity.getUniqueId())
+								|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+								|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+							return false;
+						}
+						if (getGame() instanceof TeamGame) {
+							final TeamGame teamGame = (TeamGame) getGame();
+							final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
+							final Participant participant = getGame().getParticipant(shooter.getUniqueId());
+							if (participant != null) {
+								return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+							}
+						}
+					}
+					return true;
+				}
+			};
 		}
 
 		private Location lastLocation;
@@ -177,7 +180,7 @@ public class Sniper extends AbilityBase {
 				}
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable)) {
-						damageable.damage(EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant), shooter);
+						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
 						stop(false);
 						return;
 					}
@@ -211,8 +214,8 @@ public class Sniper extends AbilityBase {
 			@Override
 			public void onDeflect(Participant deflector, Vector newDirection) {
 				stop(false);
-				Player deflectedPlayer = deflector.getPlayer();
-				new Bullet<>(deflectedPlayer, lastLocation, newDirection, powerEnchant, color).start();
+				final Player deflectedPlayer = deflector.getPlayer();
+				new Bullet(deflectedPlayer, lastLocation, newDirection, powerEnchant, color).start();
 			}
 
 			@Override

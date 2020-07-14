@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.compat.v1_15_R1.nms;
 
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.Hologram;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.iHologram;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.server.v1_15_R1.EntityArmorStand;
@@ -18,7 +18,7 @@ import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class HologramImpl implements Hologram {
+public class HologramImpl implements iHologram {
 
 	private final EntityArmorStand armorStand;
 	private final Set<EntityPlayer> viewers = new HashSet<>();

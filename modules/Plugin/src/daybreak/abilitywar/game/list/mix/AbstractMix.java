@@ -125,6 +125,9 @@ public abstract class AbstractMix extends Game {
 				Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 참가자들의 능력을 확인하였습니다.");
 			}
 			break;
+			default:
+				super.executeCommand(commandType, sender, command, args, plugin);
+				break;
 		}
 	}
 

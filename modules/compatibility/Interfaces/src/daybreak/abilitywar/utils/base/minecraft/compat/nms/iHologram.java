@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public interface Hologram {
+public interface iHologram {
 
 	void display(Player player);
 

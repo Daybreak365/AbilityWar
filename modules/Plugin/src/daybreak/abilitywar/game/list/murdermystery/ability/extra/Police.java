@@ -13,7 +13,7 @@ import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -56,7 +56,7 @@ public class Police extends AbilityBase {
 			inventory.setItem(3, three);
 			getPlayer().getInventory().setHeldItemSlot(0);
 			((MurderMystery) getGame()).updateGold(getParticipant());
-			NMSHandler.getNMS().sendTitle(getPlayer(), "§e역할§f: §a경찰", "§c머더§f를 제압하세요!", 10, 80, 10);
+			NMS.sendTitle(getPlayer(), "§e역할§f: §a경찰", "§c머더§f를 제압하세요!", 10, 80, 10);
 			new Timer(1) {
 				@Override
 				protected void run(int count) {
@@ -64,7 +64,7 @@ public class Police extends AbilityBase {
 
 				@Override
 				protected void onEnd() {
-					NMSHandler.getNMS().clearTitle(getPlayer());
+					NMS.clearTitle(getPlayer());
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
 		}

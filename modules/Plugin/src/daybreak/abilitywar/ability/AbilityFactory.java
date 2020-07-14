@@ -245,17 +245,23 @@ public class AbilityFactory {
 			Preconditions.checkNotNull(manifest.rank());
 			Preconditions.checkNotNull(manifest.species());
 
-			Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
-			for (Method method : clazz.getDeclaredMethods()) {
-				SubscribeEvent subscribeEvent = method.getAnnotation(SubscribeEvent.class);
-				if (subscribeEvent != null) {
-					Class<?>[] parameters = method.getParameterTypes();
-					if (parameters.length == 1 && Event.class.isAssignableFrom(parameters[0])) {
-						eventhandlers.putIfAbsent(parameters[0].asSubclass(Event.class), Pair.of(method, subscribeEvent));
+			{
+				final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
+				Class<?> current = clazz;
+				while (AbilityBase.class.isAssignableFrom(current) && current != AbilityBase.class) {
+					for (Method method : current.getDeclaredMethods()) {
+						final SubscribeEvent subscribeEvent = method.getAnnotation(SubscribeEvent.class);
+						if (subscribeEvent != null) {
+							final Class<?>[] parameters = method.getParameterTypes();
+							if (parameters.length == 1 && Event.class.isAssignableFrom(parameters[0])) {
+								eventhandlers.putIfAbsent(parameters[0].asSubclass(Event.class), Pair.of(method, subscribeEvent));
+							}
+						}
 					}
+					current = current.getSuperclass();
 				}
+				this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
 			}
-			this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
 
 			final Map<String, SettingObject<?>> settingObjects = new HashMap<>();
 			for (Field field : clazz.getDeclaredFields()) {

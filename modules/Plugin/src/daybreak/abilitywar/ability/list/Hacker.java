@@ -17,7 +17,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import java.util.function.Predicate;
@@ -127,7 +127,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onEnd() {
 			if (target != null) {
-				NMSHandler.getNMS().clearTitle(getPlayer());
+				NMS.clearTitle(getPlayer());
 
 				int X = (int) target.getLocation().getX(), Y = (int) target.getLocation().getY(), Z = (int) target.getLocation().getZ();
 				getPlayer().sendMessage("§e" + target.getName() + "§f님은 §aX " + X + "§f, §aY " + Y + "§f, §aZ " + Z + "§f에 있습니다.");
@@ -153,7 +153,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 			if (target != null) {
 				progressBar.step();
 
-				NMSHandler.getNMS().sendTitle(getPlayer(),
+				NMS.sendTitle(getPlayer(),
 						"§e" + target.getName() + " §f해킹중...",
 						progressBar.toString() + " §f" + this.count + "%",
 						0, 5, 0

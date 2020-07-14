@@ -17,7 +17,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
 import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.HashMap;
@@ -155,7 +155,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate)) {
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						Vector direction = getPlayer().getEyeLocation().toVector().subtract(entity.getEyeLocation().toVector());
-						NMSHandler.getNMS().rotateHead(player, entity, LocationUtil.getYaw(direction), LocationUtil.getPitch(direction));
+						NMS.rotateHead(player, entity, LocationUtil.getYaw(direction), LocationUtil.getPitch(direction));
 					}
 				}
 			}

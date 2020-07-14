@@ -11,6 +11,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +93,7 @@ public class AbilityChanger {
 					}
 				}
 
-				p.sendTitle(builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
+				NMS.sendTitle(p, builder.toString(), participant.getAbility().getRank().getRankName(), 0, 6, 40);
 			}
 
 			@Override

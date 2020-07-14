@@ -9,7 +9,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -42,17 +42,17 @@ public class Flector extends AbilityBase {
 		if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) && e.getItem() != null && materials.contains(e.getItem().getType())) {
 			Projectile projectile = LocationUtil.getEntityLookingAt(Projectile.class, boundingBox, getPlayer(), 5, null);
 			if (projectile != null && !projectile.isOnGround() && projectile.isValid() && !getPlayer().equals(projectile.getShooter())) {
-				projectile.setVelocity(getPlayer().getLocation().getDirection().multiply(2.2 * NMSHandler.getNMS().getAttackCooldown(e.getPlayer())));
+				projectile.setVelocity(getPlayer().getLocation().getDirection().multiply(2.2 * NMS.getAttackCooldown(e.getPlayer())));
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 				if (projectile.getShooter() instanceof Player)
-					NMSHandler.getNMS().setAbsorptionHearts(getPlayer(), Math.min(NMSHandler.getNMS().getAbsorptionHearts(getPlayer()) + 2, 10));
+					NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 2, 10));
 			} else {
 				Deflectable deflectable = LocationUtil.getCustomEntityLookingAt(Deflectable.class, getGame(), boundingBox, getPlayer(), 5, null);
 				if (deflectable != null && !getPlayer().equals(deflectable.getShooter())) {
-					deflectable.onDeflect(getParticipant(), getPlayer().getLocation().getDirection().multiply(2.2 * NMSHandler.getNMS().getAttackCooldown(e.getPlayer())));
+					deflectable.onDeflect(getParticipant(), getPlayer().getLocation().getDirection().multiply(2.2 * NMS.getAttackCooldown(e.getPlayer())));
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 					if (deflectable.getShooter() instanceof Player)
-						NMSHandler.getNMS().setAbsorptionHearts(getPlayer(), Math.min(NMSHandler.getNMS().getAbsorptionHearts(getPlayer()) + 2, 10));
+						NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 2, 10));
 				}
 			}
 		}

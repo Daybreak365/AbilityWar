@@ -6,6 +6,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
@@ -29,13 +30,13 @@ public interface CommandHandler {
 				}
 				if (args.length == 1) {
 					if (sender instanceof Player) {
-						Player player = (Player) sender;
+						final Player player = (Player) sender;
 						if (args[0].equalsIgnoreCase("@a")) {
 							new AbilityGUI(player, plugin).openGUI(1);
 						} else {
-							Player targetPlayer = Bukkit.getPlayerExact(args[0]);
+							final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 							if (targetPlayer != null) {
-								AbstractGame game = GameManager.getGame();
+								final AbstractGame game = GameManager.getGame();
 								if (game.isParticipating(targetPlayer)) {
 									new AbilityGUI(player, game.getParticipant(targetPlayer), plugin).openGUI(1);
 								} else
@@ -45,7 +46,7 @@ public interface CommandHandler {
 						}
 					} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [능력]");
 				} else {
-					String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+					final String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
 					if (AbilityList.isRegistered(name)) {
 						if (args[0].equalsIgnoreCase("@a")) {
@@ -59,9 +60,9 @@ public interface CommandHandler {
 								if (DeveloperSettings.isEnabled()) e.printStackTrace();
 							}
 						} else {
-							Player targetPlayer = Bukkit.getPlayerExact(args[0]);
+							final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 							if (targetPlayer != null) {
-								AbstractGame game = GameManager.getGame();
+								final AbstractGame game = GameManager.getGame();
 								if (game.isParticipating(targetPlayer)) {
 									try {
 										game.getParticipant(targetPlayer).setAbility(AbilityList.getByString(name));
@@ -80,7 +81,7 @@ public interface CommandHandler {
 				}
 			}
 			break;
-			case ABLIST:
+			case ABLIST: {
 				sender.sendMessage("§2===== §a능력자 목록 §2=====");
 				int count = 0;
 				for (Participant participant : GameManager.getGame().getParticipants()) {
@@ -97,13 +98,36 @@ public interface CommandHandler {
 				sender.sendMessage("§2========================");
 
 				Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 참가자들의 능력을 확인하였습니다.");
-				break;
+			}
+			break;
+			case ABILITY_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final Participant participant = game.getParticipant(player);
+						if (participant.hasAbility()) {
+							for (String line : Formatter.formatAbilityInfo(participant.getAbility())) {
+								player.sendMessage(line);
+							}
+						} else {
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
+						}
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+					}
+				} else {
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+				}
+			}
+			break;
 		}
 	}
 
 	enum CommandType {
 		ABI,
-		ABLIST
+		ABLIST,
+		ABILITY_CHECK
 	}
 
 }

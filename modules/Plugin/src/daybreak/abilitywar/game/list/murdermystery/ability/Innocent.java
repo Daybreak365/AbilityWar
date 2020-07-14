@@ -10,7 +10,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMSHandler;
+import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
 import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class Innocent extends AbilityBase {
 			inventory.clear();
 			getPlayer().getInventory().setHeldItemSlot(0);
 			((MurderMystery) getGame()).updateGold(getParticipant());
-			NMSHandler.getNMS().sendTitle(getPlayer(), "§e역할§f: §a시민", "§c머더§f를 피해 살아남으세요!", 10, 80, 10);
+			NMS.sendTitle(getPlayer(), "§e역할§f: §a시민", "§c머더§f를 피해 살아남으세요!", 10, 80, 10);
 			new Timer(1) {
 				@Override
 				protected void run(int count) {
@@ -46,7 +46,7 @@ public class Innocent extends AbilityBase {
 
 				@Override
 				protected void onEnd() {
-					NMSHandler.getNMS().clearTitle(getPlayer());
+					NMS.clearTitle(getPlayer());
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
 		}

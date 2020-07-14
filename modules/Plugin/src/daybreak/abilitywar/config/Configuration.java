@@ -206,8 +206,8 @@ public class Configuration {
 			return getBoolean(ConfigNodes.GAME_CLEAR_WEATHER);
 		}
 
-		public static boolean getNoBlindFire() {
-			return getBoolean(ConfigNodes.GAME_NO_BLIND_FIRE);
+		public static boolean isArrowDamageDistanceProportional() {
+			return getBoolean(ConfigNodes.GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE);
 		}
 
 		public static Location getSpawnLocation() {

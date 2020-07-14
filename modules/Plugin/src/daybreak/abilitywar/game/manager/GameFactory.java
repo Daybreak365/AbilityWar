@@ -1,9 +1,15 @@
 package daybreak.abilitywar.game.manager;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.Category;
+import daybreak.abilitywar.game.Category.GameCategory;
+import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
+import daybreak.abilitywar.game.list.blind.BlindAbilityWar;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.debug.DebugMode;
 import daybreak.abilitywar.game.list.mix.MixGame;
@@ -24,6 +30,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,8 +43,9 @@ public class GameFactory {
 
 	private static final Logger logger = Logger.getLogger(GameFactory.class);
 
-	private static final Map<String, Class<? extends AbstractGame>> usedNames = new LinkedHashMap<>();
+	private static final Map<String, GameRegistration> usedNames = new LinkedHashMap<>();
 	private static final Map<Class<? extends AbstractGame>, GameRegistration> registeredModes = new HashMap<>();
+	private static final Multimap<GameCategory, GameRegistration> byCategory = LinkedHashMultimap.create();
 
 	static {
 		registerMode(DefaultGame.class);
@@ -50,10 +58,15 @@ public class GameFactory {
 		registerMode(OneAbility.class);
 		registerMode(ChangeMix.class);
 		registerMode(MurderMystery.class);
+		registerMode(BlindAbilityWar.class);
 		if (DeveloperSettings.isEnabled()) {
 			registerMode(DebugMode.class);
 			registerMode(MixDebugMode.class);
 		}
+	}
+
+	public static Collection<GameRegistration> getRegistrations() {
+		return registeredModes.values();
 	}
 
 	public static GameRegistration getRegistration(Class<? extends AbstractGame> clazz) {
@@ -71,12 +84,16 @@ public class GameFactory {
 	public static void registerMode(Class<? extends AbstractGame> gameClass) {
 		if (!registeredModes.containsKey(gameClass)) {
 			try {
-				GameRegistration registration = new GameRegistration(gameClass);
-				String name = registration.getManifest().name();
+				final GameRegistration registration = new GameRegistration(gameClass);
+				final String name = registration.getManifest().name();
 				if (!usedNames.containsKey(name)) {
 					if (!registration.hasFlag(Flag.BETA) || DeveloperSettings.isEnabled()) {
 						registeredModes.put(gameClass, registration);
-						usedNames.put(name, gameClass);
+						usedNames.put(name, registration);
+						for (String alias : registration.aliases) {
+							usedNames.putIfAbsent(alias, registration);
+						}
+						byCategory.put(registration.category, registration);
 					}
 				} else {
 					logger.debug("§e" + gameClass.getName() + " §f게임모드는 겹치는 이름이 있어 등록되지 않았습니다.");
@@ -93,15 +110,23 @@ public class GameFactory {
 		return new ArrayList<>(usedNames.keySet());
 	}
 
-	public static Class<? extends AbstractGame> getByName(String name) {
+	public static GameRegistration getByName(String name) {
 		return usedNames.get(name);
+	}
+
+	public static Collection<GameRegistration> getByCategory(final GameCategory category) {
+		return byCategory.get(category);
 	}
 
 	public static class GameRegistration {
 
+		private static final String[] EMPTY = new String[0];
+
 		private final Class<? extends AbstractGame> clazz;
 		private final Constructor<? extends AbstractGame> constructor;
 		private final GameManifest manifest;
+		private final GameCategory category;
+		private final String[] aliases;
 		private final int flag;
 
 		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException {
@@ -126,6 +151,8 @@ public class GameFactory {
 			this.manifest = clazz.getAnnotation(GameManifest.class);
 			Preconditions.checkNotNull(manifest.name());
 			Preconditions.checkNotNull(manifest.description());
+			this.category = clazz.isAnnotationPresent(Category.class) ? clazz.getAnnotation(Category.class).value() : GameCategory.GAME;
+			this.aliases = clazz.isAnnotationPresent(GameAliases.class) ? clazz.getAnnotation(GameAliases.class).value() : EMPTY;
 
 			int flag = 0x0;
 			if (clazz.isAnnotationPresent(Beta.class)) flag |= Flag.BETA;
@@ -140,6 +167,14 @@ public class GameFactory {
 
 		public Constructor<? extends AbstractGame> getConstructor() {
 			return constructor;
+		}
+
+		public GameCategory getCategory() {
+			return category;
+		}
+
+		public String[] getAliases() {
+			return aliases;
 		}
 
 		public GameManifest getManifest() {

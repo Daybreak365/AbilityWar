@@ -2,6 +2,8 @@ package daybreak.abilitywar.game.list.debug;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.Category;
+import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
@@ -10,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 
 @GameManifest(name = "Debug Mode", description = {})
+@Category(GameCategory.DEBUG)
 public class DebugMode extends Game implements DefaultKitHandler, AbstractGame.Observer {
 
 	public DebugMode() {
