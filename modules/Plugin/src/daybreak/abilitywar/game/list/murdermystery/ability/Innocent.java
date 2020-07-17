@@ -10,7 +10,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

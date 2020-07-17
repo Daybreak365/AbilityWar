@@ -132,7 +132,7 @@ public class GameFactory {
 		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException {
 			if (clazz.isAnnotationPresent(Support.class)) {
 				Support supported = clazz.getAnnotation(Support.class);
-				if (!(ServerVersion.getVersion().isAboveOrEqual(supported.min()) && ServerVersion.getVersion().isBelowOrEqual(supported.max()))) {
+				if (!(ServerVersion.isAboveOrEqual(supported.min()) && ServerVersion.isBelowOrEqual(supported.max()))) {
 					throw new UnsupportedVersionException();
 				}
 			}

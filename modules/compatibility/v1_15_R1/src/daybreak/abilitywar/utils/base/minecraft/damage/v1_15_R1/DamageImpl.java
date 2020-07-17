@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.damage.v1_15_R1;
 
-import daybreak.abilitywar.utils.base.minecraft.damage.iDamages;
+import daybreak.abilitywar.utils.base.minecraft.damage.IDamages;
 import net.minecraft.server.v1_15_R1.DamageSource;
 import net.minecraft.server.v1_15_R1.EntityArrow;
 import net.minecraft.server.v1_15_R1.EntityDamageSource;
@@ -15,7 +15,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-public class DamageImpl implements iDamages {
+public class DamageImpl implements IDamages {
 	@Override
 	public boolean damageArrow(Entity entity, LivingEntity shooter, float damage) {
 		final net.minecraft.server.v1_15_R1.Entity nmsEntity = ((CraftEntity) entity).getHandle();

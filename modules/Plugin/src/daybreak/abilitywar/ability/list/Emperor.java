@@ -100,7 +100,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 			}
 			final Vector centerVector = lineTarget.toVector();
 			this.center = getPlayer().getWorld().spawn(lineTarget, ArmorStand.class);
-			if (ServerVersion.getVersionNumber() >= 10) {
+			if (ServerVersion.getVersion() >= 10) {
 				center.setInvulnerable(true);
 				center.setCollidable(false);
 			}
@@ -109,7 +109,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 			final EulerAngle eulerAngle = new EulerAngle(Math.toRadians(270), Math.toRadians(270), 0);
 			diff = new HashMap<>();
 			for (ArmorStand armorStand : armorStands) {
-				if (ServerVersion.getVersionNumber() >= 10) {
+				if (ServerVersion.getVersion() >= 10) {
 					armorStand.setInvulnerable(true);
 					armorStand.setCollidable(false);
 				}

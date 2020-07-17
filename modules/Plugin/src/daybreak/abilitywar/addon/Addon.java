@@ -3,7 +3,7 @@ package daybreak.abilitywar.addon;
 import com.google.common.base.Enums;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.addon.exception.InvalidDescriptionException;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public abstract class Addon {
 	public static class AddonDescription {
 
 		private final String name, main, version;
-		private final Version minVersion;
+		private final NMSVersion minVersion;
 
 		AddonDescription(File pluginFile) throws InvalidDescriptionException {
 			JarFile jarFile = null;
@@ -72,7 +72,7 @@ public abstract class Addon {
 					this.name = description.getProperty("name", "");
 					this.main = description.getProperty("main", "");
 					this.version = description.getProperty("version", "");
-					this.minVersion = description.containsKey("minVersion") ? Enums.getIfPresent(Version.class, description.getProperty("minVersion")).orNull() : Version.v1_9_R1;
+					this.minVersion = description.containsKey("minVersion") ? Enums.getIfPresent(NMSVersion.class, description.getProperty("minVersion")).orNull() : NMSVersion.v1_9_R1;
 					if (name.isEmpty() || main.isEmpty() || version.isEmpty()) {
 						throw new InvalidDescriptionException(jarFile.getName() + ": 올바르지 않은 addon.yml입니다.");
 					}
@@ -106,7 +106,7 @@ public abstract class Addon {
 			return version;
 		}
 
-		public Version getMinVersion() {
+		public NMSVersion getMinVersion() {
 			return minVersion;
 		}
 

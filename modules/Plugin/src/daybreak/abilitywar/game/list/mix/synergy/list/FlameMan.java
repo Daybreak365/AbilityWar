@@ -13,9 +13,9 @@ import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -36,7 +36,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 @AbilityManifest(name = "염인", rank = Rank.S, species = Species.HUMAN, explain = {
 		""
 })
-@Support(min = Version.v1_12_R1)
+@Support(min = NMSVersion.v1_12_R1)
 @Beta
 public class FlameMan extends Synergy implements ActiveHandler {
 
@@ -80,7 +80,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
-	private final Map<Block, BlockSnapshot> blockData = new HashMap<>();
+	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
 	private final Timer terrain = new Timer(RangeConfig.getValue()) {
 
 		private int count;
@@ -101,10 +101,10 @@ public class FlameMan extends Synergy implements ActiveHandler {
 				Block belowBlock = block.getRelative(BlockFace.DOWN);
 				Material type = belowBlock.getType();
 				if (type == Material.WATER) {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.LAVA);
 				} else {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					BlockX.setType(belowBlock, MaterialX.MAGMA_BLOCK);
 				}
 			}
@@ -160,7 +160,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 			speed.start();
 			buff.start();
 		} else if (update == Update.ABILITY_DESTROY) {
-			for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
+			for (Entry<Block, IBlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
 				if (MaterialX.MAGMA_BLOCK.compareType(key) || key.getType() == Material.LAVA || MaterialX.LAVA.compareType(key) || key.getType() == Material.FIRE) {
 					entry.getValue().apply();

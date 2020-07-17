@@ -22,7 +22,7 @@ import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import java.lang.reflect.Field;
@@ -252,7 +252,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 							Material material = player.getInventory().getItemInMainHand().getType();
 							ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
 							if (ability.usesMaterial(material)) {
-								long current = System.currentTimeMillis();
+								final long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
 									AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(ability, material, clickType);
 									Bukkit.getPluginManager().callEvent(preEvent);
@@ -284,10 +284,10 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 										ability.getPlayer().sendMessage("§d능력을 사용하였습니다.");
 									}
 									if (ability instanceof TargetHandler) {
-										Entity targetEntity = e.getRightClicked();
+										final Entity targetEntity = e.getRightClicked();
 										if (targetEntity instanceof LivingEntity) {
 											if (targetEntity instanceof Player) {
-												Player targetPlayer = (Player) targetEntity;
+												final Player targetPlayer = (Player) targetEntity;
 												if (isParticipating(targetPlayer)) {
 													if (AbstractGame.this instanceof DeathManager.Handler && ((DeathManager.Handler) AbstractGame.this).getDeathManager().isExcluded(targetPlayer))
 														return;
@@ -298,9 +298,8 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 													((TargetHandler) ability).TargetSkill(material, targetPlayer);
 												}
 											} else {
-												LivingEntity target = (LivingEntity) targetEntity;
 												this.lastClick = current;
-												((TargetHandler) ability).TargetSkill(material, target);
+												((TargetHandler) ability).TargetSkill(material, (LivingEntity) targetEntity);
 											}
 										}
 									}
@@ -466,15 +465,16 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 			}
 
 			private void update() {
-				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + " | ");
+				final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + " | ");
 				for (ActionbarChannel channel : channels) {
 					if (channel.string != null) {
 						joiner.add(channel.string);
 					}
 				}
-				this.lastString = joiner.toString();
-				if (!lastString.isEmpty()) {
-					NMS.sendActionbar(getPlayer(), lastString, 0, 20, 20);
+				final String string = joiner.toString();
+				if (!string.isEmpty() || !lastString.isEmpty()) {
+					NMS.sendActionbar(getPlayer(), string, 0, 20, 20);
+					this.lastString = string;
 				}
 			}
 

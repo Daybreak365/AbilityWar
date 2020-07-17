@@ -10,8 +10,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -80,7 +80,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	private final Map<Block, BlockSnapshot> blockData = new HashMap<>();
+	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
 
 	private final Timer iceMaker = new Timer(RangeConfig.getValue()) {
 
@@ -100,22 +100,26 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 			for (Block block : LocationUtil.getBlocks2D(center, count, true, false, true)) {
 				block = world.getBlockAt(block.getX(), LocationUtil.getFloorYAt(world, playerLocation.getY(), block.getX(), block.getZ()), block.getZ());
 				Block belowBlock = block.getRelative(BlockFace.DOWN);
+				if (belowBlock.getType() == Material.SNOW) {
+					block = belowBlock;
+					belowBlock = belowBlock.getRelative(BlockFace.DOWN);
+				}
 				Material type = belowBlock.getType();
 				if (type == Material.WATER) {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.PACKED_ICE);
 				} else if (type == Material.LAVA) {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.OBSIDIAN);
 				} else if (MaterialX.ACACIA_LEAVES.compareType(belowBlock) || MaterialX.BIRCH_LEAVES.compareType(belowBlock) || MaterialX.DARK_OAK_LEAVES.compareType(belowBlock)
 						|| MaterialX.JUNGLE_LEAVES.compareType(belowBlock) || MaterialX.OAK_LEAVES.compareType(belowBlock) || MaterialX.SPRUCE_LEAVES.compareType(belowBlock)) {
 					BlockX.setType(belowBlock, MaterialX.GREEN_WOOL);
 				} else {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.SNOW_BLOCK);
 				}
 
-				blockData.putIfAbsent(block, BlockHandler.createSnapshot(block));
+				blockData.putIfAbsent(block, Blocks.createSnapshot(block));
 				block.setType(Material.SNOW);
 			}
 			count++;
@@ -132,7 +136,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		if (update == Update.RESTRICTION_CLEAR) {
 			buff.start();
 		} else if (update == Update.ABILITY_DESTROY) {
-			for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
+			for (Entry<Block, IBlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
 				if (key.getType() == Material.PACKED_ICE || key.getType() == Material.OBSIDIAN || key.getType() == Material.SNOW_BLOCK || key.getType() == Material.SNOW) {
 					entry.getValue().apply();

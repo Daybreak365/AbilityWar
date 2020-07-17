@@ -17,7 +17,7 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -61,7 +61,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	}
 
 	@SuppressWarnings("deprecation")
-	private final Objective killObjective = ServerVersion.getVersionNumber() >= 13 ?
+	private final Objective killObjective = ServerVersion.getVersion() >= 13 ?
 			getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy", "§c킬 횟수")
 			: getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy");
 
@@ -131,7 +131,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 	private void scoreboardSetup() {
 		killObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		if (ServerVersion.getVersionNumber() >= 13)
+		if (ServerVersion.getVersion() >= 13)
 			killObjective.setDisplayName("§c킬 횟수");
 		for (Participant p : getParticipants()) {
 			Score score = killObjective.getScore(p.getPlayer().getName());

@@ -1,11 +1,10 @@
 package daybreak.abilitywar.utils.base.minecraft;
 
 import daybreak.abilitywar.game.manager.SpectatorManager;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.Collection;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class PlayerCollector {
 
@@ -13,11 +12,10 @@ public class PlayerCollector {
 	}
 
 	public static Collection<Player> EVERY_PLAYER_EXCLUDING_SPECTATORS() {
-		ArrayList<Player> players = new ArrayList<>();
+		final Collection<Player> players = new ArrayList<>();
 		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (!SpectatorManager.isSpectator(player.getName())) {
-				players.add(player);
-			}
+			if (SpectatorManager.isSpectator(player.getName())) continue;
+			players.add(player);
 		}
 		return players;
 	}

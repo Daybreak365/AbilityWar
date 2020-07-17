@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -44,7 +43,6 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -224,11 +222,6 @@ public class PenetrationArrow extends AbilityBase {
 		};
 
 		void onHit(PenetrationArrow ability, Damageable damager, Damageable victim);
-	}
-
-	@SubscribeEvent
-	private void test(EntityDamageByEntityEvent e) {
-		Bukkit.broadcastMessage(e.getCause().name());
 	}
 
 	public class Parabola extends Timer {

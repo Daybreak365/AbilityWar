@@ -117,7 +117,8 @@ public class AbilityList {
 		registerAbility(Ghost.class);
 		registerAbility(Lunar.class);
 		registerAbility(Apology.class);
-		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getVersion().name() + ".Hermit");
+		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getName() + ".Hermit");
+		registerAbility(SwordMaster.class);
 	}
 
 	/**

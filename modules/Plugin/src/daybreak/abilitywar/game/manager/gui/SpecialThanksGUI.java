@@ -47,22 +47,19 @@ public class SpecialThanksGUI implements Listener {
 			new SpecialThank("507fc49666fb43489200251f48bf4719", "몇몇 업데이트에 기여하셨습니다.")
 	};
 
-	@EventHandler
-	private void onQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
-			HandlerList.unregisterAll(this);
-		}
-	}
+	private final Player player;
 
-	private final Player p;
-
-	public SpecialThanksGUI(Player p, Plugin plugin) {
-		this.p = p;
+	public SpecialThanksGUI(Player player, Plugin plugin) {
+		this.player = player;
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
-	private int currentPage = 1;
-	private Inventory gui;
+	@EventHandler
+	private void onQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			HandlerList.unregisterAll(this);
+		}
+	}
 
 	public void openGUI(int page) {
 		int maxPage = ((SpecialThanks.length - 1) / 18) + 1;
@@ -73,14 +70,14 @@ public class SpecialThanksGUI implements Listener {
 		int count = 0;
 
 		for (SpecialThank thank : SpecialThanks) {
-			ItemStack stack = ItemLib.getSkull(thank.getName());
-			SkullMeta meta = (SkullMeta) stack.getItemMeta();
-			if (!thank.getName().equals("ERROR")) {
-				meta.setDisplayName("§e" + thank.getName());
-				meta.setLore(thank.getRole());
-			} else {
+			final ItemStack stack = ItemLib.getSkull(thank.getName());
+			final SkullMeta meta = (SkullMeta) stack.getItemMeta();
+			if (thank.getName().equals("error")) {
 				meta.setDisplayName("§c오류");
 				meta.setLore(Collections.singletonList("§bMojang API§f에 연결할 수 없습니다."));
+			} else {
+				meta.setDisplayName("§e" + thank.getName());
+				meta.setLore(thank.getRole());
 			}
 
 			stack.setItemMeta(meta);
@@ -94,13 +91,23 @@ public class SpecialThanksGUI implements Listener {
 		if (page > 1) gui.setItem(21, PREVIOUS_PAGE);
 		if (page != maxPage) gui.setItem(23, NEXT_PAGE);
 
-		ItemStack stack = new ItemStack(Material.PAPER, 1);
-		ItemMeta meta = stack.getItemMeta();
+		final ItemStack stack = new ItemStack(Material.PAPER, 1);
+		final ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		gui.setItem(22, stack);
 
-		p.openInventory(gui);
+		player.openInventory(gui);
+	}
+
+	private int currentPage = 1;
+	private Inventory gui;
+
+	@EventHandler
+	private void onPlayerQuit(PlayerQuitEvent e) {
+		if (e.getPlayer().equals(player)) {
+			HandlerList.unregisterAll(this);
+		}
 	}
 
 	@EventHandler
@@ -110,30 +117,16 @@ public class SpecialThanksGUI implements Listener {
 		}
 	}
 
-	@EventHandler
-	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(gui)) {
-			e.setCancelled(true);
-			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
-					openGUI(currentPage - 1);
-				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "다음 페이지")) {
-					openGUI(currentPage + 1);
-				}
-			}
-		}
-	}
-
 	public static class SpecialThank {
 
-		private String name;
 		private final String[] role;
+		private String name;
 
-		public SpecialThank(String UUID, String... role) {
+		public SpecialThank(String uuid, String... role) {
 			try {
-				this.name = MojangAPI.getNickname(UUID);
+				this.name = MojangAPI.getNickname(uuid);
 			} catch (IOException e) {
-				this.name = "ERROR";
+				this.name = "error";
 			}
 			this.role = role;
 			for (int i = 0; i < role.length; i++) {
@@ -149,6 +142,20 @@ public class SpecialThanksGUI implements Listener {
 			return Arrays.asList(role);
 		}
 
+	}
+
+	@EventHandler
+	private void onInventoryClick(InventoryClickEvent e) {
+		if (e.getInventory().equals(gui)) {
+			e.setCancelled(true);
+			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
+				if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
+					openGUI(currentPage - 1);
+				} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "다음 페이지")) {
+					openGUI(currentPage + 1);
+				}
+			}
+		}
 	}
 
 }

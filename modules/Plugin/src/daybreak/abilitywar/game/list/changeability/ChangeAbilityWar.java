@@ -60,7 +60,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	}
 
 	@SuppressWarnings("deprecation")
-	private final Objective lifeObjective = ServerVersion.getVersionNumber() >= 13 ?
+	private final Objective lifeObjective = ServerVersion.getVersion() >= 13 ?
 			getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy", "§c생명")
 			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
 
@@ -113,7 +113,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 			case 7:
 				Bukkit.broadcastMessage("§7스코어보드 §f설정중...");
 				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-				if (ServerVersion.getVersionNumber() < 13)
+				if (ServerVersion.getVersion() < 13)
 					lifeObjective.setDisplayName("§c생명");
 				for (Participant p : getParticipants()) {
 					Score score = lifeObjective.getScore(p.getPlayer().getName());

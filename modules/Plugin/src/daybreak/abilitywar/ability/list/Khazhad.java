@@ -20,8 +20,8 @@ import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -136,7 +136,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 
 		private final LivingEntity target;
 		private final Block[] blocks = new Block[2];
-		private final BlockSnapshot[] snapshots = new BlockSnapshot[2];
+		private final IBlockSnapshot[] snapshots = new IBlockSnapshot[2];
 		private final Location teleport;
 		private ActionbarChannel actionbarChannel;
 
@@ -146,9 +146,9 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 			this.target = target;
 			blocks[0] = target.getEyeLocation().getBlock();
 			blocks[1] = blocks[0].getRelative(BlockFace.DOWN);
-			if (ServerVersion.getVersionNumber() >= 10) target.setInvulnerable(true);
+			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(true);
 			for (int i = 0; i < 2; i++) {
-				snapshots[i] = BlockHandler.createSnapshot(blocks[i]);
+				snapshots[i] = Blocks.createSnapshot(blocks[i]);
 				blocks[i].setType(Material.ICE);
 			}
 			this.teleport = blocks[1].getLocation().clone().add(0.5, 0, 0.5).setDirection(target.getLocation().getDirection());
@@ -207,7 +207,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onEnd() {
 			HandlerList.unregisterAll(this);
-			if (ServerVersion.getVersionNumber() >= 10) target.setInvulnerable(false);
+			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(false);
 			for (int i = 0; i < 2; i++) {
 				snapshots[i].apply();
 			}
@@ -218,7 +218,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onSilentEnd() {
 			HandlerList.unregisterAll(this);
-			if (ServerVersion.getVersionNumber() >= 10) target.setInvulnerable(false);
+			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(false);
 			for (int i = 0; i < 2; i++) {
 				snapshots[i].apply();
 			}

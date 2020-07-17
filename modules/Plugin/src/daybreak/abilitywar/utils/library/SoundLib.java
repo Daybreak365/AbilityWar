@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.Sounds;
+import daybreak.abilitywar.utils.base.minecraft.nms.Sounds;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.util.Collection;
 import org.bukkit.Bukkit;
@@ -576,7 +576,7 @@ public class SoundLib {
 		}
 
 		private SimpleSound(String latestName, String oldName) {
-			this.sound = Enums.getIfPresent(Sound.class, ServerVersion.getVersionNumber() >= 13 ? latestName : oldName).orNull();
+			this.sound = Enums.getIfPresent(Sound.class, ServerVersion.getVersion() >= 13 ? latestName : oldName).orNull();
 		}
 
 		public void playSound(Location location, float volume, float pitch) {

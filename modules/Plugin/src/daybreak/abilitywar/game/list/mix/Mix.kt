@@ -66,10 +66,13 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 		removeAbility()
 		val synergyReg = SynergyFactory.getSynergy(first, second)
 		if (synergyReg != null) {
-			synergy = create(synergyReg.abilityClass, participant).apply { isRestricted = this@Mix.isRestricted || !getGame().isGameStarted } as Synergy
+			this.synergy = create(synergyReg.abilityClass, participant) as Synergy
+			this.synergy?.isRestricted = this@Mix.isRestricted || !game.isGameStarted
 		} else {
-			this.first = create(first, participant).apply { isRestricted = this@Mix.isRestricted || !game.isGameStarted }
-			this.second = create(second, participant).apply { isRestricted = this@Mix.isRestricted || !game.isGameStarted }
+			this.first = create(first, participant)
+			this.first?.isRestricted = this@Mix.isRestricted || !game.isGameStarted
+			this.second = create(second, participant)
+			this.second?.isRestricted = this@Mix.isRestricted || !game.isGameStarted
 		}
 	}
 

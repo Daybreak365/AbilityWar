@@ -19,8 +19,8 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Crescent;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.iHologram;
+import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -40,6 +40,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.util.Vector;
 
 @AbilityManifest(name = "루나", rank = Rank.A, species = Species.OTHERS, explain = {
@@ -105,6 +106,13 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		}
 	};
 	private int particleSide = 45;
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerJoin(PlayerJoinEvent e) {
+		for (Stack stack : stackMap.values()) {
+			stack.hologram.display(getPlayer());
+		}
+	}
 
 	private static boolean isNight(long time) {
 		return time > 12300 && time < 23850;
@@ -263,7 +271,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 	private class Stack extends Timer {
 
 		private final LivingEntity entity;
-		private final iHologram hologram;
+		private final IHologram hologram;
 		private int stack = 0;
 
 		private Stack(LivingEntity entity) {
@@ -302,7 +310,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onSilentEnd() {
-			hologram.hide(getPlayer());
+			hologram.unregister();
 			stackMap.remove(entity.getUniqueId());
 		}
 	}

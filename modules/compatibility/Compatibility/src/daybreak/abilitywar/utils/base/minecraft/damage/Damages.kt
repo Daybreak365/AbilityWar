@@ -2,14 +2,20 @@ package daybreak.abilitywar.utils.base.minecraft.damage
 
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException
+import org.bukkit.Bukkit
+import org.bukkit.GameMode.ADVENTURE
+import org.bukkit.GameMode.SURVIVAL
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause
 
-class Damages {
-	companion object INSTANCE : iDamages {
-		private val INSTANCE: iDamages = try {
-			Class.forName("daybreak.abilitywar.utils.base.minecraft.damage." + ServerVersion.getVersion().name + ".DamageImpl").asSubclass(iDamages::class.java).getConstructor().newInstance()
+class Damages private constructor() {
+	companion object INSTANCE : IDamages {
+		private val INSTANCE: IDamages = try {
+			Class.forName("daybreak.abilitywar.utils.base.minecraft.damage." + ServerVersion.name + ".DamageImpl").asSubclass(IDamages::class.java).getConstructor().newInstance()
 		} catch (e: Exception) {
 			throw UnsupportedVersionException()
 		}
@@ -22,6 +28,26 @@ class Damages {
 		@JvmStatic
 		override fun damageFixed(entity: Entity, damager: Player, damage: Float): Boolean {
 			return INSTANCE.damageFixed(entity, damager, damage)
+		}
+
+		private fun <T : EntityDamageEvent> canDamage(event: T, victim: Entity): Boolean {
+			Bukkit.getPluginManager().callEvent(event)
+			return if (event.isCancelled) false else {
+				if (victim is Player) {
+					val gameMode = victim.gameMode
+					gameMode == SURVIVAL || gameMode == ADVENTURE
+				} else true
+			}
+		}
+
+		@JvmStatic
+		fun canDamage(victim: Entity, damager: Entity, damageCause: DamageCause, damage: Double): Boolean {
+			return canDamage(EntityDamageByEntityEvent(damager, victim, damageCause, damage), victim)
+		}
+
+		@JvmStatic
+		fun canDamage(victim: Entity, damageCause: DamageCause, damage: Double): Boolean {
+			return canDamage(EntityDamageEvent(victim, damageCause, damage), victim)
 		}
 	}
 }

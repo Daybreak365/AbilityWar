@@ -24,13 +24,12 @@ package daybreak.abilitywar.utils.library;
 
 import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
 public enum MaterialX {
 	ACACIA_BOAT("BOAT_ACACIA"),
@@ -1108,7 +1107,7 @@ public enum MaterialX {
 		this.data = (byte) data;
 		this.version = version;
 		this.legacy = legacy;
-		if (ServerVersion.getVersionNumber() >= 13) {
+		if (ServerVersion.getVersion() >= 13) {
 			Material material = Material.getMaterial(name());
 			this.material = material != null ? material : (legacy != null ? Material.getMaterial(legacy) : null);
 		} else {
@@ -1192,7 +1191,7 @@ public enum MaterialX {
 	 * @since 2.0.0
 	 */
 	public static boolean supports(int version) {
-		return ServerVersion.getVersionNumber() >= version;
+		return ServerVersion.getVersion() >= version;
 	}
 
 	/**

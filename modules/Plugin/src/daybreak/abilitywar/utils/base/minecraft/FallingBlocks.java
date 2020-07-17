@@ -24,7 +24,7 @@ public class FallingBlocks {
 	@SuppressWarnings("deprecation")
 	public static FallingBlock spawnFallingBlock(Location location, Material type, byte data, boolean glowing, Vector velocity, Behavior behavior) {
 		final FallingBlock fallingBlock;
-		if (ServerVersion.getVersionNumber() >= 13)
+		if (ServerVersion.getVersion() >= 13)
 			fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
 		else fallingBlock = location.getWorld().spawnFallingBlock(location, type, data);
 		if (behavior != null) {
@@ -43,7 +43,7 @@ public class FallingBlocks {
 		}
 
 		fallingBlock.setGlowing(glowing);
-		if (ServerVersion.getVersionNumber() >= 10) fallingBlock.setInvulnerable(true);
+		if (ServerVersion.getVersion() >= 10) fallingBlock.setInvulnerable(true);
 		fallingBlock.setDropItem(false);
 		if (velocity != null) {
 			fallingBlock.setVelocity(velocity);
@@ -53,14 +53,14 @@ public class FallingBlocks {
 	}
 
 	public static FallingBlock spawnFallingBlock(Block block, boolean glowing, Vector velocity, Behavior behavior) {
-		if (ServerVersion.getVersionNumber() >= 13)
+		if (ServerVersion.getVersion() >= 13)
 			return spawnFallingBlock(block.getLocation(), block.getType(), (byte) 0, glowing, velocity, behavior);
 		else
 			return spawnFallingBlock(block.getLocation(), block.getType(), block.getData(), glowing, velocity, behavior);
 	}
 
 	public static FallingBlock spawnFallingBlock(Location location, MaterialX type, boolean glowing, Vector velocity, Behavior behavior) {
-		if (ServerVersion.getVersionNumber() >= 13)
+		if (ServerVersion.getVersion() >= 13)
 			return spawnFallingBlock(location, type.parseMaterial(), (byte) 0, glowing, velocity, behavior);
 		else return spawnFallingBlock(location, type.parseMaterial(), type.getData(), glowing, velocity, behavior);
 	}

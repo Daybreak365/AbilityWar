@@ -23,8 +23,8 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.lang.reflect.InvocationTargetException;
@@ -69,7 +69,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 })
 @Category(GameCategory.MINIGAME)
-@Support(min = Version.v1_12_R1)
+@Support(min = NMSVersion.v1_12_R1)
 @Beta
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
 

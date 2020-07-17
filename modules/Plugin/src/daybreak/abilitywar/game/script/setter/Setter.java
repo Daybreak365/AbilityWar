@@ -62,7 +62,7 @@ public abstract class Setter<T> implements EventExecutor {
 	}
 
 	protected void updateGUI() {
-		if (!AbilityWar.isMainThread()) {
+		if (!Bukkit.isPrimaryThread()) {
 			new BukkitRunnable() {
 				@Override
 				public void run() {

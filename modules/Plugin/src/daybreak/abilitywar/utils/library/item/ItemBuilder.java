@@ -3,12 +3,11 @@ package daybreak.abilitywar.utils.library.item;
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class ItemBuilder {
 
@@ -64,7 +63,7 @@ public class ItemBuilder {
 	public ItemStack build() {
 		Preconditions.checkNotNull(type, "type is null");
 		ItemStack stack = new ItemStack(type, amount);
-		if (ServerVersion.getVersionNumber() < 13) {
+		if (ServerVersion.getVersion() < 13) {
 			stack.setDurability(data);
 		}
 		if (displayName != null || lore != null) {

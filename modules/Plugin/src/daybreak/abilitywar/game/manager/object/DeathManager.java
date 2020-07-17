@@ -10,7 +10,7 @@ import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;

@@ -12,8 +12,8 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -58,7 +58,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 
 	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 
-	private final Map<Block, BlockSnapshot> saves = new HashMap<>();
+	private final Map<Block, IBlockSnapshot> saves = new HashMap<>();
 
 	private final Timer clearField = new Timer(20) {
 		@Override
@@ -69,7 +69,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 
 		@Override
 		public void onEnd() {
-			for (BlockSnapshot blockSnapshot : saves.values()) {
+			for (IBlockSnapshot blockSnapshot : saves.values()) {
 				blockSnapshot.apply();
 			}
 			saves.clear();
@@ -78,7 +78,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 
 		@Override
 		public void onSilentEnd() {
-			for (BlockSnapshot blockSnapshot : saves.values()) {
+			for (IBlockSnapshot blockSnapshot : saves.values()) {
 				blockSnapshot.apply();
 			}
 			saves.clear();
@@ -115,7 +115,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		public void run(int count) {
 			if (totalCount <= 10) {
 				for (Block block : LocationUtil.getBlocks2D(center, buildCount, true, false, true)) {
-					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
+					saves.putIfAbsent(block, Blocks.createSnapshot(block));
 					if (random.nextInt(5) <= 1) {
 						BlockX.setType(block, MaterialX.STONE_BRICKS);
 					} else {
@@ -129,17 +129,17 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 				buildCount++;
 			} else if (totalCount <= 15) {
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 2, true, false, true)) {
-					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
+					saves.putIfAbsent(block, Blocks.createSnapshot(block));
 					BlockX.setType(block, MaterialX.IRON_BARS);
 				}
 
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 1, true, false, true)) {
-					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
+					saves.putIfAbsent(block, Blocks.createSnapshot(block));
 					BlockX.setType(block, MaterialX.IRON_BARS);
 				}
 			} else if (totalCount <= 26) {
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, 6, 0), buildCount, true, false, true)) {
-					saves.putIfAbsent(block, BlockHandler.createSnapshot(block));
+					saves.putIfAbsent(block, Blocks.createSnapshot(block));
 					if (random.nextInt(5) <= 1) {
 						BlockX.setType(block, MaterialX.STONE_BRICKS);
 					} else {
@@ -157,7 +157,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			Block check = center.getBlock().getRelative(0, 6, 0);
 
 			if (!BlockX.isType(check, MaterialX.STONE_BRICKS)) {
-				saves.putIfAbsent(check, BlockHandler.createSnapshot(check));
+				saves.putIfAbsent(check, Blocks.createSnapshot(check));
 				BlockX.setType(check, MaterialX.STONE_BRICKS);
 			}
 
@@ -173,7 +173,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 
 		@Override
 		protected void onSilentEnd() {
-			for (BlockSnapshot blockSnapshot : saves.values()) {
+			for (IBlockSnapshot blockSnapshot : saves.values()) {
 				blockSnapshot.apply();
 			}
 			saves.clear();

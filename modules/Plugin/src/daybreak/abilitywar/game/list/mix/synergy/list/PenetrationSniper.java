@@ -62,7 +62,7 @@ import org.bukkit.util.Vector;
 })
 public class PenetrationSniper extends Synergy {
 
-	private static final Material GLASS_PANE = ServerVersion.getVersionNumber() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
+	private static final Material GLASS_PANE = ServerVersion.getVersion() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
 	private static final RGB BULLET_COLOR = new RGB(43, 209, 224);
 	private static final RGB RED = new RGB(219, 64, 66);
 	private static final RGB PURPLE = new RGB(138, 9, 173);
@@ -74,7 +74,7 @@ public class PenetrationSniper extends Synergy {
 		@Override
 		protected void run(int count) {
 			final Material main = getPlayer().getInventory().getItemInMainHand().getType(), off = getPlayer().getInventory().getItemInOffHand().getType();
-			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersionNumber() >= 14 && (main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)))) {
+			if (main.equals(Material.BOW) || off.equals(Material.BOW) || (ServerVersion.getVersion() >= 14 && (main.equals(Material.CROSSBOW) || off.equals(Material.CROSSBOW)))) {
 				PotionEffects.SLOW.addPotionEffect(getPlayer(), 2, 3, true);
 				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(Math.min(0, getPlayer().getVelocity().getY())).setZ(0));
 			}

@@ -133,7 +133,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 		public void run(int count) {
 			int distance = 6 - count;
 
-			if (ServerVersion.getVersionNumber() >= 13) {
+			if (ServerVersion.getVersion() >= 13) {
 				for (Block block : LocationUtil.getBlocks2D(center, distance, true, true, true)) {
 					if (block.getType() == Material.AIR) block = block.getRelative(BlockFace.DOWN);
 					if (block.getType() == Material.AIR) continue;
@@ -183,7 +183,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 			assassin = 3;
 			if (entities != null) {
 				damageables = new LinkedList<>(entities.keySet());
-				if (ServerVersion.getVersionNumber() >= 10) {
+				if (ServerVersion.getVersion() >= 10) {
 					for (Damageable entity : entities.keySet()) {
 						entity.setGravity(false);
 					}
@@ -219,7 +219,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 		@Override
 		public void onEnd() {
-			if (entities != null && ServerVersion.getVersionNumber() >= 10) {
+			if (entities != null && ServerVersion.getVersion() >= 10) {
 				for (Damageable entity : entities.keySet()) {
 					entity.setGravity(true);
 				}
@@ -231,7 +231,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 		@Override
 		public void onSilentEnd() {
-			if (entities != null && ServerVersion.getVersionNumber() >= 10) {
+			if (entities != null && ServerVersion.getVersion() >= 10) {
 				for (Damageable entity : entities.keySet()) {
 					entity.setGravity(true);
 				}

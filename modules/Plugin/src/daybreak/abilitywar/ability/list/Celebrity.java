@@ -15,9 +15,9 @@ import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.HashMap;
@@ -105,7 +105,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 	};
 
 	private final double distance = DistanceConfig.getValue();
-	private final Map<Block, BlockSnapshot> carpets = new HashMap<>();
+	private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 		@Override
@@ -139,7 +139,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 									location.getBlockZ()
 							);
 							if (!carpets.containsKey(block)) {
-								carpets.put(block, BlockHandler.createSnapshot(block));
+								carpets.put(block, Blocks.createSnapshot(block));
 								BlockX.setType(block, MaterialX.RED_CARPET);
 							}
 						}
@@ -163,7 +163,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationEnd() {
-			for (BlockSnapshot snapshot : carpets.values()) {
+			for (IBlockSnapshot snapshot : carpets.values()) {
 				snapshot.apply();
 			}
 			carpets.clear();
@@ -171,7 +171,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationSilentEnd() {
-			for (BlockSnapshot snapshot : carpets.values()) {
+			for (IBlockSnapshot snapshot : carpets.values()) {
 				snapshot.apply();
 			}
 			carpets.clear();

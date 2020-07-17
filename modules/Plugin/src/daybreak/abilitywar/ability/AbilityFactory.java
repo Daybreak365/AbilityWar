@@ -112,7 +112,9 @@ public class AbilityFactory {
 		// v2.1.8.6
 		registerAbility(Apology.class);
 		// v2.1.8.8
-		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getVersion().name() + ".Hermit");
+		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getName() + ".Hermit");
+		// v2.1.9.3
+		registerAbility(SwordMaster.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -231,7 +233,7 @@ public class AbilityFactory {
 		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException {
 			if (clazz.isAnnotationPresent(Support.class)) {
 				Support supported = clazz.getAnnotation(Support.class);
-				if (!(ServerVersion.getVersion().isAboveOrEqual(supported.min()) && ServerVersion.getVersion().isBelowOrEqual(supported.max()))) {
+				if (!(ServerVersion.isAboveOrEqual(supported.min()) && ServerVersion.isBelowOrEqual(supported.max()))) {
 					throw new UnsupportedVersionException();
 				}
 			}

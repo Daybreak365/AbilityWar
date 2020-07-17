@@ -42,7 +42,7 @@ public class AddonLoader {
 		try {
 			AddonDescription description = new AddonDescription(file);
 			String name = description.getName();
-			if (!ServerVersion.getVersion().isAboveOrEqual(description.getMinVersion())) {
+			if (!ServerVersion.isAboveOrEqual(description.getMinVersion())) {
 				throw new InvalidAddonException(name + ": 이 서버 버전에서 지원되는 애드온이 아닙니다. (최소 " + description.getMinVersion().name() + ")");
 			}
 			Addon instance = new AddonClassLoader(Addon.class.getClassLoader(), description, file).addon;

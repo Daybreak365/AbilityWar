@@ -19,8 +19,8 @@ import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -126,7 +126,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	private final Map<Block, BlockSnapshot> blockData = new HashMap<>();
+	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
 
 	private final int range = RangeConfig.getValue();
 	private final Timer iceMaker = new Timer(range) {
@@ -149,20 +149,20 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 				Block belowBlock = block.getRelative(BlockFace.DOWN);
 				Material type = belowBlock.getType();
 				if (type == Material.WATER) {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.PACKED_ICE);
 				} else if (type == Material.LAVA) {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.OBSIDIAN);
 				} else if (MaterialX.ACACIA_LEAVES.compareType(belowBlock) || MaterialX.BIRCH_LEAVES.compareType(belowBlock) || MaterialX.DARK_OAK_LEAVES.compareType(belowBlock)
 						|| MaterialX.JUNGLE_LEAVES.compareType(belowBlock) || MaterialX.OAK_LEAVES.compareType(belowBlock) || MaterialX.SPRUCE_LEAVES.compareType(belowBlock)) {
 					BlockX.setType(belowBlock, MaterialX.GREEN_WOOL);
 				} else {
-					blockData.putIfAbsent(belowBlock, BlockHandler.createSnapshot(belowBlock));
+					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.SNOW_BLOCK);
 				}
 
-				blockData.putIfAbsent(block, BlockHandler.createSnapshot(block));
+				blockData.putIfAbsent(block, Blocks.createSnapshot(block));
 				block.setType(Material.SNOW);
 			}
 			count++;
@@ -240,7 +240,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			buff.start();
 			passive.start();
 		} else if (update == Update.ABILITY_DESTROY) {
-			for (Entry<Block, BlockSnapshot> entry : blockData.entrySet()) {
+			for (Entry<Block, IBlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
 				if (key.getType() == Material.PACKED_ICE || key.getType() == Material.OBSIDIAN || key.getType() == Material.SNOW_BLOCK || key.getType() == Material.SNOW) {
 					entry.getValue().apply();
@@ -311,7 +311,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 		private final LivingEntity target;
 		private final Block[] blocks = new Block[2];
-		private final BlockSnapshot[] snapshots = new BlockSnapshot[2];
+		private final IBlockSnapshot[] snapshots = new IBlockSnapshot[2];
 		private final Location teleport;
 		private ActionbarChannel actionbarChannel;
 
@@ -321,9 +321,9 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			this.target = target;
 			blocks[0] = target.getEyeLocation().getBlock();
 			blocks[1] = blocks[0].getRelative(BlockFace.DOWN);
-			if (ServerVersion.getVersionNumber() >= 10) target.setInvulnerable(true);
+			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(true);
 			for (int i = 0; i < 2; i++) {
-				snapshots[i] = BlockHandler.createSnapshot(blocks[i]);
+				snapshots[i] = Blocks.createSnapshot(blocks[i]);
 				blocks[i].setType(Material.ICE);
 			}
 			this.teleport = blocks[1].getLocation().clone().add(0.5, 0, 0.5).setDirection(target.getLocation().getDirection());
@@ -386,7 +386,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 		@Override
 		protected void onEnd() {
 			HandlerList.unregisterAll(this);
-			if (ServerVersion.getVersionNumber() >= 10) target.setInvulnerable(false);
+			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(false);
 			for (int i = 0; i < 2; i++) {
 				snapshots[i].apply();
 			}
@@ -397,7 +397,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 		@Override
 		protected void onSilentEnd() {
 			HandlerList.unregisterAll(this);
-			if (ServerVersion.getVersionNumber() >= 10) target.setInvulnerable(false);
+			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(false);
 			for (int i = 0; i < 2; i++) {
 				snapshots[i].apply();
 			}

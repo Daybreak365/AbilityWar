@@ -24,7 +24,7 @@ public class Bar implements Listener {
 			bossBar.addPlayer(player);
 		}
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		if (ServerVersion.getVersionNumber() >= 10) bossBar.setVisible(true);
+		if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
 	}
 
 	@EventHandler

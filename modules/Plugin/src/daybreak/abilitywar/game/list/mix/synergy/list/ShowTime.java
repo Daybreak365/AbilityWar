@@ -20,10 +20,10 @@ import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockHandler;
-import daybreak.abilitywar.utils.base.minecraft.compat.block.BlockSnapshot;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion.Version;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -60,7 +60,7 @@ import org.bukkit.util.Vector;
 		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 처형",
 		"능력 사용 중에는 주변의 생명체 수와 관계 없이 4명 이상의 효과를 받습니다."
 })
-@Support(min = Version.v1_11_R1)
+@Support(min = NMSVersion.v1_11_R1)
 public class ShowTime extends Synergy implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "Cooldown", 40,
@@ -94,7 +94,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 			Type.BALL_LARGE, Type.STAR
 	};
 	private static final int radius = 7;
-	private final Map<Block, BlockSnapshot> carpets = new HashMap<>();
+	private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
 	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
 		@Override
@@ -128,7 +128,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 									location.getBlockZ()
 							);
 							if (!carpets.containsKey(block)) {
-								carpets.put(block, BlockHandler.createSnapshot(block));
+								carpets.put(block, Blocks.createSnapshot(block));
 								BlockX.setType(block, MaterialX.RED_CARPET);
 							}
 						}
@@ -153,7 +153,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 
 		@Override
 		protected void onDurationEnd() {
-			for (BlockSnapshot snapshot : carpets.values()) {
+			for (IBlockSnapshot snapshot : carpets.values()) {
 				snapshot.apply();
 			}
 			carpets.clear();
@@ -161,7 +161,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 
 		@Override
 		protected void onDurationSilentEnd() {
-			for (BlockSnapshot snapshot : carpets.values()) {
+			for (IBlockSnapshot snapshot : carpets.values()) {
 				snapshot.apply();
 			}
 			carpets.clear();

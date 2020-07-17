@@ -44,36 +44,19 @@ public class ItemLib {
 	public static ColouredItem STAINED_GLASS = new ColouredItem("STAINED_GLASS");
 	public static ColouredItem STAINED_GLASS_PANE = new ColouredItem("STAINED_GLASS_PANE");
 
-	public static class ColouredItem {
-
-		private final String materialName;
-
-		private ColouredItem(String materialName) {
-			this.materialName = materialName;
-		}
-
-		@SuppressWarnings("deprecation")
-		public ItemStack getItemStack(ItemColor color) {
-			if (ServerVersion.getVersionNumber() >= 13) {
-				return new ItemStack(Material.valueOf(color.name() + "_" + this.materialName));
-			} else {
-				return new ItemStack(Material.valueOf(this.materialName), 1, color.getDamage());
+	@SuppressWarnings("deprecation")
+	public static ItemStack setDurability(ItemStack is, short durability) {
+		if (ServerVersion.getVersion() >= 13) {
+			if (is.hasItemMeta() && is.getItemMeta() instanceof Damageable) {
+				Damageable dmg = (Damageable) is.getItemMeta();
+				dmg.setDamage(durability);
+				is.setItemMeta((ItemMeta) dmg);
 			}
+		} else {
+			is.setDurability(durability);
 		}
 
-		public boolean compareType(Material material) {
-			if (ServerVersion.getVersionNumber() >= 13) {
-				String name = material.toString();
-				String color = name.split("_")[0];
-				if (Enums.getIfPresent(ItemColor.class, color).isPresent()) {
-					name = name.replaceAll(color + "_", "");
-				}
-				return name.equalsIgnoreCase(this.materialName);
-			} else {
-				return material.toString().equalsIgnoreCase(this.materialName);
-			}
-		}
-
+		return is;
 	}
 
 	public enum ItemColor {
@@ -137,89 +120,8 @@ public class ItemLib {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ItemStack setDurability(ItemStack is, short durability) {
-		if (ServerVersion.getVersionNumber() >= 13) {
-			if (is.hasItemMeta() && is.getItemMeta() instanceof Damageable) {
-				Damageable dmg = (Damageable) is.getItemMeta();
-				dmg.setDamage(durability);
-				is.setItemMeta((ItemMeta) dmg);
-			}
-		} else {
-			is.setDurability(durability);
-		}
-
-		return is;
-	}
-
-	public static class PotionBuilder {
-
-		private PotionType type;
-		private PotionShape shape;
-		private boolean extended = false;
-		private boolean upgraded = false;
-
-		public PotionBuilder(PotionType type, PotionShape shape) {
-			this.type = type;
-			this.shape = shape;
-		}
-
-		public PotionBuilder setType(PotionType type) {
-			this.type = type;
-			this.extended = type.isExtendable() && extended;
-			this.upgraded = type.isUpgradeable() && upgraded;
-			return this;
-		}
-
-		public PotionBuilder setShape(PotionShape shape) {
-			this.shape = shape;
-			return this;
-		}
-
-		public PotionBuilder setExtended(boolean extended) {
-			this.extended = type.isExtendable() && extended;
-			return this;
-		}
-
-		public PotionBuilder setUpgraded(boolean upgraded) {
-			this.upgraded = type.isUpgradeable() && upgraded;
-			return this;
-		}
-
-		/**
-		 * 포션을 ItemStack으로 반환합니다.
-		 *
-		 * @param amount 개수
-		 * @return ItemStack
-		 */
-		public ItemStack build(int amount) {
-			ItemStack stack = new ItemStack(shape.material);
-			stack.setAmount(amount);
-			try {
-				PotionMeta meta = (PotionMeta) stack.getItemMeta();
-				meta.setBasePotionData(new PotionData(type, extended, upgraded));
-				stack.setItemMeta(meta);
-			} catch (Exception ignored) {
-			}
-			return stack;
-		}
-
-		public enum PotionShape {
-			NORMAL(Material.POTION),
-			SPLASH(Material.SPLASH_POTION),
-			LINGERING(Material.LINGERING_POTION);
-
-			final Material material;
-
-			PotionShape(Material material) {
-				this.material = material;
-			}
-		}
-
-	}
-
-	@SuppressWarnings("deprecation")
 	public static SkullMeta setOwner(SkullMeta meta, String playerName) {
-		if (ServerVersion.getVersionNumber() >= 13) {
+		if (ServerVersion.getVersion() >= 13) {
 			meta.setOwningPlayer(new OfflinePlayer() {
 
 				@Override
@@ -369,6 +271,104 @@ public class ItemLib {
 			meta.setOwner(playerName);
 		}
 		return meta;
+	}
+
+	public static class PotionBuilder {
+
+		private PotionType type;
+		private PotionShape shape;
+		private boolean extended = false;
+		private boolean upgraded = false;
+
+		public PotionBuilder(PotionType type, PotionShape shape) {
+			this.type = type;
+			this.shape = shape;
+		}
+
+		public PotionBuilder setType(PotionType type) {
+			this.type = type;
+			this.extended = type.isExtendable() && extended;
+			this.upgraded = type.isUpgradeable() && upgraded;
+			return this;
+		}
+
+		public PotionBuilder setShape(PotionShape shape) {
+			this.shape = shape;
+			return this;
+		}
+
+		public PotionBuilder setExtended(boolean extended) {
+			this.extended = type.isExtendable() && extended;
+			return this;
+		}
+
+		public PotionBuilder setUpgraded(boolean upgraded) {
+			this.upgraded = type.isUpgradeable() && upgraded;
+			return this;
+		}
+
+		/**
+		 * 포션을 ItemStack으로 반환합니다.
+		 *
+		 * @param amount 개수
+		 * @return ItemStack
+		 */
+		public ItemStack build(int amount) {
+			ItemStack stack = new ItemStack(shape.material);
+			stack.setAmount(amount);
+			try {
+				PotionMeta meta = (PotionMeta) stack.getItemMeta();
+				meta.setBasePotionData(new PotionData(type, extended, upgraded));
+				stack.setItemMeta(meta);
+			} catch (Exception ignored) {
+			}
+			return stack;
+		}
+
+		public enum PotionShape {
+			NORMAL(Material.POTION),
+			SPLASH(Material.SPLASH_POTION),
+			LINGERING(Material.LINGERING_POTION);
+
+			final Material material;
+
+			PotionShape(Material material) {
+				this.material = material;
+			}
+		}
+
+	}
+
+	public static class ColouredItem {
+
+		private final String materialName;
+
+		private ColouredItem(String materialName) {
+			this.materialName = materialName;
+		}
+
+		@SuppressWarnings("deprecation")
+		public ItemStack getItemStack(ItemColor color) {
+			if (ServerVersion.getVersion() >= 13) {
+				return new ItemStack(Material.valueOf(color.name() + "_" + this.materialName));
+			} else {
+				return new ItemStack(Material.valueOf(this.materialName), 1, color.getDamage());
+			}
+		}
+
+		public boolean compareType(Material material) {
+			if (ServerVersion.getVersion() >= 13) {
+				String name = material.toString();
+				String color = name.split("_")[0];
+				if (Enums.getIfPresent(ItemColor.class, color).isPresent()) {
+					name = name.replaceAll(color + "_", "");
+				}
+				return name.equalsIgnoreCase(this.materialName);
+			} else {
+				return material.toString().equalsIgnoreCase(this.materialName);
+			}
+		}
+
 	}
 
 	public static boolean addItem(Inventory inventory, Material type, int amount) {

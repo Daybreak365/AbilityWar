@@ -111,7 +111,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationStart() {
 			armorStand = target.getWorld().spawn(getPlayer().getLocation(), ArmorStand.class);
-			if (ServerVersion.getVersionNumber() >= 10 && ServerVersion.getVersionNumber() < 15)
+			if (ServerVersion.getVersion() >= 10 && ServerVersion.getVersion() < 15)
 				armorStand.setInvulnerable(true);
 			armorStand.setCustomName(target.getName());
 			armorStand.setCustomNameVisible(true);

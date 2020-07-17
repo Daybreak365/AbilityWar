@@ -1,9 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,17 +19,15 @@ public class MojangAPI {
 	}
 
 	public static String getNickname(String uuid) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), StandardCharsets.UTF_8));
-
-		String result = "";
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), StandardCharsets.UTF_8));
+		final StringBuilder response = new StringBuilder();
 		String line;
-		while ((line = br.readLine()) != null) {
-			result = result.concat(line);
+		while ((line = reader.readLine()) != null) {
+			response.append(line);
 		}
-
-		JsonArray array = JsonParser.parseString(result).getAsJsonArray();
-		JsonObject nickname = array.get(array.size() - 1).getAsJsonObject();
-		return nickname.get("name").getAsString();
+		reader.close();
+		final JsonArray array = JsonParser.parseString(response.toString()).getAsJsonArray();
+		return array.get(array.size() - 1).getAsJsonObject().get("name").getAsString();
 	}
 
 }

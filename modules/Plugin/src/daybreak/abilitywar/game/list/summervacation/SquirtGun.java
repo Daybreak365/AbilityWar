@@ -82,7 +82,7 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 				if (!spongeCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
 					for (Block b : LocationUtil.getBlocks3D(center, 9, false, true)) {
-						if (b.getType().equals(Material.WATER) || (ServerVersion.getVersionNumber() < 13 && b.getType().equals(Material.valueOf("STATIONARY_WATER")))) {
+						if (b.getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && b.getType().equals(Material.valueOf("STATIONARY_WATER")))) {
 							b.setType(Material.AIR);
 						}
 					}
@@ -149,7 +149,7 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onPlayerMove(PlayerMoveEvent e) {
 		if (e.getPlayer().equals(getPlayer())
-				&& (e.getFrom().getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersionNumber() < 13 && e.getTo().getBlock().getType().equals(Material.valueOf("STATIONARY_WATER"))))
+				&& (e.getFrom().getBlock().getType().equals(Material.WATER) || (ServerVersion.getVersion() < 13 && e.getTo().getBlock().getType().equals(Material.valueOf("STATIONARY_WATER"))))
 				& getPlayer().isSneaking()) {
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.3));
 		}

@@ -168,11 +168,11 @@ public class LocationUtil {
 	}
 
 	public static int getHighestBlockYAt(World world, int x, int z) {
-		return ServerVersion.getVersionNumber() >= 15 ? (world.getHighestBlockYAt(x, z) + 1) : world.getHighestBlockYAt(x, z);
+		return ServerVersion.getVersion() >= 15 ? (world.getHighestBlockYAt(x, z) + 1) : world.getHighestBlockYAt(x, z);
 	}
 
 	public static int getHighestBlockYAt(World world, Location location) {
-		return ServerVersion.getVersionNumber() >= 15 ? (world.getHighestBlockYAt(location) + 1) : world.getHighestBlockYAt(location);
+		return ServerVersion.getVersion() >= 15 ? (world.getHighestBlockYAt(location) + 1) : world.getHighestBlockYAt(location);
 	}
 
 	/**

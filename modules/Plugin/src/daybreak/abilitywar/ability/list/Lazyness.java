@@ -9,8 +9,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.minecraft.compat.nms.NMS;
-import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import org.bukkit.ChatColor;
@@ -47,14 +46,28 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
+	private DamageTimer lastDamage = null;
 	private final Set<DamageTimer> timers = new CopyOnWriteArraySet<>();
 	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+
+	private long lastDamageMillis = System.currentTimeMillis();
 
 	@SubscribeEvent(ignoreCancelled = true, priority = Priority.HIGHEST)
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			timers.add(new DamageTimer(e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION)));
-			getPlayer().setNoDamageTicks(getPlayer().getMaximumNoDamageTicks());
+			final long current = System.currentTimeMillis();
+			if (current - lastDamageMillis >= getPlayer().getMaximumNoDamageTicks() * 50) {
+				final DamageTimer damageTimer = new DamageTimer(e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION));
+				this.lastDamage = damageTimer;
+				timers.add(damageTimer);
+				this.lastDamageMillis = current;
+			} else if (lastDamage != null) {
+				final double damage = e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION);
+				if (lastDamage.damage < damage) {
+					lastDamage.damage = damage;
+					lastDamage.setCount(3);
+				}
+			}
 			e.setCancelled(true);
 		}
 	}
@@ -73,14 +86,18 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
-			for (DamageTimer timer : timers) {
-				timer.damage *= 0.65;
-				timer.stop(false);
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
+			if (!timers.isEmpty()) {
+				for (DamageTimer timer : timers) {
+					timer.damage *= 0.65;
+					timer.stop(false);
+				}
+				cooldownTimer.start();
+				return true;
+			} else {
+				getPlayer().sendMessage("§3받을 대미지§f가 없습니다.");
 			}
-			cooldownTimer.start();
-			return true;
 		}
 		return false;
 	}
@@ -105,7 +122,9 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onEnd() {
 			timers.remove(this);
-			SoundLib.ENTITY_PLAYER_HURT.playSound(getPlayer());
+			if (this.equals(lastDamage)) {
+				lastDamage = null;
+			}
 			double toDamage = damage;
 			final float absorptionHearts = NMS.getAbsorptionHearts(getPlayer());
 			if (!getPlayer().isDead()) {
@@ -120,6 +139,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 				} else {
 					getPlayer().setHealth(Math.max(getPlayer().getHealth() - toDamage, 0.0));
 				}
+				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
 			}
 			channel.unregister();
 		}
@@ -127,6 +147,9 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onSilentEnd() {
 			timers.remove(this);
+			if (this.equals(lastDamage)) {
+				lastDamage = null;
+			}
 			channel.unregister();
 		}
 

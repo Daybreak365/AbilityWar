@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import net.minecraft.server.v1_9_R2.DataWatcher.Item;
 import net.minecraft.server.v1_9_R2.DataWatcherObject;
@@ -99,8 +100,10 @@ public class Hermit extends AbilityBase {
 		final CraftPlayer player = (CraftPlayer) e.getPlayer();
 		if (player.equals(getPlayer())) return;
 		if (channelHandlers.containsKey(player.getUniqueId())) {
-			player.getHandle().playerConnection.networkManager.channel.pipeline().remove(channelHandlers.get(player.getUniqueId()));
-			channelHandlers.remove(player.getUniqueId());
+			try {
+				player.getHandle().playerConnection.networkManager.channel.pipeline().remove(channelHandlers.remove(player.getUniqueId()));
+			} catch (NoSuchElementException ignored) {
+			}
 		}
 	}
 

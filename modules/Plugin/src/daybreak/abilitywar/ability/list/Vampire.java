@@ -16,7 +16,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Wing;
-import daybreak.abilitywar.utils.base.minecraft.DamageUtil;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -31,7 +31,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 @AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.UNDEAD, explain = {
@@ -112,7 +112,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
 					return false;
 				}
-				if (!DamageUtil.canDamage(getPlayer(), entity, EntityDamageEvent.DamageCause.MAGIC, 1)) {
+				if (!Damages.canDamage(getPlayer(), entity, DamageCause.MAGIC, 1)) {
 					return false;
 				}
 				if (getGame() instanceof TeamGame) {
