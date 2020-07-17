@@ -94,10 +94,10 @@ public class NMSImpl implements INMS {
 	}
 
 	@Override
-	public void moveEntity(Entity entity, double x, double y, double z, float yaw, float pitch) {
+	public void moveEntity(Entity entity, double x, double y, double z, float yaw, float pitch, boolean onGround) {
 		final net.minecraft.server.v1_10_R1.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 		nmsEntity.setLocation(x, y, z, yaw, pitch);
-		final PacketPlayOutRelEntityMoveLook packet = new PacketPlayOutRelEntityMoveLook(nmsEntity.getId(), (long) (nmsEntity.locX * 32 - nmsEntity.lastX * 32) * 128, (long) (nmsEntity.locY * 32 - nmsEntity.lastY * 32) * 128, (long) (nmsEntity.locZ * 32 - nmsEntity.lastZ * 32) * 128, (byte) (yaw * (256F / 360F)), (byte) (pitch * (256F / 360F)), false);
+		final PacketPlayOutRelEntityMoveLook packet = new PacketPlayOutRelEntityMoveLook(nmsEntity.getId(), (long) (nmsEntity.locX * 32 - nmsEntity.lastX * 32) * 128, (long) (nmsEntity.locY * 32 - nmsEntity.lastY * 32) * 128, (long) (nmsEntity.locZ * 32 - nmsEntity.lastZ * 32) * 128, (byte) (yaw * (256F / 360F)), (byte) (pitch * (256F / 360F)), onGround);
 		for (CraftPlayer receiver : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
 			receiver.getHandle().playerConnection.sendPacket(packet);
 		}

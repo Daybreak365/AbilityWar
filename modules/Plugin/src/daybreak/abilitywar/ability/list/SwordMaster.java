@@ -73,7 +73,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			MaterialX.TALL_GRASS.parseMaterial(), MaterialX.GRASS.parseMaterial(), MaterialX.VINE.parseMaterial(), MaterialX.SUNFLOWER.parseMaterial(),
 			MaterialX.ALLIUM.parseMaterial(), MaterialX.AZURE_BLUET.parseMaterial(), MaterialX.BLUE_ORCHID.parseMaterial(), MaterialX.ORANGE_TULIP.parseMaterial(),
 			MaterialX.OXEYE_DAISY.parseMaterial(), MaterialX.PINK_TULIP.parseMaterial(), MaterialX.POPPY.parseMaterial(), MaterialX.RED_TULIP.parseMaterial(),
-			MaterialX.WHITE_TULIP.parseMaterial()
+			MaterialX.WHITE_TULIP.parseMaterial(), MaterialX.SNOW.parseMaterial(), MaterialX.WATER.parseMaterial()
 	);
 	private static final EulerAngle DEFAULT_EULER_ANGLE = new EulerAngle(Math.toRadians(-10), 0, 0);
 	private final CooldownTimer backstepCool = new CooldownTimer(BACKSTEP_COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
@@ -215,7 +215,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 				final Vector vector = circle.get(i);
 				final ArmorStand armorStand = swords.get(i).armorStand;
 				armorStand.setRightArmPose(eulerAngle);
-				NMS.moveEntity(armorStand, playerLocation.getX() + vector.getX(), playerLocation.getY() + vector.getY(), playerLocation.getZ() + vector.getZ(), playerLocation.getYaw(), playerLocation.getPitch());
+				NMS.moveEntity(armorStand, playerLocation.getX() + vector.getX(), playerLocation.getY() + vector.getY(), playerLocation.getZ() + vector.getZ(), playerLocation.getYaw(), playerLocation.getPitch(), false);
 			}
 		}
 
@@ -303,17 +303,20 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			armorStand.setRightArmPose(new EulerAngle(Math.toRadians(pitch - 10), 0, 0));
 			if (startFromShooter) armorStand.teleport(owner.getLocation());
 			this.runnable = new Runnable() {
+				private final Vector right = VectorUtil.rotateAroundAxisY(direction.clone(), -90).multiply(0.4);
+
 				@Override
 				public void run() {
 					for (int i = 0; i < 2; i++) {
 						final Location location = armorStand.getLocation().add(direction);
-						final Block block = location.clone().add(0, 0.75, 0).getBlock();
+						final Location swordLocation = location.clone().add(0, 0.8, 0).add(direction.clone().multiply(0.75)).add(right);
+						final Block block = swordLocation.getBlock();
 						if (!block.isEmpty() && !canGoThrough.contains(block.getType())) {
 							stop(false);
 							return;
 						}
-						swordEntity.setLocation(location);
-						NMS.moveEntity(armorStand, location.getX(), location.getY(), location.getZ(), yaw, pitch);
+						swordEntity.setLocation(swordLocation);
+						NMS.moveEntity(armorStand, location.getX(), location.getY(), location.getZ(), yaw, pitch, false);
 						for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, armorStand, predicate)) {
 							if (!livingEntity.hasMetadata("SwordMaster")) {
 								livingEntity.setNoDamageTicks(0);

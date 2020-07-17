@@ -29,7 +29,7 @@ public interface INMS {
 
 	void broadcastEntityEffect(Entity entity, byte status);
 
-	void moveEntity(Entity entity, double x, double y, double z, float yaw, float pitch);
+	void moveEntity(Entity entity, double x, double y, double z, float yaw, float pitch, boolean onGround);
 
 	void removeBoundingBox(ArmorStand armorStand);
 
