@@ -12,7 +12,8 @@ import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
-import daybreak.abilitywar.game.interfaces.iGame;
+import daybreak.abilitywar.game.interfaces.IGame;
+import daybreak.abilitywar.game.interfaces.Participable;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EventManager;
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -54,7 +54,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-public abstract class AbstractGame extends SimpleTimer implements iGame, Listener, CommandHandler {
+public abstract class AbstractGame extends SimpleTimer implements IGame, Listener, CommandHandler {
 
 	private static final Logger logger = Logger.getLogger(AbstractGame.class);
 
@@ -223,7 +223,7 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 		Bukkit.broadcastMessage(ChatColor.GRAY.toString().concat("게임이 중지되었습니다."));
 	}
 
-	public class Participant implements AbstractGame.Observer {
+	public class Participant implements AbstractGame.Observer, Participable {
 
 		private final Attributes attributes = new Attributes();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
@@ -540,13 +540,13 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 
 	}
 
-	private final List<GameTimer> timerTasks = new LinkedList<>();
+	private final Set<GameTimer> runningTimers = new HashSet<>();
 
 	/**
 	 * 현재 실행중인 모든 {@link GameTimer}를 반환합니다.
 	 */
-	public final Collection<GameTimer> getTimers() {
-		return new ArrayList<>(timerTasks);
+	public final Collection<GameTimer> getRunningTimers() {
+		return Collections.unmodifiableSet(runningTimers);
 	}
 
 	/**
@@ -555,9 +555,9 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 	 * @param type 종료할 타이머 타입
 	 */
 	public final void stopTimers(Class<? extends GameTimer> type) {
-		for (GameTimer timer : getTimers()) {
-			if (type.isAssignableFrom(timer.getClass())) {
-				timer.stop(false);
+		for (GameTimer gameTimer : new HashSet<>(runningTimers)) {
+			if (type.isAssignableFrom(gameTimer.getClass())) {
+				gameTimer.stop(false);
 			}
 		}
 	}
@@ -565,11 +565,10 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 	/**
 	 * 현재 실행중인 {@link GameTimer}를 모두 종료합니다.
 	 */
-	public void stopTimers() {
-		for (GameTimer timer : getTimers()) {
-			timer.stop(true);
+	public final void stopTimers() {
+		for (GameTimer gameTimer : new HashSet<>(runningTimers)) {
+			gameTimer.stop(true);
 		}
-		timerTasks.clear();
 	}
 
 	public abstract class GameTimer extends SimpleTimer {
@@ -578,7 +577,28 @@ public abstract class AbstractGame extends SimpleTimer implements iGame, Listene
 
 		public GameTimer(TaskType taskType, int maximumCount) {
 			super(taskType, maximumCount);
-			timerTasks.add(this);
+			attachObserver(new SimpleTimer.Observer() {
+				@Override
+				public void onStart() {
+					runningTimers.add(GameTimer.this);
+				}
+				@Override
+				public void onEnd() {
+					runningTimers.remove(GameTimer.this);
+				}
+				@Override
+				public void onSilentEnd() {
+					runningTimers.remove(GameTimer.this);
+				}
+				@Override
+				public void onResume() {
+					runningTimers.add(GameTimer.this);
+				}
+				@Override
+				public void onPause() {
+					runningTimers.remove(GameTimer.this);
+				}
+			});
 		}
 
 		public GameTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {

@@ -73,8 +73,8 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 	};
 
 	private static final double radians = Math.toRadians(90);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer skill = new DurationTimer(140, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration skill = new Duration(140, cooldownTimer) {
 
 		private Vector direction;
 		private ArmorStand center;
@@ -169,8 +169,8 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			skill.start();
 			return true;
 		}

@@ -28,11 +28,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-/**
- * 게임 관리 클래스
- *
- * @author Daybreak 새벽
- */
+
 @GameManifest(name = "단일전", description = {
 		"§f하나의 능력, 다양한 전략.",
 		"§f모두 같은 능력으로 펼치는 능력자 전쟁!"

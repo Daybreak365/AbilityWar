@@ -36,7 +36,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-@Support(min = NMSVersion.v1_11_R1)
+@Support.Version(min = NMSVersion.v1_11_R1)
 @AbilityManifest(name = "투포환", rank = Rank.B, species = Species.HUMAN, explain = {
 		"아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. $[COOLDOWN_CONFIG]",
 		"능력 사용중에는 신속 버프를 받고, 납치 대상은 지속 시간동안",
@@ -71,7 +71,7 @@ public class ShotPut extends Synergy implements ActiveHandler {
 		}
 
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -92,7 +92,7 @@ public class ShotPut extends Synergy implements ActiveHandler {
 		}
 	};
 	private Entity target = null;
-	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
 			if (target != null && target.isValid()) {

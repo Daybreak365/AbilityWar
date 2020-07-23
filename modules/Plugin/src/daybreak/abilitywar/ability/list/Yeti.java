@@ -58,11 +58,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final Timer buff = new Timer() {
-
-		@Override
-		public void onStart() {
-		}
+	private final AbilityTimer buff = new AbilityTimer() {
 
 		@Override
 		public void run(int count) {
@@ -74,15 +70,11 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 			}
 		}
 
-		@Override
-		public void onEnd() {
-		}
-
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
 
-	private final Timer iceMaker = new Timer(RangeConfig.getValue()) {
+	private final AbilityTimer iceMaker = new AbilityTimer(RangeConfig.getValue()) {
 
 		private int count;
 		private Location center;
@@ -97,8 +89,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		public void run(int sec) {
 			Location playerLocation = getPlayer().getLocation();
 			World world = getPlayer().getWorld();
-			for (Block block : LocationUtil.getBlocks2D(center, count, true, false, true)) {
-				block = world.getBlockAt(block.getX(), LocationUtil.getFloorYAt(world, playerLocation.getY(), block.getX(), block.getZ()), block.getZ());
+			for (Block block : LocationUtil.getBlocks2D(center, count, true, true, true)) {
 				Block belowBlock = block.getRelative(BlockFace.DOWN);
 				if (belowBlock.getType() == Material.SNOW) {
 					block = belowBlock;
@@ -125,11 +116,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 			count++;
 		}
 
-		@Override
-		public void onEnd() {
-		}
-
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -145,11 +132,11 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			iceMaker.start();
 			cooldownTimer.start();
 			return true;

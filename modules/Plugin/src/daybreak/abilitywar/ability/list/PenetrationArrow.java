@@ -107,7 +107,7 @@ public class PenetrationArrow extends AbilityBase {
 
 	private ArrowType arrowType = arrowTypes.get(0);
 	private int arrowBullet = bulletCount;
-	private Timer reload = null;
+	private AbilityTimer reload = null;
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
@@ -145,7 +145,7 @@ public class PenetrationArrow extends AbilityBase {
 				actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
 				if (arrowBullet <= 0) {
 					final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (WRECK.calculateDecreasedAmount(70) * 15.0) : 15;
-					this.reload = new Timer(reloadCount) {
+					this.reload = new AbilityTimer(reloadCount) {
 						private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
 						@Override
@@ -224,7 +224,7 @@ public class PenetrationArrow extends AbilityBase {
 		void onHit(PenetrationArrow ability, Damageable damager, Damageable victim);
 	}
 
-	public class Parabola extends Timer {
+	public class Parabola extends AbilityTimer {
 
 		private final LivingEntity shooter;
 		private final OnHitBehavior onHitBehavior;

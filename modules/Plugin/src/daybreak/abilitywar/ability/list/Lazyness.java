@@ -48,7 +48,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 
 	private DamageTimer lastDamage = null;
 	private final Set<DamageTimer> timers = new CopyOnWriteArraySet<>();
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private long lastDamageMillis = System.currentTimeMillis();
 
@@ -102,7 +102,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	private class DamageTimer extends Timer {
+	private class DamageTimer extends AbilityTimer {
 
 		private final ActionbarChannel channel;
 		private double damage;

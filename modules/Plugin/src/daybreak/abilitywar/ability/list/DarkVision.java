@@ -58,7 +58,7 @@ public class DarkVision extends AbilityBase {
 
 	private final int distance = DistanceConfig.getValue();
 
-	private final Timer darkVision = new Timer() {
+	private final AbilityTimer darkVision = new AbilityTimer() {
 		@Override
 		public void run(int count) {
 			PotionEffects.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
@@ -68,7 +68,7 @@ public class DarkVision extends AbilityBase {
 				PotionEffects.GLOWING.addPotionEffect(entity, 10, 0, true);
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
 	protected void onUpdate(Update update) {

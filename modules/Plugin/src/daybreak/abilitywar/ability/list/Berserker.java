@@ -63,9 +63,9 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
-	private class BerserkerTimer extends DurationTimer {
+	private class BerserkerTimer extends Duration {
 
 		private BerserkerTimer() {
 			super(5);
@@ -78,7 +78,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationEnd() {
 			cooldownTimer.start();
-			cooldownTimer.setCount(cooldownTimer.getMaximumCount() / 2);
+			cooldownTimer.setCount(cooldownTimer.getCooldown() / 2);
 		}
 
 		public boolean stop() {
@@ -92,8 +92,8 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 	private final BerserkerTimer berserkerTimer = new BerserkerTimer();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType == ClickType.RIGHT_CLICK) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
 			if (!berserkerTimer.isDuration() && !cooldownTimer.isCooldown()) {
 				berserkerTimer.start();
 				return true;

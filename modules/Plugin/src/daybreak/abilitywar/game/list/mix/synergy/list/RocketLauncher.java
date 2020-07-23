@@ -95,8 +95,8 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 		}
 	};
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer skill = new DurationTimer(20, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration skill = new Duration(20, cooldownTimer) {
 
 		private VectorIterator circle;
 		private Set<Damageable> attacked;
@@ -145,8 +145,8 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
 					skill.start();

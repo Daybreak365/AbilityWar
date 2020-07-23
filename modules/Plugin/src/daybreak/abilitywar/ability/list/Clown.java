@@ -57,8 +57,8 @@ public class Clown extends AbilityBase implements ActiveHandler {
 
 	private Location originalPoint = null;
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer skill = new DurationTimer(10, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration skill = new Duration(10, cooldownTimer) {
 
 		@Override
 		protected void onDurationStart() {
@@ -95,8 +95,8 @@ public class Clown extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!skill.isDuration()) {
 					if (!cooldownTimer.isCooldown()) {

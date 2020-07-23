@@ -69,8 +69,8 @@ public class Flector extends AbilityBase implements ActiveHandler {
 	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.parseMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.parseMaterial(), Material.DIAMOND_SWORD);
 
 	private final CenteredBoundingBox boundingBox = CenteredBoundingBox.of(getPlayer().getLocation(), -1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer skill = new DurationTimer(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationProcess(int count) {
 			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 8, 8, null)) {

@@ -17,15 +17,19 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -40,6 +44,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -51,10 +56,26 @@ import org.bukkit.util.Vector;
 		"BETA"
 })
 @Beta
+@Support.Server(ServerType.PAPER)
 public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> BACKSTEP_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "COOLDOWN.BACKSTEP", 10,
-			"# 쿨타임") {
+			"# 백스텝 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+
+	};
+
+	public static final SettingObject<Integer> ULTIMATE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "COOLDOWN.ULTIMATE", 50,
+			"# 난사 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -69,20 +90,14 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 	};
 
 	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.parseMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.parseMaterial(), Material.DIAMOND_SWORD);
-	private static final Set<Material> canGoThrough = ImmutableSet.of(
-			MaterialX.TALL_GRASS.parseMaterial(), MaterialX.GRASS.parseMaterial(), MaterialX.VINE.parseMaterial(), MaterialX.SUNFLOWER.parseMaterial(),
-			MaterialX.ALLIUM.parseMaterial(), MaterialX.AZURE_BLUET.parseMaterial(), MaterialX.BLUE_ORCHID.parseMaterial(), MaterialX.ORANGE_TULIP.parseMaterial(),
-			MaterialX.OXEYE_DAISY.parseMaterial(), MaterialX.PINK_TULIP.parseMaterial(), MaterialX.POPPY.parseMaterial(), MaterialX.RED_TULIP.parseMaterial(),
-			MaterialX.WHITE_TULIP.parseMaterial(), MaterialX.SNOW.parseMaterial(), MaterialX.WATER.parseMaterial()
-	);
 	private static final EulerAngle DEFAULT_EULER_ANGLE = new EulerAngle(Math.toRadians(-10), 0, 0);
-	private final CooldownTimer backstepCool = new CooldownTimer(BACKSTEP_COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
+	private final Cooldown backstepCool = new Cooldown(BACKSTEP_COOLDOWN_CONFIG.getValue(), CooldownDecrease._25), ultimateCool = new Cooldown(ULTIMATE_COOLDOWN_CONFIG.getValue());
 	private final int stacksToCharge = 3, maxSwords = 10;
 	private final Circle[] circles = newCircleArray(maxSwords);
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	private final Swords swords = new Swords();
 	private Charge charge = null;
-	private final Timer chargeTimer = new Timer() {
+	private final AbilityTimer chargeTimer = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			final PlayerInventory inventory = getPlayer().getInventory();
@@ -99,7 +114,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 				}
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 5);
+	}.setPeriod(TimeUnit.TICKS, 5).register();
 
 	public SwordMaster(Participant participant) {
 		super(participant);
@@ -121,8 +136,16 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerMove(PlayerMoveEvent e) {
 		if (getPlayer().getVelocity().getY() > 0.4 && getPlayer().isSneaking() && !backstepCool.isCooldown()) {
-			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(-1).setY(0.3));
+			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(-1).setY(0.45));
 			backstepCool.start();
+		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerToggleSneak(PlayerToggleSneakEvent e) {
+		if (e.isSneaking() && getPlayer().getLocation().getPitch() >= 80 && !ultimateCool.isCooldown()) {
+			swords.ultimate();
+			ultimateCool.start();
 		}
 	}
 
@@ -175,7 +198,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 	}
 
-	private class Swords extends Timer {
+	private class Swords extends AbilityTimer {
 
 		private final List<Sword> swords = new ArrayList<Sword>() {
 			@Override
@@ -197,9 +220,17 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			if (!swords.isEmpty()) {
 				final Sword sword = swords.remove(0);
 				final Location playerLocation = getPlayer().getLocation();
-				sword.shoot(playerLocation.getDirection(), playerLocation.getYaw(), playerLocation.getPitch(), true);
+				sword.shoot(playerLocation.getDirection(), playerLocation.getYaw(), playerLocation.getPitch());
 				actionbarChannel.update(formatActionbarMessage(0));
 			}
+		}
+
+		private void ultimate() {
+			for (Iterator<Sword> iterator = swords.iterator(); iterator.hasNext();) {
+				iterator.next().ultimate();
+				iterator.remove();
+			}
+			actionbarChannel.update(formatActionbarMessage(0));
 		}
 
 		@Override
@@ -215,7 +246,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 				final Vector vector = circle.get(i);
 				final ArmorStand armorStand = swords.get(i).armorStand;
 				armorStand.setRightArmPose(eulerAngle);
-				NMS.moveEntity(armorStand, playerLocation.getX() + vector.getX(), playerLocation.getY() + vector.getY(), playerLocation.getZ() + vector.getZ(), playerLocation.getYaw(), playerLocation.getPitch(), false);
+				NMS.setLocation(armorStand, playerLocation.getX() + vector.getX(), playerLocation.getY() + vector.getY(), playerLocation.getZ() + vector.getZ(), playerLocation.getYaw(), playerLocation.getPitch());
 			}
 		}
 
@@ -239,14 +270,14 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private class Sword extends Timer {
+	private class Sword extends AbilityTimer {
 
 		private final Player owner;
 		private final Predicate<Entity> predicate;
 		private final Material material;
 		private final double damage;
 		private ArmorStand armorStand;
-		private Runnable runnable;
+		private Runnable skillHandler;
 		private Vector direction;
 		private SwordEntity swordEntity;
 
@@ -297,12 +328,12 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			armorStand.setRightArmPose(DEFAULT_EULER_ANGLE);
 		}
 
-		private void shoot(Vector vector, float yaw, float pitch, boolean startFromShooter) {
+		private void shoot(Vector vector, float yaw, float pitch) {
 			this.direction = vector.normalize();
 			this.swordEntity = new SwordEntity(owner.getWorld(), owner.getLocation().getX(), owner.getLocation().getY(), owner.getLocation().getZ());
 			armorStand.setRightArmPose(new EulerAngle(Math.toRadians(pitch - 10), 0, 0));
-			if (startFromShooter) armorStand.teleport(owner.getLocation());
-			this.runnable = new Runnable() {
+			armorStand.teleport(owner.getLocation());
+			this.skillHandler = new Runnable() {
 				private final Vector right = VectorUtil.rotateAroundAxisY(direction.clone(), -90).multiply(0.4);
 
 				@Override
@@ -311,12 +342,12 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 						final Location location = armorStand.getLocation().add(direction);
 						final Location swordLocation = location.clone().add(0, 0.8, 0).add(direction.clone().multiply(0.75)).add(right);
 						final Block block = swordLocation.getBlock();
-						if (!block.isEmpty() && !canGoThrough.contains(block.getType())) {
+						if (!block.isEmpty() && block.getType().isSolid()) {
 							stop(false);
 							return;
 						}
 						swordEntity.setLocation(swordLocation);
-						NMS.moveEntity(armorStand, location.getX(), location.getY(), location.getZ(), yaw, pitch, false);
+						NMS.setLocation(armorStand, location.getX(), location.getY(), location.getZ(), yaw, pitch);
 						for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, armorStand, predicate)) {
 							if (!livingEntity.hasMetadata("SwordMaster")) {
 								livingEntity.setNoDamageTicks(0);
@@ -331,9 +362,24 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			start();
 		}
 
+		private void ultimate() {
+			armorStand.setRightArmPose(new EulerAngle(Math.toRadians(80), 0, 0));
+			final Location teleportDest = armorStand.getLocation();
+			teleportDest.setY(LocationUtil.getFloorYAt(teleportDest.getWorld(), getPlayer().getLocation().getY(), teleportDest.getBlockX(), teleportDest.getBlockZ()) - 0.5);
+			armorStand.teleport(teleportDest);
+			armorStand.getWorld().strikeLightningEffect(armorStand.getLocation());
+			this.skillHandler = new Runnable() {
+				@Override
+				public void run() {
+
+				}
+			};
+			start();
+		}
+
 		@Override
 		protected void run(int count) {
-			runnable.run();
+			skillHandler.run();
 		}
 
 		@Override
@@ -362,7 +408,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			public void onDeflect(Participant deflector, Vector newDirection) {
 				stop(false);
 				final Player deflectedPlayer = deflector.getPlayer();
-				new Sword(deflectedPlayer, material, damage).shoot(newDirection, LocationUtil.getYaw(newDirection), LocationUtil.getPitch(newDirection), true);
+				new Sword(deflectedPlayer, material, damage).shoot(newDirection, LocationUtil.getYaw(newDirection), LocationUtil.getPitch(newDirection));
 			}
 
 			@Override
@@ -373,4 +419,5 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 		}
 
 	}
+
 }

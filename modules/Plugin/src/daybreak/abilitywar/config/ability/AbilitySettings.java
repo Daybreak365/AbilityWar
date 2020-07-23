@@ -1,8 +1,8 @@
 package daybreak.abilitywar.config.ability;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import com.google.common.collect.TreeBasedTable;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.config.Cache;
@@ -30,7 +30,7 @@ public class AbilitySettings {
 
 	private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 	private static final Map<String, AbilitySettings> abilitySettings = new HashMap<>();
-	private final Table<String, String, SettingObject<?>> settings = HashBasedTable.create();
+	private final Table<String, String, SettingObject<?>> settings = TreeBasedTable.create();
 
 	public AbilitySettings(File configFile) {
 		this.configFile = configFile;

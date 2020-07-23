@@ -73,7 +73,7 @@ public class Demigod extends AbilityBase {
 	private static final Circle circle = Circle.of(0.5, particleCount);
 
 	private void showHelix(RGB color) {
-		new Timer((particleCount * 3) / 2) {
+		new AbilityTimer((particleCount * 3) / 2) {
 			int count = 0;
 
 			@Override

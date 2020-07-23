@@ -48,4 +48,8 @@ public class FastMath {
 		return a << k;
 	}
 
+	public static double square(double a) {
+		return a * a;
+	}
+
 }

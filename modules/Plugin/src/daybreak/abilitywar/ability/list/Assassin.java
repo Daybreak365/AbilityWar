@@ -77,7 +77,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -102,7 +102,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 	private final int damage = DamageConfig.getValue();
 	private final int distance = DistanceConfig.getValue();
 	private LinkedList<LivingEntity> entities = null;
-	private final Timer skill = new Timer(TeleportCountConfig.getValue()) {
+	private final AbilityTimer skill = new AbilityTimer(TeleportCountConfig.getValue()) {
 
 		@Override
 		public void run(int count) {
@@ -120,11 +120,11 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 3);
+	}.setPeriod(TimeUnit.TICKS, 3).register();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			this.entities = new LinkedList<>(LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate));
 			if (entities.size() > 0) {
 				skill.start();

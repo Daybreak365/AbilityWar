@@ -61,7 +61,7 @@ public class ExpertOfFall extends AbilityBase {
 				e.setCancelled(true);
 				Block block = getPlayer().getLocation().getBlock();
 				Material blockType = block.getType();
-				new Timer(1) {
+				new AbilityTimer(1) {
 					@Override
 					protected void onStart() {
 						block.setType(Material.WATER);

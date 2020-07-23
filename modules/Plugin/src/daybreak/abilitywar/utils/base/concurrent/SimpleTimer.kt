@@ -5,6 +5,15 @@ import daybreak.abilitywar.AbilityWar
 import org.bukkit.Bukkit
 
 abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
+	private lateinit var observers: MutableSet<Observer>
+
+	fun attachObserver(observer: Observer) {
+		if (!this::observers.isInitialized) {
+			this.observers = HashSet()
+		}
+		observers.add(observer)
+	}
+
 	private var task: Task? = null
 	private var taskId = -1
 	private var initialDelay = 0
@@ -36,6 +45,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		set(count) {
 			if (task != null) {
 				task!!.count = count
+				onCountSet()
 			}
 		}
 
@@ -47,6 +57,11 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 			task = taskType.newRunnable(this)
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task!!, initialDelay.toLong(), period.toLong())
 			onStart()
+			if (this::observers.isInitialized) {
+				for (observer in observers) {
+					observer.onStart()
+				}
+			}
 			return true
 		}
 		return false
@@ -57,7 +72,21 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 			Bukkit.getScheduler().cancelTask(taskId)
 			task = null
 			taskId = -1
-			if (!silent) onEnd() else onSilentEnd()
+			if (!silent) {
+				onEnd()
+				if (this::observers.isInitialized) {
+					for (observer in observers) {
+						observer.onEnd()
+					}
+				}
+			} else {
+				onSilentEnd()
+				if (this::observers.isInitialized) {
+					for (observer in observers) {
+						observer.onSilentEnd()
+					}
+				}
+			}
 			return true
 		}
 		return false
@@ -67,6 +96,12 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		if (isRunning) {
 			Bukkit.getScheduler().cancelTask(taskId)
 			taskId = -1
+			onPause()
+			if (this::observers.isInitialized) {
+				for (observer in observers) {
+					observer.onPause()
+				}
+			}
 			return true
 		}
 		return false
@@ -75,6 +110,12 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 	open fun resume(): Boolean {
 		if (isPaused) {
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task!!, 0, period.toLong())
+			onResume()
+			if (this::observers.isInitialized) {
+				for (observer in observers) {
+					observer.onResume()
+				}
+			}
 			return true
 		}
 		return false
@@ -84,6 +125,8 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 	protected abstract fun run(count: Int)
 	protected open fun onEnd() {}
 	protected open fun onSilentEnd() {}
+	protected open fun onPause() {}
+	protected open fun onResume() {}
 	protected open fun onCountSet() {}
 
 	enum class TaskType {
@@ -126,6 +169,16 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 
 	interface Task : Runnable {
 		var count: Int
+	}
+
+	interface Observer {
+
+		fun onStart()
+		fun onEnd()
+		fun onSilentEnd()
+		fun onPause()
+		fun onResume()
+
 	}
 
 }

@@ -1,8 +1,8 @@
 package daybreak.abilitywar;
 
 import daybreak.abilitywar.Command.Condition;
-import daybreak.abilitywar.ability.AbilityBase.CooldownTimer;
-import daybreak.abilitywar.ability.AbilityBase.DurationTimer;
+import daybreak.abilitywar.ability.AbilityBase.Cooldown;
+import daybreak.abilitywar.ability.AbilityBase.Duration;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
@@ -455,7 +455,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (GameManager.isGameRunning()) {
-							GameManager.getGame().stopTimers(CooldownTimer.class);
+							GameManager.getGame().stopTimers(Cooldown.CooldownTimer.class);
 							Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 쿨타임을 모두 초기화하였습니다.");
 						} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 						return true;
@@ -465,7 +465,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (GameManager.isGameRunning()) {
-							GameManager.getGame().stopTimers(DurationTimer.class);
+							GameManager.getGame().stopTimers(Duration.class);
 							Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 지속시간을 모두 초기화하였습니다.");
 						} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 						return true;

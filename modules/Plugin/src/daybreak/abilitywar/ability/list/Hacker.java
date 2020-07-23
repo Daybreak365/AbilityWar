@@ -65,14 +65,14 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 	private Player target = null;
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final int stunDuration = DurationConfig.getValue();
 	private final RGB PURPLE = RGB.of(113, 43, 204);
 
 	private final int amount = 25;
 	private final Vectors top = Circle.of(1, amount);
 	private final Vectors bottom = Circle.of(1, amount);
-	private final Timer particleShow = new Timer(stunDuration * 20) {
+	private final AbilityTimer particleShow = new AbilityTimer(stunDuration * 20) {
 
 		private double y;
 		private boolean add;
@@ -110,8 +110,8 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 			target = null;
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 1);
-	private final Timer skill = new Timer(100) {
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	private final AbilityTimer skill = new AbilityTimer(100) {
 
 		private int count;
 		private ProgressBar progressBar;
@@ -163,7 +163,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 				this.count++;
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -186,8 +186,8 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Player target = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);

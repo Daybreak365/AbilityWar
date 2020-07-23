@@ -18,11 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-/**
- * 게임 관리 클래스
- *
- * @author Daybreak 새벽
- */
+
 @GameManifest(name = "게임", description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
 public class DefaultGame extends Game implements DefaultKitHandler {
 

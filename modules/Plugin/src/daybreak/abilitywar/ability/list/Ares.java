@@ -20,17 +20,20 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Damageable;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 @AbilityManifest(name = "아레스", rank = Rank.A, species = Species.GOD, explain = {
 		"전쟁의 신 아레스.",
-		"철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 대미지를 주며,",
-		"대미지를 받은 엔티티들을 밀쳐냅니다. $[COOLDOWN_CONFIG]"
+		"철괴를 우클릭하면 앞으로 도약합니다. 도약 중 주위의 생명체들을 끌고 가며",
+		"대미지를 주고, 도약이 끝나 땅에 착지하면 주변의 생명체들을",
+		"모두 밀쳐냅니다. $[COOLDOWN_CONFIG]"
 })
 public class Ares extends AbilityBase implements ActiveHandler {
 
@@ -45,7 +48,7 @@ public class Ares extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ares.class, "Cooldown", 60,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ares.class, "Cooldown", 90,
 			"# 쿨타임") {
 
 		@Override
@@ -56,16 +59,6 @@ public class Ares extends AbilityBase implements ActiveHandler {
 		@Override
 		public String toString() {
 			return Formatter.formatCooldown(getValue());
-		}
-
-	};
-
-	public static final SettingObject<Boolean> DashConfig = abilitySettings.new SettingObject<Boolean>(Ares.class, "DashIntoTheAir", false,
-			"# true로 설정하면 아레스 능력 사용 시 공중으로 돌진 할 수 있습니다.") {
-
-		@Override
-		public boolean condition(Boolean value) {
-			return true;
 		}
 
 	};
@@ -93,65 +86,100 @@ public class Ares extends AbilityBase implements ActiveHandler {
 			return true;
 		}
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer skill = new DurationTimer(20, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private boolean noFallDamage = false;
+	private boolean skillEnabled = false;
+	private final Duration skill = new Duration(20, cooldownTimer) {
 
-		private Set<Damageable> attacked;
+		private Set<LivingEntity> attacked;
 
 		@Override
 		protected void onDurationStart() {
 			attacked = new HashSet<>();
+			noFallDamage = true;
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, null));
 		}
 
 		@Override
-		public void onDurationProcess(int seconds) {
-			final Player p = getPlayer();
-			ParticleLib.LAVA.spawnParticle(p.getLocation(), 4, 4, 4, 40);
+		public void onDurationProcess(int count) {
+			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 5, 5, 5, 30);
 
-			if (DashConfig.getValue()) {
-				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7)));
-			} else {
-				p.setVelocity(p.getVelocity().add(p.getLocation().getDirection().multiply(0.7).setY(0)));
-			}
-
-			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, p.getLocation(), 4, 4, predicate)) {
+			getPlayer().setVelocity(getPlayer().getVelocity().add(getPlayer().getLocation().getDirection().multiply(0.25).setY(((count / 20.0) - .5) * .45)));
+			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
 				if (!attacked.contains(livingEntity)) {
-					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue(), p);
+					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue(), getPlayer());
 					attacked.add(livingEntity);
-					SoundLib.BLOCK_ANVIL_LAND.playSound(p, 0.5f, 1);
+					SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer(), 0.5f, 1);
 					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
-				} else if (seconds % 2 == 0) {
+				} else if (count % 2 == 0) {
 					livingEntity.setNoDamageTicks(0);
-					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue()) / 5, p);
+					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue()) / 9, getPlayer());
 					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
 				}
-				livingEntity.setVelocity(livingEntity.getLocation().toVector().subtract(p.getLocation().toVector()).multiply(0.5).setY(0.5));
+				livingEntity.setVelocity(getPlayer().getLocation().toVector().subtract(livingEntity.getLocation().toVector()).multiply((getPlayer().getLocation().distanceSquared(livingEntity.getLocation()) / 36) * 0.75));
 			}
 		}
 
+		@Override
+		protected void onDurationEnd() {
+			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
+				livingEntity.setVelocity(getPlayer().getLocation().toVector().subtract(livingEntity.getLocation().toVector()).multiply(0.45));
+			}
+			skillEnabled = true;
+			new AbilityTimer() {
+				@Override
+				protected void run(int count) {
+					if (skillEnabled) {
+						final Block blockHere = getPlayer().getLocation().getBlock(), blockBelow = blockHere.getRelative(BlockFace.DOWN);
+						if (blockHere.getType().isSolid() || blockBelow.getType().isSolid()) {
+							skillEnabled = false;
+							ability();
+						}
+					} else stop(false);
+				}
+			}.setPeriod(TimeUnit.TICKS, 5).start();
+		}
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
-					skill.start();
-
-					return true;
-				}
+	@SubscribeEvent
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL)) {
+			if (noFallDamage) {
+				e.setCancelled(true);
+				noFallDamage = false;
+			} else if (skill.isRunning()) {
+				e.setCancelled(true);
 			}
 		}
-
-		return false;
 	}
 
 	@SubscribeEvent
-	public void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(getPlayer()) && e.getCause().equals(DamageCause.FALL) && skill.isDuration()) {
-			e.setCancelled(true);
+	private void onPlayerMove(PlayerMoveEvent e) {
+		if (e.getPlayer().equals(getPlayer())) {
+			if (skillEnabled) {
+				final Block blockHere = getPlayer().getLocation().getBlock(), blockBelow = blockHere.getRelative(BlockFace.DOWN);
+				if (blockHere.getType().isSolid() || blockBelow.getType().isSolid()) {
+					skillEnabled = false;
+					ability();
+				}
+			}
 		}
+	}
+
+	private void ability() {
+		SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 5, 1);
+		for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
+			livingEntity.setVelocity(livingEntity.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(2.5).setY(0.5));
+		}
+	}
+
+	@Override
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+			skill.start();
+			return true;
+		}
+		return false;
 	}
 
 }

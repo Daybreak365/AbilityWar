@@ -64,7 +64,7 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 	};
 	private static final RGB BLACK = RGB.of(1, 1, 1);
 	private static final Sphere sphere = Sphere.of(10, 10);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -85,7 +85,7 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 		}
 	};
 	private Location center;
-	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
 
 		private final int distance = 10;
 		private LinkedList<Block> blocks;
@@ -142,8 +142,8 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
 					skill.start();

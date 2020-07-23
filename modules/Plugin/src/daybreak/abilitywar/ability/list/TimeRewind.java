@@ -59,16 +59,16 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private final int time = TimeConfig.getValue();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
-					Skill.start();
+					skill.start();
 
 					return true;
 				}
@@ -103,7 +103,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	private PushingList<PlayerData> playerDatas = new PushingList<>(time * 20);
 
-	private final DurationTimer Skill = new DurationTimer(time * 10, cooldownTimer) {
+	private final Duration skill = new Duration(time * 10, cooldownTimer) {
 
 		private LinkedList<PlayerData> datas;
 
@@ -132,14 +132,14 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1);
 
-	private final Timer save = new Timer() {
+	private final AbilityTimer save = new AbilityTimer() {
 
 		@Override
 		public void run(int count) {
 			playerDatas.add(new PlayerData());
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 2);
+	}.setPeriod(TimeUnit.TICKS, 2).register();
 
 	@Override
 	protected void onUpdate(Update update) {

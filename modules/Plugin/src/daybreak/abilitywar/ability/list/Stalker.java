@@ -74,9 +74,9 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 	}
 
 	private static final RGB BLACK = new RGB(0, 0, 0);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final CooldownTimer leftCooldownTimer = new CooldownTimer(LEFT_COOLDOWN_CONFIG.getValue(), "돌진");
-	private final Timer skill = new Timer() {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown leftCooldownTimer = new Cooldown(LEFT_COOLDOWN_CONFIG.getValue(), "돌진");
+	private final AbilityTimer skill = new AbilityTimer() {
 		private GameMode originalMode;
 		private Player target;
 		private float flySpeed;
@@ -127,11 +127,11 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 			getPlayer().setFlySpeed(flySpeed);
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType == Material.IRON_INGOT) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType == ClickType.RIGHT_CLICK) {
 				if (cooldownTimer.isCooldown()) return false;
 				if (lastVictim != null) {

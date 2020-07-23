@@ -19,7 +19,7 @@ import org.bukkit.plugin.Plugin;
 
 public class GameWizard extends SettingWizard {
 
-	private final ItemStack wreck, arrowDamage, food, level, durability, firewall, clearWeather, visualEffect, abilityDraw, maxHealth;
+	private final ItemStack wreck, arrowDamage, food, level, durability, zeroTick, firewall, clearWeather, visualEffect, abilityDraw, maxHealth;
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, "§2§l게임 진행 설정", plugin);
@@ -53,6 +53,12 @@ public class GameWizard extends SettingWizard {
 			meta.setDisplayName("§b내구도 무한");
 			durability.setItemMeta(meta);
 		}
+		this.zeroTick = MaterialX.CLOCK.parseItem();
+		{
+			ItemMeta meta = zeroTick.getItemMeta();
+			meta.setDisplayName("§b제로틱");
+			zeroTick.setItemMeta(meta);
+		}
 		this.firewall = new ItemStack(Material.BARRIER);
 		{
 			ItemMeta meta = firewall.getItemMeta();
@@ -75,7 +81,7 @@ public class GameWizard extends SettingWizard {
 		{
 			ItemMeta meta = abilityDraw.getItemMeta();
 			meta.setDisplayName("§b능력 추첨");
-			meta.setLore(Messager.asList("§a활성화§f하면 게임을 시작할 때 능력을 추첨합니다.",
+			meta.setLore(Messager.asList("§a활성화 §f하면 게임을 시작할 때 능력을 추첨합니다.",
 					"", "§7상태 : " + (Settings.getDrawAbility() ? "§a활성화" : "§c비활성화")));
 			abilityDraw.setItemMeta(meta);
 		}
@@ -83,7 +89,7 @@ public class GameWizard extends SettingWizard {
 		{
 			ItemMeta meta = maxHealth.getItemMeta();
 			meta.setDisplayName("§b기본 최대 체력");
-			meta.setLore(Messager.asList("§a활성화§f하면 게임을 시작할 때 모든 플레이어의 최대 체력을 설정합니다.",
+			meta.setLore(Messager.asList("§a활성화 §f하면 게임을 시작할 때 모든 플레이어의 최대 체력을 설정합니다.",
 					"", "§7상태 : " + (Settings.isDefaultMaxHealthEnabled() ? "§a활성화" : "§c비활성화"),
 					"§fSHIFT + 좌클릭으로 §a활성화§f/§c비활성화 §f여부를 변경하세요.", "",
 					"§7기본 최대 체력 : §f" + Settings.getDefaultMaxHealth(),
@@ -124,7 +130,7 @@ public class GameWizard extends SettingWizard {
 				case 13: {
 					final ItemMeta meta = arrowDamage.getItemMeta();
 					meta.setLore(Messager.asList(
-							"§a활성화§f하면 게임이 진행되는 동안 화살의 대미지가 거리 비례 대미지로 변경됩니다.", "",
+							"§a활성화 §f하면 게임이 진행되는 동안 화살의 대미지가 거리 비례 대미지로 변경됩니다.", "",
 							"§7상태 : " + (Settings.isArrowDamageDistanceProportional() ? "§a활성화" : "§c비활성화")));
 					arrowDamage.setItemMeta(meta);
 
@@ -154,10 +160,21 @@ public class GameWizard extends SettingWizard {
 					gui.setItem(i, durability);
 				}
 				break;
+				case 21: {
+					ItemMeta meta = zeroTick.getItemMeta();
+					meta.setLore(Messager.asList(
+							"§a활성화 §f하면 게임 중 공격 딜레이 없이 타격할 수 있습니다.",
+							"§7상태 : " + (Settings.isZeroTickEnabled() ? "§a활성화" : "§c비활성화")
+					));
+					zeroTick.setItemMeta(meta);
+
+					gui.setItem(i, zeroTick);
+				}
+				break;
 				case 22: {
 					ItemMeta firewallMeta = firewall.getItemMeta();
 					firewallMeta.setLore(Messager.asList(
-							"§a활성화§f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다.",
+							"§a활성화 §f하면 게임이 시작되고 난 후 참여자 또는 관전자가 아닌 유저는 접속할 수 없습니다.",
 							"§c관리자 권한§f을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다.", "",
 							"§7상태 : " + (Settings.getFirewall() ? "§a활성화" : "§c비활성화")));
 					firewall.setItemMeta(firewallMeta);
@@ -176,7 +193,7 @@ public class GameWizard extends SettingWizard {
 				case 30: {
 					ItemMeta visualEffectMeta = visualEffect.getItemMeta();
 					visualEffectMeta.setLore(Messager.asList(
-							"§a활성화§f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다.",
+							"§a활성화 §f하면 일부 능력을 사용할 때 파티클 효과가 보여집니다.",
 							"§4주의§f: §c비활성화를 추천하지 않습니다.", "",
 							"§7상태 : " + (Settings.getVisualEffect() ? "§a활성화" : "§c비활성화")));
 					visualEffect.setItemMeta(visualEffectMeta);
@@ -187,7 +204,7 @@ public class GameWizard extends SettingWizard {
 				case 32: {
 					ItemMeta abilityDrawMeta = abilityDraw.getItemMeta();
 					abilityDrawMeta.setLore(
-							Messager.asList("§a활성화§f하면 게임을 시작할 때 능력을 추첨합니다.",
+							Messager.asList("§a활성화 §f하면 게임을 시작할 때 능력을 추첨합니다.",
 									"", "§7상태 : " + (Settings.getDrawAbility() ? "§a활성화" : "§c비활성화")));
 					abilityDraw.setItemMeta(abilityDrawMeta);
 
@@ -196,7 +213,7 @@ public class GameWizard extends SettingWizard {
 				break;
 				case 40: {
 					ItemMeta meta = maxHealth.getItemMeta();
-					meta.setLore(Messager.asList("§a활성화§f하면 게임을 시작할 때 모든 플레이어의 최대 체력을 설정합니다.",
+					meta.setLore(Messager.asList("§a활성화 §f하면 게임을 시작할 때 모든 플레이어의 최대 체력을 설정합니다.",
 							"", "§7상태 : " + (Settings.isDefaultMaxHealthEnabled() ? "§a활성화" : "§c비활성화"),
 							"§7SHIFT + 좌클릭§f으로 §a활성화§f/§c비활성화 §f여부를 변경하세요.", "",
 							"§7기본 최대 체력 : §f" + Settings.getDefaultMaxHealth(),
@@ -272,6 +289,10 @@ public class GameWizard extends SettingWizard {
 						break;
 					case "§b내구도 무한":
 						Configuration.modifyProperty(ConfigNodes.GAME_INFINITE_DURABILITY, !Settings.getInfiniteDurability());
+						Show();
+						break;
+					case "§b제로틱":
+						Configuration.modifyProperty(ConfigNodes.GAME_ZEROTICK, !Settings.isZeroTickEnabled());
 						Show();
 						break;
 					case "§b방화벽":

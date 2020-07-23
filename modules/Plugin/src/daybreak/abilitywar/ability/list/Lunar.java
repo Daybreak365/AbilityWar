@@ -79,7 +79,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 			Note.natural(1, Tone.A),
 			Note.sharp(1, Tone.C)
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	public Lunar(Participant participant) {
 		super(participant);
@@ -129,7 +129,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private class CutParticle extends Timer {
+	private class CutParticle extends AbilityTimer {
 
 		private final Vector axis;
 		private final Vector vector;
@@ -159,7 +159,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent
 	private void onAttack(EntityDamageByEntityEvent e) {
-		if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof LivingEntity && !e.isCancelled()) {
+		if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof LivingEntity && !e.isCancelled() && predicate.test(e.getEntity())) {
 			new CutParticle(particleSide).start();
 			updateTime(getPlayer().getWorld());
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
@@ -198,7 +198,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	private class SoundTimer extends Timer {
+	private class SoundTimer extends AbilityTimer {
 
 		private final Player player;
 
@@ -215,7 +215,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 
 	}
 
-	private class LunarSkill extends Timer {
+	private class LunarSkill extends AbilityTimer {
 
 		private final Location baseLocation;
 		private final double radius;
@@ -268,7 +268,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private class Stack extends Timer {
+	private class Stack extends AbilityTimer {
 
 		private final LivingEntity entity;
 		private final IHologram hologram;

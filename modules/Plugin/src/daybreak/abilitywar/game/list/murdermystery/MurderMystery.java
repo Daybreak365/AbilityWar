@@ -69,7 +69,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 })
 @Category(GameCategory.MINIGAME)
-@Support(min = NMSVersion.v1_12_R1)
+@Support.Version(min = NMSVersion.v1_12_R1)
 @Beta
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
 

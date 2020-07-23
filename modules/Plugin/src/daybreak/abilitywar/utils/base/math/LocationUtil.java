@@ -189,8 +189,8 @@ public class LocationUtil {
 		for (int x = blockX - radius; x <= blockX + radius; x++) {
 			for (int y = blockY - radius; y <= blockY + radius; y++) {
 				for (int z = blockZ - radius; z <= blockZ + radius; z++) {
-					Block block = center.getWorld().getBlockAt(x, y, z);
-					double distanceSquared = center.distanceSquared(block.getLocation());
+					final Block block = center.getWorld().getBlockAt(x, y, z);
+					final double distanceSquared = center.distanceSquared(block.getLocation());
 					if (distanceSquared <= (radius * radius) && !(hollow && distanceSquared < ((radius - 1) * (radius - 1)))) {
 						if (block.isEmpty()) {
 							if (includeAir) {
@@ -212,19 +212,16 @@ public class LocationUtil {
 	 * @param center        중심
 	 * @param radius        범위
 	 * @param hollow        참일 경우 바깥 부분의 블록들만 가져옵니다.
-	 * @param highestBlocks 참일 경우 각 위치에서 가장 높은 위치에 있는 블록들을 가져옵니다. 이 경우 모든 블록이 같은 평면 위에 있지 않을 수 있습니다.
+	 * @param floorBlocks   참일 경우 각 위치에서 중심의 y 좌표를 참조값으로 {@link #getFloorYAt}을 호출한 위치의 블록을 받아옵니다. 이 경우 모든 블록이 같은 평면 위에 있지 않을 수 있습니다.
 	 */
-	public static List<Block> getBlocks2D(Location center, int radius, boolean hollow, boolean highestBlocks, boolean includeAir) {
+	public static List<Block> getBlocks2D(Location center, int radius, boolean hollow, boolean floorBlocks, boolean includeAir) {
 		List<Block> blocks = new ArrayList<>();
 		final int blockX = center.getBlockX(), blockZ = center.getBlockZ();
 		for (int x = blockX - radius; x <= blockX + radius; x++) {
 			for (int z = blockZ - radius; z <= blockZ + radius; z++) {
-				Block block = highestBlocks ? center.getWorld().getHighestBlockAt(x, z) : center.getWorld().getBlockAt(x, center.getBlockY(), z);
-				Location compare = center.clone();
-				compare.setY(0);
-				Location blockCompare = block.getLocation().clone();
-				blockCompare.setY(0);
-				double distance = compare.distanceSquared(blockCompare);
+				final Block block = center.getWorld().getBlockAt(x, floorBlocks ? getFloorYAt(center.getWorld(), center.getY(), x, z) : center.getBlockY(), z);
+				final Location blockLocation = block.getLocation();
+				final double distance = FastMath.square(center.getX() - blockLocation.getX()) + FastMath.square(center.getZ() - blockLocation.getZ());
 				if (distance <= (radius * radius) && !(hollow && distance < ((radius - 1) * (radius - 1)))) {
 					if (block.isEmpty()) {
 						if (includeAir) {
@@ -240,7 +237,7 @@ public class LocationUtil {
 	}
 
 	public static Locations getRandomLocations(Random random, Location center, double radius, int amount) {
-		Locations locations = new Locations(amount);
+		final Locations locations = new Locations(amount);
 		for (int i = 0; i < amount; i++) {
 			double radians = Math.toRadians(random.nextDouble() * 360);
 			double x = center.getX() + (random.nextDouble() * radius * FastMath.cos(radians));
@@ -404,16 +401,16 @@ public class LocationUtil {
 	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<Entity> predicate) {
 		final List<T> entities = new ArrayList<>();
 		final World world = boundingBox.getCenter().getWorld();
-		final Chunk chunk = boundingBox.getCenter().getChunk();
-		int chunkX = chunk.getX(), chunkZ = chunk.getZ();
-		for (int x = chunkX - 1; x <= chunkX + 1; x++) {
-			for (int z = chunkZ - 1; z <= chunkZ + 1; z++) {
+		final Chunk minChunk = world.getChunkAt(((int) boundingBox.getMinX()) >> 4, ((int) boundingBox.getMinZ()) >> 4), maxChunk = world.getChunkAt(((int) boundingBox.getMaxX()) >> 4, ((int) boundingBox.getMaxZ()) >> 4);
+		final int minX = minChunk.getX(), maxX = maxChunk.getX(), minZ = minChunk.getZ(), maxZ = maxChunk.getZ();
+		for (int x = minX; x <= maxX; x++) {
+			for (int z = minZ; z <= maxZ; z++) {
 				for (Entity e : world.getChunkAt(x, z).getEntities()) {
 					if (entityType.isAssignableFrom(e.getClass())) {
-						@SuppressWarnings("unchecked") T entity = (T) e;
-						BoundaryData boundaryData = BoundaryData.of(entity.getType());
-						Location entityLocation = entity.getLocation();
-						double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
+						final T entity = entityType.cast(e);
+						final BoundaryData boundaryData = BoundaryData.of(entity.getType());
+						final Location entityLocation = entity.getLocation();
+						final double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
 						if (entityX + boundaryData.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < boundingBox.getMaxY() &&
 								boundingBox.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityZ + boundaryData.getMaxZ() &&
 								(predicate == null || predicate.test(entity))) {
@@ -428,22 +425,22 @@ public class LocationUtil {
 
 	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, Entity base, Predicate<Entity> predicate) {
 		final List<T> entities = new ArrayList<>();
-		final Location baseLocation = base.getLocation();
-		final World world = baseLocation.getWorld();
-		final Chunk chunk = baseLocation.getChunk();
-		final int chunkX = chunk.getX(), chunkZ = chunk.getZ();
-		final double baseX = baseLocation.getX(), baseY = baseLocation.getY(), baseZ = baseLocation.getZ();
-		BoundaryData baseBoundary = BoundaryData.of(base.getType());
-		for (int x = chunkX - 1; x <= chunkX + 1; x++) {
-			for (int z = chunkZ - 1; z <= chunkZ + 1; z++) {
+		final World world = base.getWorld();
+		final Location center = base.getLocation();
+		final BoundaryData baseBoundary = BoundaryData.of(base.getType());
+		final Chunk minChunk = world.getChunkAt(((int) (center.getX() + baseBoundary.getMinX())) >> 4, ((int) (center.getZ() + baseBoundary.getMinZ())) >> 4), maxChunk = world.getChunkAt(((int) (center.getX() + baseBoundary.getMaxX())) >> 4, ((int) (center.getZ() + baseBoundary.getMaxZ())) >> 4);
+		final int minX = minChunk.getX(), maxX = maxChunk.getX(), minZ = minChunk.getZ(), maxZ = maxChunk.getZ();
+		final double baseMinX = baseBoundary.getMinX() + center.getX(), baseMinY = baseBoundary.getMinY() + center.getY(), baseMinZ = baseBoundary.getMinZ() + center.getZ(), baseMaxX = baseBoundary.getMaxX() + center.getX(), baseMaxY = baseBoundary.getMaxY() + center.getY(), baseMaxZ = baseBoundary.getMaxZ() + center.getZ();
+		for (int x = minX; x <= maxX; x++) {
+			for (int z = minZ; z <= maxZ; z++) {
 				for (Entity e : world.getChunkAt(x, z).getEntities()) {
 					if (entityType.isAssignableFrom(e.getClass())) {
-						@SuppressWarnings("unchecked") T entity = (T) e;
+						final T entity = entityType.cast(e);
 						final BoundaryData boundaryData = BoundaryData.of(entity.getType());
 						final Location entityLocation = entity.getLocation();
 						final double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
-						if (entityX + boundaryData.getMinX() < baseX + baseBoundary.getMaxX() && baseX + baseBoundary.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < baseY + baseBoundary.getMaxY() &&
-								baseY + baseBoundary.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < baseZ + baseBoundary.getMaxZ() && baseZ + baseBoundary.getMinZ() < entityZ + boundaryData.getMaxZ() &&
+						if (entityX + boundaryData.getMinX() < baseMaxX && baseMinX < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < baseMaxY &&
+								baseMinY < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < baseMaxZ && baseMinZ < entityZ + boundaryData.getMaxZ() &&
 								(predicate == null || predicate.test(entity))) {
 							entities.add(entity);
 						}

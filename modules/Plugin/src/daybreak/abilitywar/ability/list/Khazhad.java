@@ -74,7 +74,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -95,7 +95,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private final Timer passive = new Timer() {
+	private final AbilityTimer passive = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			Location center = getPlayer().getLocation();
@@ -103,7 +103,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7)) {
 					projectiles.add(projectile);
 					projectile.setVelocity(projectile.getVelocity().multiply(0.1));
-					new Timer(3) {
+					new AbilityTimer(3) {
 						@Override
 						protected void onStart() {
 							projectile.getLocation().getBlock().setType(Material.ICE);
@@ -121,7 +121,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 				}
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -132,7 +132,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 
 	private static final Set<LivingEntity> frozenEntities = new HashSet<>();
 
-	public class Frost extends Timer implements Listener {
+	public class Frost extends AbilityTimer implements Listener {
 
 		private final LivingEntity target;
 		private final Block[] blocks = new Block[2];
@@ -237,8 +237,8 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.LEFT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.LEFT_CLICK) && !cooldownTimer.isCooldown()) {
 			FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
 				@Override
 				public boolean onEntityChangeBlock(FallingBlock fallingBlock) {
@@ -254,7 +254,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 				}
 			});
 			BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
-			new Timer() {
+			new AbilityTimer() {
 				@Override
 				protected void run(int count) {
 					if (fallingBlock.isValid() && !fallingBlock.isDead()) {

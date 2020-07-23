@@ -226,6 +226,10 @@ public class Configuration {
 			return getSet(ConfigNodes.GAME_BLACKLIST);
 		}
 
+		public static boolean isZeroTickEnabled() {
+			return getBoolean(ConfigNodes.GAME_ZEROTICK);
+		}
+
 		public static PresetContainer getPresetContainer() {
 			return get(ConfigNodes.GAME_TEAM_PRESETS);
 		}

@@ -6,8 +6,8 @@ import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionExcept
 import org.bukkit.block.Block
 
 class Blocks private constructor() {
-	companion object INSTACE : IBlocks {
-		private val INSTACE: IBlocks = try {
+	companion object INSTANCE : IBlocks {
+		private val INSTANCE: IBlocks = try {
 			Class.forName("daybreak.abilitywar.utils.base.minecraft.block." + if (ServerVersion.isAboveOrEqual(NMSVersion.v1_13_R1)) "flat" else "preflat" + ".BlocksImpl").asSubclass(IBlocks::class.java).getConstructor().newInstance()
 		} catch (e: Exception) {
 			throw UnsupportedVersionException()
@@ -15,7 +15,7 @@ class Blocks private constructor() {
 
 		@JvmStatic
 		override fun createSnapshot(block: Block): IBlockSnapshot {
-			return INSTACE.createSnapshot(block)
+			return INSTANCE.createSnapshot(block)
 		}
 	}
 }

@@ -74,8 +74,8 @@ public class Zeus extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final Timer Skill = new Timer(3) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final AbilityTimer Skill = new AbilityTimer(3) {
 
 		Location center;
 
@@ -103,15 +103,11 @@ public class Zeus extends AbilityBase implements ActiveHandler {
 			}
 		}
 
-		@Override
-		public void onEnd() {
-		}
-
-	}.setPeriod(TimeUnit.TICKS, 2);
+	}.setPeriod(TimeUnit.TICKS, 2).register();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Skill.start();

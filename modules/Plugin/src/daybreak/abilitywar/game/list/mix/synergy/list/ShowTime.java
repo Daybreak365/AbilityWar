@@ -60,7 +60,7 @@ import org.bukkit.util.Vector;
 		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 처형",
 		"능력 사용 중에는 주변의 생명체 수와 관계 없이 4명 이상의 효과를 받습니다."
 })
-@Support(min = NMSVersion.v1_11_R1)
+@Support.Version(min = NMSVersion.v1_11_R1)
 public class ShowTime extends Synergy implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "Cooldown", 40,
@@ -95,8 +95,8 @@ public class ShowTime extends Synergy implements ActiveHandler {
 	};
 	private static final int radius = 7;
 	private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer skillTimer = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration skillTimer = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
 			final World world = getPlayer().getWorld();
@@ -114,7 +114,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 						.setZ(rotateZ(originX, originZ, radians * 3))));
 			}
 			direction.multiply(0.75);
-			new Timer(30) {
+			new AbilityTimer(30) {
 				final Set<String> set = new HashSet<>();
 
 				@Override
@@ -201,7 +201,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 		}
 	};
 
-	private final Timer passive = new Timer() {
+	private final AbilityTimer passive = new AbilityTimer() {
 
 		@Override
 		public void run(int count) {
@@ -233,7 +233,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -247,8 +247,8 @@ public class ShowTime extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skillTimer.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !skillTimer.isDuration() && !cooldownTimer.isCooldown()) {
 			skillTimer.start();
 			return true;
 		}

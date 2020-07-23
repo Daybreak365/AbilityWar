@@ -18,6 +18,8 @@ import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
+import daybreak.abilitywar.utils.base.minecraft.server.UnsupportedServerException;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
@@ -26,6 +28,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +82,7 @@ public class AbilityFactory {
 		registerAbility(Pumpkin.class);
 		registerAbility(Virus.class);
 		registerAbility(DevilBoots.class);
-		registerAbility(BombArrow.class);
+		registerAbility(Explosion.class);
 		registerAbility(Imprison.class);
 		registerAbility(SuperNova.class);
 		registerAbility(Celebrity.class);
@@ -157,6 +160,8 @@ public class AbilityFactory {
 				logger.error(abilityClass.getName() + " 능력 클래스에 public 생성자가 존재하지 않습니다.");
 			} catch (UnsupportedVersionException e) {
 				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 버전에서 지원되지 않습니다.");
+			} catch (UnsupportedServerException e) {
+				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
 			} catch (Exception e) {
 				logger.error("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다.");
 			}
@@ -230,11 +235,17 @@ public class AbilityFactory {
 		private final int flag;
 
 
-		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException {
-			if (clazz.isAnnotationPresent(Support.class)) {
-				Support supported = clazz.getAnnotation(Support.class);
-				if (!(ServerVersion.isAboveOrEqual(supported.min()) && ServerVersion.isBelowOrEqual(supported.max()))) {
+		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException, UnsupportedServerException {
+			if (clazz.isAnnotationPresent(Support.Version.class)) {
+				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
+				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
 					throw new UnsupportedVersionException();
+				}
+			}
+			if (clazz.isAnnotationPresent(Support.Server.class)) {
+				final ServerType[] supportedServers = clazz.getAnnotation(Support.Server.class).value();
+				if (!Arrays.asList(supportedServers).contains(ServerType.getServerType())) {
+					throw new UnsupportedServerException(supportedServers);
 				}
 			}
 			this.clazz = clazz;

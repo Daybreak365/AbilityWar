@@ -71,8 +71,8 @@ class NMS private constructor() {
 		}
 
 		@JvmStatic
-		override fun moveEntity(entity: Entity, x: Double, y: Double, z: Double, yaw: Float, pitch: Float, onGround: Boolean) {
-			INSTANCE.moveEntity(entity, x, y, z, yaw, pitch, onGround)
+		override fun setLocation(entity: Entity, x: Double, y: Double, z: Double, yaw: Float, pitch: Float) {
+			INSTANCE.setLocation(entity, x, y, z, yaw, pitch)
 		}
 
 		@JvmStatic

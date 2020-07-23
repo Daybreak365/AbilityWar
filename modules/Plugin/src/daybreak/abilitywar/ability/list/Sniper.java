@@ -59,7 +59,7 @@ public class Sniper extends AbilityBase {
 	private static final Material GLASS_PANE = ServerVersion.getVersion() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
 	private static final RGB BULLET_COLOR = new RGB(43, 209, 224);
 
-	private final Timer snipeMode = new Timer() {
+	private final AbilityTimer snipeMode = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			final Material main = getPlayer().getInventory().getItemInMainHand().getType(), off = getPlayer().getInventory().getItemInOffHand().getType();
@@ -68,7 +68,7 @@ public class Sniper extends AbilityBase {
 				getPlayer().setVelocity(getPlayer().getVelocity().setX(0).setY(Math.min(0, getPlayer().getVelocity().getY())).setZ(0));
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -77,7 +77,7 @@ public class Sniper extends AbilityBase {
 		}
 	}
 
-	private Timer reload = null;
+	private AbilityTimer reload = null;
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
@@ -93,7 +93,7 @@ public class Sniper extends AbilityBase {
 				new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
 				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (WRECK.calculateDecreasedAmount(20) * 25.0) : 25;
-				this.reload = new Timer(reloadCount) {
+				this.reload = new AbilityTimer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
 					@Override
@@ -116,7 +116,7 @@ public class Sniper extends AbilityBase {
 		}
 	}
 
-	public class Bullet extends Timer {
+	public class Bullet extends AbilityTimer {
 
 		private final LivingEntity shooter;
 		private final CustomEntity entity;

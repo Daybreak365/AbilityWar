@@ -55,7 +55,7 @@ public class Hedgehog extends AbilityBase {
 		}
 	};
 
-	private final Timer passive = new Timer() {
+	private final AbilityTimer passive = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			if (!getPlayer().isDead()) {
@@ -66,7 +66,7 @@ public class Hedgehog extends AbilityBase {
 				}
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 7);
+	}.setPeriod(TimeUnit.TICKS, 7).register();
 
 	@Override
 	protected void onUpdate(Update update) {

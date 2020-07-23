@@ -157,7 +157,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	private static final RGB BLACK = RGB.of(1, 1, 1), WHITE = RGB.of(250, 250, 250);
 
 	private final int distance = DistanceConfig.getValue(), distanceSquared = distance * distance;
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -180,7 +180,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	private final ActionbarChannel noticeChannel = newActionbarChannel();
 	private int killCount = 0;
 	private Player lastVictim = null;
-	private final Timer notice = new Timer() {
+	private final AbilityTimer notice = new AbilityTimer() {
 		private Player last;
 
 		@Override
@@ -194,8 +194,8 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 			}
 			this.last = lastVictim;
 		}
-	}.setPeriod(TimeUnit.TICKS, 5);
-	private final DurationTimer skillTimer = new DurationTimer(60) {
+	}.setPeriod(TimeUnit.TICKS, 5).register();
+	private final Duration skillTimer = new Duration(60) {
 		private GameMode originalMode;
 		private float originalSpeed;
 
@@ -244,7 +244,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 			lastVictim.damage(Math.max(1, (21.5 * (1 - (lastVictim.getHealth() / lastVictim.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()))) * (1 + (killCount * 0.15))), getPlayer());
 			if (lastVictim.isDead()) {
 				killCount++;
-				new Timer(Math.min(3, killCount)) {
+				new AbilityTimer(Math.min(3, killCount)) {
 					@Override
 					protected void run(int count) {
 						SoundLib.PIANO.playInstrument(getPlayer(), Note.natural(0, Tone.A));
@@ -286,8 +286,8 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown() && !skillTimer.isDuration()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown() && !skillTimer.isDuration()) {
 			if (lastVictim != null) {
 				if (getGame().getParticipant(lastVictim).attributes().TARGETABLE.getValue()) {
 					final double distanceSquared = getPlayer().getWorld().equals(lastVictim.getWorld()) ? getPlayer().getLocation().distanceSquared(lastVictim.getLocation()) : Double.MAX_VALUE;

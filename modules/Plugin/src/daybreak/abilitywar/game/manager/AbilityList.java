@@ -96,7 +96,7 @@ public class AbilityList {
 		registerAbility(Pumpkin.class);
 		registerAbility(Virus.class);
 		registerAbility(DevilBoots.class);
-		registerAbility(BombArrow.class);
+		registerAbility(Explosion.class);
 		registerAbility(Imprison.class);
 		registerAbility(SuperNova.class);
 		registerAbility(Celebrity.class);

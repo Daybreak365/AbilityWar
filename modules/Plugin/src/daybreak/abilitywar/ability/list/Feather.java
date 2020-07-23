@@ -55,8 +55,8 @@ public class Feather extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer durationTimer = new DurationTimer(DurationConfig.getValue() * 4, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration durationTimer = new Duration(DurationConfig.getValue() * 4, cooldownTimer) {
 
 		@Override
 		public void onDurationProcess(int seconds) {
@@ -80,7 +80,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 5);
 
-	private final Timer dash = new Timer() {
+	private final AbilityTimer dash = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			if (getPlayer().isFlying()) {
@@ -90,7 +90,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 				stop(false);
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@SubscribeEvent
 	private void onEntityDamage(EntityDamageEvent e) {
@@ -102,8 +102,8 @@ public class Feather extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
 			durationTimer.start();
 			return true;
 		}

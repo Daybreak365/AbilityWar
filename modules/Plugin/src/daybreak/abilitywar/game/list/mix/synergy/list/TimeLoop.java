@@ -51,18 +51,17 @@ public class TimeLoop extends Synergy {
 		}
 
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Map<Participant, PlayerLogger> loggers = new HashMap<>();
 
-	private final Timer save = new Timer() {
+	private final AbilityTimer save = new AbilityTimer() {
 		@Override
 		public void run(int count) {
 			for (PlayerLogger value : loggers.values()) {
 				value.log();
 			}
 		}
-
-	}.setPeriod(TimeUnit.TICKS, 2);
+	}.setPeriod(TimeUnit.TICKS, 2).register();
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -72,7 +71,7 @@ public class TimeLoop extends Synergy {
 	}
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-	private final Timer inCombat = new Timer(10) {
+	private final AbilityTimer inCombat = new AbilityTimer(10) {
 		@Override
 		protected void onStart() {
 			loggers.put(getParticipant(), new PlayerLogger(getPlayer()));
@@ -88,7 +87,7 @@ public class TimeLoop extends Synergy {
 			loggers.clear();
 			actionbarChannel.update("§a전투 종료", 2);
 		}
-	};
+	}.register();
 
 	public TimeLoop(Participant participant) {
 		super(participant);
@@ -196,7 +195,7 @@ public class TimeLoop extends Synergy {
 		private final Player player;
 		private final PlayerData primal;
 		private final PushingList<PlayerData> playerDatas = new PushingList<>(100);
-		private final Timer rewind = new Timer(100) {
+		private final AbilityTimer rewind = new AbilityTimer(100) {
 			@Override
 			public void run(int seconds) {
 				PlayerData data = playerDatas.pollLast();

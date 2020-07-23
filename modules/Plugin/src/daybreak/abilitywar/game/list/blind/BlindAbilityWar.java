@@ -2,7 +2,7 @@ package daybreak.abilitywar.game.list.blind;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityBase.CooldownTimer;
+import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
@@ -655,7 +655,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 			protected void apply(Participant target, Participant castingTarget) {
 				if (target.hasAbility()) {
 					for (GameTimer timer : target.getAbility().getTimers()) {
-						if (timer instanceof CooldownTimer) {
+						if (timer instanceof Cooldown.CooldownTimer) {
 							timer.stop(false);
 						}
 					}

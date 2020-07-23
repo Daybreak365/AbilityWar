@@ -87,7 +87,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 			return true;
 		}
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private static final RGB BLACK = RGB.of(1, 1, 1);
 
@@ -95,8 +95,8 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	private ArmorStand armorStand = null;
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 13, predicate);
 			if (player != null) {
 				target = player;
@@ -105,7 +105,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		}
 		return false;
 	}
-	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 10, cooldownTimer) {
+	private final Duration skill = new Duration(DurationConfig.getValue() * 10, cooldownTimer) {
 		private int particle;
 
 		@Override
@@ -155,7 +155,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	private static final Circle helixCircle = Circle.of(0.5, particleCount);
 
 	private void showHelix(Location target) {
-		new Timer((particleCount * 3) / 2) {
+		new AbilityTimer((particleCount * 3) / 2) {
 			int count = 0;
 
 			@Override

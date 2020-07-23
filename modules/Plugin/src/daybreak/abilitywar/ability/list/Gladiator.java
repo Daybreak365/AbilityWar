@@ -56,11 +56,11 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private final Map<Block, IBlockSnapshot> saves = new HashMap<>();
 
-	private final Timer clearField = new Timer(20) {
+	private final AbilityTimer clearField = new AbilityTimer(20) {
 		@Override
 		public void run(int count) {
 			target.sendMessage("§4[§c투기장§4] §f" + count + "초 후에 투기장이 삭제됩니다.");
@@ -84,7 +84,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			saves.clear();
 			target = null;
 		}
-	};
+	}.register();
 
 	private Player target = null;
 	private final Random random = new Random();
@@ -98,7 +98,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		}
 	};
 
-	private final Timer createField = new Timer(26) {
+	private final AbilityTimer createField = new AbilityTimer(26) {
 
 		private int buildCount;
 		private int totalCount;
@@ -178,7 +178,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			}
 			saves.clear();
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@SubscribeEvent
 	public void onBlockBreak(BlockBreakEvent e) {
@@ -204,7 +204,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 
 	@Override
 	public void TargetSkill(Material material, LivingEntity entity) {
-		if (material.equals(Material.IRON_INGOT)) {
+		if (material == Material.IRON_INGOT) {
 			if (entity != null) {
 				if (entity instanceof Player) {
 					if (!cooldownTimer.isCooldown()) {

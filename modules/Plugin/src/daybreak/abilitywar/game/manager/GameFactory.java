@@ -21,15 +21,17 @@ import daybreak.abilitywar.game.list.standard.DefaultGame;
 import daybreak.abilitywar.game.list.standard.WarGame;
 import daybreak.abilitywar.game.list.summervacation.SummerVacation;
 import daybreak.abilitywar.game.list.teamfight.TeamFight;
-import daybreak.abilitywar.game.list.zerotick.ZeroTick;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
+import daybreak.abilitywar.utils.base.minecraft.server.UnsupportedServerException;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -54,7 +56,6 @@ public class GameFactory {
 		registerMode(SummerVacation.class);
 		registerMode(TeamFight.class);
 		registerMode(MixGame.class);
-		registerMode(ZeroTick.class);
 		registerMode(OneAbility.class);
 		registerMode(ChangeMix.class);
 		registerMode(MurderMystery.class);
@@ -100,6 +101,8 @@ public class GameFactory {
 				}
 			} catch (UnsupportedVersionException e) {
 				logger.debug("§e" + gameClass.getName() + " §f게임 모드는 이 버전에서 지원되지 않습니다.");
+			} catch (UnsupportedServerException e) {
+				logger.debug("§e" + gameClass.getName() + " §f게임 모드는 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
 			} catch (Exception e) {
 				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + gameClass.getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
 			}
@@ -129,11 +132,17 @@ public class GameFactory {
 		private final String[] aliases;
 		private final int flag;
 
-		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException {
-			if (clazz.isAnnotationPresent(Support.class)) {
-				Support supported = clazz.getAnnotation(Support.class);
-				if (!(ServerVersion.isAboveOrEqual(supported.min()) && ServerVersion.isBelowOrEqual(supported.max()))) {
+		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException, UnsupportedServerException {
+			if (clazz.isAnnotationPresent(Support.Version.class)) {
+				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
+				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
 					throw new UnsupportedVersionException();
+				}
+			}
+			if (clazz.isAnnotationPresent(Support.Server.class)) {
+				final ServerType[] supportedServers = clazz.getAnnotation(Support.Server.class).value();
+				if (!Arrays.asList(supportedServers).contains(ServerType.getServerType())) {
+					throw new UnsupportedServerException(supportedServers);
 				}
 			}
 			this.clazz = clazz;

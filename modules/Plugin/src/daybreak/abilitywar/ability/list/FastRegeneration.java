@@ -52,9 +52,9 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
-	private final DurationTimer healthGain = new DurationTimer(DurationConfig.getValue() * 2, cooldownTimer) {
+	private final Duration healthGain = new Duration(DurationConfig.getValue() * 2, cooldownTimer) {
 
 		@Override
 		public void onDurationStart() {
@@ -98,7 +98,7 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 10);
 
-	private final Timer sound = new Timer() {
+	private final AbilityTimer sound = new AbilityTimer() {
 
 		private int tick;
 
@@ -128,11 +128,11 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 5);
+	}.setPeriod(TimeUnit.TICKS, 5).register();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
 			healthGain.start();
 			return true;
 		}

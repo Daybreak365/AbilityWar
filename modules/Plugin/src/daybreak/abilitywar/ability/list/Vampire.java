@@ -124,11 +124,11 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 			return true;
 		}
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final int distance = DistanceConfig.getValue();
 	private final Circle circle = Circle.of(distance, distance * 15);
 	private static final RGB COLOR_BLOOD_RED = new RGB(138, 7, 7);
-	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 10, cooldownTimer) {
+	private final Duration skill = new Duration(DurationConfig.getValue() * 10, cooldownTimer) {
 		private int count;
 		private double blood;
 		private List<Damageable> targets;
@@ -240,7 +240,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private final Timer passive = new Timer() {
+	private final AbilityTimer passive = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			if (cooldownTimer.isRunning()) {
@@ -250,7 +250,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 				}
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 10);
+	}.setPeriod(TimeUnit.TICKS, 10).register();
 
 	@Override
 	protected void onUpdate(Update update) {
@@ -260,8 +260,8 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			skill.start();
 			return true;
 		}

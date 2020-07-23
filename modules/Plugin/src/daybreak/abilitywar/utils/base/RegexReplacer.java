@@ -13,11 +13,11 @@ public class RegexReplacer {
 		this.pattern = Pattern.compile(regex);
 	}
 
-	public String replaceAll(CharSequence sequence, Function<MatchResult, String> function) {
-		Matcher matcher = pattern.matcher(sequence);
-		StringBuffer buffer = new StringBuffer();
+	public String replaceAll(String string, Function<MatchResult, String> function) {
+		final Matcher matcher = pattern.matcher(string);
+		final StringBuffer buffer = new StringBuffer();
 		while (matcher.find()) {
-			matcher.appendReplacement(buffer, function.apply(matcher));
+			matcher.appendReplacement(buffer, Matcher.quoteReplacement(function.apply(matcher)));
 		}
 		matcher.appendTail(buffer);
 		return buffer.toString();

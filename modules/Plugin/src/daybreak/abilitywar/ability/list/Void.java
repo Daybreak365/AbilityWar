@@ -57,12 +57,12 @@ public class Void extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final Timer skill = new Timer(DurationConfig.getValue()) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final AbilityTimer skill = new AbilityTimer(DurationConfig.getValue()) {
 		@Override
 		public void run(int count) {
 		}
-	};
+	}.register();
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -85,8 +85,8 @@ public class Void extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					Player target = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);

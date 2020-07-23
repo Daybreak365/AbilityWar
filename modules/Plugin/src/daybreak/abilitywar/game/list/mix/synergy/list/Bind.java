@@ -75,7 +75,7 @@ public class Bind extends Synergy implements ActiveHandler {
 			MaterialX.GREEN_STAINED_GLASS,
 			MaterialX.BLUE_STAINED_GLASS
 	};
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private final int maxSolidity = MaxSolidityConfig.getValue();
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
@@ -102,7 +102,7 @@ public class Bind extends Synergy implements ActiveHandler {
 	private final Random random = new Random();
 	private int solidity = 1;
 
-	private final Timer stackAdder = new Timer() {
+	private final AbilityTimer stackAdder = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			if (solidity < maxSolidity) {
@@ -110,15 +110,15 @@ public class Bind extends Synergy implements ActiveHandler {
 				actionbarChannel.update("§f강도: §c" + solidity);
 			}
 		}
-	}.setPeriod(TimeUnit.SECONDS, 10);
+	}.setPeriod(TimeUnit.SECONDS, 10).register();
 
 	public Bind(Participant participant) {
 		super(participant);
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			LivingEntity entity = LocationUtil.getEntityLookingAt(LivingEntity.class, getPlayer(), 15, predicate);
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {

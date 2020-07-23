@@ -104,7 +104,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 	private static final Note G = Note.natural(0, Tone.G);
 
 	private static final RGB COLOR = new RGB(138, 25, 115);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -134,7 +134,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		}
 	}
 
-	public class Ring extends DurationTimer implements Listener {
+	public class Ring extends Duration implements Listener {
 
 		private final double radius;
 		private final Location center;
@@ -146,7 +146,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		private final double health;
 		private final double targetHealth;
 
-		public Ring(CooldownTimer cooldownTimer, double radius, Player target) {
+		public Ring(Cooldown cooldownTimer, double radius, Player target) {
 			super(duration * 20, cooldownTimer);
 			this.radius = radius;
 			this.center = getPlayer().getLocation().clone();
@@ -258,7 +258,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		@EventHandler
 		protected void onDeath(PlayerDeathEvent e) {
 			if (target.equals(e.getEntity())) {
-				new Timer(3) {
+				new AbilityTimer(3) {
 					@Override
 					protected void run(int count) {
 						SoundLib.PIANO.playInstrument(getPlayer(), C);
@@ -268,7 +268,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				}.setPeriod(TimeUnit.TICKS, 7).start();
 				stop(false);
 			} else if (getPlayer().equals(e.getEntity())) {
-				new Timer(3) {
+				new AbilityTimer(3) {
 					@Override
 					protected void run(int count) {
 						SoundLib.PIANO.playInstrument(target, C);
@@ -282,6 +282,11 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 		@Override
 		protected void onDurationEnd() {
+			onDurationSilentEnd();
+		}
+
+		@Override
+		protected void onDurationSilentEnd() {
 			getParticipant().attributes().TARGETABLE.setValue(true);
 			targetParticipant.attributes().TARGETABLE.setValue(true);
 			HandlerList.unregisterAll(this);
@@ -296,12 +301,8 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 			if (!getPlayer().isDead()) {
 				getPlayer().setHealth(health);
 			}
+			unregister();
 			ring = null;
-		}
-
-		@Override
-		protected void onDurationSilentEnd() {
-			onDurationEnd();
 		}
 
 	}

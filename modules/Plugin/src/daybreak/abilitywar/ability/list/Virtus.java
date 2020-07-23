@@ -50,18 +50,18 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final Timer skill = new Timer(DurationConfig.getValue()) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final AbilityTimer skill = new AbilityTimer(DurationConfig.getValue()) {
 		@Override
 		public void run(int count) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
 			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 3, 3, 3, 10);
 		}
-	};
+	}.register();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			skill.start();
 			cooldownTimer.start();
 			return true;

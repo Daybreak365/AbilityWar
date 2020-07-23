@@ -91,6 +91,8 @@ public enum ConfigNodes {
 			"# _90 : 90%",
 			"# _100 : 100%",
 			"# 중 하나로 설정하면 됩니다."),
+	GAME_ZEROTICK("게임.제로틱", false,
+			"# true로 설정하면 게임 중 공격 딜레이 없이 타격할 수 있습니다."),
 	GAME_TEAM_PRESETS("팀게임.팀프리셋", new PresetContainer(), "#"),
 	GAME_DEFAULT_MAX_HEALTH_ENABLE("게임.최대체력.활성화", false,
 			"# 게임 시작시 모든 플레이어에게 기본 최대 체력 설정 여부"),

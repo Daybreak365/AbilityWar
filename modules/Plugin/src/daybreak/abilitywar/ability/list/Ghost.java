@@ -51,7 +51,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 
 	private final int cooldownIncrease = COOLDOWN_INCREASE_CONFIG.getValue();
 	private Location targetLocation;
-	private final Timer skill = new Timer() {
+	private final AbilityTimer skill = new AbilityTimer() {
 		private GameMode originalMode;
 		private float flySpeed;
 
@@ -93,8 +93,8 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 			getPlayer().setFlySpeed(flySpeed);
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
-	private CooldownTimer cooldownTimer = null;
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	private final Cooldown cooldownTimer = new Cooldown(0);
 	private int currentCooldown = 0;
 
 	@SubscribeEvent(onlyRelevant = true)
@@ -119,9 +119,9 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isRunning()) {
-			if (cooldownTimer == null) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isRunning()) {
+			if (!cooldownTimer.isCooldown()) {
 				Block lastEmpty = null;
 				try {
 					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection(), 1, 7); iterator.hasNext(); ) {
@@ -135,19 +135,13 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 				if (lastEmpty != null) {
 					this.targetLocation = lastEmpty.getLocation();
 					skill.start();
-					cooldownTimer = new CooldownTimer(currentCooldown += cooldownIncrease) {
-						@Override
-						public void onEnd() {
-							super.onEnd();
-							Ghost.this.cooldownTimer = null;
-						}
-					};
+					cooldownTimer.setCooldown(currentCooldown += cooldownIncrease);
 					cooldownTimer.start();
 					return true;
 				} else {
 					getPlayer().sendMessage(ChatColor.RED + "바라보는 방향에 이동할 수 있는 곳이 없습니다.");
 				}
-			} else cooldownTimer.isCooldown();
+			}
 		}
 		return false;
 	}

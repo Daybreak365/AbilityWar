@@ -27,11 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-/**
- * 게임 관리 클래스
- *
- * @author Daybreak 새벽
- */
+
 @GameManifest(name = "능력자 전쟁", description = {"§f우승 조건이 있는 능력자 전쟁 플러그인의 기본 게임입니다."})
 public class WarGame extends Game implements DefaultKitHandler, Winnable, Observer {
 

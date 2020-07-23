@@ -12,6 +12,7 @@ import daybreak.abilitywar.game.AbstractGame.RestrictionBehavior;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
@@ -57,10 +58,10 @@ public class Hermit extends AbilityBase {
 		}
 	}
 
-	private final Map<UUID, ChannelOutboundHandlerAdapter> channelHandlers = new HashMap<>();
+	private final Map<UUID, Pair<CraftPlayer, ChannelOutboundHandlerAdapter>> channelHandlers = new HashMap<>();
 	private final ActionbarChannel cooldownActionbarChannel = newActionbarChannel();
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-	private final Timer cooldown = new Timer(TaskType.REVERSE, 20) {
+	private final AbilityTimer cooldown = new AbilityTimer(TaskType.REVERSE, 20) {
 		@Override
 		protected void onStart() {
 			show();
@@ -81,7 +82,7 @@ public class Hermit extends AbilityBase {
 			cooldownActionbarChannel.update(null);
 			hide();
 		}
-	}.setBehavior(RestrictionBehavior.PAUSE_RESUME);
+	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).register();
 
 	public Hermit(Participant participant) {
 		super(participant);
@@ -89,9 +90,25 @@ public class Hermit extends AbilityBase {
 
 	@SubscribeEvent
 	private void onJoin(PlayerJoinEvent e) {
+		if (cooldown.isRunning()) return;
 		final CraftPlayer player = (CraftPlayer) e.getPlayer();
 		if (player.equals(getPlayer())) return;
-		injectPlayer(player);
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (PacketPlayOutEntityEquipment packet : new PacketPlayOutEntityEquipment[] {
+						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, ItemStack.a),
+						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, ItemStack.a),
+						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.HEAD, ItemStack.a),
+						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.CHEST, ItemStack.a),
+						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, ItemStack.a),
+						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, ItemStack.a)
+				}) {
+					player.getHandle().playerConnection.sendPacket(packet);
+				}
+				injectPlayer(player);
+			}
+		}.runTaskLater(AbilityWar.getPlugin(), 2L);
 	}
 
 	@SubscribeEvent
@@ -100,7 +117,7 @@ public class Hermit extends AbilityBase {
 		if (player.equals(getPlayer())) return;
 		if (channelHandlers.containsKey(player.getUniqueId())) {
 			try {
-				player.getHandle().playerConnection.networkManager.channel.pipeline().remove(channelHandlers.remove(player.getUniqueId()));
+				player.getHandle().playerConnection.networkManager.channel.pipeline().remove(channelHandlers.remove(player.getUniqueId()).getRight());
 			} catch (NoSuchElementException ignored) {
 			}
 		}
@@ -149,13 +166,14 @@ public class Hermit extends AbilityBase {
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(getPlayer().getInventory().getLeggings())),
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, CraftItemStack.asNMSCopy(getPlayer().getInventory().getBoots()))
 		};
-		for (Entry<UUID, ChannelOutboundHandlerAdapter> entry : channelHandlers.entrySet()) {
-			CraftPlayer player = (CraftPlayer) Bukkit.getPlayer(entry.getKey());
-			if (player != null) {
-				player.getHandle().playerConnection.networkManager.channel.pipeline().remove(entry.getValue());
-				for (PacketPlayOutEntityEquipment packet : packets) {
-					player.getHandle().playerConnection.sendPacket(packet);
-				}
+		for (Entry<UUID, Pair<CraftPlayer, ChannelOutboundHandlerAdapter>> entry : channelHandlers.entrySet()) {
+			final CraftPlayer player = entry.getValue().getLeft();
+			try {
+				player.getHandle().playerConnection.networkManager.channel.pipeline().remove(entry.getValue().getRight());
+			} catch (NoSuchElementException ignored) {}
+			if (!player.isValid()) continue;
+			for (PacketPlayOutEntityEquipment packet : packets) {
+				player.getHandle().playerConnection.sendPacket(packet);
 			}
 		}
 		channelHandlers.clear();
@@ -178,8 +196,16 @@ public class Hermit extends AbilityBase {
 			actionbarChannel.update(null);
 		}
 	}
-
 	private void injectPlayer(CraftPlayer player) {
+		if (!player.isValid()) return;
+		if (channelHandlers.containsKey(player.getUniqueId())) {
+			final Pair<CraftPlayer, ChannelOutboundHandlerAdapter> pair = channelHandlers.get(player.getUniqueId());
+			if (!pair.getLeft().isValid()) {
+				try {
+					pair.getLeft().getHandle().playerConnection.networkManager.channel.pipeline().remove(pair.getRight());
+				} catch (NoSuchElementException ignored) {}
+			} else return;
+		}
 		final ChannelOutboundHandlerAdapter handler = new ChannelOutboundHandlerAdapter() {
 			@Override
 			public void write(ChannelHandlerContext ctx, Object packet, ChannelPromise promise) throws Exception {
@@ -203,7 +229,7 @@ public class Hermit extends AbilityBase {
 				super.write(ctx, packet, promise);
 			}
 		};
-		channelHandlers.put(player.getUniqueId(), handler);
+		channelHandlers.put(player.getUniqueId(), Pair.of(player, handler));
 		player.getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", hashCode() + ":" + player.getName(), handler);
 	}
 

@@ -60,7 +60,7 @@ public class Muse extends AbilityBase implements ActiveHandler {
 
 	private static final Circle headCircle = Circle.of(0.5, 10);
 	private static final RGB PINK = RGB.of(255, 189, 235);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -72,7 +72,7 @@ public class Muse extends AbilityBase implements ActiveHandler {
 	private double currentRadius;
 	private Location center = null;
 
-	private final DurationTimer skill = new DurationTimer(120, cooldownTimer) {
+	private final Duration skill = new Duration(120, cooldownTimer) {
 
 		private int count;
 		private int soundCount;
@@ -163,8 +163,8 @@ public class Muse extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 2);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
 					skill.start();

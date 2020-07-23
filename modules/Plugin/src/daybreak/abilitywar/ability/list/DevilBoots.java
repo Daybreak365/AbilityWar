@@ -24,12 +24,12 @@ public class DevilBoots extends AbilityBase {
 		super(participant);
 	}
 
-	private final Timer speed = new Timer() {
+	private final AbilityTimer speed = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
 		}
-	};
+	}.register();
 
 	private final LinkedList<Block> blocks = new LinkedList<>();
 

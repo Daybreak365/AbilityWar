@@ -36,7 +36,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 @AbilityManifest(name = "염인", rank = Rank.S, species = Species.HUMAN, explain = {
 		""
 })
-@Support(min = NMSVersion.v1_12_R1)
+@Support.Version(min = NMSVersion.v1_12_R1)
 @Beta
 public class FlameMan extends Synergy implements ActiveHandler {
 
@@ -63,14 +63,14 @@ public class FlameMan extends Synergy implements ActiveHandler {
 		}
 
 	};
-	private final Timer speed = new Timer() {
+	private final AbilityTimer speed = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
 		}
-	};
+	}.register();
 	private final LinkedList<Block> blocks = new LinkedList<>();
-	private final Timer buff = new Timer() {
+	private final AbilityTimer buff = new AbilityTimer() {
 		@Override
 		public void run(int count) {
 			Block block = getPlayer().getLocation().getBlock(), belowBlock = getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN);
@@ -79,9 +79,9 @@ public class FlameMan extends Synergy implements ActiveHandler {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
-	private final Timer terrain = new Timer(RangeConfig.getValue()) {
+	private final AbilityTimer terrain = new AbilityTimer(RangeConfig.getValue()) {
 
 		private int count;
 		private Location center;
@@ -110,8 +110,8 @@ public class FlameMan extends Synergy implements ActiveHandler {
 			}
 			count++;
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	public FlameMan(Participant participant) {
 		super(participant);
@@ -174,8 +174,8 @@ public class FlameMan extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
 			terrain.start();
 			cooldownTimer.start();
 			return true;

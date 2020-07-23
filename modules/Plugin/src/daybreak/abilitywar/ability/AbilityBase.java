@@ -1,6 +1,7 @@
 package daybreak.abilitywar.ability;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -26,6 +27,7 @@ import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.utils.base.RegexReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -38,12 +40,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.regex.MatchResult;
@@ -157,10 +161,11 @@ public abstract class AbilityBase {
 	private String[] explanation = null;
 	private final AbstractGame game;
 	private final Map<Class<? extends Event>, EventObserver> eventhandlers;
-	private final List<GameTimer> timers = new LinkedList<>();
+	private final Set<AbilityTimer> timers = new HashSet<>();
+	private final Set<AbilityTimer> runningTimers = new HashSet<>();
 	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
 
-	private boolean restricted;
+	private boolean restricted, destroyed;
 
 	public static <T extends AbilityBase> T create(Class<T> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		Preconditions.checkNotNull(abilityClass);
@@ -190,14 +195,14 @@ public abstract class AbilityBase {
 	 * 절대 임의로 호출하지 마십시오.
 	 */
 	public final void destroy() {
+		this.destroyed = true;
 		onUpdate(Update.ABILITY_DESTROY);
 		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
-		for (EventObserver value : eventhandlers.values()) {
-			game.getEventManager().unregister(value);
+		for (EventObserver eventObserver : eventhandlers.values()) {
+			game.getEventManager().unregister(eventObserver);
 		}
-		for (GameTimer timer : timers) {
-			if (timer instanceof Timer) ((Timer) timer).destroyed = true;
-			timer.stop(true);
+		for (AbilityTimer abilityTimer : new HashSet<>(runningTimers)) {
+			abilityTimer.stop(true);
 		}
 		for (ActionbarChannel channel : actionbarChannels) {
 			channel.unregister();
@@ -284,8 +289,12 @@ public abstract class AbilityBase {
 		return restricted;
 	}
 
-	public final List<GameTimer> getTimers() {
-		return Collections.unmodifiableList(timers);
+	public final Set<GameTimer> getTimers() {
+		return Collections.unmodifiableSet(timers);
+	}
+
+	public final Set<GameTimer> getRunningTimers() {
+		return Collections.unmodifiableSet(runningTimers);
 	}
 
 	public boolean usesMaterial(Material material) {
@@ -338,6 +347,7 @@ public abstract class AbilityBase {
 	 *
 	 * @author Daybreak 새벽
 	 */
+	@Deprecated
 	public class CooldownTimer extends Timer {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
@@ -429,6 +439,7 @@ public abstract class AbilityBase {
 	 *
 	 * @author Daybreak 새벽
 	 */
+	@Deprecated
 	public abstract class DurationTimer extends Timer {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
@@ -452,16 +463,10 @@ public abstract class AbilityBase {
 			this(duration, null);
 		}
 
-		protected void onDurationStart() {
-		}
-
+		protected void onDurationStart() {}
 		protected abstract void onDurationProcess(int count);
-
-		protected void onDurationEnd() {
-		}
-
-		protected void onDurationSilentEnd() {
-		}
+		protected void onDurationEnd() {}
+		protected void onDurationSilentEnd() {}
 
 		public final boolean isDuration() {
 			if (isRunning()) {
@@ -548,13 +553,12 @@ public abstract class AbilityBase {
 
 	}
 
-	public abstract class Timer extends GameTimer {
-
-		private boolean destroyed;
+	@Deprecated
+	public abstract class Timer extends AbilityTimer {
 
 		public Timer(TaskType taskType, int maximumCount) {
-			game.super(taskType, maximumCount);
-			timers.add(this);
+			super(taskType, maximumCount);
+			register();
 		}
 
 		public Timer(int maximumCount) {
@@ -582,12 +586,358 @@ public abstract class AbilityBase {
 			return this;
 		}
 
+	}
+
+	public abstract class AbilityTimer extends GameTimer {
+
+		public AbilityTimer(TaskType taskType, int maximumCount) {
+			game.super(taskType, maximumCount);
+			attachObserver(new SimpleTimer.Observer() {
+				@Override
+				public void onStart() {
+					runningTimers.add(AbilityTimer.this);
+				}
+				@Override
+				public void onEnd() {
+					runningTimers.remove(AbilityTimer.this);
+				}
+				@Override
+				public void onSilentEnd() {
+					runningTimers.remove(AbilityTimer.this);
+				}
+				@Override
+				public void onResume() {
+					runningTimers.add(AbilityTimer.this);
+				}
+				@Override
+				public void onPause() {
+					runningTimers.remove(AbilityTimer.this);
+				}
+			});
+		}
+
+		public AbilityTimer(int maximumCount) {
+			this(TaskType.REVERSE, maximumCount);
+		}
+
+		public AbilityTimer() {
+			this(TaskType.INFINITE, -1);
+		}
+
+		@Override
+		public AbilityTimer setPeriod(TimeUnit timeUnit, int period) {
+			super.setPeriod(timeUnit, period);
+			return this;
+		}
+
+		@Override
+		public AbilityTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+			super.setInitialDelay(timeUnit, initialDelay);
+			return this;
+		}
+
+		public AbilityTimer setBehavior(RestrictionBehavior behavior) {
+			super.setBehavior(behavior);
+			return this;
+		}
+
+		public AbilityTimer register() {
+			timers.add(this);
+			return this;
+		}
+
+		public AbilityTimer unregister() {
+			timers.remove(this);
+			return this;
+		}
+
 		@Override
 		public boolean start() {
 			if (!destroyed) {
 				return super.start();
 			} else {
 				return false;
+			}
+		}
+
+	}
+
+	/**
+	 * 쿨타임 관리 클래스
+	 * 타이머를 내부적으로 관리합니다.
+	 *
+	 * @author Daybreak 새벽
+	 */
+	public class Cooldown {
+
+		private int cooldown;
+		private final String name;
+		private CooldownTimer timer;
+
+		public Cooldown(int cooldown, String name, CooldownDecrease maxDecrease) {
+			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(maxDecrease.getPercentage()) : cooldown);
+			this.timer = new CooldownTimer(this.cooldown);
+			this.name = name;
+		}
+
+		public Cooldown(int cooldown, String name) {
+			this(cooldown, name, CooldownDecrease._100);
+		}
+
+		public Cooldown(int cooldown, CooldownDecrease maxDecrease) {
+			this(cooldown, "", maxDecrease);
+		}
+
+		public Cooldown(int cooldown) {
+			this(cooldown, "");
+		}
+
+		public boolean start() {
+			return timer.start();
+		}
+
+		public boolean stop(boolean silent) {
+			return timer.stop(silent);
+		}
+
+		public boolean isRunning() {
+			return timer.isRunning();
+		}
+
+		public int getCooldown() {
+			return cooldown;
+		}
+
+		public boolean isCooldown() {
+			if (timer.isRunning()) {
+				if (getPlayer() != null) {
+					getPlayer().sendMessage(toString(ChatColor.WHITE));
+				}
+			}
+			return timer.isRunning();
+		}
+
+		public int getCount() {
+			return timer.getCount();
+		}
+
+		public void setCount(int count) {
+			timer.setCount(count);
+		}
+
+		public void setCooldown(int cooldown, CooldownDecrease maxDecrease) {
+			timer.actionbarChannel.unregister();
+			timer.stop(true);
+			timer.unregister();
+			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(maxDecrease.getPercentage()) : cooldown);
+			this.timer = new CooldownTimer(this.cooldown);
+		}
+
+		public void setCooldown(int cooldown) {
+			this.setCooldown(cooldown, CooldownDecrease._100);
+		}
+
+		@Override
+		public String toString() {
+			return toString(ChatColor.GOLD);
+		}
+
+		public String toString(ChatColor timeColor) {
+			if (name != null && !name.isEmpty()) {
+				return ChatColor.RED.toString() + name + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(timer.getCount());
+			} else {
+				return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(timer.getCount());
+			}
+		}
+
+		public class CooldownTimer extends AbilityTimer {
+
+			private final ActionbarChannel actionbarChannel = newActionbarChannel();
+
+			public CooldownTimer(int cooldown) {
+				super(TaskType.REVERSE, cooldown);
+				setBehavior(RestrictionBehavior.PAUSE_RESUME);
+				register();
+			}
+
+			@Override
+			public void run(int count) {
+				actionbarChannel.update(toString());
+				if (count == (getMaximumCount() / 2) || (count <= 5 && count >= 1)) {
+					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
+					getPlayer().sendMessage(toString(ChatColor.WHITE));
+				}
+			}
+
+			@Override
+			public void onEnd() {
+				getPlayer().sendMessage("§a능력을 다시 사용할 수 있습니다.");
+				actionbarChannel.update("§a능력을 다시 사용할 수 있습니다.", 2);
+			}
+
+			@Override
+			public void onSilentEnd() {
+				actionbarChannel.update(null);
+			}
+
+			@Override
+			public void onCountSet() {
+				actionbarChannel.update(toString());
+			}
+
+			@Override
+			public String toString() {
+				return toString(ChatColor.GOLD);
+			}
+
+			private String toString(ChatColor timeColor) {
+				if (name != null && !name.isEmpty()) {
+					return ChatColor.RED.toString() + name + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
+				} else {
+					return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
+				}
+			}
+
+			@Override
+			public CooldownTimer setPeriod(TimeUnit timeUnit, int period) {
+				return this;
+			}
+
+			@Override
+			public CooldownTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+				return this;
+			}
+
+		}
+
+	}
+
+	/**
+	 * 지속 타이머
+	 *
+	 * @author Daybreak 새벽
+	 */
+	public abstract class Duration extends AbilityTimer {
+
+		private final ActionbarChannel actionbarChannel = newActionbarChannel();
+		private final int duration;
+		private final String name;
+		private final Cooldown cooldown;
+		private int period = 20;
+
+		public Duration(int duration, Cooldown cooldown, String name) {
+			super(TaskType.REVERSE, duration);
+			this.duration = duration;
+			this.name = Strings.nullToEmpty(name);
+			this.cooldown = cooldown;
+			register();
+		}
+
+		public Duration(int duration, Cooldown cooldown) {
+			this(duration, cooldown, "");
+		}
+
+		public Duration(int duration) {
+			this(duration, null);
+		}
+
+		protected void onDurationStart() {}
+		protected abstract void onDurationProcess(int count);
+		protected void onDurationEnd() {}
+		protected void onDurationSilentEnd() {}
+
+		public final boolean isDuration() {
+			if (isRunning()) {
+				if (getPlayer() != null) {
+					getPlayer().sendMessage(toString(ChatColor.WHITE));
+				}
+			}
+			return isRunning();
+		}
+
+		@Override
+		public Duration setPeriod(TimeUnit timeUnit, int period) {
+			Preconditions.checkNotNull(timeUnit);
+			this.period = timeUnit.toTicks(period);
+			super.setPeriod(TimeUnit.TICKS, FastMath.gcd(this.period, 20));
+			return this;
+		}
+
+		@Override
+		public Duration setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+			super.setInitialDelay(timeUnit, initialDelay);
+			return this;
+		}
+
+		@Override
+		public Duration setBehavior(RestrictionBehavior behavior) {
+			super.setBehavior(behavior);
+			return this;
+		}
+
+		@Override
+		public Duration unregister() {
+			super.unregister();
+			return this;
+		}
+
+		@Override
+		protected final void onStart() {
+			onDurationStart();
+		}
+
+		private int tick = 0;
+
+		@Override
+		protected final void run(int count) {
+			tick += getPeriod();
+			if (tick % 20 == 0) {
+				actionbarChannel.update(toString());
+				final int fixedCount = getFixedCount();
+				if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
+					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
+					getPlayer().sendMessage(toString(ChatColor.WHITE));
+				}
+			}
+			if (tick % period == 0) {
+				onDurationProcess(count);
+				if (tick >= 20) {
+					tick = 0;
+				}
+			}
+		}
+
+		@Override
+		protected final void onEnd() {
+			Player player = getPlayer();
+			if (player != null) {
+				onDurationEnd();
+
+				player.sendMessage("§6지속 시간§f이 종료되었습니다.");
+				actionbarChannel.update("§6지속 시간§f이 종료되었습니다.", 2);
+
+				if (cooldown != null) {
+					cooldown.start();
+				}
+			}
+		}
+
+		@Override
+		protected final void onSilentEnd() {
+			onDurationSilentEnd();
+			actionbarChannel.update(null);
+		}
+
+		@Override
+		public final String toString() {
+			return toString(ChatColor.YELLOW);
+		}
+
+		public final String toString(ChatColor timeColor) {
+			if (name != null && !name.isEmpty()) {
+				return ChatColor.GOLD.toString() + name + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
+			} else {
+				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
 			}
 		}
 

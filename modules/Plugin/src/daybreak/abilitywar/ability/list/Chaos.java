@@ -71,7 +71,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 
 	private static final RGB BLACK = RGB.of(1, 1, 1);
 	private final int distance = DistanceConfig.getValue();
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -92,7 +92,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 		}
 	};
 	private final Circle CIRCLE = Circle.of(distance, distance * 4);
-	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
 
 		private Location center;
 		private Circle pCircle, sCircle;
@@ -122,8 +122,8 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			skill.start();
 			return true;
 		}

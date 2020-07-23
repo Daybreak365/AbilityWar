@@ -62,7 +62,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 	private boolean nameSelecting = false;
 	private String religionName = null;
 
-	private final Timer nameSelect = new Timer(30) {
+	private final AbilityTimer nameSelect = new AbilityTimer(30) {
 		@Override
 		protected void onStart() {
 			sendMessage("창시할 종교의 이름을 채팅창에 입력하세요. (최대 10글자)");
@@ -82,7 +82,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 			sendMessage("종교의 이름이 선택되지 않아 이름이 임의로 설정되었습니다.");
 		}
 
-	};
+	}.register();
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
@@ -90,8 +90,8 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 		getPlayer().sendMessage("§5[§d교주§5] §f" + message);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final DurationTimer skill = new DurationTimer(10, cooldownTimer) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration skill = new Duration(10, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
 			Bukkit.broadcastMessage("§4" + religionName + " §c이단 심판이 시작되었습니다.");
@@ -201,8 +201,8 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT) && clickType.equals(ClickType.LEFT_CLICK) && religionName != null && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType.equals(ClickType.LEFT_CLICK) && religionName != null && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			if (belivers.size() >= minBelivers) {
 				skill.start();
 			} else {
@@ -214,7 +214,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 
 	@Override
 	public void TargetSkill(Material material, LivingEntity entity) {
-		if (material.equals(Material.IRON_INGOT) && religionName != null && entity instanceof Player) {
+		if (material == Material.IRON_INGOT && religionName != null && entity instanceof Player) {
 			if (belivers.size() < maxBelivers) {
 				Player target = (Player) entity;
 				if (getGame().isParticipating(target) && belivers.add(getGame().getParticipant(target))) {

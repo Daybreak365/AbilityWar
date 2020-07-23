@@ -47,8 +47,8 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer bombCool = new CooldownTimer(30, "물폭탄");
-	private final CooldownTimer spongeCool = new CooldownTimer(15, "스펀지");
+	private final Cooldown bombCool = new Cooldown(30, "물폭탄");
+	private final Cooldown spongeCool = new Cooldown(15, "스펀지");
 
 	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
 		@Override
@@ -60,8 +60,8 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!bombCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
@@ -96,11 +96,11 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	private final CooldownTimer gunCool = new CooldownTimer(3, "물총");
+	private final Cooldown gunCool = new Cooldown(3, "물총");
 
 	private final List<Arrow> arrows = new LinkedList<>();
 
-	private final Timer passive = new Timer() {
+	private final AbilityTimer passive = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			for (Arrow arrow : arrows) {
@@ -108,7 +108,7 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 			}
 			PotionEffects.NIGHT_VISION.addPotionEffect(getPlayer(), 400, 0, true);
 		}
-	}.setPeriod(TimeUnit.TICKS, 3);
+	}.setPeriod(TimeUnit.TICKS, 3).register();
 
 	@Override
 	protected void onUpdate(Update update) {

@@ -51,15 +51,15 @@ public class Magician extends AbilityBase {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Circle circle = Circle.of(5, 70);
 
 	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
-			return getGame().isParticipating(entity.getUniqueId())
+			return !(entity instanceof Player) || (getGame().isParticipating(entity.getUniqueId())
 					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue();
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
 		}
 	};
 

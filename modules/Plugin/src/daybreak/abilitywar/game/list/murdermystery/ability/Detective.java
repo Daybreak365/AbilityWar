@@ -41,7 +41,7 @@ public class Detective extends AbilityBase {
 			inventory.setItem(2, new ItemStack(Material.ARROW));
 			((MurderMystery) getGame()).updateGold(getParticipant());
 			NMS.sendTitle(getPlayer(), "§e역할§f: §5탐정", "§c머더§f로부터 §a시민§f들을 보호하세요!", 10, 80, 10);
-			new Timer(1) {
+			new AbilityTimer(1) {
 				@Override
 				protected void run(int count) {
 				}
@@ -56,7 +56,7 @@ public class Detective extends AbilityBase {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onShoot(EntityShootBowEvent e) {
-		new Timer(14) {
+		new AbilityTimer(14) {
 			private final ProgressBar progressBar = new ProgressBar(14, 14);
 
 			@Override

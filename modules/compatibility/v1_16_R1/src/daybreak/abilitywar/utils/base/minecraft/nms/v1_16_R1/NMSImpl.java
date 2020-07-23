@@ -87,13 +87,8 @@ public class NMSImpl implements INMS {
 	}
 
 	@Override
-	public void moveEntity(Entity entity, double x, double y, double z, float yaw, float pitch, boolean onGround) {
-		final net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-		nmsEntity.setLocation(x, y, z, yaw, pitch);
-		final PacketPlayOutRelEntityMoveLook packet = new PacketPlayOutRelEntityMoveLook(nmsEntity.getId(), (short) ((x * 32 - nmsEntity.locX() * 32) * 128), (short) ((y * 32 - nmsEntity.locY() * 32) * 128), (short) ((z * 32 - nmsEntity.locZ() * 32) * 128), (byte) (yaw * (256F / 360F)), (byte) (pitch * (256F / 360F)), onGround);
-		for (CraftPlayer receiver : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
-			receiver.getHandle().playerConnection.sendPacket(packet);
-		}
+	public void setLocation(Entity entity, double x, double y, double z, float yaw, float pitch) {
+		((CraftEntity) entity).getHandle().setLocation(x, y, z, yaw, pitch);
 	}
 
 	@Override

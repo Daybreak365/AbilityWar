@@ -30,14 +30,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 })
 public class Murderer extends AbilityBase {
 
-	private final Timer PASSIVE = new Timer() {
+	private final AbilityTimer PASSIVE = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			if (Items.isMurdererSword(getPlayer().getInventory().getItemInMainHand())) {
 				getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15);
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	public Murderer(Participant participant) {
 		super(participant);
@@ -51,7 +51,7 @@ public class Murderer extends AbilityBase {
 			getPlayer().getInventory().setHeldItemSlot(0);
 			((MurderMystery) getGame()).updateGold(getParticipant());
 			NMS.sendTitle(getPlayer(), "§e역할§f: §5머더", "§f모든 §a시민§f과 §5탐정§f을 죽이세요!", 10, 80, 10);
-			new Timer(1) {
+			new AbilityTimer(1) {
 				@Override
 				protected void run(int count) {
 				}
@@ -62,7 +62,7 @@ public class Murderer extends AbilityBase {
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
 			getPlayer().sendMessage("§e50초 §f뒤에 §4살인자§c의 검§f을 얻습니다.");
-			new Timer(1) {
+			new AbilityTimer(1) {
 				@Override
 				protected void run(int count) {
 					getPlayer().getInventory().setHeldItemSlot(0);
@@ -70,7 +70,7 @@ public class Murderer extends AbilityBase {
 					getPlayer().sendMessage("§4살인자§c의 검§f을 들고 있을 때 더 빠르게 움직일 수 있습니다.");
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						NMS.sendTitle(player, "§4머더§c가 검을 얻었습니다.", "", 10, 80, 10);
-						new Timer(1) {
+						new AbilityTimer(1) {
 							@Override
 							protected void run(int count) {
 							}

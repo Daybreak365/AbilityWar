@@ -34,7 +34,7 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 		"$[ZombieCountConfig]마리의 §5좀비§f를 소환합니다.",
 		"소환된 좀비들은 불에 타지 않고, 대미지를 받지 않으며, 대상 플레이어를 공격합니다. $[COOLDOWN_CONFIG]"
 })
-@Support(min = NMSVersion.v1_9_R1, max = NMSVersion.v1_14_R1)
+@Support.Version(min = NMSVersion.v1_9_R1, max = NMSVersion.v1_14_R1)
 public class Zombie extends AbilityBase implements TargetHandler {
 
 	private static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
@@ -92,9 +92,9 @@ public class Zombie extends AbilityBase implements TargetHandler {
 	private final double radius = RadiusConfig.getValue();
 	private final int zombieCount = ZombieCountConfig.getValue();
 	private final Set<org.bukkit.entity.Zombie> zombies = new HashSet<>(zombieCount);
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private Player target;
-	private final DurationTimer skill = new DurationTimer(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
 
 		@Override
 		protected void onDurationStart() {

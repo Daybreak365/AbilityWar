@@ -90,7 +90,7 @@ public class Apology extends AbilityBase {
 		}
 	}
 
-	private class DamageStacker extends Timer {
+	private class DamageStacker extends AbilityTimer {
 
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private final Player target;

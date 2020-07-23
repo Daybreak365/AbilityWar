@@ -31,7 +31,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.FireworkExplodeEvent;
 
-@Support(min = NMSVersion.v1_11_R1)
+@Support.Version(min = NMSVersion.v1_11_R1)
 @AbilityManifest(name = "쇼맨쉽", rank = Rank.B, species = Species.HUMAN, explain = {
 		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
 		"플레이어는 1명, 플레이어가 아닌 생명체는 0.2명 취급합니다.",
@@ -102,7 +102,7 @@ public class ShowmanShip extends AbilityBase {
 		}
 	}
 
-	private final Timer passive = new Timer() {
+	private final AbilityTimer passive = new AbilityTimer() {
 
 		@Override
 		public void run(int count) {
@@ -134,7 +134,7 @@ public class ShowmanShip extends AbilityBase {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
 	protected void onUpdate(Update update) {

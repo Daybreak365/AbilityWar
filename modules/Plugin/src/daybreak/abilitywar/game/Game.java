@@ -13,6 +13,7 @@ import daybreak.abilitywar.game.manager.object.Firewall;
 import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.game.manager.object.ScoreboardManager;
 import daybreak.abilitywar.game.manager.object.WRECK;
+import daybreak.abilitywar.game.manager.object.ZeroTick;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import java.lang.reflect.InvocationTargetException;
@@ -260,6 +261,10 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		if (wreck.isEnabled()) {
 			Bukkit.broadcastMessage("§cW§6R§eE§aC§bK §f모드가 활성화되었습니다!");
 			Bukkit.broadcastMessage("§c모든 능력의 쿨타임이 §4" + Settings.getCooldownDecrease().getPercentage() + "% §c감소합니다.");
+		}
+		if (Settings.isZeroTickEnabled()) {
+			Bukkit.broadcastMessage("§f제로틱 §a모드가 활성화되었습니다! §2(§f공격 딜레이 §a없이 타격할 수 있습니다.§2)");
+			new ZeroTick(this);
 		}
 		if (Settings.isDefaultMaxHealthEnabled()) {
 			for (Participant participant : getParticipants()) {

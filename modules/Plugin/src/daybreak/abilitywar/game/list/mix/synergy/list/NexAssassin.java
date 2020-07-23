@@ -116,10 +116,10 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 		}
 	};
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final int damage = DamageConfig.getValue();
 	private final int distance = DistanceConfig.getValue();
-	private final Timer fallBlockTimer = new Timer(5) {
+	private final AbilityTimer fallBlockTimer = new AbilityTimer(5) {
 
 		Location center;
 
@@ -156,9 +156,9 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 4);
+	}.setPeriod(TimeUnit.TICKS, 4).register();
 	private Map<Damageable, Vector> entities = null;
-	private final Timer follow = new Timer() {
+	private final AbilityTimer follow = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			if (entities != null) {
@@ -170,10 +170,10 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 				}
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 	private boolean noFallDamage = false;
 	private boolean skillEnabled = false;
-	private final Timer assassinSkill = new Timer() {
+	private final AbilityTimer assassinSkill = new AbilityTimer() {
 
 		private LinkedList<Damageable> damageables;
 		private int assassin;
@@ -239,8 +239,8 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 			follow.stop(false);
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 3);
-	private final Timer nexSkill = new Timer(4) {
+	}.setPeriod(TimeUnit.TICKS, 3).register();
+	private final AbilityTimer nexSkill = new AbilityTimer(4) {
 
 		@Override
 		public void onStart() {
@@ -263,15 +263,15 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 			follow.stop(false);
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 10);
+	}.setPeriod(TimeUnit.TICKS, 10).register();
 
 	public NexAssassin(Participant participant) {
 		super(participant);
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!nexSkill.isRunning() && !assassinSkill.isRunning() && !cooldownTimer.isCooldown()) {
 					this.entities = new HashMap<>();

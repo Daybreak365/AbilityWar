@@ -104,11 +104,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 	};
 	private static final Set<LivingEntity> frozenEntities = new HashSet<>();
 
-	private final Timer buff = new Timer() {
-
-		@Override
-		public void onStart() {
-		}
+	private final AbilityTimer buff = new AbilityTimer() {
 
 		@Override
 		public void run(int count) {
@@ -120,16 +116,12 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			}
 		}
 
-		@Override
-		public void onEnd() {
-		}
-
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
 
 	private final int range = RangeConfig.getValue();
-	private final Timer iceMaker = new Timer(range) {
+	private final AbilityTimer iceMaker = new AbilityTimer(range) {
 
 		private int count;
 		private Location center;
@@ -168,13 +160,9 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			count++;
 		}
 
-		@Override
-		public void onEnd() {
-		}
-
-	}.setPeriod(TimeUnit.TICKS, 1);
-	private final CooldownTimer yetiCooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final CooldownTimer cooldownTimer = new CooldownTimer(LeftCOOLDOWN_CONFIG.getValue());
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+	private final Cooldown yetiCooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(LeftCOOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -202,7 +190,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 		}
 	};
 
-	private final Timer passive = new Timer() {
+	private final AbilityTimer passive = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			Location center = getPlayer().getLocation();
@@ -210,7 +198,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 				if (!projectile.isOnGround() && !projectiles.contains(projectile) && LocationUtil.isInCircle(center, projectile.getLocation(), 7)) {
 					projectiles.add(projectile);
 					projectile.setVelocity(projectile.getVelocity().multiply(0.1));
-					new Timer(3) {
+					new AbilityTimer(3) {
 						@Override
 						protected void onStart() {
 							projectile.getLocation().getBlock().setType(Material.ICE);
@@ -228,7 +216,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 				}
 			}
 		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	public AbsoluteZero(Participant participant) {
 		super(participant);
@@ -250,8 +238,8 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.LEFT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
@@ -307,7 +295,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 		projectiles.remove(e.getEntity());
 	}
 
-	public class Frost extends Timer implements Listener {
+	public class Frost extends AbilityTimer implements Listener {
 
 		private final LivingEntity target;
 		private final Block[] blocks = new Block[2];

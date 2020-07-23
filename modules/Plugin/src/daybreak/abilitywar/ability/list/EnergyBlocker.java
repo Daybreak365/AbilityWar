@@ -34,8 +34,8 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				projectileBlocking = !projectileBlocking;
 				getPlayer().sendMessage(getState() + "로 변경되었습니다.");
@@ -59,7 +59,7 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private final Timer particle = particleShowState ? new Timer() {
+	private final AbilityTimer particle = (particleShowState ? new AbilityTimer() {
 
 		@Override
 		public void run(int count) {
@@ -70,7 +70,7 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 1) : new Timer() {
+	} : new AbilityTimer() {
 
 		@Override
 		public void run(int count) {
@@ -81,7 +81,7 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 1);
+	}).setPeriod(TimeUnit.TICKS, 1).register();
 
 	public String getState() {
 		return projectileBlocking ? "§b원거리 §f1/3 배§7, §a근거리 §f두 배" : "§b원거리 §f두 배§7, §a근거리 §f1/3 배";

@@ -84,8 +84,8 @@ public class Meteor extends Synergy implements ActiveHandler {
 		}
 	};
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
-	private final Timer explosion = new Timer(2) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final AbilityTimer explosion = new AbilityTimer(2) {
 
 		Location center;
 
@@ -104,12 +104,8 @@ public class Meteor extends Synergy implements ActiveHandler {
 			}
 		}
 
-		@Override
-		public void onEnd() {
-		}
-
-	}.setPeriod(TimeUnit.TICKS, 2);
-	private final Timer fallBlockTimer = new Timer(5) {
+	}.setPeriod(TimeUnit.TICKS, 2).register();
+	private final AbilityTimer fallBlockTimer = new AbilityTimer(5) {
 
 		Location center;
 
@@ -146,11 +142,11 @@ public class Meteor extends Synergy implements ActiveHandler {
 			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 4);
+	}.setPeriod(TimeUnit.TICKS, 4).register();
 	private boolean noFallDamage = false;
 	private boolean skillEnabled = false;
 
-	private final Timer Skill = new Timer(4) {
+	private final AbilityTimer Skill = new AbilityTimer(4) {
 
 		@Override
 		public void onStart() {
@@ -169,15 +165,15 @@ public class Meteor extends Synergy implements ActiveHandler {
 			getPlayer().setVelocity(getPlayer().getVelocity().add(playerDirection.normalize().multiply(8).setY(-4)));
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 10);
+	}.setPeriod(TimeUnit.TICKS, 10).register();
 
 	public Meteor(Participant participant) {
 		super(participant);
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType.equals(Material.IRON_INGOT)) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT) {
 			if (clickType.equals(ClickType.RIGHT_CLICK)) {
 				if (!cooldownTimer.isCooldown()) {
 					for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 5, 5, null)) {

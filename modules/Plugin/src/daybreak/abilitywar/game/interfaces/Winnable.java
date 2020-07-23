@@ -1,6 +1,5 @@
 package daybreak.abilitywar.game.interfaces;
 
-import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
@@ -12,25 +11,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public interface Winnable extends iGame {
+public interface Winnable extends IGame {
 
-	default void Win(Participant... winners) {
+	default void Win(Participable... winners) {
 		Messager.clearChat();
-		StringBuilder builder = new StringBuilder("§5§l우승자§f: ");
 		StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE, ChatColor.LIGHT_PURPLE.toString(), ChatColor.WHITE + ".");
-		for (Participant participant : winners) {
-			Player p = participant.getPlayer();
-			joiner.add(p.getName());
-			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
+		for (Participable participable : winners) {
+			final Player player = participable.getPlayer();
+			joiner.add(player.getName());
+			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(player);
 			new SimpleTimer(TaskType.REVERSE, 8) {
 				@Override
 				protected void run(int seconds) {
-					FireworkUtil.spawnWinnerFirework(p.getEyeLocation());
+					FireworkUtil.spawnWinnerFirework(player.getEyeLocation());
 				}
 			}.setPeriod(TimeUnit.TICKS, 8).start();
 		}
-		builder.append(joiner.toString());
-		Bukkit.broadcastMessage(builder.toString());
+		Bukkit.broadcastMessage("§5§l우승자§f: " + joiner.toString());
 		stop();
 	}
 

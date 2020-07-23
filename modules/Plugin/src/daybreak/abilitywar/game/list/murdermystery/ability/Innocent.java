@@ -39,7 +39,7 @@ public class Innocent extends AbilityBase {
 			getPlayer().getInventory().setHeldItemSlot(0);
 			((MurderMystery) getGame()).updateGold(getParticipant());
 			NMS.sendTitle(getPlayer(), "§e역할§f: §a시민", "§c머더§f를 피해 살아남으세요!", 10, 80, 10);
-			new Timer(1) {
+			new AbilityTimer(1) {
 				@Override
 				protected void run(int count) {
 				}

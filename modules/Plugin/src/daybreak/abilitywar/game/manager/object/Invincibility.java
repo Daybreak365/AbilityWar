@@ -46,7 +46,6 @@ public class Invincibility implements EventExecutor {
 
 	public interface Observer {
 		void onStart();
-
 		void onEnd();
 	}
 
@@ -127,7 +126,7 @@ public class Invincibility implements EventExecutor {
 		@Override
 		protected void onStart() {
 			game.setRestricted(true);
-			for (Observer observer : observers) {
+			for (Invincibility.Observer observer : observers) {
 				observer.onStart();
 			}
 			Bukkit.broadcastMessage(startMessage);
@@ -153,7 +152,7 @@ public class Invincibility implements EventExecutor {
 			if (bossBar != null) {
 				bossBar.remove();
 			}
-			for (Observer observer : observers) {
+			for (Invincibility.Observer observer : observers) {
 				observer.onEnd();
 			}
 			game.setRestricted(false);

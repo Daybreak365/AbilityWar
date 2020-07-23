@@ -68,12 +68,12 @@ public class Imprison extends AbilityBase implements TargetHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private final int maxSolidity = MaxSolidityConfig.getValue();
 	private int solidity = 1;
 
-	private final Timer stackAdder = new Timer() {
+	private final AbilityTimer stackAdder = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
 			if (solidity < maxSolidity) {
@@ -81,7 +81,7 @@ public class Imprison extends AbilityBase implements TargetHandler {
 				actionbarChannel.update("§f강도: §c" + solidity);
 			}
 		}
-	}.setPeriod(TimeUnit.SECONDS, 10);
+	}.setPeriod(TimeUnit.SECONDS, 10).register();
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
@@ -89,7 +89,7 @@ public class Imprison extends AbilityBase implements TargetHandler {
 
 	@Override
 	public void TargetSkill(Material material, LivingEntity entity) {
-		if (material.equals(Material.IRON_INGOT)) {
+		if (material == Material.IRON_INGOT) {
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {
 					for (Block block : LocationUtil.getBlocks3D(entity.getLocation(), SizeConfig.getValue(), true, true)) {

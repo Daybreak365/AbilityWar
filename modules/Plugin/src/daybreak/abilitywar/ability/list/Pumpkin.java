@@ -68,9 +68,9 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final CooldownTimer cooldownTimer = new CooldownTimer(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
-	private final Timer music = new Timer(32) {
+	private final AbilityTimer music = new AbilityTimer(32) {
 
 		private List<Player> players;
 
@@ -124,7 +124,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 			this.count++;
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 3);
+	}.setPeriod(TimeUnit.TICKS, 3).register();
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -148,7 +148,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	private Map<Player, ItemStack> players;
 
-	private final DurationTimer durationTimer = new DurationTimer(DurationConfig.getValue(), cooldownTimer) {
+	private final Duration durationTimer = new Duration(DurationConfig.getValue(), cooldownTimer) {
 
 		@Override
 		public void onDurationStart() {
@@ -195,8 +195,8 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material materialType, ClickType clickType) {
-		if (materialType == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
 			durationTimer.start();
 			return true;
 		}
