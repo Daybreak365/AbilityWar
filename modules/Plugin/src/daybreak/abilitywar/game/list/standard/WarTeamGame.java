@@ -3,19 +3,21 @@ package daybreak.abilitywar.game.list.standard;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
+import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
-import daybreak.abilitywar.game.Game;
-import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
-import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.team.TeamGame;
+import daybreak.abilitywar.game.team.TeamGame.Winnable;
+import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
+import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.List;
 import javax.naming.OperationNotSupportedException;
@@ -23,18 +25,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 
-@GameManifest(name = "능력자 전쟁", description = {"§f우승 조건이 있는 능력자 전쟁 플러그인의 기본 게임입니다.", "", "§a● §f일부 콘피그가 임의로 변경될 수 있습니다."})
-@TeamSupport(WarTeamGame.class)
-public class WarGame extends Game implements DefaultKitHandler, Winnable, Observer {
+public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable, Observer {
 
-	public WarGame() {
-		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
+	public WarTeamGame(final String[] args) {
+		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS(), args);
 		setRestricted(Settings.InvincibilitySettings.isEnabled());
 		attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
@@ -168,33 +169,30 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 
 				startGame();
 				break;
+			case 16:
+				checkWinner();
+				break;
 		}
 	}
 
 	@EventHandler
 	private void onPlayerQuit(PlayerQuitEvent e) {
-		Player player = e.getPlayer();
-		if (isParticipating(player)) {
-			Participant quitParticipant = getParticipant(player);
+		if (isParticipating(e.getPlayer())) {
+			final Participant quitParticipant = getParticipant(e.getPlayer());
 			getDeathManager().Operation(quitParticipant);
-			Player winner = null;
-			for (Participant participant : getParticipants()) {
-				if (!getDeathManager().isExcluded(player)) {
-					if (winner == null) {
-						winner = player;
-					} else {
-						return;
-					}
-				}
-			}
-			if (winner != null) Win(getParticipant(winner));
+			if (isGameStarted()) checkWinner();
 		}
+	}
+
+	@EventHandler
+	private void onParticipantTeamChanged(ParticipantTeamChangedEvent e) {
+		if (isGameStarted()) checkWinner();
 	}
 
 	@Override
 	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
-			public void Operation(Participant victim) {
+			public void Operation(AbstractGame.Participant victim) {
 				switch (DeathSettings.getOperation()) {
 					case 탈락:
 						Eliminate(victim);
@@ -204,22 +202,35 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 					case 없음:
 						victim.getPlayer().setGameMode(GameMode.SPECTATOR);
 						excludedPlayers.add(victim.getPlayer().getUniqueId());
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								NMS.respawn(victim.getPlayer());
+							}
+						}.runTaskLater(AbilityWar.getPlugin(), 2L);
 						break;
 				}
-				Player winner = null;
-				for (Participant participant : getParticipants()) {
-					Player player = participant.getPlayer();
-					if (!isExcluded(player)) {
-						if (winner == null) {
-							winner = player;
-						} else {
-							return;
-						}
-					}
-				}
-				if (winner != null) Win(getParticipant(winner));
+				if (isGameStarted()) checkWinner();
 			}
 		};
+	}
+
+	private void checkWinner() {
+		Members winTeam = null;
+		for (Members team : getTeams()) {
+			if (!team.isExcluded()) {
+				if (winTeam == null) {
+					winTeam = team;
+				} else {
+					return;
+				}
+			}
+		}
+		if (winTeam != null) {
+			Win(winTeam);
+		} else {
+			Win("§f없음 §8(§7무승부§8)");
+		}
 	}
 
 	@Override
@@ -229,4 +240,8 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 		}
 	}
 
+	@Override
+	public void Win(@NotNull Members winTeam) {
+		Winnable.DefaultImpls.Win(this, winTeam);
+	}
 }

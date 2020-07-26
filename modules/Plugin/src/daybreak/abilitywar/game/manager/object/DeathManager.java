@@ -42,8 +42,7 @@ public class DeathManager implements Listener, Observer {
 
 	@EventHandler
 	public final void onPlayerDeath(PlayerDeathEvent e) {
-		Player victimPlayer = e.getEntity();
-		Player killerPlayer = victimPlayer.getKiller();
+		final Player victimPlayer = e.getEntity(), killerPlayer = victimPlayer.getKiller();
 		if (victimPlayer.getLastDamageCause() != null) {
 			if (killerPlayer != null) {
 				e.setDeathMessage("§a" + killerPlayer.getName() + "§f님이 §c" + victimPlayer.getName() + "§f님을 죽였습니다.");
@@ -83,10 +82,21 @@ public class DeathManager implements Listener, Observer {
 			e.setDeathMessage("§c" + victimPlayer.getName() + "§f님이 죽었습니다.");
 		}
 
+		if (!game.isGameStarted()) {
+			if (autoRespawn) {
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						NMS.respawn(victimPlayer);
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 2L);
+			}
+			return;
+		}
 		if (game.isParticipating(victimPlayer)) {
-			Participant victim = game.getParticipant(victimPlayer);
+			final Participant victim = game.getParticipant(victimPlayer);
 
-			ParticipantDeathEvent event = new ParticipantDeathEvent(victim);
+			final ParticipantDeathEvent event = new ParticipantDeathEvent(victim);
 			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
 				if (abilityReveal) Bukkit.broadcastMessage(getRevealMessage(victim));

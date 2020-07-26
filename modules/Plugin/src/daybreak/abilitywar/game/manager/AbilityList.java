@@ -11,18 +11,20 @@ import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
-import daybreak.abilitywar.game.list.standard.DefaultGame;
+import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * {@link DefaultGame}, {@link ChangeAbilityWar} 등에서 사용하는 능력자 플러그인의 기본적인 능력 목록을 관리하는 클래스입니다.
+ * {@link StandardGame}, {@link ChangeAbilityWar} 등에서 사용하는 능력자 플러그인의 기본적인 능력 목록을 관리하는 클래스입니다.
  */
 public class AbilityList {
 
@@ -32,9 +34,14 @@ public class AbilityList {
 	private static final Logger logger = Logger.getLogger(AbilityList.class);
 
 	private static final Map<String, AbilityRegistration> abilities = new TreeMap<>();
+	private static final Set<AbilityRegistration> registered = new HashSet<>();
 
 	public static boolean isRegistered(String name) {
 		return abilities.containsKey(name);
+	}
+
+	public static boolean isRegistered(AbilityRegistration registration) {
+		return registered.contains(registration);
 	}
 
 	/**
@@ -48,12 +55,13 @@ public class AbilityList {
 	 * @param abilityClass 능력 클래스
 	 */
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
-		AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
+		final AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 		if (registration != null) {
 			String name = registration.getManifest().name();
 			if (!abilities.containsKey(name)) {
 				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
 				abilities.put(name, registration);
+				registered.add(registration);
 			} else {
 				logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 			}
@@ -119,6 +127,7 @@ public class AbilityList {
 		registerAbility(Apology.class);
 		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getName() + ".Hermit");
 		registerAbility(SwordMaster.class);
+		registerAbility(SurvivalInstinct.class);
 	}
 
 	/**

@@ -4,10 +4,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
-import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
@@ -28,21 +25,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-@GameManifest(name = "믹스 능력자 전쟁", description = {
-		"§f두 능력이 섞이면 어떻게 될까?",
-		"§f지금 바로 믹스!",
-		"",
-		"§f두가지의 능력으로 펼치는 능력자 전쟁입니다."
-})
-@GameAliases({"믹능전", "믹스"})
-@TeamSupport(MixTeamGame.class)
-public class MixGame extends AbstractMix implements DefaultKitHandler {
+public class MixTeamGame extends AbstractTeamMix implements DefaultKitHandler {
 
-	private static final Logger logger = Logger.getLogger(MixGame.class);
+	private static final Logger logger = Logger.getLogger(MixTeamGame.class);
 	private final boolean invincible = InvincibilitySettings.isEnabled();
 
-	public MixGame() {
-		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
+	public MixTeamGame(final String[] args) {
+		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS(), args);
 	}
 
 	@Override

@@ -209,7 +209,7 @@ public class TeamPresetGUI implements Listener {
 			e.setCancelled(true);
 			switch (state) {
 				case NEW_PRESET: {
-					String name = e.getMessage();
+					final String name = e.getMessage();
 					if (!name.equals("!")) {
 						if (!Settings.getPresetContainer().hasPreset(name)) {
 							Settings.getPresetContainer().addPreset(new TeamPreset(name, DivisionType.EQUAL));
@@ -220,9 +220,7 @@ public class TeamPresetGUI implements Listener {
 									openGUI(1);
 								}
 							}.runTask(AbilityWar.getPlugin());
-						} else {
-							p.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 이미 존재하는 프리셋 이름입니다.");
-						}
+						} else p.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 이미 존재하는 프리셋 이름입니다.");
 					} else {
 						this.state = State.GUI;
 						new BukkitRunnable() {
@@ -235,13 +233,15 @@ public class TeamPresetGUI implements Listener {
 					break;
 				}
 				case NEW_SCHEME_NAME: {
-					String name = e.getMessage();
+					final String name = e.getMessage();
 					if (!name.equals("!")) {
 						if (!editing.hasScheme(name)) {
-							this.schemeName = name;
-							this.state = State.NEW_SCHEME_DISPLAY_NAME;
-							p.sendMessage(ChatColor.WHITE + "프리셋에 새로 추가할 " + ChatColor.GREEN + "팀" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "별명" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
-							p.sendMessage(ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "§로 색코드 사용 가능" + ChatColor.DARK_GRAY + ")");
+							if (name.length() <= 12) {
+								this.schemeName = name;
+								this.state = State.NEW_SCHEME_DISPLAY_NAME;
+								p.sendMessage(ChatColor.WHITE + "프리셋에 새로 추가할 " + ChatColor.GREEN + "팀" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "별명" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
+								p.sendMessage(ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "§로 색코드 사용 가능" + ChatColor.DARK_GRAY + ")");
+							} else p.sendMessage(ChatColor.WHITE + "프리셋 이름은 " + ChatColor.GREEN + "13 글자 " + ChatColor.WHITE + "이상으로 할 수 없습니다.");
 						} else {
 							p.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 프리셋에 이미 존재하는 팀 이름입니다.");
 						}
@@ -257,17 +257,29 @@ public class TeamPresetGUI implements Listener {
 					break;
 				}
 				case NEW_SCHEME_DISPLAY_NAME:
-					String name = e.getMessage();
-					if (!name.equals("!") && !schemeName.equals("")) {
-						editing.addScheme(new TeamScheme(schemeName, ChatColor.translateAlternateColorCodes('&', name)));
-					}
-					this.state = State.GUI;
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							openGUI(1);
+					final String name = e.getMessage();
+					if (!name.equals("!") && !schemeName.isEmpty()) {
+						if (name.length() <= 12) {
+							editing.addScheme(new TeamScheme(schemeName, ChatColor.translateAlternateColorCodes('&', name)));
+							this.state = State.GUI;
+							new BukkitRunnable() {
+								@Override
+								public void run() {
+									openGUI(1);
+								}
+							}.runTask(AbilityWar.getPlugin());
+						} else {
+							p.sendMessage(ChatColor.WHITE + "프리셋 별명은 " + ChatColor.GREEN + "13 글자 " + ChatColor.WHITE + "이상으로 할 수 없습니다.");
 						}
-					}.runTask(AbilityWar.getPlugin());
+					} else {
+						this.state = State.GUI;
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								openGUI(1);
+							}
+						}.runTask(AbilityWar.getPlugin());
+					}
 					break;
 			}
 		}

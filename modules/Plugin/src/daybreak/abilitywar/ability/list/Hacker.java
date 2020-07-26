@@ -8,9 +8,9 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.interfaces.TeamGame;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -67,7 +67,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final int stunDuration = DurationConfig.getValue();
-	private final RGB PURPLE = RGB.of(113, 43, 204);
+	private static final RGB PURPLE = RGB.of(113, 43, 204);
 
 	private final int amount = 25;
 	private final Vectors top = Circle.of(1, amount);
@@ -175,10 +175,10 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
 					return false;
 				}
-				if (getGame() instanceof TeamGame) {
-					final TeamGame teamGame = (TeamGame) getGame();
-					final Participant entityParticipant = getGame().getParticipant(entity.getUniqueId());
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(getParticipant()) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(getParticipant())));
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
 				}
 			}
 			return true;

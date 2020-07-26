@@ -6,7 +6,7 @@ import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.config.serializable.AbilityKit;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.list.standard.DefaultGame;
+import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.ClassUtil;
@@ -230,6 +230,10 @@ public class Configuration {
 			return getBoolean(ConfigNodes.GAME_ZEROTICK);
 		}
 
+		public static boolean isTeamGameEnabled() {
+			return getBoolean(ConfigNodes.GAME_TEAMGAME);
+		}
+
 		public static PresetContainer getPresetContainer() {
 			return get(ConfigNodes.GAME_TEAM_PRESETS);
 		}
@@ -387,8 +391,8 @@ public class Configuration {
 			} catch (ClassNotFoundException ignored) {
 			}
 
-			modifyProperty(ConfigNodes.GAME_MODE, DefaultGame.class.getName());
-			return DefaultGame.class;
+			modifyProperty(ConfigNodes.GAME_MODE, StandardGame.class.getName());
+			return StandardGame.class;
 		}
 
 		public static boolean isWRECKEnabled() {

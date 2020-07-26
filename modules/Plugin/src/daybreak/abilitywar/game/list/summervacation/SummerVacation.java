@@ -100,7 +100,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 				break;
 			case 13:
 				scoreboardSetup();
-				Bukkit.broadcastMessage("§7스코어보드 §f설정중...");
+				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
 				Bukkit.broadcastMessage("§e잠시 후 §f게임이 시작됩니다.");
 				break;
 			case 16:

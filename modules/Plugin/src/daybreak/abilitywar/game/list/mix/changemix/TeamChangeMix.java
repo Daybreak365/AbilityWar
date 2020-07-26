@@ -1,22 +1,29 @@
-package daybreak.abilitywar.game.list.changeability;
+package daybreak.abilitywar.game.list.mix.changemix;
 
 import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
-import daybreak.abilitywar.game.AbstractGame.Observer;
-import daybreak.abilitywar.game.Game;
-import daybreak.abilitywar.game.GameAliases;
-import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
-import daybreak.abilitywar.game.interfaces.Winnable;
+import daybreak.abilitywar.game.list.mix.AbstractTeamMix;
+import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
+import daybreak.abilitywar.game.team.TeamGame.Winnable;
+import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
+import daybreak.abilitywar.game.team.event.TeamCreatedEvent;
+import daybreak.abilitywar.game.team.event.TeamRemovedEvent;
+import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
+import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -33,42 +40,59 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * 체인지 능력 전쟁
- *
- * @author Daybreak 새벽
- */
-@GameManifest(name = "체인지 능력 전쟁", description = {
-		"§f일정 시간마다 바뀌는 능력을 가지고 플레이하는 심장 쫄깃한 모드입니다.",
-		"§f모든 플레이어에게는 일정량의 생명이 주어지며, 죽을 때마다 생명이 소모됩니다.",
-		"§f생명이 모두 소모되면 설정에 따라 게임에서 탈락합니다.",
-		"§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "",
-		"§a● §f스크립트가 적용되지 않습니다.",
-		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "",
-		"§6● §f체인지 능력 전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."
-})
-@GameAliases({"체능전", "체인지"})
-public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler, Observer {
+public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler, Winnable {
 
-	public ChangeAbilityWar() {
-		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		setRestricted(invincible);
-		this.maxLife = ChangeAbilityWarSettings.getLife();
-		attachObserver(this);
-		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-	}
+	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
 	@SuppressWarnings("deprecation")
 	private final Objective lifeObjective = ServerVersion.getVersion() >= 13 ?
 			getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy", "§c생명")
 			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
 
-	private final AbilityChanger changer = new AbilityChanger(this);
-
-	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
-
+	private final MixAbilityChanger changer = new MixAbilityChanger(this);
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
+	private final int maxLife;
+	private final Set<Members> noLife = new HashSet<Members>() {
+		@Override
+		public boolean add(Members members) {
+			if (super.add(members)) {
+				if (lifeObjective.getScoreboard() == null) return true;
+				lifeObjective.getScore(getScoreboardName(members)).setScore(0);
+				for (Participant member : members.getMembers()) {
+					getDeathManager().Operation(member);
+				}
+				return true;
+			} else return false;
+		}
+	};
+
+	public TeamChangeMix(final String[] args) {
+		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS(), args);
+		setRestricted(invincible);
+		this.maxLife = ChangeAbilityWarSettings.getLife();
+		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+	}
+
+	@EventHandler
+	private void onTeamCreated(TeamCreatedEvent e) {
+		lifeObjective.getScore(getScoreboardName(e.getTeam())).setScore(maxLife);
+	}
+
+	@EventHandler
+	private void onTeamRemoved(TeamRemovedEvent e) {
+		lifeObjective.getScore(getScoreboardName(e.getTeam())).setScore(0);
+	}
+
+	@EventHandler
+	private void onParticipantTeamChanged(ParticipantTeamChangedEvent e) {
+		if (isGameStarted()) checkWinner();
+	}
+
+	private String getScoreboardName(final Members team) {
+		return team.getName() + "§8(" + team.getDisplayName() + "§8)";
+	}
 
 	@Override
 	protected void progressGame(int seconds) {
@@ -93,7 +117,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				break;
 			case 3:
 				ArrayList<String> msg = new ArrayList<>();
-				msg.add("§5§l체인지! §d§l능력 §f§l전쟁");
+				msg.add("§5§l체인지! §d§l믹스 §f§l전쟁");
 				msg.add("§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion());
 				msg.add("§b모드 개발자 §7: §fDaybreak 새벽");
 				msg.add("§9디스코드 §7: §f새벽§7#5908");
@@ -111,40 +135,32 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				Bukkit.broadcastMessage("§7게임 시작시 §f첫번째 능력§7이 할당되며, 이후 §f" + TimeUtil.parseTimeAsString(changer.getPeriod()) + "§7마다 능력이 변경됩니다.");
 				break;
 			case 7:
-				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
-				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-				if (ServerVersion.getVersion() < 13)
-					lifeObjective.setDisplayName("§c생명");
-				for (Participant p : getParticipants()) {
-					Score score = lifeObjective.getScore(p.getPlayer().getName());
-					score.setScore(maxLife);
-				}
 				Bukkit.broadcastMessage("§d잠시 후 §f게임이 시작됩니다.");
 				break;
-			case 9:
+			case 8:
 				Bukkit.broadcastMessage("§f게임이 §55§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 10:
+			case 9:
 				Bukkit.broadcastMessage("§f게임이 §54§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 11:
+			case 10:
 				Bukkit.broadcastMessage("§f게임이 §53§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 12:
+			case 11:
 				Bukkit.broadcastMessage("§f게임이 §52§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 13:
+			case 12:
 				Bukkit.broadcastMessage("§f게임이 §51§f초 후에 시작됩니다.");
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
-			case 14:
+			case 13:
 				for (String m : new String[]{
 						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
-						"§f                §5§l체인지! §d§l능력 §f§l전쟁",
+						"§f                §5§l체인지! §d§l믹스 §f§l전쟁",
 						"§f                    게임 시작                ",
 						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"}) {
 					Bukkit.broadcastMessage(m);
@@ -153,9 +169,9 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
 				giveDefaultKit(getParticipants());
 
-				for (Participant p : getParticipants()) {
+				for (Participant participant : getParticipants()) {
 					if (Settings.getSpawnEnable()) {
-						p.getPlayer().teleport(Settings.getSpawnLocation());
+						participant.getPlayer().teleport(Settings.getSpawnLocation());
 					}
 				}
 
@@ -187,38 +203,59 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				changer.start();
 
 				startGame();
+				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
+				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+				if (ServerVersion.getVersion() < 13) lifeObjective.setDisplayName("§c생명");
+				for (Members team : getTeams()) {
+					lifeObjective.getScore(getScoreboardName(team)).setScore(maxLife);
+				}
+				break;
+			case 14:
+				checkWinner();
 				break;
 		}
 	}
 
-	private final int maxLife;
-	private final Set<Participant> noLife = new HashSet<>();
-
 	@EventHandler
 	private void onPlayerQuit(PlayerQuitEvent e) {
-		Player player = e.getPlayer();
-		if (isParticipating(player)) {
-			Participant quitParticipant = getParticipant(player);
-			Score score = lifeObjective.getScore(player.getName());
-			if (score.isScoreSet()) {
-				score.setScore(0);
-				noLife.add(quitParticipant);
-				getDeathManager().Operation(quitParticipant);
-
-				Participant winner = null;
-				int count = 0;
-				for (Participant participant : getParticipants()) {
-					if (!noLife.contains(participant)) {
-						count++;
-						winner = participant;
+		final Participant quit = getParticipant(e.getPlayer());
+		if (quit != null) {
+			final Members team = getTeam(quit);
+			if (team != null && lifeObjective.getScoreboard() != null) {
+				final Score score = lifeObjective.getScore(getScoreboardName(team));
+				if (score.isScoreSet()) {
+					getDeathManager().Operation(quit);
+					if (team.isExcluded() || isAllOffline(team, e.getPlayer())) {
+						score.setScore(0);
+						noLife.add(team);
 					}
 				}
-
-				if (count == 1) {
-					Win(winner);
-				}
+				checkWinner();
 			}
 		}
+	}
+
+	private void checkWinner() {
+		Members winTeam = null;
+		for (Members team : getTeams()) {
+			if (!noLife.contains(team)) {
+				if (isAllOffline(team, null) || team.isExcluded()) {
+					noLife.add(team);
+					continue;
+				}
+				if (winTeam == null) {
+					winTeam = team;
+				} else return;
+			}
+		}
+		if (winTeam == null) Win("§f없음 §8(§7무승부§8)"); else Win(winTeam);
+	}
+
+	private boolean isAllOffline(final Members team, final Player quit) {
+		for (Participant member : team.getMembers()) {
+			if (member.getPlayer().isOnline() && !member.getPlayer().equals(quit)) return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -226,35 +263,43 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 		return new DeathManager(this) {
 			@Override
 			public void Operation(Participant victim) {
-				Player victimPlayer = victim.getPlayer();
-				Score score = lifeObjective.getScore(victimPlayer.getName());
+				final Members team = getTeam(victim);
+				if (team == null || lifeObjective.getScoreboard() == null) return;
+				final Score score = lifeObjective.getScore(getScoreboardName(team));
 				if (score.isScoreSet()) {
 					int life = score.getScore();
 					if (life >= 1) {
 						score.setScore(--life);
 						if (maxLife <= 10) {
-							victimPlayer.sendMessage("§f남은 생명: §c" + Strings.repeat("§c♥", life) + Strings.repeat("§c♡", maxLife - life));
+							victim.getPlayer().sendMessage("§f남은 생명: §c" + Strings.repeat("§c♥", life) + Strings.repeat("§c♡", maxLife - life));
 						} else {
-							victimPlayer.sendMessage("§f남은 생명: §c" + life);
+							victim.getPlayer().sendMessage("§f남은 생명: §c" + life);
 						}
 					}
 					if (score.getScore() <= 0) {
-						noLife.add(victim);
+						noLife.add(team);
 						super.Operation(victim);
 
-						Participant winner = null;
-						int count = 0;
-						for (Participant participant : getParticipants()) {
-							if (!noLife.contains(participant)) {
-								count++;
-								winner = participant;
-							}
-						}
-
-						if (count == 1) {
-							Win(winner);
-						}
+						checkWinner();
 					}
+				}
+			}
+
+			@Override
+			protected String getRevealMessage(Participant victim) {
+				Mix mix = (Mix) victim.getAbility();
+				if (mix.hasAbility()) {
+					if (mix.hasSynergy()) {
+						Synergy synergy = mix.getSynergy();
+						Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+						String name = synergy.getName() + " (" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + ")";
+						return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
+					} else {
+						String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+						return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
+					}
+				} else {
+					return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님은 능력이 없습니다.";
 				}
 			}
 		};
@@ -267,15 +312,14 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
 	@Override
 	protected void onEnd() {
+		HandlerList.unregisterAll(this);
 		lifeObjective.unregister();
 		super.onEnd();
 	}
 
 	@Override
-	public void update(GameUpdate update) {
-		if (update == GameUpdate.END) {
-			HandlerList.unregisterAll(this);
-		}
+	public void Win(@NotNull Members winTeam) {
+		Winnable.DefaultImpls.Win(this, winTeam);
 	}
 
 }

@@ -5,6 +5,8 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GameUpdate;
+import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -40,7 +42,7 @@ import org.bukkit.plugin.Plugin;
 /**
  * 능력 부여 GUI
  */
-public class AbilityGUI implements Listener {
+public class AbilityGUI implements Listener, Observer {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
@@ -60,12 +62,13 @@ public class AbilityGUI implements Listener {
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
 	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
 
-	private final Player p;
+	private final Player player;
 	private final Participant target;
 
-	public AbilityGUI(Player p, Participant target, Plugin plugin) {
-		this.p = p;
+	public AbilityGUI(Player player, Participant target, Plugin plugin) {
+		this.player = player;
 		this.target = target;
+		target.getGame().attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 
 		values = new TreeMap<>();
@@ -152,7 +155,7 @@ public class AbilityGUI implements Listener {
 		stack.setItemMeta(meta);
 		abilityGUI.setItem(49, stack);
 
-		p.openInventory(abilityGUI);
+		player.openInventory(abilityGUI);
 	}
 
 	@EventHandler
@@ -164,7 +167,7 @@ public class AbilityGUI implements Listener {
 
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 		}
 	}
@@ -222,4 +225,10 @@ public class AbilityGUI implements Listener {
 		}
 	}
 
+	@Override
+	public void update(GameUpdate update) {
+		if (update == GameUpdate.END) {
+			player.closeInventory();
+		}
+	}
 }

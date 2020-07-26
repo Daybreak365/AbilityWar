@@ -1,9 +1,11 @@
 package daybreak.abilitywar.game
 
+import daybreak.abilitywar.game.team.interfaces.Teamable
 import daybreak.abilitywar.utils.library.MaterialX
 import org.bukkit.Material
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.reflect.KClass
 
 @Retention(RUNTIME)
 @Target(CLASS)
@@ -20,3 +22,5 @@ annotation class Category(val value: GameCategory) {
 }
 
 annotation class GameAliases(vararg val value: String)
+
+annotation class TeamSupport(val value: KClass<out Teamable>)

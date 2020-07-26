@@ -2,6 +2,7 @@ package daybreak.abilitywar.game;
 
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -31,7 +32,7 @@ public interface ParticipantStrategy {
 
 		@Override
 		public Collection<? extends Participant> getParticipants() {
-			return participants.values();
+			return Collections.unmodifiableCollection(participants.values());
 		}
 
 		@Override

@@ -3,7 +3,7 @@ package daybreak.abilitywar.config.enums;
 import daybreak.abilitywar.config.Cacher;
 import daybreak.abilitywar.config.serializable.AbilityKit;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
-import daybreak.abilitywar.game.list.standard.DefaultGame;
+import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.Messager;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,6 +93,8 @@ public enum ConfigNodes {
 			"# 중 하나로 설정하면 됩니다."),
 	GAME_ZEROTICK("게임.제로틱", false,
 			"# true로 설정하면 게임 중 공격 딜레이 없이 타격할 수 있습니다."),
+	GAME_TEAMGAME("게임.팀게임", false,
+			"# true로 설정하면 일부 게임을 팀 게임으로 플레이할 수 있습니다."),
 	GAME_TEAM_PRESETS("팀게임.팀프리셋", new PresetContainer(), "#"),
 	GAME_DEFAULT_MAX_HEALTH_ENABLE("게임.최대체력.활성화", false,
 			"# 게임 시작시 모든 플레이어에게 기본 최대 체력 설정 여부"),
@@ -109,7 +111,7 @@ public enum ConfigNodes {
 			"# 관리자 권한을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
 	SUMMER_VACATION_KILL("신나는여름휴가.킬횟수", 10,
 			"# 우승하기 위해 필요한 킬 횟수"),
-	GAME_MODE("게임모드", DefaultGame.class.getName(),
+	GAME_MODE("게임모드", StandardGame.class.getName(),
 			"# 게임 모드 클래스"),
 	DEVELOPER("개발자", false,
 			"# 개발자 모드 활성화 여부",

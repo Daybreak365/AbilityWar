@@ -2,13 +2,12 @@ package daybreak.abilitywar.game.list.standard;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.game.Game;
-import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.team.TeamGame;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -19,11 +18,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 
-@GameManifest(name = "게임", description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
-public class DefaultGame extends Game implements DefaultKitHandler {
+public class StandardTeamGame extends TeamGame implements DefaultKitHandler {
 
-	public DefaultGame() {
-		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
+	public StandardTeamGame(final String[] args) {
+		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS(), args);
 		setRestricted(Settings.InvincibilitySettings.isEnabled());
 	}
 

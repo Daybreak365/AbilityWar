@@ -118,6 +118,8 @@ public class AbilityFactory {
 		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getName() + ".Hermit");
 		// v2.1.9.3
 		registerAbility(SwordMaster.class);
+		// v2.1.9.6
+		registerAbility(SurvivalInstinct.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

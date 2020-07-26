@@ -13,7 +13,6 @@ import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
-import daybreak.abilitywar.game.interfaces.Participable;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.EventManager;
@@ -64,10 +63,14 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 	public enum GameUpdate {START, END}
 
-	private final Set<Observer> observers = new HashSet<>();
+	private final Set<AbstractGame.Observer> observers = new HashSet<>();
 
-	public final void attachObserver(Observer observer) {
+	public final void attachObserver(AbstractGame.Observer observer) {
 		observers.add(observer);
+	}
+
+	public final void detachObserver(AbstractGame.Observer observer) {
+		observers.remove(observer);
 	}
 
 	private boolean restricted = true;
@@ -223,7 +226,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		Bukkit.broadcastMessage(ChatColor.GRAY.toString().concat("게임이 중지되었습니다."));
 	}
 
-	public class Participant implements AbstractGame.Observer, Participable {
+	public class Participant implements AbstractGame.Observer {
 
 		private final Attributes attributes = new Attributes();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
@@ -245,16 +248,16 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 				@EventHandler
 				public void onPlayerInteract(PlayerInteractEvent e) {
-					Player player = e.getPlayer();
+					final Player player = e.getPlayer();
 					if (player.equals(getPlayer()) && hasAbility()) {
-						AbilityBase ability = getAbility();
+						final AbilityBase ability = getAbility();
 						if (ability instanceof ActiveHandler && !ability.isRestricted()) {
-							Material material = player.getInventory().getItemInMainHand().getType();
-							ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
+							final Material material = player.getInventory().getItemInMainHand().getType();
+							final ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
 							if (ability.usesMaterial(material)) {
 								final long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
-									AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(ability, material, clickType);
+									final AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(ability, material, clickType);
 									Bukkit.getPluginManager().callEvent(preEvent);
 									if (!preEvent.isCancelled()) {
 										this.lastClick = current;

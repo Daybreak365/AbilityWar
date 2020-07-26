@@ -30,8 +30,9 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		return this
 	}
 
-	val isRunning: Boolean
-		get() = task != null && taskId != -1
+	fun isRunning(): Boolean {
+		return task != null && taskId != -1
+	}
 
 	val isPaused: Boolean
 		get() = task != null && taskId == -1
@@ -53,7 +54,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		get() = count / (20 / period)
 
 	open fun start(): Boolean {
-		if (!isRunning) {
+		if (!isRunning()) {
 			task = taskType.newRunnable(this)
 			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task!!, initialDelay.toLong(), period.toLong())
 			onStart()
@@ -68,7 +69,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 	}
 
 	open fun stop(silent: Boolean): Boolean {
-		if (isRunning || isPaused) {
+		if (isRunning() || isPaused) {
 			Bukkit.getScheduler().cancelTask(taskId)
 			task = null
 			taskId = -1
@@ -93,7 +94,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 	}
 
 	open fun pause(): Boolean {
-		if (isRunning) {
+		if (isRunning()) {
 			Bukkit.getScheduler().cancelTask(taskId)
 			taskId = -1
 			onPause()

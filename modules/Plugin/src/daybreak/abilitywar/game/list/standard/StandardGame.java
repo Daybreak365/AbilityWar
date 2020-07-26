@@ -2,15 +2,11 @@ package daybreak.abilitywar.game.list.standard;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
-import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
-import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
@@ -20,24 +16,17 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.List;
 import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 
-@GameManifest(name = "능력자 전쟁", description = {"§f우승 조건이 있는 능력자 전쟁 플러그인의 기본 게임입니다.", "", "§a● §f일부 콘피그가 임의로 변경될 수 있습니다."})
-@TeamSupport(WarTeamGame.class)
-public class WarGame extends Game implements DefaultKitHandler, Winnable, Observer {
+@GameManifest(name = "게임", description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
+@TeamSupport(StandardTeamGame.class)
+public class StandardGame extends Game implements DefaultKitHandler {
 
-	public WarGame() {
+	public StandardGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		setRestricted(Settings.InvincibilitySettings.isEnabled());
-		attachObserver(this);
-		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
 	@Override
@@ -57,9 +46,9 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 					Bukkit.broadcastMessage(line);
 				}
 
-				if (getParticipants().size() < 2) {
+				if (getParticipants().size() < 1) {
 					stop();
-					Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§72명§8)");
+					Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§71명§8)");
 				}
 				break;
 			case 3:
@@ -152,9 +141,7 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 				}
 
 				if (Settings.getClearWeather()) {
-					for (World w : Bukkit.getWorlds()) {
-						w.setStorm(false);
-					}
+					for (World world : Bukkit.getWorlds()) world.setStorm(false);
 				}
 
 				if (isRestricted()) {
@@ -168,64 +155,6 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 
 				startGame();
 				break;
-		}
-	}
-
-	@EventHandler
-	private void onPlayerQuit(PlayerQuitEvent e) {
-		Player player = e.getPlayer();
-		if (isParticipating(player)) {
-			Participant quitParticipant = getParticipant(player);
-			getDeathManager().Operation(quitParticipant);
-			Player winner = null;
-			for (Participant participant : getParticipants()) {
-				if (!getDeathManager().isExcluded(player)) {
-					if (winner == null) {
-						winner = player;
-					} else {
-						return;
-					}
-				}
-			}
-			if (winner != null) Win(getParticipant(winner));
-		}
-	}
-
-	@Override
-	public DeathManager newDeathManager() {
-		return new DeathManager(this) {
-			public void Operation(Participant victim) {
-				switch (DeathSettings.getOperation()) {
-					case 탈락:
-						Eliminate(victim);
-						excludedPlayers.add(victim.getPlayer().getUniqueId());
-						break;
-					case 관전모드:
-					case 없음:
-						victim.getPlayer().setGameMode(GameMode.SPECTATOR);
-						excludedPlayers.add(victim.getPlayer().getUniqueId());
-						break;
-				}
-				Player winner = null;
-				for (Participant participant : getParticipants()) {
-					Player player = participant.getPlayer();
-					if (!isExcluded(player)) {
-						if (winner == null) {
-							winner = player;
-						} else {
-							return;
-						}
-					}
-				}
-				if (winner != null) Win(getParticipant(winner));
-			}
-		};
-	}
-
-	@Override
-	public void update(GameUpdate update) {
-		if (update == GameUpdate.END) {
-			HandlerList.unregisterAll(this);
 		}
 	}
 

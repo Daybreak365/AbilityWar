@@ -52,17 +52,17 @@ public class FireworkUtil {
 	}
 
 	public static Firework spawnWinnerFirework(final Location location) {
-		Firework firework = location.getWorld().spawn(location, Firework.class);
-		FireworkMeta fireworkMeta = firework.getFireworkMeta();
-		fireworkMeta.addEffect(FireworkEffect.builder()
+		final Firework firework = location.getWorld().spawn(location, Firework.class);
+		final FireworkMeta meta = firework.getFireworkMeta();
+		meta.addEffect(FireworkEffect.builder()
 				.flicker(true)
-				.withColor(new Color[]{Color.YELLOW, Color.RED}[random.nextInt(2)])
-				.withFade(new Color[]{Color.WHITE, Color.YELLOW, Color.RED, Color.ORANGE}[random.nextInt(4)])
-				.with(new Type[]{Type.STAR, Type.BALL_LARGE, Type.BURST}[random.nextInt(3)])
+				.withColor(Color.WHITE, Color.BLUE, Color.RED)
+				.withFade(Color.BLACK)
+				.with(Type.BURST)
 				.trail(true)
 				.build());
-		fireworkMeta.setPower(random.nextInt(3) + 1);
-		firework.setFireworkMeta(fireworkMeta);
+		meta.setPower(random.nextInt(2) + 1);
+		firework.setFireworkMeta(meta);
 		return firework;
 	}
 

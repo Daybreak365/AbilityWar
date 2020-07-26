@@ -4,6 +4,8 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GameUpdate;
+import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -36,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-public class MixAbilityGUI implements Listener {
+public class MixAbilityGUI implements Listener, Observer {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
@@ -56,16 +58,17 @@ public class MixAbilityGUI implements Listener {
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
 	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^()]]+)\\)");
 
-	private final Player p;
+	private final Player player;
 	private final Participant target;
 	private final Map<String, AbilityRegistration> values;
 	private int currentPage = 1;
 	private Inventory abilityGUI;
 	private AbilityRegistration firstAbility = null;
 
-	public MixAbilityGUI(Player p, Participant target, Plugin plugin) {
-		this.p = p;
+	public MixAbilityGUI(Player player, Participant target, Plugin plugin) {
+		this.player = player;
 		this.target = target;
+		target.getGame().attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 
 		values = new TreeMap<>();
@@ -148,7 +151,7 @@ public class MixAbilityGUI implements Listener {
 		stack.setItemMeta(meta);
 		abilityGUI.setItem(49, stack);
 
-		p.openInventory(abilityGUI);
+		player.openInventory(abilityGUI);
 	}
 
 	@EventHandler
@@ -160,7 +163,7 @@ public class MixAbilityGUI implements Listener {
 
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 		}
 	}
@@ -168,7 +171,7 @@ public class MixAbilityGUI implements Listener {
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
 		if (e.getInventory().equals(abilityGUI)) {
-			Player p = (Player) e.getWhoClicked();
+			final Player player = (Player) e.getWhoClicked();
 			e.setCancelled(true);
 			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
 				if (e.getCurrentItem().getType() == Material.DIAMOND_BLOCK) {
@@ -184,25 +187,25 @@ public class MixAbilityGUI implements Listener {
 									if (target != null) {
 										Mix mix = (Mix) target.getAbility();
 										mix.setAbility(firstAbility.getAbilityClass(), registration.getAbilityClass());
-										Bukkit.broadcastMessage("§e" + p.getName() + "§a님이 §f" + target.getPlayer().getName() + "§a님에게 능력을 임의로 부여하였습니다.");
+										Bukkit.broadcastMessage("§e" + player.getName() + "§a님이 §f" + target.getPlayer().getName() + "§a님에게 능력을 임의로 부여하였습니다.");
 									} else {
 										for (Participant participant : game.getParticipants()) {
 											Mix mix = (Mix) participant.getAbility();
 											mix.setAbility(firstAbility.getAbilityClass(), registration.getAbilityClass());
 										}
-										Bukkit.broadcastMessage("§e" + p.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
+										Bukkit.broadcastMessage("§e" + player.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
 									}
 								}
 							}
 						} catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 							ex.printStackTrace();
 							if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-								Messager.sendErrorMessage(p, ex.getMessage());
+								Messager.sendErrorMessage(player, ex.getMessage());
 							} else {
-								Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
+								Messager.sendErrorMessage(player, "설정 도중 오류가 발생하였습니다.");
 							}
 						}
-						p.closeInventory();
+						player.closeInventory();
 					}
 				} else {
 					if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
@@ -215,20 +218,26 @@ public class MixAbilityGUI implements Listener {
 							if (target != null) {
 								Mix mix = (Mix) target.getAbility();
 								mix.removeAbility();
-								Bukkit.broadcastMessage("§e" + p.getName() + "§a님이 §f" + target.getPlayer().getName() + "§a님의 능력을 제거하였습니다.");
+								Bukkit.broadcastMessage("§e" + player.getName() + "§a님이 §f" + target.getPlayer().getName() + "§a님의 능력을 제거하였습니다.");
 							} else {
 								for (Participant participant : game.getParticipants()) {
 									Mix mix = (Mix) participant.getAbility();
 									mix.removeAbility();
 								}
-								Bukkit.broadcastMessage("§e" + p.getName() + "§a님이 §f모든 참가자§a의 능력을 제거하였습니다.");
+								Bukkit.broadcastMessage("§e" + player.getName() + "§a님이 §f모든 참가자§a의 능력을 제거하였습니다.");
 							}
 						}
-						p.closeInventory();
+						player.closeInventory();
 					}
 				}
 			}
 		}
 	}
 
+	@Override
+	public void update(GameUpdate update) {
+		if (update == GameUpdate.END) {
+			player.closeInventory();
+		}
+	}
 }

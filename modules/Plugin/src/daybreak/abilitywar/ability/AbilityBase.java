@@ -19,7 +19,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.AbstractGame.RestrictionBehavior;
 import daybreak.abilitywar.game.event.participant.ParticipantEvent;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
-import daybreak.abilitywar.game.list.standard.DefaultGame;
+import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.EventManager;
 import daybreak.abilitywar.game.manager.object.EventManager.EventObserver;
@@ -68,7 +68,7 @@ import org.bukkit.event.player.PlayerEvent;
  * <ul>
  * {@link AbilityFactory#registerAbility}
  * </ul>
- * {@link DefaultGame}, {@link ChangeAbilityWar} 등에서 사용할 능력은 추가적으로
+ * {@link StandardGame}, {@link ChangeAbilityWar} 등에서 사용할 능력은 추가적으로
  * {@link AbilityList}에 등록해야 합니다.
  * <p>
  * <ul>

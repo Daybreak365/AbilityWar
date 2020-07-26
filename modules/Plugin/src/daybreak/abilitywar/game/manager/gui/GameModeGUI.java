@@ -8,6 +8,7 @@ import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
+import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -82,6 +83,11 @@ public class GameModeGUI implements Listener {
 				ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b" + manifest.name());
 				List<String> lore = Messager.asList(manifest.description());
+				if (registration.hasFlag(Flag.TEAM_GAME_SUPPORTED)) {
+					lore.add("");
+					lore.add("§3● §f팀 게임이 지원됩니다.");
+					lore.add("");
+				}
 				lore.add("§7선택된 게임모드입니다.");
 				meta.setLore(lore);
 				stack.setItemMeta(meta);
@@ -90,6 +96,11 @@ public class GameModeGUI implements Listener {
 				ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b" + manifest.name());
 				List<String> lore = Messager.asList(manifest.description());
+				if (registration.hasFlag(Flag.TEAM_GAME_SUPPORTED)) {
+					lore.add("");
+					lore.add("§3● §f팀 게임이 지원됩니다.");
+					lore.add("");
+				}
 				lore.add("§b» §f이 게임모드를 선택하려면 클릭하세요.");
 				meta.setLore(lore);
 				stack.setItemMeta(meta);

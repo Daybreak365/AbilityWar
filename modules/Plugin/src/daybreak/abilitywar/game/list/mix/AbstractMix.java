@@ -19,6 +19,7 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -231,7 +232,7 @@ public abstract class AbstractMix extends Game {
 
 		@Override
 		public Collection<MixParticipant> getParticipants() {
-			return participants.values();
+			return Collections.unmodifiableCollection(participants.values());
 		}
 
 		@Override

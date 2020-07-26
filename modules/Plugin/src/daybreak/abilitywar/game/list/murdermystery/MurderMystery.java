@@ -364,7 +364,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 					protected void run(int seconds) {
 						FireworkUtil.spawnWinnerFirework(p.getEyeLocation());
 					}
-				}.setPeriod(TimeUnit.TICKS, 8).start();
+				}.setPeriod(TimeUnit.TICKS, 4).start();
 			}
 			Bukkit.broadcastMessage("§e시민§5이 우승했습니다!");
 			GameManager.stopGame();

@@ -19,7 +19,7 @@ import org.bukkit.plugin.Plugin;
 
 public class GameWizard extends SettingWizard {
 
-	private final ItemStack wreck, arrowDamage, food, level, durability, zeroTick, firewall, clearWeather, visualEffect, abilityDraw, maxHealth;
+	private final ItemStack wreck, arrowDamage, food, level, durability, zeroTick, firewall, teamGame, clearWeather, visualEffect, abilityDraw, maxHealth;
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, "§2§l게임 진행 설정", plugin);
@@ -64,6 +64,12 @@ public class GameWizard extends SettingWizard {
 			ItemMeta meta = firewall.getItemMeta();
 			meta.setDisplayName("§b방화벽");
 			firewall.setItemMeta(meta);
+		}
+		this.teamGame = new ItemStack(Material.CAKE);
+		{
+			ItemMeta meta = teamGame.getItemMeta();
+			meta.setDisplayName("§b팀 게임");
+			teamGame.setItemMeta(meta);
 		}
 		this.clearWeather = MaterialX.SNOWBALL.parseItem();
 		{
@@ -182,6 +188,15 @@ public class GameWizard extends SettingWizard {
 					gui.setItem(i, firewall);
 				}
 				break;
+				case 23: {
+					ItemMeta meta = teamGame.getItemMeta();
+					meta.setLore(Messager.asList(
+							"§a활성화 §f하면 일부 게임을 팀 게임으로 플레이할 수 있습니다.",
+							"", "§7상태 : " + (Settings.isTeamGameEnabled() ? "§a활성화" : "§c비활성화")));
+					teamGame.setItemMeta(meta);
+					gui.setItem(i, teamGame);
+				}
+				break;
 				case 24: {
 					ItemMeta clearWeatherMeta = clearWeather.getItemMeta();
 					clearWeatherMeta.setLore(Messager.asList("§7상태 : " + (Settings.getClearWeather() ? "§a활성화" : "§c비활성화")));
@@ -297,6 +312,10 @@ public class GameWizard extends SettingWizard {
 						break;
 					case "§b방화벽":
 						Configuration.modifyProperty(ConfigNodes.GAME_FIREWALL, !Settings.getFirewall());
+						Show();
+						break;
+					case "§b팀 게임":
+						Configuration.modifyProperty(ConfigNodes.GAME_TEAMGAME, !Settings.isTeamGameEnabled());
 						Show();
 						break;
 					case "§b맑은 날씨 고정":

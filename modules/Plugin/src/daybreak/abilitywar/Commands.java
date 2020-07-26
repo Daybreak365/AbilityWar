@@ -16,8 +16,7 @@ import daybreak.abilitywar.config.wizard.SpawnWizard;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.interfaces.TeamGame;
-import daybreak.abilitywar.game.interfaces.TeamGame.Team;
+import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.SpectatorManager;
@@ -36,6 +35,8 @@ import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.game.script.AbstractScript;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.team.interfaces.Members;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
@@ -93,7 +94,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 			}
 
 			private void sendCommandHelp(CommandSender sender, String command, int page) {
-				final int allPage = 2;
+				final int allPage = 3;
 				switch (page) {
 					case 1:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
@@ -104,20 +105,25 @@ public class Commands implements CommandExecutor, TabCompleter {
 								Formatter.formatCommand(command, "yes", "자신의 능력을 확정합니다.", false),
 								Formatter.formatCommand(command, "no", "자신의 능력을 변경합니다.", false),
 								Formatter.formatCommand(command, "abilities", "능력자 전쟁 능력 목록을 확인합니다.", false),
-								Formatter.formatCommand(command, "team", "팀 게임의 명령어 목록을 확인합니다.", false),
+								Formatter.formatCommand(command, "abilities [능력]", "[능력] 능력의 정보를 확인합니다.", false),
 								Formatter.formatCommand(command, "specialthanks", "능력자 전쟁 플러그인에 기여한 사람들을 확인합니다.", false)});
 						break;
 					case 2:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(command, "team", "팀 게임의 명령어 목록을 확인합니다.", false),
 								Formatter.formatCommand(command, "skip", "모든 유저의 능력을 강제로 확정합니다.", true),
 								Formatter.formatCommand(command, "anew", "모든 유저의 능력을 새로 뽑습니다.", true),
 								Formatter.formatCommand(command, "config", "능력자 전쟁 콘피그 명령어를 확인합니다.", true),
 								Formatter.formatCommand(command, "util", "능력자 전쟁 유틸 명령어를 확인합니다.", true),
 								Formatter.formatCommand(command, "script", "능력자 전쟁 스크립트 편집을 시작합니다.", true),
 								Formatter.formatCommand(command, "gamemode", "게임 모드 설정 GUI를 엽니다.", true),
-								Formatter.formatCommand(command, "gamemode [모드]", "게임 모드를 [모드]로 변경합니다.", true),
-								Formatter.formatCommand(command, "install", "새로운 버전의 다운로드를 시도합니다.", true)});
+								Formatter.formatCommand(command, "gamemode [모드]", "게임 모드를 [모드]로 변경합니다.", true)});
+						break;
+					case 3:
+						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
+								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -210,10 +216,19 @@ public class Commands implements CommandExecutor, TabCompleter {
 				return true;
 			}
 		});
-		mainCommand.addSubCommand("abilities", new Command(Condition.PLAYER) {
+		mainCommand.addSubCommand("abilities", new Command() {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				new AbilityListGUI((Player) sender, AbilityWar.getPlugin()).openGUI(1);
+				if (args.length == 0) {
+					if (sender instanceof Player) new AbilityListGUI((Player) sender, AbilityWar.getPlugin()).openGUI(1); else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " abilities <능력>");
+				} else {
+					final String name = String.join(" ", args);
+					if (AbilityFactory.isRegistered(name) && AbilityList.isRegistered(name)) {
+						for (String line : Formatter.formatInfo(AbilityFactory.getRegistration(AbilityFactory.getByName(name)))) {
+							sender.sendMessage(line);
+						}
+					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
+				}
 				return true;
 			}
 		});
@@ -505,8 +520,9 @@ public class Commands implements CommandExecutor, TabCompleter {
 						addSubCommand("list", new Command() {
 							@Override
 							protected boolean onCommand(CommandSender sender, String command, String[] args) {
-								if (GameManager.isGameOf(TeamGame.class)) {
-									ArrayList<Team> teams = new ArrayList<>(((TeamGame) GameManager.getGame()).getTeams());
+								if (GameManager.isGameOf(Teamable.class)) {
+									final Teamable teamGame = (Teamable) GameManager.getGame();
+									final ArrayList<Members> teams = new ArrayList<>(teamGame.getTeams());
 									final int maxPage = (teams.size() / 8) + (teams.size() % 8 == 0 ? 0 : 1);
 									int page = 1;
 									if (args.length >= 1) {
@@ -523,7 +539,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 											if (i >= teams.size()) {
 												break;
 											}
-											TeamGame.Team team = teams.get(i);
+											Members team = teams.get(i);
 											sender.sendMessage(ChatColor.YELLOW + "● " + ChatColor.WHITE + team.getName() + ChatColor.WHITE + " (" + team.getDisplayName() + ChatColor.WHITE + ")");
 										}
 										sender.sendMessage("§6========================================");
@@ -537,16 +553,15 @@ public class Commands implements CommandExecutor, TabCompleter {
 						addSubCommand("set", new Command() {
 							@Override
 							protected boolean onCommand(CommandSender sender, String command, String[] args) {
-								if (GameManager.isGameOf(TeamGame.class)) {
-									AbstractGame game = GameManager.getGame();
-									TeamGame teamGame = (TeamGame) game;
+								if (GameManager.isGameOf(Teamable.class)) {
+									final Teamable teamGame = (Teamable) GameManager.getGame();
 									if (args.length >= 2) {
 										Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 										if (targetPlayer != null) {
-											if (game.isParticipating(targetPlayer)) {
-												Participant target = game.getParticipant(targetPlayer);
+											if (teamGame.isParticipating(targetPlayer)) {
+												Participant target = teamGame.getParticipant(targetPlayer);
 												if (teamGame.teamExists(args[1])) {
-													TeamGame.Team team = teamGame.getTeam(args[1]);
+													Members team = teamGame.getTeam(args[1]);
 													if (!teamGame.hasTeam(target) || !teamGame.getTeam(target).equals(team)) {
 														teamGame.setTeam(target, team);
 														sender.sendMessage("§e" + targetPlayer.getName() + "§f님의 팀을 " + team.getName() + " §f(" + team.getDisplayName() + "§f)" + KoreanUtil.getJosa(team.getName(), Josa.으로로) + " 설정하였습니다.");
@@ -567,10 +582,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 						addSubCommand("new", new Command() {
 							@Override
 							protected boolean onCommand(CommandSender sender, String command, String[] args) {
-								if (GameManager.isGameOf(TeamGame.class)) {
+								if (GameManager.isGameOf(Teamable.class)) {
+									final Teamable teamGame = (Teamable) GameManager.getGame();
 									if (args.length >= 2) {
 										try {
-											TeamGame.Team team = ((TeamGame) GameManager.getGame()).newTeam(args[0], ChatColor.translateAlternateColorCodes('&', args[1]));
+											Members team = teamGame.newTeam(args[0], ChatColor.translateAlternateColorCodes('&', args[1]));
 											Bukkit.broadcastMessage("§e" + sender.getName() + "§f님이 " + team.getName() + "§f(" + team.getDisplayName() + "§f) 팀을 새로 만들었습니다.");
 										} catch (IllegalStateException | IllegalArgumentException e) {
 											Messager.sendErrorMessage(sender, e.getMessage());
@@ -584,11 +600,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 						addSubCommand("remove", new Command() {
 							@Override
 							protected boolean onCommand(CommandSender sender, String command, String[] args) {
-								if (GameManager.isGameOf(TeamGame.class)) {
+								if (GameManager.isGameOf(Teamable.class)) {
+									final Teamable teamGame = (Teamable) GameManager.getGame();
 									if (args.length >= 1) {
-										TeamGame teamGame = (TeamGame) GameManager.getGame();
 										if (teamGame.teamExists(args[0])) {
-											TeamGame.Team team = teamGame.getTeam(args[0]);
+											Members team = teamGame.getTeam(args[0]);
 											teamGame.removeTeam(team);
 											Bukkit.broadcastMessage("§e" + sender.getName() + "§f님이 " + team.getName() + "§f(" + team.getDisplayName() + "§f) 팀을 삭제했습니다.");
 										} else Messager.sendErrorMessage(sender, args[0] + "은(는) 존재하지 않는 팀입니다.");
@@ -601,10 +617,9 @@ public class Commands implements CommandExecutor, TabCompleter {
 						addSubCommand("divide", new Command() {
 							@Override
 							protected boolean onCommand(CommandSender sender, String command, String[] args) {
-								if (GameManager.isGameOf(TeamGame.class)) {
-									AbstractGame game = GameManager.getGame();
-									TeamGame teamGame = (TeamGame) GameManager.getGame();
-									for (Participant participant : game.getParticipants()) {
+								if (GameManager.isGameOf(Teamable.class)) {
+									final Teamable teamGame = (Teamable) GameManager.getGame();
+									for (Participant participant : teamGame.getParticipants()) {
 										teamGame.setTeam(participant, null);
 									}
 									Bukkit.broadcastMessage("§e" + sender.getName() + "§f님이 모든 참가자를 각각 하나의 팀으로 나누었습니다.");
@@ -616,7 +631,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						if (GameManager.isGameOf(TeamGame.class)) {
+						if (GameManager.isGameOf(Teamable.class)) {
 							if (args.length > 0) {
 								if (NumberUtil.isInt(args[0])) {
 									sendTeamUtilCommandHelp(sender, command, Integer.parseInt(args[0]));
@@ -751,8 +766,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 				addSubCommand("chat", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						Player player = (Player) sender;
-						if (GameManager.isGameOf(TeamGame.class)) {
+						final Player player = (Player) sender;
+						if (GameManager.isGameOf(Teamable.class)) {
 							AbstractGame game = GameManager.getGame();
 							if (game.isParticipating(player)) {
 								Participant participant = game.getParticipant(player);
@@ -770,13 +785,12 @@ public class Commands implements CommandExecutor, TabCompleter {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						Player player = (Player) sender;
-						if (GameManager.isGameOf(TeamGame.class)) {
-							AbstractGame game = GameManager.getGame();
-							TeamGame teamGame = (TeamGame) game;
-							if (game.isParticipating(player)) {
-								Participant participant = game.getParticipant(player);
+						if (GameManager.isGameOf(Teamable.class)) {
+							final Teamable teamGame = (Teamable) GameManager.getGame();
+							if (teamGame.isParticipating(player)) {
+								Participant participant = teamGame.getParticipant(player);
 								if (teamGame.hasTeam(participant)) {
-									for (String str : Formatter.formatTeamInfo(teamGame, teamGame.getTeam(participant))) {
+									for (String str : Formatter.formatTeamInfo(teamGame.getTeam(participant))) {
 										player.sendMessage(str);
 									}
 								} else Messager.sendErrorMessage(player, "팀에 소속되지 않았습니다.");
@@ -790,9 +804,9 @@ public class Commands implements CommandExecutor, TabCompleter {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
 				Player p = (Player) sender;
-				if (GameManager.isGameOf(TeamGame.class)) {
-					AbstractGame game = GameManager.getGame();
-					if (game.isParticipating(p)) {
+				if (GameManager.isGameOf(Teamable.class)) {
+					final Teamable teamGame = (Teamable) GameManager.getGame();
+					if (teamGame.isParticipating(p)) {
 						if (args.length > 0) {
 							if (NumberUtil.isInt(args[0])) {
 								sendTeamCommandHelp(sender, command, Integer.parseInt(args[0]));
@@ -919,9 +933,9 @@ public class Commands implements CommandExecutor, TabCompleter {
 									return players;
 								}
 							} else if (args[2].equalsIgnoreCase("remove")) {
-								if (GameManager.isGameOf(TeamGame.class)) {
-									TeamGame teamGame = (TeamGame) GameManager.getGame();
-									return teamGame.getTeams().stream().map(TeamGame.Team::getName).collect(Collectors.toList());
+								if (GameManager.isGameOf(Teamable.class)) {
+									final Teamable teamGame = (Teamable) GameManager.getGame();
+									return teamGame.getTeams().stream().map(Members::getName).collect(Collectors.toList());
 								}
 							}
 						}
@@ -930,9 +944,9 @@ public class Commands implements CommandExecutor, TabCompleter {
 				case 5:
 					if (args[0].equalsIgnoreCase("util")) {
 						if (args[1].equalsIgnoreCase("team") && args[2].equalsIgnoreCase("set")) {
-							if (GameManager.isGameOf(TeamGame.class)) {
-								TeamGame teamGame = (TeamGame) GameManager.getGame();
-								return teamGame.getTeams().stream().map(TeamGame.Team::getName).collect(Collectors.toList());
+							if (GameManager.isGameOf(Teamable.class)) {
+								final Teamable teamGame = (Teamable) GameManager.getGame();
+								return teamGame.getTeams().stream().map(Members::getName).collect(Collectors.toList());
 							}
 						}
 					}

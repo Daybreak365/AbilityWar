@@ -7,6 +7,7 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
+import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
@@ -48,6 +49,7 @@ import org.bukkit.scoreboard.Score;
 })
 @GameAliases("체믹")
 @Beta
+@TeamSupport(TeamChangeMix.class)
 public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnable {
 
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
@@ -110,7 +112,7 @@ public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnabl
 				Bukkit.broadcastMessage("§7게임 시작시 §f첫번째 능력§7이 할당되며, 이후 §f" + TimeUtil.parseTimeAsString(changer.getPeriod()) + "§7마다 능력이 변경됩니다.");
 				break;
 			case 7:
-				Bukkit.broadcastMessage("§7스코어보드 §f설정중...");
+				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
 				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 				if (ServerVersion.getVersion() < 13)
 					lifeObjective.setDisplayName("§c생명");

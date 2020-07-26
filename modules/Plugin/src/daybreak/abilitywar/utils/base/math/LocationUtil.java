@@ -289,12 +289,12 @@ public class LocationUtil {
 	 */
 	public static Entity[] collectEntities(Location center, int horizontal) {
 		Entity[] entities = new Entity[0];
-		World world = center.getWorld();
+		final World world = center.getWorld();
 		final int maxX = (center.getBlockX() + horizontal) >> 4, maxZ = (center.getBlockZ() + horizontal) >> 4;
 		for (int x = (center.getBlockX() - horizontal) >> 4; x <= maxX; x++) {
 			for (int z = (center.getBlockZ() - horizontal) >> 4; z <= maxZ; z++) {
-				Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
-				Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
+				final Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
+				final Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
 				System.arraycopy(entities, 0, newEntities, 0, entities.length);
 				System.arraycopy(chunkEntities, 0, newEntities, entities.length, chunkEntities.length);
 				entities = newEntities;
@@ -313,7 +313,7 @@ public class LocationUtil {
 	public static List<CustomEntity> collectCustomEntities(Location center, int horizontal) {
 		final List<CustomEntity> entities = new ArrayList<>();
 		if (GameManager.isGameRunning()) {
-			World world = center.getWorld();
+			final World world = center.getWorld();
 			final int maxX = (center.getBlockX() + horizontal) >> 4, maxZ = (center.getBlockZ() + horizontal) >> 4;
 			for (int x = (center.getBlockX() - horizontal) >> 4; x <= maxX; x++) {
 				for (int z = (center.getBlockZ() - horizontal) >> 4; z <= maxZ; z++) {
@@ -336,11 +336,11 @@ public class LocationUtil {
 	 */
 	public static Entity[] collectEntities(Chunk center, int minX, int minZ, int maxX, int maxZ) {
 		Entity[] entities = new Entity[0];
-		World world = center.getWorld();
+		final World world = center.getWorld();
 		for (int x = minX; x <= maxX; x++) {
 			for (int z = minZ; z <= maxZ; z++) {
-				Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
-				Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
+				final Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
+				final Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
 				System.arraycopy(entities, 0, newEntities, 0, entities.length);
 				System.arraycopy(chunkEntities, 0, newEntities, entities.length, chunkEntities.length);
 				entities = newEntities;
