@@ -7,15 +7,12 @@ import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_12_R1.PacketPlayInClientCommand;
 import net.minecraft.server.v1_12_R1.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntity.PacketPlayOutEntityLook;
-import net.minecraft.server.v1_12_R1.PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_12_R1.PacketPlayOutTitle;
 import net.minecraft.server.v1_12_R1.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_12_R1.PlayerConnection;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
@@ -42,7 +39,7 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void sendActionbar(Player player, String string, int fadeIn, int stay, int fadeOut) {
-		PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+		final PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
 		connection.sendPacket(new PacketPlayOutTitle(fadeIn, stay, fadeOut));
 		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.ACTIONBAR, ChatSerializer.a("{\"text\":\"" + string + "\"}"), fadeIn, stay, fadeOut));
 	}
@@ -54,9 +51,9 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void rotateHead(Player receiver, Entity entity, float yaw, float pitch) {
-		PlayerConnection connection = ((CraftPlayer) receiver).getHandle().playerConnection;
+		final PlayerConnection connection = ((CraftPlayer) receiver).getHandle().playerConnection;
 		connection.sendPacket(new PacketPlayOutEntityTeleport(((CraftEntity) entity).getHandle()));
-		byte fixedYaw = (byte) (yaw * (256F / 360F));
+		final byte fixedYaw = (byte) (yaw * (256F / 360F));
 		connection.sendPacket(new PacketPlayOutEntityLook(entity.getEntityId(), fixedYaw, (byte) (pitch * (256F / 360F)), entity.isOnGround()));
 		connection.sendPacket(new PacketPlayOutEntityHeadRotation(((CraftEntity) entity).getHandle(), fixedYaw));
 	}

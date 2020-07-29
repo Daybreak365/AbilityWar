@@ -73,6 +73,11 @@ public class AbilitySettingWizard implements Listener {
 					count++;
 				}
 
+				gui.setItem(45, new ItemBuilder()
+						.type(MaterialX.RED_WOOL)
+						.displayName(ChatColor.RED + "초기화")
+						.lore(ChatColor.WHITE + abilitySettings.getConfigFile().getName() + " 파일의 모든 능력 설정을 초기화합니다.")
+						.build());
 				if (page > 1) gui.setItem(48, PREVIOUS_PAGE);
 				if (page != maxPage) gui.setItem(50, NEXT_PAGE);
 
@@ -98,6 +103,11 @@ public class AbilitySettingWizard implements Listener {
 					count++;
 				}
 
+				gui.setItem(18, new ItemBuilder()
+						.type(MaterialX.RED_WOOL)
+						.displayName(ChatColor.RED + "초기화")
+						.lore(ChatColor.WHITE + settings.getLeft() + " 능력의 모든 설정을 초기화합니다.")
+						.build());
 				if (page > 1) gui.setItem(21, PREVIOUS_PAGE);
 				if (page != maxPage) gui.setItem(23, NEXT_PAGE);
 
@@ -120,13 +130,20 @@ public class AbilitySettingWizard implements Listener {
 				if (count / 9 == page - 1) {
 					final ItemStack stack = new ItemStack(Material.PAPER);
 					final ItemMeta meta = stack.getItemMeta();
-					meta.setDisplayName(abilitySettings.getConfigFile().getName());
+					final String fileName = abilitySettings.getConfigFile().getName();
+					final int dotIndex = fileName.lastIndexOf(46);
+					meta.setDisplayName(dotIndex == -1 ? fileName : (ChatColor.AQUA + fileName.substring(0, dotIndex) + ChatColor.WHITE + fileName.substring(dotIndex)));
 					stack.setItemMeta(meta);
 					gui.setItem(count % 9, stack);
 				}
 				count++;
 			}
 
+			gui.setItem(9, new ItemBuilder()
+					.type(MaterialX.RED_WOOL)
+					.displayName(ChatColor.RED + "초기화")
+					.lore(ChatColor.WHITE + "모든 능력 설정을 초기화합니다.")
+					.build());
 			if (page > 1) gui.setItem(12, PREVIOUS_PAGE);
 			if (page != maxPage) gui.setItem(14, NEXT_PAGE);
 
@@ -175,6 +192,10 @@ public class AbilitySettingWizard implements Listener {
 						if (MaterialX.BIRCH_DOOR.compareType(clicked) && stripName.equals("나가기")) {
 							abilitySettings = null;
 							openGUI(1);
+						} else if (MaterialX.RED_WOOL.compareType(clicked) && stripName.equals("초기화")) {
+							for (SettingObject<?> setting : abilitySettings.getSettings().values()) {
+								setting.reset();
+							}
 						} else if (clicked.getType() == Material.BOOK) {
 							this.settings = Pair.of(stripName, abilitySettings.getSettings(stripName));
 							openGUI(1);
@@ -183,6 +204,11 @@ public class AbilitySettingWizard implements Listener {
 						if (MaterialX.BIRCH_DOOR.compareType(clicked) && stripName.equals("나가기")) {
 							settings = null;
 							openGUI(1);
+						} else if (MaterialX.RED_WOOL.compareType(clicked) && stripName.equals("초기화")) {
+							for (SettingObject<?> setting : settings.getRight().values()) {
+								setting.reset();
+							}
+							openGUI(currentPage);
 						} else {
 							final SettingObject<?> settingObject = abilitySettings.getSetting(settings.getLeft(), stripName);
 							if (settingObject != null) {
@@ -192,8 +218,16 @@ public class AbilitySettingWizard implements Listener {
 						}
 					}
 				} else {
-					this.abilitySettings = AbilitySettings.getAbilitySetting(stripName);
-					openGUI(1);
+					if (MaterialX.RED_WOOL.compareType(clicked) && stripName.equals("초기화")) {
+						for (AbilitySettings abilitySetting : AbilitySettings.getAbilitySettings()) {
+							for (SettingObject<?> setting : abilitySetting.getSettings().values()) {
+								setting.reset();
+							}
+						}
+					} else {
+						this.abilitySettings = AbilitySettings.getAbilitySetting(stripName);
+						openGUI(1);
+					}
 				}
 			}
 		}

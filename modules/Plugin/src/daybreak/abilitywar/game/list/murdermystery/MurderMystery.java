@@ -224,7 +224,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 						Bukkit.broadcastMessage(line);
 					}
 					if (Settings.getSpawnEnable()) {
-						Location spawn = Settings.getSpawnLocation();
+						Location spawn = Settings.getSpawnLocation().toBukkitLocation();
 						for (Participant participant : getParticipants()) {
 							participant.getPlayer().teleport(spawn);
 						}

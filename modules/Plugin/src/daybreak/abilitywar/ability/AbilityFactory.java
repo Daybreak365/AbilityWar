@@ -46,7 +46,7 @@ public class AbilityFactory {
 
 	private static final Logger logger = Logger.getLogger(AbilityFactory.class);
 
-	private static final Map<String, Class<? extends AbilityBase>> usedNames = new HashMap<>();
+	private static final Map<String, AbilityRegistration> usedNames = new HashMap<>();
 	private static final Map<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
 
 	static {
@@ -147,12 +147,11 @@ public class AbilityFactory {
 	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
 		if (!registeredAbilities.containsKey(abilityClass)) {
 			try {
-				AbilityRegistration registration = new AbilityRegistration(abilityClass);
-				String name = registration.getManifest().name();
+				final AbilityRegistration registration = new AbilityRegistration(abilityClass);
+				final String name = registration.getManifest().name();
 				if (!usedNames.containsKey(name)) {
-					Class<? extends AbilityBase> registeredClass = registration.getAbilityClass();
-					registeredAbilities.put(registeredClass, registration);
-					usedNames.put(name, registeredClass);
+					registeredAbilities.put(registration.getAbilityClass(), registration);
+					usedNames.put(name, registration);
 				} else {
 					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
@@ -220,7 +219,7 @@ public class AbilityFactory {
 	 * @param name 능력의 이름
 	 * @return 능력 Class
 	 */
-	public static Class<? extends AbilityBase> getByName(String name) {
+	public static AbilityRegistration getByName(String name) {
 		return usedNames.get(name);
 	}
 
@@ -290,7 +289,7 @@ public class AbilityFactory {
 			}
 			this.settingObjects = Collections.unmodifiableMap(settingObjects);
 
-			Materials materials = clazz.getAnnotation(Materials.class);
+			final Materials materials = clazz.getAnnotation(Materials.class);
 			this.materials = materials != null ? ImmutableSet.<Material>builder().add(materials.materials()).build() : DEFAULT_MATERIALS;
 
 			int flag = 0x0;

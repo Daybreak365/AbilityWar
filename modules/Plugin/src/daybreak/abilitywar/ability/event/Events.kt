@@ -49,7 +49,7 @@ class AbilityDestroyEvent(ability: AbilityBase) : AbilityEvent(ability) {
 	}
 }
 
-class AbilityRestrictionEvent(ability: AbilityBase, val newStatus: Boolean) : AbilityEvent(ability) {
+class AbilityRestrictionEvent(ability: AbilityBase, val newState: Boolean) : AbilityEvent(ability) {
 	private companion object Handlers {
 		@JvmStatic
 		val handlerList = HandlerList()
@@ -60,7 +60,7 @@ class AbilityRestrictionEvent(ability: AbilityBase, val newStatus: Boolean) : Ab
 	}
 }
 
-class AbilityPreRestrictionEvent(ability: AbilityBase, var newStatus: Boolean) : AbilityEvent(ability) {
+class AbilityPreRestrictionEvent(ability: AbilityBase, var newState: Boolean) : AbilityEvent(ability) {
 	private companion object Handlers {
 		@JvmStatic
 		val handlerList = HandlerList()

@@ -215,7 +215,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 		for (Participant p : getParticipants()) {
 			if (Settings.getSpawnEnable()) {
-				p.getPlayer().teleport(Settings.getSpawnLocation());
+				p.getPlayer().teleport(Settings.getSpawnLocation().toBukkitLocation());
 			}
 		}
 

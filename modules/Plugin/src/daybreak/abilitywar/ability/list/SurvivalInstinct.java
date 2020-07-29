@@ -120,12 +120,18 @@ public class SurvivalInstinct extends AbilityBase {
 
 		@Override
 		protected void onEnd() {
-			actionbarChannel.unregister();
+			onSilentEnd();
 		}
 
 		@Override
 		protected void onSilentEnd() {
 			actionbarChannel.unregister();
+			getRestriction().new Condition() {
+				@Override
+				public boolean condition() {
+					return true;
+				}
+			}.register();
 		}
 	}
 

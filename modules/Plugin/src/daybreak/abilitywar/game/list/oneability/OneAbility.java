@@ -205,7 +205,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 				giveDefaultKit(getParticipants());
 
 				if (Settings.getSpawnEnable()) {
-					Location spawn = Settings.getSpawnLocation();
+					Location spawn = Settings.getSpawnLocation().toBukkitLocation();
 					for (Participant participant : getParticipants()) {
 						participant.getPlayer().teleport(spawn);
 					}

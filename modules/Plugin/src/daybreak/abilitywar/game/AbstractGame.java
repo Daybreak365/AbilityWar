@@ -197,7 +197,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		return restricted;
 	}
 
-	public void setRestricted(boolean restricted) {
+	public void setRestricted(final boolean restricted) {
 		this.restricted = restricted;
 		for (Participant participant : getParticipants()) {
 			if (participant.hasAbility()) {
@@ -213,6 +213,13 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	protected void startGame() {
 		this.gameStarted = true;
 		observers.forEach(observer -> observer.update(GameUpdate.START));
+		if (!restricted) {
+			for (Participant participant : getParticipants()) {
+				if (participant.hasAbility()) {
+					participant.getAbility().setRestricted(false);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -331,13 +338,9 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		 * @param abilityClass 부여할 능력의 클래스
 		 */
 		public void setAbility(Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-			AbilityBase oldAbility = null;
-			if (hasAbility()) {
-				oldAbility = removeAbility();
-			}
-
-			AbilityBase ability = AbilityBase.create(abilityClass, this);
-			ability.setRestricted(isRestricted() || !isGameStarted());
+			final AbilityBase oldAbility = removeAbility();
+			final AbilityBase ability = AbilityBase.create(abilityClass, this);
+			ability.setRestricted(false);
 			this.ability = ability;
 			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
 		}
@@ -350,14 +353,14 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		@Beta
 		public void setAbility(AbilityBase ability) throws NoSuchFieldException, IllegalAccessException {
 			if (hasAbility() && this.ability.equals(ability)) return;
-			AbilityBase oldAbility = removeAbility();
+			final AbilityBase oldAbility = removeAbility();
 			if (ability != null) {
 				ability.getParticipant().ability = null;
-				ability.setRestricted(isRestricted() || !isGameStarted());
 
 				Field participant = FieldUtil.removeFlag(AbilityBase.class.getDeclaredField("participant"), Modifier.FINAL);
 				ReflectionUtil.setAccessible(participant).set(ability, Participant.this);
 				FieldUtil.addFlag(participant, Modifier.FINAL);
+				ability.setRestricted(false);
 			}
 
 			this.ability = ability;
@@ -378,7 +381,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		 * @return 제거된 능력
 		 */
 		public AbilityBase removeAbility() {
-			AbilityBase ability = getAbility();
+			final AbilityBase ability = getAbility();
 			if (ability != null) {
 				ability.destroy();
 				this.ability = null;
@@ -576,8 +579,6 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 	public abstract class GameTimer extends SimpleTimer {
 
-		private RestrictionBehavior behavior = RestrictionBehavior.STOP_START;
-
 		public GameTimer(TaskType taskType, int maximumCount) {
 			super(taskType, maximumCount);
 			attachObserver(new SimpleTimer.Observer() {
@@ -614,18 +615,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			return this;
 		}
 
-		public GameTimer setBehavior(RestrictionBehavior behavior) {
-			this.behavior = Preconditions.checkNotNull(behavior);
-			return this;
-		}
-
-		public RestrictionBehavior getBehavior() {
-			return behavior;
-		}
-
 	}
-
-	public enum RestrictionBehavior {STOP_START, PAUSE_RESUME}
 
 	private final SetMultimap<Integer, CustomEntity> customEntities = MultimapBuilder.hashKeys().hashSetValues().build();
 

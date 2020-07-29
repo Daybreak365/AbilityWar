@@ -9,11 +9,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -28,7 +27,7 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final HashMap<Class<? extends Event>, TreeMap<Integer, CopyOnWriteArraySet<EventObserver>>> observers = new HashMap<>();
+	private final HashMap<Class<? extends Event>, TreeMap<Integer, HashSet<EventObserver>>> observers = new HashMap<>();
 	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
 
 	@SuppressWarnings("unchecked")
@@ -40,45 +39,52 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 	}
 
 	public void register(EventObserver observer) {
-		final TreeMap<Integer, CopyOnWriteArraySet<EventObserver>> observerMap;
+		final TreeMap<Integer, HashSet<EventObserver>> observerMap;
 		if (!observers.containsKey(observer.eventClass)) {
 			observerMap = new TreeMap<>();
 			observers.put(observer.eventClass, observerMap);
 		} else observerMap = observers.get(observer.eventClass);
 
-		Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(observer.eventClass);
+		final Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(observer.eventClass);
 		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
 			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, EventPriority.HIGH, this, AbilityWar.getPlugin());
 		}
 
-		final CopyOnWriteArraySet<EventObserver> observers;
+		final HashSet<EventObserver> observers;
 		if (observerMap.get(observer.subscriber.priority()) == null) {
-			observers = new CopyOnWriteArraySet<>();
+			observers = new HashSet<>();
 			observerMap.put(observer.subscriber.priority(), observers);
 		} else observers = observerMap.get(observer.subscriber.priority());
 		observers.add(observer);
 	}
 
 	public void unregister(EventObserver observer) {
-		if (observers.containsKey(observer.eventClass)) {
-			TreeMap<Integer, CopyOnWriteArraySet<EventObserver>> treeMap = observers.get(observer.eventClass);
-			for (Iterator<Entry<Integer, CopyOnWriteArraySet<EventObserver>>> iterator = treeMap.entrySet().iterator(); iterator.hasNext(); ) {
-				Entry<Integer, CopyOnWriteArraySet<EventObserver>> entry = iterator.next();
-				if (entry.getValue().remove(observer) && entry.getValue().size() == 0) {
-					iterator.remove();
-				}
-			}
+		if (iterationDepth != 0) {
+			toRemove.add(observer);
+		} else if (observers.containsKey(observer.eventClass)) {
+			final TreeMap<Integer, HashSet<EventObserver>> treeMap = observers.get(observer.eventClass);
+			treeMap.entrySet().removeIf(entry -> entry.getValue().remove(observer) && entry.getValue().size() == 0);
 		}
 	}
 
+	private int iterationDepth = 0;
+	private final List<EventObserver> toRemove = new LinkedList<>();
+
 	@Override
 	public void execute(Listener listener, Event event) {
-		Class<? extends Event> eventClass = event.getClass();
+		final Class<? extends Event> eventClass = event.getClass();
 		if (observers.containsKey(eventClass)) {
-			for (CopyOnWriteArraySet<EventObserver> value : observers.get(eventClass).values()) {
+			iterationDepth++;
+			for (HashSet<EventObserver> value : observers.get(eventClass).values()) {
 				for (EventObserver observer : value) {
 					observer.onEvent(event);
 				}
+			}
+			iterationDepth = Math.max(0, iterationDepth - 1);
+			if (iterationDepth == 0) {
+				final TreeMap<Integer, HashSet<EventObserver>> treeMap = observers.get(eventClass);
+				treeMap.entrySet().removeIf(entry -> entry.getValue().removeAll(toRemove) && entry.getValue().size() == 0);
+				toRemove.clear();
 			}
 		}
 	}

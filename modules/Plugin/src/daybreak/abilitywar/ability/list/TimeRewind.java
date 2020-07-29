@@ -21,6 +21,8 @@ import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
@@ -87,19 +89,24 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent
 	public void onEntityDamage(EntityDamageEvent e) {
-		if (e.getEntity().equals(getPlayer()) && rewinding) {
+		if (e.getEntity().equals(getPlayer()) && skill.isRunning()) {
+			e.setCancelled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public void onEntityDamage(EntityDamageByBlockEvent e) {
+		if (e.getEntity().equals(getPlayer()) && skill.isRunning()) {
 			e.setCancelled(true);
 		}
 	}
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getDamager().equals(getPlayer()) && rewinding) {
+		if (((getPlayer().equals(e.getDamager()) || (e.getDamager() instanceof Projectile && getPlayer().equals(((Projectile) e.getDamager()).getShooter()))) || getPlayer().equals(e.getEntity())) && skill.isRunning()) {
 			e.setCancelled(true);
 		}
 	}
-
-	private boolean rewinding = false;
 
 	private PushingList<PlayerData> playerDatas = new PushingList<>(time * 20);
 
@@ -109,7 +116,6 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public void onDurationStart() {
-			rewinding = true;
 			this.datas = playerDatas;
 			playerDatas = new PushingList<>(time * 20);
 		}
@@ -124,7 +130,6 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public void onDurationEnd() {
-			rewinding = false;
 			SoundLib.BELL.playInstrument(getPlayer(), Note.natural(0, Tone.D));
 			SoundLib.BELL.playInstrument(getPlayer(), Note.sharp(0, Tone.F));
 			SoundLib.BELL.playInstrument(getPlayer(), Note.natural(1, Tone.A));

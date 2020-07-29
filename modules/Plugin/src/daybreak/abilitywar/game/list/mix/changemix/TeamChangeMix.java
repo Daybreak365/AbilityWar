@@ -171,7 +171,7 @@ public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler,
 
 				for (Participant participant : getParticipants()) {
 					if (Settings.getSpawnEnable()) {
-						participant.getPlayer().teleport(Settings.getSpawnLocation());
+						participant.getPlayer().teleport(Settings.getSpawnLocation().toBukkitLocation());
 					}
 				}
 
@@ -264,25 +264,26 @@ public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler,
 			@Override
 			public void Operation(Participant victim) {
 				final Members team = getTeam(victim);
-				if (team == null || lifeObjective.getScoreboard() == null) return;
-				final Score score = lifeObjective.getScore(getScoreboardName(team));
-				if (score.isScoreSet()) {
-					int life = score.getScore();
-					if (life >= 1) {
-						score.setScore(--life);
-						if (maxLife <= 10) {
-							victim.getPlayer().sendMessage("§f남은 생명: §c" + Strings.repeat("§c♥", life) + Strings.repeat("§c♡", maxLife - life));
-						} else {
-							victim.getPlayer().sendMessage("§f남은 생명: §c" + life);
+				try {
+					final Score score = lifeObjective.getScore(getScoreboardName(team));
+					if (score.isScoreSet()) {
+						int life = score.getScore();
+						if (life >= 1) {
+							score.setScore(--life);
+							if (maxLife <= 10) {
+								victim.getPlayer().sendMessage("§f남은 생명: §c" + Strings.repeat("§c♥", life) + Strings.repeat("§c♡", maxLife - life));
+							} else {
+								victim.getPlayer().sendMessage("§f남은 생명: §c" + life);
+							}
+						}
+						if (score.getScore() <= 0) {
+							noLife.add(team);
+							super.Operation(victim);
+
+							checkWinner();
 						}
 					}
-					if (score.getScore() <= 0) {
-						noLife.add(team);
-						super.Operation(victim);
-
-						checkWinner();
-					}
-				}
+				} catch (IllegalStateException ignored) {}
 			}
 
 			@Override

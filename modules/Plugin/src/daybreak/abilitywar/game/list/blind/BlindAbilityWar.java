@@ -277,7 +277,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 				giveDefaultKit(getParticipants());
 
 				if (Settings.getSpawnEnable()) {
-					Location spawn = Settings.getSpawnLocation();
+					Location spawn = Settings.getSpawnLocation().toBukkitLocation();
 					for (Participant participant : getParticipants()) {
 						participant.getPlayer().teleport(spawn);
 					}

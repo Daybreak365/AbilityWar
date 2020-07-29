@@ -224,7 +224,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 				} else {
 					final String name = String.join(" ", args);
 					if (AbilityFactory.isRegistered(name) && AbilityList.isRegistered(name)) {
-						for (String line : Formatter.formatInfo(AbilityFactory.getRegistration(AbilityFactory.getByName(name)))) {
+						for (String line : Formatter.formatInfo(AbilityFactory.getByName(name))) {
 							sender.sendMessage(line);
 						}
 					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
@@ -270,7 +270,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 						if (args.length > 0) {
 							String name = String.join(" ", args);
 							if (AbilityFactory.isRegistered(name)) {
-								new KitWizard(player, plugin, AbilityFactory.getRegistration(AbilityFactory.getByName(name))).Show();
+								new KitWizard(player, plugin, AbilityFactory.getByName(name)).Show();
 							} else {
 								player.sendMessage(ChatColor.RED + name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
 							}

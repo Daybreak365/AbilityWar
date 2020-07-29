@@ -141,10 +141,9 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		private final Locations locations;
 		private final Participant targetParticipant;
 		private final Player target;
-		private final ItemStack[] contents;
-		private final ItemStack[] targetContents;
-		private final double health;
-		private final double targetHealth;
+		private final ItemStack[] contents, targetContents;
+		private final double health, targetHealth;
+		private final Restriction.Condition restrictCondition;
 
 		public Ring(Cooldown cooldownTimer, double radius, Player target) {
 			super(duration * 20, cooldownTimer);
@@ -159,6 +158,12 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 			this.targetContents = target.getInventory().getContents();
 			getPlayer().getInventory().clear();
 			target.getInventory().clear();
+			this.restrictCondition = targetParticipant.hasAbility() ? targetParticipant.getAbility().getRestriction().new Condition() {
+				@Override
+				public boolean condition() {
+					return true;
+				}
+			}.register() : null;
 			if (targetParticipant.hasAbility()) {
 				targetParticipant.getAbility().setRestricted(true);
 			}
@@ -238,8 +243,8 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 		@EventHandler
 		private void onPreAbilityRestriction(AbilityPreRestrictionEvent e) {
-			if ((e.getAbility().getParticipant().equals(targetParticipant) || e.getAbility().getParticipant().equals(getParticipant())) && !e.getNewStatus())
-				e.setNewStatus(true);
+			if ((e.getAbility().getParticipant().equals(targetParticipant) || e.getAbility().getParticipant().equals(getParticipant())) && !e.getNewState())
+				e.setNewState(true);
 		}
 
 		@Override
@@ -292,14 +297,14 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 			HandlerList.unregisterAll(this);
 			getPlayer().getInventory().setContents(contents);
 			target.getInventory().setContents(targetContents);
-			if (targetParticipant.hasAbility()) {
-				targetParticipant.getAbility().setRestricted(false);
+			if (restrictCondition != null) {
+				restrictCondition.unregister();
 			}
 			if (!target.isDead()) {
-				target.setHealth(targetHealth);
+				target.setHealth(Math.min(targetHealth, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 			}
 			if (!getPlayer().isDead()) {
-				getPlayer().setHealth(health);
+				getPlayer().setHealth(Math.min(health, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 			}
 			unregister();
 			ring = null;

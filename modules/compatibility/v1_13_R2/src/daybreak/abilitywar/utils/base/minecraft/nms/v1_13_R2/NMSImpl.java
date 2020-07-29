@@ -42,7 +42,7 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void sendActionbar(Player player, String string, int fadeIn, int stay, int fadeOut) {
-		PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+		final PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
 		connection.sendPacket(new PacketPlayOutTitle(fadeIn, stay, fadeOut));
 		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.ACTIONBAR, ChatSerializer.a("{\"text\":\"" + string + "\"}"), fadeIn, stay, fadeOut));
 	}
@@ -54,9 +54,9 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void rotateHead(Player receiver, Entity entity, float yaw, float pitch) {
-		PlayerConnection connection = ((CraftPlayer) receiver).getHandle().playerConnection;
+		final PlayerConnection connection = ((CraftPlayer) receiver).getHandle().playerConnection;
 		connection.sendPacket(new PacketPlayOutEntityTeleport(((CraftEntity) entity).getHandle()));
-		byte fixedYaw = (byte) (yaw * (256F / 360F));
+		final byte fixedYaw = (byte) (yaw * (256F / 360F));
 		connection.sendPacket(new PacketPlayOutEntityLook(entity.getEntityId(), fixedYaw, (byte) (pitch * (256F / 360F)), entity.isOnGround()));
 		connection.sendPacket(new PacketPlayOutEntityHeadRotation(((CraftEntity) entity).getHandle(), fixedYaw));
 	}

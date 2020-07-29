@@ -2,6 +2,7 @@ package daybreak.abilitywar.config.enums;
 
 import daybreak.abilitywar.config.Cacher;
 import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.Messager;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.MemorySection;
 
 public enum ConfigNodes {
 
@@ -63,9 +65,23 @@ public enum ConfigNodes {
 			"# 맑은 날씨 고정 여부",
 			"# true로 설정하면 게임이 진행되는 동안 맑은 날씨로 고정됩니다."),
 	GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE("게임.원거리.거리비례대미지", false,
-			"# true로 설정하면 게임이 진행되는 동안 화살의 대미지가 거리 비례 대미지로 변경됩니다."),
-	GAME_SPAWN_LOCATION("게임.스폰.위치", Bukkit.getWorlds().get(0).getSpawnLocation(),
-			"# 스폰 위치 설정"),
+			"# true로 설정하면 게임이 진행되는 동안 화살의 대미지가 거리 비례 대미지로 변경됩니다.",
+			"# 가까울수록 대미지가 감소하며, 대미지가 원 대미지보다 증가하지는 않습니다."),
+	GAME_SPAWN_LOCATION("게임.스폰.위치", new SpawnLocation(Bukkit.getWorlds().get(0).getSpawnLocation()), new Cacher() {
+		@Override
+		public Object toCache(Object object) {
+			try {
+				return new SpawnLocation((MemorySection) object);
+			} catch (NullPointerException | ClassCastException e) {
+				return new SpawnLocation(Bukkit.getWorlds().get(0).getSpawnLocation());
+			}
+		}
+
+		@Override
+		public Object revertCache(Object object) {
+			return ((SpawnLocation) object).toMap();
+		}
+	}, "# 스폰 위치 설정"),
 	GAME_SPAWN_ENABLE("게임.스폰.이동", true,
 			"# 초반 스폰 이동 활성화 여부"),
 	GAME_VISUAL_EFFECT("게임.시각효과", true,
@@ -101,6 +117,10 @@ public enum ConfigNodes {
 	GAME_DEFAULT_MAX_HEALTH_VALUE("게임.최대체력.값", 20,
 			"# 게임 시작시 모든 플레이어에게 설정될 최대 체력",
 			"# 1 이상의 값으로 설정되어야 합니다."),
+	GAME_DURATION_TIMER_BEHAVIOR("게임.지속타이머.작업", false,
+			"# 게임 중 능력이 비활성화 되었을 때 지속 시간 타이머를 어떻게 처리할지 설정합니다.",
+			"# false: 타이머 종료",
+			"# true: 타이머 일시 정지, 능력 활성화시 타이머 재개"),
 	ABILITY_CHANGE_GAME_PERIOD("체인지능력전쟁.주기", 20,
 			"# 능력 변경 주기 (단위: 초)"),
 	ABILITY_CHANGE_GAME_LIFE("체인지능력전쟁.생명", 3,

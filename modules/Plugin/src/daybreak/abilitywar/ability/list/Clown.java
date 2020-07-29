@@ -5,7 +5,9 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.manager.object.DeathManager;
@@ -63,7 +65,12 @@ public class Clown extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationStart() {
 			originalPoint = getPlayer().getLocation();
-			getPlayer().teleport(getPlayer().getWorld().getSpawnLocation());
+			final SpawnLocation spawnLocation = Settings.getSpawnLocation();
+			if (getPlayer().getWorld().getName().equals(spawnLocation.world)) {
+				getPlayer().teleport(spawnLocation.toBukkitLocation());
+			} else {
+				getPlayer().teleport(getPlayer().getWorld().getSpawnLocation());
+			}
 		}
 
 		@Override

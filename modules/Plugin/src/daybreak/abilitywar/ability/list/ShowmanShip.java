@@ -144,11 +144,11 @@ public class ShowmanShip extends AbilityBase {
 	}
 
 	private double getPoint(int horizontal, int vertical) {
-		Location center = getPlayer().getLocation();
-		double centerX = center.getX(), centerZ = center.getZ();
+		final Location center = getPlayer().getLocation();
+		final double centerX = center.getX(), centerZ = center.getZ();
 		double point = 0;
 		for (Entity entity : LocationUtil.collectEntities(center, horizontal)) {
-			Location entityLocation = entity.getLocation();
+			final Location entityLocation = entity.getLocation();
 			if (LocationUtil.distanceSquared2D(centerX, centerZ, entityLocation.getX(), entityLocation.getZ()) <= (horizontal * horizontal) && NumberUtil.subtract(center.getY(), entityLocation.getY()) <= vertical && (notEqualPredicate == null || notEqualPredicate.test(entity))) {
 				if (entity instanceof Player) {
 					point += 1.0;

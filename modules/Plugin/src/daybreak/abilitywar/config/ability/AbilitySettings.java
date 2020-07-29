@@ -53,11 +53,6 @@ public class AbilitySettings {
 			this.error = true;
 		}
 		this.config = config;
-		try {
-			_update();
-		} catch (IOException | InvalidConfigurationException e) {
-			this.error = true;
-		}
 		abilitySettings.put(configFile.getName(), this);
 	}
 
@@ -112,7 +107,7 @@ public class AbilitySettings {
 		config.load();
 
 		for (Entry<SettingObject<?>, Cache> entry : cache.entrySet()) {
-			Cache cache = entry.getValue();
+			final Cache cache = entry.getValue();
 			if (cache.isModifiedValue()) {
 				config.set(entry.getKey().getPath(), cache.getValue());
 			}
@@ -121,13 +116,14 @@ public class AbilitySettings {
 		cache.clear();
 		lastModified = configFile.lastModified();
 		for (SettingObject<?> setting : settings.values()) {
-			Object value = config.get(setting.getPath());
+			final Object value = config.get(setting.getPath());
 			if (value != null) {
 				cache.put(setting, new Cache(false, value));
 			} else {
 				config.set(setting.getPath(), setting.getDefaultValue());
 				cache.put(setting, new Cache(false, setting.getDefaultValue()));
 			}
+			config.addComment(setting.getPath(), setting.getComments());
 		}
 		config.save();
 	}
@@ -213,6 +209,10 @@ public class AbilitySettings {
 				return true;
 			}
 			return false;
+		}
+
+		public void reset() {
+			setValue(defaultValue);
 		}
 
 		@Override

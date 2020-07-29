@@ -126,7 +126,7 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 				giveDefaultKit(getParticipants());
 
 				if (Configuration.Settings.getSpawnEnable()) {
-					Location spawn = Configuration.Settings.getSpawnLocation();
+					Location spawn = Configuration.Settings.getSpawnLocation().toBukkitLocation();
 					for (Participant participant : getParticipants()) {
 						participant.getPlayer().teleport(spawn);
 					}

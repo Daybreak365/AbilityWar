@@ -152,6 +152,10 @@ public class CommentedConfiguration extends YamlConfiguration {
 			}
 		}
 		for (String line : commentLines) {
+			line = line.trim();
+			if (!line.startsWith("#")) {
+				line = "# " + line;
+			}
 			if (!line.isEmpty()) {
 				line = leadingSpaces + line;
 			} else {

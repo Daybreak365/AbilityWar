@@ -197,9 +197,7 @@ public abstract class AbstractMix extends Game {
 					if (this.ability != null) {
 						this.ability.destroy();
 					}
-					AbilityBase mix = AbilityBase.create(Mix.class, this);
-					mix.setRestricted(isRestricted() || !isGameStarted());
-					this.ability = mix;
+					this.ability = AbilityBase.create(Mix.class, this);
 				} catch (IllegalAccessException | InvocationTargetException | InstantiationException ignored) {
 				}
 			}

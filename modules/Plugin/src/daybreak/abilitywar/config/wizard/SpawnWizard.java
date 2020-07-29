@@ -3,9 +3,9 @@ package daybreak.abilitywar.config.wizard;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.utils.base.Messager;
 import java.util.Arrays;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -35,20 +35,20 @@ public class SpawnWizard extends SettingWizard {
 
 				gui.setItem(i, spawn);
 			} else if (i.equals(15)) {
-				ItemStack spawn = new ItemStack(Material.COMPASS, 1);
-				ItemMeta spawnMeta = spawn.getItemMeta();
+				final ItemStack spawn = new ItemStack(Material.COMPASS, 1);
+				final ItemMeta spawnMeta = spawn.getItemMeta();
 				spawnMeta.setDisplayName("§b스폰 설정");
 
-				Location spawnLocation = Settings.getSpawnLocation();
-				double X = spawnLocation.getX();
-				double Y = spawnLocation.getY();
-				double Z = spawnLocation.getZ();
+				final SpawnLocation spawnLocation = Settings.getSpawnLocation();
+				double X = spawnLocation.x;
+				double Y = spawnLocation.y;
+				double Z = spawnLocation.z;
 
 				spawnMeta.setLore(Arrays.asList(
 						"§f당신이 현재 서 있는 §a위치§f를 §b스폰§f으로 설정합니다.",
 						"§6» §f스폰 위치를 변경하려면 클릭하세요.", "",
 						"§3현재 스폰 위치",
-						"§b월드 §7: §f" + spawnLocation.getWorld().getName(),
+						"§b월드 §7: §f" + spawnLocation.world,
 						"§bX §7: §f" + X,
 						"§bY §7: §f" + Y,
 						"§bZ §7: §f" + Z,
@@ -79,10 +79,10 @@ public class SpawnWizard extends SettingWizard {
 					case "§b스폰 설정":
 						p.closeInventory();
 						if (e.getClick().equals(ClickType.SHIFT_LEFT)) {
-							p.teleport(Settings.getSpawnLocation());
+							p.teleport(Settings.getSpawnLocation().toBukkitLocation());
 							p.sendMessage("§a스폰 §f위치로 이동되었습니다.");
 						} else {
-							Configuration.modifyProperty(ConfigNodes.GAME_SPAWN_LOCATION, p.getLocation());
+							Configuration.modifyProperty(ConfigNodes.GAME_SPAWN_LOCATION, new SpawnLocation(p.getLocation()));
 							p.sendMessage("§a게임 스폰이 변경되었습니다.");
 						}
 						break;

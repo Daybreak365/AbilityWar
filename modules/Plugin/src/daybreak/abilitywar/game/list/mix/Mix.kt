@@ -50,7 +50,7 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 
 		private fun formatInfo(joiner: StringJoiner, ability: AbilityBase?) {
 			if (ability != null) {
-				joiner.add("§b" + ability.name + " " + ability.rank.rankName + " " + ability.species.speciesName)
+				joiner.add("§b${ability.name} §f[${if (ability.isRestricted) "§7능력 비활성화됨" else "§a능력 활성화됨"}§f] ${ability.rank.rankName} ${ability.species.speciesName}")
 				val iterator = ability.explanation
 				while (iterator.hasNext()) {
 					joiner.add(RESET.toString() + iterator.next())
@@ -66,13 +66,16 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 		removeAbility()
 		val synergyReg = SynergyFactory.getSynergy(first, second)
 		if (synergyReg != null) {
-			this.synergy = create(synergyReg.abilityClass, participant) as Synergy
-			this.synergy?.isRestricted = this@Mix.isRestricted || !game.isGameStarted
+			this.synergy = (create(synergyReg.abilityClass, participant) as Synergy).apply {
+				this.isRestricted = false
+			}
 		} else {
-			this.first = create(first, participant)
-			this.first?.isRestricted = this@Mix.isRestricted || !game.isGameStarted
-			this.second = create(second, participant)
-			this.second?.isRestricted = this@Mix.isRestricted || !game.isGameStarted
+			this.first = create(first, participant)?.apply {
+				this.isRestricted = false
+			}
+			this.second = create(second, participant)?.apply {
+				this.isRestricted = false
+			}
 		}
 	}
 

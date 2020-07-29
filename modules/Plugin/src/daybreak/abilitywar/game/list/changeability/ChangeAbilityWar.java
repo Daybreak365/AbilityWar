@@ -155,7 +155,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
 				for (Participant p : getParticipants()) {
 					if (Settings.getSpawnEnable()) {
-						p.getPlayer().teleport(Settings.getSpawnLocation());
+						p.getPlayer().teleport(Settings.getSpawnLocation().toBukkitLocation());
 					}
 				}
 

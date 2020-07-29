@@ -257,7 +257,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 						}
 					});
 					BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock);
-					new Timer() {
+					new AbilityTimer() {
 						@Override
 						protected void run(int count) {
 							if (fallingBlock.isValid() && !fallingBlock.isDead()) {

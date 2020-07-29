@@ -4,6 +4,7 @@ import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.list.standard.StandardGame;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
 
@@ -69,7 +69,7 @@ public class Configuration {
 		cache.clear();
 		for (ConfigNodes node : ConfigNodes.values()) {
 			if (node.hasCacher()) {
-				Cacher handler = node.getCacher();
+				final Cacher handler = node.getCacher();
 				if (config.isSet(node.getPath())) {
 					cache.put(node, new Cache(false, handler.toCache(config.get(node.getPath()))));
 				} else {
@@ -149,37 +149,20 @@ public class Configuration {
 		private Settings() {
 		}
 
-		public static String getString(ConfigNodes node) {
-			return get(node);
-		}
-
-		public static int getInt(ConfigNodes node) {
-			return get(node);
-		}
-
-		public static boolean getBoolean(ConfigNodes node) {
-			return get(node);
-		}
-		public static Location getLocation(ConfigNodes node) {
-			return get(node);
-		}
-		public static List<String> getStringList(ConfigNodes node) {
-			return getList(node, String.class);
-		}
 		public static List<ItemStack> getItemStackList(ConfigNodes node) {
-			return getList(node, ItemStack.class);
+			return Configuration.getList(node, ItemStack.class);
 		}
 
 		public static boolean getNoHunger() {
-			return getBoolean(ConfigNodes.GAME_NO_HUNGER);
+			return get(ConfigNodes.GAME_NO_HUNGER);
 		}
 
 		public static int getStartLevel() {
-			return getInt(ConfigNodes.GAME_START_LEVEL);
+			return get(ConfigNodes.GAME_START_LEVEL);
 		}
 
 		public static boolean getInventoryClear() {
-			return getBoolean(ConfigNodes.GAME_INVENTORY_CLEAR);
+			return get(ConfigNodes.GAME_INVENTORY_CLEAR);
 		}
 
 		public static List<ItemStack> getDefaultKit() {
@@ -191,35 +174,35 @@ public class Configuration {
 		}
 
 		public static boolean getDrawAbility() {
-			return getBoolean(ConfigNodes.GAME_DRAW_ABILITY);
+			return get(ConfigNodes.GAME_DRAW_ABILITY);
 		}
 
 		public static boolean getInfiniteDurability() {
-			return getBoolean(ConfigNodes.GAME_INFINITE_DURABILITY);
+			return get(ConfigNodes.GAME_INFINITE_DURABILITY);
 		}
 
 		public static boolean getFirewall() {
-			return getBoolean(ConfigNodes.GAME_FIREWALL);
+			return get(ConfigNodes.GAME_FIREWALL);
 		}
 
 		public static boolean getClearWeather() {
-			return getBoolean(ConfigNodes.GAME_CLEAR_WEATHER);
+			return get(ConfigNodes.GAME_CLEAR_WEATHER);
 		}
 
 		public static boolean isArrowDamageDistanceProportional() {
-			return getBoolean(ConfigNodes.GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE);
+			return get(ConfigNodes.GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE);
 		}
 
-		public static Location getSpawnLocation() {
-			return getLocation(ConfigNodes.GAME_SPAWN_LOCATION);
+		public static SpawnLocation getSpawnLocation() {
+			return get(ConfigNodes.GAME_SPAWN_LOCATION);
 		}
 
 		public static boolean getSpawnEnable() {
-			return getBoolean(ConfigNodes.GAME_SPAWN_ENABLE);
+			return get(ConfigNodes.GAME_SPAWN_ENABLE);
 		}
 
 		public static boolean getVisualEffect() {
-			return getBoolean(ConfigNodes.GAME_VISUAL_EFFECT);
+			return get(ConfigNodes.GAME_VISUAL_EFFECT);
 		}
 
 		public static Set<String> getBlackList() {
@@ -227,11 +210,11 @@ public class Configuration {
 		}
 
 		public static boolean isZeroTickEnabled() {
-			return getBoolean(ConfigNodes.GAME_ZEROTICK);
+			return get(ConfigNodes.GAME_ZEROTICK);
 		}
 
 		public static boolean isTeamGameEnabled() {
-			return getBoolean(ConfigNodes.GAME_TEAMGAME);
+			return get(ConfigNodes.GAME_TEAMGAME);
 		}
 
 		public static PresetContainer getPresetContainer() {
@@ -244,6 +227,10 @@ public class Configuration {
 
 		public static int getDefaultMaxHealth() {
 			return get(ConfigNodes.GAME_DEFAULT_MAX_HEALTH_VALUE);
+		}
+
+		public static boolean getDurationTimerBehavior() {
+			return get(ConfigNodes.GAME_DURATION_TIMER_BEHAVIOR);
 		}
 
 		public static boolean isBlacklisted(String abilityName) {
@@ -297,23 +284,23 @@ public class Configuration {
 			}
 
 			public static boolean isEnabled() {
-				return getBoolean(ConfigNodes.GAME_INVINCIBILITY_ENABLE);
+				return get(ConfigNodes.GAME_INVINCIBILITY_ENABLE);
 			}
 
 			public static int getDuration() {
-				return getInt(ConfigNodes.GAME_INVINCIBILITY_DURATION);
+				return get(ConfigNodes.GAME_INVINCIBILITY_DURATION);
 			}
 
 			public static boolean isBossbarEnabled() {
-				return getBoolean(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_ENABLE);
+				return get(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_ENABLE);
 			}
 
 			public static String getBossbarMessage() {
-				return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_MESSAGE);
+				return get(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_MESSAGE);
 			}
 
 			public static String getBossbarInfiniteMessage() {
-				return getString(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_INFINITE_MESSAGE);
+				return get(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_INFINITE_MESSAGE);
 			}
 		}
 
@@ -323,7 +310,7 @@ public class Configuration {
 			}
 
 			public static OnDeath getOperation() {
-				return OnDeath.getIfPresent(getString(ConfigNodes.GAME_DEATH_OPERATION));
+				return OnDeath.getIfPresent(get(ConfigNodes.GAME_DEATH_OPERATION));
 			}
 
 			public static void nextOperation() {
@@ -331,11 +318,11 @@ public class Configuration {
 			}
 
 			public static boolean getAbilityReveal() {
-				return getBoolean(ConfigNodes.GAME_DEATH_ABILITY_REVEAL);
+				return get(ConfigNodes.GAME_DEATH_ABILITY_REVEAL);
 			}
 
 			public static boolean getAutoRespawn() {
-				return getBoolean(ConfigNodes.GAME_DEATH_AUTO_RESPAWN);
+				return get(ConfigNodes.GAME_DEATH_AUTO_RESPAWN);
 			}
 
 		}
@@ -346,15 +333,15 @@ public class Configuration {
 			}
 
 			public static int getPeriod() {
-				return getInt(ConfigNodes.ABILITY_CHANGE_GAME_PERIOD);
+				return get(ConfigNodes.ABILITY_CHANGE_GAME_PERIOD);
 			}
 
 			public static int getLife() {
-				return getInt(ConfigNodes.ABILITY_CHANGE_GAME_LIFE);
+				return get(ConfigNodes.ABILITY_CHANGE_GAME_LIFE);
 			}
 
 			public static boolean getEliminate() {
-				return getBoolean(ConfigNodes.ABILITY_CHANGE_GAME_ELIMINATE);
+				return get(ConfigNodes.ABILITY_CHANGE_GAME_ELIMINATE);
 			}
 
 		}
@@ -365,7 +352,7 @@ public class Configuration {
 			}
 
 			public static int getMaxKill() {
-				return getInt(ConfigNodes.SUMMER_VACATION_KILL);
+				return get(ConfigNodes.SUMMER_VACATION_KILL);
 			}
 
 		}
@@ -376,7 +363,7 @@ public class Configuration {
 			}
 
 			public static boolean isEnabled() {
-				return getBoolean(ConfigNodes.DEVELOPER);
+				return get(ConfigNodes.DEVELOPER);
 			}
 
 		}
@@ -384,7 +371,7 @@ public class Configuration {
 		@SuppressWarnings("unchecked")
 		public static Class<? extends AbstractGame> getGameMode() {
 			try {
-				Class<?> clazz = ClassUtil.forName(getString(ConfigNodes.GAME_MODE));
+				Class<?> clazz = ClassUtil.forName(get(ConfigNodes.GAME_MODE));
 				if (AbstractGame.class.isAssignableFrom(clazz)) {
 					return (Class<? extends AbstractGame>) clazz;
 				}
@@ -396,11 +383,11 @@ public class Configuration {
 		}
 
 		public static boolean isWRECKEnabled() {
-			return getBoolean(ConfigNodes.GAME_WRECK_ENABLE);
+			return get(ConfigNodes.GAME_WRECK_ENABLE);
 		}
 
 		public static CooldownDecrease getCooldownDecrease() {
-			return CooldownDecrease.getIfPresent(getString(ConfigNodes.GAME_WRECK_DECREASE));
+			return CooldownDecrease.getIfPresent(get(ConfigNodes.GAME_WRECK_DECREASE));
 		}
 
 	}

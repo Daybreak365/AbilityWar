@@ -156,7 +156,7 @@ public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnabl
 
 				for (Participant p : getParticipants()) {
 					if (Settings.getSpawnEnable()) {
-						p.getPlayer().teleport(Settings.getSpawnLocation());
+						p.getPlayer().teleport(Settings.getSpawnLocation().toBukkitLocation());
 					}
 				}
 

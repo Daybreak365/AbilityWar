@@ -8,15 +8,14 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
-import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionEvent;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.AbstractGame.RestrictionBehavior;
 import daybreak.abilitywar.game.event.participant.ParticipantEvent;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.StandardGame;
@@ -85,52 +84,16 @@ public abstract class AbilityBase {
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
 	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
 
-	/**
-	 * {@link AbilityBase}의 기본 생성자입니다.
-	 *
-	 * @param participant 능력을 소유하는 참가자
-	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
-	 */
-	protected AbilityBase(Participant participant) throws IllegalStateException {
-		this.participant = participant;
-		this.game = participant.getGame();
-		if (!AbilityFactory.isRegistered(getClass())) {
-			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
+	public static <T extends AbilityBase> T create(Class<T> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Preconditions.checkNotNull(abilityClass);
+		Preconditions.checkNotNull(participant);
+		if (AbilityFactory.isRegistered(abilityClass)) {
+			AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
+			AbilityBase abilityBase = registration.getConstructor().newInstance(participant);
+			return abilityClass.cast(abilityBase);
+		} else {
+			throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
 		}
-		this.registration = AbilityFactory.getRegistration(getClass());
-		this.manifest = registration.getManifest();
-		EventManager eventManager = game.getEventManager();
-		eventhandlers = new HashMap<>();
-		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
-			final Pair<Method, SubscribeEvent> pair = entry.getValue();
-			final EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
-				@Override
-				protected void onEvent(Event event) {
-					if (restricted) return;
-					if (subscriber.onlyRelevant()
-							&& ((event instanceof AbilityEvent && !AbilityBase.this.equals(((AbilityEvent) event).getAbility()))
-							|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
-							|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
-							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
-						return;
-					}
-					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled())
-						return;
-					try {
-						ReflectionUtil.setAccessible(method).invoke(AbilityBase.this, event);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-						logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
-					}
-				}
-			};
-			eventhandlers.put(entry.getKey(), observer);
-		}
-
-		for (EventObserver value : eventhandlers.values()) {
-			eventManager.register(value);
-		}
-
-		this.restricted = game.isRestricted() || !game.isGameStarted();
 	}
 
 	private final Function<MatchResult, String> fieldValueProvider = new Function<MatchResult, String>() {
@@ -161,31 +124,65 @@ public abstract class AbilityBase {
 	private String[] explanation = null;
 	private final AbstractGame game;
 	private final Map<Class<? extends Event>, EventObserver> eventhandlers;
-	private final Set<AbilityTimer> timers = new HashSet<>();
-	private final Set<AbilityTimer> runningTimers = new HashSet<>();
+	private final Set<AbilityTimer> timers = new HashSet<>(), runningTimers = new HashSet<>();
+	private final Queue<AbilityTimer> pausedTimers = new LinkedList<>();
 	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
+	private final Restriction restriction;
+	private boolean destroyed;
 
-	private boolean restricted, destroyed;
-
-	public static <T extends AbilityBase> T create(Class<T> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
-		Preconditions.checkNotNull(abilityClass);
-		Preconditions.checkNotNull(participant);
-		if (AbilityFactory.isRegistered(abilityClass)) {
-			AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
-			AbilityBase abilityBase = registration.getConstructor().newInstance(participant);
-			return abilityClass.cast(abilityBase);
-		} else {
-			throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
+	/**
+	 * {@link AbilityBase}의 기본 생성자입니다.
+	 *
+	 * @param participant 능력을 소유하는 참가자
+	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
+	 */
+	protected AbilityBase(Participant participant) throws IllegalStateException {
+		this.participant = participant;
+		this.game = participant.getGame();
+		if (!AbilityFactory.isRegistered(getClass())) {
+			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
-	}
-
-	protected void onUpdate(Update update) {
+		this.registration = AbilityFactory.getRegistration(getClass());
+		this.manifest = registration.getManifest();
+		final EventManager eventManager = game.getEventManager();
+		eventhandlers = new HashMap<>();
+		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
+			final Pair<Method, SubscribeEvent> pair = entry.getValue();
+			final EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
+				@Override
+				protected void onEvent(Event event) {
+					if (isRestricted()) return;
+					if (subscriber.onlyRelevant()
+							&& ((event instanceof AbilityEvent && !AbilityBase.this.equals(((AbilityEvent) event).getAbility()))
+							|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
+							|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
+							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
+						return;
+					}
+					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled())
+						return;
+					try {
+						ReflectionUtil.setAccessible(method).invoke(AbilityBase.this, event);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+						logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
+					}
+				}
+			};
+			eventhandlers.put(entry.getKey(), observer);
+		}
+		for (EventObserver value : eventhandlers.values()) {
+			eventManager.register(value);
+		}
+		this.restriction = new Restriction();
 	}
 
 	public enum Update {
 		RESTRICTION_SET,
 		RESTRICTION_CLEAR,
 		ABILITY_DESTROY
+	}
+
+	protected void onUpdate(Update update) {
 	}
 
 	/**
@@ -203,6 +200,9 @@ public abstract class AbilityBase {
 		}
 		for (AbilityTimer abilityTimer : new HashSet<>(runningTimers)) {
 			abilityTimer.stop(true);
+		}
+		for (GameTimer timer : pausedTimers) {
+			timer.stop(true);
 		}
 		for (ActionbarChannel channel : actionbarChannels) {
 			channel.unregister();
@@ -286,7 +286,18 @@ public abstract class AbilityBase {
 	 * 능력의 제한 여부를 반환합니다.
 	 */
 	public final boolean isRestricted() {
-		return restricted;
+		return restriction.updateState();
+	}
+
+	/**
+	 * 능력의 제한 여부를 설정합니다.
+	 */
+	public final void setRestricted(final boolean restricted) {
+		restriction.setRestricted(restricted);
+	}
+
+	public final Restriction getRestriction() {
+		return restriction;
 	}
 
 	public final Set<GameTimer> getTimers() {
@@ -301,38 +312,6 @@ public abstract class AbilityBase {
 		return registration.getMaterials().contains(material);
 	}
 
-	private final Queue<GameTimer> pausedTimers = new LinkedList<>();
-
-	/**
-	 * 능력의 제한 여부를 설정합니다.
-	 */
-	public final void setRestricted(final boolean toSet) {
-		final AbilityPreRestrictionEvent event = new AbilityPreRestrictionEvent(this, toSet);
-		Bukkit.getPluginManager().callEvent(event);
-		this.restricted = event.getNewStatus();
-		if (event.getNewStatus()) {
-			for (GameTimer timer : timers) {
-				if (timer.getBehavior() == RestrictionBehavior.STOP_START) {
-					timer.stop(true);
-				} else {
-					timer.pause();
-					pausedTimers.add(timer);
-				}
-			}
-			for (ActionbarChannel channel : actionbarChannels) {
-				channel.update(null);
-			}
-			onUpdate(Update.RESTRICTION_SET);
-			Bukkit.getPluginManager().callEvent(new AbilityRestrictionEvent(this, true));
-		} else {
-			while (!pausedTimers.isEmpty()) {
-				pausedTimers.poll().resume();
-			}
-			onUpdate(Update.RESTRICTION_CLEAR);
-			Bukkit.getPluginManager().callEvent(new AbilityRestrictionEvent(this, false));
-		}
-	}
-
 	public final ActionbarChannel newActionbarChannel() {
 		ActionbarChannel channel = participant.actionbar().newChannel();
 		actionbarChannels.add(channel);
@@ -341,254 +320,11 @@ public abstract class AbilityBase {
 
 	public enum ClickType {LEFT_CLICK, RIGHT_CLICK}
 
-	/**
-	 * 쿨타임 타이머
-	 * 능력의 쿨타임을 관리하기 위해 만들어진 타이머입니다.
-	 *
-	 * @author Daybreak 새벽
-	 */
-	@Deprecated
-	public class CooldownTimer extends Timer {
-
-		private final ActionbarChannel actionbarChannel = newActionbarChannel();
-		private final String name;
-
-		public CooldownTimer(int cooldown, String name, CooldownDecrease maxDecrease) {
-			super(TaskType.REVERSE, (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(maxDecrease.getPercentage()) : cooldown));
-			setBehavior(RestrictionBehavior.PAUSE_RESUME);
-			this.name = name;
-		}
-
-		public CooldownTimer(int cooldown, String name) {
-			this(cooldown, name, CooldownDecrease._100);
-		}
-
-		public CooldownTimer(int cooldown, CooldownDecrease maxDecrease) {
-			this(cooldown, "", maxDecrease);
-		}
-
-		public CooldownTimer(int cooldown) {
-			this(cooldown, "");
-		}
-
-		public boolean isCooldown() {
-			if (isRunning()) {
-				if (getPlayer() != null) {
-					getPlayer().sendMessage(toString(ChatColor.WHITE));
-				}
-			}
-			return isRunning();
-		}
-
-		@Override
-		public void run(int count) {
-			actionbarChannel.update(toString());
-			if (count == (getMaximumCount() / 2) || (count <= 5 && count >= 1)) {
-				SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
-				getPlayer().sendMessage(toString(ChatColor.WHITE));
-			}
-		}
-
-		@Override
-		public void onEnd() {
-			Player player = getPlayer();
-			if (player != null) {
-				player.sendMessage("§a능력을 다시 사용할 수 있습니다.");
-				actionbarChannel.update("§a능력을 다시 사용할 수 있습니다.", 2);
-			}
-		}
-
-		@Override
-		public void onSilentEnd() {
-			actionbarChannel.update(null);
-		}
-
-		@Override
-		public void onCountSet() {
-			actionbarChannel.update(toString());
-		}
-
-		@Override
-		public String toString() {
-			return toString(ChatColor.GOLD);
-		}
-
-		public String toString(ChatColor timeColor) {
-			if (name != null && !name.isEmpty()) {
-				return ChatColor.RED.toString() + name + " 쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
-			} else {
-				return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getCount());
-			}
-		}
-
-		@Override
-		public CooldownTimer setPeriod(TimeUnit timeUnit, int period) {
-			return this;
-		}
-
-		@Override
-		public CooldownTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
-			return this;
-		}
-
-	}
-
-	/**
-	 * Duration Timer (지속시간 타이머)
-	 * 능력의 지속시간을 관리하고 능력을 발동시키기 위해 만들어진 타이머입니다.
-	 *
-	 * @author Daybreak 새벽
-	 */
-	@Deprecated
-	public abstract class DurationTimer extends Timer {
-
-		private final ActionbarChannel actionbarChannel = newActionbarChannel();
-		private final int duration;
-		private final String name;
-		private final CooldownTimer cooldownTimer;
-		private int period = 20;
-
-		public DurationTimer(int duration, CooldownTimer cooldownTimer, String name) {
-			super(TaskType.REVERSE, duration);
-			this.duration = duration;
-			this.name = name;
-			this.cooldownTimer = cooldownTimer;
-		}
-
-		public DurationTimer(int duration, CooldownTimer cooldownTimer) {
-			this(duration, cooldownTimer, "");
-		}
-
-		public DurationTimer(int duration) {
-			this(duration, null);
-		}
-
-		protected void onDurationStart() {}
-		protected abstract void onDurationProcess(int count);
-		protected void onDurationEnd() {}
-		protected void onDurationSilentEnd() {}
-
-		public final boolean isDuration() {
-			if (isRunning()) {
-				if (getPlayer() != null) {
-					getPlayer().sendMessage(toString(ChatColor.WHITE));
-				}
-			}
-			return isRunning();
-		}
-
-		@Override
-		public DurationTimer setPeriod(TimeUnit timeUnit, int period) {
-			Preconditions.checkNotNull(timeUnit);
-			this.period = timeUnit.toTicks(period);
-			super.setPeriod(TimeUnit.TICKS, FastMath.gcd(this.period, 20));
-			return this;
-		}
-
-		@Override
-		public DurationTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
-			super.setInitialDelay(timeUnit, initialDelay);
-			return this;
-		}
-
-		@Override
-		protected final void onStart() {
-			onDurationStart();
-		}
-
-		private int tick = 0;
-
-		@Override
-		protected final void run(int count) {
-			tick += getPeriod();
-			if (tick % 20 == 0) {
-				actionbarChannel.update(toString());
-				final int fixedCount = getFixedCount();
-				if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
-					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
-					getPlayer().sendMessage(toString(ChatColor.WHITE));
-				}
-			}
-			if (tick % period == 0) {
-				onDurationProcess(count);
-				if (tick >= 20) {
-					tick = 0;
-				}
-			}
-		}
-
-		@Override
-		protected final void onEnd() {
-			Player player = getPlayer();
-			if (player != null) {
-				onDurationEnd();
-
-				player.sendMessage("§6지속 시간§f이 종료되었습니다.");
-				actionbarChannel.update("§6지속 시간§f이 종료되었습니다.", 2);
-
-				if (cooldownTimer != null) {
-					cooldownTimer.start();
-				}
-			}
-		}
-
-		@Override
-		protected final void onSilentEnd() {
-			onDurationSilentEnd();
-			actionbarChannel.update(null);
-		}
-
-		@Override
-		public final String toString() {
-			return toString(ChatColor.YELLOW);
-		}
-
-		public final String toString(ChatColor timeColor) {
-			if (name != null && !name.isEmpty()) {
-				return ChatColor.GOLD.toString() + name + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
-			} else {
-				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
-			}
-		}
-
-	}
-
-	@Deprecated
-	public abstract class Timer extends AbilityTimer {
-
-		public Timer(TaskType taskType, int maximumCount) {
-			super(taskType, maximumCount);
-			register();
-		}
-
-		public Timer(int maximumCount) {
-			this(TaskType.REVERSE, maximumCount);
-		}
-
-		public Timer() {
-			this(TaskType.INFINITE, -1);
-		}
-
-		@Override
-		public Timer setPeriod(TimeUnit timeUnit, int period) {
-			super.setPeriod(timeUnit, period);
-			return this;
-		}
-
-		@Override
-		public Timer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
-			super.setInitialDelay(timeUnit, initialDelay);
-			return this;
-		}
-
-		public Timer setBehavior(RestrictionBehavior behavior) {
-			super.setBehavior(behavior);
-			return this;
-		}
-
-	}
+	public enum RestrictionBehavior {STOP, PAUSE_RESUME}
 
 	public abstract class AbilityTimer extends GameTimer {
+
+		private RestrictionBehavior behavior = RestrictionBehavior.STOP;
 
 		public AbilityTimer(TaskType taskType, int maximumCount) {
 			game.super(taskType, maximumCount);
@@ -637,8 +373,12 @@ public abstract class AbilityBase {
 		}
 
 		public AbilityTimer setBehavior(RestrictionBehavior behavior) {
-			super.setBehavior(behavior);
+			this.behavior = Preconditions.checkNotNull(behavior);
 			return this;
+		}
+
+		public RestrictionBehavior getBehavior() {
+			return behavior;
 		}
 
 		public AbilityTimer register() {
@@ -830,6 +570,9 @@ public abstract class AbilityBase {
 			this.duration = duration;
 			this.name = Strings.nullToEmpty(name);
 			this.cooldown = cooldown;
+			if (Settings.getDurationTimerBehavior()) {
+				setBehavior(RestrictionBehavior.PAUSE_RESUME);
+			}
 			register();
 		}
 
@@ -909,16 +652,13 @@ public abstract class AbilityBase {
 
 		@Override
 		protected final void onEnd() {
-			Player player = getPlayer();
-			if (player != null) {
-				onDurationEnd();
+			onDurationEnd();
 
-				player.sendMessage("§6지속 시간§f이 종료되었습니다.");
-				actionbarChannel.update("§6지속 시간§f이 종료되었습니다.", 2);
+			getPlayer().sendMessage("§6지속 시간§f이 종료되었습니다.");
+			actionbarChannel.update("§6지속 시간§f이 종료되었습니다.", 2);
 
-				if (cooldown != null) {
-					cooldown.start();
-				}
+			if (cooldown != null) {
+				cooldown.start();
 			}
 		}
 
@@ -939,6 +679,90 @@ public abstract class AbilityBase {
 			} else {
 				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
 			}
+		}
+
+	}
+
+	public final class Restriction {
+
+		private boolean isRestricted = true;
+		private final Set<Restriction.Condition> conditions = new HashSet<>();
+
+		private Restriction() {
+			conditions.add(new Condition() {
+				@Override
+				public boolean condition() {
+					return game.isRestricted() || !game.isGameStarted();
+				}
+			});
+		}
+
+		private boolean checkConditions() {
+			for (Restriction.Condition condition : conditions) {
+				if (condition.condition()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private boolean updateState(final boolean state) {
+			if (this.isRestricted == state) return this.isRestricted;
+			this.isRestricted = state;
+			if (state) {
+				for (AbilityTimer timer : timers) {
+					if (timer.getBehavior() == RestrictionBehavior.STOP) {
+						timer.stop(true);
+					} else {
+						timer.pause();
+						pausedTimers.add(timer);
+					}
+				}
+				for (ActionbarChannel channel : actionbarChannels) {
+					channel.update(null);
+				}
+				onUpdate(Update.RESTRICTION_SET);
+				Bukkit.getPluginManager().callEvent(new AbilityRestrictionEvent(AbilityBase.this, true));
+				return true;
+			} else {
+				while (!pausedTimers.isEmpty()) {
+					pausedTimers.poll().resume();
+				}
+				onUpdate(Update.RESTRICTION_CLEAR);
+				Bukkit.getPluginManager().callEvent(new AbilityRestrictionEvent(AbilityBase.this, false));
+				return false;
+			}
+		}
+
+		public boolean updateState() {
+			if (checkConditions()) {
+				return updateState(true);
+			} else return isRestricted;
+		}
+
+		public void setRestricted(final boolean restricted) {
+			if (restricted) updateState(true); else updateState(checkConditions());
+		}
+
+		public abstract class Condition {
+
+			public abstract boolean condition();
+
+			protected final AbilityBase getAbility() {
+				return AbilityBase.this;
+			}
+
+			public final Condition register() {
+				if (condition()) updateState(true); else updateState();
+				conditions.add(this);
+				return this;
+			}
+
+			public final void unregister() {
+				conditions.remove(this);
+				if (condition()) updateState();
+			}
+
 		}
 
 	}
