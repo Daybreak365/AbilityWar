@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,10 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 	}
 
 	public void register(EventObserver observer) {
+		if (iterationDepth != 0) {
+			toRegister.add(observer);
+			return;
+		}
 		final TreeMap<Integer, HashSet<EventObserver>> observerMap;
 		if (!observers.containsKey(observer.eventClass)) {
 			observerMap = new TreeMap<>();
@@ -60,15 +65,17 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 
 	public void unregister(EventObserver observer) {
 		if (iterationDepth != 0) {
-			toRemove.add(observer);
-		} else if (observers.containsKey(observer.eventClass)) {
+			toUnregister.add(observer);
+			return;
+		}
+		if (observers.containsKey(observer.eventClass)) {
 			final TreeMap<Integer, HashSet<EventObserver>> treeMap = observers.get(observer.eventClass);
 			treeMap.entrySet().removeIf(entry -> entry.getValue().remove(observer) && entry.getValue().size() == 0);
 		}
 	}
 
 	private int iterationDepth = 0;
-	private final List<EventObserver> toRemove = new LinkedList<>();
+	private final List<EventObserver> toRegister = new LinkedList<>(), toUnregister = new LinkedList<>();
 
 	@Override
 	public void execute(Listener listener, Event event) {
@@ -83,8 +90,12 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 			iterationDepth = Math.max(0, iterationDepth - 1);
 			if (iterationDepth == 0) {
 				final TreeMap<Integer, HashSet<EventObserver>> treeMap = observers.get(eventClass);
-				treeMap.entrySet().removeIf(entry -> entry.getValue().removeAll(toRemove) && entry.getValue().size() == 0);
-				toRemove.clear();
+				treeMap.entrySet().removeIf(entry -> entry.getValue().removeAll(toUnregister) && entry.getValue().size() == 0);
+				toUnregister.clear();
+				for (final Iterator<EventObserver> iterator = toRegister.iterator(); iterator.hasNext(); ) {
+					register(iterator.next());
+					iterator.remove();
+				}
 			}
 		}
 	}

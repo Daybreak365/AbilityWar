@@ -58,6 +58,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * {@link AbilityWar} 플러그인에서 사용하는 <strong>모든 능력</strong>의 기반이 되는 클래스입니다.
@@ -123,7 +124,7 @@ public abstract class AbilityBase {
 	private final AbilityManifest manifest;
 	private String[] explanation = null;
 	private final AbstractGame game;
-	private final Map<Class<? extends Event>, EventObserver> eventhandlers;
+	private final Map<Class<? extends Event>, EventObserver> eventhandlers = new HashMap<>();
 	private final Set<AbilityTimer> timers = new HashSet<>(), runningTimers = new HashSet<>();
 	private final Queue<AbilityTimer> pausedTimers = new LinkedList<>();
 	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
@@ -139,13 +140,15 @@ public abstract class AbilityBase {
 	protected AbilityBase(Participant participant) throws IllegalStateException {
 		this.participant = participant;
 		this.game = participant.getGame();
+		if (!game.isRunning()) {
+			throw new IllegalStateException("게임이 진행 되고 있지 않습니다.");
+		}
 		if (!AbilityFactory.isRegistered(getClass())) {
 			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		}
 		this.registration = AbilityFactory.getRegistration(getClass());
 		this.manifest = registration.getManifest();
 		final EventManager eventManager = game.getEventManager();
-		eventhandlers = new HashMap<>();
 		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
 			final Pair<Method, SubscribeEvent> pair = entry.getValue();
 			final EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
@@ -193,6 +196,7 @@ public abstract class AbilityBase {
 	 */
 	public final void destroy() {
 		this.destroyed = true;
+		this.restriction.isRestricted = true;
 		onUpdate(Update.ABILITY_DESTROY);
 		Bukkit.getPluginManager().callEvent(new AbilityDestroyEvent(this));
 		for (EventObserver eventObserver : eventhandlers.values()) {
@@ -313,7 +317,8 @@ public abstract class AbilityBase {
 	}
 
 	public final ActionbarChannel newActionbarChannel() {
-		ActionbarChannel channel = participant.actionbar().newChannel();
+		if (destroyed) throw new IllegalStateException();
+		final ActionbarChannel channel = participant.actionbar().newChannel();
 		actionbarChannels.add(channel);
 		return channel;
 	}
@@ -360,12 +365,14 @@ public abstract class AbilityBase {
 			this(TaskType.INFINITE, -1);
 		}
 
+		@NotNull
 		@Override
 		public AbilityTimer setPeriod(TimeUnit timeUnit, int period) {
 			super.setPeriod(timeUnit, period);
 			return this;
 		}
 
+		@NotNull
 		@Override
 		public AbilityTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
 			super.setInitialDelay(timeUnit, initialDelay);
@@ -538,11 +545,13 @@ public abstract class AbilityBase {
 				}
 			}
 
+			@NotNull
 			@Override
 			public CooldownTimer setPeriod(TimeUnit timeUnit, int period) {
 				return this;
 			}
 
+			@NotNull
 			@Override
 			public CooldownTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
 				return this;
@@ -598,6 +607,7 @@ public abstract class AbilityBase {
 			return isRunning();
 		}
 
+		@NotNull
 		@Override
 		public Duration setPeriod(TimeUnit timeUnit, int period) {
 			Preconditions.checkNotNull(timeUnit);
@@ -606,6 +616,7 @@ public abstract class AbilityBase {
 			return this;
 		}
 
+		@NotNull
 		@Override
 		public Duration setInitialDelay(TimeUnit timeUnit, int initialDelay) {
 			super.setInitialDelay(timeUnit, initialDelay);
@@ -692,7 +703,7 @@ public abstract class AbilityBase {
 			conditions.add(new Condition() {
 				@Override
 				public boolean condition() {
-					return game.isRestricted() || !game.isGameStarted();
+					return game.isRestricted() || !game.isGameStarted() || destroyed;
 				}
 			});
 		}
@@ -748,7 +759,7 @@ public abstract class AbilityBase {
 
 			public abstract boolean condition();
 
-			protected final AbilityBase getAbility() {
+			public final AbilityBase getAbility() {
 				return AbilityBase.this;
 			}
 

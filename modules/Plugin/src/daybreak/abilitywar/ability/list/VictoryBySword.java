@@ -10,8 +10,8 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -299,6 +299,9 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 			target.getInventory().setContents(targetContents);
 			if (restrictCondition != null) {
 				restrictCondition.unregister();
+				if (restrictCondition.getAbility().equals(targetParticipant.getAbility())) {
+					restrictCondition.getAbility().setRestricted(false);
+				}
 			}
 			if (!target.isDead()) {
 				target.setHealth(Math.min(targetHealth, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
