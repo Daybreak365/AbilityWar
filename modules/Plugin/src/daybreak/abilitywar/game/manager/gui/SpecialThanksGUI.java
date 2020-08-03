@@ -1,8 +1,8 @@
 package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
+import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
-import daybreak.abilitywar.utils.library.item.ItemLib;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,7 +70,7 @@ public class SpecialThanksGUI implements Listener {
 		int count = 0;
 
 		for (SpecialThank thank : SpecialThanks) {
-			final ItemStack stack = ItemLib.getSkull(thank.getName());
+			final ItemStack stack = Skulls.createSkull(thank.getName());
 			final SkullMeta meta = (SkullMeta) stack.getItemMeta();
 			if (thank.getName().equals("error")) {
 				meta.setDisplayName("§c오류");

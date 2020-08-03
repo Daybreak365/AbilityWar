@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft.damage
 
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
-import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException
+import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException
 import org.bukkit.Bukkit
 import org.bukkit.GameMode.ADVENTURE
 import org.bukkit.GameMode.SURVIVAL
@@ -17,7 +17,7 @@ class Damages private constructor() {
 		private val INSTANCE: IDamages = try {
 			Class.forName("daybreak.abilitywar.utils.base.minecraft.damage." + ServerVersion.name + ".DamageImpl").asSubclass(IDamages::class.java).getConstructor().newInstance()
 		} catch (e: Exception) {
-			throw UnsupportedVersionException()
+			throw VersionNotSupportedException()
 		}
 
 		@JvmStatic

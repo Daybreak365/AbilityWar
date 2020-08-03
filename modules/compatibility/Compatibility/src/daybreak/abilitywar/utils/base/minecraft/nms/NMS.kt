@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft.nms
 
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
-import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException
+import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException
 import org.bukkit.World
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
@@ -12,7 +12,7 @@ class NMS private constructor() {
 		private val INSTANCE: INMS = try {
 			Class.forName("daybreak.abilitywar.utils.base.minecraft.nms." + ServerVersion.name + ".NMSImpl").asSubclass(INMS::class.java).getConstructor().newInstance()
 		} catch (e: Exception) {
-			throw UnsupportedVersionException()
+			throw VersionNotSupportedException()
 		}
 
 		@JvmStatic

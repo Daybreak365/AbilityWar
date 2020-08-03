@@ -55,8 +55,6 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 	public SummerVacation() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		boolean invincible = Settings.InvincibilitySettings.isEnabled();
-		setRestricted(invincible);
 		this.maxKill = SummerVacationSettings.getMaxKill();
 	}
 

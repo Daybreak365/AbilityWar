@@ -8,17 +8,17 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.item.ItemLib;
 import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -120,7 +120,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 			armorStand.setGravity(false);
 			EntityEquipment equipment = armorStand.getEquipment();
 			equipment.setArmorContents(target.getInventory().getArmorContents());
-			equipment.setHelmet(ItemLib.getSkull(target.getName()));
+			equipment.setHelmet(Skulls.createSkull(target));
 			this.particle = 0;
 		}
 

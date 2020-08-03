@@ -60,7 +60,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 				Random random = new Random();
 				this.selector = new ArrayList<>(getSelectors()).get(0);
 				Bukkit.broadcastMessage("§e" + selector.getPlayer().getName() + "§f님이 능력을 선택합니다!");
-				abilities = AbilitySelectStrategy.EVERY_ABILITY_EXCLUDING_BLACKLISTED.getAbilities();
+				abilities = AbilityCollector.EVERY_ABILITY_EXCLUDING_BLACKLISTED.collect(OneAbility.this.getClass());
 				if (abilities.size() > 0) {
 					Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
 					for (Participant participant : getParticipants()) {

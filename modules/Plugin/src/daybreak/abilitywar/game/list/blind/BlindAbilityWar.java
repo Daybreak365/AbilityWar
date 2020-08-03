@@ -409,7 +409,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 
 			@Override
 			protected void drawAbility(Collection<? extends Participant> selectors) {
-				abilities = AbilitySelectStrategy.EVERY_ABILITY_EXCLUDING_BLACKLISTED.getAbilities();
+				abilities = AbilityCollector.EVERY_ABILITY_EXCLUDING_BLACKLISTED.collect(BlindAbilityWar.this.getClass());
 				if (getSelectors().size() <= abilities.size()) {
 					Random random = new Random();
 

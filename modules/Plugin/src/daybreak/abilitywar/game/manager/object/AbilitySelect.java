@@ -2,7 +2,8 @@ package daybreak.abilitywar.game.manager.object;
 
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -212,21 +213,21 @@ public abstract class AbilitySelect extends GameTimer {
 		void startAbilitySelect() throws OperationNotSupportedException;
 	}
 
-	public interface AbilitySelectStrategy {
-		AbilitySelectStrategy EVERY_ABILITY_EXCLUDING_BLACKLISTED = new AbilitySelectStrategy() {
+	public interface AbilityCollector {
+		AbilityCollector EVERY_ABILITY_EXCLUDING_BLACKLISTED = new AbilityCollector() {
 			@Override
-			public List<Class<? extends AbilityBase>> getAbilities() {
-				ArrayList<Class<? extends AbilityBase>> abilities = new ArrayList<>();
-				for (String name : AbilityList.nameValues()) {
-					if (!Configuration.Settings.isBlacklisted(name)) {
-						abilities.add(AbilityList.getByString(name));
+			public List<Class<? extends AbilityBase>> collect(Class<? extends AbstractGame> game) {
+				final List<Class<? extends AbilityBase>> abilities = new ArrayList<>();
+				for (AbilityRegistration registration : AbilityList.values()) {
+					if (!Settings.isBlacklisted(registration.getManifest().name()) && registration.isAvailable(game)) {
+						abilities.add(registration.getAbilityClass());
 					}
 				}
 				return abilities;
 			}
 		};
 
-		List<Class<? extends AbilityBase>> getAbilities();
+		List<Class<? extends AbilityBase>> collect(final Class<? extends AbstractGame> game);
 	}
 
 }

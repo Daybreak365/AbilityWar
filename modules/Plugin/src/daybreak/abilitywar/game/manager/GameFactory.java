@@ -16,6 +16,7 @@ import daybreak.abilitywar.game.list.debug.DebugMode;
 import daybreak.abilitywar.game.list.mix.MixGame;
 import daybreak.abilitywar.game.list.mix.changemix.ChangeMix;
 import daybreak.abilitywar.game.list.mix.debug.MixDebugMode;
+import daybreak.abilitywar.game.list.mix.triplemix.TripleMixGame;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.oneability.OneAbility;
 import daybreak.abilitywar.game.list.standard.StandardGame;
@@ -26,10 +27,10 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.server.ServerNotSupportedException;
 import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
-import daybreak.abilitywar.utils.base.minecraft.server.UnsupportedServerException;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
+import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +61,7 @@ public class GameFactory {
 		registerMode(ChangeMix.class);
 		registerMode(MurderMystery.class);
 		registerMode(BlindAbilityWar.class);
+		registerMode(TripleMixGame.class);
 		if (DeveloperSettings.isEnabled()) {
 			registerMode(DebugMode.class);
 			registerMode(MixDebugMode.class);
@@ -99,9 +101,9 @@ public class GameFactory {
 				} else {
 					logger.debug("§e" + gameClass.getName() + " §f게임모드는 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
-			} catch (UnsupportedVersionException e) {
+			} catch (VersionNotSupportedException e) {
 				logger.debug("§e" + gameClass.getName() + " §f게임 모드는 이 버전에서 지원되지 않습니다.");
-			} catch (UnsupportedServerException e) {
+			} catch (ServerNotSupportedException e) {
 				logger.debug("§e" + gameClass.getName() + " §f게임 모드는 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
 			} catch (Exception e) {
 				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + gameClass.getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
@@ -133,17 +135,17 @@ public class GameFactory {
 		private final TeamGameRegistration teamGame;
 		private final int flag;
 
-		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException, UnsupportedServerException {
+		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException {
 			if (clazz.isAnnotationPresent(Support.Version.class)) {
 				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
 				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
-					throw new UnsupportedVersionException();
+					throw new VersionNotSupportedException();
 				}
 			}
 			if (clazz.isAnnotationPresent(Support.Server.class)) {
 				final ServerType[] supportedServers = clazz.getAnnotation(Support.Server.class).value();
 				if (!Arrays.asList(supportedServers).contains(ServerType.getServerType())) {
-					throw new UnsupportedServerException(supportedServers);
+					throw new ServerNotSupportedException(supportedServers);
 				}
 			}
 			this.clazz = clazz;
@@ -168,9 +170,9 @@ public class GameFactory {
 				TeamGameRegistration teamGame = null;
 				try {
 					teamGame = new TeamGameRegistration(teamSupport.value());
-				} catch (UnsupportedVersionException e) {
+				} catch (VersionNotSupportedException e) {
 					logger.debug("§e" + teamSupport.value().getName() + " §f게임 모드는 이 버전에서 지원되지 않습니다.");
-				} catch (UnsupportedServerException e) {
+				} catch (ServerNotSupportedException e) {
 					logger.debug("§e" + teamSupport.value().getName() + " §f게임 모드는 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
 				} catch (Exception e) {
 					logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + teamSupport.value().getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
@@ -227,17 +229,17 @@ public class GameFactory {
 		private final Constructor<? extends Teamable> constructor;
 		private final int flag;
 
-		private TeamGameRegistration(Class<? extends Teamable> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, UnsupportedVersionException, UnsupportedServerException {
+		private TeamGameRegistration(Class<? extends Teamable> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException {
 			if (clazz.isAnnotationPresent(Support.Version.class)) {
 				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
 				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
-					throw new UnsupportedVersionException();
+					throw new VersionNotSupportedException();
 				}
 			}
 			if (clazz.isAnnotationPresent(Support.Server.class)) {
 				final ServerType[] supportedServers = clazz.getAnnotation(Support.Server.class).value();
 				if (!Arrays.asList(supportedServers).contains(ServerType.getServerType())) {
-					throw new UnsupportedServerException(supportedServers);
+					throw new ServerNotSupportedException(supportedServers);
 				}
 			}
 			this.clazz = clazz;

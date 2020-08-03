@@ -1,4 +1,4 @@
-package daybreak.abilitywar.game.list.mix;
+package daybreak.abilitywar.game.list.mix.triplemix;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
@@ -7,12 +7,12 @@ import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -28,20 +28,20 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-@GameManifest(name = "믹스 능력자 전쟁", description = {
-		"§f두 능력이 섞이면 어떻게 될까?",
+@GameManifest(name = "트리플 믹스", description = {
+		"§f두 개도 모자라서 능력 세 개를 동시에?",
 		"§f지금 바로 믹스!",
 		"",
-		"§f두가지의 능력으로 펼치는 능력자 전쟁입니다."
+		"§f세가지의 능력으로 펼치는 능력자 전쟁입니다."
 })
-@GameAliases({"믹능전", "믹스"})
-@TeamSupport(MixTeamGame.class)
-public class MixGame extends AbstractMix implements DefaultKitHandler {
+@Beta
+@GameAliases({"트믹"})
+public class TripleMixGame extends AbstractTripleMix implements DefaultKitHandler {
 
-	private static final Logger logger = Logger.getLogger(MixGame.class);
+	private static final Logger logger = Logger.getLogger(TripleMixGame.class);
 	private final boolean invincible = InvincibilitySettings.isEnabled();
 
-	public MixGame() {
+	public TripleMixGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 	}
 
@@ -69,7 +69,7 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 				break;
 			case 3:
 				lines = Messager.asList(
-						"§5MixAbility §f- §d믹스 능력자 전쟁",
+						"§5TripleMix §f- §d트리플 믹스",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b모드 개발자 §7: §fDaybreak 새벽",
 						"§9디스코드 §7: §f새벽§7#5908"
@@ -117,7 +117,7 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 			case 13:
 				for (String line : Messager.asList(
 						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
-						"§f            §5MixAbility §f- §d믹스 능력자 전쟁  ",
+						"§f            §5TripleMix §f- §d트리플 믹스  ",
 						"§f                    게임 시작                ",
 						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
 					Bukkit.broadcastMessage(line);
@@ -172,17 +172,16 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 
 			@Override
 			protected void drawAbility(Collection<? extends Participant> selectors) {
-				abilities = AbilityCollector.EVERY_ABILITY_EXCLUDING_BLACKLISTED.collect(MixGame.this.getClass());
+				abilities = AbilityCollector.EVERY_ABILITY_EXCLUDING_BLACKLISTED.collect(TripleMixGame.this.getClass());
 				if (abilities.size() > 0) {
 					Random random = new Random();
 
 					for (Participant participant : selectors) {
 						Player p = participant.getPlayer();
 
-						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
-						Class<? extends AbilityBase> secondAbilityClass = abilities.get(random.nextInt(abilities.size()));
+						final Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size())), secondAbilityClass = abilities.get(random.nextInt(abilities.size())), thirdAbilityClass = abilities.get(random.nextInt(abilities.size()));
 						try {
-							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
+							((TripleMix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass, thirdAbilityClass);
 
 							p.sendMessage(new String[]{
 									"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
@@ -191,7 +190,7 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 							});
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
-							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
+							logger.error("문제가 발생한 능력: §b" + abilityClass.getName() + " §f또는 §b" + secondAbilityClass.getName() + " §f또는 §b" + thirdAbilityClass.getName());
 						}
 					}
 				} else {
@@ -202,20 +201,19 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 
 			@Override
 			protected boolean changeAbility(Participant participant) {
-				Player p = participant.getPlayer();
+				final Player p = participant.getPlayer();
 
 				if (abilities.size() > 0) {
-					Random random = new Random();
+					final Random random = new Random();
 
 					if (participant.hasAbility()) {
-						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
-						Class<? extends AbilityBase> secondAbilityClass = abilities.get(random.nextInt(abilities.size()));
+						final Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size())), secondAbilityClass = abilities.get(random.nextInt(abilities.size())), thirdAbilityClass = abilities.get(random.nextInt(abilities.size()));
 						try {
-							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
+							((TripleMix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass, thirdAbilityClass);
 							return true;
 						} catch (Exception e) {
 							logger.error(ChatColor.YELLOW + p.getName() + ChatColor.WHITE + "님의 능력을 변경하는 도중 오류가 발생하였습니다.");
-							logger.error(ChatColor.WHITE + "문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
+							logger.error("문제가 발생한 능력: §b" + abilityClass.getName() + " §f또는 §b" + secondAbilityClass.getName() + " §f또는 §b" + thirdAbilityClass.getName());
 						}
 					}
 				} else {

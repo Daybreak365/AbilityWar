@@ -24,6 +24,10 @@ public class FileUtil {
 	private FileUtil() {
 	}
 
+	public static File getFile(String path) {
+		return new File(mainDirectory, path);
+	}
+
 	public static File newFile(String path) {
 		File file = new File(mainDirectory.getPath() + "/" + path);
 		try {
@@ -42,7 +46,7 @@ public class FileUtil {
 	}
 
 	public static File newDirectory(String path) {
-		File directory = new File(mainDirectory.getPath() + "/" + path);
+		final File directory = new File(mainDirectory.getPath() + "/" + path);
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}

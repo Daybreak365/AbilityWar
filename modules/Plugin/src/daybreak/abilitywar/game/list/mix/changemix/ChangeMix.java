@@ -66,7 +66,6 @@ public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnabl
 
 	public ChangeMix() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		setRestricted(invincible);
 		this.maxLife = ChangeAbilityWarSettings.getLife();
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}

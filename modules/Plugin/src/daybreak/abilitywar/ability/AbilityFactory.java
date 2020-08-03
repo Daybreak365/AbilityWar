@@ -7,8 +7,10 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.triplemix.TripleMix;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
 import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
@@ -18,10 +20,10 @@ import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.server.ServerNotSupportedException;
 import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
-import daybreak.abilitywar.utils.base.minecraft.server.UnsupportedServerException;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import daybreak.abilitywar.utils.base.minecraft.version.UnsupportedVersionException;
+import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -33,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 
@@ -126,6 +129,8 @@ public class AbilityFactory {
 		registerAbility(SquirtGun.class);
 		// 믹스 능력자 게임모드
 		registerAbility(Mix.class);
+		// 트리플 믹스 게임모드
+		registerAbility(TripleMix.class);
 
 		// 머더 미스터리 게임모드
 		registerAbility(Murderer.class);
@@ -155,13 +160,13 @@ public class AbilityFactory {
 				} else {
 					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
-			} catch (NoSuchMethodException | NullPointerException e) {
-				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다."));
+			} catch (NoSuchMethodException | NullPointerException | IllegalArgumentException e) {
+				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? (ChatColor.YELLOW + abilityClass.getName() + ChatColor.WHITE + ": " + e.getMessage()) : ("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다."));
 			} catch (IllegalAccessException e) {
 				logger.error(abilityClass.getName() + " 능력 클래스에 public 생성자가 존재하지 않습니다.");
-			} catch (UnsupportedVersionException e) {
+			} catch (VersionNotSupportedException e) {
 				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 버전에서 지원되지 않습니다.");
-			} catch (UnsupportedServerException e) {
+			} catch (ServerNotSupportedException e) {
 				logger.debug("§e" + abilityClass.getName() + " §f능력은 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
 			} catch (Exception e) {
 				logger.error("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다.");
@@ -233,27 +238,27 @@ public class AbilityFactory {
 		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 		private final Map<String, SettingObject<?>> settingObjects;
 		private final ImmutableSet<Material> materials;
+		private final ImmutableSet<Class<? extends AbstractGame>> notAvailable;
 		private final int flag;
 
 
-		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, UnsupportedVersionException, UnsupportedServerException {
+		private AbilityRegistration(Class<? extends AbilityBase> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, IllegalAccessException, VersionNotSupportedException, ServerNotSupportedException {
 			if (clazz.isAnnotationPresent(Support.Version.class)) {
 				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
 				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
-					throw new UnsupportedVersionException();
+					throw new VersionNotSupportedException();
 				}
 			}
 			if (clazz.isAnnotationPresent(Support.Server.class)) {
 				final ServerType[] supportedServers = clazz.getAnnotation(Support.Server.class).value();
 				if (!Arrays.asList(supportedServers).contains(ServerType.getServerType())) {
-					throw new UnsupportedServerException(supportedServers);
+					throw new ServerNotSupportedException(supportedServers);
 				}
 			}
 			this.clazz = clazz;
 			this.constructor = clazz.getConstructor(Participant.class);
 
-			if (!clazz.isAnnotationPresent(AbilityManifest.class))
-				throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
+			if (!clazz.isAnnotationPresent(AbilityManifest.class)) throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
 			this.manifest = clazz.getAnnotation(AbilityManifest.class);
 			Preconditions.checkNotNull(manifest.name());
 			Preconditions.checkNotNull(manifest.rank());
@@ -292,6 +297,9 @@ public class AbilityFactory {
 			final Materials materials = clazz.getAnnotation(Materials.class);
 			this.materials = materials != null ? ImmutableSet.<Material>builder().add(materials.materials()).build() : DEFAULT_MATERIALS;
 
+			final NotAvailable notAvailable = clazz.getAnnotation(NotAvailable.class);
+			this.notAvailable = notAvailable != null ? ImmutableSet.<Class<? extends AbstractGame>>builder().add(notAvailable.value()).build() : ImmutableSet.of();
+
 			int flag = 0x0;
 			if (ActiveHandler.class.isAssignableFrom(clazz)) flag |= Flag.ACTIVE_SKILL;
 			if (TargetHandler.class.isAssignableFrom(clazz)) flag |= Flag.TARGET_SKILL;
@@ -321,6 +329,15 @@ public class AbilityFactory {
 
 		public ImmutableSet<Material> getMaterials() {
 			return materials;
+		}
+
+		public boolean isAvailable(final Class<? extends AbstractGame> game) {
+			for (final Class<? extends AbstractGame> clazz : notAvailable) {
+				if (clazz.isAssignableFrom(game)) {
+					return false;
+				}
+			}
+			return true;
 		}
 
 		public boolean hasFlag(int flag) {

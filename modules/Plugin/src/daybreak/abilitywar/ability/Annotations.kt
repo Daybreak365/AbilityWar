@@ -1,10 +1,12 @@
 package daybreak.abilitywar.ability
 
+import daybreak.abilitywar.game.AbstractGame
 import org.bukkit.Material
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
 import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.reflect.KClass
 
 @Retention(RUNTIME)
 @Target(ANNOTATION_CLASS, CLASS)
@@ -43,3 +45,5 @@ annotation class SubscribeEvent(val onlyRelevant: Boolean = false, val ignoreCan
 		const val HIGHEST = 5
 	}
 }
+
+annotation class NotAvailable(val value: Array<KClass<out AbstractGame>>)

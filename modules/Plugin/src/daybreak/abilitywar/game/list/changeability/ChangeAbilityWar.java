@@ -53,7 +53,6 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
 	public ChangeAbilityWar() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		setRestricted(invincible);
 		this.maxLife = ChangeAbilityWarSettings.getLife();
 		attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());

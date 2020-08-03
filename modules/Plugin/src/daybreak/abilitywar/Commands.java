@@ -4,6 +4,7 @@ import daybreak.abilitywar.Command.Condition;
 import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityBase.Duration;
 import daybreak.abilitywar.ability.AbilityFactory;
+import daybreak.abilitywar.addon.installer.AddonsGUI;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.wizard.AbilitySettingWizard;
@@ -123,7 +124,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 					case 3:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
-								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true)});
+								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true),
+								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -831,11 +833,17 @@ public class Commands implements CommandExecutor, TabCompleter {
 			}
 
 		});
-
 		mainCommand.addSubCommand("specialthanks", new Command(Condition.PLAYER) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
 				new SpecialThanksGUI((Player) sender, plugin).openGUI(1);
+				return true;
+			}
+		});
+		mainCommand.addSubCommand("addon", new Command(Condition.OP, Condition.PLAYER) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				new AddonsGUI((Player) sender, plugin).openGUI(1);
 				return true;
 			}
 		});
@@ -854,7 +862,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 			switch (args.length) {
 				case 1:
 					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "skip", "anew",
-							"config", "util", "script", "gamemode", "install", "team", "specialthanks");
+							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon");
 					if (args[0].isEmpty()) {
 						return subCommands;
 					} else {

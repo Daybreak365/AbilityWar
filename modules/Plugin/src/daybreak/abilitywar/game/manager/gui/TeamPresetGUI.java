@@ -57,7 +57,7 @@ public class TeamPresetGUI implements Listener {
 			.build();
 
 	private static final ItemStack QUIT = new ItemBuilder()
-			.type(MaterialX.BIRCH_DOOR)
+			.type(MaterialX.SPRUCE_DOOR)
 			.displayName(ChatColor.AQUA + "나가기")
 			.build();
 

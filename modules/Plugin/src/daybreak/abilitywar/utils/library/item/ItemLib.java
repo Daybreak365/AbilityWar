@@ -96,12 +96,14 @@ public class ItemLib {
 
 	private static final ItemStack AIR = new ItemStack(Material.AIR);
 
+	@Deprecated
 	public static ItemStack getSkull(String owner) {
 		ItemStack item = MaterialX.PLAYER_HEAD.parseItem();
 		item.setItemMeta(setOwner((SkullMeta) item.getItemMeta(), owner));
 		return item;
 	}
 
+	@Deprecated
 	public static ItemStack getCustomSkull(String url) {
 		ItemStack skull = MaterialX.PLAYER_HEAD.parseItem();
 		if (url == null || url.isEmpty()) return skull;
@@ -119,7 +121,7 @@ public class ItemLib {
 		return skull;
 	}
 
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static SkullMeta setOwner(SkullMeta meta, String playerName) {
 		if (ServerVersion.getVersion() >= 13) {
 			meta.setOwningPlayer(new OfflinePlayer() {

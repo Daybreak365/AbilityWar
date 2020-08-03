@@ -70,7 +70,6 @@ public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler,
 
 	public TeamChangeMix(final String[] args) {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS(), args);
-		setRestricted(invincible);
 		this.maxLife = ChangeAbilityWarSettings.getLife();
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}

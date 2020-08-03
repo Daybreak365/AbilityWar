@@ -113,7 +113,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 			@Override
 			protected void drawAbility(Collection<? extends Participant> selectors) {
-				abilities = AbilitySelectStrategy.EVERY_ABILITY_EXCLUDING_BLACKLISTED.getAbilities();
+				abilities = AbilityCollector.EVERY_ABILITY_EXCLUDING_BLACKLISTED.collect(Game.this.getClass());
 				if (getSelectors().size() <= abilities.size()) {
 					Random random = new Random();
 
