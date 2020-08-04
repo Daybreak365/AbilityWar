@@ -36,6 +36,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -128,7 +129,7 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof LivingEntity && !e.isCancelled() && predicate.test(e.getEntity())) {
+		if ((e.getDamager() instanceof Projectile ? getPlayer().equals(((Projectile) e.getDamager()).getShooter()) : getPlayer().equals(e.getDamager())) && e.getEntity() instanceof LivingEntity && !e.isCancelled() && predicate.test(e.getEntity())) {
 			if (duration.isRunning()) {
 				for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
 					addStack(livingEntity, 1);
@@ -303,6 +304,23 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 				for (LocationIterator iterator = Line.iteratorBetween(armorStand.getLocation(), other.armorStand.getLocation(), 10); iterator.hasNext();) {
 					ParticleLib.REDSTONE.spawnParticle(iterator.next(), RED);
 				}
+			}
+		}
+
+		@EventHandler
+		private void onEntityDamage(EntityDamageEvent e) {
+			if (e.getEntity().equals(armorStand)) e.setCancelled(true);
+		}
+
+		@EventHandler
+		private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+			if (e.getEntity().equals(armorStand)) e.setCancelled(true);
+		}
+
+		@EventHandler
+		private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+			if (e.getEntity().equals(armorStand) && !e.getDamager().equals(getPlayer())) {
+				e.setCancelled(true);
 			}
 		}
 

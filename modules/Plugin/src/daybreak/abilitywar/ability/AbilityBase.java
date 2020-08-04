@@ -725,8 +725,9 @@ public abstract class AbilityBase {
 					if (timer.getBehavior() == RestrictionBehavior.STOP) {
 						timer.stop(true);
 					} else {
-						timer.pause();
-						pausedTimers.add(timer);
+						if (timer.pause()) {
+							pausedTimers.add(timer);
+						}
 					}
 				}
 				for (ActionbarChannel channel : actionbarChannels) {

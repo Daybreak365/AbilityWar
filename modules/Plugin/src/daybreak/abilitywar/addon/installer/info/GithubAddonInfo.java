@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class GithubAddonInfo implements AddonInfo {
 
@@ -131,6 +132,9 @@ public class GithubAddonInfo implements AddonInfo {
 			this.downloadURL = new URL(asset.get("browser_download_url").getAsString());
 			this.fileSize = asset.get("size").getAsInt();
 			this.updates = object.get("body").getAsString().split("\\n");
+			for (int i = 0; i < updates.length; i++) {
+				updates[i] = updates[i].replaceAll("\\r", "");
+			}
 		}
 
 		@Override
@@ -167,6 +171,9 @@ public class GithubAddonInfo implements AddonInfo {
 		public void install() throws IOException {
 			GameManager.stopGame();
 			Messager.sendConsoleMessage(GithubAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 시작");
+			for (Player receiver : Bukkit.getOnlinePlayers()) {
+				receiver.sendMessage(Messager.defaultPrefix + GithubAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 시작");
+			}
 			final InputStream input = downloadURL.openConnection().getInputStream();
 			final FileOutputStream output;
 			if (AddonLoader.checkAddon(GithubAddonInfo.this.name)) {
@@ -189,6 +196,9 @@ public class GithubAddonInfo implements AddonInfo {
 			output.close();
 			Bukkit.reload();
 			Messager.sendConsoleMessage(GithubAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 완료");
+			for (Player receiver : Bukkit.getOnlinePlayers()) {
+				receiver.sendMessage(Messager.defaultPrefix + GithubAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 완료");
+			}
 		}
 
 	}

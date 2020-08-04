@@ -19,6 +19,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class CustomAddonInfo implements AddonInfo {
 
@@ -161,6 +162,9 @@ public class CustomAddonInfo implements AddonInfo {
 		public void install() throws IOException {
 			GameManager.stopGame();
 			Messager.sendConsoleMessage(CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 시작");
+			for (Player receiver : Bukkit.getOnlinePlayers()) {
+				receiver.sendMessage(Messager.defaultPrefix + CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 시작");
+			}
 			final InputStream input = connection.getInputStream();
 			final FileOutputStream output;
 			if (AddonLoader.checkAddon(CustomAddonInfo.this.name)) {
@@ -183,6 +187,9 @@ public class CustomAddonInfo implements AddonInfo {
 			output.close();
 			Bukkit.reload();
 			Messager.sendConsoleMessage(CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 완료");
+			for (Player receiver : Bukkit.getOnlinePlayers()) {
+				receiver.sendMessage(Messager.defaultPrefix + CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 완료");
+			}
 		}
 
 	}

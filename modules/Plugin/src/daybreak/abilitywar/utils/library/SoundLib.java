@@ -666,28 +666,40 @@ public class SoundLib {
 			this.simpleSound = sound;
 		}
 
-		public void playInstrument(Player player, Location location, Note note) {
-			simpleSound.playSound(player, location, 4, (float) Math.pow(2.0D, (note.getId() - 12.0D) / 12.0D));
+		public void playInstrument(final Player player, final Location location, final float volume, final Note note) {
+			simpleSound.playSound(player, location, volume, (float) Math.pow(2.0D, (note.getId() - 12.0D) / 12.0D));
 		}
 
-		public void playInstrument(Player player, Note note) {
+		public void playInstrument(final Player player, final Location location, final Note note) {
+			this.playInstrument(player, location, 4, note);
+		}
+
+		public void playInstrument(final Location location, final float volume, final Note note) {
+			simpleSound.playSound(location, volume, (float) Math.pow(2.0D, (note.getId() - 12.0D) / 12.0D));
+		}
+
+		public void playInstrument(final Location location, final Note note) {
+			this.playInstrument(location, 4, note);
+		}
+
+		public void playInstrument(final Player player, final Note note) {
 			this.playInstrument(player, player.getLocation(), note);
 		}
 
-		public void playInstrument(Collection<Player> players, Location location, Note note) {
-			for (Player player : players) {
+		public void playInstrument(final Collection<Player> players, final Location location, final Note note) {
+			for (final Player player : players) {
 				this.playInstrument(player, location, note);
 			}
 		}
 
-		public void playInstrument(Collection<Player> players, Note note) {
-			for (Player player : players) {
+		public void playInstrument(final Collection<Player> players, final Note note) {
+			for (final Player player : players) {
 				this.playInstrument(player, note);
 			}
 		}
 
-		public void broadcastInstrument(Note note) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
+		public void broadcastInstrument(final Note note) {
+			for (final Player player : Bukkit.getOnlinePlayers()) {
 				this.playInstrument(player, note);
 			}
 		}
