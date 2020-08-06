@@ -20,7 +20,7 @@ import org.bukkit.plugin.Plugin;
 public class InvincibilityWizard extends SettingWizard {
 
 	public InvincibilityWizard(Player player, Plugin plugin) {
-		super(player, 27, "§2§l초반 무적 설정", plugin);
+		super(player, 27, "§2§l무적 설정", plugin);
 	}
 
 	private Unit unit = Unit.MINUTE;
@@ -70,6 +70,14 @@ public class InvincibilityWizard extends SettingWizard {
 	void openGUI(Inventory gui) {
 		for (int i = 0; i < 27; i++) {
 			if (i == 11) {
+				final ItemStack stack = MaterialX.DRAGON_HEAD.createItem();
+				final ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§b무적 보스바");
+				meta.setLore(Messager.asList("§7상태 : " + (InvincibilitySettings.isBossbarEnabled() ? "§a활성화" : "§c비활성화")));
+				stack.setItemMeta(meta);
+
+				gui.setItem(i, stack);
+			} else if (i == 12) {
 				boolean isEnabled = Settings.InvincibilitySettings.isEnabled();
 				ItemColor color = isEnabled ? ItemColor.LIME : ItemColor.RED;
 				ItemStack stack = ItemLib.WOOL.getItemStack(color);
@@ -80,7 +88,7 @@ public class InvincibilityWizard extends SettingWizard {
 
 				gui.setItem(i, stack);
 			} else if (i == 14) {
-				ItemStack stack = MaterialX.CLOCK.parseItem();
+				ItemStack stack = MaterialX.CLOCK.createItem();
 				ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b초반 무적 시간");
 				meta.setLore(Messager.asList(
@@ -94,7 +102,7 @@ public class InvincibilityWizard extends SettingWizard {
 
 				gui.setItem(i, stack);
 			} else if (i == 15) {
-				ItemStack stack = MaterialX.PAPER.parseItem();
+				ItemStack stack = MaterialX.PAPER.createItem();
 				ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b단위");
 
@@ -121,6 +129,10 @@ public class InvincibilityWizard extends SettingWizard {
 		if (currentItem != null) {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
+					case "§b무적 보스바":
+						Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_ENABLE, !Settings.InvincibilitySettings.isBossbarEnabled());
+						Show();
+						break;
 					case "§b초반 무적":
 						Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_ENABLE,
 								!Settings.InvincibilitySettings.isEnabled());

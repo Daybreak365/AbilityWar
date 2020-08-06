@@ -57,7 +57,7 @@ public final class BlockX {
 	public static final int CAKE_SLICES = 6;
 
 	public static boolean isLit(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Lightable)) return false;
 			Lightable lightable = (Lightable) block.getBlockData();
 			return lightable.isLit();
@@ -82,7 +82,7 @@ public final class BlockX {
 	 * Can be furnaces or redstone lamps.
 	 */
 	public static void setLit(Block block, boolean lit) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Lightable)) return;
 			Lightable lightable = (Lightable) block.getBlockData();
 			lightable.setLit(lit);
@@ -99,7 +99,7 @@ public final class BlockX {
 	 * Wool and Dye. But Dye is not a block itself.
 	 */
 	public static DyeColor getColor(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Colorable)) return null;
 			Colorable colorable = (Colorable) block.getBlockData();
 			return colorable.getColor();
@@ -115,35 +115,35 @@ public final class BlockX {
 	}
 
 	public static boolean isCake(Material material) {
-		return MaterialX.isNewVersion() ? material == Material.CAKE : material.name().equals("CAKE_BLOCK");
+		return ServerVersion.getVersion() >= 13 ? material == Material.CAKE : material.name().equals("CAKE_BLOCK");
 	}
 
 	public static boolean isWheat(Material material) {
-		return MaterialX.isNewVersion() ? material == Material.WHEAT : material.name().equals("CROPS");
+		return ServerVersion.getVersion() >= 13 ? material == Material.WHEAT : material.name().equals("CROPS");
 	}
 
 	public static boolean isSugarCane(Material material) {
-		return MaterialX.isNewVersion() ? material == Material.SUGAR_CANE : material.name().equals("SUGAR_CANE_BLOCK");
+		return ServerVersion.getVersion() >= 13 ? material == Material.SUGAR_CANE : material.name().equals("SUGAR_CANE_BLOCK");
 	}
 
 	public static boolean isBeetroot(Material material) {
-		return MaterialX.isNewVersion() ? material == Material.SUGAR_CANE : material.name().equals("BEETROOT_BLOCK");
+		return ServerVersion.getVersion() >= 13 ? material == Material.SUGAR_CANE : material.name().equals("BEETROOT_BLOCK");
 	}
 
 	public static boolean isNetherWart(Material material) {
-		return MaterialX.isNewVersion() ? material == Material.NETHER_WART : material.name().equals("NETHER_WARTS");
+		return ServerVersion.getVersion() >= 13 ? material == Material.NETHER_WART : material.name().equals("NETHER_WARTS");
 	}
 
 	public static boolean isCarrot(Material material) {
-		return MaterialX.isNewVersion() ? material.name().equals("CARROTS") : material == Material.CARROT;
+		return ServerVersion.getVersion() >= 13 ? material.name().equals("CARROTS") : material == Material.CARROT;
 	}
 
 	public static boolean isPotato(Material material) {
-		return MaterialX.isNewVersion() ? material.name().equals("POTATOES") : material == Material.POTATO;
+		return ServerVersion.getVersion() >= 13 ? material.name().equals("POTATOES") : material == Material.POTATO;
 	}
 
 	public static BlockFace getDirection(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Directional)) return BlockFace.SELF;
 			Directional direction = (Directional) block.getBlockData();
 			return direction.getFacing();
@@ -158,7 +158,7 @@ public final class BlockX {
 	}
 
 	public static boolean setDirection(Block block, BlockFace facing) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Directional)) return false;
 			Directional direction = (Directional) block.getBlockData();
 			direction.setFacing(facing);
@@ -176,7 +176,7 @@ public final class BlockX {
 	}
 
 	public static int getAge(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Ageable)) return 0;
 			Ageable ageable = (Ageable) block.getBlockData();
 			return ageable.getAge();
@@ -188,7 +188,7 @@ public final class BlockX {
 	}
 
 	public static void setAge(Block block, int age) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Ageable)) return;
 			Ageable ageable = (Ageable) block.getBlockData();
 			ageable.setAge(age);
@@ -208,7 +208,7 @@ public final class BlockX {
 	 * @return true if the block can be colored, otherwise false.
 	 */
 	public static boolean setColor(Block block, DyeColor color) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			String type = block.getType().name();
 			if (type.endsWith("WOOL")) block.setType(Material.getMaterial(color.name() + "_WOOL"));
 			else if (type.endsWith("BED")) block.setType(Material.getMaterial(color.name() + "_BED"));
@@ -240,7 +240,7 @@ public final class BlockX {
 	 * Can be used on cauldron.
 	 */
 	public static boolean setFluidLevel(Block block, int level) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Levelled)) return false;
 			Levelled levelled = (Levelled) block.getBlockData();
 			levelled.setLevel(level);
@@ -255,7 +255,7 @@ public final class BlockX {
 	}
 
 	public static int getFluidLevel(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Levelled)) return -1;
 			Levelled levelled = (Levelled) block.getBlockData();
 			return levelled.getLevel();
@@ -267,7 +267,7 @@ public final class BlockX {
 	}
 
 	public static boolean isWaterStationary(Block block) {
-		return MaterialX.isNewVersion() ? getFluidLevel(block) < 7 : block.getType().name().equals("STATIONARY_WATER");
+		return ServerVersion.getVersion() >= 13 ? getFluidLevel(block) < 7 : block.getType().name().equals("STATIONARY_WATER");
 	}
 
 	public static boolean isWater(Material material) {
@@ -277,7 +277,7 @@ public final class BlockX {
 
 	public static void setCakeSlices(Block block, int amount) {
 		if (!isCake(block.getType())) throw new IllegalArgumentException("Block is not a cake: " + block.getType());
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			BlockData bd = block.getBlockData();
 			if (bd instanceof org.bukkit.block.data.type.Cake) {
 				org.bukkit.block.data.type.Cake cake = (org.bukkit.block.data.type.Cake) bd;
@@ -311,7 +311,7 @@ public final class BlockX {
 
 	public static int addCakeSlices(Block block, int slices) {
 		if (!isCake(block.getType())) throw new IllegalArgumentException("Block is not a cake: " + block.getType());
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			BlockData bd = block.getBlockData();
 			org.bukkit.block.data.type.Cake cake = (org.bukkit.block.data.type.Cake) bd;
 
@@ -340,8 +340,8 @@ public final class BlockX {
 	}
 
 	public static boolean setWooden(Block block, MaterialX species) {
-		block.setType(species.parseMaterial());
-		if (MaterialX.isNewVersion()) return true;
+		block.setType(species.getMaterial());
+		if (ServerVersion.getVersion() >= 13) return true;
 
 		TreeSpecies type = species == MaterialX.SPRUCE_LOG ? TreeSpecies.REDWOOD :
 				TreeSpecies.valueOf(species.name().substring(0, species.name().indexOf('_')));
@@ -390,7 +390,7 @@ public final class BlockX {
 			case AIR:
 				return isAir(blockType);
 			default:
-				return MaterialX.isNewVersion() ? material.parseMaterial() == blockType : material.parseMaterial() == blockType && block.getData() == material.getData();
+				return ServerVersion.getVersion() >= 13 ? material.getMaterial() == blockType : material.getMaterial() == blockType && block.getData() == material.getData();
 		}
 	}
 
@@ -400,7 +400,7 @@ public final class BlockX {
 	}
 
 	public static boolean isPowered(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Powerable)) return false;
 			Powerable powerable = (Powerable) block.getBlockData();
 			return powerable.isPowered();
@@ -414,7 +414,7 @@ public final class BlockX {
 	}
 
 	public static void setPowered(Block block, boolean powered) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Powerable)) return;
 			Powerable powerable = (Powerable) block.getBlockData();
 			powerable.setPowered(powered);
@@ -426,7 +426,7 @@ public final class BlockX {
 	}
 
 	public static boolean isOpen(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof org.bukkit.block.data.Openable)) return false;
 			org.bukkit.block.data.Openable openable = (org.bukkit.block.data.Openable) block.getBlockData();
 			return openable.isOpen();
@@ -439,7 +439,7 @@ public final class BlockX {
 	}
 
 	public static void setOpened(Block block, boolean opened) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof org.bukkit.block.data.Openable)) return;
 			org.bukkit.block.data.Openable openable = (org.bukkit.block.data.Openable) block.getBlockData();
 			openable.setOpen(opened);
@@ -455,7 +455,7 @@ public final class BlockX {
 	}
 
 	public static BlockFace getRotation(Block block) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Rotatable)) return null;
 			Rotatable rotatable = (Rotatable) block.getBlockData();
 			return rotatable.getRotation();
@@ -465,7 +465,7 @@ public final class BlockX {
 	}
 
 	public static void setRotation(Block block, BlockFace facing) {
-		if (MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() >= 13) {
 			if (!(block.getBlockData() instanceof Rotatable)) return;
 			Rotatable rotatable = (Rotatable) block.getBlockData();
 			rotatable.setRotation(facing);
@@ -480,9 +480,9 @@ public final class BlockX {
 	}
 
 	private static final Set<Material> indestructible = ImmutableSet.of(
-			MaterialX.BARRIER.parseMaterial(), MaterialX.BEDROCK.parseMaterial(), MaterialX.COMMAND_BLOCK.parseMaterial(),
-			MaterialX.CHAIN_COMMAND_BLOCK.parseMaterial(), MaterialX.REPEATING_COMMAND_BLOCK.parseMaterial(), MaterialX.END_PORTAL_FRAME.parseMaterial(),
-			MaterialX.STRUCTURE_BLOCK.parseMaterial()
+			MaterialX.BARRIER.getMaterial(), MaterialX.BEDROCK.getMaterial(), MaterialX.COMMAND_BLOCK.getMaterial(),
+			MaterialX.CHAIN_COMMAND_BLOCK.getMaterial(), MaterialX.REPEATING_COMMAND_BLOCK.getMaterial(), MaterialX.END_PORTAL_FRAME.getMaterial(),
+			MaterialX.STRUCTURE_BLOCK.getMaterial()
 	);
 
 	public static boolean isIndestructible(Material type) {
@@ -496,7 +496,7 @@ public final class BlockX {
 			.put("SKULL_ITEM", "SKULL").put("DIODE", "DIODE_BLOCK_OFF").build();
 
 	private static Material checkMaterial(Material material) {
-		if (material != null && !MaterialX.isNewVersion() && BLOCK_MATERIALS.containsKey(material.name())) {
+		if (material != null && ServerVersion.getVersion() < 13 && BLOCK_MATERIALS.containsKey(material.name())) {
 			return Material.getMaterial(BLOCK_MATERIALS.get(material.name()));
 		}
 		return material;
@@ -505,7 +505,7 @@ public final class BlockX {
 	private static Method SET_DATA = null;
 
 	static {
-		if (!MaterialX.isNewVersion()) {
+		if (ServerVersion.getVersion() < 13) {
 			try {
 				SET_DATA = Block.class.getDeclaredMethod("setData", byte.class);
 			} catch (NoSuchMethodException ignored) {
@@ -514,10 +514,10 @@ public final class BlockX {
 	}
 
 	public static void setType(Block block, MaterialX materialX) {
-		Material material = checkMaterial(materialX.parseMaterial());
+		Material material = checkMaterial(materialX.getMaterial());
 		if (material != null) {
 			block.setType(material);
-			if (!MaterialX.isNewVersion() && materialX.hasData()) {
+			if (ServerVersion.getVersion() < 13 && materialX.hasData()) {
 				try {
 					SET_DATA.invoke(block, materialX.getData());
 				} catch (IllegalAccessException | InvocationTargetException ignored) {
@@ -527,7 +527,7 @@ public final class BlockX {
 	}
 
 	public static void sendBlockChange(Player player, Location location, MaterialX materialX) {
-		Material material = checkMaterial(materialX.parseMaterial());
+		Material material = checkMaterial(materialX.getMaterial());
 		if (material != null) {
 			if (ServerVersion.getVersion() >= 13) {
 				player.sendBlockChange(location, material.createBlockData());

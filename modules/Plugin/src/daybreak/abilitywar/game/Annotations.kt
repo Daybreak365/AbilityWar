@@ -17,7 +17,7 @@ annotation class Category(val value: GameCategory) {
 	enum class GameCategory(val icon: Material, val displayName: String) {
 		GAME(Material.DIAMOND_SWORD, "게임"),
 		MINIGAME(Material.FEATHER, "미니 게임"),
-		DEBUG(MaterialX.COMMAND_BLOCK.parseMaterial(), "디버그");
+		DEBUG(MaterialX.COMMAND_BLOCK.material, "디버그");
 	}
 }
 

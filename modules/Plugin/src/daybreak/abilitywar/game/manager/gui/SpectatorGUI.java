@@ -137,9 +137,9 @@ public class SpectatorGUI implements Listener {
 				}
 			}
 
-			if (e.getCurrentItem() != null && e.getCurrentItem().getType() != null && ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
+			if (e.getCurrentItem() != null && ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
 				try {
-					if (MaterialX.RED_WOOL.compareType(e.getCurrentItem())) {
+					if (MaterialX.RED_WOOL.compare(e.getCurrentItem())) {
 						String targetName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
 
 						String target = null;
@@ -157,7 +157,7 @@ public class SpectatorGUI implements Listener {
 						} else {
 							throw new Exception("해당 플레이어가 존재하지 않습니다.");
 						}
-					} else if (MaterialX.LIME_WOOL.compareType(e.getCurrentItem())) {
+					} else if (MaterialX.LIME_WOOL.compare(e.getCurrentItem())) {
 						String target = Bukkit.getPlayerExact(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName())).getName();
 						if (target != null) {
 							SpectatorManager.addSpectator(target);

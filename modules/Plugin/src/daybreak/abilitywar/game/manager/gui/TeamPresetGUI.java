@@ -82,7 +82,7 @@ public class TeamPresetGUI implements Listener {
 			int count = 0;
 
 			for (TeamPreset preset : Settings.getPresetContainer().getPresets()) {
-				final ItemStack stack = MaterialX.WHITE_WOOL.parseItem();
+				final ItemStack stack = MaterialX.WHITE_WOOL.createItem();
 				ItemMeta im = stack.getItemMeta();
 				im.setDisplayName(ChatColor.AQUA + preset.getName());
 				List<String> lore = new ArrayList<>(7 + preset.getDivisionType().lore.size() + preset.getSchemes().size());
@@ -128,31 +128,31 @@ public class TeamPresetGUI implements Listener {
 				final ItemStack stack;
 				final String displayName = scheme.getDisplayName();
 				if (displayName.contains(ChatColor.RED.toString()) || displayName.contains(ChatColor.DARK_RED.toString())) {
-					stack = MaterialX.RED_WOOL.parseItem();
+					stack = MaterialX.RED_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.GOLD.toString())) {
-					stack = MaterialX.ORANGE_WOOL.parseItem();
+					stack = MaterialX.ORANGE_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.YELLOW.toString())) {
-					stack = MaterialX.YELLOW_WOOL.parseItem();
+					stack = MaterialX.YELLOW_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.GREEN.toString())) {
-					stack = MaterialX.LIME_WOOL.parseItem();
+					stack = MaterialX.LIME_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.DARK_GREEN.toString())) {
-					stack = MaterialX.GREEN_WOOL.parseItem();
+					stack = MaterialX.GREEN_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.AQUA.toString()) || displayName.contains(ChatColor.DARK_AQUA.toString())) {
-					stack = MaterialX.LIGHT_BLUE_WOOL.parseItem();
+					stack = MaterialX.LIGHT_BLUE_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.BLUE.toString()) || displayName.contains(ChatColor.DARK_BLUE.toString())) {
-					stack = MaterialX.BLUE_WOOL.parseItem();
+					stack = MaterialX.BLUE_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.LIGHT_PURPLE.toString())) {
-					stack = MaterialX.MAGENTA_WOOL.parseItem();
+					stack = MaterialX.MAGENTA_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.DARK_PURPLE.toString())) {
-					stack = MaterialX.PURPLE_WOOL.parseItem();
+					stack = MaterialX.PURPLE_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.GRAY.toString())) {
-					stack = MaterialX.LIGHT_GRAY_WOOL.parseItem();
+					stack = MaterialX.LIGHT_GRAY_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.DARK_GRAY.toString())) {
-					stack = MaterialX.GRAY_WOOL.parseItem();
+					stack = MaterialX.GRAY_WOOL.createItem();
 				} else if (displayName.contains(ChatColor.BLACK.toString())) {
-					stack = MaterialX.BLACK_WOOL.parseItem();
+					stack = MaterialX.BLACK_WOOL.createItem();
 				} else {
-					stack = MaterialX.WHITE_WOOL.parseItem();
+					stack = MaterialX.WHITE_WOOL.createItem();
 				}
 				ItemMeta im = stack.getItemMeta();
 				im.setDisplayName(ChatColor.WHITE + scheme.getName());
@@ -303,20 +303,20 @@ public class TeamPresetGUI implements Listener {
 							p.closeInventory();
 						} else if (e.getClick() == ClickType.LEFT) {
 							String stripName = ChatColor.stripColor(displayName);
-							if (MaterialX.WHITE_WOOL.compareType(e.getCurrentItem())) {
+							if (MaterialX.WHITE_WOOL.compare(e.getCurrentItem())) {
 								this.editing = Settings.getPresetContainer().getPreset(stripName);
 								openGUI(1);
 							}
 						} else if (e.getClick() == ClickType.SHIFT_LEFT) {
 							String stripName = ChatColor.stripColor(displayName);
-							if (MaterialX.WHITE_WOOL.compareType(e.getCurrentItem())) {
+							if (MaterialX.WHITE_WOOL.compare(e.getCurrentItem())) {
 								final TeamPreset preset = Settings.getPresetContainer().getPreset(stripName);
 								preset.setDivisionType(preset.getDivisionType().next());
 								openGUI(1);
 							}
 						} else if (e.getClick() == ClickType.RIGHT) {
 							String stripName = ChatColor.stripColor(displayName);
-							if (MaterialX.WHITE_WOOL.compareType(e.getCurrentItem())) {
+							if (MaterialX.WHITE_WOOL.compare(e.getCurrentItem())) {
 								Settings.getPresetContainer().removePreset(stripName);
 								openGUI(1);
 							}

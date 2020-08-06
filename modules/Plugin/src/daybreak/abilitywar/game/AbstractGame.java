@@ -560,7 +560,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	 *
 	 * @param type 종료할 타이머 타입
 	 */
-	public final void stopTimers(Class<? extends GameTimer> type) {
+	public final void  stopTimers(Class<? extends GameTimer> type) {
 		for (GameTimer gameTimer : new HashSet<>(runningTimers)) {
 			if (type.isAssignableFrom(gameTimer.getClass())) {
 				gameTimer.stop(false);

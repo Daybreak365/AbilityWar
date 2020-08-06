@@ -2,6 +2,7 @@ package daybreak.abilitywar.addon;
 
 import com.google.common.io.ByteStreams;
 import daybreak.abilitywar.addon.Addon.AddonDescription;
+import daybreak.abilitywar.addon.exception.InitializationException;
 import daybreak.abilitywar.addon.exception.InvalidAddonException;
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,8 @@ public class AddonClassLoader extends URLClassLoader {
 				throw new InvalidAddonException("메인 클래스 '" + description.getMain() + "'가 존재하지 않습니다.", ex);
 			} catch (ClassCastException ex) {
 				throw new InvalidAddonException("메인 클래스 '" + description.getMain() + "'가 Addon을 확장하지 않습니다.", ex);
+			} catch (ExceptionInInitializerError error) {
+				throw new InitializationException(error);
 			}
 			this.addon = addonClass.getConstructor().newInstance();
 			addon.init(this, description);

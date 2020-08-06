@@ -2,6 +2,7 @@ package daybreak.abilitywar;
 
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.AddonLoader;
+import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.config.serializable.AbilityKit;
@@ -59,9 +60,10 @@ public class AbilityWar extends JavaPlugin {
 				try {
 					installer = new Installer("DayBreak365", "AbilityWar", AbilityWar.this);
 					Messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
-				} catch (IOException | InterruptedException | ExecutionException ignore) {
-				}
+				} catch (IOException | InterruptedException | ExecutionException ignore) {}
 				AbilityWar.this.installer = installer;
+				Addons.load();
+				Messager.sendConsoleMessage("추천 애드온 목록을 모두 불러왔습니다.");
 			}
 		});
 	}

@@ -20,7 +20,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -71,7 +70,7 @@ public class SpecialThanksGUI implements Listener {
 
 		for (SpecialThank thank : SpecialThanks) {
 			final ItemStack stack = Skulls.createSkull(thank.getName());
-			final SkullMeta meta = (SkullMeta) stack.getItemMeta();
+			final ItemMeta meta = stack.getItemMeta();
 			if (thank.getName().equals("error")) {
 				meta.setDisplayName("§c오류");
 				meta.setLore(Collections.singletonList("§bMojang API§f에 연결할 수 없습니다."));

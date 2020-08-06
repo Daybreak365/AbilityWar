@@ -39,7 +39,7 @@ public class IntegerSetter extends Setter {
 
 	@Override
 	public ItemStack getItem(SettingObject<?> settingObject) {
-		ItemStack wool = MaterialX.BLUE_WOOL.parseItem();
+		ItemStack wool = MaterialX.BLUE_WOOL.createItem();
 		ItemMeta woolMeta = wool.getItemMeta();
 		woolMeta.setDisplayName(ChatColor.WHITE + settingObject.getKey());
 		String[] comments = settingObject.getComments();

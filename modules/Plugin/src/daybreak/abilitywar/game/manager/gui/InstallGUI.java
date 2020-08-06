@@ -49,7 +49,7 @@ public class InstallGUI implements Listener {
 			UpdateObject update = entry.getValue();
 			ItemStack is;
 			if (installer.getPluginVersion().equals(version)) {
-				is = MaterialX.ENCHANTED_BOOK.parseItem();
+				is = MaterialX.ENCHANTED_BOOK.createItem();
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName("§b" + version.getVersionString());
 				im.setLore(Arrays.asList(
@@ -60,7 +60,7 @@ public class InstallGUI implements Listener {
 						"§b다운로드 횟수§f: " + update.getDownloadCount()));
 				is.setItemMeta(im);
 			} else {
-				is = MaterialX.BOOK.parseItem();
+				is = MaterialX.BOOK.createItem();
 				ItemMeta im = is.getItemMeta();
 				im.setDisplayName("§b" + version.getVersionString());
 				im.setLore(Arrays.asList(

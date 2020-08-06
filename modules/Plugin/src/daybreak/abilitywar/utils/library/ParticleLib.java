@@ -252,17 +252,17 @@ public class ParticleLib {
 
 		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, MaterialX material) {
 			if (ServerVersion.getVersion() >= 13) {
-				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, material.parseMaterial().createBlockData());
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, material.getMaterial().createBlockData());
 			} else {
-				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(material.parseMaterial(), material.getData()));
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(material.getMaterial(), material.getData()));
 			}
 		}
 
 		public void spawnParticle(Location location, double offsetX, double offsetY, double offsetZ, int count, MaterialX material) {
 			if (ServerVersion.getVersion() >= 13) {
-				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, material.parseMaterial().createBlockData());
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, material.getMaterial().createBlockData());
 			} else {
-				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, new MaterialData(material.parseMaterial(), material.getData()));
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, new MaterialData(material.getMaterial(), material.getData()));
 			}
 		}
 
@@ -284,17 +284,17 @@ public class ParticleLib {
 
 		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, MaterialX material) {
 			if (ServerVersion.getVersion() >= 13) {
-				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, material.parseMaterial().createBlockData());
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, material.getMaterial().createBlockData());
 			} else {
-				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(material.parseMaterial(), material.getData()));
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(material.getMaterial(), material.getData()));
 			}
 		}
 
 		public void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, MaterialX material) {
 			if (ServerVersion.getVersion() >= 13) {
-				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, material.parseMaterial().createBlockData());
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, material.getMaterial().createBlockData());
 			} else {
-				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, new MaterialData(material.parseMaterial(), material.getData()));
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, new MaterialData(material.getMaterial(), material.getData()));
 			}
 		}
 

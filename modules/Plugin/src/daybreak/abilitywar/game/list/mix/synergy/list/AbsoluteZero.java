@@ -146,8 +146,8 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 				} else if (type == Material.LAVA) {
 					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
 					belowBlock.setType(Material.OBSIDIAN);
-				} else if (MaterialX.ACACIA_LEAVES.compareType(belowBlock) || MaterialX.BIRCH_LEAVES.compareType(belowBlock) || MaterialX.DARK_OAK_LEAVES.compareType(belowBlock)
-						|| MaterialX.JUNGLE_LEAVES.compareType(belowBlock) || MaterialX.OAK_LEAVES.compareType(belowBlock) || MaterialX.SPRUCE_LEAVES.compareType(belowBlock)) {
+				} else if (MaterialX.ACACIA_LEAVES.compare(belowBlock) || MaterialX.BIRCH_LEAVES.compare(belowBlock) || MaterialX.DARK_OAK_LEAVES.compare(belowBlock)
+						|| MaterialX.JUNGLE_LEAVES.compare(belowBlock) || MaterialX.OAK_LEAVES.compare(belowBlock) || MaterialX.SPRUCE_LEAVES.compare(belowBlock)) {
 					BlockX.setType(belowBlock, MaterialX.GREEN_WOOL);
 				} else {
 					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));

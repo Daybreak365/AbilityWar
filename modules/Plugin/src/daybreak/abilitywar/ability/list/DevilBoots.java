@@ -49,7 +49,7 @@ public class DevilBoots extends AbilityBase {
 			}
 			if (toBelow.getType().equals(Material.SNOW_BLOCK)) {
 				toBelow.setType(Material.DIRT);
-			} else if (toBelow.getType().equals(Material.PACKED_ICE) || toBelow.getType().equals(Material.ICE) || MaterialX.FROSTED_ICE.compareType(toBelow) || MaterialX.BLUE_ICE.compareType(toBelow)) {
+			} else if (toBelow.getType().equals(Material.PACKED_ICE) || toBelow.getType().equals(Material.ICE) || MaterialX.FROSTED_ICE.compare(toBelow) || MaterialX.BLUE_ICE.compare(toBelow)) {
 				toBelow.setType(Material.WATER);
 			}
 		}

@@ -74,7 +74,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 		@Override
 		public void run(int count) {
 			Block block = getPlayer().getLocation().getBlock(), belowBlock = getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN);
-			if (MaterialX.LAVA.compareType(block) || MaterialX.LAVA.compareType(belowBlock) || block.getType() == Material.LAVA || belowBlock.getType() == Material.LAVA || MaterialX.MAGMA_BLOCK.compareType(belowBlock)) {
+			if (MaterialX.LAVA.compare(block) || MaterialX.LAVA.compare(belowBlock) || block.getType() == Material.LAVA || belowBlock.getType() == Material.LAVA || MaterialX.MAGMA_BLOCK.compare(belowBlock)) {
 				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
 			}
@@ -133,7 +133,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 			}
 			if (toBelow.getType().equals(Material.SNOW_BLOCK)) {
 				toBelow.setType(Material.DIRT);
-			} else if (toBelow.getType().equals(Material.PACKED_ICE) || toBelow.getType().equals(Material.ICE) || MaterialX.FROSTED_ICE.compareType(toBelow) || MaterialX.BLUE_ICE.compareType(toBelow)) {
+			} else if (toBelow.getType().equals(Material.PACKED_ICE) || toBelow.getType().equals(Material.ICE) || MaterialX.FROSTED_ICE.compare(toBelow) || MaterialX.BLUE_ICE.compare(toBelow)) {
 				toBelow.setType(Material.WATER);
 			}
 		}
@@ -162,7 +162,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 		} else if (update == Update.ABILITY_DESTROY) {
 			for (Entry<Block, IBlockSnapshot> entry : blockData.entrySet()) {
 				Block key = entry.getKey();
-				if (MaterialX.MAGMA_BLOCK.compareType(key) || key.getType() == Material.LAVA || MaterialX.LAVA.compareType(key) || key.getType() == Material.FIRE) {
+				if (MaterialX.MAGMA_BLOCK.compare(key) || key.getType() == Material.LAVA || MaterialX.LAVA.compare(key) || key.getType() == Material.FIRE) {
 					entry.getValue().apply();
 				}
 			}

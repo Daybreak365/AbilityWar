@@ -1,30 +1,17 @@
 package daybreak.abilitywar.utils.library.item;
 
 import com.google.common.base.Enums;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
-import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.logging.Level;
-import org.apache.commons.codec.binary.Base64;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
@@ -95,185 +82,6 @@ public class ItemLib {
 	}
 
 	private static final ItemStack AIR = new ItemStack(Material.AIR);
-
-	@Deprecated
-	public static ItemStack getSkull(String owner) {
-		ItemStack item = MaterialX.PLAYER_HEAD.parseItem();
-		item.setItemMeta(setOwner((SkullMeta) item.getItemMeta(), owner));
-		return item;
-	}
-
-	@Deprecated
-	public static ItemStack getCustomSkull(String url) {
-		ItemStack skull = MaterialX.PLAYER_HEAD.parseItem();
-		if (url == null || url.isEmpty()) return skull;
-		SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-		GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-		PropertyMap propertyMap = profile.getProperties();
-		byte[] encodedData = Base64.encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-		propertyMap.put("textures", new Property("textures", new String(encodedData)));
-		try {
-			FieldUtil.setValue(skullMeta.getClass(), skullMeta, "profile", profile);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			logger.log(Level.SEVERE, "getCustomSkull(String): " + e.getClass().getSimpleName());
-		}
-		skull.setItemMeta(skullMeta);
-		return skull;
-	}
-
-	@Deprecated
-	public static SkullMeta setOwner(SkullMeta meta, String playerName) {
-		if (ServerVersion.getVersion() >= 13) {
-			meta.setOwningPlayer(new OfflinePlayer() {
-
-				@Override
-				public Map<String, Object> serialize() {
-					return null;
-				}
-
-				@Override
-				public boolean isOp() {
-					return false;
-				}
-
-				@Override
-				public void setOp(boolean value) {
-				}
-
-				@Override
-				public boolean isWhitelisted() {
-					return false;
-				}
-
-				@Override
-				public void setWhitelisted(boolean value) {
-				}
-
-				@Override
-				public boolean isOnline() {
-					return false;
-				}
-
-				@Override
-				public boolean isBanned() {
-					return false;
-				}
-
-				@Override
-				public boolean hasPlayedBefore() {
-					return false;
-				}
-
-				@Override
-				public UUID getUniqueId() {
-					return null;
-				}
-
-				@Override
-				public org.bukkit.entity.Player getPlayer() {
-					return null;
-				}
-
-				@Override
-				public String getName() {
-					return playerName;
-				}
-
-				@Override
-				public long getLastPlayed() {
-					return 0;
-				}
-
-				@Override
-				public long getFirstPlayed() {
-					return 0;
-				}
-
-				@Override
-				public Location getBedSpawnLocation() {
-					return null;
-				}
-
-				@Override
-				public void incrementStatistic(Statistic statistic) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void decrementStatistic(Statistic statistic) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void incrementStatistic(Statistic statistic, int i) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void decrementStatistic(Statistic statistic, int i) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void setStatistic(Statistic statistic, int i) throws IllegalArgumentException {
-				}
-
-				@Override
-				public int getStatistic(Statistic statistic) throws IllegalArgumentException {
-					return 0;
-				}
-
-				@Override
-				public void incrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void decrementStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-				}
-
-				@Override
-				public int getStatistic(Statistic statistic, Material material) throws IllegalArgumentException {
-					return 0;
-				}
-
-				@Override
-				public void incrementStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void decrementStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void setStatistic(Statistic statistic, Material material, int i) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void incrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void decrementStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-				}
-
-				@Override
-				public int getStatistic(Statistic statistic, EntityType entityType) throws IllegalArgumentException {
-					return 0;
-				}
-
-				@Override
-				public void incrementStatistic(Statistic statistic, EntityType entityType, int i) throws IllegalArgumentException {
-				}
-
-				@Override
-				public void decrementStatistic(Statistic statistic, EntityType entityType, int i) {
-				}
-
-				@Override
-				public void setStatistic(Statistic statistic, EntityType entityType, int i) {
-				}
-			});
-		} else {
-			meta.setOwner(playerName);
-		}
-		return meta;
-	}
 
 	public static class PotionBuilder {
 

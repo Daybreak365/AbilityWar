@@ -1,5 +1,6 @@
 package daybreak.abilitywar.addon.installer;
 
+import daybreak.abilitywar.addon.Addon;
 import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.addon.installer.info.AddonInfo;
 import daybreak.abilitywar.addon.installer.info.AddonInfo.AddonVersion;
@@ -49,12 +50,14 @@ public class AddonsGUI implements Listener {
 			.build();
 
 	private final Player player;
+	private final Addons addons;
 	private AddonInfo addonInfo;
 	private boolean versionsLookup = false;
 	private Inventory gui;
 
-	public AddonsGUI(Player player, Plugin plugin) {
+	public AddonsGUI(Player player, Addons addons, Plugin plugin) {
 		this.player = player;
+		this.addons = addons;
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -63,7 +66,7 @@ public class AddonsGUI implements Listener {
 	public void openGUI(int page) {
 		if (addonInfo == null) {
 			this.gui = Bukkit.createInventory(null, 27, "§0§l추천 애드온 목록");
-			final Collection<AddonInfo> addonInfos = Addons.getAddonInfos();
+			final Collection<AddonInfo> addonInfos = addons.getAddonInfos();
 			final int maxPage = ((addonInfos.size() - 1) / 18) + 1;
 			if (maxPage < page || page < 1) page = 1;
 			currentPage = page;
@@ -72,27 +75,29 @@ public class AddonsGUI implements Listener {
 				final ItemStack stack = Skulls.createSkull(addonInfo.getIcon());
 				final ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b" + addonInfo.getDisplayName());
-				if (AddonLoader.checkAddon(addonInfo.getName())) {
-					final List<String> lore = new ArrayList<>();
+				final Addon addon = AddonLoader.getAddon(addonInfo.getName());
+				final List<String> lore = new ArrayList<>();
+				if (addon != null) {
 					for (String s : addonInfo.getDescription()) {
 						lore.add(ChatColor.GRAY + s);
 					}
 					lore.add("");
 					lore.add("§3● §b개발자§f: " + addonInfo.getDeveloper());
-					lore.add("§2● §a애드온이 설치되어 있습니다.");
-					lore.add("§8● §7추가 정보를 보려면 클릭하세요.");
-					meta.setLore(lore);
+					if (addon.getDescription().getVersion().equals(addonInfo.getLatest().getVersion())) {
+						lore.add("§2✔ §a애드온이 설치되어 있습니다.");
+					} else {
+						lore.add("§2✔ §a애드온이 설치되어 있습니다. §8(§7업데이트가 있습니다.§8)");
+					}
 				} else {
-					final List<String> lore = new ArrayList<>();
 					for (String s : addonInfo.getDescription()) {
 						lore.add(ChatColor.GRAY + s);
 					}
 					lore.add("");
 					lore.add("§3● §b개발자§f: " + addonInfo.getDeveloper());
-					lore.add("§4● §c애드온이 설치되어 있지 않습니다.");
-					lore.add("§8● §7추가 정보를 보려면 클릭하세요.");
-					meta.setLore(lore);
+					lore.add("§4✖ §c애드온이 설치되어 있지 않습니다.");
 				}
+				lore.add("§8● §7추가 정보를 보려면 클릭하세요.");
+				meta.setLore(lore);
 				stack.setItemMeta(meta);
 				if (count / 18 == page - 1) gui.setItem(count % 18, stack);
 				count++;
@@ -225,8 +230,8 @@ public class AddonsGUI implements Listener {
 							openGUI(currentPage + 1);
 							break;
 						default:
-							if (MaterialX.PLAYER_HEAD.compareType(e.getCurrentItem())) {
-								this.addonInfo = Addons.getAddonInfo(ChatColor.stripColor(displayName));
+							if (MaterialX.PLAYER_HEAD.compare(e.getCurrentItem())) {
+								this.addonInfo = addons.getAddonInfo(ChatColor.stripColor(displayName));
 								if (this.addonInfo != null) {
 									versionsLookup = false;
 									openGUI(1);

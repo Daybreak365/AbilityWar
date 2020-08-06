@@ -20,10 +20,10 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class Addon {
 
-	private ClassLoader classLoader;
+	private AddonClassLoader classLoader;
 	private AddonDescription description;
 
-	void init(ClassLoader classLoader, AddonDescription description) {
+	void init(AddonClassLoader classLoader, AddonDescription description) {
 		this.classLoader = classLoader;
 		this.description = description;
 	}
@@ -51,7 +51,7 @@ public abstract class Addon {
 	/**
 	 * 이 애드온을 불러올 때 사용된 ClassLoader를 받아옵니다.
 	 */
-	protected ClassLoader getClassLoader() {
+	protected AddonClassLoader getClassLoader() {
 		return classLoader;
 	}
 
@@ -61,9 +61,7 @@ public abstract class Addon {
 		private final NMSVersion minVersion;
 
 		AddonDescription(File pluginFile) throws InvalidDescriptionException {
-			JarFile jarFile = null;
-			try {
-				jarFile = new JarFile(pluginFile);
+			try (JarFile jarFile = new JarFile(pluginFile)) {
 				ZipEntry entry = jarFile.getEntry("addon.yml");
 				if (entry != null) {
 					Properties description = new Properties();
@@ -84,13 +82,6 @@ public abstract class Addon {
 				}
 			} catch (IOException ex) {
 				throw new InvalidDescriptionException(ex);
-			} finally {
-				if (jarFile != null) {
-					try {
-						jarFile.close();
-					} catch (IOException ignored) {
-					}
-				}
 			}
 		}
 

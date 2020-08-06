@@ -189,10 +189,10 @@ public class AbilitySettingWizard implements Listener {
 				}
 				if (abilitySettings != null) {
 					if (settings == null) {
-						if (MaterialX.BIRCH_DOOR.compareType(clicked) && stripName.equals("나가기")) {
+						if (MaterialX.SPRUCE_DOOR.compare(clicked) && stripName.equals("나가기")) {
 							abilitySettings = null;
 							openGUI(1);
-						} else if (MaterialX.RED_WOOL.compareType(clicked) && stripName.equals("초기화")) {
+						} else if (MaterialX.RED_WOOL.compare(clicked) && stripName.equals("초기화")) {
 							for (SettingObject<?> setting : abilitySettings.getSettings().values()) {
 								setting.reset();
 							}
@@ -201,10 +201,10 @@ public class AbilitySettingWizard implements Listener {
 							openGUI(1);
 						}
 					} else {
-						if (MaterialX.BIRCH_DOOR.compareType(clicked) && stripName.equals("나가기")) {
+						if (MaterialX.SPRUCE_DOOR.compare(clicked) && stripName.equals("나가기")) {
 							settings = null;
 							openGUI(1);
-						} else if (MaterialX.RED_WOOL.compareType(clicked) && stripName.equals("초기화")) {
+						} else if (MaterialX.RED_WOOL.compare(clicked) && stripName.equals("초기화")) {
 							for (SettingObject<?> setting : settings.getRight().values()) {
 								setting.reset();
 							}
@@ -218,7 +218,7 @@ public class AbilitySettingWizard implements Listener {
 						}
 					}
 				} else {
-					if (MaterialX.RED_WOOL.compareType(clicked) && stripName.equals("초기화")) {
+					if (MaterialX.RED_WOOL.compare(clicked) && stripName.equals("초기화")) {
 						for (AbilitySettings abilitySetting : AbilitySettings.getAbilitySettings()) {
 							for (SettingObject<?> setting : abilitySetting.getSettings().values()) {
 								setting.reset();

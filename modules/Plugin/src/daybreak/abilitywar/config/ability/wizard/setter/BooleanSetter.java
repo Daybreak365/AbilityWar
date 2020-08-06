@@ -25,7 +25,7 @@ public class BooleanSetter extends Setter {
 
 	@Override
 	public ItemStack getItem(SettingObject<?> settingObject) {
-		ItemStack wool = MaterialX.LIME_WOOL.parseItem();
+		ItemStack wool = MaterialX.LIME_WOOL.createItem();
 		ItemMeta woolMeta = wool.getItemMeta();
 		woolMeta.setDisplayName(ChatColor.WHITE + settingObject.getKey());
 		String[] comments = settingObject.getComments();

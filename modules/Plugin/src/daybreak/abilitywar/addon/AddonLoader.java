@@ -6,9 +6,7 @@ import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Level;
 
 /**
  * 애드온에 직접적으로 엑세스하여 처리하는 로더입니다.
@@ -27,7 +25,7 @@ public class AddonLoader {
 	 * 애드온 디렉토리에 있는 모든 애드온을 불러옵니다.
 	 */
 	public static void loadAll() {
-		for (File file : FileUtil.newDirectory("Addon").listFiles()) {
+		for (final File file : FileUtil.newDirectory("Addon").listFiles()) {
 			load(file);
 		}
 	}
@@ -51,30 +49,31 @@ public class AddonLoader {
 			}
 			addons.put(name, instance);
 			return instance;
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, "애드온을 불러오는 동안 오류가 발생하였습니다.");
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, e.getMessage());
+			logger.error(file.getName() + " 애드온을 불러오는 도중 오류가 발생하였습니다.");
+			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public static void enableAll() {
-		for (Addon addon : addons.values()) {
+		for (final Addon addon : addons.values()) {
 			try {
 				addon.onEnable();
-			} catch (Exception e) {
-				logger.log(Level.SEVERE, addon.getDescription().getName() + ": 애드온을 활성화하는 도중 오류가 발생하였습니다", e);
+			} catch (Exception | ExceptionInInitializerError e) {
+				logger.error(addon.getDescription().getName() + " (" + addon.getClassLoader().getPluginFile().getName() + "): 애드온을 활성화하는 도중 오류가 발생하였습니다");
+				e.printStackTrace();
 			}
 		}
 	}
 
 	public static void disableAll() {
-		for (Addon addon : addons.values()) {
+		for (final Addon addon : addons.values()) {
 			try {
 				addon.onDisable();
-			} catch (Exception e) {
-				logger.log(Level.SEVERE, addon.getDescription().getName() + ": 애드온을 비활성화하는 도중 오류가 발생하였습니다", e);
+			} catch (Exception | ExceptionInInitializerError e) {
+				logger.error(addon.getDescription().getName() + " (" + addon.getClassLoader().getPluginFile().getName() + "): 애드온을 비활성화하는 도중 오류가 발생하였습니다");
+				e.printStackTrace();
 			}
 		}
 	}

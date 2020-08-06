@@ -105,8 +105,9 @@ public class GameFactory {
 				logger.debug("§e" + gameClass.getName() + " §f게임 모드는 이 버전에서 지원되지 않습니다.");
 			} catch (ServerNotSupportedException e) {
 				logger.debug("§e" + gameClass.getName() + " §f게임 모드는 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
-			} catch (Exception e) {
-				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + gameClass.getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
+			} catch (Exception | ExceptionInInitializerError e) {
+				logger.error("§e" + gameClass.getName() + " §f게임 모드 등록 중 오류가 발생하였습니다.");
+				e.printStackTrace();
 			}
 		}
 	}

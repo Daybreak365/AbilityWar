@@ -120,7 +120,7 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 				armorStand.setGravity(false);
 				final EntityEquipment equipment = armorStand.getEquipment();
 				equipment.setItemInMainHand(new ItemStack(Material.SHIELD));
-				equipment.setHelmet(MaterialX.GOLDEN_HELMET.parseItem());
+				equipment.setHelmet(MaterialX.GOLDEN_HELMET.createItem());
 				diff.put(armorStand, armorStand.getLocation().toVector().subtract(centerVector).add(direction.clone()));
 			}
 			gravityFalse = false;

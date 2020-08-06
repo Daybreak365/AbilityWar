@@ -79,7 +79,7 @@ public class GameModeGUI implements Listener {
 			final GameManifest manifest = registration.getManifest();
 			final ItemStack stack;
 			if (gameClass.equals(mode)) {
-				stack = MaterialX.ENCHANTED_BOOK.parseItem();
+				stack = MaterialX.ENCHANTED_BOOK.createItem();
 				ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b" + manifest.name());
 				List<String> lore = Messager.asList(manifest.description());
@@ -92,7 +92,7 @@ public class GameModeGUI implements Listener {
 				meta.setLore(lore);
 				stack.setItemMeta(meta);
 			} else {
-				stack = MaterialX.BOOK.parseItem();
+				stack = MaterialX.BOOK.createItem();
 				ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b" + manifest.name());
 				List<String> lore = Messager.asList(manifest.description());

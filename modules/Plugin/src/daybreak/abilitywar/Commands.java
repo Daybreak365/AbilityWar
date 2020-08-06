@@ -1,10 +1,12 @@
 package daybreak.abilitywar;
 
 import daybreak.abilitywar.Command.Condition;
+import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityBase.Duration;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.addon.installer.AddonsGUI;
+import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.wizard.AbilitySettingWizard;
@@ -15,6 +17,7 @@ import daybreak.abilitywar.config.wizard.InvincibilityWizard;
 import daybreak.abilitywar.config.wizard.KitWizard;
 import daybreak.abilitywar.config.wizard.SpawnWizard;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -48,6 +51,7 @@ import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -461,6 +465,32 @@ public class Commands implements CommandExecutor, TabCompleter {
 						return true;
 					}
 				});
+				addSubCommand("check", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						if (GameManager.isGameRunning()) {
+							if (args.length != 0) {
+								final Player target = Bukkit.getPlayerExact(args[0]);
+								if (target != null) {
+									final AbstractGame game = GameManager.getGame();
+									if (game.isParticipating(target)) {
+										final AbilityBase ability = game.getParticipant(target).getAbility();
+										if (ability != null) {
+											sender.sendMessage(Formatter.formatTitle(44, ChatColor.GOLD, ChatColor.WHITE, ChatColor.YELLOW + target.getName() + ChatColor.WHITE + " 능력 정보"));
+											sender.sendMessage("§b" + ability.getName() + " " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
+											for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
+												sender.sendMessage(iterator.next());
+											}
+											sender.sendMessage("§6---------------------------------------");
+										} else Messager.sendErrorMessage(sender, target.getName() + "님은 능력이 없습니다.");
+										Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 §f" + target.getName() + "§a님의 능력을 확인하였습니다.");
+									} else Messager.sendErrorMessage(sender, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+								} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+							} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util check <대상>");
+						} else Messager.sendErrorMessage(sender, "§c게임이 진행되고 있지 않습니다.");
+						return true;
+					}
+				});
 				addSubCommand("blacklist", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -472,8 +502,26 @@ public class Commands implements CommandExecutor, TabCompleter {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (GameManager.isGameRunning()) {
-							GameManager.getGame().stopTimers(Cooldown.CooldownTimer.class);
-							Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 쿨타임을 모두 초기화하였습니다.");
+							if (args.length == 0) {
+								GameManager.getGame().stopTimers(Cooldown.CooldownTimer.class);
+								Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 쿨타임을 모두 초기화하였습니다.");
+							} else {
+								final Player target = Bukkit.getPlayerExact(args[0]);
+								if (target != null) {
+									final AbstractGame game = GameManager.getGame();
+									if (game.isParticipating(target)) {
+										final AbilityBase ability = game.getParticipant(target).getAbility();
+										if (ability != null) {
+											for (GameTimer timer : ability.getTimers()) {
+												if (timer instanceof Cooldown.CooldownTimer) {
+													timer.stop(false);
+												}
+											}
+										}
+										Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 §f" + target.getName() + "§a님의 능력 쿨타임을 초기화하였습니다.");
+									} else Messager.sendErrorMessage(sender, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+								} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+							}
 						} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 						return true;
 					}
@@ -482,8 +530,26 @@ public class Commands implements CommandExecutor, TabCompleter {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (GameManager.isGameRunning()) {
-							GameManager.getGame().stopTimers(Duration.class);
-							Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 지속시간을 모두 초기화하였습니다.");
+							if (args.length == 0) {
+								GameManager.getGame().stopTimers(Duration.class);
+								Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 지속시간을 모두 초기화하였습니다.");
+							} else {
+								final Player target = Bukkit.getPlayerExact(args[0]);
+								if (target != null) {
+									final AbstractGame game = GameManager.getGame();
+									if (game.isParticipating(target)) {
+										final AbilityBase ability = game.getParticipant(target).getAbility();
+										if (ability != null) {
+											for (GameTimer timer : ability.getTimers()) {
+												if (timer instanceof Duration) {
+													timer.stop(false);
+												}
+											}
+										}
+										Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 §f" + target.getName() + "§a님의 능력 지속시간을 초기화하였습니다.");
+									} else Messager.sendErrorMessage(sender, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+								} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+							}
 						} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 						return true;
 					}
@@ -689,9 +755,16 @@ public class Commands implements CommandExecutor, TabCompleter {
 					case 2:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
 								"§b/" + label + " util <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(label + " util", "check <대상>", "대상의 능력을 확인합니다.", true),
 								Formatter.formatCommand(label + " util", "resetcool", "참가자들의 능력 쿨타임을 초기화시킵니다.", true),
+								Formatter.formatCommand(label + " util", "resetcool <대상>", "대상의 능력 쿨타임을 초기화시킵니다.", true),
 								Formatter.formatCommand(label + " util", "resetduration", "참가자들의 능력 지속시간을 초기화시킵니다.", true),
-								Formatter.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true),
+								Formatter.formatCommand(label + " util", "resetduration <대상>", "대상의 능력 지속시간을 초기화시킵니다.", true),
+								Formatter.formatCommand(label + " util", "kit <대상/@a>", "대상에게 기본템을 다시 지급합니다.", true)});
+						break;
+					case 3:
+						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 유틸"),
+								"§b/" + label + " util <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(label + " util", "team", "팀 유틸 명령어를 확인합니다.", true)});
 						break;
 					default:
@@ -843,7 +916,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 		mainCommand.addSubCommand("addon", new Command(Condition.OP, Condition.PLAYER) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				new AddonsGUI((Player) sender, plugin).openGUI(1);
+				try {
+					new AddonsGUI((Player) sender, Addons.getInstance(), plugin).openGUI(1);
+				} catch (IllegalStateException e) {
+					Messager.sendErrorMessage(sender, "아직 추천 애드온 목록이 불러와지지 않았습니다.");
+				}
 				return true;
 			}
 		});
@@ -879,7 +956,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 							return configs;
 						}
 					} else if (args[0].equalsIgnoreCase("util")) {
-						List<String> utils = Messager.asList("abi", "spec", "ablist", "resetcool",
+						List<String> utils = Messager.asList("abi", "spec", "ablist", "check", "resetcool",
 								"resetduration", "kit", "inv", "team");
 						if (args[1].isEmpty()) {
 							return utils;
@@ -911,6 +988,14 @@ public class Commands implements CommandExecutor, TabCompleter {
 							List<String> players = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
 							players.add("@a");
 							players.sort(String::compareToIgnoreCase);
+							if (args[2].isEmpty()) {
+								return players;
+							} else {
+								players.removeIf(name -> !name.toLowerCase().startsWith(args[2].toLowerCase()));
+								return players;
+							}
+						} else if (args[1].equalsIgnoreCase("check") || args[1].equalsIgnoreCase("resetcool") || args[1].equalsIgnoreCase("resetduration")) {
+							List<String> players = Bukkit.getOnlinePlayers().stream().map(Player::getName).sorted(String::compareToIgnoreCase).collect(Collectors.toList());
 							if (args[2].isEmpty()) {
 								return players;
 							} else {

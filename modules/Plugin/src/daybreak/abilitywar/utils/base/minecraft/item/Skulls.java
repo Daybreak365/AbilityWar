@@ -5,10 +5,10 @@ import com.mojang.authlib.properties.Property;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -28,12 +28,12 @@ public class Skulls {
 	private static final String LINK_HEAD = "http://textures.minecraft.net/texture/";
 
 	public static ItemStack createCustomSkull(String url) {
-		final ItemStack stack = MaterialX.PLAYER_HEAD.parseItem();
+		final ItemStack stack = MaterialX.PLAYER_HEAD.createItem();
 		if (url == null || url.isEmpty()) return stack;
 		if (!url.startsWith(LINK_HEAD)) url = LINK_HEAD + url;
 		final SkullMeta meta = (SkullMeta) stack.getItemMeta();
 		final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-		profile.getProperties().put("textures", new Property("textures", new String(Base64.encodeBase64(("{textures:{SKIN:{url:\"" + url + "\"}}}").getBytes()))));
+		profile.getProperties().put("textures", new Property("textures", new String(Base64.getEncoder().encode(("{textures:{SKIN:{url:\"" + url + "\"}}}").getBytes()))));
 		try {
 			FieldUtil.setValue(meta.getClass(), meta, "profile", profile);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ignored) {}
@@ -42,13 +42,13 @@ public class Skulls {
 	}
 
 	public static ItemStack createSkull(final String name) {
-		final ItemStack stack = MaterialX.PLAYER_HEAD.parseItem();
+		final ItemStack stack = MaterialX.PLAYER_HEAD.createItem();
 		stack.setItemMeta(setOwningPlayer((SkullMeta) stack.getItemMeta(), name));
 		return stack;
 	}
 
 	public static ItemStack createSkull(final Player owner) {
-		final ItemStack stack = MaterialX.PLAYER_HEAD.parseItem();
+		final ItemStack stack = MaterialX.PLAYER_HEAD.createItem();
 		stack.setItemMeta(setOwningPlayer((SkullMeta) stack.getItemMeta(), owner));
 		return stack;
 	}

@@ -8,8 +8,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -176,7 +176,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		}
 
 		private ItemStack getPumpkin(int time) {
-			ItemStack stack = MaterialX.CARVED_PUMPKIN.parseItem();
+			ItemStack stack = MaterialX.CARVED_PUMPKIN.createItem();
 			ItemMeta meta = stack.getItemMeta();
 			meta.setDisplayName("§6호박");
 			meta.setLore(Arrays.asList("§d♪ §f호박 같은 네 얼굴 §d♪", "§f남은 시간§5: §d" + time + "초"));

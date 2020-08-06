@@ -120,7 +120,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	public void updateGold(Participant participant) {
 		final int gold = getGold(participant);
 		if (gold > 0) {
-			ItemStack stack = MaterialX.GOLD_INGOT.parseItem();
+			ItemStack stack = MaterialX.GOLD_INGOT.createItem();
 			ItemMeta meta = stack.getItemMeta();
 			meta.setDisplayName("§6금");
 			stack.setItemMeta(meta);

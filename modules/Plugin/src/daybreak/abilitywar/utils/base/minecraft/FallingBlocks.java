@@ -61,8 +61,8 @@ public class FallingBlocks {
 
 	public static FallingBlock spawnFallingBlock(Location location, MaterialX type, boolean glowing, Vector velocity, Behavior behavior) {
 		if (ServerVersion.getVersion() >= 13)
-			return spawnFallingBlock(location, type.parseMaterial(), (byte) 0, glowing, velocity, behavior);
-		else return spawnFallingBlock(location, type.parseMaterial(), type.getData(), glowing, velocity, behavior);
+			return spawnFallingBlock(location, type.getMaterial(), (byte) 0, glowing, velocity, behavior);
+		else return spawnFallingBlock(location, type.getMaterial(), type.getData(), glowing, velocity, behavior);
 	}
 
 	public static FallingBlock spawnFallingBlock(Location location, Material type, byte data, boolean glowing, Behavior behavior) {

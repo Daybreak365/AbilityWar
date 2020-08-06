@@ -19,7 +19,7 @@ public class ItemBuilder {
 	private List<String> lore;
 
 	public ItemBuilder type(MaterialX type) {
-		this.type = type.parseMaterial();
+		this.type = type.getMaterial();
 		this.data = type.getData();
 		return this;
 	}

@@ -111,7 +111,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 	}
 
 	@SubscribeEvent(onlyRelevant = true)
-	private void onToogleSneak(PlayerToggleSneakEvent e) {
+	private void onToggleSneak(PlayerToggleSneakEvent e) {
 		Player player = e.getPlayer();
 		if (player.isFlying() && e.isSneaking()) {
 			dash.start();

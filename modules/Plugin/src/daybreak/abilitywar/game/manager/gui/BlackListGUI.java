@@ -1,5 +1,9 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import daybreak.abilitywar.ability.AbilityFactory;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
+import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.config.Configuration;
@@ -13,8 +17,11 @@ import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import org.apache.commons.lang.ArrayUtils;
@@ -79,23 +86,50 @@ public class BlackListGUI implements Listener {
 		playerPage = page;
 		int count = 0;
 
-		for (String name : abilityNames) {
+		for (final String name : abilityNames) {
 			final ItemStack stack;
+			final AbilityRegistration registration = AbilityFactory.getByName(name);
 
 			if (Settings.isBlacklisted(name)) {
 				stack = ItemLib.WOOL.getItemStack(ItemColor.RED);
-				ItemMeta im = stack.getItemMeta();
-				im.setDisplayName("§b" + name);
-				im.setLore(Messager.asList("§7이 능력은 능력을 추첨할 때 예외됩니다.",
-						"§b» §f예외 처리를 해제하려면 클릭하세요."));
-				stack.setItemMeta(im);
+				final ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§b" + name);
+				List<String> lore = new ArrayList<>();
+				if (registration != null) {
+					final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+					if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
+					if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+					if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
+					final AbilityManifest manifest = registration.getManifest();
+					lore.add("§f등급: " + manifest.rank().getRankName());
+					lore.add("§f종류: " + manifest.species().getSpeciesName());
+					lore.add(joiner.toString());
+					lore.add("");
+				}
+				lore.add("§7이 능력은 능력을 추첨할 때 예외됩니다.");
+				lore.add("§b» §f예외 처리를 해제하려면 클릭하세요.");
+				meta.setLore(lore);
+				stack.setItemMeta(meta);
 			} else {
 				stack = ItemLib.WOOL.getItemStack(ItemColor.LIME);
-				ItemMeta im = stack.getItemMeta();
-				im.setDisplayName("§b" + name);
-				im.setLore(Messager.asList("§7이 능력은 능력을 추첨할 때 예외되지 않습니다.",
-						"§b» §f예외 처리를 하려면 클릭하세요."));
-				stack.setItemMeta(im);
+				final ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§b" + name);
+				List<String> lore = new ArrayList<>();
+				if (registration != null) {
+					final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+					if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
+					if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+					if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
+					final AbilityManifest manifest = registration.getManifest();
+					lore.add("§f등급: " + manifest.rank().getRankName());
+					lore.add("§f종류: " + manifest.species().getSpeciesName());
+					lore.add(joiner.toString());
+					lore.add("");
+				}
+				lore.add("§7이 능력은 능력을 추첨할 때 예외되지 않습니다.");
+				lore.add("§b» §f예외 처리를 하려면 클릭하세요.");
+				meta.setLore(lore);
+				stack.setItemMeta(meta);
 			}
 
 			if (count / 36 == page - 1) {
@@ -187,11 +221,11 @@ public class BlackListGUI implements Listener {
 
 					if (ItemLib.WOOL.compareType(e.getCurrentItem().getType())) {
 						String stripItemName = ChatColor.stripColor(itemName);
-						if (MaterialX.RED_WOOL.compareType(e.getCurrentItem())) {
+						if (MaterialX.RED_WOOL.compare(e.getCurrentItem())) {
 							Settings.removeBlacklist(stripItemName);
 							SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 							openGUI(playerPage);
-						} else if (MaterialX.LIME_WOOL.compareType(e.getCurrentItem())) {
+						} else if (MaterialX.LIME_WOOL.compare(e.getCurrentItem())) {
 							Settings.addBlacklist(stripItemName);
 							SoundLib.BLOCK_ANVIL_LAND.playSound(p);
 							openGUI(playerPage);

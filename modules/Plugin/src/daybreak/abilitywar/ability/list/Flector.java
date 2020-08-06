@@ -66,7 +66,7 @@ public class Flector extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.parseMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.parseMaterial(), Material.DIAMOND_SWORD);
+	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 
 	private final CenteredBoundingBox boundingBox = CenteredBoundingBox.of(getPlayer().getLocation(), -1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());

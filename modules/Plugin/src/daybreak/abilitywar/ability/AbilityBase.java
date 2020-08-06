@@ -85,16 +85,11 @@ public abstract class AbilityBase {
 	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
 	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
 
-	public static <T extends AbilityBase> T create(Class<T> abilityClass, Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+	public static <T extends AbilityBase> T create(final Class<T> abilityClass, final Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		Preconditions.checkNotNull(abilityClass);
 		Preconditions.checkNotNull(participant);
-		if (AbilityFactory.isRegistered(abilityClass)) {
-			AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
-			AbilityBase abilityBase = registration.getConstructor().newInstance(participant);
-			return abilityClass.cast(abilityBase);
-		} else {
-			throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
-		}
+		if (!AbilityFactory.isRegistered(abilityClass)) throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
+		return abilityClass.cast(AbilityFactory.getRegistration(abilityClass).getConstructor().newInstance(participant));
 	}
 
 	private final Function<MatchResult, String> fieldValueProvider = new Function<MatchResult, String>() {
@@ -120,10 +115,10 @@ public abstract class AbilityBase {
 	};
 
 	private final Participant participant;
+	private final AbstractGame game;
 	private final AbilityRegistration registration;
 	private final AbilityManifest manifest;
 	private String[] explanation = null;
-	private final AbstractGame game;
 	private final Map<Class<? extends Event>, EventObserver> eventhandlers = new HashMap<>();
 	private final Set<AbilityTimer> timers = new HashSet<>(), runningTimers = new HashSet<>();
 	private final Queue<AbilityTimer> pausedTimers = new LinkedList<>();
@@ -137,23 +132,19 @@ public abstract class AbilityBase {
 	 * @param participant 능력을 소유하는 참가자
 	 * @throws IllegalStateException 능력이 {@link AbilityFactory}에 등록되지 않았을 경우 예외가 발생합니다.
 	 */
-	protected AbilityBase(Participant participant) throws IllegalStateException {
+	protected AbilityBase(final Participant participant) throws IllegalStateException {
 		this.participant = participant;
 		this.game = participant.getGame();
-		if (!game.isRunning()) {
-			throw new IllegalStateException("게임이 진행 되고 있지 않습니다.");
-		}
-		if (!AbilityFactory.isRegistered(getClass())) {
-			throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
-		}
+		if (!game.isRunning()) throw new IllegalStateException("게임이 진행 되고 있지 않습니다.");
+		if (!AbilityFactory.isRegistered(getClass())) throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		this.registration = AbilityFactory.getRegistration(getClass());
 		this.manifest = registration.getManifest();
 		final EventManager eventManager = game.getEventManager();
-		for (Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
+		for (final Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
 			final Pair<Method, SubscribeEvent> pair = entry.getValue();
 			final EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
 				@Override
-				protected void onEvent(Event event) {
+				protected void onEvent(final Event event) {
 					if (isRestricted()) return;
 					if (subscriber.onlyRelevant()
 							&& ((event instanceof AbilityEvent && !AbilityBase.this.equals(((AbilityEvent) event).getAbility()))
@@ -172,9 +163,7 @@ public abstract class AbilityBase {
 				}
 			};
 			eventhandlers.put(entry.getKey(), observer);
-		}
-		for (EventObserver value : eventhandlers.values()) {
-			eventManager.register(value);
+			eventManager.register(observer);
 		}
 		this.restriction = new Restriction();
 	}
@@ -338,18 +327,22 @@ public abstract class AbilityBase {
 				public void onStart() {
 					runningTimers.add(AbilityTimer.this);
 				}
+
 				@Override
 				public void onEnd() {
 					runningTimers.remove(AbilityTimer.this);
 				}
+
 				@Override
 				public void onSilentEnd() {
 					runningTimers.remove(AbilityTimer.this);
 				}
+
 				@Override
 				public void onResume() {
 					runningTimers.add(AbilityTimer.this);
 				}
+
 				@Override
 				public void onPause() {
 					runningTimers.remove(AbilityTimer.this);
@@ -402,6 +395,15 @@ public abstract class AbilityBase {
 		public boolean start() {
 			if (!destroyed) {
 				return super.start();
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public boolean resume() {
+			if (!destroyed) {
+				return super.resume();
 			} else {
 				return false;
 			}
@@ -593,10 +595,16 @@ public abstract class AbilityBase {
 			this(duration, null);
 		}
 
-		protected void onDurationStart() {}
+		protected void onDurationStart() {
+		}
+
 		protected abstract void onDurationProcess(int count);
-		protected void onDurationEnd() {}
-		protected void onDurationSilentEnd() {}
+
+		protected void onDurationEnd() {
+		}
+
+		protected void onDurationSilentEnd() {
+		}
 
 		public final boolean isDuration() {
 			if (isRunning()) {
@@ -753,7 +761,8 @@ public abstract class AbilityBase {
 		}
 
 		public void setRestricted(final boolean restricted) {
-			if (restricted) updateState(true); else updateState(checkConditions());
+			if (restricted) updateState(true);
+			else updateState(checkConditions());
 		}
 
 		public abstract class Condition {
@@ -765,7 +774,8 @@ public abstract class AbilityBase {
 			}
 
 			public final Condition register() {
-				if (condition()) updateState(true); else updateState();
+				if (condition()) updateState(true);
+				else updateState();
 				conditions.add(this);
 				return this;
 			}

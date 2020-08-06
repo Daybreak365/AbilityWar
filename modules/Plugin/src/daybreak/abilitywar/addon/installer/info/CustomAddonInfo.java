@@ -1,5 +1,6 @@
 package daybreak.abilitywar.addon.installer.info;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
@@ -14,10 +15,13 @@ import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -108,9 +112,9 @@ public class CustomAddonInfo implements AddonInfo {
 	public class AddonVersion implements AddonInfo.AddonVersion {
 
 		private final String name, tag;
+		private String version = null;
 		private final boolean prerelease;
 		private final URL downloadURL;
-		private final URLConnection connection;
 		private final int fileSize;
 		private final String[] updates;
 
@@ -119,8 +123,32 @@ public class CustomAddonInfo implements AddonInfo {
 			this.tag = object.get("tag").getAsString();
 			this.prerelease = object.get("prerelease").getAsBoolean();
 			this.downloadURL = new URL(object.get("downloadURL").getAsString());
-			this.connection = downloadURL.openConnection();
-			this.fileSize = connection.getContentLength();
+			{
+				final HttpURLConnection connection = (HttpURLConnection) downloadURL.openConnection();
+				try (final JarInputStream jarInputStream = new JarInputStream(connection.getInputStream())) {
+					ZipEntry entry;
+					while ((entry = jarInputStream.getNextEntry()) != null) {
+						if (entry.getName().equals("addon.yml")) break;
+					}
+					if (entry != null) {
+						try (final Scanner scanner = new Scanner(jarInputStream)) {
+							while (scanner.hasNextLine()) {
+								String line = scanner.nextLine();
+								if (line.startsWith("version:")) {
+									if (line.length() <= 8) break;
+									line = line.substring(8).trim();
+									if (!line.isEmpty()) {
+										this.version = line;
+									}
+									break;
+								}
+							}
+						}
+					}
+				}
+				this.fileSize = connection.getContentLength();
+				connection.disconnect();
+			}
 			final List<String> updates = new ArrayList<>();
 			for (JsonElement element : object.get("updates").getAsJsonArray()) {
 				updates.add(element.getAsString());
@@ -136,6 +164,11 @@ public class CustomAddonInfo implements AddonInfo {
 		@Override
 		public String getTag() {
 			return tag;
+		}
+
+		@Override
+		public String getVersion() {
+			return Strings.nullToEmpty(version);
 		}
 
 		@Override
@@ -165,26 +198,27 @@ public class CustomAddonInfo implements AddonInfo {
 			for (Player receiver : Bukkit.getOnlinePlayers()) {
 				receiver.sendMessage(Messager.defaultPrefix + CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 시작");
 			}
-			final InputStream input = connection.getInputStream();
-			final FileOutputStream output;
-			if (AddonLoader.checkAddon(CustomAddonInfo.this.name)) {
-				final ClassLoader classLoader = AddonLoader.getAddon(CustomAddonInfo.this.name).getClass().getClassLoader();
-				if (classLoader instanceof AddonClassLoader) {
-					output = new FileOutputStream(((AddonClassLoader) classLoader).getPluginFile(), false);
+			final HttpURLConnection connection = (HttpURLConnection) downloadURL.openConnection();
+			try (final InputStream input = connection.getInputStream()) {
+				final FileOutputStream output;
+				if (AddonLoader.checkAddon(CustomAddonInfo.this.name)) {
+					final ClassLoader classLoader = AddonLoader.getAddon(CustomAddonInfo.this.name).getClass().getClassLoader();
+					if (classLoader instanceof AddonClassLoader) {
+						output = new FileOutputStream(((AddonClassLoader) classLoader).getPluginFile(), false);
+					} else {
+						output = new FileOutputStream(FileUtil.getFile("Addon/" + CustomAddonInfo.this.name + ".jar"), false);
+					}
 				} else {
-					final String[] split = downloadURL.getPath().split("/");
-					output = new FileOutputStream(FileUtil.getFile("Addon/" + split[split.length - 1]), false);
+					output = new FileOutputStream(FileUtil.getFile("Addon/" + CustomAddonInfo.this.name + ".jar"), false);
 				}
-			} else {
-				final String[] split = downloadURL.getPath().split("/");
-				output = new FileOutputStream(FileUtil.getFile("Addon/" + split[split.length - 1]), false);
+				final byte[] data = new byte[1024];
+				int count;
+				while ((count = input.read(data)) >= 0) {
+					output.write(data, 0, count);
+				}
+				output.close();
 			}
-			final byte[] data = new byte[1024];
-			int count;
-			while ((count = input.read(data)) >= 0) {
-				output.write(data, 0, count);
-			}
-			output.close();
+			connection.disconnect();
 			Bukkit.reload();
 			Messager.sendConsoleMessage(CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 완료");
 			for (Player receiver : Bukkit.getOnlinePlayers()) {

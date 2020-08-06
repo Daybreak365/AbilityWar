@@ -88,7 +88,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 	};
 
-	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.parseMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.parseMaterial(), Material.DIAMOND_SWORD);
+	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 	private static final EulerAngle DEFAULT_EULER_ANGLE = new EulerAngle(Math.toRadians(-10), 0, 0);
 	private final Cooldown backstepCool = new Cooldown(BACKSTEP_COOLDOWN_CONFIG.getValue(), CooldownDecrease._25), ultimateCool = new Cooldown(ULTIMATE_COOLDOWN_CONFIG.getValue());
 	private final int stacksToCharge = 3, maxSwords = 10;

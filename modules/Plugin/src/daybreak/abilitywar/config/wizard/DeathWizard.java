@@ -28,12 +28,12 @@ public class DeathWizard extends SettingWizard {
 		eliminateMeta.setDisplayName("§b작업");
 		eliminate.setItemMeta(eliminateMeta);
 
-		abilityReveal = MaterialX.ENDER_EYE.parseItem();
+		abilityReveal = MaterialX.ENDER_EYE.createItem();
 		ItemMeta abilityRevealMeta = abilityReveal.getItemMeta();
 		abilityRevealMeta.setDisplayName("§b능력 공개");
 		abilityReveal.setItemMeta(abilityRevealMeta);
 
-		autoRespawn = MaterialX.DIAMOND_CHESTPLATE.parseItem();
+		autoRespawn = MaterialX.DIAMOND_CHESTPLATE.createItem();
 		ItemMeta autoRespawnMeta = autoRespawn.getItemMeta();
 		autoRespawnMeta.setDisplayName("§b자동 리스폰");
 		autoRespawn.setItemMeta(autoRespawnMeta);

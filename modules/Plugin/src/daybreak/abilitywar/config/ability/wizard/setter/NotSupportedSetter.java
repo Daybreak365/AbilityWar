@@ -20,7 +20,7 @@ public class NotSupportedSetter extends Setter {
 
 	@Override
 	public ItemStack getItem(SettingObject<?> settingObject) {
-		ItemStack wool = MaterialX.RED_WOOL.parseItem();
+		ItemStack wool = MaterialX.RED_WOOL.createItem();
 		ItemMeta woolMeta = wool.getItemMeta();
 		woolMeta.setDisplayName(ChatColor.WHITE + settingObject.getKey());
 		String[] comments = settingObject.getComments();

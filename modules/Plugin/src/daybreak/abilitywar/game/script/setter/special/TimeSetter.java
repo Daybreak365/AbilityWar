@@ -46,7 +46,7 @@ public class TimeSetter extends Setter<Integer> {
 
 	@Override
 	public ItemStack getItem() {
-		ItemStack watch = MaterialX.CLOCK.parseItem();
+		ItemStack watch = MaterialX.CLOCK.createItem();
 		ItemMeta watchMeta = watch.getItemMeta();
 		watchMeta.setDisplayName(ChatColor.AQUA + this.getKey());
 

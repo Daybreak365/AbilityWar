@@ -38,6 +38,7 @@ public interface AddonInfo {
 	interface AddonVersion {
 		String getName();
 		String getTag();
+		String getVersion();
 		boolean isPrerelease();
 		URL getFileURL();
 		int getFileSize();
