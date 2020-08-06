@@ -67,7 +67,7 @@ public enum ConfigNodes {
 	GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE("게임.원거리.거리비례대미지", false,
 			"# true로 설정하면 게임이 진행되는 동안 화살의 대미지가 거리 비례 대미지로 변경됩니다.",
 			"# 가까울수록 대미지가 감소하며, 대미지가 원 대미지보다 증가하지는 않습니다."),
-	GAME_SPAWN_LOCATION("게임.스폰.위치", new SpawnLocation(Bukkit.getWorlds().get(0).getSpawnLocation()), new Cacher() {
+	GAME_SPAWN_LOCATION("게임.스폰.위치", new SpawnLocation(Bukkit.getWorlds().get(0).getSpawnLocation()).toMap(), new Cacher() {
 		@Override
 		public Object toCache(Object object) {
 			try {
