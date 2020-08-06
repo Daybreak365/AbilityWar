@@ -249,7 +249,7 @@ public class AddonsGUI implements Listener {
 							if (addonVersion != null) {
 								player.closeInventory();
 								try {
-									addonInfo.getVersions().get(addonInfo.getVersions().size() - 1).install();
+									addonVersion.install();
 								} catch (IOException ex) {
 									ex.printStackTrace();
 								}
