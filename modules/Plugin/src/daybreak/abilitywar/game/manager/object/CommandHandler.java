@@ -32,13 +32,13 @@ public interface CommandHandler {
 					if (sender instanceof Player) {
 						final Player player = (Player) sender;
 						if (args[0].equalsIgnoreCase("@a")) {
-							new AbilityGUI(player, plugin).openGUI(1);
+							new AbilityGUI(player, GameManager.getGame(), plugin).openGUI(1);
 						} else {
 							final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 							if (targetPlayer != null) {
 								final AbstractGame game = GameManager.getGame();
 								if (game.isParticipating(targetPlayer)) {
-									new AbilityGUI(player, game.getParticipant(targetPlayer), plugin).openGUI(1);
+									new AbilityGUI(player, game.getParticipant(targetPlayer), game, plugin).openGUI(1);
 								} else
 									Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 							} else

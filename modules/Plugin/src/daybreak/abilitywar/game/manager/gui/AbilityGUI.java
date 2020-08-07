@@ -65,10 +65,10 @@ public class AbilityGUI implements Listener, Observer {
 	private final Player player;
 	private final Participant target;
 
-	public AbilityGUI(Player player, Participant target, Plugin plugin) {
+	public AbilityGUI(Player player, Participant target, AbstractGame game, Plugin plugin) {
 		this.player = player;
 		this.target = target;
-		target.getGame().attachObserver(this);
+		game.attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 
 		values = new TreeMap<>();
@@ -77,8 +77,8 @@ public class AbilityGUI implements Listener, Observer {
 		}
 	}
 
-	public AbilityGUI(Player player, Plugin plugin) {
-		this(player, null, plugin);
+	public AbilityGUI(Player player, AbstractGame game, Plugin plugin) {
+		this(player, null, game, plugin);
 	}
 
 	private final Map<String, AbilityRegistration> values;

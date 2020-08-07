@@ -37,6 +37,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MixAbilityGUI implements Listener, Observer {
 
@@ -65,10 +67,10 @@ public class MixAbilityGUI implements Listener, Observer {
 	private Inventory abilityGUI;
 	private AbilityRegistration firstAbility = null;
 
-	public MixAbilityGUI(Player player, Participant target, Plugin plugin) {
+	public MixAbilityGUI(@NotNull final Player player, @Nullable final Participant target, @NotNull final AbstractGame game, @NotNull final Plugin plugin) {
 		this.player = player;
 		this.target = target;
-		target.getGame().attachObserver(this);
+		game.attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 
 		values = new TreeMap<>();
@@ -77,8 +79,8 @@ public class MixAbilityGUI implements Listener, Observer {
 		}
 	}
 
-	public MixAbilityGUI(Player player, Plugin plugin) {
-		this(player, null, plugin);
+	public MixAbilityGUI(@NotNull final Player player, @NotNull final AbstractGame game, @NotNull final Plugin plugin) {
+		this(player, null, game, plugin);
 	}
 
 	public void openGUI(int page) {

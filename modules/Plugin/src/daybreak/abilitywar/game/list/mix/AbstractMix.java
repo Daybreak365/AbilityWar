@@ -48,13 +48,13 @@ public abstract class AbstractMix extends Game {
 					if (sender instanceof Player) {
 						Player player = (Player) sender;
 						if (args[0].equalsIgnoreCase("@a")) {
-							new MixAbilityGUI(player, plugin).openGUI(1);
+							new MixAbilityGUI(player, this, plugin).openGUI(1);
 						} else {
 							Player targetPlayer = Bukkit.getPlayerExact(args[0]);
 							if (targetPlayer != null) {
 								AbstractGame game = GameManager.getGame();
 								if (game.isParticipating(targetPlayer)) {
-									new MixAbilityGUI(player, game.getParticipant(targetPlayer), plugin).openGUI(1);
+									new MixAbilityGUI(player, game.getParticipant(targetPlayer), this, plugin).openGUI(1);
 								} else
 									Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 							} else
