@@ -60,7 +60,7 @@ public class AddonLoader {
 		for (final Addon addon : addons.values()) {
 			try {
 				addon.onEnable();
-			} catch (Exception | ExceptionInInitializerError e) {
+			} catch (Exception | ExceptionInInitializerError | NoSuchMethodError | NoSuchFieldError | NoClassDefFoundError e) {
 				logger.error(addon.getDescription().getName() + " (" + addon.getClassLoader().getPluginFile().getName() + "): 애드온을 활성화하는 도중 오류가 발생하였습니다");
 				e.printStackTrace();
 			}
@@ -71,7 +71,7 @@ public class AddonLoader {
 		for (final Addon addon : addons.values()) {
 			try {
 				addon.onDisable();
-			} catch (Exception | ExceptionInInitializerError e) {
+			} catch (Exception | ExceptionInInitializerError | NoSuchMethodError | NoSuchFieldError | NoClassDefFoundError e) {
 				logger.error(addon.getDescription().getName() + " (" + addon.getClassLoader().getPluginFile().getName() + "): 애드온을 비활성화하는 도중 오류가 발생하였습니다");
 				e.printStackTrace();
 			}

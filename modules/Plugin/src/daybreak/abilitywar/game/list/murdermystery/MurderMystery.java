@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Category;
@@ -11,15 +12,21 @@ import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.interfaces.Winnable;
+import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
 import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
-import daybreak.abilitywar.game.list.murdermystery.ability.extra.Police;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Doctor;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Police;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.AssassinMurderer;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMurderer;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -29,6 +36,7 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,16 +55,20 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
@@ -64,6 +76,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 @GameManifest(name = "머더 미스터리", description = {
 
@@ -75,6 +88,12 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 
 	public static final List<Class<? extends AbilityBase>> JOB_ABILITIES = ImmutableList.<Class<? extends AbilityBase>>builder()
 			.add(Police.class)
+			.add(Doctor.class)
+			.build();
+
+	public static final List<Class<? extends AbilityBase>> MURDER_JOB_ABILITIES = ImmutableList.<Class<? extends AbilityBase>>builder()
+			.add(AssassinMurderer.class)
+			.add(BlackMurderer.class)
 			.build();
 	private static final Random random = new Random();
 	private static final ItemStack AIR = new ItemStack(Material.AIR);
@@ -94,14 +113,40 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		return JOB_ABILITIES.get(random.nextInt(JOB_ABILITIES.size()));
 	}
 
-	public boolean addGold(Participant participant) {
+	public static Class<? extends AbilityBase> getRandomMurderJob() {
+		return MURDER_JOB_ABILITIES.get(random.nextInt(MURDER_JOB_ABILITIES.size()));
+	}
+
+	public boolean addGold(final Participant participant) {
+		return addGold(participant, true);
+	}
+
+	private boolean addGold(final Participant participant, final boolean message) {
 		final int gold = getGold(participant);
 		if (gold < 64) {
 			goldPoints.put(participant, gold + 1);
 			updateGold(participant);
-			participant.getPlayer().sendMessage("§6+ §e1 금");
+			if (message) participant.getPlayer().sendMessage("§6+ §e1 금");
 			return true;
 		} else return false;
+	}
+
+	public int addGold(final Participant participant, final int amount) {
+		final int gold = getGold(participant);
+		if (gold != 64) {
+			final int earn = 64 - gold - amount;
+			if (earn >= 0) {
+				goldPoints.put(participant, gold + earn);
+				updateGold(participant);
+				participant.getPlayer().sendMessage("§6+ §e" + earn + " 금");
+				return 0;
+			} else {
+				goldPoints.put(participant, gold + amount + earn);
+				updateGold(participant);
+				participant.getPlayer().sendMessage("§6+ §e" + (amount + earn) + " 금");
+				return -earn;
+			}
+		} else return amount;
 	}
 
 	public boolean consumeGold(Participant participant, int amount) {
@@ -164,12 +209,12 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 					}
 					break;
 				case 5:
-					Random random = new Random();
-					List<Participant> participants = new ArrayList<>(getParticipants());
-					final int div = (int) Math.max(Math.ceil(participants.size() / 7.0), 1);
+					final Random random = new Random();
+					final List<Participant> participants = new ArrayList<>(getParticipants());
+					final int div = (int) Math.max(Math.ceil(participants.size() / 9.0), 1);
 					for (int i = 0; i < div; i++) {
-						int index = random.nextInt(participants.size());
-						Participant murderer = participants.get(index);
+						final int index = random.nextInt(participants.size());
+						final Participant murderer = participants.get(index);
 						participants.remove(index);
 						try {
 							murderer.setAbility(Murderer.class);
@@ -177,8 +222,8 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 						}
 					}
 					for (int i = 0; i < div; i++) {
-						int index = random.nextInt(participants.size());
-						Participant detective = participants.get(index);
+						final int index = random.nextInt(participants.size());
+						final Participant detective = participants.get(index);
 						participants.remove(index);
 						try {
 							detective.setAbility(Detective.class);
@@ -252,6 +297,13 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	}
 
 	@EventHandler
+	private void onFoodLevelChange(FoodLevelChangeEvent e) {
+		if (Settings.getNoHunger()) {
+			e.setFoodLevel(20);
+		}
+	}
+
+	@EventHandler
 	private void onPlayerSwapHandItems(PlayerSwapHandItemsEvent e) {
 		e.setCancelled(true);
 	}
@@ -259,14 +311,18 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	@EventHandler
 	private void onProjectileHit(ProjectileHitEvent e) {
 		if (e.getEntity() instanceof Arrow) {
-			Arrow arrow = (Arrow) e.getEntity();
+			final Arrow arrow = (Arrow) e.getEntity();
 			arrow.remove();
 			if (arrow.getShooter() != null && arrow.getShooter() instanceof Entity && isParticipating(((Entity) arrow.getShooter()).getUniqueId()) && e.getHitEntity() != null && isParticipating(e.getHitEntity().getUniqueId()) && !arrow.getShooter().equals(e.getHitEntity())) {
-				Participant hit = getParticipant(e.getHitEntity().getUniqueId()), shooter = getParticipant(((Entity) arrow.getShooter()).getUniqueId());
-				if (hit.hasAbility() && !(hit.getAbility() instanceof Murderer) && shooter.hasAbility() && !(shooter.getAbility() instanceof Murderer)) {
-					shooter.getPlayer().setHealth(0);
+				final Participant hit = getParticipant(e.getHitEntity().getUniqueId()), shooter = getParticipant(((Entity) arrow.getShooter()).getUniqueId());
+				final ArrowKillEvent event = new ArrowKillEvent(shooter, hit);
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					if (hit.hasAbility() && !(hit.getAbility() instanceof AbstractMurderer) && shooter.hasAbility() && !(shooter.getAbility() instanceof AbstractMurderer)) {
+						shooter.getPlayer().setHealth(0);
+					}
+					hit.getPlayer().setHealth(0);
 				}
-				hit.getPlayer().setHealth(0);
 			}
 		}
 	}
@@ -289,7 +345,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 					private final Predicate<Entity> predicate = new Predicate<Entity>() {
 						@Override
 						public boolean test(Entity entity) {
-							return isParticipating(entity.getUniqueId()) && !deadPlayers.contains(entity.getUniqueId()) && !(getParticipant(entity.getUniqueId()).getAbility() instanceof Murderer);
+							return isParticipating(entity.getUniqueId()) && !deadPlayers.contains(entity.getUniqueId()) && !(getParticipant(entity.getUniqueId()).getAbility() instanceof AbstractMurderer);
 						}
 					};
 					private final ArmorStand stand = entityPart.getPlayer().getWorld().spawn(center, ArmorStand.class);
@@ -331,7 +387,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		}
 		if (killer != null && isParticipating(killer.getUniqueId()) && isParticipating(entity.getUniqueId())) {
 			Participant killerPart = getParticipant(killer.getUniqueId()), entityPart = getParticipant(entity.getUniqueId());
-			if (entityPart.hasAbility() && !(entityPart.getAbility() instanceof Murderer) && killerPart.hasAbility() && !(killerPart.getAbility() instanceof Murderer)) {
+			if (entityPart.hasAbility() && !(entityPart.getAbility() instanceof AbstractMurderer) && killerPart.hasAbility() && !(killerPart.getAbility() instanceof AbstractMurderer)) {
 				killer.setHealth(0);
 			}
 		}
@@ -347,7 +403,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		List<Participant> murderers = new ArrayList<>();
 		for (Participant participant : getParticipants()) {
 			if (deadPlayers.contains(participant.getPlayer().getUniqueId())) continue;
-			if (participant.hasAbility() && participant.getAbility() instanceof Murderer) {
+			if (participant.hasAbility() && participant.getAbility() instanceof AbstractMurderer) {
 				murderers.add(participant);
 			} else {
 				innocentLeft = true;
@@ -356,7 +412,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		if (murderers.size() == 0) {
 			Messager.clearChat();
 			for (Participant participant : getParticipants()) {
-				if (participant.hasAbility() && participant.getAbility() instanceof Murderer) continue;
+				if (participant.hasAbility() && participant.getAbility() instanceof AbstractMurderer) continue;
 				Player p = participant.getPlayer();
 				SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(p);
 				new SimpleTimer(TaskType.REVERSE, 8) {
@@ -421,10 +477,107 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		}
 	}
 
+	@EventHandler
+	private void onCommandPreProcess(PlayerCommandPreprocessEvent e) {
+		if (e.getMessage().equals("/금나와라뚝딱")) {
+			e.setCancelled(true);
+			if (e.getPlayer().isOp()) {
+				if (isParticipating(e.getPlayer())) {
+					Bukkit.broadcastMessage("§f" + e.getPlayer().getName() + "§a님이 디버그 명령어로 §e금 §a64개를 얻으셨습니다.");
+					final Participant participant = getParticipant(e.getPlayer());
+					new GameTimer(TaskType.NORMAL, 64) {
+						@Override
+						protected void run(int count) {
+							if (getGold(participant) == 64) stop(true);
+							addGold(participant, false);
+						}
+					}.setPeriod(TimeUnit.TICKS, 1).start();
+				} else Messager.sendErrorMessage(e.getPlayer(), "게임에 참여중이지 않습니다.");
+			} else Messager.sendErrorMessage(e.getPlayer(), "OP 권한이 있어야 합니다.");
+		}
+	}
+
 	@Override
 	public void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
 		if (commandType == CommandType.ABILITY_CHECK) super.executeCommand(commandType, sender, command, args, plugin);
+		else if (commandType == CommandType.ABI) {
+			if (args.length < 2) {
+				Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [직업]");
+				return;
+			}
+			final String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+
+			if (JobList.isRegistered(name)) {
+				if (args[0].equalsIgnoreCase("@a")) {
+					try {
+						for (Participant participant : GameManager.getGame().getParticipants()) {
+							participant.setAbility(JobList.getByString(name));
+						}
+						Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 직업을 임의로 부여하였습니다.");
+					} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+						Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
+						if (DeveloperSettings.isEnabled()) e.printStackTrace();
+					}
+				} else {
+					final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
+					if (targetPlayer != null) {
+						final AbstractGame game = GameManager.getGame();
+						if (game.isParticipating(targetPlayer)) {
+							try {
+								game.getParticipant(targetPlayer).setAbility(JobList.getByString(name));
+								Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 직업을 임의로 부여하였습니다.");
+							} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+								Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
+								if (DeveloperSettings.isEnabled()) e.printStackTrace();
+							}
+						} else Messager.sendErrorMessage(sender, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+					} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+				}
+			} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 직업입니다.");
+		}
 		else sender.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
+	}
+
+	public static class ArrowKillEvent extends Event implements Cancellable {
+
+		private static final HandlerList handlers = new HandlerList();
+
+		@NotNull
+		@Override
+		public HandlerList getHandlers() {
+			return handlers;
+		}
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		private boolean cancelled;
+		private final Participant shooter;
+		private final Participant target;
+
+		private ArrowKillEvent(final Participant shooter, final Participant target) {
+			this.shooter = shooter;
+			this.target = target;
+		}
+
+		public Participant getShooter() {
+			return shooter;
+		}
+
+		public Participant getTarget() {
+			return target;
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return cancelled;
+		}
+
+		@Override
+		public void setCancelled(final boolean cancelled) {
+			this.cancelled = cancelled;
+		}
 	}
 
 }

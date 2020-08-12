@@ -1,9 +1,10 @@
-package daybreak.abilitywar.game.manager.gui;
+package daybreak.abilitywar.config.wizard;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.config.serializable.team.TeamPreset.DivisionType;
 import daybreak.abilitywar.config.serializable.team.TeamPreset.TeamScheme;
@@ -34,7 +35,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class TeamPresetGUI implements Listener {
+public class TeamPresetWizard implements Listener {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
 			.type(Material.ARROW)
@@ -61,15 +62,15 @@ public class TeamPresetGUI implements Listener {
 			.displayName(ChatColor.AQUA + "나가기")
 			.build();
 
-	private final Player p;
+	private final Player player;
 	private TeamPreset editing = null;
 	private State state = State.GUI;
 	private int playerPage = 1;
 	private Inventory gui;
 	private String schemeName = "";
 
-	public TeamPresetGUI(Player p, Plugin Plugin) {
-		this.p = p;
+	public TeamPresetWizard(Player player, Plugin Plugin) {
+		this.player = player;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 
@@ -154,10 +155,21 @@ public class TeamPresetGUI implements Listener {
 				} else {
 					stack = MaterialX.WHITE_WOOL.createItem();
 				}
-				ItemMeta im = stack.getItemMeta();
-				im.setDisplayName(ChatColor.WHITE + scheme.getName());
-				im.setLore(Arrays.asList(scheme.getDisplayName(), "", ChatColor.RED + "삭제" + ChatColor.WHITE + "하려면 우클릭하세요."));
-				stack.setItemMeta(im);
+				final ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName(ChatColor.WHITE + scheme.getName());
+				final SpawnLocation spawnLocation = scheme.getSpawn();
+				meta.setLore(Arrays.asList(
+						scheme.getDisplayName(), "", "§6» " + ChatColor.RED + "삭제" + ChatColor.WHITE + "하려면 §b우클릭§f하세요.",
+						"",
+						"§6» §f스폰 위치를 내 위치로 §a설정§f하려면 §b좌클릭§f하세요.",
+						"§6» §f스폰 위치를 §c초기화§f하려면 §bSHIFT + 좌클릭§f하세요.", "",
+						"§3현재 팀 스폰 위치",
+						"§b월드 §7: §f" + spawnLocation.world,
+						"§bX §7: §f" + spawnLocation.x,
+						"§bY §7: §f" + spawnLocation.y,
+						"§bZ §7: §f" + spawnLocation.z
+				));
+				stack.setItemMeta(meta);
 
 				if (count / 36 == page - 1) {
 					gui.setItem(count % 36, stack);
@@ -176,7 +188,7 @@ public class TeamPresetGUI implements Listener {
 			stack.setItemMeta(meta);
 			gui.setItem(49, stack);
 		}
-		p.openInventory(gui);
+		player.openInventory(gui);
 	}
 
 	@EventHandler
@@ -193,7 +205,7 @@ public class TeamPresetGUI implements Listener {
 
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 			Configuration.updateProperty(ConfigNodes.GAME_TEAM_PRESETS);
 			try {
@@ -205,7 +217,7 @@ public class TeamPresetGUI implements Listener {
 
 	@EventHandler
 	private void onChat(AsyncPlayerChatEvent e) {
-		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 			e.setCancelled(true);
 			switch (state) {
 				case NEW_PRESET: {
@@ -220,7 +232,7 @@ public class TeamPresetGUI implements Listener {
 									openGUI(1);
 								}
 							}.runTask(AbilityWar.getPlugin());
-						} else p.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 이미 존재하는 프리셋 이름입니다.");
+						} else player.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 이미 존재하는 프리셋 이름입니다.");
 					} else {
 						this.state = State.GUI;
 						new BukkitRunnable() {
@@ -239,11 +251,11 @@ public class TeamPresetGUI implements Listener {
 							if (name.length() <= 12) {
 								this.schemeName = name;
 								this.state = State.NEW_SCHEME_DISPLAY_NAME;
-								p.sendMessage(ChatColor.WHITE + "프리셋에 새로 추가할 " + ChatColor.GREEN + "팀" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "별명" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
-								p.sendMessage(ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "§로 색코드 사용 가능" + ChatColor.DARK_GRAY + ")");
-							} else p.sendMessage(ChatColor.WHITE + "프리셋 이름은 " + ChatColor.GREEN + "13 글자 " + ChatColor.WHITE + "이상으로 할 수 없습니다.");
+								player.sendMessage(ChatColor.WHITE + "프리셋에 새로 추가할 " + ChatColor.GREEN + "팀" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "별명" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
+								player.sendMessage(ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "§로 색코드 사용 가능" + ChatColor.DARK_GRAY + ")");
+							} else player.sendMessage(ChatColor.WHITE + "프리셋 이름은 " + ChatColor.GREEN + "13 글자 " + ChatColor.WHITE + "이상으로 할 수 없습니다.");
 						} else {
-							p.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 프리셋에 이미 존재하는 팀 이름입니다.");
+							player.sendMessage(ChatColor.GREEN + name + ChatColor.WHITE + KoreanUtil.getJosa(name, Josa.은는) + " 프리셋에 이미 존재하는 팀 이름입니다.");
 						}
 					} else {
 						this.state = State.GUI;
@@ -269,7 +281,7 @@ public class TeamPresetGUI implements Listener {
 								}
 							}.runTask(AbilityWar.getPlugin());
 						} else {
-							p.sendMessage(ChatColor.WHITE + "프리셋 별명은 " + ChatColor.GREEN + "13 글자 " + ChatColor.WHITE + "이상으로 할 수 없습니다.");
+							player.sendMessage(ChatColor.WHITE + "프리셋 별명은 " + ChatColor.GREEN + "13 글자 " + ChatColor.WHITE + "이상으로 할 수 없습니다.");
 						}
 					} else {
 						this.state = State.GUI;
@@ -299,8 +311,8 @@ public class TeamPresetGUI implements Listener {
 					if (editing == null) {
 						if (displayName.equals(ChatColor.GREEN + "프리셋 추가")) {
 							this.state = State.NEW_PRESET;
-							p.sendMessage(ChatColor.WHITE + "새로 추가할 " + ChatColor.GREEN + "프리셋" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "이름" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
-							p.closeInventory();
+							player.sendMessage(ChatColor.WHITE + "새로 추가할 " + ChatColor.GREEN + "프리셋" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "이름" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
+							player.closeInventory();
 						} else if (e.getClick() == ClickType.LEFT) {
 							String stripName = ChatColor.stripColor(displayName);
 							if (MaterialX.WHITE_WOOL.compare(e.getCurrentItem())) {
@@ -324,14 +336,20 @@ public class TeamPresetGUI implements Listener {
 					} else {
 						if (displayName.equals(ChatColor.GREEN + "팀 추가")) {
 							this.state = State.NEW_SCHEME_NAME;
-							p.sendMessage(ChatColor.WHITE + "프리셋에 새로 추가할 " + ChatColor.GREEN + "팀" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "이름" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
-							p.closeInventory();
+							player.sendMessage(ChatColor.WHITE + "프리셋에 새로 추가할 " + ChatColor.GREEN + "팀" + ChatColor.WHITE + "의 " + ChatColor.YELLOW + "이름" + ChatColor.WHITE + "을 채팅에 입력해주세요. " + ChatColor.DARK_GRAY + "(" + ChatColor.GRAY + "취소하려면 '!'를 입력해주세요." + ChatColor.DARK_GRAY + ")");
+							player.closeInventory();
 						} else if (displayName.equals(ChatColor.AQUA + "나가기")) {
 							this.editing = null;
 							openGUI(1);
 						} else if (e.getClick() == ClickType.RIGHT) {
 							editing.removeScheme(ChatColor.stripColor(displayName));
 							openGUI(1);
+						} else if (e.getClick() == ClickType.LEFT) {
+							editing.getScheme(ChatColor.stripColor(displayName)).setSpawn(player.getLocation());
+							openGUI(playerPage);
+						} else if (e.getClick() == ClickType.SHIFT_LEFT) {
+							editing.getScheme(ChatColor.stripColor(displayName)).setSpawn(null);
+							openGUI(playerPage);
 						}
 					}
 				}

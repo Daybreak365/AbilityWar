@@ -128,6 +128,7 @@ public class AbilityList {
 		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getName() + ".Hermit");
 		registerAbility(SwordMaster.class);
 		registerAbility(SurvivalInstinct.class);
+		registerAbility(Synchronize.class);
 	}
 
 	/**

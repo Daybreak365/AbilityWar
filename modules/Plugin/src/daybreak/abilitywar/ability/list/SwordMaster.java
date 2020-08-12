@@ -88,7 +88,10 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 	};
 
-	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
+	private static final Set<Material> materials = MaterialX.NETHERITE_SWORD.isSupported() ?
+			ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD, MaterialX.NETHERITE_SWORD.getMaterial())
+			:
+			ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 	private static final EulerAngle DEFAULT_EULER_ANGLE = new EulerAngle(Math.toRadians(-10), 0, 0);
 	private final Cooldown backstepCool = new Cooldown(BACKSTEP_COOLDOWN_CONFIG.getValue(), CooldownDecrease._25), ultimateCool = new Cooldown(ULTIMATE_COOLDOWN_CONFIG.getValue());
 	private final int stacksToCharge = 3, maxSwords = 10;
@@ -101,7 +104,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 		protected void run(int count) {
 			final PlayerInventory inventory = getPlayer().getInventory();
 			if (charge != null) {
-				if (inventory.getHeldItemSlot() != charge.slot || inventory.getItemInMainHand().getType() != charge.material) {
+				if (inventory.getHeldItemSlot() != charge.slot || inventory.getItemInMainHand().getType() != charge.stack.getType()) {
 					charge = null;
 					actionbarChannel.update(formatActionbarMessage(0));
 				} else {
@@ -109,7 +112,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 				}
 			} else {
 				if (materials.contains(inventory.getItemInMainHand().getType()) && swords.swords.size() < maxSwords) {
-					charge = new Charge(inventory.getItemInMainHand().getType(), inventory.getHeldItemSlot());
+					charge = new Charge(inventory.getItemInMainHand(), inventory.getHeldItemSlot());
 				}
 			}
 		}
@@ -176,19 +179,19 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 	private class Charge {
 
-		private final Material material;
+		private final ItemStack stack;
 		private final int slot;
 		private int count = 0;
 
-		private Charge(Material material, int slot) {
-			this.material = material;
+		private Charge(ItemStack stack, int slot) {
+			this.stack = stack;
 			this.slot = slot;
 		}
 
 		public void addCount() {
 			if (++count > stacksToCharge) {
 				charge = null;
-				swords.add(new Sword(material, getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue() / 3));
+				swords.add(new Sword(stack, getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue() / 3));
 				actionbarChannel.update(formatActionbarMessage(0));
 				return;
 			}
@@ -225,6 +228,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 		}
 
 		private void ultimate() {
+			if (swords.size() < maxSwords) return;
 			for (Iterator<Sword> iterator = swords.iterator(); iterator.hasNext();) {
 				iterator.next().ultimate();
 				iterator.remove();
@@ -273,15 +277,15 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 		private final Player owner;
 		private final Predicate<Entity> predicate;
-		private final Material material;
+		private final ItemStack stack;
 		private final double damage;
 		private ArmorStand armorStand;
-		private Runnable skillHandler;
+		private SkillHandler skillHandler;
 		private Vector direction;
 		private SwordEntity swordEntity;
 
-		private Sword(Player owner, Material material, double damage) {
-			super(TaskType.NORMAL, 200);
+		private Sword(Player owner, ItemStack stack, double damage, int maximumCount) {
+			super(TaskType.NORMAL, maximumCount);
 			this.owner = owner;
 			this.predicate = new Predicate<Entity>() {
 				@Override
@@ -305,23 +309,27 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 				}
 			};
 			setPeriod(TimeUnit.TICKS, 1);
-			this.material = material;
+			this.stack = stack.clone();
 			this.damage = damage;
 			newArmorStand();
 		}
 
-		private Sword(Material material, double damage) {
-			this(getPlayer(), material, damage);
+		private Sword(Player owner, ItemStack stack, double damage) {
+			this(owner, stack, damage, 200);
+		}
+
+		private Sword(ItemStack stack, double damage) {
+			this(getPlayer(), stack, damage);
 		}
 
 		private void newArmorStand() {
 			this.armorStand = owner.getWorld().spawn(owner.getLocation(), ArmorStand.class);
-			armorStand.setMarker(true);
+			armorStand.setFireTicks(Integer.MAX_VALUE);
 			NMS.removeBoundingBox(armorStand);
 			armorStand.setMetadata("SwordMaster", new FixedMetadataValue(AbilityWar.getPlugin(), null));
 			armorStand.setVisible(false);
 			armorStand.setInvulnerable(true);
-			armorStand.getEquipment().setItemInMainHand(new ItemStack(material));
+			armorStand.getEquipment().setItemInMainHand(stack);
 			armorStand.setGravity(false);
 			armorStand.setRightArmPose(DEFAULT_EULER_ANGLE);
 		}
@@ -331,11 +339,11 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			this.swordEntity = new SwordEntity(owner.getWorld(), owner.getLocation().getX(), owner.getLocation().getY(), owner.getLocation().getZ());
 			armorStand.setRightArmPose(new EulerAngle(Math.toRadians(pitch - 10), 0, 0));
 			armorStand.teleport(owner.getLocation());
-			this.skillHandler = new Runnable() {
+			this.skillHandler = new SkillHandler() {
 				private final Vector right = VectorUtil.rotateAroundAxisY(direction.clone(), -90).multiply(0.4);
 
 				@Override
-				public void run() {
+				public void run(final int count) {
 					for (int i = 0; i < 2; i++) {
 						final Location location = armorStand.getLocation().add(direction);
 						final Location swordLocation = location.clone().add(0, 0.8, 0).add(direction.clone().multiply(0.75)).add(right);
@@ -366,10 +374,9 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			teleportDest.setY(LocationUtil.getFloorYAt(teleportDest.getWorld(), getPlayer().getLocation().getY(), teleportDest.getBlockX(), teleportDest.getBlockZ()) - 0.5);
 			armorStand.teleport(teleportDest);
 			armorStand.getWorld().strikeLightningEffect(armorStand.getLocation());
-			this.skillHandler = new Runnable() {
+			this.skillHandler = new SkillHandler() {
 				@Override
-				public void run() {
-
+				public void run(final int count) {
 				}
 			};
 			start();
@@ -377,7 +384,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void run(int count) {
-			skillHandler.run();
+			skillHandler.run(count);
 		}
 
 		@Override
@@ -406,7 +413,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			public void onDeflect(Participant deflector, Vector newDirection) {
 				stop(false);
 				final Player deflectedPlayer = deflector.getPlayer();
-				new Sword(deflectedPlayer, material, damage).shoot(newDirection, LocationUtil.getYaw(newDirection), LocationUtil.getPitch(newDirection));
+				new Sword(deflectedPlayer, stack, damage).shoot(newDirection, LocationUtil.getYaw(newDirection), LocationUtil.getPitch(newDirection));
 			}
 
 			@Override
@@ -416,6 +423,10 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 		}
 
+	}
+
+	private interface SkillHandler {
+		void run(final int count);
 	}
 
 }

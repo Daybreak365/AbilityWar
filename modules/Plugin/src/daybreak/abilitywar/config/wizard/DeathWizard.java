@@ -98,15 +98,15 @@ public class DeathWizard extends SettingWizard {
 			switch (currentItem.getItemMeta().getDisplayName()) {
 				case "§b작업":
 					DeathSettings.nextOperation();
-					Show();
+					show();
 					break;
 				case "§b능력 공개":
 					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_ABILITY_REVEAL, !DeathSettings.getAbilityReveal());
-					Show();
+					show();
 					break;
 				case "§b자동 리스폰":
 					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_AUTO_RESPAWN, !DeathSettings.getAutoRespawn());
-					Show();
+					show();
 					break;
 			}
 		}

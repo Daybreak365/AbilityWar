@@ -9,13 +9,17 @@ import daybreak.abilitywar.addon.installer.AddonsGUI;
 import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.ability.wizard.AbilitySettingWizard;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.wizard.AbilitySettingWizard;
 import daybreak.abilitywar.config.wizard.DeathWizard;
+import daybreak.abilitywar.config.wizard.GameSettingWizard;
 import daybreak.abilitywar.config.wizard.GameWizard;
 import daybreak.abilitywar.config.wizard.InvincibilityWizard;
+import daybreak.abilitywar.config.wizard.KitPresetWizard;
 import daybreak.abilitywar.config.wizard.KitWizard;
 import daybreak.abilitywar.config.wizard.SpawnWizard;
+import daybreak.abilitywar.config.wizard.TeamPresetWizard;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -30,7 +34,6 @@ import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
-import daybreak.abilitywar.game.manager.gui.TeamPresetGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.CommandHandler.CommandType;
@@ -51,8 +54,10 @@ import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
@@ -276,12 +281,12 @@ public class Commands implements CommandExecutor, TabCompleter {
 						if (args.length > 0) {
 							String name = String.join(" ", args);
 							if (AbilityFactory.isRegistered(name)) {
-								new KitWizard(player, plugin, AbilityFactory.getByName(name)).Show();
+								new KitWizard(player, plugin, AbilityFactory.getByName(name)).show();
 							} else {
 								player.sendMessage(ChatColor.RED + name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
 							}
 						} else {
-							new KitWizard(player, plugin).Show();
+							new KitWizard(player, plugin).show();
 						}
 						return true;
 					}
@@ -289,28 +294,35 @@ public class Commands implements CommandExecutor, TabCompleter {
 				addSubCommand("spawn", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						new SpawnWizard((Player) sender, plugin).Show();
+						new SpawnWizard((Player) sender, plugin).show();
 						return true;
 					}
 				});
 				addSubCommand("inv", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						new InvincibilityWizard((Player) sender, plugin).Show();
+						new InvincibilityWizard((Player) sender, plugin).show();
 						return true;
 					}
 				});
 				addSubCommand("game", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						new GameWizard((Player) sender, plugin).Show();
+						new GameWizard((Player) sender, plugin).show();
+						return true;
+					}
+				});
+				addSubCommand("games", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						new GameSettingWizard((Player) sender, plugin).openGUI(1);
 						return true;
 					}
 				});
 				addSubCommand("death", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						new DeathWizard((Player) sender, plugin).Show();
+						new DeathWizard((Player) sender, plugin).show();
 						return true;
 					}
 				});
@@ -324,7 +336,14 @@ public class Commands implements CommandExecutor, TabCompleter {
 				addSubCommand("teampreset", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						new TeamPresetGUI((Player) sender, plugin).openGUI(1);
+						new TeamPresetWizard((Player) sender, plugin).openGUI(1);
+						return true;
+					}
+				});
+				addSubCommand("kitpreset", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						new KitPresetWizard((Player) sender, plugin).openGUI(1);
 						return true;
 					}
 				});
@@ -347,6 +366,33 @@ public class Commands implements CommandExecutor, TabCompleter {
 						return true;
 					}
 				});
+				addSubCommand("developer", new Command() {
+					private final Map<String, Long> typed = new HashMap<>();
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						if (!typed.containsKey(sender.getName())) {
+							typed.put(sender.getName(), System.currentTimeMillis());
+							if (DeveloperSettings.isEnabled()) {
+								sender.sendMessage("§f정말 §3개발자 설정§f을 §c비활성화§f하려면 §e/" + command + " config developer §f명령어를");
+							} else {
+								sender.sendMessage("§3개발자 설정§f을 §a활성화§f하면 테스트 중인 §3베타 §f능력, 게임 모드 등이 §a활성화§f되며,");
+								sender.sendMessage("§f'§3베타§f'는 현재 실험 중이며, 불안정하거나 오류가 있을 수 있다는 것을 의미합니다.");
+								sender.sendMessage("§f정말 §3개발자 설정§f을 §a활성화§f하려면 §e/" + command + " config developer §f명령어를");
+							}
+							sender.sendMessage("§710초 §f안에 다시 한번 입력해주세요. §8(§7설정이 변경될 때 서버가 리로드됩니다.§8)");
+						} else {
+							if (System.currentTimeMillis() - typed.remove(sender.getName()) <= 10000) {
+								Configuration.modifyProperty(ConfigNodes.DEVELOPER, !DeveloperSettings.isEnabled());
+								Bukkit.broadcastMessage(Messager.defaultPrefix + "서버를 다시 불러옵니다.");
+								Bukkit.reload();
+								Bukkit.broadcastMessage(Messager.defaultPrefix + "서버를 다시 불러왔습니다.");
+							} else {
+								sender.sendMessage("§7만료되었습니다.");
+							}
+						}
+						return true;
+					}
+				});
 			}
 
 			@Override
@@ -362,7 +408,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 			}
 
 			private void sendConfigCommandHelp(CommandSender sender, String label, int page) {
-				final int allPage = 2;
+				final int allPage = 3;
 				switch (page) {
 					case 1:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
@@ -378,9 +424,16 @@ public class Commands implements CommandExecutor, TabCompleter {
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
 								"§b/" + label + " config <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(label + " config", "ability", "능력별 설정을 변경합니다.", true),
+								Formatter.formatCommand(label + " config", "games", "게임별 설정을 변경합니다.", true),
 								Formatter.formatCommand(label + " config", "teampreset", "팀 프리셋 설정 GUI를 엽니다.", true),
+								Formatter.formatCommand(label + " config", "kitpreset", "기본 아이템 프리셋 설정 GUI를 엽니다.", true),
 								Formatter.formatCommand(label + " config", "blacklist", "능력 블랙리스트 설정 GUI를 엽니다.", true),
 								Formatter.formatCommand(label + " config", "blacklist [능력]", "[능력] 능력의 블랙 상태를 토글합니다.", true)});
+						break;
+					case 3:
+						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
+								"§b/" + label + " config <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(label + " config", "developer", "개발자 모드를 토글합니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -531,7 +584,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (GameManager.isGameRunning()) {
 							if (args.length == 0) {
-								GameManager.getGame().stopTimers(Duration.class);
+								GameManager.getGame().stopTimers(Duration.DurationTimer.class);
 								Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 지속시간을 모두 초기화하였습니다.");
 							} else {
 								final Player target = Bukkit.getPlayerExact(args[0]);
@@ -541,7 +594,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 										final AbilityBase ability = game.getParticipant(target).getAbility();
 										if (ability != null) {
 											for (GameTimer timer : ability.getTimers()) {
-												if (timer instanceof Duration) {
+												if (timer instanceof Duration.DurationTimer) {
 													timer.stop(false);
 												}
 											}
@@ -948,7 +1001,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					}
 				case 2:
 					if (args[0].equalsIgnoreCase("config")) {
-						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability", "teampreset", "blacklist");
+						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability", "games", "teampreset", "kitpreset", "blacklist", "developer");
 						if (args[1].isEmpty()) {
 							return configs;
 						} else {

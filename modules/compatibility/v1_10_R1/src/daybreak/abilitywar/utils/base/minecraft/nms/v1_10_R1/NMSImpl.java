@@ -2,6 +2,8 @@ package daybreak.abilitywar.utils.base.minecraft.nms.v1_10_R1;
 
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
+import net.minecraft.server.v1_10_R1.DataWatcherObject;
+import net.minecraft.server.v1_10_R1.DataWatcherRegistry;
 import net.minecraft.server.v1_10_R1.EntityArmorStand;
 import net.minecraft.server.v1_10_R1.IChatBaseComponent;
 import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
@@ -102,4 +104,13 @@ public class NMSImpl implements INMS {
 		nmsArmorStand.setSize(0F, 0F);
 	}
 
+	@Override
+	public void removeArrow(Player player) {
+		((CraftPlayer) player).getHandle().getDataWatcher().set(new DataWatcherObject<>(10, DataWatcherRegistry.b), 0);
+	}
+
+	@Override
+	public void setInvisible(Player player, boolean invisible) {
+		((CraftPlayer) player).getHandle().setInvisible(invisible);
+	}
 }

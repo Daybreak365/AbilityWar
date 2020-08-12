@@ -10,6 +10,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
+import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
@@ -20,6 +21,7 @@ import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Hashes;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
@@ -56,6 +58,8 @@ import org.bukkit.event.player.PlayerLoginEvent;
 public abstract class AbstractGame extends SimpleTimer implements IGame, Listener, CommandHandler {
 
 	private static final Logger logger = Logger.getLogger(AbstractGame.class);
+
+	public static final GameSettings gameSettings = new GameSettings(FileUtil.newFile("gamesettings.yml"));
 
 	public interface Observer {
 		void update(GameUpdate update);

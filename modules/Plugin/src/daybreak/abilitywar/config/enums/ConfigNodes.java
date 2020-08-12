@@ -1,13 +1,11 @@
 package daybreak.abilitywar.config.enums;
 
-import daybreak.abilitywar.config.Cacher;
-import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.interfaces.Cacher;
 import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.Messager;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,10 +32,6 @@ public enum ConfigNodes {
 			"# %d는 순서대로 분, 초로 치환됩니다."),
 	GAME_INVINCIBILITY_BOSSBAR_INFINITE_MESSAGE("게임.초반무적.보스바.무한메시지", "무적이 적용되었습니다.",
 			"# 무적 제한시간이 정해져있지 않은 경우에 보스바에 표시될 메시지를 설정합니다."),
-	GAME_KIT("게임.기본템", Collections.emptyList(),
-			"# 기본템 설정"),
-	GAME_ABILITY_KIT("게임.능력기본템", new AbilityKit(),
-			"# 능력 별 기본템 설정"),
 	GAME_INVENTORY_CLEAR("게임.인벤토리초기화", true,
 			"# 게임 시작시 인벤토리 초기화 여부"),
 	GAME_DRAW_ABILITY("게임.능력추첨", true,
@@ -121,16 +115,6 @@ public enum ConfigNodes {
 			"# 게임 중 능력이 비활성화 되었을 때 지속 시간 타이머를 어떻게 처리할지 설정합니다.",
 			"# false: 타이머 종료",
 			"# true: 타이머 일시 정지, 능력 활성화시 타이머 재개"),
-	ABILITY_CHANGE_GAME_PERIOD("체인지능력전쟁.주기", 20,
-			"# 능력 변경 주기 (단위: 초)"),
-	ABILITY_CHANGE_GAME_LIFE("체인지능력전쟁.생명", 3,
-			"# 죽었을 때 다시 태어날 수 있는 횟수"),
-	ABILITY_CHANGE_GAME_ELIMINATE("체인지능력전쟁.탈락", true,
-			"# 생명이 다했을 경우 탈락 여부",
-			"# 탈락한 유저는 게임이 끝날 때까지 서버에 접속할 수 없습니다.",
-			"# 관리자 권한을 가지고 있을 경우 이를 무시하고 접속할 수 있습니다."),
-	SUMMER_VACATION_KILL("신나는여름휴가.킬횟수", 10,
-			"# 우승하기 위해 필요한 킬 횟수"),
 	GAME_MODE("게임모드", StandardGame.class.getName(),
 			"# 게임 모드 클래스"),
 	DEVELOPER("개발자", false,

@@ -19,13 +19,13 @@ public class MojangAPI {
 	}
 
 	public static String getNickname(String uuid) throws IOException {
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), StandardCharsets.UTF_8));
 		final StringBuilder response = new StringBuilder();
-		String line;
-		while ((line = reader.readLine()) != null) {
-			response.append(line);
+		try (final BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/user/profiles/" + uuid + "/names").openStream(), StandardCharsets.UTF_8))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				response.append(line);
+			}
 		}
-		reader.close();
 		final JsonArray array = JsonParser.parseString(response.toString()).getAsJsonArray();
 		return array.get(array.size() - 1).getAsJsonObject().get("name").getAsString();
 	}

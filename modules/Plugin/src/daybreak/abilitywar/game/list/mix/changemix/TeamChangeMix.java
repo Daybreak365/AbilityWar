@@ -4,8 +4,8 @@ import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.mix.AbstractTeamMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -13,8 +13,8 @@ import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
+import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.game.team.TeamGame.Winnable;
 import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
 import daybreak.abilitywar.game.team.event.TeamCreatedEvent;
@@ -42,7 +42,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.jetbrains.annotations.NotNull;
 
-public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler, Winnable {
+public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
@@ -70,7 +70,7 @@ public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler,
 
 	public TeamChangeMix(final String[] args) {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS(), args);
-		this.maxLife = ChangeAbilityWarSettings.getLife();
+		this.maxLife = ChangeAbilityWar.MAX_LIFE.getValue();
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
@@ -168,21 +168,27 @@ public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler,
 
 				giveDefaultKit(getParticipants());
 
-				for (Participant participant : getParticipants()) {
-					if (Settings.getSpawnEnable()) {
-						participant.getPlayer().teleport(Settings.getSpawnLocation().toBukkitLocation());
-					}
-				}
-
 				if (Settings.getNoHunger()) {
 					Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");
 				} else {
 					Bukkit.broadcastMessage("§4배고픔 무제한§c이 적용되지 않습니다.");
 				}
 
+				getInvincibility().attachObserver(new Invincibility.Observer() {
+					@Override
+					public void onStart() {
+						changer.stop();
+					}
+
+					@Override
+					public void onEnd() {
+						changer.start();
+					}
+				});
 				if (invincible) {
 					getInvincibility().start(false);
 				} else {
+					changer.start();
 					Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
 					setRestricted(false);
 				}
@@ -198,8 +204,6 @@ public class TeamChangeMix extends AbstractTeamMix implements DefaultKitHandler,
 						w.setStorm(false);
 					}
 				}
-
-				changer.start();
 
 				startGame();
 				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");

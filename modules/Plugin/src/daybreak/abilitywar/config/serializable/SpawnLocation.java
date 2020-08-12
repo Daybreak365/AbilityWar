@@ -22,6 +22,15 @@ public class SpawnLocation {
 		this.pitch = pitch;
 	}
 
+	public SpawnLocation(final Map<?, ?> memorySection) throws ClassCastException, NullPointerException {
+		this.world = (String) memorySection.get("world");
+		this.x = (Double) memorySection.get("x");
+		this.y = (Double) memorySection.get("y");
+		this.z = (Double) memorySection.get("z");
+		this.yaw = ((Double) memorySection.get("yaw")).floatValue();
+		this.pitch = ((Double) memorySection.get("pitch")).floatValue();
+	}
+
 	public SpawnLocation(final MemorySection memorySection) throws ClassCastException, NullPointerException {
 		this.world = memorySection.getString("world");
 		this.x = memorySection.getDouble("x");

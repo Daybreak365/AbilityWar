@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.config.Cache;
 import daybreak.abilitywar.config.CommentedConfiguration;
-import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.interfaces.Configurable;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class AbilitySettings {
 
-	private static final Logger logger = Logger.getLogger(Configuration.class.getName());
+	private static final Logger logger = Logger.getLogger(AbilitySettings.class.getName());
 	private static final Map<String, AbilitySettings> abilitySettings = new HashMap<>();
 	private final Table<String, String, SettingObject<?>> settings = TreeBasedTable.create();
 
@@ -128,7 +128,7 @@ public class AbilitySettings {
 		config.save();
 	}
 
-	public abstract class SettingObject<T> {
+	public abstract class SettingObject<T> implements Configurable<T> {
 
 		private final String key, path;
 		private final T defaultValue;
@@ -148,24 +148,30 @@ public class AbilitySettings {
 			registerSetting(manifest.name(), this);
 		}
 
+		@Override
 		public String getKey() {
 			return key;
 		}
 
+		@Override
 		public String getPath() {
 			return path;
 		}
 
+		@Override
 		public T getDefaultValue() {
 			return defaultValue;
 		}
 
+		@Override
 		public String[] getComments() {
 			return comments;
 		}
 
+		@Override
 		public abstract boolean condition(T value);
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public T getValue() {
 			if (isError()) {
@@ -203,6 +209,7 @@ public class AbilitySettings {
 			}
 		}
 
+		@Override
 		public boolean setValue(T value) {
 			if (condition(value)) {
 				cache.put(this, new Cache(true, value));
@@ -211,6 +218,7 @@ public class AbilitySettings {
 			return false;
 		}
 
+		@Override
 		public void reset() {
 			setValue(defaultValue);
 		}

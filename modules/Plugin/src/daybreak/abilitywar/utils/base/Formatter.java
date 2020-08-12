@@ -7,7 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
-import daybreak.abilitywar.utils.installer.Installer.UpdateObject;
+import daybreak.abilitywar.utils.installer.Installer.VersionObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class Formatter {
 	/**
 	 * 설치 설명을 구성합니다.
 	 */
-	public static List<String> formatVersionInfo(UpdateObject update) {
+	public static List<String> formatVersionInfo(VersionObject update) {
 		List<String> info = new ArrayList<>();
 		info.add(formatTitle(ChatColor.DARK_GREEN, ChatColor.GREEN, "버전 정보"));
 		info.add("§b" + update.getTag() + " §f릴리즈 §f(§7v" + update.getVersion() + "§f) " + "(§7" + (update.getFileSize() / 1024) + "KB§f)");

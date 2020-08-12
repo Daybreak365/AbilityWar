@@ -1,6 +1,6 @@
-package daybreak.abilitywar.config.ability.wizard.setter;
+package daybreak.abilitywar.config.wizard.setter;
 
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.interfaces.Configurable;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,25 +14,25 @@ public class NotSupportedSetter extends Setter {
 	static final Setter instance = new NotSupportedSetter();
 
 	@Override
-	public boolean onClick(SettingObject<?> settingObject, ClickType clickType) {
+	public boolean onClick(Configurable<?> configurable, ClickType clickType) {
 		return false;
 	}
 
 	@Override
-	public ItemStack getItem(SettingObject<?> settingObject) {
+	public ItemStack getItem(Configurable<?> configurable) {
 		ItemStack wool = MaterialX.RED_WOOL.createItem();
 		ItemMeta woolMeta = wool.getItemMeta();
-		woolMeta.setDisplayName(ChatColor.WHITE + settingObject.getKey());
-		String[] comments = settingObject.getComments();
+		woolMeta.setDisplayName(ChatColor.WHITE + configurable.getKey());
+		String[] comments = configurable.getComments();
 		List<String> lore = new ArrayList<>(comments.length + 5);
 		for (String comment : comments) {
 			lore.add(ChatColor.GRAY + comment);
 		}
 		lore.add("");
-		if (settingObject.getValue() == null) {
+		if (configurable.getValue() == null) {
 			lore.add("§c지원되지 않는 데이터 타입입니다.");
 		} else {
-			lore.add("§c지원되지 않는 데이터 타입입니다: " + settingObject.getValue().getClass().getSimpleName());
+			lore.add("§c지원되지 않는 데이터 타입입니다: " + configurable.getValue().getClass().getSimpleName());
 		}
 		lore.add("§c콘피그에서 직접 변경해주세요.");
 

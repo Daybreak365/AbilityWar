@@ -1,4 +1,4 @@
-package daybreak.abilitywar.config;
+package daybreak.abilitywar.config.interfaces;
 
 public interface Cacher {
 

@@ -40,18 +40,14 @@ public class SpawnWizard extends SettingWizard {
 				spawnMeta.setDisplayName("§b스폰 설정");
 
 				final SpawnLocation spawnLocation = Settings.getSpawnLocation();
-				double X = spawnLocation.x;
-				double Y = spawnLocation.y;
-				double Z = spawnLocation.z;
-
 				spawnMeta.setLore(Arrays.asList(
 						"§f당신이 현재 서 있는 §a위치§f를 §b스폰§f으로 설정합니다.",
 						"§6» §f스폰 위치를 변경하려면 클릭하세요.", "",
 						"§3현재 스폰 위치",
 						"§b월드 §7: §f" + spawnLocation.world,
-						"§bX §7: §f" + X,
-						"§bY §7: §f" + Y,
-						"§bZ §7: §f" + Z,
+						"§bX §7: §f" + spawnLocation.x,
+						"§bY §7: §f" + spawnLocation.y,
+						"§bZ §7: §f" + spawnLocation.z,
 						"§6» §f이 위치로 이동하려면 SHIFT + 좌클릭하세요."));
 				spawn.setItemMeta(spawnMeta);
 
@@ -74,7 +70,7 @@ public class SpawnWizard extends SettingWizard {
 				switch (currentItem.getItemMeta().getDisplayName()) {
 					case "§b스폰 이동":
 						Configuration.modifyProperty(ConfigNodes.GAME_SPAWN_ENABLE, !Settings.getSpawnEnable());
-						Show();
+						show();
 						break;
 					case "§b스폰 설정":
 						p.closeInventory();

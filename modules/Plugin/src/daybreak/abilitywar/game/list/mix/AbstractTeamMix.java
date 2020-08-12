@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.list.mix;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -119,6 +121,12 @@ public abstract class AbstractTeamMix extends AbstractMix implements Teamable {
 			public void update(GameUpdate update) {
 				if (update == GameUpdate.START) {
 					teamPreset.getDivisionType().divide(AbstractTeamMix.this, teamPreset);
+					if (Settings.getSpawnEnable()) {
+						final Location spawn = Settings.getSpawnLocation().toBukkitLocation();
+						for (Participant participant : getParticipants()) {
+							participant.getPlayer().teleport(hasTeam(participant) ? getTeam(participant).getSpawn().toBukkitLocation() : spawn);
+						}
+					}
 				} else if (update == GameUpdate.END) {
 					HandlerList.unregisterAll(this);
 				}
@@ -217,6 +225,7 @@ public abstract class AbstractTeamMix extends AbstractMix implements Teamable {
 		private final String name, displayName;
 		private final Set<Participant> members = new HashSet<>();
 		private final org.bukkit.scoreboard.Team team;
+		private SpawnLocation spawn = Settings.getSpawnLocation();
 
 		private Team(final String name, final String displayName) {
 			this.name = name;
@@ -289,6 +298,17 @@ public abstract class AbstractTeamMix extends AbstractMix implements Teamable {
 				joiner.add(member.getPlayer().getName());
 			}
 			return displayName + " §8(" + joiner.toString() + "§8)§f";
+		}
+
+		@NotNull
+		@Override
+		public SpawnLocation getSpawn() {
+			return spawn;
+		}
+
+		@Override
+		public void setSpawn(@NotNull SpawnLocation spawn) {
+			this.spawn = spawn;
 		}
 	}
 

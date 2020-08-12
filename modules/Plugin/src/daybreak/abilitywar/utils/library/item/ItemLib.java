@@ -1,12 +1,13 @@
 package daybreak.abilitywar.utils.library.item;
 
 import com.google.common.base.Enums;
-import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.Hashes;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -22,60 +23,85 @@ import org.bukkit.potion.PotionType;
  */
 public class ItemLib {
 
-	private static final Logger logger = Logger.getLogger(ItemLib.class.getName());
-
 	private ItemLib() {
 	}
 
-	public static ColouredItem WOOL = new ColouredItem("WOOL");
-	public static ColouredItem STAINED_GLASS = new ColouredItem("STAINED_GLASS");
-	public static ColouredItem STAINED_GLASS_PANE = new ColouredItem("STAINED_GLASS_PANE");
+	public static final ColouredItem WOOL = new ColouredItem("WOOL");
+	public static final ColouredItem STAINED_GLASS = new ColouredItem("STAINED_GLASS");
+	public static final ColouredItem STAINED_GLASS_PANE = new ColouredItem("STAINED_GLASS_PANE");
 
-	@SuppressWarnings("deprecation")
-	public static ItemStack setDurability(ItemStack is, short durability) {
+
+	private static final int prime = 31;
+	public static int hashCode(final ItemStack stack) {
+		int hashCode = 1;
+		hashCode = prime * hashCode + stack.getType().ordinal();
+		hashCode = prime * hashCode + stack.getAmount();
+		final ItemMeta meta = stack.getItemMeta();
 		if (ServerVersion.getVersion() >= 13) {
-			if (is.hasItemMeta() && is.getItemMeta() instanceof Damageable) {
-				Damageable dmg = (Damageable) is.getItemMeta();
-				dmg.setDamage(durability);
-				is.setItemMeta((ItemMeta) dmg);
+			if (meta instanceof Damageable) {
+				hashCode = prime * hashCode + ((Damageable) meta).getDamage();
 			}
 		} else {
-			is.setDurability(durability);
+			hashCode = prime * hashCode + stack.getDurability();
+		}
+		if (meta != null) {
+			if (meta.hasDisplayName()) {
+				hashCode = prime * hashCode + meta.getDisplayName().hashCode();
+			}
+			if (meta.hasEnchants()) {
+				for (Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
+					hashCode = prime * hashCode + Hashes.hashCode(entry.getKey().hashCode(), entry.getValue().hashCode());
+				}
+			}
+		}
+		return hashCode;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static ItemStack setDurability(final ItemStack itemStack, final short durability) {
+		if (ServerVersion.getVersion() >= 13) {
+			if (itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof Damageable) {
+				final Damageable damageable = (Damageable) itemStack.getItemMeta();
+				damageable.setDamage(durability);
+				itemStack.setItemMeta((ItemMeta) damageable);
+			}
+		} else {
+			itemStack.setDurability(durability);
 		}
 
-		return is;
+		return itemStack;
 	}
 
 	public enum ItemColor {
 
-		WHITE((short) 0),
-		ORANGE((short) 1),
-		MAGENTA((short) 2),
-		LIGHT_BLUE((short) 3),
-		YELLOW((short) 4),
-		LIME((short) 5),
-		PINK((short) 6),
-		GRAY((short) 7),
-		LIGHT_GRAY((short) 8),
-		CYAN((short) 9),
-		PURPLE((short) 10),
-		BLUE((short) 11),
-		BROWN((short) 12),
-		GREEN((short) 13),
-		RED((short) 14),
-		BLACK((short) 15);
+		WHITE(0),
+		ORANGE(1),
+		MAGENTA(2),
+		LIGHT_BLUE(3),
+		YELLOW(4),
+		LIME(5),
+		PINK(6),
+		GRAY(7),
+		LIGHT_GRAY(8),
+		CYAN(9),
+		PURPLE(10),
+		BLUE(11),
+		BROWN(12),
+		GREEN(13),
+		RED(14),
+		BLACK(15);
 
 		private final short damage;
 
-		ItemColor(short damage) {
-			this.damage = damage;
+		ItemColor(final int damage) {
+			this.damage = (short) damage;
 		}
 
 		public short getDamage() {
 			return damage;
 		}
 
-		public static ItemColor getByDamage(short damage) {
+		public static ItemColor getByDamage(final int damage) {
 			return values()[damage];
 		}
 
@@ -168,8 +194,7 @@ public class ItemLib {
 
 		public boolean compareType(Material material) {
 			if (ServerVersion.getVersion() >= 13) {
-				String name = material.toString();
-				String color = name.split("_")[0];
+				String name = material.toString(), color = name.split("_")[0];
 				if (Enums.getIfPresent(ItemColor.class, color).isPresent()) {
 					name = name.replaceAll(color + "_", "");
 				}

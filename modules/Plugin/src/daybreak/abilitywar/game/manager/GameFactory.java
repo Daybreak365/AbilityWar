@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.Category;
 import daybreak.abilitywar.game.Category.GameCategory;
@@ -14,6 +15,7 @@ import daybreak.abilitywar.game.list.blind.BlindAbilityWar;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.debug.DebugMode;
 import daybreak.abilitywar.game.list.mix.MixGame;
+import daybreak.abilitywar.game.list.mix.blind.MixBlindGame;
 import daybreak.abilitywar.game.list.mix.changemix.ChangeMix;
 import daybreak.abilitywar.game.list.mix.debug.MixDebugMode;
 import daybreak.abilitywar.game.list.mix.triplemix.TripleMixGame;
@@ -31,10 +33,14 @@ import daybreak.abilitywar.utils.base.minecraft.server.ServerNotSupportedExcepti
 import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,6 +68,7 @@ public class GameFactory {
 		registerMode(MurderMystery.class);
 		registerMode(BlindAbilityWar.class);
 		registerMode(TripleMixGame.class);
+		registerMode(MixBlindGame.class);
 		if (DeveloperSettings.isEnabled()) {
 			registerMode(DebugMode.class);
 			registerMode(MixDebugMode.class);
@@ -134,9 +141,10 @@ public class GameFactory {
 		private final GameCategory category;
 		private final String[] aliases;
 		private final TeamGameRegistration teamGame;
+		private final Map<String, Setting<?>> settings;
 		private final int flag;
 
-		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException {
+		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException, IllegalAccessException {
 			if (clazz.isAnnotationPresent(Support.Version.class)) {
 				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
 				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
@@ -158,6 +166,18 @@ public class GameFactory {
 				constructor = clazz.getConstructor();
 			}
 			this.constructor = constructor;
+
+			final Map<String, Setting<?>> settings = new HashMap<>();
+			for (Field field : clazz.getDeclaredFields()) {
+				final Class<?> type = field.getType();
+				if (Modifier.isStatic(field.getModifiers())) {
+					if (Setting.class.isAssignableFrom(type)) {
+						Setting<?> settingObject = (Setting<?>) ReflectionUtil.setAccessible(field).get(null);
+						settings.put(settingObject.getKey(), settingObject);
+					}
+				}
+			}
+			this.settings = Collections.unmodifiableMap(settings);
 
 			if (!clazz.isAnnotationPresent(GameManifest.class))
 				throw new IllegalArgumentException("GameManifest가 없는 게임 모드입니다.");
@@ -202,6 +222,10 @@ public class GameFactory {
 
 		public String[] getAliases() {
 			return aliases;
+		}
+
+		public Map<String, Setting<?>> getSettings() {
+			return settings;
 		}
 
 		public GameManifest getManifest() {

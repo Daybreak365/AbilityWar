@@ -84,14 +84,13 @@ public class CommentedConfiguration extends YamlConfiguration {
 						} else if (whiteSpace / 2 < depth) {
 							int newDepth = whiteSpace / 2;
 							for (int i = 0; i < depth - newDepth; i++) {
-								currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")),
-										"");
+								currentPath = currentPath.replace(currentPath.substring(Math.max(0, currentPath.lastIndexOf("."))), "");
 							}
 							int lastIndex = currentPath.lastIndexOf(".");
 							if (lastIndex < 0) {
 								currentPath = "";
 							} else {
-								currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")),
+								currentPath = currentPath.replace(currentPath.substring(Math.max(0, currentPath.lastIndexOf("."))),
 										"");
 								currentPath += ".";
 							}
@@ -102,7 +101,7 @@ public class CommentedConfiguration extends YamlConfiguration {
 							if (lastIndex < 0) {
 								currentPath = "";
 							} else {
-								currentPath = currentPath.replace(currentPath.substring(currentPath.lastIndexOf(".")),
+								currentPath = currentPath.replace(currentPath.substring(Math.max(0, currentPath.lastIndexOf("."))),
 										"");
 								currentPath += ".";
 							}

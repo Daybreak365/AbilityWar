@@ -1509,8 +1509,8 @@ public enum MaterialX {
 	 * @since 1.0.0
 	 */
 	@SuppressWarnings("deprecation")
-	public boolean compare(final @Nonnull ItemStack item) {
-		Objects.requireNonNull(item, "Cannot compare with null ItemStack");
+	public boolean compare(final @Nullable ItemStack item) {
+		if (item == null) return false;
 		if (item.getType() != material) return false;
 		return ServerVersion.getVersion() >= 13 || this.isDamageable() || item.getDurability() == this.data;
 	}
@@ -1522,7 +1522,7 @@ public enum MaterialX {
 	}
 
 	public boolean isSupported() {
-		return materialVersion.version >= ServerVersion.getVersion();
+		return materialVersion.version <= ServerVersion.getVersion();
 	}
 
 	public enum MaterialVersion {

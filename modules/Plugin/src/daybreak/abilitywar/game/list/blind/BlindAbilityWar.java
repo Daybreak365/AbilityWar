@@ -6,7 +6,6 @@ import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
-import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
@@ -170,7 +169,6 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 
 	public BlindAbilityWar() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		setRestricted(InvincibilitySettings.isEnabled());
 		attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
@@ -180,7 +178,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 				Formatter.formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
 				"§b§kBLIND§r " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " §8§k---§r §7§kBLIND§r",
 				"§kBLINDBLINDBLINDBLINDBLINDBLIND");
-		list.add("§a--------------------------------");
+		list.add("§a---------------------------------");
 		return list;
 	}
 
@@ -316,6 +314,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 					getInvincibility().start(false);
 				} else {
 					Bukkit.broadcastMessage("§4초반 무적§0이 적용되지 않습니다.");
+					blindRoulette.start();
 					setRestricted(false);
 				}
 

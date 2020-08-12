@@ -208,46 +208,46 @@ public class GameWizard extends SettingWizard {
 					case "§bWRECK":
 						if (e.getClick() == ClickType.LEFT) {
 							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, !Settings.isWRECKEnabled());
-							Show();
+							show();
 						} else if (e.getClick() == ClickType.RIGHT) {
 							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, Settings.getCooldownDecrease().next().name());
-							Show();
+							show();
 						}
 						break;
 					case "§b배고픔 무제한":
 						Configuration.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
-						Show();
+						show();
 						break;
 					case "§b화살 거리 비례 대미지":
 						Configuration.modifyProperty(ConfigNodes.GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE, !Settings.isArrowDamageDistanceProportional());
-						Show();
+						show();
 						break;
 					case "§b초반 지급 레벨":
 						int startLevel = Settings.getStartLevel();
 						switch (e.getClick()) {
 							case RIGHT:
 								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 1);
-								Show();
+								show();
 								break;
 							case SHIFT_RIGHT:
 								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 5);
-								Show();
+								show();
 								break;
 							case LEFT:
 								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 1 ? startLevel - 1 : 0);
-								Show();
+								show();
 								break;
 							case SHIFT_LEFT:
 								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 5 ? startLevel - 5 : 0);
-								Show();
+								show();
 								break;
 							case MIDDLE:
 								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel + 10000);
-								Show();
+								show();
 								break;
 							case DROP:
 								Configuration.modifyProperty(ConfigNodes.GAME_START_LEVEL, startLevel >= 10000 ? startLevel - 10000 : 0);
-								Show();
+								show();
 								break;
 							default:
 								break;
@@ -255,49 +255,49 @@ public class GameWizard extends SettingWizard {
 						break;
 					case "§b내구도 무한":
 						Configuration.modifyProperty(ConfigNodes.GAME_INFINITE_DURABILITY, !Settings.getInfiniteDurability());
-						Show();
+						show();
 						break;
 					case "§b제로틱":
 						Configuration.modifyProperty(ConfigNodes.GAME_ZEROTICK, !Settings.isZeroTickEnabled());
-						Show();
+						show();
 						break;
 					case "§b방화벽":
 						Configuration.modifyProperty(ConfigNodes.GAME_FIREWALL, !Settings.getFirewall());
-						Show();
+						show();
 						break;
 					case "§b팀 게임":
 						Configuration.modifyProperty(ConfigNodes.GAME_TEAMGAME, !Settings.isTeamGameEnabled());
-						Show();
+						show();
 						break;
 					case "§b맑은 날씨 고정":
 						Configuration.modifyProperty(ConfigNodes.GAME_CLEAR_WEATHER, !Settings.getClearWeather());
-						Show();
+						show();
 						break;
 					case "§b시각 효과":
 						Configuration.modifyProperty(ConfigNodes.GAME_VISUAL_EFFECT, !Settings.getVisualEffect());
-						Show();
+						show();
 						break;
 					case "§b지속 타이머 작업":
 						Configuration.modifyProperty(ConfigNodes.GAME_DURATION_TIMER_BEHAVIOR, !Settings.getDurationTimerBehavior());
-						Show();
+						show();
 						break;
 					case "§b능력 추첨":
 						Configuration.modifyProperty(ConfigNodes.GAME_DRAW_ABILITY, !Settings.getDrawAbility());
-						Show();
+						show();
 						break;
 					case "§b기본 최대 체력":
 						switch (e.getClick()) {
 							case RIGHT:
 								Configuration.modifyProperty(ConfigNodes.GAME_DEFAULT_MAX_HEALTH_VALUE, Settings.getDefaultMaxHealth() + 1);
-								Show();
+								show();
 								break;
 							case LEFT:
 								Configuration.modifyProperty(ConfigNodes.GAME_DEFAULT_MAX_HEALTH_VALUE, Settings.getDefaultMaxHealth() >= 2 ? Settings.getDefaultMaxHealth() - 1 : 1);
-								Show();
+								show();
 								break;
 							case SHIFT_LEFT:
 								Configuration.modifyProperty(ConfigNodes.GAME_DEFAULT_MAX_HEALTH_ENABLE, !Settings.isDefaultMaxHealthEnabled());
-								Show();
+								show();
 								break;
 						}
 						break;

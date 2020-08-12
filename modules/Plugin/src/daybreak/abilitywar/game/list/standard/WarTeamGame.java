@@ -23,7 +23,6 @@ import java.util.List;
 import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -132,13 +131,6 @@ public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable
 				}
 
 				giveDefaultKit(getParticipants());
-
-				if (Settings.getSpawnEnable()) {
-					Location spawn = Settings.getSpawnLocation().toBukkitLocation();
-					for (Participant participant : getParticipants()) {
-						participant.getPlayer().teleport(spawn);
-					}
-				}
 
 				if (Settings.getNoHunger()) {
 					Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");

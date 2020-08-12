@@ -6,14 +6,13 @@ import daybreak.abilitywar.game.Category;
 import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
-import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 
 @GameManifest(name = "Mix Debug Mode", description = {})
 @Category(GameCategory.DEBUG)
-public class MixDebugMode extends AbstractMix implements DefaultKitHandler, AbstractGame.Observer {
+public class MixDebugMode extends AbstractMix implements AbstractGame.Observer {
 
 	public MixDebugMode() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());

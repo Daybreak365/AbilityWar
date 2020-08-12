@@ -1,23 +1,22 @@
 package daybreak.abilitywar.config.serializable;
 
-import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.kitpreset.KitConfiguration.KitSettings;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class AbilityKit implements ConfigurationSerializable {
 
-	private final Map<String, List<ItemStack>> kits;
+	private final Map<String, KitPreset> kits;
 
-	public AbilityKit(Map<String, Object> args) {
-		Map<String, List<ItemStack>> kits = new HashMap<>();
+	public AbilityKit(final Map<String, Object> args) {
+		Map<String, KitPreset> kits = new HashMap<>();
 		for (Entry<String, Object> entry : args.entrySet()) {
 			Object value = entry.getValue();
-			if (value instanceof List) {
-				kits.put(entry.getKey(), (List<ItemStack>) value);
+			if (value instanceof Map<?, ?>) {
+				kits.put(entry.getKey(), new KitPreset((Map<?, ?>) value));
 			}
 		}
 		this.kits = kits;
@@ -27,17 +26,31 @@ public class AbilityKit implements ConfigurationSerializable {
 		this.kits = new HashMap<>();
 	}
 
+	@NotNull
 	@Override
 	public Map<String, Object> serialize() {
-		return new HashMap<>(kits);
+		final Map<String, Object> map = new HashMap<>();
+		for (Entry<String, KitPreset> entry : kits.entrySet()) {
+			map.put(entry.getKey(), entry.getValue().toMap());
+		}
+		return map;
 	}
 
-	public List<ItemStack> getKits(String abilityName) {
-		return kits.getOrDefault(abilityName, Settings.getDefaultKit());
+	@NotNull
+	public KitPreset getKits(final String ability) {
+		return kits.getOrDefault(ability, new KitPreset(KitSettings.getKit()));
 	}
 
-	public void setKits(String abilityName, List<ItemStack> kit) {
-		kits.put(abilityName, kit);
+	public boolean hasKits(final String ability) {
+		return kits.containsKey(ability);
+	}
+
+	public void setKits(final String ability, final KitPreset kit) {
+		kits.put(ability, kit);
+	}
+
+	public void removeKits(String ability) {
+		kits.remove(ability);
 	}
 
 }

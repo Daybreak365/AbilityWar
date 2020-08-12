@@ -14,7 +14,6 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.List;
 import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 
 
@@ -116,13 +115,6 @@ public class StandardTeamGame extends TeamGame implements DefaultKitHandler {
 				}
 
 				giveDefaultKit(getParticipants());
-
-				if (Settings.getSpawnEnable()) {
-					Location spawn = Settings.getSpawnLocation().toBukkitLocation();
-					for (Participant participant : getParticipants()) {
-						participant.getPlayer().teleport(spawn);
-					}
-				}
 
 				if (Settings.getNoHunger()) {
 					Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");

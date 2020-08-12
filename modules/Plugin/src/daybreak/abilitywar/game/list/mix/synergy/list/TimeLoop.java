@@ -9,7 +9,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.collect.PushingList;
+import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Collection;
@@ -194,7 +194,7 @@ public class TimeLoop extends Synergy {
 
 		private final Player player;
 		private final PlayerData primal;
-		private final PushingList<PlayerData> playerDatas = new PushingList<>(100);
+		private final LimitedPushingList<PlayerData> playerDatas = new LimitedPushingList<>(100);
 		private final AbilityTimer rewind = new AbilityTimer(100) {
 			@Override
 			public void run(int seconds) {

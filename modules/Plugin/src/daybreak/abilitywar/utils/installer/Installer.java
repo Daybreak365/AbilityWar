@@ -7,6 +7,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,15 +18,15 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -33,10 +34,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
@@ -54,108 +58,73 @@ public class Installer {
 
 	private static final Logger logger = Logger.getLogger(Installer.class.getName());
 
-	private final Version pluginVersion;
-	private final Map<Version, UpdateObject> versions;
-	private final HashMap<String, Version> versionCache = new HashMap<>();
+	private final List<VersionObject> versions;
+	private final HashMap<String, VersionObject> versionCache = new HashMap<>();
 
-	public Version getPluginVersion() {
-		return pluginVersion;
+	public VersionObject getVersion(String name) {
+		return versionCache.get(name);
 	}
 
-	public Version getVersion(String versionString) {
-		return versionCache.get(versionString);
-	}
-
-	public Map<Version, UpdateObject> getVersions() {
+	public List<VersionObject> getVersions() {
 		return versions;
 	}
 
 	private final Plugin plugin;
 
 	public Installer(String author, String repository, Plugin plugin) throws IOException, InterruptedException, ExecutionException {
-		this.pluginVersion = new Version(plugin.getDescription().getVersion());
 		this.plugin = plugin;
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-				new URL("https://api.github.com/repos/" + author + "/" + repository + "/releases").openStream(),
-				StandardCharsets.UTF_8));
 		String result = "";
-		String line;
-		while ((line = br.readLine()) != null) {
-			result = result.concat(line);
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://api.github.com/repos/" + author + "/" + repository + "/releases").openStream(), StandardCharsets.UTF_8))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				result = result.concat(line);
+			}
 		}
 
-		HashMap<ExecutorService, Future<UpdateObject>> tasks = new HashMap<>();
+		final Map<ExecutorService, Future<VersionObject>> tasks = new LinkedHashMap<>();
 		for (JsonElement element : JsonParser.parseString(result).getAsJsonArray()) {
-			ExecutorService service = Executors.newSingleThreadExecutor();
-			tasks.put(service, service.submit(new Callable<Installer.UpdateObject>() {
+			final ExecutorService service = Executors.newSingleThreadExecutor();
+			tasks.put(service, service.submit(new Callable<VersionObject>() {
 				@Override
-				public UpdateObject call() throws Exception {
-					return new UpdateObject(element.getAsJsonObject());
+				public VersionObject call() throws Exception {
+					return new VersionObject(element.getAsJsonObject());
 				}
 			}));
 		}
-		TreeMap<Version, UpdateObject> versions = new TreeMap<>(Version.comparator);
-		for (Map.Entry<ExecutorService, Future<UpdateObject>> entry : tasks.entrySet()) {
-			UpdateObject update = entry.getValue().get();
+		final List<VersionObject> versions = new ArrayList<>(tasks.size());
+		for (Map.Entry<ExecutorService, Future<VersionObject>> entry : tasks.entrySet()) {
+			VersionObject update = entry.getValue().get();
 			entry.getKey().shutdown();
-			Version version = new Version(update.getVersion());
-			versions.put((pluginVersion.equals(version) ? pluginVersion : version), update);
-			versionCache.put(version.getVersionString(), version);
+			versions.add(update);
+			versionCache.put(update.getVersion(), update);
 		}
-		this.versions = Collections.unmodifiableMap(versions);
+		this.versions = Collections.unmodifiableList(versions);
 	}
 
-	public void Install(CommandSender sender, UpdateObject update) {
-		try {
-			Messager.sendConsoleMessage(Formatter.formatVersionInfo(update));
-			unload(plugin);
-			if (!sender.equals(Bukkit.getConsoleSender())) {
-				Messager.sendConsoleMessage("§f설치를 시작합니다.");
-			}
-			sender.sendMessage(Messager.defaultPrefix + "설치를 시작합니다.");
+	private enum DownloadResult {SUCCESS, FAILURE}
 
-			InputStream input = update.getConnection().getInputStream();
-			URL fileURL = AbilityWar.class.getProtectionDomain().getCodeSource().getLocation();
-			String[] split = fileURL.getPath().split("/");
-			FileOutputStream output = new FileOutputStream("plugins/" + split[split.length - 1], false);
-
-			byte[] data = new byte[1024];
-			int Count;
-			while ((Count = input.read(data)) >= 0) {
-				output.write(data, 0, Count);
-			}
-
-			output.close();
-
-			if (!sender.equals(Bukkit.getConsoleSender())) {
-				Messager.sendConsoleMessage("§f설치를 완료하였습니다.");
-			}
-			sender.sendMessage(Messager.defaultPrefix + "설치를 완료하였습니다.");
-			load(plugin);
-		} catch (IOException ex) {
-			logger.log(Level.SEVERE, "설치 도중 오류가 발생하였습니다.");
-		}
-	}
-
-	public static final class UpdateObject {
+	public final class VersionObject {
 
 		private final String version;
 		private final boolean prerelease;
 		private final String tag;
-		private final URLConnection connection;
+		private final URL downloadURL;
 		private final int fileSize;
 		private final int downloadCount;
 		private final String[] updates;
 
-		private UpdateObject(JsonObject json) throws IOException {
+		private VersionObject(JsonObject json) throws IOException {
 			this.version = json.get("name").getAsString();
 			this.prerelease = json.get("prerelease").getAsBoolean();
 			this.tag = json.get("tag_name").getAsString();
-			JsonObject asset = json.get("assets").getAsJsonArray().get(0).getAsJsonObject();
-			this.connection = new URL(asset.get("browser_download_url").getAsString()).openConnection();
-			((HttpURLConnection) connection).setRequestMethod("GET");
-			this.fileSize = connection.getContentLength();
+			final JsonObject asset = json.get("assets").getAsJsonArray().get(0).getAsJsonObject();
+			this.downloadURL = new URL(asset.get("browser_download_url").getAsString());
+			{
+				final HttpURLConnection connection = (HttpURLConnection) downloadURL.openConnection();
+				this.fileSize = connection.getContentLength();
+				connection.disconnect();
+			}
 			this.downloadCount = asset.get("download_count").getAsInt();
 			this.updates = json.get("body").getAsString().split("\\n");
 		}
@@ -172,10 +141,6 @@ public class Installer {
 			return tag;
 		}
 
-		public URLConnection getConnection() {
-			return connection;
-		}
-
 		public int getFileSize() {
 			return fileSize;
 		}
@@ -188,15 +153,51 @@ public class Installer {
 			return updates;
 		}
 
+		public void install() {
+			try {
+				Messager.sendConsoleMessage(Formatter.formatVersionInfo(this));
+				unload(plugin);
+				Bukkit.broadcastMessage(Messager.defaultPrefix + "AbilityWar " + tag + "(" + version + ") 설치를 시작합니다.");
+
+				final HttpURLConnection connection = (HttpURLConnection) downloadURL.openConnection();
+				try (final InputStream input = connection.getInputStream()) {
+					final String[] split = AbilityWar.class.getProtectionDomain().getCodeSource().getLocation().getPath().split("/");
+					final BossBar bossBar = Bukkit.createBossBar(Messager.defaultPrefix + "AbilityWar " + tag + "(" + version + ") 설치", BarColor.WHITE, BarStyle.SEGMENTED_12);
+					for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+						bossBar.addPlayer(onlinePlayer);
+					}
+					bossBar.setProgress(0);
+					if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
+					try (final FileOutputStream output = new FileOutputStream("plugins/" + split[split.length - 1], false)) {
+						byte[] data = new byte[1024];
+						int count;
+						double sum = 0;
+						while ((count = input.read(data)) >= 0) {
+							output.write(data, 0, count);
+							sum += count;
+							bossBar.setProgress(Math.max(0.0, Math.min(1.0, sum / fileSize)));
+						}
+					} catch (Exception ex) {
+						if (ServerVersion.getVersion() >= 10) bossBar.setVisible(false);
+						bossBar.removeAll();
+						throw ex;
+					}
+					if (ServerVersion.getVersion() >= 10) bossBar.setVisible(false);
+					bossBar.removeAll();
+				}
+				connection.disconnect();
+				Bukkit.broadcastMessage(Messager.defaultPrefix + "AbilityWar " + tag + "(" + version + ") 설치를 완료했습니다.");
+				load(plugin);
+			} catch (Exception ex) {
+				logger.log(Level.SEVERE, "설치 도중 오류가 발생하였습니다.");
+			}
+		}
 	}
 
 	private void load(Plugin plugin) {
 		load(plugin.getName());
 	}
 
-	/**
-	 * 플러그인을 Load 합니다.
-	 */
 	private void load(String name) {
 
 		Plugin target = null;
@@ -233,9 +234,6 @@ public class Installer {
 		Bukkit.getPluginManager().enablePlugin(target);
 	}
 
-	/**
-	 * 플러그인을 Unload합니다.
-	 */
 	@SuppressWarnings("unchecked")
 	private void unload(Plugin plugin) {
 

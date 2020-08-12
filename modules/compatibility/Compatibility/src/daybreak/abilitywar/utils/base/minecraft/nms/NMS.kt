@@ -79,5 +79,15 @@ class NMS private constructor() {
 		override fun removeBoundingBox(armorStand: ArmorStand) {
 			INSTANCE.removeBoundingBox(armorStand)
 		}
+
+		@JvmStatic
+		override fun removeArrow(player: Player) {
+			INSTANCE.removeArrow(player)
+		}
+
+		@JvmStatic
+		override fun setInvisible(player: Player, invisible: Boolean) {
+			INSTANCE.setInvisible(player, invisible)
+		}
 	}
 }

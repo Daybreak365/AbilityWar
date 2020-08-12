@@ -1,7 +1,5 @@
-package daybreak.abilitywar.game.list.murdermystery.ability.extra;
+package daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent;
 
-import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -9,28 +7,26 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
+import daybreak.abilitywar.game.list.murdermystery.ability.AbstractInnocent;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import java.util.function.Predicate;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.scheduler.BukkitRunnable;
 
-@AbilityManifest(name = "경찰", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "시민: 경찰", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
 		"금 좌클릭으로 금 3개를 소모해 주변 7칸 이내의",
-		"모든 플레이어를 1.5초간 기절시킬 수 있습니다."
+		"모든 플레이어를 1초간 기절시킬 수 있습니다."
 })
-public class Police extends AbilityBase {
+public class Police extends AbstractInnocent {
 
 	public Police(Participant participant) {
 		super(participant);
@@ -56,7 +52,7 @@ public class Police extends AbilityBase {
 			inventory.setItem(3, three);
 			getPlayer().getInventory().setHeldItemSlot(0);
 			((MurderMystery) getGame()).updateGold(getParticipant());
-			NMS.sendTitle(getPlayer(), "§e역할§f: §a경찰", "§c머더§f를 제압하세요!", 10, 80, 10);
+			NMS.sendTitle(getPlayer(), "§e직업§f: §a경찰", "§c머더§f를 제압하세요!", 10, 80, 10);
 			new AbilityTimer(1) {
 				@Override
 				protected void run(int count) {
@@ -67,47 +63,6 @@ public class Police extends AbilityBase {
 					NMS.clearTitle(getPlayer());
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
-		}
-	}
-
-	@SubscribeEvent
-	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getDamager().equals(getPlayer()) && e.getEntity() instanceof Player && getGame().isParticipating(e.getEntity().getUniqueId()) && getPlayer().getInventory().getItemInMainHand().isSimilar(Items.MURDERER_SWORD.getStack())) {
-			e.setCancelled(false);
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					((Player) e.getEntity()).setHealth(0);
-				}
-			}.runTaskLater(AbilityWar.getPlugin(), 2L);
-		}
-	}
-
-	public boolean hasBow() {
-		ItemStack stack = getPlayer().getInventory().getItem(2);
-		return stack != null && stack.getType() == Material.BOW;
-	}
-
-	public int getArrowCount() {
-		ItemStack stack = getPlayer().getInventory().getItem(3);
-		if (stack != null && stack.getType() == Material.ARROW) {
-			return stack.getAmount();
-		} else return 0;
-	}
-
-	public boolean addArrow() {
-		ItemStack stack = getPlayer().getInventory().getItem(3);
-		if (stack != null && stack.getType() == Material.ARROW) {
-			if (stack.getAmount() < 64) {
-				stack.setAmount(stack.getAmount() + 1);
-				getPlayer().getInventory().setItem(3, stack);
-				getPlayer().sendMessage("§8+ §f1 화살");
-				return true;
-			} else return false;
-		} else {
-			getPlayer().getInventory().setItem(3, new ItemStack(Material.ARROW));
-			getPlayer().sendMessage("§8+ §f1 화살");
-			return true;
 		}
 	}
 
@@ -130,7 +85,7 @@ public class Police extends AbilityBase {
 				if (murderMystery.consumeGold(getParticipant(), 3)) {
 					getPlayer().sendMessage("§6전기 충격 §f능력을 사용했습니다.");
 					for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 7, 7, predicate)) {
-						Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, 30);
+						Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, 20);
 						player.sendMessage("§6전기 충격!");
 					}
 				}

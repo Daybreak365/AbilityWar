@@ -15,6 +15,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -33,7 +34,7 @@ public abstract class SettingWizard {
 	private final String inventoryName;
 	final Player player;
 
-	SettingWizard(Player player, int inventorySize, String inventoryName, Plugin plugin) {
+	SettingWizard(final Player player, int inventorySize, String inventoryName, Plugin plugin) {
 		this.inventorySize = inventorySize;
 		this.inventoryName = inventoryName;
 		this.player = player;
@@ -46,11 +47,15 @@ public abstract class SettingWizard {
 			private void onInventoryClose(InventoryCloseEvent e) {
 				if (e.getInventory().equals(gui)) {
 					HandlerList.unregisterAll(this);
-					try {
-						Configuration.update();
-					} catch (IOException | InvalidConfigurationException e1) {
-						logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
-					}
+					onUnregister(gui);
+				}
+			}
+
+			@EventHandler
+			private void onQuit(PlayerQuitEvent e) {
+				if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+					HandlerList.unregisterAll(this);
+					onUnregister(gui);
 				}
 			}
 
@@ -64,13 +69,19 @@ public abstract class SettingWizard {
 		};
 	}
 
-	public void Show() {
+	public void show() {
 		this.gui = Bukkit.createInventory(null, inventorySize, inventoryName);
 		openGUI(gui);
 	}
 
 	abstract void openGUI(Inventory gui);
-
 	abstract void onClick(InventoryClickEvent e, Inventory gui);
+	void onUnregister(final Inventory gui) {
+		try {
+			Configuration.update();
+		} catch (IOException | InvalidConfigurationException e1) {
+			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
+		}
+	}
 
 }

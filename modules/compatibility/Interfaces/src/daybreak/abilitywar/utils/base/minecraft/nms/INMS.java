@@ -28,5 +28,7 @@ public interface INMS {
 	void setLocation(Entity entity, double x, double y, double z, float yaw, float pitch);
 
 	void removeBoundingBox(ArmorStand armorStand);
+	void removeArrow(Player player);
+	void setInvisible(Player player, boolean invisible);
 
 }

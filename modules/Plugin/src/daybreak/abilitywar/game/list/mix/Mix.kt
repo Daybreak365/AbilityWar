@@ -9,9 +9,11 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank.SPECIAL
 import daybreak.abilitywar.ability.AbilityManifest.Species.OTHERS
 import daybreak.abilitywar.ability.decorator.ActiveHandler
 import daybreak.abilitywar.ability.decorator.TargetHandler
+import daybreak.abilitywar.game.AbstractGame.GameTimer
 import daybreak.abilitywar.game.AbstractGame.Participant
 import daybreak.abilitywar.game.list.mix.synergy.Synergy
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory
+import daybreak.abilitywar.utils.base.collect.SetUnion
 import org.bukkit.ChatColor.RESET
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
@@ -29,11 +31,11 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 	private val EXPLAIN: Any = object : Any() {
 		override fun toString(): String {
 			val joiner = StringJoiner("\n")
-			joiner.add("§a--------------------------------")
+			joiner.add("§a---------------------------------")
 			return if (synergy != null) {
 				val base = SynergyFactory.getSynergyBase(synergy!!.registration)
 				joiner.add("§f시너지: §a" + base.left.manifest.name + " §f+ §a" + base.right.manifest.name)
-				joiner.add("§a--------------------------------")
+				joiner.add("§a---------------------------------")
 				joiner.add("§b" + synergy!!.name + " " + synergy!!.rank.rankName + " " + synergy!!.species.speciesName)
 				val iterator = synergy!!.explanation
 				while (iterator.hasNext()) {
@@ -42,7 +44,7 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 				joiner.toString()
 			} else {
 				formatInfo(joiner, first)
-				joiner.add("§a--------------------------------")
+				joiner.add("§a---------------------------------")
 				formatInfo(joiner, second)
 				joiner.toString()
 			}
@@ -81,6 +83,38 @@ class Mix(participant: Participant) : AbilityBase(participant), ActiveHandler, T
 
 	override fun usesMaterial(material: Material): Boolean {
 		return synergy?.usesMaterial(material) ?: false || first?.usesMaterial(material) ?: false || second?.usesMaterial(material) ?: false
+	}
+
+	override fun getTimers(): Set<GameTimer> {
+		if (hasAbility()) {
+			val synergy = this.synergy
+			if (synergy != null) {
+				return SetUnion.union(synergy.timers, super.getTimers())
+			} else {
+				val first = this.first
+				val second = this.second
+				if (first != null && second != null) {
+					return SetUnion.union(first.timers, second.timers, super.getTimers())
+				}
+			}
+		}
+		return super.getTimers()
+	}
+
+	override fun getRunningTimers(): Set<GameTimer> {
+		if (hasAbility()) {
+			val synergy = this.synergy
+			if (synergy != null) {
+				return SetUnion.union(synergy.runningTimers, super.getRunningTimers())
+			} else {
+				val first = this.first
+				val second = this.second
+				if (first != null && second != null) {
+					return SetUnion.union(first.runningTimers, second.runningTimers, super.getRunningTimers())
+				}
+			}
+		}
+		return super.getRunningTimers()
 	}
 
 	fun hasSynergy(): Boolean {

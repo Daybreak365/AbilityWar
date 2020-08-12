@@ -3,7 +3,7 @@ package daybreak.abilitywar.config;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.config.enums.OnDeath;
-import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.interfaces.Cacher;
 import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.AbstractGame;
@@ -91,6 +91,10 @@ public class Configuration {
 		lastModified = file.lastModified();
 	}
 
+	public static CommentedConfiguration getConfig() {
+		return config;
+	}
+
 	private static final EnumMap<ConfigNodes, Cache> cache = new EnumMap<>(ConfigNodes.class);
 
 	@SuppressWarnings("unchecked") // private only method
@@ -163,14 +167,6 @@ public class Configuration {
 
 		public static boolean getInventoryClear() {
 			return get(ConfigNodes.GAME_INVENTORY_CLEAR);
-		}
-
-		public static List<ItemStack> getDefaultKit() {
-			return getItemStackList(ConfigNodes.GAME_KIT);
-		}
-
-		public static AbilityKit getAbilityKit() {
-			return get(ConfigNodes.GAME_ABILITY_KIT);
 		}
 
 		public static boolean getDrawAbility() {
@@ -323,36 +319,6 @@ public class Configuration {
 
 			public static boolean getAutoRespawn() {
 				return get(ConfigNodes.GAME_DEATH_AUTO_RESPAWN);
-			}
-
-		}
-
-		public static class ChangeAbilityWarSettings {
-
-			private ChangeAbilityWarSettings() {
-			}
-
-			public static int getPeriod() {
-				return get(ConfigNodes.ABILITY_CHANGE_GAME_PERIOD);
-			}
-
-			public static int getLife() {
-				return get(ConfigNodes.ABILITY_CHANGE_GAME_LIFE);
-			}
-
-			public static boolean getEliminate() {
-				return get(ConfigNodes.ABILITY_CHANGE_GAME_ELIMINATE);
-			}
-
-		}
-
-		public static class SummerVacationSettings {
-
-			private SummerVacationSettings() {
-			}
-
-			public static int getMaxKill() {
-				return get(ConfigNodes.SUMMER_VACATION_KILL);
 			}
 
 		}

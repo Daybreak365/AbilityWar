@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
-import org.bukkit.plugin.Plugin;
 
 /**
  * 애드온
@@ -37,7 +36,7 @@ public abstract class Addon {
 	/**
 	 * AbilityWar 플러그인을 받아옵니다.
 	 */
-	protected Plugin getPlugin() {
+	protected AbilityWar getPlugin() {
 		return AbilityWar.getPlugin();
 	}
 

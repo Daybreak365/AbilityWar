@@ -5,6 +5,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.utils.library.item.ItemLib;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,8 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Set;
 
 public class InfiniteDurability implements Listener, Observer {
 
@@ -58,26 +57,26 @@ public class InfiniteDurability implements Listener, Observer {
 	@EventHandler
 	private void onArmorDurability(EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
-			Player p = (Player) e.getEntity();
-			ItemStack boots = p.getInventory().getBoots();
+			final Player player = (Player) e.getEntity();
+			final ItemStack boots = player.getInventory().getBoots();
 			if (boots != null && hasDurability.contains(boots.getType())) {
 				ItemLib.setDurability(boots, (short) 0);
-				p.getInventory().setBoots(boots);
+				player.getInventory().setBoots(boots);
 			}
-			ItemStack leggings = p.getInventory().getLeggings();
+			final ItemStack leggings = player.getInventory().getLeggings();
 			if (leggings != null && hasDurability.contains(leggings.getType())) {
 				ItemLib.setDurability(leggings, (short) 0);
-				p.getInventory().setLeggings(leggings);
+				player.getInventory().setLeggings(leggings);
 			}
-			ItemStack chestplate = p.getInventory().getChestplate();
+			final ItemStack chestplate = player.getInventory().getChestplate();
 			if (chestplate != null && hasDurability.contains(chestplate.getType())) {
 				ItemLib.setDurability(chestplate, (short) 0);
-				p.getInventory().setChestplate(chestplate);
+				player.getInventory().setChestplate(chestplate);
 			}
-			ItemStack helmet = p.getInventory().getHelmet();
+			final ItemStack helmet = player.getInventory().getHelmet();
 			if (helmet != null && hasDurability.contains(helmet.getType())) {
 				ItemLib.setDurability(helmet, (short) 0);
-				p.getInventory().setHelmet(helmet);
+				player.getInventory().setHelmet(helmet);
 			}
 		}
 	}

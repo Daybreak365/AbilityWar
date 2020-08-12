@@ -5,12 +5,15 @@ import daybreak.abilitywar.addon.AddonLoader;
 import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.ability.AbilitySettings;
+import daybreak.abilitywar.config.game.GameSettings;
+import daybreak.abilitywar.config.kitpreset.KitConfiguration;
 import daybreak.abilitywar.config.serializable.AbilityKit;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.config.serializable.team.TeamPreset.TeamScheme;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
+import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
@@ -97,12 +100,17 @@ public class AbilityWar extends JavaPlugin {
 				SynergyFactory.getSynergies();
 				try {
 					Configuration.update();
+					KitConfiguration.getInstance().update();
 				} catch (IOException | InvalidConfigurationException e) {
 					logger.log(Level.SEVERE, "콘피그를 불러오는 도중 오류가 발생하였습니다.");
 					Bukkit.getPluginManager().disablePlugin(plugin);
 				}
 				for (AbilitySettings abilitySetting : AbilitySettings.getAbilitySettings()) {
 					abilitySetting.update();
+				}
+				GameFactory.nameValues();
+				for (GameSettings gameSetting : GameSettings.getGameSettings()) {
+					gameSetting.update();
 				}
 				ScriptManager.loadAll();
 			}
@@ -116,11 +124,15 @@ public class AbilityWar extends JavaPlugin {
 		GameManager.stopGame();
 		try {
 			Configuration.update();
+			KitConfiguration.getInstance().update();
 		} catch (IOException | InvalidConfigurationException e) {
 			logger.log(Level.SEVERE, "콘피그를 업데이트하는 도중 오류가 발생하였습니다.");
 		}
 		for (AbilitySettings abilitySetting : AbilitySettings.getAbilitySettings()) {
 			abilitySetting.update();
+		}
+		for (GameSettings gameSetting : GameSettings.getGameSettings()) {
+			gameSetting.update();
 		}
 		AddonLoader.disableAll();
 		Messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");

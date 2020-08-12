@@ -4,12 +4,12 @@ import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
+import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -17,8 +17,8 @@ import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
+import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
@@ -50,7 +50,7 @@ import org.bukkit.scoreboard.Score;
 @GameAliases("체믹")
 @Beta
 @TeamSupport(TeamChangeMix.class)
-public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnable {
+public class ChangeMix extends AbstractMix implements Winnable {
 
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
@@ -66,7 +66,7 @@ public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnabl
 
 	public ChangeMix() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		this.maxLife = ChangeAbilityWarSettings.getLife();
+		this.maxLife = ChangeAbilityWar.MAX_LIFE.getValue();
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
@@ -165,9 +165,21 @@ public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnabl
 					Bukkit.broadcastMessage("§4배고픔 무제한§c이 적용되지 않습니다.");
 				}
 
+				getInvincibility().attachObserver(new Invincibility.Observer() {
+					@Override
+					public void onStart() {
+						changer.stop();
+					}
+
+					@Override
+					public void onEnd() {
+						changer.start();
+					}
+				});
 				if (invincible) {
 					getInvincibility().start(false);
 				} else {
+					changer.start();
 					Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
 					setRestricted(false);
 				}
@@ -183,8 +195,6 @@ public class ChangeMix extends AbstractMix implements DefaultKitHandler, Winnabl
 						w.setStorm(false);
 					}
 				}
-
-				changer.start();
 
 				startGame();
 				break;

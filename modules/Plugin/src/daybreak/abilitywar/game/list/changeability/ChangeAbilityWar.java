@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.list.changeability;
 import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.ChangeAbilityWarSettings;
+import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameAliases;
@@ -15,6 +15,7 @@ import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
+import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -51,9 +52,23 @@ import org.bukkit.scoreboard.Score;
 @GameAliases({"체능전", "체인지"})
 public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler, Observer {
 
+	public static final Setting<Integer> CHANGE_PERIOD = gameSettings.new Setting<Integer>(ChangeAbilityWar.class, "주기", 20, "# 능력 변경 주기 (단위: 초)") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+	};
+
+	public static final Setting<Integer> MAX_LIFE = gameSettings.new Setting<Integer>(ChangeAbilityWar.class, "생명", 3, "# 죽었을 때 다시 태어날 수 있는 횟수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+	};
+
 	public ChangeAbilityWar() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		this.maxLife = ChangeAbilityWarSettings.getLife();
+		this.maxLife = MAX_LIFE.getValue();
 		attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
@@ -64,9 +79,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
 
 	private final AbilityChanger changer = new AbilityChanger(this);
-
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
-
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
 	@Override
@@ -164,10 +177,22 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 					Bukkit.broadcastMessage("§4배고픔 무제한§c이 적용되지 않습니다.");
 				}
 
+				getInvincibility().attachObserver(new Invincibility.Observer() {
+					@Override
+					public void onStart() {
+						changer.stop();
+					}
+
+					@Override
+					public void onEnd() {
+						changer.start();
+					}
+				});
 				if (invincible) {
 					getInvincibility().start(false);
 				} else {
 					Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
+					changer.start();
 					setRestricted(false);
 				}
 
@@ -182,8 +207,6 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 						w.setStorm(false);
 					}
 				}
-
-				changer.start();
 
 				startGame();
 				break;

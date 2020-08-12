@@ -10,7 +10,6 @@ import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.TeamSupport;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
@@ -36,7 +35,7 @@ import org.bukkit.entity.Player;
 })
 @GameAliases({"믹능전", "믹스"})
 @TeamSupport(MixTeamGame.class)
-public class MixGame extends AbstractMix implements DefaultKitHandler {
+public class MixGame extends AbstractMix {
 
 	private static final Logger logger = Logger.getLogger(MixGame.class);
 	private final boolean invincible = InvincibilitySettings.isEnabled();
@@ -179,10 +178,9 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 					for (Participant participant : selectors) {
 						Player p = participant.getPlayer();
 
-						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
-						Class<? extends AbilityBase> secondAbilityClass = abilities.get(random.nextInt(abilities.size()));
+						final Class<? extends AbilityBase> first = abilities.get(random.nextInt(abilities.size())), second = abilities.get(random.nextInt(abilities.size()));
 						try {
-							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
+							((Mix) participant.getAbility()).setAbility(first, second);
 
 							p.sendMessage(new String[]{
 									"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
@@ -191,7 +189,7 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 							});
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
-							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
+							logger.error("문제가 발생한 능력: §b" + first.getName() + " §f또는 §b" + second.getName());
 						}
 					}
 				} else {
@@ -208,14 +206,13 @@ public class MixGame extends AbstractMix implements DefaultKitHandler {
 					Random random = new Random();
 
 					if (participant.hasAbility()) {
-						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
-						Class<? extends AbilityBase> secondAbilityClass = abilities.get(random.nextInt(abilities.size()));
+						final Class<? extends AbilityBase> first = abilities.get(random.nextInt(abilities.size())), second = abilities.get(random.nextInt(abilities.size()));
 						try {
-							((Mix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass);
+							((Mix) participant.getAbility()).setAbility(first, second);
 							return true;
 						} catch (Exception e) {
 							logger.error(ChatColor.YELLOW + p.getName() + ChatColor.WHITE + "님의 능력을 변경하는 도중 오류가 발생하였습니다.");
-							logger.error(ChatColor.WHITE + "문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
+							logger.error("문제가 발생한 능력: §b" + first.getName() + " §f또는 §b" + second.getName());
 						}
 					}
 				} else {

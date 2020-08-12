@@ -12,8 +12,8 @@ public class PlayerCollector {
 	}
 
 	public static Collection<Player> EVERY_PLAYER_EXCLUDING_SPECTATORS() {
-		final Collection<Player> players = new ArrayList<>();
-		for (Player player : Bukkit.getOnlinePlayers()) {
+		final Collection<Player> players = new ArrayList<>(Math.max(1, Bukkit.getOnlinePlayers().size() - SpectatorManager.getSpectators().size()));
+		for (final Player player : Bukkit.getOnlinePlayers()) {
 			if (SpectatorManager.isSpectator(player.getName())) continue;
 			players.add(player);
 		}

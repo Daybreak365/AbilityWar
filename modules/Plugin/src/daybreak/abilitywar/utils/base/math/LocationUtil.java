@@ -154,7 +154,7 @@ public class LocationUtil {
 		return null;
 	}
 
-	public static int getFloorYAt(World world, double referenceY, int x, int z) {
+	public static int getFloorYAt(final World world, final double referenceY, final int x, final int z) {
 		int y = getHighestBlockYAt(world, x, z);
 		if (y > referenceY) {
 			for (int yCheck = y; yCheck >= referenceY; yCheck--) {
@@ -165,6 +165,12 @@ public class LocationUtil {
 			}
 		}
 		return y;
+	}
+
+	public static Location floorY(final Location location, final double referenceY) {
+		final Location clone = location.clone();
+		clone.setY(getFloorYAt(clone.getWorld(), referenceY, clone.getBlockX(), clone.getBlockZ()));
+		return clone;
 	}
 
 	public static int getHighestBlockYAt(World world, int x, int z) {

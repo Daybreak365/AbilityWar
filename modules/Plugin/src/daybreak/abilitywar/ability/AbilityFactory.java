@@ -1,7 +1,10 @@
 package daybreak.abilitywar.ability;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
@@ -14,7 +17,10 @@ import daybreak.abilitywar.game.list.mix.triplemix.TripleMix;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
 import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
-import daybreak.abilitywar.game.list.murdermystery.ability.extra.Police;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Doctor;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Police;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.AssassinMurderer;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMurderer;
 import daybreak.abilitywar.game.list.summervacation.SquirtGun;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
@@ -123,6 +129,8 @@ public class AbilityFactory {
 		registerAbility(SwordMaster.class);
 		// v2.1.9.6
 		registerAbility(SurvivalInstinct.class);
+		// v2.2.1
+		registerAbility(Synchronize.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -137,6 +145,9 @@ public class AbilityFactory {
 		registerAbility(Detective.class);
 		registerAbility(Innocent.class);
 		registerAbility(Police.class);
+		registerAbility(Doctor.class);
+		registerAbility(AssassinMurderer.class);
+		registerAbility(BlackMurderer.class);
 	}
 
 	/**
@@ -236,7 +247,7 @@ public class AbilityFactory {
 		private final Class<? extends AbilityBase> clazz;
 		private final Constructor<? extends AbilityBase> constructor;
 		private final AbilityManifest manifest;
-		private final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
+		private final Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 		private final Map<String, SettingObject<?>> settingObjects;
 		private final ImmutableSet<Material> materials;
 		private final ImmutableSet<Class<? extends AbstractGame>> notAvailable;
@@ -266,7 +277,7 @@ public class AbilityFactory {
 			Preconditions.checkNotNull(manifest.species());
 
 			{
-				final Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = new HashMap<>();
+				final Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = HashMultimap.create();
 				Class<?> current = clazz;
 				while (AbilityBase.class.isAssignableFrom(current) && current != AbilityBase.class) {
 					for (Method method : current.getDeclaredMethods()) {
@@ -274,13 +285,13 @@ public class AbilityFactory {
 						if (subscribeEvent != null) {
 							final Class<?>[] parameters = method.getParameterTypes();
 							if (parameters.length == 1 && Event.class.isAssignableFrom(parameters[0])) {
-								eventhandlers.putIfAbsent(parameters[0].asSubclass(Event.class), Pair.of(method, subscribeEvent));
+								eventhandlers.put(parameters[0].asSubclass(Event.class), Pair.of(method, subscribeEvent));
 							}
 						}
 					}
 					current = current.getSuperclass();
 				}
-				this.eventhandlers = Collections.unmodifiableMap(eventhandlers);
+				this.eventhandlers = Multimaps.unmodifiableMultimap(eventhandlers);
 			}
 
 			final Map<String, SettingObject<?>> settingObjects = new HashMap<>();
@@ -320,7 +331,7 @@ public class AbilityFactory {
 			return manifest;
 		}
 
-		public Map<Class<? extends Event>, Pair<Method, SubscribeEvent>> getEventhandlers() {
+		public Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> getEventhandlers() {
 			return eventhandlers;
 		}
 

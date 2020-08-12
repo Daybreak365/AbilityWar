@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.team
 
 import daybreak.abilitywar.AbilityWar
 import daybreak.abilitywar.config.Configuration.Settings
+import daybreak.abilitywar.config.serializable.SpawnLocation
 import daybreak.abilitywar.config.serializable.team.PresetContainer
 import daybreak.abilitywar.config.serializable.team.TeamPreset
 import daybreak.abilitywar.game.AbstractGame
@@ -83,6 +84,12 @@ abstract class TeamGame(players: Collection<Player>, args: Array<String>): Game(
 				when (update) {
 					START -> {
 						teamPreset.divisionType.divide(this@TeamGame, teamPreset)
+						if (Settings.getSpawnEnable()) {
+							val spawn = Settings.getSpawnLocation().toBukkitLocation()
+							for (participant in participants) {
+								participant.player.teleport(if (participant.hasTeam()) participant.getTeam()!!.getSpawn().toBukkitLocation() else spawn)
+							}
+						}
 					}
 					END -> {
 						HandlerList.unregisterAll(this)
@@ -256,6 +263,7 @@ abstract class TeamGame(players: Collection<Player>, args: Array<String>): Game(
 	inner class Team(override val name: String, override val displayName: String): Members {
 		private val members: MutableSet<AbstractGame.Participant> = HashSet()
 		private val team: org.bukkit.scoreboard.Team = scoreboardManager.registerNewTeam(name)
+		private var spawn: SpawnLocation = Settings.getSpawnLocation()
 
 		init {
 			team.setCanSeeFriendlyInvisibles(true)
@@ -295,6 +303,14 @@ abstract class TeamGame(players: Collection<Player>, args: Array<String>): Game(
 			return true
 		}
 
+		override fun getSpawn(): SpawnLocation {
+			return spawn
+		}
+
+		override fun setSpawn(spawn: SpawnLocation) {
+			this.spawn = spawn
+		}
+
 		override fun unregister() {
 			scoreboardManager.unregisterTeam(team)
 		}
@@ -320,7 +336,7 @@ abstract class TeamGame(players: Collection<Player>, args: Array<String>): Game(
 
 	}
 
-	inner class Participant(player: Player) : daybreak.abilitywar.game.AbstractGame.Participant(player) {
+	inner class Participant(player: Player) : AbstractGame.Participant(player) {
 		override fun toString(): String {
 			return player.name
 		}

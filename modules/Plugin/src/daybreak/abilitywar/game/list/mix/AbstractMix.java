@@ -2,7 +2,11 @@ package daybreak.abilitywar.game.list.mix;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.kitpreset.KitConfiguration.KitSettings;
+import daybreak.abilitywar.config.serializable.AbilityKit;
+import daybreak.abilitywar.config.serializable.KitPreset;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManager;
@@ -12,10 +16,13 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
+import daybreak.abilitywar.utils.library.SoundLib;
+import daybreak.abilitywar.utils.library.item.ItemLib;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,12 +33,94 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
-public abstract class AbstractMix extends Game {
+public abstract class AbstractMix extends Game implements DefaultKitHandler {
 
 	public AbstractMix(Collection<Player> players) {
 		super(players);
+	}
+
+	@Override
+	public void giveDefaultKit(Participant participant) {
+		if (!participant.getGame().equals(this)) return;
+		Player player = participant.getPlayer();
+		player.setLevel(0);
+		if (Configuration.Settings.getStartLevel() > 0) {
+			player.giveExpLevels(Configuration.Settings.getStartLevel());
+			SoundLib.ENTITY_PLAYER_LEVELUP.playSound(player);
+		}
+		final PlayerInventory inventory = player.getInventory();
+		if (Configuration.Settings.getInventoryClear()) {
+			inventory.clear();
+		}
+
+		final Mix mix = (Mix) participant.getAbility();
+		if (mix.hasAbility()) {
+			final AbilityKit abilityKit = KitSettings.getAbilityKit();
+			if (mix.hasSynergy()) {
+				final KitPreset kit = abilityKit.getKits(mix.getSynergy().getClass().getName());
+				for (ItemStack stack : kit.getItems()) {
+					inventory.addItem(stack);
+				}
+				inventory.setHelmet(kit.getHelmet());
+				inventory.setChestplate(kit.getChestplate());
+				inventory.setLeggings(kit.getLeggings());
+				inventory.setBoots(kit.getBoots());
+			} else {
+				final String firstName = mix.getFirst().getClass().getName(), secondName = mix.getSecond().getClass().getName();
+				final boolean hasFirst = abilityKit.hasKits(firstName), hasSecond = abilityKit.hasKits(secondName);
+				if (hasFirst || hasSecond) {
+					if (hasFirst && hasSecond) {
+						final KitPreset first = abilityKit.getKits(firstName), second = abilityKit.getKits(secondName);
+						final Map<Integer, Integer> hashCodes = new HashMap<>();
+						for (final ItemStack stack : first.getItems()) {
+							inventory.addItem(stack);
+							final int hashCode = ItemLib.hashCode(stack);
+							hashCodes.put(hashCode, hashCodes.getOrDefault(hashCode, 0) + 1);
+						}
+						for (final ItemStack stack : second.getItems()) {
+							final int hashCode = ItemLib.hashCode(stack);
+							if (hashCodes.containsKey(hashCode)) {
+								hashCodes.put(hashCode, hashCodes.get(hashCode) - 1);
+								if (hashCodes.get(hashCode) > 0) {
+									continue;
+								} else {
+									hashCodes.remove(hashCode);
+								}
+							}
+							inventory.addItem(stack);
+						}
+						inventory.setHelmet(first.getHelmet());
+						inventory.setChestplate(first.getChestplate());
+						inventory.setLeggings(first.getLeggings());
+						inventory.setBoots(first.getBoots());
+					} else {
+						if (hasFirst) {
+							giveKit(inventory, abilityKit.getKits(firstName));
+						} else {
+							giveKit(inventory, abilityKit.getKits(secondName));
+						}
+					}
+				} else {
+					giveKit(inventory, KitSettings.getKit());
+				}
+			}
+		} else {
+			giveKit(inventory, KitSettings.getKit());
+		}
+	}
+
+	private void giveKit(PlayerInventory inventory, KitPreset kit) {
+		for (ItemStack stack : kit.getItems()) {
+			inventory.addItem(stack);
+		}
+		inventory.setHelmet(kit.getHelmet());
+		inventory.setChestplate(kit.getChestplate());
+		inventory.setLeggings(kit.getLeggings());
+		inventory.setBoots(kit.getBoots());
 	}
 
 	@Override

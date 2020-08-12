@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.team.interfaces
 
+import daybreak.abilitywar.config.serializable.SpawnLocation
 import daybreak.abilitywar.game.AbstractGame.Participant
 import daybreak.abilitywar.game.interfaces.IGame
 
@@ -25,5 +26,7 @@ interface Members {
 	fun isMember(participant: Participant): Boolean
 	fun getMembers(): Set<Participant>
 	fun isExcluded(): Boolean
+	fun getSpawn(): SpawnLocation
+	fun setSpawn(spawn: SpawnLocation)
 	fun unregister()
 }

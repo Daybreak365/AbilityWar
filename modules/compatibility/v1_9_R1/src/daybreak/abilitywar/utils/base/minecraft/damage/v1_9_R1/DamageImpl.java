@@ -36,6 +36,7 @@ public class DamageImpl implements IDamages {
 		return ((CraftEntity) entity).getHandle().damageEntity(new EntityDamageSource("player", ((CraftPlayer) damager).getHandle()) {
 			{
 				setIgnoreArmor();
+				m();
 			}
 		}, damage);
 	}

@@ -27,6 +27,7 @@ import daybreak.abilitywar.utils.base.RegexReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.Observer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -140,7 +141,7 @@ public abstract class AbilityBase {
 		this.registration = AbilityFactory.getRegistration(getClass());
 		this.manifest = registration.getManifest();
 		final EventManager eventManager = game.getEventManager();
-		for (final Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entrySet()) {
+		for (final Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entries()) {
 			final Pair<Method, SubscribeEvent> pair = entry.getValue();
 			final EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
 				@Override
@@ -293,11 +294,11 @@ public abstract class AbilityBase {
 		return restriction;
 	}
 
-	public final Set<GameTimer> getTimers() {
+	public Set<GameTimer> getTimers() {
 		return Collections.unmodifiableSet(timers);
 	}
 
-	public final Set<GameTimer> getRunningTimers() {
+	public Set<GameTimer> getRunningTimers() {
 		return Collections.unmodifiableSet(runningTimers);
 	}
 
@@ -568,23 +569,20 @@ public abstract class AbilityBase {
 	 *
 	 * @author Daybreak 새벽
 	 */
-	public abstract class Duration extends AbilityTimer {
+	public abstract class Duration {
 
-		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private final int duration;
+		private int period = 20;
 		private final String name;
 		private final Cooldown cooldown;
-		private int period = 20;
+		private DurationTimer timer;
+		private final Set<SimpleTimer.Observer> observers = new HashSet<>(0);
 
-		public Duration(int duration, Cooldown cooldown, String name) {
-			super(TaskType.REVERSE, duration);
+		public Duration(final int duration, final Cooldown cooldown, final String name) {
 			this.duration = duration;
 			this.name = Strings.nullToEmpty(name);
 			this.cooldown = cooldown;
-			if (Settings.getDurationTimerBehavior()) {
-				setBehavior(RestrictionBehavior.PAUSE_RESUME);
-			}
-			register();
+			this.timer = new DurationTimer(this.duration, FastMath.gcd(this.period, 20));
 		}
 
 		public Duration(int duration, Cooldown cooldown) {
@@ -595,96 +593,87 @@ public abstract class AbilityBase {
 			this(duration, null);
 		}
 
-		protected void onDurationStart() {
-		}
-
+		protected void onDurationStart() {}
 		protected abstract void onDurationProcess(int count);
-
-		protected void onDurationEnd() {
-		}
-
-		protected void onDurationSilentEnd() {
-		}
+		protected void onDurationEnd() {}
+		protected void onDurationSilentEnd() {}
 
 		public final boolean isDuration() {
-			if (isRunning()) {
+			if (timer.isRunning()) {
 				if (getPlayer() != null) {
 					getPlayer().sendMessage(toString(ChatColor.WHITE));
 				}
 			}
-			return isRunning();
+			return timer.isRunning();
+		}
+
+		public void attachObserver(final SimpleTimer.Observer observer) {
+			observers.add(observer);
+			timer.attachObserver(observer);
+		}
+
+		public void detachObserver(final SimpleTimer.Observer observer) {
+			observers.remove(observer);
+			timer.detachObserver(observer);
 		}
 
 		@NotNull
-		@Override
 		public Duration setPeriod(TimeUnit timeUnit, int period) {
-			Preconditions.checkNotNull(timeUnit);
+			timer.actionbarChannel.unregister();
+			timer.stop(true);
+			timer.unregister();
 			this.period = timeUnit.toTicks(period);
-			super.setPeriod(TimeUnit.TICKS, FastMath.gcd(this.period, 20));
+			this.timer = new DurationTimer(duration, FastMath.gcd(this.period, 20));
+			for (Observer observer : observers) {
+				timer.attachObserver(observer);
+			}
 			return this;
 		}
 
 		@NotNull
-		@Override
 		public Duration setInitialDelay(TimeUnit timeUnit, int initialDelay) {
-			super.setInitialDelay(timeUnit, initialDelay);
+			timer.setInitialDelay(timeUnit, initialDelay);
 			return this;
 		}
 
-		@Override
+		@NotNull
 		public Duration setBehavior(RestrictionBehavior behavior) {
-			super.setBehavior(behavior);
+			timer.setBehavior(behavior);
 			return this;
 		}
 
-		@Override
+		@NotNull
 		public Duration unregister() {
-			super.unregister();
+			timer.unregister();
 			return this;
 		}
 
-		@Override
-		protected final void onStart() {
-			onDurationStart();
+		public boolean start() {
+			return timer.start();
 		}
 
-		private int tick = 0;
-
-		@Override
-		protected final void run(int count) {
-			tick += getPeriod();
-			if (tick % 20 == 0) {
-				actionbarChannel.update(toString());
-				final int fixedCount = getFixedCount();
-				if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
-					SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
-					getPlayer().sendMessage(toString(ChatColor.WHITE));
-				}
-			}
-			if (tick % period == 0) {
-				onDurationProcess(count);
-				if (tick >= 20) {
-					tick = 0;
-				}
-			}
+		public boolean stop(boolean silent) {
+			return timer.stop(silent);
 		}
 
-		@Override
-		protected final void onEnd() {
-			onDurationEnd();
-
-			getPlayer().sendMessage("§6지속 시간§f이 종료되었습니다.");
-			actionbarChannel.update("§6지속 시간§f이 종료되었습니다.", 2);
-
-			if (cooldown != null) {
-				cooldown.start();
-			}
+		public boolean isRunning() {
+			return timer.isRunning();
 		}
 
-		@Override
-		protected final void onSilentEnd() {
-			onDurationSilentEnd();
-			actionbarChannel.update(null);
+		public int getMaximumCount() {
+			return timer.getMaximumCount();
+		}
+
+		public int getCount() {
+			return timer.getCount();
+		}
+
+		public int getFixedCount() {
+			return timer.getFixedCount();
+		}
+
+		public void setCount(int count) {
+			timer.setCount(count);
 		}
 
 		@Override
@@ -694,10 +683,89 @@ public abstract class AbilityBase {
 
 		public final String toString(ChatColor timeColor) {
 			if (name != null && !name.isEmpty()) {
-				return ChatColor.GOLD.toString() + name + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
+				return ChatColor.GOLD.toString() + name + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(timer.getFixedCount());
 			} else {
-				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
+				return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(timer.getFixedCount());
 			}
+		}
+
+		public class DurationTimer extends AbilityTimer {
+
+			private final ActionbarChannel actionbarChannel = newActionbarChannel();
+			private final double cycle;
+
+			public DurationTimer(final int maxCount, final int gcd) {
+				super(TaskType.REVERSE, maxCount * (int) ((double) period / gcd));
+				this.cycle = ((double) period / gcd);
+				setPeriod(TimeUnit.TICKS, gcd);
+				if (Settings.getDurationTimerBehavior()) {
+					setBehavior(RestrictionBehavior.PAUSE_RESUME);
+				}
+				register();
+			}
+
+			@Override
+			protected final void onStart() {
+				onDurationStart();
+			}
+
+			private int tick = 0;
+
+			@Override
+			public void run(int count) {
+				tick += getPeriod();
+				if (tick % 20 == 0) {
+					actionbarChannel.update(toString());
+					final int fixedCount = getFixedCount();
+					if ((fixedCount == (duration / 2) || (fixedCount <= 5 && fixedCount >= 1))) {
+						SoundLib.BLOCK_NOTE_BLOCK_HAT.playSound(getPlayer());
+						getPlayer().sendMessage(toString(ChatColor.WHITE));
+					}
+				}
+				if (tick % period == 0) {
+					onDurationProcess((int) Math.floor(count / cycle));
+					if (tick >= 20) {
+						tick = 0;
+					}
+				}
+			}
+
+			@Override
+			protected final void onEnd() {
+				onDurationEnd();
+
+				getPlayer().sendMessage("§6지속 시간§f이 종료되었습니다.");
+				actionbarChannel.update("§6지속 시간§f이 종료되었습니다.", 2);
+
+				if (cooldown != null) {
+					cooldown.start();
+				}
+			}
+
+			@Override
+			protected final void onSilentEnd() {
+				onDurationSilentEnd();
+				actionbarChannel.update(null);
+			}
+
+			@Override
+			public void onCountSet() {
+				actionbarChannel.update(toString());
+			}
+
+			@Override
+			public final String toString() {
+				return toString(ChatColor.YELLOW);
+			}
+
+			public final String toString(ChatColor timeColor) {
+				if (name != null && !name.isEmpty()) {
+					return ChatColor.GOLD.toString() + name + " 지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
+				} else {
+					return ChatColor.GOLD.toString() + "지속 시간 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(getFixedCount());
+				}
+			}
+
 		}
 
 	}

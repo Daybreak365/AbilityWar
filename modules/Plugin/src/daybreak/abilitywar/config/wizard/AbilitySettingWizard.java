@@ -1,8 +1,8 @@
-package daybreak.abilitywar.config.ability.wizard;
+package daybreak.abilitywar.config.wizard;
 
 import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.ability.wizard.setter.Setter;
+import daybreak.abilitywar.config.wizard.setter.Setter;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;

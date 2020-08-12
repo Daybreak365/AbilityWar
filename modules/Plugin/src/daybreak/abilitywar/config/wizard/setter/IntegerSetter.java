@@ -1,6 +1,6 @@
-package daybreak.abilitywar.config.ability.wizard.setter;
+package daybreak.abilitywar.config.wizard.setter;
 
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.interfaces.Configurable;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,8 +18,8 @@ public class IntegerSetter extends Setter {
 	}
 
 	@Override
-	public boolean onClick(SettingObject<?> object, ClickType clickType) {
-		@SuppressWarnings("unchecked") SettingObject<Integer> settingObject = (SettingObject<Integer>) object;
+	public boolean onClick(Configurable<?> configurable, ClickType clickType) {
+		@SuppressWarnings("unchecked") Configurable<Integer> settingObject = (Configurable<Integer>) configurable;
 		switch (clickType) {
 			case RIGHT:
 				if (!settingObject.setValue(settingObject.getValue() + 1)) return false;
@@ -38,13 +38,13 @@ public class IntegerSetter extends Setter {
 	}
 
 	@Override
-	public ItemStack getItem(SettingObject<?> settingObject) {
+	public ItemStack getItem(Configurable<?> configurable) {
 		ItemStack wool = MaterialX.BLUE_WOOL.createItem();
 		ItemMeta woolMeta = wool.getItemMeta();
-		woolMeta.setDisplayName(ChatColor.WHITE + settingObject.getKey());
-		String[] comments = settingObject.getComments();
+		woolMeta.setDisplayName(ChatColor.WHITE + configurable.getKey());
+		String[] comments = configurable.getComments();
 		List<String> lore = new ArrayList<>(comments.length + 6);
-		lore.add("§9값§f: " + settingObject.getValue());
+		lore.add("§9값§f: " + configurable.getValue());
 		for (String comment : comments) {
 			lore.add(ChatColor.GRAY + comment);
 		}

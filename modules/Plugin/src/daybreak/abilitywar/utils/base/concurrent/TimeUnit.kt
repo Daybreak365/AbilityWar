@@ -1,47 +1,25 @@
 package daybreak.abilitywar.utils.base.concurrent
 
-enum class TimeUnit {
-	TICKS {
-		override fun toTicks(duration: Int): Int {
-			return duration
-		}
+enum class TimeUnit(inTicks: Int) {
+	TICKS(1),
+	SECONDS(20),
+	MINUTES(1200);
 
-		override fun toSeconds(duration: Int): Int {
-			return duration / 20
-		}
+	private val inTicks: Double = inTicks.toDouble()
 
-		override fun toMinutes(duration: Int): Int {
-			return duration / 1200
-		}
-	},
-	SECONDS {
-		override fun toTicks(duration: Int): Int {
-			return duration * 20
-		}
+	fun to(timeUnit: TimeUnit, duration: Int): Double {
+		return duration / (timeUnit.inTicks / this.inTicks)
+	}
 
-		override fun toSeconds(duration: Int): Int {
-			return duration
-		}
+	fun toTicks(duration: Int): Int {
+		return to(TICKS, duration).toInt()
+	}
 
-		override fun toMinutes(duration: Int): Int {
-			return duration / 60
-		}
-	},
-	MINUTES {
-		override fun toTicks(duration: Int): Int {
-			return duration * 1200
-		}
+	fun toSeconds(duration: Int): Double {
+		return to(SECONDS, duration)
+	}
 
-		override fun toSeconds(duration: Int): Int {
-			return duration * 60
-		}
-
-		override fun toMinutes(duration: Int): Int {
-			return duration
-		}
-	};
-
-	abstract fun toTicks(duration: Int): Int
-	abstract fun toSeconds(duration: Int): Int
-	abstract fun toMinutes(duration: Int): Int
+	fun toMinutes(duration: Int): Double {
+		return to(MINUTES, duration)
+	}
 }

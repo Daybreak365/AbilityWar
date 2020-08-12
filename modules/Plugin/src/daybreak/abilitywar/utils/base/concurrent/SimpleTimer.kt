@@ -2,16 +2,23 @@ package daybreak.abilitywar.utils.base.concurrent
 
 import com.google.common.base.Preconditions
 import daybreak.abilitywar.AbilityWar
+import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet
 import org.bukkit.Bukkit
 
 abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
-	private lateinit var observers: MutableSet<Observer>
+	private lateinit var observers: QueueOnIterateHashSet<Observer>
 
 	fun attachObserver(observer: Observer) {
 		if (!this::observers.isInitialized) {
-			this.observers = HashSet()
+			this.observers = QueueOnIterateHashSet()
 		}
 		observers.add(observer)
+	}
+
+	fun detachObserver(observer: Observer) {
+		if (this::observers.isInitialized) {
+			observers.remove(observer)
+		}
 	}
 
 	private var task: Task? = null

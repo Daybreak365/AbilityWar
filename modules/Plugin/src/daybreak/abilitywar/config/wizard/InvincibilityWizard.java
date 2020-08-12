@@ -131,12 +131,12 @@ public class InvincibilityWizard extends SettingWizard {
 				switch (currentItem.getItemMeta().getDisplayName()) {
 					case "§b무적 보스바":
 						Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_BOSSBAR_ENABLE, !Settings.InvincibilitySettings.isBossbarEnabled());
-						Show();
+						show();
 						break;
 					case "§b초반 무적":
 						Configuration.modifyProperty(ConfigNodes.GAME_INVINCIBILITY_ENABLE,
 								!Settings.InvincibilitySettings.isEnabled());
-						Show();
+						show();
 						break;
 					case "§b초반 무적 시간":
 						int duration = Settings.InvincibilitySettings.getDuration();
@@ -156,11 +156,11 @@ public class InvincibilityWizard extends SettingWizard {
 							default:
 								break;
 						}
-						Show();
+						show();
 						break;
 					case "§b단위":
 						this.unit = unit.getNext();
-						Show();
+						show();
 						break;
 				}
 			}

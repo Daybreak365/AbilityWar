@@ -10,7 +10,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.collect.PushingList;
+import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Collection;
@@ -83,7 +83,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	public void onPlayerDeath(ParticipantDeathEvent e) {
 		if (e.getParticipant().equals(getParticipant())) {
-			playerDatas = new PushingList<>(time * 20);
+			playerDatas = new LimitedPushingList<>(time * 20);
 		}
 	}
 
@@ -108,7 +108,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private PushingList<PlayerData> playerDatas = new PushingList<>(time * 20);
+	private LimitedPushingList<PlayerData> playerDatas = new LimitedPushingList<>(time * 20);
 
 	private final Duration skill = new Duration(time * 10, cooldownTimer) {
 
@@ -117,7 +117,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 		@Override
 		public void onDurationStart() {
 			this.datas = playerDatas;
-			playerDatas = new PushingList<>(time * 20);
+			playerDatas = new LimitedPushingList<>(time * 20);
 		}
 
 		@Override

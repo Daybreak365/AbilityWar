@@ -9,7 +9,9 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank.SPECIAL
 import daybreak.abilitywar.ability.AbilityManifest.Species.OTHERS
 import daybreak.abilitywar.ability.decorator.ActiveHandler
 import daybreak.abilitywar.ability.decorator.TargetHandler
+import daybreak.abilitywar.game.AbstractGame.GameTimer
 import daybreak.abilitywar.game.AbstractGame.Participant
+import daybreak.abilitywar.utils.base.collect.SetUnion
 import org.bukkit.ChatColor.RESET
 import org.bukkit.Material
 import org.bukkit.entity.LivingEntity
@@ -27,11 +29,11 @@ class TripleMix(participant: Participant) : AbilityBase(participant), ActiveHand
 	private val EXPLAIN: Any = object : Any() {
 		override fun toString(): String {
 			val joiner = StringJoiner("\n")
-			joiner.add("§a--------------------------------")
+			joiner.add("§a---------------------------------")
 			formatInfo(joiner, first)
-			joiner.add("§a--------------------------------")
+			joiner.add("§a---------------------------------")
 			formatInfo(joiner, second)
-			joiner.add("§a--------------------------------")
+			joiner.add("§a---------------------------------")
 			formatInfo(joiner, third)
 			return joiner.toString()
 		}
@@ -65,6 +67,30 @@ class TripleMix(participant: Participant) : AbilityBase(participant), ActiveHand
 
 	override fun usesMaterial(material: Material): Boolean {
 		return first?.usesMaterial(material) ?: false || second?.usesMaterial(material) ?: false || third?.usesMaterial(material) ?: false
+	}
+
+	override fun getTimers(): Set<GameTimer> {
+		if (hasAbility()) {
+			val first = this.first
+			val second = this.second
+			val third = this.third
+			if (first != null && second != null && third != null) {
+				return SetUnion.union(first.timers, second.timers, third.timers)
+			}
+		}
+		return super.getTimers()
+	}
+
+	override fun getRunningTimers(): Set<GameTimer> {
+		if (hasAbility()) {
+			val first = this.first
+			val second = this.second
+			val third = this.third
+			if (first != null && second != null && third != null) {
+				return SetUnion.union(first.runningTimers, second.runningTimers, third.runningTimers)
+			}
+		}
+		return super.getRunningTimers()
 	}
 
 	fun hasAbility(): Boolean {

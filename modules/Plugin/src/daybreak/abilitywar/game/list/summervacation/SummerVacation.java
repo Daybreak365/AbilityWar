@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.list.summervacation;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
-import daybreak.abilitywar.config.Configuration.Settings.SummerVacationSettings;
+import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.Category;
 import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.Game;
@@ -53,9 +53,16 @@ import org.bukkit.scoreboard.Score;
 @Category(GameCategory.MINIGAME)
 public class SummerVacation extends Game implements Winnable, DefaultKitHandler {
 
+	public static final Setting<Integer> KILLS_TO_WIN = gameSettings.new Setting<Integer>(SummerVacation.class, "킬횟수", 10, "# 우승을 위해 필요한 킬 횟수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+	};
+
 	public SummerVacation() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-		this.maxKill = SummerVacationSettings.getMaxKill();
+		this.killsToWin = KILLS_TO_WIN.getValue();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -148,7 +155,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		}
 	}.setPeriod(TimeUnit.TICKS, 10);
 
-	private final int maxKill;
+	private final int killsToWin;
 
 	@Override
 	public DeathManager newDeathManager() {
@@ -165,7 +172,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 						Score score = killObjective.getScore(killer.getPlayer().getName());
 						if (score.isScoreSet()) {
 							score.setScore(score.getScore() + 1);
-							if (score.getScore() >= maxKill) {
+							if (score.getScore() >= killsToWin) {
 								Win(killer);
 							}
 						}

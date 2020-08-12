@@ -12,6 +12,7 @@ import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,9 @@ import java.util.Scanner;
 import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
 public class CustomAddonInfo implements AddonInfo {
@@ -199,6 +203,12 @@ public class CustomAddonInfo implements AddonInfo {
 				receiver.sendMessage(Messager.defaultPrefix + CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 시작");
 			}
 			final HttpURLConnection connection = (HttpURLConnection) downloadURL.openConnection();
+			final BossBar bossBar = Bukkit.createBossBar(Messager.defaultPrefix + CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치", BarColor.WHITE, BarStyle.SEGMENTED_12);
+			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+				bossBar.addPlayer(onlinePlayer);
+			}
+			bossBar.setProgress(0);
+			if (ServerVersion.getVersion() >= 10) bossBar.setVisible(true);
 			try (final InputStream input = connection.getInputStream()) {
 				final FileOutputStream output;
 				if (AddonLoader.checkAddon(CustomAddonInfo.this.name)) {
@@ -213,13 +223,28 @@ public class CustomAddonInfo implements AddonInfo {
 				}
 				final byte[] data = new byte[1024];
 				int count;
+				double sum = 0;
 				while ((count = input.read(data)) >= 0) {
 					output.write(data, 0, count);
+					sum += count;
+					bossBar.setProgress(Math.max(0.0, Math.min(1.0, sum / fileSize)));
 				}
 				output.close();
+			} catch (Exception ex) {
+				if (ServerVersion.getVersion() >= 10) bossBar.setVisible(false);
+				bossBar.removeAll();
+				throw ex;
 			}
 			connection.disconnect();
+			Messager.sendConsoleMessage("서버를 다시 불러오는 중...");
+			for (Player receiver : Bukkit.getOnlinePlayers()) {
+				receiver.sendMessage(Messager.defaultPrefix + "서버를 다시 불러오는 중...");
+			}
+			bossBar.setColor(BarColor.RED);
+			bossBar.setTitle("서버를 다시 불러오는 중...");
 			Bukkit.reload();
+			if (ServerVersion.getVersion() >= 10) bossBar.setVisible(false);
+			bossBar.removeAll();
 			Messager.sendConsoleMessage(CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 완료");
 			for (Player receiver : Bukkit.getOnlinePlayers()) {
 				receiver.sendMessage(Messager.defaultPrefix + CustomAddonInfo.this.displayName + " " + tag + "(" + name + ") 설치 완료");
