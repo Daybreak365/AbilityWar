@@ -129,6 +129,7 @@ public class AbilityList {
 		registerAbility(SwordMaster.class);
 		registerAbility(SurvivalInstinct.class);
 		registerAbility(Synchronize.class);
+		registerAbility(Ghoul.class);
 	}
 
 	/**

@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Collection;
 import java.util.HashMap;
@@ -91,6 +92,18 @@ public class TimeLoop extends Synergy {
 
 	public TimeLoop(Participant participant) {
 		super(participant);
+	}
+
+	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
+	private void onPlayerSetHealth(PlayerSetHealthEvent e) {
+		if (cooldownTimer.isRunning()) return;
+		if (e.getHealth() == 0.0) {
+			e.setCancelled(true);
+			for (PlayerLogger value : loggers.values()) {
+				value.rewind();
+			}
+			cooldownTimer.start();
+		}
 	}
 
 	@SubscribeEvent(priority = 6)

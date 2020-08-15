@@ -41,6 +41,9 @@ public class AssassinMurderer extends AbstractMurderer {
 		super(participant);
 	}
 
+	private final Cooldown cooldown = new Cooldown(20);
+	private boolean skill = false;
+
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
@@ -113,14 +116,17 @@ public class AssassinMurderer extends AbstractMurderer {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onToggleSneak(final PlayerToggleSneakEvent e) {
-		if (e.isSneaking()) {
+		if (e.isSneaking() && !cooldown.isRunning()) {
+			this.skill = true;
 			getPlayer().getInventory().setArmorContents(null);
 			NMS.removeArrow(getPlayer());
 			NMS.setInvisible(getPlayer(), true);
 			ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.15, 0.15, 0.15, 100, 0);
 			SoundLib.ENTITY_SILVERFISH_AMBIENT.playSound(getPlayer().getLocation(), 0.5f, 1f);
-		} else {
+		} else if (skill) {
+			cooldown.start();
 			NMS.setInvisible(getPlayer(), false);
+			this.skill = false;
 		}
 	}
 

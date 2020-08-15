@@ -1,8 +1,11 @@
 package daybreak.abilitywar.utils.base.minecraft.nms;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public interface INMS {
@@ -30,5 +33,12 @@ public interface INMS {
 	void removeBoundingBox(ArmorStand armorStand);
 	void removeArrow(Player player);
 	void setInvisible(Player player, boolean invisible);
+
+	void setCooldown(Player player, Material material, int ticks);
+	boolean hasCooldown(Player player, Material material);
+
+	void fakeCollect(Entity entity, Item item);
+
+	void clearActiveItem(LivingEntity livingEntity);
 
 }

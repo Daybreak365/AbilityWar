@@ -1,12 +1,10 @@
-package daybreak.abilitywar.game.manager.object;
+package daybreak.abilitywar.game.manager.object.event;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
+import org.jetbrains.annotations.NotNull;
 
 public class EventManager implements Listener, EventExecutor, AbstractGame.Observer {
 
@@ -56,10 +55,10 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 		}
 
 		final HashSet<EventObserver> observers;
-		if (observerMap.get(observer.subscriber.priority()) == null) {
+		if (observerMap.get(observer.priority) == null) {
 			observers = new HashSet<>();
-			observerMap.put(observer.subscriber.priority(), observers);
-		} else observers = observerMap.get(observer.subscriber.priority());
+			observerMap.put(observer.priority, observers);
+		} else observers = observerMap.get(observer.priority);
 		observers.add(observer);
 	}
 
@@ -78,7 +77,7 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 	private final List<EventObserver> toRegister = new LinkedList<>(), toUnregister = new LinkedList<>();
 
 	@Override
-	public void execute(Listener listener, Event event) {
+	public void execute(@NotNull Listener listener, Event event) {
 		final Class<? extends Event> eventClass = event.getClass();
 		if (observers.containsKey(eventClass)) {
 			iterationDepth++;
@@ -110,13 +109,11 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 	public abstract static class EventObserver {
 
 		protected final Class<? extends Event> eventClass;
-		protected final SubscribeEvent subscriber;
-		protected final Method method;
+		protected final int priority;
 
-		public EventObserver(Class<? extends Event> eventClass, SubscribeEvent subscriber, Method method) {
+		public EventObserver(final Class<? extends Event> eventClass, final int priority) {
 			this.eventClass = eventClass;
-			this.subscriber = subscriber;
-			this.method = method;
+			this.priority = priority;
 		}
 
 		protected abstract void onEvent(Event event);

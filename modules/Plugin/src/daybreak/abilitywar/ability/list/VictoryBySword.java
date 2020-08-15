@@ -13,6 +13,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
@@ -263,7 +264,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		@EventHandler
 		protected void onDeath(PlayerDeathEvent e) {
 			if (target.equals(e.getEntity())) {
-				new AbilityTimer(3) {
+				getGame().new GameTimer(TaskType.NORMAL, 3) {
 					@Override
 					protected void run(int count) {
 						SoundLib.PIANO.playInstrument(getPlayer(), C);
@@ -273,7 +274,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				}.setPeriod(TimeUnit.TICKS, 7).start();
 				stop(false);
 			} else if (getPlayer().equals(e.getEntity())) {
-				new AbilityTimer(3) {
+				getGame().new GameTimer(TaskType.NORMAL, 3) {
 					@Override
 					protected void run(int count) {
 						SoundLib.PIANO.playInstrument(target, C);

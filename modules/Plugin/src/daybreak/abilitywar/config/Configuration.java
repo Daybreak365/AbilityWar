@@ -173,6 +173,14 @@ public class Configuration {
 			return get(ConfigNodes.GAME_DRAW_ABILITY);
 		}
 
+		public static boolean isAutoSkipEnabled() {
+			return get(ConfigNodes.GAME_DRAW_AUTOSKIP_ENABLED);
+		}
+
+		public static int getAutoSkipTime() {
+			return get(ConfigNodes.GAME_DRAW_AUTOSKIP_TIME);
+		}
+
 		public static boolean getInfiniteDurability() {
 			return get(ConfigNodes.GAME_INFINITE_DURABILITY);
 		}
@@ -187,6 +195,14 @@ public class Configuration {
 
 		public static boolean isArrowDamageDistanceProportional() {
 			return get(ConfigNodes.GAME_ARROW_DISTANCE_PROPORTIONAL_DAMAGE);
+		}
+
+		public static boolean isShieldCooldownEnabled() {
+			return get(ConfigNodes.GAME_SHIELD_COOLDOWN);
+		}
+
+		public static boolean isBowCooldownEnabled() {
+			return get(ConfigNodes.GAME_BOW_COOLDOWN);
 		}
 
 		public static SpawnLocation getSpawnLocation() {

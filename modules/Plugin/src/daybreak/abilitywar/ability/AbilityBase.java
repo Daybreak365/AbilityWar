@@ -2,6 +2,8 @@ package daybreak.abilitywar.ability;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -20,9 +22,9 @@ import daybreak.abilitywar.game.event.participant.ParticipantEvent;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.object.EventManager;
-import daybreak.abilitywar.game.manager.object.EventManager.EventObserver;
 import daybreak.abilitywar.game.manager.object.WRECK;
+import daybreak.abilitywar.game.manager.object.event.EventManager;
+import daybreak.abilitywar.game.manager.object.event.EventManager.EventObserver;
 import daybreak.abilitywar.utils.base.RegexReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
@@ -39,12 +41,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
@@ -120,7 +120,7 @@ public abstract class AbilityBase {
 	private final AbilityRegistration registration;
 	private final AbilityManifest manifest;
 	private String[] explanation = null;
-	private final Map<Class<? extends Event>, EventObserver> eventhandlers = new HashMap<>();
+	private final Multimap<Class<? extends Event>, EventObserver> eventhandlers = HashMultimap.create();
 	private final Set<AbilityTimer> timers = new HashSet<>(), runningTimers = new HashSet<>();
 	private final Queue<AbilityTimer> pausedTimers = new LinkedList<>();
 	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
@@ -143,7 +143,9 @@ public abstract class AbilityBase {
 		final EventManager eventManager = game.getEventManager();
 		for (final Entry<Class<? extends Event>, Pair<Method, SubscribeEvent>> entry : registration.getEventhandlers().entries()) {
 			final Pair<Method, SubscribeEvent> pair = entry.getValue();
-			final EventObserver observer = new EventObserver(entry.getKey(), pair.getRight(), pair.getLeft()) {
+			final SubscribeEvent subscriber = pair.getRight();
+			final Method method = pair.getLeft();
+			final EventObserver observer = new EventObserver(entry.getKey(), subscriber.priority()) {
 				@Override
 				protected void onEvent(final Event event) {
 					if (isRestricted()) return;
@@ -154,8 +156,7 @@ public abstract class AbilityBase {
 							|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
 						return;
 					}
-					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled())
-						return;
+					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled()) return;
 					try {
 						ReflectionUtil.setAccessible(method).invoke(AbilityBase.this, event);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -167,6 +168,43 @@ public abstract class AbilityBase {
 			eventManager.register(observer);
 		}
 		this.restriction = new Restriction();
+	}
+
+	/**
+	 *
+	 * @param clazz				이벤트 클래스
+	 * @param onlyRelevant		이 능력 또는 이 능력의 주인과 관련 없는 이벤트 무시 여부
+	 * @param ignoreCancelled	취소된 이벤트 무시 여부
+	 * @param priority			이벤트 우선 순위
+	 */
+	protected <T extends Event> void subscribeEvent(final Class<T> clazz, final EventConsumer<T> consumer, final boolean onlyRelevant, final boolean ignoreCancelled, final int priority) {
+		Preconditions.checkNotNull(clazz);
+		Preconditions.checkNotNull(consumer);
+		final EventObserver observer = new EventObserver(clazz, priority) {
+			@Override
+			protected void onEvent(final Event event) {
+				if (isRestricted()) return;
+				if (onlyRelevant
+						&& ((event instanceof AbilityEvent && !AbilityBase.this.equals(((AbilityEvent) event).getAbility()))
+						|| (event instanceof ParticipantEvent && !getParticipant().equals(((ParticipantEvent) event).getParticipant()))
+						|| (event instanceof PlayerEvent && !getPlayer().equals(((PlayerEvent) event).getPlayer()))
+						|| (event instanceof EntityEvent && !getPlayer().equals(((EntityEvent) event).getEntity())))) {
+					return;
+				}
+				if (ignoreCancelled && event instanceof Cancellable && ((Cancellable) event).isCancelled()) return;
+				try {
+					consumer.onEvent(clazz.cast(event));
+				} catch (Exception ex) {
+					logger.log(Level.SEVERE, AbilityBase.this.getClass().getName() + ":" + consumer.toString() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
+				}
+			}
+		};
+		eventhandlers.put(clazz, observer);
+		game.getEventManager().register(observer);
+	}
+
+	public interface EventConsumer<T> {
+		void onEvent(final T event);
 	}
 
 	public enum Update {

@@ -17,6 +17,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Wing;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -135,7 +136,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		private List<Player> instrumentListeners;
 		private Wing leftWing, rightWing;
 
-		public void Target() {
+		public void target() {
 			this.targets = LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), distance, 250, STRICT_PREDICATE);
 			this.instrumentListeners = new ArrayList<>();
 			this.leftWing = VAMPIRE_WING.getLeft().clone();
@@ -149,9 +150,14 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 				} else {
 					amount = 1;
 				}
-				damageable.setHealth(Math.max(damageable.getHealth() - amount, 0));
 				blood += amount;
-				if (damageable instanceof Player) instrumentListeners.add((Player) damageable);
+				if (damageable instanceof Player) {
+					final Player player = (Player) damageable;
+					instrumentListeners.add(player);
+					Healths.setHealth(player, player.getHealth() - amount);
+				} else {
+					damageable.setHealth(Math.max(damageable.getHealth() - amount, 0));
+				}
 			}
 		}
 
@@ -177,7 +183,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 			}
 
 			if (count == 1) {
-				Target();
+				target();
 				count++;
 			} else if (count < 10) {
 				count++;

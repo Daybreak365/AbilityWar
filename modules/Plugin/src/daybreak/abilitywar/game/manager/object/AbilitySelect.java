@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.manager.object;
 
 import com.google.common.base.Preconditions;
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
@@ -8,6 +9,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,12 +18,23 @@ import java.util.List;
 import java.util.Map;
 import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public abstract class AbilitySelect extends GameTimer {
 
+	private final AbstractGame game;
+
 	public AbilitySelect(AbstractGame game, Collection<? extends Participant> selectors, int changeCount) {
 		game.super(TaskType.INFINITE, -1);
+		this.game = game;
 		this.selectorData = new SelectorData(Preconditions.checkNotNull(filterSelectors(selectors)), changeCount);
 	}
 
@@ -44,6 +57,9 @@ public abstract class AbilitySelect extends GameTimer {
 		started = true;
 		selectorMap = selectorData.newMap();
 		drawAbility(selectorMap.keySet());
+		if (Settings.isAutoSkipEnabled()) {
+			new AutoSkip();
+		}
 	}
 
 	/**
@@ -114,13 +130,24 @@ public abstract class AbilitySelect extends GameTimer {
 	 *
 	 * @param admin 출력할 관리자의 이름
 	 */
-	public final void Skip(String admin) {
-		for (Participant p : getSelectors())
-			if (!hasDecided(p))
-				decideAbility(p);
+	public final void skip(String admin) {
+		if (this.stop(false)) {
+			for (Participant p : getSelectors())
+				if (!hasDecided(p))
+					decideAbility(p);
 
-		Bukkit.broadcastMessage("§f관리자 §e" + admin + "§f님이 모든 플레이어의 능력을 강제로 확정시켰습니다.");
-		this.stop(false);
+			Bukkit.broadcastMessage("§f관리자 §e" + admin + "§f님이 모든 참가자의 능력을 강제로 확정시켰습니다.");
+		}
+	}
+
+	private void skip() {
+		if (this.stop(false)) {
+			for (Participant participant : getSelectors())
+				if (!hasDecided(participant))
+					decideAbility(participant);
+
+			Bukkit.broadcastMessage("§e모든 참가자§f의 능력이 강제로 확정되었습니다.");
+		}
 	}
 
 	/**
@@ -228,6 +255,74 @@ public abstract class AbilitySelect extends GameTimer {
 		};
 
 		List<Class<? extends AbilityBase>> collect(final Class<? extends AbstractGame> game);
+	}
+
+	public class AutoSkip extends GameTimer implements Listener {
+
+		private final BossBar bossBar;
+		private final SimpleTimer.Observer observer = new Observer() {
+			@Override
+			public void onResume() {}
+
+			@Override
+			public void onPause() {}
+
+			@Override
+			public void onSilentEnd() {
+				stop(true);
+			}
+
+			@Override
+			public void onEnd() {
+				stop(true);
+			}
+
+			@Override
+			public void onStart() {}
+		};
+
+		public AutoSkip() {
+			game.super(TaskType.REVERSE, Settings.getAutoSkipTime());
+			this.bossBar = Bukkit.createBossBar("§f자동 스킵까지§7: §3" + getMaximumCount() + "초", BarColor.BLUE, BarStyle.SOLID);
+			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+			AbilitySelect.this.attachObserver(observer);
+			start();
+		}
+
+		@Override
+		protected void onStart() {
+			Bukkit.getOnlinePlayers().forEach(bossBar::addPlayer);
+		}
+
+		@Override
+		protected void run(final int count) {
+			bossBar.setProgress((double) count / getMaximumCount());
+			bossBar.setTitle("§f자동 스킵까지§7: §3" + count + "초");
+		}
+
+		@Override
+		protected void onEnd() {
+			AbilitySelect.this.skip();
+			onSilentEnd();
+		}
+
+		@Override
+		protected void onSilentEnd() {
+			HandlerList.unregisterAll(this);
+			bossBar.removeAll();
+			AbilitySelect.this.detachObserver(observer);
+		}
+
+		@EventHandler
+		private void onPlayerJoin(final PlayerJoinEvent e) {
+			bossBar.addPlayer(e.getPlayer());
+		}
+
+		@EventHandler
+		private void onPlayerQuit(final PlayerQuitEvent e) {
+			bossBar.removePlayer(e.getPlayer());
+		}
+
 	}
 
 }

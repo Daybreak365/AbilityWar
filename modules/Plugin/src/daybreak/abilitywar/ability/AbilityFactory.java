@@ -131,6 +131,8 @@ public class AbilityFactory {
 		registerAbility(SurvivalInstinct.class);
 		// v2.2.1
 		registerAbility(Synchronize.class);
+		// v2.2.2
+		registerAbility(Ghoul.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

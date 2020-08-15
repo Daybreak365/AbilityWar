@@ -2,9 +2,12 @@ package daybreak.abilitywar.utils.base.minecraft.nms
 
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
+import org.bukkit.entity.Item
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 
 class NMS private constructor() {
@@ -88,6 +91,26 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun setInvisible(player: Player, invisible: Boolean) {
 			INSTANCE.setInvisible(player, invisible)
+		}
+
+		@JvmStatic
+		override fun setCooldown(player: Player, material: Material, ticks: Int) {
+			INSTANCE.setCooldown(player, material, ticks)
+		}
+
+		@JvmStatic
+		override fun hasCooldown(player: Player, material: Material): Boolean {
+			return INSTANCE.hasCooldown(player, material)
+		}
+
+		@JvmStatic
+		override fun fakeCollect(entity: Entity, item: Item) {
+			INSTANCE.fakeCollect(entity, item)
+		}
+
+		@JvmStatic
+		override fun clearActiveItem(livingEntity: LivingEntity?) {
+			INSTANCE.clearActiveItem(livingEntity)
 		}
 	}
 }

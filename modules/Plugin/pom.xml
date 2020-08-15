@@ -33,6 +33,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>daybreak.abilitywar</groupId>
+            <artifactId>Patch</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>${bukkit-api.version}</version>

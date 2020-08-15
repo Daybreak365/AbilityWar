@@ -6,8 +6,10 @@ import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.item.CustomSkullBuilder;
 import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,7 +23,10 @@ import org.bukkit.plugin.Plugin;
 
 public class GameWizard extends SettingWizard {
 
-	private final ItemStack WRECK = new ItemBuilder().type(MaterialX.NETHER_STAR).displayName("§bWRECK").build(),
+	private final ItemStack AUTO_SKIP = new CustomSkullBuilder("dd993b8c13588919b9f8b42db065d5adfe78af182815b4e6f0f91ba683deac9").displayName("§b자동 스킵").build(),
+			WRECK = new ItemBuilder().type(MaterialX.NETHER_STAR).displayName("§bWRECK").build(),
+			SHIELD_COOLDOWN = new ItemBuilder().type(Material.SHIELD).displayName("§b방패 쿨타임").build(),
+			BOW_COOLDOWN = new ItemBuilder().type(MaterialX.SPECTRAL_ARROW).displayName("§b활 쿨타임").build(),
 			ARROW_DAMAGE = new ItemBuilder().type(MaterialX.BOW).displayName("§b화살 거리 비례 대미지").build(),
 			FOOD = new ItemBuilder().type(MaterialX.COOKED_BEEF).displayName("§b배고픔 무제한").build(),
 			LEVEL = new ItemBuilder().type(MaterialX.EXPERIENCE_BOTTLE).displayName("§b초반 지급 레벨").build(),
@@ -43,6 +48,18 @@ public class GameWizard extends SettingWizard {
 	void openGUI(Inventory gui) {
 		for (int i = 0; i < 45; i++) {
 			switch (i) {
+				case 2: {
+					final ItemMeta meta = AUTO_SKIP.getItemMeta();
+					meta.setLore(Arrays.asList("§a활성화 §f하면 능력 추첨을 일정 시간이 지난 후 자동으로 스킵합니다.",
+							"", "§7상태 : " + (Settings.isAutoSkipEnabled() ? "§a활성화" : "§c비활성화"),
+							"§7SHIFT + 좌클릭§f으로 §a활성화§f/§c비활성화 §f여부를 변경하세요.", "",
+							"§f" + Settings.getAutoSkipTime() + "초 §7후에 자동으로 스킵합니다.",
+							"§c우클릭         §6» §e+ 1초",
+							"§c좌클릭         §6» §e- 1초"));
+					AUTO_SKIP.setItemMeta(meta);
+					gui.setItem(i, AUTO_SKIP);
+				}
+				break;
 				case 4: {
 					ItemMeta wreckMeta = WRECK.getItemMeta();
 					List<String> lore = Messager.asList("§7상태 : " + (Settings.isWRECKEnabled() ? "§a활성화" : "§c비활성화"));
@@ -57,6 +74,13 @@ public class GameWizard extends SettingWizard {
 					wreckMeta.setLore(lore);
 					WRECK.setItemMeta(wreckMeta);
 					gui.setItem(i, WRECK);
+				}
+				break;
+				case 6: {
+					final ItemMeta meta = SHIELD_COOLDOWN.getItemMeta();
+					meta.setLore(Collections.singletonList("§7상태 : " + (Settings.isShieldCooldownEnabled() ? "§a활성화" : "§c비활성화")));
+					SHIELD_COOLDOWN.setItemMeta(meta);
+					gui.setItem(i, SHIELD_COOLDOWN);
 				}
 				break;
 				case 12: {
@@ -177,6 +201,18 @@ public class GameWizard extends SettingWizard {
 					gui.setItem(i, ABILITY_DRAW);
 				}
 				break;
+				case 38: {
+					final ItemMeta meta = BOW_COOLDOWN.getItemMeta();
+					meta.setLore(Arrays.asList(
+							"§7상태 : " + (Settings.isBowCooldownEnabled() ? "§a활성화" : "§c비활성화"),
+							"§a활성화§f하면 게임 중 10칸 이내에서 활로 대미지를 입힌 경우 대상과의",
+							"§f거리에 비례하여 활에 쿨타임이 생깁니다. 활을 이용한 카이팅 플레이를",
+							"§f예방할 수 있습니다."
+					));
+					BOW_COOLDOWN.setItemMeta(meta);
+					gui.setItem(i, BOW_COOLDOWN);
+				}
+				break;
 				case 40: {
 					ItemMeta meta = MAXHEALTH.getItemMeta();
 					meta.setLore(Messager.asList("§a활성화 §f하면 게임을 시작할 때 모든 플레이어의 최대 체력을 설정합니다.",
@@ -205,6 +241,22 @@ public class GameWizard extends SettingWizard {
 		if (currentItem != null) {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
+					case "§b자동 스킵":
+						switch (e.getClick()) {
+							case RIGHT:
+								Configuration.modifyProperty(ConfigNodes.GAME_DRAW_AUTOSKIP_TIME, Settings.getAutoSkipTime() + 1);
+								show();
+								break;
+							case LEFT:
+								Configuration.modifyProperty(ConfigNodes.GAME_DRAW_AUTOSKIP_TIME, Settings.getAutoSkipTime() >= 2 ? Settings.getAutoSkipTime() - 1 : 1);
+								show();
+								break;
+							case SHIFT_LEFT:
+								Configuration.modifyProperty(ConfigNodes.GAME_DRAW_AUTOSKIP_ENABLED, !Settings.isAutoSkipEnabled());
+								show();
+								break;
+						}
+						break;
 					case "§bWRECK":
 						if (e.getClick() == ClickType.LEFT) {
 							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, !Settings.isWRECKEnabled());
@@ -213,6 +265,10 @@ public class GameWizard extends SettingWizard {
 							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, Settings.getCooldownDecrease().next().name());
 							show();
 						}
+						break;
+					case "§b방패 쿨타임":
+						Configuration.modifyProperty(ConfigNodes.GAME_SHIELD_COOLDOWN, !Settings.isShieldCooldownEnabled());
+						show();
 						break;
 					case "§b배고픔 무제한":
 						Configuration.modifyProperty(ConfigNodes.GAME_NO_HUNGER, !Settings.getNoHunger());
@@ -283,6 +339,10 @@ public class GameWizard extends SettingWizard {
 						break;
 					case "§b능력 추첨":
 						Configuration.modifyProperty(ConfigNodes.GAME_DRAW_ABILITY, !Settings.getDrawAbility());
+						show();
+						break;
+					case "§b활 쿨타임":
+						Configuration.modifyProperty(ConfigNodes.GAME_BOW_COOLDOWN, !Settings.isBowCooldownEnabled());
 						show();
 						break;
 					case "§b기본 최대 체력":

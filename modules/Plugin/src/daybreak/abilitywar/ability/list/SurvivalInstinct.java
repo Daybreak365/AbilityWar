@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -58,20 +59,24 @@ public class SurvivalInstinct extends AbilityBase {
 		super(participant);
 	}
 
+	private void ability() {
+		invincibility.start();
+		getPlayer().setHealth(1);
+		NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
+		if (ServerVersion.isAboveOrEqual(NMSVersion.v1_11_R1)) NMS.broadcastEntityEffect(getPlayer(), (byte) 35);
+		final Vector playerLocation = getPlayer().getLocation().toVector();
+		for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
+			entity.setVelocity(entity.getLocation().toVector().subtract(playerLocation).normalize().multiply(2).setY(0));
+		}
+		PotionEffects.SPEED.addPotionEffect(getPlayer(), 100, 1, true);
+	}
+
 	@SubscribeEvent(onlyRelevant = true, priority = 6, ignoreCancelled = true)
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (!invincibility.started) {
 			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
 				e.setCancelled(true);
-				invincibility.start();
-				getPlayer().setHealth(1);
-				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
-				if (ServerVersion.isAboveOrEqual(NMSVersion.v1_11_R1)) NMS.broadcastEntityEffect(getPlayer(), (byte) 35);
-				final Vector playerLocation = getPlayer().getLocation().toVector();
-				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
-					entity.setVelocity(entity.getLocation().toVector().subtract(playerLocation).normalize().multiply(2).setY(0));
-				}
-				PotionEffects.SPEED.addPotionEffect(getPlayer(), 100, 1, true);
+				ability();
 			}
 		} else if (invincibility.isRunning()) {
 			e.setCancelled(true);
@@ -89,6 +94,15 @@ public class SurvivalInstinct extends AbilityBase {
 			onEntityDamage(e);
 		} else if (invincibility.isRunning() && (getPlayer().equals(e.getDamager()) || (e.getDamager() instanceof Projectile && getPlayer().equals(((Projectile) e.getDamager()).getShooter())))) {
 			e.setCancelled(true);
+		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
+	private void onPlayerSetHealth(PlayerSetHealthEvent e) {
+		if (invincibility.started) return;
+		if (e.getHealth() == 0.0) {
+			e.setCancelled(true);
+			ability();
 		}
 	}
 

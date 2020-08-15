@@ -16,6 +16,7 @@ import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.game.manager.object.ZeroTick;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
@@ -23,17 +24,20 @@ import java.util.Random;
 import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
 
@@ -51,26 +55,54 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	private final AbilitySelect abilitySelect = newAbilitySelect();
 	private final Listener listener = new Listener() {
 		@EventHandler
-		private void onWeatherChange(WeatherChangeEvent e) {
+		private void onWeatherChange(final WeatherChangeEvent e) {
 			if (Settings.getClearWeather() && e.toWeatherState()) e.setCancelled(true);
 		}
 
 		@EventHandler
-		private void onFoodLevelChange(FoodLevelChangeEvent e) {
+		private void onFoodLevelChange(final FoodLevelChangeEvent e) {
 			if (Settings.getNoHunger()) {
 				e.setFoodLevel(19);
 			}
 		}
 
-		@EventHandler
-		private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-			if (Settings.isArrowDamageDistanceProportional() && e.getDamager() instanceof Arrow) {
-				final ProjectileSource shooter = ((Arrow) e.getDamager()).getShooter();
-				if (shooter instanceof Entity) {
-					e.setDamage(e.getDamage() * (Math.max(0.3, Math.min(100, e.getEntity().getLocation().distanceSquared(((Entity) shooter).getLocation())) / 100)));
+		@SuppressWarnings("deprecation")
+		@EventHandler(ignoreCancelled = true)
+		private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
+			if (e.getDamager() instanceof Arrow) {
+				final Arrow arrow = (Arrow) e.getDamager();
+				if (arrow.getShooter() instanceof Entity) {
+					final Entity shooter = (Entity) arrow.getShooter();
+					final double distanceSquared = e.getEntity().getLocation().distanceSquared(shooter.getLocation());
+					if (Settings.isBowCooldownEnabled() && distanceSquared <= 100 && shooter instanceof Player) {
+						final Player entity = (Player) shooter;
+						NMS.setCooldown(entity, Material.BOW, (int) (15 * (1 - (Math.min(100, distanceSquared) / 100))));
+						new BukkitRunnable() {
+							@Override
+							public void run() {
+								NMS.clearActiveItem(entity);
+							}
+						}.runTaskLater(AbilityWar.getPlugin(), 1L);
+					}
+					if (Settings.isArrowDamageDistanceProportional() && distanceSquared <= 100) {
+						e.setDamage(e.getDamage() * (Math.max(0.6, Math.min(100, distanceSquared) / 100)));
+					}
+				}
+			}
+			if (Settings.isShieldCooldownEnabled() && e.getEntity() instanceof Player) {
+				final Player entity = (Player) e.getEntity();
+				if (e.getDamage(DamageModifier.BLOCKING) < 0 && !NMS.hasCooldown(entity, Material.SHIELD)) {
+					NMS.setCooldown(entity, Material.SHIELD, e.getDamager() instanceof Projectile ? 80 : 120);
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							NMS.clearActiveItem(entity);
+						}
+					}.runTaskLater(AbilityWar.getPlugin(), 1L);
 				}
 			}
 		}
+
 	};
 
 	@Override

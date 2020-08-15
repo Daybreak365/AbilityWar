@@ -16,7 +16,7 @@ import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.EventManager;
+import daybreak.abilitywar.game.manager.object.event.EventManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Hashes;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;

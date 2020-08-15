@@ -44,6 +44,8 @@ import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.patch.Patchable;
+import daybreak.abilitywar.patch.list.Patches;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
@@ -134,6 +136,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true),
+								Formatter.formatCommand(command, "patch", "쾌적한 플레이를 위한 패치를 진행합니다.", true),
 								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true)});
 						break;
 					default:
@@ -250,7 +253,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					AbilitySelect abilitySelect = ((AbilitySelect.Handler) GameManager.getGame()).getAbilitySelect();
 					if (abilitySelect != null) {
 						if (abilitySelect.isStarted() && !abilitySelect.isEnded()) {
-							abilitySelect.Skip(sender.getName());
+							abilitySelect.skip(sender.getName());
 						} else {
 							Messager.sendErrorMessage(sender, "능력을 선택하고 있지 않습니다.");
 						}
@@ -977,6 +980,36 @@ public class Commands implements CommandExecutor, TabCompleter {
 				return true;
 			}
 		});
+		mainCommand.addSubCommand("patch", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				sender.sendMessage(Messager.defaultPrefix + "패치를 시작합니다.");
+				int applied = 0;
+				boolean notApplied = false;
+				for (final Patchable patch : Patches.VALUES) {
+					if (!patch.isValid() || patch.isApplied()) continue;
+					notApplied = true;
+					sender.sendMessage("§a" + patch.getName() + " §f패치 중...");
+					patch.apply();
+					if (patch.isApplied()) {
+						sender.sendMessage("§2완료");
+						applied++;
+					} else {
+						sender.sendMessage("§c실패");
+					}
+				}
+				if (applied == 0) {
+					if (notApplied) {
+						sender.sendMessage(Messager.defaultPrefix + applied + "개의 패치를 완료했습니다.");
+					} else {
+						sender.sendMessage(Messager.defaultPrefix + "적용할 패치가 없습니다.");
+					}
+				} else {
+					sender.sendMessage(Messager.defaultPrefix + applied + "개의 패치를 완료했습니다.");
+				}
+				return true;
+			}
+		});
 	}
 
 	@Override
@@ -992,7 +1025,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 			switch (args.length) {
 				case 1:
 					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "skip", "anew",
-							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon");
+							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon", "patch");
 					if (args[0].isEmpty()) {
 						return subCommands;
 					} else {

@@ -8,18 +8,26 @@ import net.minecraft.server.v1_13_R2.EntityArmorStand;
 import net.minecraft.server.v1_13_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_13_R2.PacketPlayInClientCommand;
 import net.minecraft.server.v1_13_R2.PacketPlayInClientCommand.EnumClientCommand;
+import net.minecraft.server.v1_13_R2.PacketPlayOutCollect;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntity.PacketPlayOutEntityLook;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_13_R2.PacketPlayOutTitle;
 import net.minecraft.server.v1_13_R2.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_13_R2.PlayerConnection;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_13_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_13_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_13_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class NMSImpl implements INMS {
@@ -107,4 +115,28 @@ public class NMSImpl implements INMS {
 	public void setInvisible(Player player, boolean invisible) {
 		((CraftPlayer) player).getHandle().setInvisible(invisible);
 	}
+
+	@Override
+	public void setCooldown(Player player, Material material, int ticks) {
+		((CraftPlayer) player).getHandle().getCooldownTracker().a(CraftMagicNumbers.getItem(material), ticks);
+	}
+
+	@Override
+	public boolean hasCooldown(Player player, Material material) {
+		return ((CraftPlayer) player).getHandle().getCooldownTracker().a(CraftMagicNumbers.getItem(material));
+	}
+
+	@Override
+	public void fakeCollect(Entity entity, Item item) {
+		final PacketPlayOutCollect packet = new PacketPlayOutCollect(item.getEntityId(), entity.getEntityId(), item.getItemStack().getAmount());
+		for (final CraftPlayer player : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
+			player.getHandle().playerConnection.sendPacket(packet);
+		}
+	}
+
+	@Override
+	public void clearActiveItem(LivingEntity livingEntity) {
+		((CraftLivingEntity) livingEntity).getHandle().clearActiveItem();
+	}
+
 }
