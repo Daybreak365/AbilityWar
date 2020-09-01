@@ -26,6 +26,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "해커", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 자신에게 가장 가까운 플레이어를 해킹해 좌표를 알아내고",
@@ -186,9 +187,9 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!cooldownTimer.isCooldown()) {
 					Player target = LocationUtil.getNearestEntity(Player.class, getPlayer().getLocation(), predicate);
 

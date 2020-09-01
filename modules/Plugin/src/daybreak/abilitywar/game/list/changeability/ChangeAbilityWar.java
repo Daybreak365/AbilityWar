@@ -19,7 +19,6 @@ import daybreak.abilitywar.game.manager.object.Invincibility;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,7 +46,7 @@ import org.bukkit.scoreboard.Score;
 		"§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "",
 		"§a● §f스크립트가 적용되지 않습니다.",
 		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "",
-		"§6● §f체인지 능력 전쟁 전용 콘피그가 있습니다. Config.yml을 확인해보세요."
+		"§6● §f체인지 능력 전쟁 전용 콘피그가 있습니다."
 })
 @GameAliases({"체능전", "체인지"})
 public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler, Observer {
@@ -73,10 +72,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	@SuppressWarnings("deprecation")
-	private final Objective lifeObjective = ServerVersion.getVersion() >= 13 ?
-			getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy", "§c생명")
-			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
+	private final Objective lifeObjective = getScoreboardManager().registerNewObjective("생명", "dummy", "§c생명");
 
 	private final AbilityChanger changer = new AbilityChanger(this);
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
@@ -125,10 +121,8 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 			case 7:
 				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
 				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-				if (ServerVersion.getVersion() < 13)
-					lifeObjective.setDisplayName("§c생명");
-				for (Participant p : getParticipants()) {
-					Score score = lifeObjective.getScore(p.getPlayer().getName());
+				for (Participant participant : getParticipants()) {
+					final Score score = lifeObjective.getScore(participant.getPlayer().getName());
 					score.setScore(maxLife);
 				}
 				Bukkit.broadcastMessage("§d잠시 후 §f게임이 시작됩니다.");

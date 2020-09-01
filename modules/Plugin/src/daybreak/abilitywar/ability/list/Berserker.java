@@ -14,6 +14,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "버서커", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭한 후 5초 안에 하는 다음 근접 공격이 강화됩니다. $[COOLDOWN_CONFIG]",
@@ -92,7 +93,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 	private final BerserkerTimer berserkerTimer = new BerserkerTimer();
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
 			if (!berserkerTimer.isDuration() && !cooldownTimer.isCooldown()) {
 				berserkerTimer.start();

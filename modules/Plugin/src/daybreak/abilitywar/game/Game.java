@@ -35,6 +35,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -49,7 +50,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	private final DeathManager deathManager = Preconditions.checkNotNull(newDeathManager());
 	private final Invincibility invincibility = new Invincibility(this);
-	private final WRECK wreck = newWRECK();
+	private final WRECK wreck = newWreck();
 	private final ScoreboardManager scoreboardManager = new ScoreboardManager(this);
 	private final Firewall fireWall = new Firewall(this, this);
 	private final AbilitySelect abilitySelect = newAbilitySelect();
@@ -103,6 +104,12 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 			}
 		}
 
+		@EventHandler(ignoreCancelled = true)
+		private void onShootBow(final EntityShootBowEvent e) {
+			if (e.getEntity() instanceof Player && NMS.hasCooldown((Player) e.getEntity(), Material.BOW)) {
+				e.setCancelled(true);
+			}
+		}
 	};
 
 	@Override
@@ -269,12 +276,12 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	 * null을 반환하지 않습니다.
 	 */
 	@Override
-	public WRECK getWRECK() {
+	public WRECK getWreck() {
 		return wreck;
 	}
 
 	@Override
-	public boolean isWRECKEnabled() {
+	public boolean isWreckEnabled() {
 		return wreck.isEnabled();
 	}
 

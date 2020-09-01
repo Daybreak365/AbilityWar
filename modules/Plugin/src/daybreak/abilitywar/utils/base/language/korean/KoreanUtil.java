@@ -21,16 +21,39 @@ public class KoreanUtil {
 			NumberDetector.instance
 	};
 
+	public static String addJosa(String text, Josa josa) {
+		return text + getJosa(text, josa);
+	}
+
 	public static String getJosa(String text, Josa josa) {
 		if (text != null && text.length() > 0) {
-			String readText = getReadText(text);
-
+			final String readText = getReadText(text);
 			for (JongSungDetector jongSungDetector : jongSungDetectors)
 				if (jongSungDetector.canHandle(readText))
 					return (jongSungDetector.getJongSungType(readText) > 0 ? josa.withJongsung : josa.withoutJongsung);
 		}
 		return josa.unknown;
 	}
+
+	public static JosaType getNeededJosa(String text) {
+		if (text != null && text.length() > 0) {
+			final String readText = getReadText(text);
+			for (JongSungDetector jongSungDetector : jongSungDetectors)
+				if (jongSungDetector.canHandle(readText))
+					return (jongSungDetector.getJongSungType(readText) > 0 ? JosaType.WITH_JONGSUNG : JosaType.WITHOUT_JONGSUNG);
+		}
+		return JosaType.UNKNOWN;
+	}
+
+	public static String getJosa(Josa josa, JosaType josaType) {
+		switch (josaType) {
+			case WITH_JONGSUNG: return josa.withJongsung;
+			case WITHOUT_JONGSUNG: return josa.withoutJongsung;
+			default: return josa.unknown;
+		}
+	}
+
+	public enum JosaType { WITH_JONGSUNG, WITHOUT_JONGSUNG, UNKNOWN }
 
 	private static String getReadText(String str) {
 		for (Josa readingRule : Josa.values()) {

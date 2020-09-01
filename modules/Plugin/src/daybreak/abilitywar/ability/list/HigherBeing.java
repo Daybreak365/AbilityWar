@@ -26,7 +26,7 @@ public class HigherBeing extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		Entity damager = e.getDamager();
 		if (damager instanceof Projectile) {
 			ProjectileSource source = ((Projectile) damager).getShooter();

@@ -8,8 +8,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -47,7 +47,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class Kidnap extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Cooldown", 30,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Cooldown", 35,
 			"# 쿨타임") {
 
 		@Override
@@ -62,7 +62,7 @@ public class Kidnap extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Duration", 6,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Duration", 3,
 			"# 지속 시간") {
 
 		@Override
@@ -153,7 +153,7 @@ public class Kidnap extends AbilityBase implements ActiveHandler {
 				target.setInvulnerable(false);
 				target.setGravity(true);
 				Bukkit.getPluginManager().callEvent(new KidnapEndEvent(target));
-				final Vector direction = getPlayer().getLocation().getDirection().multiply(2);
+				final Vector direction = getPlayer().getLocation().getDirection().multiply(1.75);
 				target.setVelocity(direction.setY(Math.min(0.45, direction.getY())));
 				target = null;
 			}

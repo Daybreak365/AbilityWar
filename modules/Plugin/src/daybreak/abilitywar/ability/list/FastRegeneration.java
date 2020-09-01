@@ -15,6 +15,7 @@ import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "빠른 회복", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 빠른 회복 능력을 사용합니다. $[COOLDOWN_CONFIG]",
@@ -131,8 +132,8 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 5).register();
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !healthGain.isDuration() && !cooldownTimer.isCooldown()) {
 			healthGain.start();
 			return true;
 		}

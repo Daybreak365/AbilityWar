@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "결박", rank = Rank.B, species = Species.HUMAN, explain = {
 		"주위 15칸 안에 있는 생명체를 원거리에서 철괴 우클릭으로 타겟팅해",
@@ -117,8 +118,8 @@ public class Bind extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			LivingEntity entity = LocationUtil.getEntityLookingAt(LivingEntity.class, getPlayer(), 15, predicate);
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {

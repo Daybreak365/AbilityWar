@@ -111,4 +111,9 @@ public class Ghoul extends AbilityBase {
 		} else return getPlayer().equals(entity);
 	}
 
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+		}
+	}
 }

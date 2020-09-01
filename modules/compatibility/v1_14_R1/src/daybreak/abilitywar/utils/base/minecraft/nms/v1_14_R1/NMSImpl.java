@@ -5,6 +5,8 @@ import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
 import net.minecraft.server.v1_14_R1.DataWatcherRegistry;
 import net.minecraft.server.v1_14_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_14_R1.ItemCooldown;
+import net.minecraft.server.v1_14_R1.ItemCooldown.Info;
 import net.minecraft.server.v1_14_R1.PacketPlayInClientCommand;
 import net.minecraft.server.v1_14_R1.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.server.v1_14_R1.PacketPlayOutCollect;
@@ -104,8 +106,9 @@ public class NMSImpl implements INMS {
 	}
 
 	@Override
-	public void removeArrow(Player player) {
-		((CraftPlayer) player).getHandle().getDataWatcher().set(new DataWatcherObject<>(11, DataWatcherRegistry.b), 0);
+	public void setArrowsInBody(Player player, int count) {
+		if (count < 0) throw new IllegalStateException("count cannot be negative.");
+		((CraftPlayer) player).getHandle().getDataWatcher().set(new DataWatcherObject<>(11, DataWatcherRegistry.b), count);
 	}
 
 	@Override
@@ -121,6 +124,13 @@ public class NMSImpl implements INMS {
 	@Override
 	public boolean hasCooldown(Player player, Material material) {
 		return ((CraftPlayer) player).getHandle().getCooldownTracker().hasCooldown(CraftMagicNumbers.getItem(material));
+	}
+
+	@Override
+	public int getCooldown(Player player, Material material) {
+		final ItemCooldown cooldownTracker = ((CraftPlayer) player).getHandle().getCooldownTracker();
+		final Info cooldown = cooldownTracker.cooldowns.get(CraftMagicNumbers.getItem(material));
+		return cooldown == null ? 0 : Math.max(0, cooldown.endTick - cooldownTracker.currentTick);
 	}
 
 	@Override

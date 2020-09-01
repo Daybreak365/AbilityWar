@@ -25,9 +25,10 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.WRECK;
 import daybreak.abilitywar.game.manager.object.event.EventManager;
 import daybreak.abilitywar.game.manager.object.event.EventManager.EventObserver;
-import daybreak.abilitywar.utils.base.RegexReplacer;
+import daybreak.abilitywar.utils.base.BracketReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.Observer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -50,7 +51,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.regex.MatchResult;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -83,8 +83,47 @@ public abstract class AbilityBase {
 	private static final Logger logger = Logger.getLogger(AbilityBase.class);
 
 	public static final AbilitySettings abilitySettings = new AbilitySettings(FileUtil.newFile("abilitysettings.yml"));
-	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
-	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
+	public static final BracketReplacer SQUARE_BRACKET = new BracketReplacer('[', ']'), ROUND_BRACKET = new BracketReplacer('(', ')');
+
+	public static Iterator<String> getExplanation(final AbilityRegistration registration) {
+		return new Iterator<String>() {
+			private final Function<String, String> valueProvider = new Function<String, String>() {
+				@Override
+				public String apply(String string) {
+					try {
+						final Field field = registration.getAbilityClass().getDeclaredField(string);
+						if (Modifier.isStatic(field.getModifiers())) {
+							try {
+								return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
+							} catch (IllegalAccessException ignored) {
+							}
+						}
+					} catch (NoSuchFieldException ignored) {
+					}
+					return "?";
+				}
+			};
+			private final String[] explanation = registration.getManifest().explain();
+			private int cursor = 0;
+
+			@Override
+			public boolean hasNext() {
+				return cursor < explanation.length;
+			}
+
+			@Override
+			public String next() {
+				final int index = cursor;
+				cursor++;
+				final String line = explanation[index];
+				if (registration.getExplain().needsReplace(index)) {
+					return ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(line, valueProvider), valueProvider);
+				} else {
+					return line;
+				}
+			}
+		};
+	}
 
 	public static <T extends AbilityBase> T create(final Class<T> abilityClass, final Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
 		Preconditions.checkNotNull(abilityClass);
@@ -93,11 +132,11 @@ public abstract class AbilityBase {
 		return abilityClass.cast(AbilityFactory.getRegistration(abilityClass).getConstructor().newInstance(participant));
 	}
 
-	private final Function<MatchResult, String> fieldValueProvider = new Function<MatchResult, String>() {
+	private final Function<String, String> fieldValueProvider = new Function<String, String>() {
 		@Override
-		public String apply(MatchResult matchResult) {
+		public String apply(String string) {
 			try {
-				final Field field = AbilityBase.this.getClass().getDeclaredField(matchResult.group(1));
+				final Field field = AbilityBase.this.getClass().getDeclaredField(string);
 				if (Modifier.isStatic(field.getModifiers())) {
 					try {
 						return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
@@ -121,7 +160,7 @@ public abstract class AbilityBase {
 	private final AbilityManifest manifest;
 	private String[] explanation = null;
 	private final Multimap<Class<? extends Event>, EventObserver> eventhandlers = HashMultimap.create();
-	private final Set<AbilityTimer> timers = new HashSet<>(), runningTimers = new HashSet<>();
+	private final Set<AbilityTimer> timers = new QueueOnIterateHashSet<>(), runningTimers = new QueueOnIterateHashSet<>();
 	private final Queue<AbilityTimer> pausedTimers = new LinkedList<>();
 	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
 	private final Restriction restriction;
@@ -230,7 +269,7 @@ public abstract class AbilityBase {
 		for (EventObserver eventObserver : eventhandlers.values()) {
 			game.getEventManager().unregister(eventObserver);
 		}
-		for (AbilityTimer abilityTimer : new HashSet<>(runningTimers)) {
+		for (AbilityTimer abilityTimer : runningTimers) {
 			abilityTimer.stop(true);
 		}
 		for (GameTimer timer : pausedTimers) {
@@ -248,6 +287,7 @@ public abstract class AbilityBase {
 	/**
 	 * 능력을 소유하는 플레이어를 반환합니다.
 	 */
+	@NotNull
 	public final Player getPlayer() {
 		return participant.getPlayer();
 	}
@@ -357,9 +397,10 @@ public abstract class AbilityBase {
 
 	public abstract class AbilityTimer extends GameTimer {
 
+		@NotNull
 		private RestrictionBehavior behavior = RestrictionBehavior.STOP;
 
-		public AbilityTimer(TaskType taskType, int maximumCount) {
+		public AbilityTimer(final @NotNull TaskType taskType, final int maximumCount) {
 			game.super(taskType, maximumCount);
 			attachObserver(new SimpleTimer.Observer() {
 				@Override
@@ -399,14 +440,14 @@ public abstract class AbilityBase {
 
 		@NotNull
 		@Override
-		public AbilityTimer setPeriod(TimeUnit timeUnit, int period) {
+		public AbilityTimer setPeriod(@NotNull TimeUnit timeUnit, int period) {
 			super.setPeriod(timeUnit, period);
 			return this;
 		}
 
 		@NotNull
 		@Override
-		public AbilityTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+		public AbilityTimer setInitialDelay(@NotNull TimeUnit timeUnit, int initialDelay) {
 			super.setInitialDelay(timeUnit, initialDelay);
 			return this;
 		}
@@ -462,21 +503,29 @@ public abstract class AbilityBase {
 		private final String name;
 		private CooldownTimer timer;
 
-		public Cooldown(int cooldown, String name, CooldownDecrease maxDecrease) {
-			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(maxDecrease.getPercentage()) : cooldown);
+		public Cooldown(final int cooldown, final String name, final int maxDecrease) {
+			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(Math.min(100, Math.max(0, maxDecrease))) : cooldown);
 			this.timer = new CooldownTimer(this.cooldown);
 			this.name = name;
 		}
 
-		public Cooldown(int cooldown, String name) {
+		public Cooldown(final int cooldown, final String name, final CooldownDecrease maxDecrease) {
+			this(cooldown, name, maxDecrease.getPercentage());
+		}
+
+		public Cooldown(final int cooldown, final String name) {
 			this(cooldown, name, CooldownDecrease._100);
 		}
 
-		public Cooldown(int cooldown, CooldownDecrease maxDecrease) {
+		public Cooldown(final int cooldown, final int maxDecrease) {
 			this(cooldown, "", maxDecrease);
 		}
 
-		public Cooldown(int cooldown) {
+		public Cooldown(final int cooldown, final CooldownDecrease maxDecrease) {
+			this(cooldown, "", maxDecrease);
+		}
+
+		public Cooldown(final int cooldown) {
 			this(cooldown, "");
 		}
 
@@ -513,16 +562,20 @@ public abstract class AbilityBase {
 			timer.setCount(count);
 		}
 
-		public void setCooldown(int cooldown, CooldownDecrease maxDecrease) {
+		public void setCooldown(int cooldown, final int maxDecrease) {
 			timer.actionbarChannel.unregister();
 			timer.stop(true);
 			timer.unregister();
-			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(maxDecrease.getPercentage()) : cooldown);
+			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(Math.min(100, Math.max(0, maxDecrease))) : cooldown);
 			this.timer = new CooldownTimer(this.cooldown);
 		}
 
+		public void setCooldown(int cooldown, CooldownDecrease maxDecrease) {
+			this.setCooldown(cooldown, maxDecrease.getPercentage());
+		}
+
 		public void setCooldown(int cooldown) {
-			this.setCooldown(cooldown, CooldownDecrease._100);
+			this.setCooldown(cooldown, 100);
 		}
 
 		@Override
@@ -536,6 +589,16 @@ public abstract class AbilityBase {
 			} else {
 				return ChatColor.RED.toString() + "쿨타임 " + ChatColor.WHITE.toString() + ": " + timeColor.toString() + TimeUtil.parseTimeAsString(timer.getCount());
 			}
+		}
+
+		public Cooldown attachObserver(final SimpleTimer.Observer observer) {
+			timer.attachObserver(observer);
+			return this;
+		}
+
+		public Cooldown detachObserver(final SimpleTimer.Observer observer) {
+			timer.detachObserver(observer);
+			return this;
 		}
 
 		public class CooldownTimer extends AbilityTimer {
@@ -588,13 +651,13 @@ public abstract class AbilityBase {
 
 			@NotNull
 			@Override
-			public CooldownTimer setPeriod(TimeUnit timeUnit, int period) {
+			public CooldownTimer setPeriod(@NotNull TimeUnit timeUnit, int period) {
 				return this;
 			}
 
 			@NotNull
 			@Override
-			public CooldownTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+			public CooldownTimer setInitialDelay(@NotNull TimeUnit timeUnit, int initialDelay) {
 				return this;
 			}
 
@@ -841,6 +904,15 @@ public abstract class AbilityBase {
 					} else {
 						if (timer.pause()) {
 							pausedTimers.add(timer);
+						}
+					}
+				}
+				for (AbilityTimer runningTimer : runningTimers) {
+					if (runningTimer.getBehavior() == RestrictionBehavior.STOP) {
+						runningTimer.stop(true);
+					} else {
+						if (runningTimer.pause()) {
+							pausedTimers.add(runningTimer);
 						}
 					}
 				}

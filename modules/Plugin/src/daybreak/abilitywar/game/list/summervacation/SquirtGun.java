@@ -30,6 +30,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "물총", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
 		"물 안에서 웅크리면 빠른 속도로 앞으로 나아갑니다.",
@@ -60,9 +61,9 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!bombCool.isCooldown()) {
 					Location center = getPlayer().getLocation();
 					for (Block b : LocationUtil.getBlocks3D(center, 2, false, true)) {

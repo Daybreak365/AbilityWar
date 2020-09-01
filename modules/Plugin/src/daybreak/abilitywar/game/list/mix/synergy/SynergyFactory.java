@@ -9,7 +9,9 @@ import daybreak.abilitywar.ability.list.Ares;
 import daybreak.abilitywar.ability.list.Assassin;
 import daybreak.abilitywar.ability.list.Celebrity;
 import daybreak.abilitywar.ability.list.Chaos;
+import daybreak.abilitywar.ability.list.Curse;
 import daybreak.abilitywar.ability.list.DevilBoots;
+import daybreak.abilitywar.ability.list.Ghost;
 import daybreak.abilitywar.ability.list.Imprison;
 import daybreak.abilitywar.ability.list.Khazhad;
 import daybreak.abilitywar.ability.list.Kidnap;
@@ -31,6 +33,7 @@ import daybreak.abilitywar.game.list.mix.synergy.list.DeathGrasp;
 import daybreak.abilitywar.game.list.mix.synergy.list.DoubleSniper;
 import daybreak.abilitywar.game.list.mix.synergy.list.EventHorizon;
 import daybreak.abilitywar.game.list.mix.synergy.list.FlameMan;
+import daybreak.abilitywar.game.list.mix.synergy.list.Grudge;
 import daybreak.abilitywar.game.list.mix.synergy.list.Meteor;
 import daybreak.abilitywar.game.list.mix.synergy.list.NexAssassin;
 import daybreak.abilitywar.game.list.mix.synergy.list.Pandemic;
@@ -69,6 +72,7 @@ public class SynergyFactory {
 		registerSynergy(Muse.class, Muse.class, Bless.class);
 		registerSynergy(ShowmanShip.class, Celebrity.class, ShowTime.class);
 		registerSynergy(Kidnap.class, Kidnap.class, ShotPut.class);
+		registerSynergy(Ghost.class, Curse.class, Grudge.class);
 	}
 
 	private SynergyFactory() {

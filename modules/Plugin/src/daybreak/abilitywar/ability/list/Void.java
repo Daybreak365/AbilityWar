@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "보이드", rank = Rank.A, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §5공허 차원문§f: 보이드는 순간 이동할 때 그 자리에 이동할 위치로",
@@ -108,7 +109,7 @@ public class Void extends AbilityBase implements ActiveHandler {
 	private Location saved = null;
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
 			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!cooldown.isCooldown()) {

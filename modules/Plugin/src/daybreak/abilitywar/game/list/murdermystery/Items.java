@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.list.murdermystery;
 
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,8 +15,7 @@ public enum Items {
 	private final ItemStack stack;
 
 	Items(MaterialX type, String displayName, String... lore) {
-		this.stack = new ItemBuilder()
-				.type(type)
+		this.stack = new ItemBuilder(type)
 				.displayName(displayName)
 				.lore(lore)
 				.unbreakable(true)

@@ -88,13 +88,12 @@ public class LocationUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends Entity> T getEntityLookingAt(Class<T> entityType, CenteredBoundingBox boundingBox, LivingEntity criterion, int maxDistance, Predicate<Entity> predicate) {
+	public static <T extends Entity> T getEntityLookingAt(final Class<T> entityType, final CenteredBoundingBox boundingBox, final LivingEntity criterion, final int maxDistance, final  Predicate<Entity> predicate) {
 		if (criterion == null || maxDistance <= 0) return null;
-		World world = criterion.getWorld();
-		Iterator<Block> iterator = new BlockIterator(criterion, maxDistance);
-		while (iterator.hasNext()) {
+		final World world = criterion.getWorld();
+		for (final Iterator<Block> iterator = new BlockIterator(criterion, maxDistance); iterator.hasNext();) {
 			Block block = iterator.next();
-			if (block.getType().isOccluding()) return null;
+			if (block.getType().isSolid()) return null;
 			boundingBox.setCenter(block.getLocation());
 			Chunk blockChunk = block.getChunk();
 			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
@@ -365,9 +364,9 @@ public class LocationUtil {
 	 * @param predicate  커스텀 조건
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
-	public static <T extends Entity> ArrayList<T> getNearbyEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<Entity> predicate) {
-		double centerX = center.getX(), centerZ = center.getZ();
-		ArrayList<T> entities = new ArrayList<>();
+	public static <T extends Entity> List<T> getNearbyEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<Entity> predicate) {
+		final double centerX = center.getX(), centerZ = center.getZ();
+		final List<T> entities = new ArrayList<>();
 		for (Entity e : collectEntities(center, (int) Math.floor(horizontal))) {
 			if (entityType.isAssignableFrom(e.getClass())) {
 				@SuppressWarnings("unchecked") T entity = (T) e;
@@ -391,9 +390,9 @@ public class LocationUtil {
 	 * @return 주변에 있는 특정 타입의 커스텀 엔티티 목록
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ArrayList<T> getNearbyCustomEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<CustomEntity> predicate) {
-		double centerX = center.getX(), centerZ = center.getZ();
-		ArrayList<T> entities = new ArrayList<>();
+	public static <T> List<T> getNearbyCustomEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<CustomEntity> predicate) {
+		final double centerX = center.getX(), centerZ = center.getZ();
+		final List<T> entities = new ArrayList<>();
 		for (CustomEntity e : collectCustomEntities(center, (int) Math.floor(horizontal))) {
 			if (entityType.isAssignableFrom(e.getClass())) {
 				if (distanceSquared2D(centerX, centerZ, e.x(), e.z()) <= (horizontal * horizontal) && NumberUtil.subtract(center.getY(), e.y()) <= vertical && (predicate == null || predicate.test(e))) {

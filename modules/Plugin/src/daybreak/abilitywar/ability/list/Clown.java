@@ -9,8 +9,8 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -20,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "광대", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 스폰으로 이동합니다. $[COOLDOWN_CONFIG]",
@@ -102,9 +103,9 @@ public class Clown extends AbilityBase implements ActiveHandler {
 	};
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!skill.isDuration()) {
 					if (!cooldownTimer.isCooldown()) {
 						skill.start();

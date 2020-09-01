@@ -33,6 +33,7 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "황제", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내",
@@ -169,8 +170,8 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			skill.start();
 			return true;
 		}

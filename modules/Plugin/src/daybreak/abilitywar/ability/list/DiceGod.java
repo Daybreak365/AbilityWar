@@ -11,10 +11,12 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import java.util.Random;
+import java.util.function.Consumer;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "다이스 갓", rank = Rank.A, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 §c재생 §f/ §6힘 §f/ §3저항 §f/ §5시듦 §f/ §8구속 §f/ §7나약함 §f효과 중 하나를",
@@ -38,60 +40,78 @@ public class DiceGod extends AbilityBase implements ActiveHandler {
 
 	};
 
+	private static final Random random = new Random();
+	private static final PlayerConsumer[] events = {
+			new PlayerConsumer() {
+				@Override
+				public void accept(Player player) {
+					player.sendMessage("§c재생 §f효과를 받습니다.");
+					PotionEffects.REGENERATION.addPotionEffect(player, 140, 1, true);
+				}
+			},
+			new PlayerConsumer() {
+				@Override
+				public void accept(Player player) {
+					player.sendMessage("§6힘 §f효과를 받습니다.");
+					PotionEffects.INCREASE_DAMAGE.addPotionEffect(player, 140, 1, true);
+				}
+			},
+			new PlayerConsumer() {
+				@Override
+				public void accept(Player player) {
+					player.sendMessage("§3저항 §f효과를 받습니다.");
+					PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(player, 140, 1, true);
+				}
+			},
+			new PlayerConsumer() {
+				@Override
+				public void accept(Player player) {
+					player.sendMessage("§5시듦 §f효과를 받습니다.");
+					PotionEffects.WITHER.addPotionEffect(player, 140, 1, true);
+				}
+			},
+			new PlayerConsumer() {
+				@Override
+				public void accept(Player player) {
+					player.sendMessage("§8구속 §f효과를 받습니다.");
+					PotionEffects.SLOW.addPotionEffect(player, 140, 1, true);
+				}
+			},
+			new PlayerConsumer() {
+				@Override
+				public void accept(Player player) {
+					player.sendMessage("§7나약함 §f효과를 받습니다.");
+					PotionEffects.WEAKNESS.addPotionEffect(player, 140, 1, true);
+				}
+			}
+	};
+
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+
 	public DiceGod(Participant participant) {
 		super(participant);
 	}
 
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
-			Player p = getPlayer();
-			Random random = new Random();
-			switch (random.nextInt(6)) {
-				case 0:
-					p.sendMessage("§c재생 §f효과를 받았습니다.");
-					PotionEffects.REGENERATION.addPotionEffect(p, 140, 1, true);
-					break;
-				case 2:
-					p.sendMessage("§6힘 §f효과를 받았습니다.");
-					PotionEffects.INCREASE_DAMAGE.addPotionEffect(p, 140, 1, true);
-					break;
-				case 3:
-					p.sendMessage("§3저항 §f효과를 받았습니다.");
-					PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(p, 140, 1, true);
-					break;
-				case 1:
-					p.sendMessage("§5시듦 §f효과를 받았습니다.");
-					PotionEffects.WITHER.addPotionEffect(p, 140, 1, true);
-					break;
-				case 4:
-					p.sendMessage("§8구속 §f효과를 받았습니다.");
-					PotionEffects.SLOW.addPotionEffect(p, 140, 1, true);
-					break;
-				case 5:
-					p.sendMessage("§7나약함 §f효과를 받았습니다.");
-					PotionEffects.WEAKNESS.addPotionEffect(p, 140, 1, true);
-					break;
-			}
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
+			events[random.nextInt(events.length)].accept(getPlayer());
 			cooldownTimer.start();
 			return true;
 		}
 		return false;
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getEntity().equals(getPlayer())) {
-			Random r = new Random();
-			if (r.nextInt(6) == 0) {
-				if (!getPlayer().isDead()) {
-					getPlayer().setHealth(Math.min(getPlayer().getHealth() + e.getFinalDamage(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
-				}
-				e.setDamage(0);
+		if (random.nextInt(6) == 0) {
+			if (!getPlayer().isDead()) {
+				getPlayer().setHealth(Math.min(getPlayer().getHealth() + e.getFinalDamage(), getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 			}
+			e.setDamage(0);
 		}
 	}
+
+	private interface PlayerConsumer extends Consumer<Player> {}
 
 }

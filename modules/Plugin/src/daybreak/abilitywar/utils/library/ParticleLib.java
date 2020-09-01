@@ -71,8 +71,8 @@ public class ParticleLib {
 	public static final SimpleParticle SLIME = new SimpleParticle("SLIME");
 	public static final SimpleParticle SMOKE_LARGE = new SimpleParticle("SMOKE_LARGE");
 	public static final SimpleParticle SMOKE_NORMAL = new SimpleParticle("SMOKE_NORMAL");
-	public static final SimpleParticle SNOW_SHOVEL = new SimpleParticle("SNOW_SHOVEL");
 	public static final SimpleParticle SNOWBALL = new SimpleParticle("SNOWBALL");
+	public static final SimpleParticle SNOW_SHOVEL = new SimpleParticle("SNOW_SHOVEL");
 	public static final SimpleParticle SPELL = new SimpleParticle("SPELL");
 	public static final SimpleParticle SPELL_INSTANT = new SimpleParticle("SPELL_INSTANT");
 	public static final ColouredParticle SPELL_MOB = new ColouredParticle("SPELL_MOB");

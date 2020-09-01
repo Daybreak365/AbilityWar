@@ -4,8 +4,8 @@ import daybreak.abilitywar.config.kitpreset.KitConfiguration;
 import daybreak.abilitywar.config.kitpreset.KitConfiguration.KitSettings;
 import daybreak.abilitywar.config.kitpreset.KitNodes;
 import daybreak.abilitywar.config.serializable.KitPreset;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,33 +30,27 @@ import org.jetbrains.annotations.Nullable;
 
 public class KitPresetWizard implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	private static final ItemStack NEW_PRESET = new ItemBuilder()
-			.type(MaterialX.LIME_WOOL)
+	private static final ItemStack NEW_PRESET = new ItemBuilder(MaterialX.LIME_WOOL)
 			.displayName(ChatColor.GREEN + "프리셋 추가")
 			.build();
 
-	private static final ItemStack SET_AS_KIT = new ItemBuilder()
-			.type(MaterialX.LIME_WOOL)
+	private static final ItemStack SET_AS_KIT = new ItemBuilder(MaterialX.LIME_WOOL)
 			.displayName(ChatColor.GREEN + "적용")
 			.build();
 
-	private static final ItemStack QUIT = new ItemBuilder()
-			.type(MaterialX.SPRUCE_DOOR)
+	private static final ItemStack QUIT = new ItemBuilder(MaterialX.SPRUCE_DOOR)
 			.displayName(ChatColor.AQUA + "나가기")
 			.build();
 
-	private static final ItemStack BOOTS = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack BOOTS = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "부츠")
 			.lore(
 					"§7부츠 아이템을 변경하려면 아이템을 들고",
@@ -64,8 +58,7 @@ public class KitPresetWizard implements Listener {
 			)
 			.build();
 
-	private static final ItemStack LEGGINGS = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack LEGGINGS = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "각반")
 			.lore(
 					"§7각반 아이템을 변경하려면 아이템을 들고",
@@ -73,8 +66,7 @@ public class KitPresetWizard implements Listener {
 			)
 			.build();
 
-	private static final ItemStack CHESTPLATE = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack CHESTPLATE = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "흉갑")
 			.lore(
 					"§7흉갑 아이템을 변경하려면 아이템을 들고",
@@ -82,8 +74,7 @@ public class KitPresetWizard implements Listener {
 			)
 			.build();
 
-	private static final ItemStack HELMET = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack HELMET = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "투구")
 			.lore(
 					"§7투구 아이템을 변경하려면 아이템을 들고",
@@ -91,8 +82,7 @@ public class KitPresetWizard implements Listener {
 			)
 			.build();
 
-	private static final ItemStack DECO = new ItemBuilder()
-			.type(MaterialX.WHITE_STAINED_GLASS_PANE)
+	private static final ItemStack DECO = new ItemBuilder(MaterialX.WHITE_STAINED_GLASS_PANE)
 			.displayName("§f")
 			.build();
 

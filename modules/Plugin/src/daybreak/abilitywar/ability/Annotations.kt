@@ -8,6 +8,9 @@ import kotlin.annotation.AnnotationTarget.CLASS
 import kotlin.annotation.AnnotationTarget.FUNCTION
 import kotlin.reflect.KClass
 
+sealed class Test {}
+
+
 @Retention(RUNTIME)
 @Target(ANNOTATION_CLASS, CLASS)
 annotation class AbilityManifest(val name: String, val rank: Rank, val species: Species, val explain: Array<String> = []) {

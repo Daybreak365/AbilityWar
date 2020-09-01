@@ -11,9 +11,9 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import java.io.IOException;
@@ -47,13 +47,11 @@ import org.bukkit.plugin.Plugin;
  */
 public class BlackListGUI implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
@@ -249,10 +247,10 @@ public class BlackListGUI implements Listener {
 	}
 
 	private void blacklist(ClickType clickType, Collection<String> abilityNames) {
-		if (clickType.equals(ClickType.LEFT)) {
+		if (clickType == ClickType.LEFT) {
 			Settings.addBlacklist(abilityNames);
 			SoundLib.BLOCK_ANVIL_LAND.playSound(p);
-		} else if (clickType.equals(ClickType.RIGHT)) {
+		} else if (clickType == ClickType.RIGHT) {
 			Settings.removeBlacklist(abilityNames);
 			SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(p);
 		}

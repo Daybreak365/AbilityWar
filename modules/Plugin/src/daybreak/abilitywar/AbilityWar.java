@@ -33,7 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * @author Daybreak 새벽
  */
-public class AbilityWar extends JavaPlugin {
+public class AbilityWar extends JavaPlugin implements Provider {
 
 	static {
 		ConfigurationSerialization.registerClass(AbilityKit.class);
@@ -53,6 +53,7 @@ public class AbilityWar extends JavaPlugin {
 	}
 
 	private Installer installer = null;
+	private final Commands commands = new Commands(this);
 
 	public AbilityWar() {
 		plugin = this;
@@ -78,11 +79,15 @@ public class AbilityWar extends JavaPlugin {
 		throw new IllegalStateException("버전 목록이 아직 불러와지지 않았습니다.");
 	}
 
+	public Commands getCommands() {
+		return commands;
+	}
+
 	@Override
 	public void onEnable() {
 		if (!ServerVersion.compatVersion(this)) return;
 		Messager.sendConsoleMessage("Server Version: " + Bukkit.getBukkitVersion());
-		Bukkit.getPluginCommand("AbilityWar").setExecutor(new Commands(this));
+		Bukkit.getPluginCommand("AbilityWar").setExecutor(commands);
 
 		AddonLoader.loadAll();
 		AddonLoader.enableAll();
@@ -116,7 +121,7 @@ public class AbilityWar extends JavaPlugin {
 			}
 		});
 
-		Messager.sendConsoleMessage("플러그인이 활성화되었습니다.");
+		Messager.sendConsoleMessage("플러그인이 활성화되었습니다. §8(§7" + ServerVersion.getName() + "§8)");
 	}
 
 	@Override
@@ -138,4 +143,8 @@ public class AbilityWar extends JavaPlugin {
 		Messager.sendConsoleMessage("플러그인이 비활성화되었습니다.");
 	}
 
+	@Override
+	public Object getInstance() {
+		return this;
+	}
 }

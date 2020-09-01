@@ -1,13 +1,12 @@
 package daybreak.abilitywar.utils.base.minecraft;
 
+import java.util.Random;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
-
-import java.util.Random;
 
 public class FireworkUtil {
 
@@ -51,16 +50,18 @@ public class FireworkUtil {
 		return firework;
 	}
 
+	private static final FireworkEffect WINNER_EFFECT = FireworkEffect.builder()
+			.flicker(true)
+			.withColor(Color.WHITE, Color.BLUE, Color.RED)
+			.withFade(Color.BLACK)
+			.with(Type.BURST)
+			.trail(true)
+			.build();
+
 	public static Firework spawnWinnerFirework(final Location location) {
 		final Firework firework = location.getWorld().spawn(location, Firework.class);
 		final FireworkMeta meta = firework.getFireworkMeta();
-		meta.addEffect(FireworkEffect.builder()
-				.flicker(true)
-				.withColor(Color.WHITE, Color.BLUE, Color.RED)
-				.withFade(Color.BLACK)
-				.with(Type.BURST)
-				.trail(true)
-				.build());
+		meta.addEffect(WINNER_EFFECT);
 		meta.setPower(random.nextInt(2) + 1);
 		firework.setFireworkMeta(meta);
 		return firework;

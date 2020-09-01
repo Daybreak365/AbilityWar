@@ -7,6 +7,7 @@ import net.minecraft.server.v1_9_R2.DataWatcherRegistry;
 import net.minecraft.server.v1_9_R2.EntityArmorStand;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_9_R2.ItemCooldown;
 import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand;
 import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.server.v1_9_R2.PacketPlayOutChat;
@@ -113,8 +114,9 @@ public class NMSImpl implements INMS {
 	}
 
 	@Override
-	public void removeArrow(Player player) {
-		((CraftPlayer) player).getHandle().getDataWatcher().set(new DataWatcherObject<>(9, DataWatcherRegistry.b), 0);
+	public void setArrowsInBody(Player player, int count) {
+		if (count < 0) throw new IllegalStateException("count cannot be negative.");
+		((CraftPlayer) player).getHandle().getDataWatcher().set(new DataWatcherObject<>(9, DataWatcherRegistry.b), count);
 	}
 
 	@Override
@@ -130,6 +132,14 @@ public class NMSImpl implements INMS {
 	@Override
 	public boolean hasCooldown(Player player, Material material) {
 		return ((CraftPlayer) player).getHandle().db().a(CraftMagicNumbers.getItem(material));
+	}
+
+	@Override
+	public int getCooldown(Player player, Material material) {
+		final ItemCooldown cooldownTracker = ((CraftPlayer) player).getHandle().db();
+		final net.minecraft.server.v1_9_R2.Item item = CraftMagicNumbers.getItem(material);
+		final float left = cooldownTracker.a(item, 0.0f);
+		return (int) (left * (1.0f / (left - cooldownTracker.a(item, 1.0f))));
 	}
 
 	@Override

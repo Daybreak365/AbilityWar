@@ -10,8 +10,8 @@ import daybreak.abilitywar.config.serializable.team.TeamPreset.DivisionType;
 import daybreak.abilitywar.config.serializable.team.TeamPreset.TeamScheme;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,28 +37,23 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class TeamPresetWizard implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	private static final ItemStack NEW_PRESET = new ItemBuilder()
-			.type(MaterialX.LIME_WOOL)
+	private static final ItemStack NEW_PRESET = new ItemBuilder(MaterialX.LIME_WOOL)
 			.displayName(ChatColor.GREEN + "프리셋 추가")
 			.build();
 
-	private static final ItemStack NEW_TEAM = new ItemBuilder()
-			.type(MaterialX.LIME_WOOL)
+	private static final ItemStack NEW_TEAM = new ItemBuilder(MaterialX.LIME_WOOL)
 			.displayName(ChatColor.GREEN + "팀 추가")
 			.build();
 
-	private static final ItemStack QUIT = new ItemBuilder()
-			.type(MaterialX.SPRUCE_DOOR)
+	private static final ItemStack QUIT = new ItemBuilder(MaterialX.SPRUCE_DOOR)
 			.displayName(ChatColor.AQUA + "나가기")
 			.build();
 

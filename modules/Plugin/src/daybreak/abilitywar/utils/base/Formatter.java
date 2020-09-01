@@ -6,17 +6,12 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.team.interfaces.Members;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.installer.Installer.VersionObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.function.Function;
-import java.util.regex.MatchResult;
 import org.bukkit.ChatColor;
 
 public class Formatter {
@@ -73,32 +68,13 @@ public class Formatter {
 		return list;
 	}
 
-	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
-	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^()]]+)\\)");
-
 	public static List<String> formatInfo(AbilityRegistration registration) {
 		final AbilityManifest manifest = registration.getManifest();
 		final List<String> info = new ArrayList<>(3 + manifest.explain().length);
 		info.add(formatTitle(32, ChatColor.DARK_GREEN, ChatColor.GREEN, "능력 정보"));
 		info.add("§b" + manifest.name() + " §r" + manifest.rank().getRankName() + " §r" + manifest.species().getSpeciesName());
-		final Function<MatchResult, String> valueProvider = new Function<MatchResult, String>() {
-			@Override
-			public String apply(MatchResult matchResult) {
-				try {
-					final Field field = registration.getAbilityClass().getDeclaredField(matchResult.group(1));
-					if (Modifier.isStatic(field.getModifiers())) {
-						try {
-							return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
-						} catch (IllegalAccessException ignored) {
-						}
-					}
-				} catch (NoSuchFieldException ignored) {
-				}
-				return "?";
-			}
-		};
-		for (String explain : manifest.explain()) {
-			info.add(ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(explain, valueProvider), valueProvider));
+		for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
+			info.add(ChatColor.WHITE.toString().concat(iterator.next()));
 		}
 		info.add("§a---------------------------------");
 		return info;

@@ -30,12 +30,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
 		"주위 13칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타겟팅해 $[DurationConfig]초간",
 		"지속되는 저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
 		"대미지의 일부가 상대에게 전이됩니다. $[COOLDOWN_CONFIG]",
-		"대상의 체력이 적을 수록 더욱 큰 대미지를 입힐 수 있습니다."
+		"대상의 체력이 적을수록 더욱 큰 대미지를 입힐 수 있습니다."
 })
 public class Curse extends AbilityBase implements ActiveHandler {
 
@@ -95,8 +96,8 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	private ArmorStand armorStand = null;
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			Player player = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 13, predicate);
 			if (player != null) {
 				target = player;

@@ -177,18 +177,18 @@ public class ItemLib {
 
 	public static class ColouredItem {
 
-		private final String materialName;
+		private final String name;
 
-		private ColouredItem(String materialName) {
-			this.materialName = materialName;
+		private ColouredItem(final String name) {
+			this.name = name;
 		}
 
 		@SuppressWarnings("deprecation")
 		public ItemStack getItemStack(ItemColor color) {
 			if (ServerVersion.getVersion() >= 13) {
-				return new ItemStack(Material.valueOf(color.name() + "_" + this.materialName));
+				return new ItemStack(Material.valueOf(color.name() + "_" + this.name));
 			} else {
-				return new ItemStack(Material.valueOf(this.materialName), 1, color.getDamage());
+				return new ItemStack(Material.valueOf(this.name), 1, color.getDamage());
 			}
 		}
 
@@ -198,9 +198,9 @@ public class ItemLib {
 				if (Enums.getIfPresent(ItemColor.class, color).isPresent()) {
 					name = name.replaceAll(color + "_", "");
 				}
-				return name.equalsIgnoreCase(this.materialName);
+				return name.equalsIgnoreCase(this.name);
 			} else {
-				return material.toString().equalsIgnoreCase(this.materialName);
+				return material.toString().equalsIgnoreCase(this.name);
 			}
 		}
 

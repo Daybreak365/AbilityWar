@@ -2,7 +2,8 @@ package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
+import daybreak.abilitywar.utils.library.MaterialX;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,13 +28,11 @@ import org.bukkit.plugin.Plugin;
  */
 public class SpecialThanksGUI implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 

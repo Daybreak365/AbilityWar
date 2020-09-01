@@ -17,11 +17,11 @@ import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,7 +48,7 @@ import org.bukkit.scoreboard.Score;
  * @author Daybreak 새벽
  */
 @GameManifest(name = "신나는 여름 휴가", description = {"§f신나는 물총싸움 뿌슝빠슝! 지금 바로 즐겨보세요!", "", "§a● §f스크립트가 적용되지 않습니다.",
-		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f신나는 여름 휴가 전용 콘피그가 있습니다. Config.yml을 확인해보세요."})
+		"§a● §f일부 콘피그가 임의로 변경될 수 있습니다.", "", "§6● §f신나는 여름 휴가 전용 콘피그가 있습니다."})
 @GameAliases("여름휴가")
 @Category(GameCategory.MINIGAME)
 public class SummerVacation extends Game implements Winnable, DefaultKitHandler {
@@ -65,10 +65,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		this.killsToWin = KILLS_TO_WIN.getValue();
 	}
 
-	@SuppressWarnings("deprecation")
-	private final Objective killObjective = ServerVersion.getVersion() >= 13 ?
-			getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy", "§c킬 횟수")
-			: getScoreboardManager().getScoreboard().registerNewObjective("킬 횟수", "dummy");
+	private final Objective killObjective = getScoreboardManager().registerNewObjective("킬 횟수", "dummy", "§c킬 횟수");
 
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
@@ -92,20 +89,29 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 				break;
 			}
 			case 5:
-				broadcastPluginDescription();
+				for (String msg : Arrays.asList("§eSummer Vacation §f- §c여름 휴가",
+						"§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
+						"§b모드 개발자 §7: §fDaybreak 새벽",
+						"§9디스코드 §7: §fDayBreak§7#5908")) {
+					Bukkit.broadcastMessage(msg);
+				}
 				break;
 			case 10:
-				broadcastAbilityReady();
+				Bukkit.broadcastMessage("§e신나는 여름 휴가 §f모드에서는 모든 플레이어의 능력이 물총으로 고정됩니다.");
 				try {
-					for (Participant p : getParticipants()) {
-						p.setAbility(SquirtGun.class);
+					for (Participant participant : getParticipants()) {
+						participant.setAbility(SquirtGun.class);
 					}
 				} catch (InstantiationException | InvocationTargetException | IllegalAccessException ignored) {
 				}
 				break;
 			case 13:
-				scoreboardSetup();
 				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
+				killObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+				for (Participant participant : getParticipants()) {
+					Score score = killObjective.getScore(participant.getPlayer().getName());
+					score.setScore(0);
+				}
 				Bukkit.broadcastMessage("§e잠시 후 §f게임이 시작됩니다.");
 				break;
 			case 16:
@@ -129,18 +135,45 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 21:
-				GameStart();
-				break;
-		}
-	}
+				for (String m : Messager.asList(
+						"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+						"§f           §eSummer Vacation §f- §c여름 휴가 ",
+						"§f                    게임 시작                ",
+						"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
+					Bukkit.broadcastMessage(m);
+				}
+				SoundLib.ENTITY_PLAYER_SPLASH.broadcastSound();
 
-	private void scoreboardSetup() {
-		killObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		if (ServerVersion.getVersion() >= 13)
-			killObjective.setDisplayName("§c킬 횟수");
-		for (Participant p : getParticipants()) {
-			Score score = killObjective.getScore(p.getPlayer().getName());
-			score.setScore(0);
+				giveDefaultKit(getParticipants());
+
+				for (Participant p : getParticipants()) {
+					if (Settings.getSpawnEnable()) {
+						p.getPlayer().teleport(Settings.getSpawnLocation().toBukkitLocation());
+					}
+				}
+
+				Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");
+
+				glow.start();
+
+				Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
+				for (Participant participant : this.getParticipants()) {
+					if (participant.hasAbility()) {
+						participant.getAbility().setRestricted(false);
+					}
+				}
+
+				attachObserver(infiniteDurability);
+
+				for (World w : Bukkit.getWorlds()) {
+					if (Settings.getClearWeather()) {
+						w.setStorm(false);
+					}
+				}
+
+				startGame();
+				setRestricted(false);
+				break;
 		}
 	}
 
@@ -190,64 +223,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		};
 	}
 
-	public void broadcastPluginDescription() {
-		List<String> msg = Messager.asList(
-				"§eSummer Vacation §f- §c여름 휴가",
-				"§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
-				"§b모드 개발자 §7: §fDaybreak 새벽",
-				"§9디스코드 §7: §fDayBreak§7#5908");
-
-		for (String m : msg) {
-			Bukkit.broadcastMessage(m);
-		}
-	}
-
-	public void broadcastAbilityReady() {
-		Bukkit.broadcastMessage("§e신나는 여름 휴가 §f모드에서는 모든 플레이어의 능력이 물총으로 고정됩니다.");
-	}
-
-	public void GameStart() {
-		for (String m : Messager.asList(
-				"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
-				"§f           §eSummer Vacation §f- §c여름 휴가 ",
-				"§f                    게임 시작                ",
-				"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
-			Bukkit.broadcastMessage(m);
-		}
-		SoundLib.ENTITY_PLAYER_SPLASH.broadcastSound();
-
-		giveDefaultKit(getParticipants());
-
-		for (Participant p : getParticipants()) {
-			if (Settings.getSpawnEnable()) {
-				p.getPlayer().teleport(Settings.getSpawnLocation().toBukkitLocation());
-			}
-		}
-
-		Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");
-
-		glow.start();
-
-		Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
-		for (Participant participant : this.getParticipants()) {
-			if (participant.hasAbility()) {
-				participant.getAbility().setRestricted(false);
-			}
-		}
-
-		attachObserver(infiniteDurability);
-
-		for (World w : Bukkit.getWorlds()) {
-			if (Settings.getClearWeather()) {
-				w.setStorm(false);
-			}
-		}
-
-		startGame();
-	}
-
-	private static final ItemStack WATER_GUN_ITEMSTACK = new ItemBuilder()
-			.type(Material.BOW)
+	private static final ItemStack WATER_GUN_ITEMSTACK = new ItemBuilder(MaterialX.BOW)
 			.displayName("§b물총")
 			.unbreakable(true)
 			.build();
@@ -258,27 +234,27 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	 */
 	@Override
 	public void giveDefaultKit(Participant participant) {
-		Player player = participant.getPlayer();
-		List<ItemStack> defaultKit = Arrays.asList(WATER_GUN_ITEMSTACK, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
+		final Player player = participant.getPlayer();
+		final List<ItemStack> defaultKit = Arrays.asList(WATER_GUN_ITEMSTACK, new ItemStack(Material.ARROW, 64), new ItemStack(Material.IRON_INGOT, 64));
 
 		if (Settings.getInventoryClear()) {
 			player.getInventory().clear();
 		}
 
-		for (ItemStack is : defaultKit) {
-			player.getInventory().addItem(is);
+		for (ItemStack stack : defaultKit) {
+			player.getInventory().addItem(stack);
 		}
 
-		ItemStack boots = new ItemStack(Material.IRON_BOOTS);
-		ItemMeta bootsMeta = boots.getItemMeta();
+		final ItemStack boots = new ItemStack(Material.IRON_BOOTS);
+		final ItemMeta bootsMeta = boots.getItemMeta();
 		bootsMeta.setUnbreakable(true);
 		bootsMeta.setDisplayName("§e오리발");
 		boots.setItemMeta(bootsMeta);
 		boots.addEnchantment(Enchantment.BINDING_CURSE, 1);
 		boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3);
 
-		ItemStack helmet = new ItemStack(Material.IRON_HELMET);
-		ItemMeta helmetMeta = helmet.getItemMeta();
+		final ItemStack helmet = new ItemStack(Material.IRON_HELMET);
+		final ItemMeta helmetMeta = helmet.getItemMeta();
 		helmetMeta.setUnbreakable(true);
 		helmetMeta.setDisplayName("§b안경");
 		helmet.setItemMeta(helmetMeta);

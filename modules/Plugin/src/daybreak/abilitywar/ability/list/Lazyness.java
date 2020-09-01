@@ -14,15 +14,18 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
-		"지금 받을 대미지를 3초 뒤의 나에게 미루고, 넉백을 무시합니다.",
-		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.65배로 줄여 받습니다.",
+		"지금 받을 대미지와 회복을 3초 뒤의 나에게 미루고, 넉백을 무시합니다.",
+		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.75배로 줄여 받습니다.",
 		"$[COOLDOWN_CONFIG]"
 })
 public class Lazyness extends AbilityBase implements ActiveHandler {
@@ -80,17 +83,23 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 		onEntityDamage(e);
 	}
 
+	@SubscribeEvent(ignoreCancelled = true, onlyRelevant = true, priority = Priority.HIGHEST)
+	private void onEntityRegainHealth(final EntityRegainHealthEvent e) {
+		e.setCancelled(true);
+		new RegainTimer(e.getAmount());
+	}
+
 	@SubscribeEvent(ignoreCancelled = true, priority = Priority.HIGHEST)
 	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
 		onEntityDamage(e);
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			if (!timers.isEmpty()) {
 				for (DamageTimer timer : timers) {
-					timer.damage *= 0.65;
+					timer.damage *= 0.75;
 					timer.stop(false);
 				}
 				cooldownTimer.start();
@@ -116,7 +125,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void run(int count) {
-			channel.update(ChatColor.YELLOW.toString() + count + ChatColor.WHITE + "초 뒤 " + ChatColor.AQUA.toString() + (Math.round(damage * 100.0) / 100.0) + ChatColor.WHITE + " 대미지");
+			channel.update(ChatColor.YELLOW.toString() + count + ChatColor.WHITE + "초: " + ChatColor.RED.toString() + "-" + (Math.round(damage * 100.0) / 100.0));
 		}
 
 		@Override
@@ -150,6 +159,38 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 			if (this.equals(lastDamage)) {
 				lastDamage = null;
 			}
+			channel.unregister();
+		}
+
+	}
+
+	private class RegainTimer extends AbilityTimer {
+
+		private final ActionbarChannel channel;
+		private double health;
+
+		private RegainTimer(double health) {
+			super(3);
+			this.channel = newActionbarChannel();
+			this.health = health;
+			start();
+		}
+
+		@Override
+		protected void run(int count) {
+			channel.update(ChatColor.YELLOW.toString() + count + ChatColor.WHITE + "초: " + ChatColor.GREEN.toString() + "+" + (Math.round(health * 100.0) / 100.0));
+		}
+
+		@Override
+		protected void onEnd() {
+			if (!getPlayer().isDead()) {
+				getPlayer().setHealth(Math.max(0, Math.min(getPlayer().getHealth() + health, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())));
+			}
+			channel.unregister();
+		}
+
+		@Override
+		protected void onSilentEnd() {
 			channel.unregister();
 		}
 

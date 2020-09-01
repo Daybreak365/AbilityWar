@@ -5,8 +5,8 @@ import daybreak.abilitywar.config.kitpreset.KitConfiguration;
 import daybreak.abilitywar.config.kitpreset.KitConfiguration.KitSettings;
 import daybreak.abilitywar.config.kitpreset.KitNodes;
 import daybreak.abilitywar.config.serializable.KitPreset;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +24,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class KitWizard extends SettingWizard {
 
-	private static final ItemStack RESET = new ItemBuilder()
-			.type(MaterialX.RED_WOOL)
+	private static final ItemStack RESET = new ItemBuilder(MaterialX.RED_WOOL)
 			.displayName(ChatColor.RED + "초기화")
 			.build();
 
-	private static final ItemStack BOOTS = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack BOOTS = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "부츠")
 			.lore(
 					"§7부츠 아이템을 변경하려면 아이템을 들고",
@@ -38,8 +36,7 @@ public class KitWizard extends SettingWizard {
 			)
 			.build();
 
-	private static final ItemStack LEGGINGS = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack LEGGINGS = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "각반")
 			.lore(
 					"§7각반 아이템을 변경하려면 아이템을 들고",
@@ -47,8 +44,7 @@ public class KitWizard extends SettingWizard {
 			)
 			.build();
 
-	private static final ItemStack CHESTPLATE = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack CHESTPLATE = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "흉갑")
 			.lore(
 					"§7흉갑 아이템을 변경하려면 아이템을 들고",
@@ -56,8 +52,7 @@ public class KitWizard extends SettingWizard {
 			)
 			.build();
 
-	private static final ItemStack HELMET = new ItemBuilder()
-			.type(MaterialX.BLACK_STAINED_GLASS_PANE)
+	private static final ItemStack HELMET = new ItemBuilder(MaterialX.BLACK_STAINED_GLASS_PANE)
 			.displayName(ChatColor.AQUA + "투구")
 			.lore(
 					"§7투구 아이템을 변경하려면 아이템을 들고",
@@ -65,8 +60,7 @@ public class KitWizard extends SettingWizard {
 			)
 			.build();
 
-	private static final ItemStack DECO = new ItemBuilder()
-			.type(MaterialX.WHITE_STAINED_GLASS_PANE)
+	private static final ItemStack DECO = new ItemBuilder(MaterialX.WHITE_STAINED_GLASS_PANE)
 			.displayName("§f")
 			.build();
 

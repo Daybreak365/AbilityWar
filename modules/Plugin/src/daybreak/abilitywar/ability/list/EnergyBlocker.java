@@ -13,14 +13,19 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import java.util.Random;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @AbilityManifest(name = "에너지 블로커", rank = Rank.A, species = Species.HUMAN, explain = {
-		"원거리 공격 피해를 1/3로, 근거리 공격 피해를 두 배로 받거나",
-		"원거리 공격 피해를 두 배로, 근거리 공격 피해를 1/3로 받을 수 있습니다.",
-		"철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다.",
-		"철괴를 좌클릭하면 현재 상태를 확인할 수 있습니다.",
+		"원거리 피해를 3분의 1로, 근거리 피해를 두 배로 받거나",
+		"원거리 피해를 두 배로, 근거리 피해를 3분의 1로 받을 수 있습니다.",
+		"철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다. 피해 정도를 변경한 이후",
+		"한 번 이상 공격을 받아야만 다시 피해 정도를 뒤바꿀 수 있습니다.",
 		"$[PARTICLE_NOTICE]"
 })
 public class EnergyBlocker extends AbilityBase implements ActiveHandler {
@@ -33,25 +38,24 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
-	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
-				projectileBlocking = !projectileBlocking;
-				getPlayer().sendMessage(getState() + "로 변경되었습니다.");
-				actionbarChannel.update(getState());
-			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
-				getPlayer().sendMessage("§6현재 상태§f: " + getState());
-			}
-		}
+	private boolean canChange = true;
 
+	@Override
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
+			if (canChange) {
+				projectileBlocking = !projectileBlocking;
+				getPlayer().sendMessage(getState() + "§f으로 변경되었습니다.");
+				actionbarChannel.update(getState());
+				canChange = false;
+			} else getPlayer().sendMessage("§f[§c!§f] 한 번 이상 공격을 받아야만 §a피해 §b정도§f를 뒤바꿀 수 있습니다.");
+		}
 		return false;
 	}
 
 	private final boolean particleShowState = new Random().nextBoolean();
 
-	private static final RGB LONG_DISTANCE = RGB.of(116, 237, 167);
-	private static final RGB SHORT_DISTANCE = RGB.of(85, 237, 242);
+	private static final RGB LONG_DISTANCE = RGB.of(82, 108, 179), SHORT_DISTANCE = RGB.of(130, 255, 147);
 	private final Object PARTICLE_NOTICE = new Object() {
 		@Override
 		public String toString() {
@@ -84,27 +88,30 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 	}).setPeriod(TimeUnit.TICKS, 1).register();
 
 	public String getState() {
-		return projectileBlocking ? "§b원거리 §f1/3 배§7, §a근거리 §f두 배" : "§b원거리 §f두 배§7, §a근거리 §f1/3 배";
+		return projectileBlocking ? "§b원거리 §f보호 §8(§a근거리 §f취약§8)" : "§a근거리 §f보호 §8(§b원거리 §f취약§8)";
 	}
 
 	@SubscribeEvent
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
+	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
-			DamageCause cause = e.getCause();
-			if (cause.equals(DamageCause.PROJECTILE)) {
-				if (projectileBlocking) {
-					e.setDamage(e.getDamage() / 3);
-				} else {
-					e.setDamage(e.getDamage() * 2);
-				}
-			} else if (cause.equals(DamageCause.ENTITY_ATTACK)) {
-				if (projectileBlocking) {
-					e.setDamage(e.getDamage() * 2);
-				} else {
-					e.setDamage(e.getDamage() / 3);
-				}
+			final Entity damager = getDamager(e.getDamager());
+			if (getPlayer().equals(damager)) return;
+			if (e.getCause() == DamageCause.PROJECTILE) {
+				e.setDamage(projectileBlocking ? e.getDamage() / 3 : (e.getDamage() * 2));
+				this.canChange = true;
+			} else if (e.getCause() == DamageCause.ENTITY_ATTACK) {
+				e.setDamage(projectileBlocking ? e.getDamage() * 2 : (e.getDamage() / 3));
+				this.canChange = true;
 			}
 		}
+	}
+
+	@Nullable
+	private static Entity getDamager(final Entity damager) {
+		if (damager instanceof Projectile) {
+			final ProjectileSource shooter = ((Projectile) damager).getShooter();
+			return shooter instanceof Entity ? (Entity) shooter : null;
+		} else return damager;
 	}
 
 	@Override

@@ -26,6 +26,7 @@ public class Stopwatch {
 			throw new IllegalStateException("Unable to start while the stopwatch is running.");
 		}
 		this.currentTaskName = taskName;
+		System.nanoTime();
 		this.startTimeNanos = System.nanoTime();
 	}
 
@@ -55,28 +56,28 @@ public class Stopwatch {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder builder = new StringBuilder();
 		final long totalNanos = getTotalNanos();
-		sb.append("\nStopwatch '").append(identifier).append("': Running Time = ").append(totalNanos).append(" ns (").append(totalNanos / 1000000000.0).append(" sec)");
-		sb.append("\n--------------------------------------------------\n");
-		sb.append("nanoseconds    %        Name\n");
-		sb.append("--------------------------------------------------\n");
-		NumberFormat ns = NumberFormat.getNumberInstance();
+		builder.append("\nStopwatch '").append(identifier).append("': Running Time = ").append(totalNanos).append(" ns (").append(totalNanos / 1000000000.0).append(" sec)");
+		builder.append("\n--------------------------------------------------\n");
+		builder.append("nanoseconds    %        Name\n");
+		builder.append("--------------------------------------------------\n");
+		final NumberFormat ns = NumberFormat.getNumberInstance();
 		ns.setMinimumIntegerDigits(10);
 		ns.setGroupingUsed(false);
-		NumberFormat percentage = NumberFormat.getNumberInstance();
+		final NumberFormat percentage = NumberFormat.getNumberInstance();
 		percentage.setMinimumIntegerDigits(3);
 		percentage.setGroupingUsed(false);
-		for (Record record : records) {
-			sb.append(ns.format(record.getTimeNanos()))
+		for (final Record record : records) {
+			builder.append(ns.format(record.getTimeNanos()))
 					.append("     ")
 					.append(percentage.format(Math.round((double) record.timeNanos / totalNanos * 100.0)))
 					.append("%     ")
 					.append(record.taskName)
 					.append("\n");
 		}
-		sb.append("--------------------------------------------------\n");
-		return sb.toString();
+		builder.append("--------------------------------------------------\n");
+		return builder.toString();
 	}
 
 	public static final class Record {
@@ -84,7 +85,7 @@ public class Stopwatch {
 		private final String taskName;
 		private final long timeNanos;
 
-		private Record(String taskName, long currentNanos, long startTimeNanos) {
+		private Record(final String taskName, final long currentNanos, final long startTimeNanos) {
 			this.taskName = taskName;
 			this.timeNanos = currentNanos - startTimeNanos;
 		}

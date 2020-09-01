@@ -1,5 +1,8 @@
 package daybreak.abilitywar.game.manager.object.event;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameUpdate;
@@ -11,24 +14,23 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.jetbrains.annotations.NotNull;
 
-public class EventManager implements Listener, EventExecutor, AbstractGame.Observer {
+public final class EventManager implements Listener, AbstractGame.Observer {
 
 	public EventManager(AbstractGame game) {
 		game.attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
 
-	private final HashMap<Class<? extends Event>, TreeMap<Integer, HashSet<EventObserver>>> observers = new HashMap<>();
-	private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
+	private final Observers observers = new Observers(EventPriority.HIGH);
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends Event> getHandlerListDeclaringClass(Class<? extends Event> eventClass) {
@@ -38,65 +40,12 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 		return null;
 	}
 
-	public void register(EventObserver observer) {
-		if (iterationDepth != 0) {
-			toRegister.add(observer);
-			return;
-		}
-		final TreeMap<Integer, HashSet<EventObserver>> observerMap;
-		if (!observers.containsKey(observer.eventClass)) {
-			observerMap = new TreeMap<>();
-			observers.put(observer.eventClass, observerMap);
-		} else observerMap = observers.get(observer.eventClass);
-
-		final Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(observer.eventClass);
-		if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
-			Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, this, EventPriority.HIGH, this, AbilityWar.getPlugin());
-		}
-
-		final HashSet<EventObserver> observers;
-		if (observerMap.get(observer.priority) == null) {
-			observers = new HashSet<>();
-			observerMap.put(observer.priority, observers);
-		} else observers = observerMap.get(observer.priority);
-		observers.add(observer);
+	public void register(final EventObserver observer) {
+		observers.register(observer);
 	}
 
-	public void unregister(EventObserver observer) {
-		if (iterationDepth != 0) {
-			toUnregister.add(observer);
-			return;
-		}
-		if (observers.containsKey(observer.eventClass)) {
-			final TreeMap<Integer, HashSet<EventObserver>> treeMap = observers.get(observer.eventClass);
-			treeMap.entrySet().removeIf(entry -> entry.getValue().remove(observer) && entry.getValue().size() == 0);
-		}
-	}
-
-	private int iterationDepth = 0;
-	private final List<EventObserver> toRegister = new LinkedList<>(), toUnregister = new LinkedList<>();
-
-	@Override
-	public void execute(@NotNull Listener listener, Event event) {
-		final Class<? extends Event> eventClass = event.getClass();
-		if (observers.containsKey(eventClass)) {
-			iterationDepth++;
-			for (HashSet<EventObserver> value : observers.get(eventClass).values()) {
-				for (EventObserver observer : value) {
-					observer.onEvent(event);
-				}
-			}
-			iterationDepth = Math.max(0, iterationDepth - 1);
-			if (iterationDepth == 0) {
-				final TreeMap<Integer, HashSet<EventObserver>> treeMap = observers.get(eventClass);
-				treeMap.entrySet().removeIf(entry -> entry.getValue().removeAll(toUnregister) && entry.getValue().size() == 0);
-				toUnregister.clear();
-				for (final Iterator<EventObserver> iterator = toRegister.iterator(); iterator.hasNext(); ) {
-					register(iterator.next());
-					iterator.remove();
-				}
-			}
-		}
+	public void unregister(final EventObserver observer) {
+		observers.unregister(observer);
 	}
 
 	@Override
@@ -117,6 +66,93 @@ public class EventManager implements Listener, EventExecutor, AbstractGame.Obser
 		}
 
 		protected abstract void onEvent(Event event);
+
+	}
+
+	private class Observers extends HashMap<Class<? extends Event>, SetMultimap<Integer, EventObserver>> implements EventExecutor {
+
+		private final EventPriority eventPriority;
+
+		private Observers(final EventPriority eventPriority) {
+			this.eventPriority = eventPriority;
+		}
+
+		private int iterations = 0;
+		private final List<EventObserver> toRegister = new LinkedList<>(), toUnregister = new LinkedList<>();
+		private final Set<Class<? extends Event>> registeredEvents = new HashSet<>();
+
+		@NotNull
+		public SetMultimap<Integer, EventObserver> getNotNull(final Class<? extends Event> key) {
+			final SetMultimap<Integer, EventObserver> got = super.get(key);
+			if (got == null) {
+				final SetMultimap<Integer, EventObserver> multimap = MultimapBuilder.treeKeys().hashSetValues().build();
+				super.put(key, multimap);
+				return multimap;
+			} else {
+				return got;
+			}
+		}
+
+		private void iterationStarted() {
+			iterations++;
+		}
+
+		private void iterationEnded() {
+			if ((iterations = Math.max(0, iterations - 1)) == 0) {
+				for (final Iterator<EventObserver> iterator = toUnregister.iterator(); iterator.hasNext();) {
+					unregister0(iterator.next());
+					iterator.remove();
+				}
+				for (final Iterator<EventObserver> iterator = toRegister.iterator(); iterator.hasNext();) {
+					register0(iterator.next());
+					iterator.remove();
+				}
+			}
+		}
+
+		private void register(final EventObserver observer) {
+			if (iterations != 0) {
+				toRegister.add(observer);
+				return;
+			}
+			register0(observer);
+		}
+
+		private void register0(final EventObserver observer) {
+			final SetMultimap<Integer, EventObserver> priorityMap = getNotNull(observer.eventClass);
+			final Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(observer.eventClass);
+			if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
+				Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, EventManager.this, this.eventPriority, this, AbilityWar.getPlugin());
+			}
+			priorityMap.put(observer.priority, observer);
+		}
+
+		private void unregister(final EventObserver observer) {
+			if (iterations != 0) {
+				toUnregister.add(observer);
+				return;
+			}
+			unregister0(observer);
+		}
+
+		private void unregister0(final EventObserver observer) {
+			final Multimap<Integer, EventObserver> priorityMap = super.get(observer.eventClass);
+			if (priorityMap != null) {
+				priorityMap.remove(observer.priority, observer);
+			}
+		}
+
+		@Override
+		public void execute(@NotNull Listener listener, @NotNull Event event) throws EventException {
+			final Class<? extends Event> eventClass = event.getClass();
+			if (observers.containsKey(eventClass)) {
+				observers.iterationStarted();
+				for (EventObserver value : observers.getNotNull(eventClass).values()) {
+					value.onEvent(event);
+				}
+				observers.iterationEnded();
+			}
+		}
 
 	}
 

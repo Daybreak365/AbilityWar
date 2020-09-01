@@ -161,8 +161,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 				BlockX.setType(check, MaterialX.STONE_BRICKS);
 			}
 
-			Location teleport = center.clone().add(0, 1, 0);
-
+			final Location teleport = center.clone().add(0, 1, 0);
 			getPlayer().teleport(teleport);
 			PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 400, 2, true);
 			PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);

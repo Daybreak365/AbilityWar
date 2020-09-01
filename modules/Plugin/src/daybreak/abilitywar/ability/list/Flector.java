@@ -12,6 +12,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
@@ -20,6 +21,7 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.Set;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -57,7 +59,7 @@ public class Flector extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public boolean condition(Integer value) {
-			return value >= 1;
+			return value >= 2;
 		}
 
 	};
@@ -68,11 +70,30 @@ public class Flector extends AbilityBase implements ActiveHandler {
 
 	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 
+	private static final double particleRadius = 5;
 	private final CenteredBoundingBox boundingBox = CenteredBoundingBox.of(getPlayer().getLocation(), -1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
+		private int particle;
+		@Override
+		protected void onDurationStart() {
+			particle = 0;
+		}
 		@Override
 		protected void onDurationProcess(int count) {
+			if (particle < 30) {
+				if (count % 5 == 0) {
+					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
+				}
+				final double radians = 0.10471975511965977461542144610932 * particle, sin = FastMath.sin(radians), y = particleRadius * FastMath.cos(radians);
+				final Location playerLocation = getPlayer().getLocation().clone().add(0, y, 0);
+				for (double phi = 0; phi < 6.283185307179586476925286766559; phi += 0.25132741228718345907701147066236) {
+					final double x = particleRadius * sin * FastMath.cos(phi), z = particleRadius * sin * FastMath.sin(phi);
+					ParticleLib.SWEEP_ATTACK.spawnParticle(playerLocation.add(x, 0, z));
+					playerLocation.subtract(x, 0, z);
+				}
+				particle++;
+			}
 			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 8, 8, null)) {
 				deflect(projectile, false);
 			}

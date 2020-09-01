@@ -15,7 +15,6 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
@@ -28,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -280,7 +280,23 @@ public class PenetrationArrow extends AbilityBase {
 			time += 0.025;
 			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time);
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
-			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 8); iterator.hasNext(); ) {
+			for (Iterator<Location> iterator = new Iterator<Location>() {
+				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
+				private final int amount = (int) (vectorBetween.length() / 0.1);
+				private int cursor = 0;
+
+				@Override
+				public boolean hasNext() {
+					return cursor < amount;
+				}
+
+				@Override
+				public Location next() {
+					if (cursor >= amount) throw new NoSuchElementException();
+					cursor++;
+					return lastLocation.clone().add(unit.clone().multiply(cursor));
+				}
+			}; iterator.hasNext(); ) {
 				Location location = iterator.next();
 				if (location.getY() < 0) {
 					stop(false);

@@ -2,10 +2,9 @@ package daybreak.abilitywar.utils.base.math.geometry;
 
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.geometry.location.LocationIterator;
+import java.util.NoSuchElementException;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
-
-import java.util.NoSuchElementException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -18,7 +17,11 @@ public class Sphere extends Shape {
 		checkArgument(radius > 0, "The radius must be positive");
 		checkArgument(!Double.isNaN(radius) && Double.isFinite(radius));
 		return new LocationIterator() {
-			private double divided = Math.PI / amount, radians = divided, phi = divided, sin, z;
+			private final double divided = Math.PI / amount;
+			private double radians = divided;
+			private double phi = divided;
+			private double sin;
+			private double z;
 
 			@Override
 			public boolean hasNext() {

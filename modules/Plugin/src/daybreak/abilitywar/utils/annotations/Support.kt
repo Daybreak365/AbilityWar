@@ -2,7 +2,7 @@ package daybreak.abilitywar.utils.annotations
 
 import daybreak.abilitywar.utils.base.minecraft.server.ServerType
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion
-import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion.v1_16_R1
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion.v1_16_R2
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS
 import kotlin.annotation.AnnotationTarget.CLASS
@@ -14,7 +14,7 @@ class Support private constructor() {
 	@Retention(RUNTIME)
 	@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, ANNOTATION_CLASS, CLASS)
 	@MustBeDocumented
-	annotation class Version(val min: NMSVersion, val max: NMSVersion = v1_16_R1)
+	annotation class Version(val min: NMSVersion, val max: NMSVersion = v1_16_R2)
 
 	@Retention(RUNTIME)
 	@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, ANNOTATION_CLASS, CLASS)

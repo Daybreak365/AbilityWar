@@ -4,8 +4,8 @@ import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.config.wizard.setter.Setter;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.Bukkit;
@@ -25,18 +25,15 @@ import org.bukkit.plugin.Plugin;
 
 public class GameSettingWizard implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	private static final ItemStack QUIT = new ItemBuilder()
-			.type(MaterialX.SPRUCE_DOOR)
+	private static final ItemStack QUIT = new ItemBuilder(MaterialX.SPRUCE_DOOR)
 			.displayName(ChatColor.AQUA + "나가기")
 			.build();
 
@@ -73,8 +70,7 @@ public class GameSettingWizard implements Listener {
 					count++;
 				}
 
-				gui.setItem(45, new ItemBuilder()
-						.type(MaterialX.RED_WOOL)
+				gui.setItem(45, new ItemBuilder(MaterialX.RED_WOOL)
 						.displayName(ChatColor.RED + "초기화")
 						.lore(ChatColor.WHITE + gameSettings.getConfigFile().getName() + " 파일의 모든 게임 설정을 초기화합니다.")
 						.build());
@@ -103,8 +99,7 @@ public class GameSettingWizard implements Listener {
 					count++;
 				}
 
-				gui.setItem(18, new ItemBuilder()
-						.type(MaterialX.RED_WOOL)
+				gui.setItem(18, new ItemBuilder(MaterialX.RED_WOOL)
 						.displayName(ChatColor.RED + "초기화")
 						.lore(ChatColor.WHITE + settings.getLeft() + " 게임의 모든 설정을 초기화합니다.")
 						.build());
@@ -139,8 +134,7 @@ public class GameSettingWizard implements Listener {
 				count++;
 			}
 
-			gui.setItem(9, new ItemBuilder()
-					.type(MaterialX.RED_WOOL)
+			gui.setItem(9, new ItemBuilder(MaterialX.RED_WOOL)
 					.displayName(ChatColor.RED + "초기화")
 					.lore(ChatColor.WHITE + "모든 게임 설정을 초기화합니다.")
 					.build());

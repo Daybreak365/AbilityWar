@@ -25,6 +25,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "교주", rank = Rank.A, species = Species.HUMAN, explain = {
 		"처음 시작하면 새로운 종교를 창시하며, 이름을 정할 수 있습니다.",
@@ -56,8 +57,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 		super(participant);
 	}
 
-	private final int maxBelivers = getGame().getParticipants().size() / 2;
-	private final int minBelivers = getGame().getParticipants().size() / 4;
+	private final int maxBelivers = getGame().getParticipants().size() / 2, minBelivers = getGame().getParticipants().size() / 4;
 	private final Set<Participant> belivers = new HashSet<>();
 	private boolean nameSelecting = false;
 	private String religionName = null;
@@ -201,8 +201,8 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.LEFT_CLICK) && religionName != null && !skill.isDuration() && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK && religionName != null && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			if (belivers.size() >= minBelivers) {
 				skill.start();
 			} else {

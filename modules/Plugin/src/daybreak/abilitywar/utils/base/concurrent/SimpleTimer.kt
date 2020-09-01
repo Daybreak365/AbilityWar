@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions
 import daybreak.abilitywar.AbilityWar
 import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet
 import org.bukkit.Bukkit
+import org.bukkit.scheduler.BukkitTask
 
 abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
+
 	private lateinit var observers: QueueOnIterateHashSet<Observer>
 
 	fun attachObserver(observer: Observer) {
@@ -22,7 +24,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 	}
 
 	private var task: Task? = null
-	private var taskId = -1
+	private var bukkitTask: BukkitTask? = null
 	private var initialDelay = 0
 	var period = 20
 		private set
@@ -37,13 +39,8 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		return this
 	}
 
-	fun isRunning(): Boolean {
-		return task != null && taskId != -1
-	}
-
-	fun isPaused(): Boolean {
-		return task != null && taskId == -1
-	}
+	fun isRunning(): Boolean = task != null && bukkitTask != null
+	fun isPaused(): Boolean = task != null && bukkitTask == null
 
 	var count: Int
 		get() = if (task != null) {
@@ -58,13 +55,12 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 			}
 		}
 
-	val fixedCount: Int
-		get() = count / (20 / period)
+	fun getFixedCount(): Int = count / (20 / period)
 
 	open fun start(): Boolean {
 		if (!isRunning()) {
 			task = taskType.newRunnable(this)
-			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task!!, initialDelay.toLong(), period.toLong())
+			bukkitTask = Bukkit.getScheduler().runTaskTimer(AbilityWar.getPlugin(), task!!, initialDelay.toLong(), period.toLong())
 			if (this::observers.isInitialized) {
 				for (observer in observers) {
 					observer.onStart()
@@ -78,9 +74,9 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 
 	open fun stop(silent: Boolean): Boolean {
 		if (isRunning() || isPaused()) {
-			Bukkit.getScheduler().cancelTask(taskId)
+			bukkitTask?.cancel()
 			task = null
-			taskId = -1
+			bukkitTask = null
 			if (!silent) {
 				if (this::observers.isInitialized) {
 					for (observer in observers) {
@@ -103,8 +99,8 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 
 	open fun pause(): Boolean {
 		if (isRunning()) {
-			Bukkit.getScheduler().cancelTask(taskId)
-			taskId = -1
+			bukkitTask?.cancel()
+			bukkitTask = null
 			if (this::observers.isInitialized) {
 				for (observer in observers) {
 					observer.onPause()
@@ -118,7 +114,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 
 	open fun resume(): Boolean {
 		if (isPaused()) {
-			taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(AbilityWar.getPlugin(), task!!, 0, period.toLong())
+			bukkitTask = Bukkit.getScheduler().runTaskTimer(AbilityWar.getPlugin(), task!!, 0, period.toLong())
 			if (this::observers.isInitialized) {
 				for (observer in observers) {
 					observer.onResume()
@@ -141,7 +137,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 	enum class TaskType {
 		INFINITE {
 			override fun newRunnable(simpleTimer: SimpleTimer): Task {
-				return object : Task {
+				return object: Task {
 					override var count = 0
 					override fun run() {
 						simpleTimer.run(++count)
@@ -152,7 +148,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		},
 		NORMAL {
 			override fun newRunnable(simpleTimer: SimpleTimer): Task {
-				return object : Task {
+				return object: Task {
 					override var count = 0
 					override fun run() {
 						if (count < simpleTimer.maximumCount) simpleTimer.run(++count) else simpleTimer.stop(false)
@@ -163,7 +159,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		},
 		REVERSE {
 			override fun newRunnable(simpleTimer: SimpleTimer): Task {
-				return object : Task {
+				return object: Task {
 					override var count = simpleTimer.maximumCount + 1
 					override fun run() {
 						if (count > 1) simpleTimer.run(--count) else simpleTimer.stop(false)
@@ -176,7 +172,7 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 		abstract fun newRunnable(simpleTimer: SimpleTimer): Task
 	}
 
-	interface Task : Runnable {
+	interface Task: Runnable {
 		var count: Int
 	}
 

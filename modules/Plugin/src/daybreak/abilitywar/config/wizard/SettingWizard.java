@@ -2,8 +2,8 @@ package daybreak.abilitywar.config.wizard;
 
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.io.IOException;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
@@ -24,8 +24,7 @@ public abstract class SettingWizard {
 
 	static final Logger logger = Logger.getLogger(SettingWizard.class.getName());
 
-	protected static final ItemStack DECO = new ItemBuilder()
-			.type(MaterialX.WHITE_STAINED_GLASS_PANE)
+	protected static final ItemStack DECO = new ItemBuilder(MaterialX.WHITE_STAINED_GLASS_PANE)
 			.displayName(ChatColor.WHITE.toString())
 			.build();
 

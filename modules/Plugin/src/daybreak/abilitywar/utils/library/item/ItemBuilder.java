@@ -1,6 +1,7 @@
 package daybreak.abilitywar.utils.library.item;
 
 import com.google.common.base.Preconditions;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+@Deprecated
 public class ItemBuilder {
 
 	private Material type;
@@ -70,7 +72,7 @@ public class ItemBuilder {
 			ItemMeta meta = stack.getItemMeta();
 			if (displayName != null) meta.setDisplayName(displayName);
 			if (lore != null) meta.setLore(lore);
-			if (unbreakable != null) meta.setUnbreakable(unbreakable);
+			if (unbreakable != null && ServerVersion.isAboveOrEqual(NMSVersion.v1_11_R1)) meta.setUnbreakable(unbreakable);
 			stack.setItemMeta(meta);
 		}
 		return stack;

@@ -16,6 +16,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "테러리스트", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 자신의 주위에 §cTNT §f$[CountConfig] X 2개를 소환합니다. $[COOLDOWN_CONFIG]",
@@ -57,9 +58,9 @@ public class Terrorist extends AbilityBase implements ActiveHandler {
 	private final Circle circle = Circle.of(10, count);
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!cooldownTimer.isCooldown()) {
 					Location center = getPlayer().getLocation();
 
@@ -80,12 +81,10 @@ public class Terrorist extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(onlyRelevant = true)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getEntity().equals(getPlayer())) {
-			if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-				e.setCancelled(true);
-			}
+		if (e.getCause().equals(DamageCause.BLOCK_EXPLOSION) || e.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
+			e.setCancelled(true);
 		}
 	}
 

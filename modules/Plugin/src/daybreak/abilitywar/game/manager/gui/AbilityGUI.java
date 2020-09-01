@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -11,19 +12,16 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.base.RegexReplacer;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
-import java.lang.reflect.Field;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
+import daybreak.abilitywar.utils.library.MaterialX;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.regex.MatchResult;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -44,23 +42,17 @@ import org.bukkit.plugin.Plugin;
  */
 public class AbilityGUI implements Listener, Observer {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	private static final ItemStack REMOVE_ABILITY = new ItemBuilder()
-			.type(Material.BARRIER)
+	private static final ItemStack REMOVE_ABILITY = new ItemBuilder(MaterialX.BARRIER)
 			.displayName(ChatColor.RED + "능력 제거")
 			.build();
-
-	private static final RegexReplacer SQUARE_BRACKET = new RegexReplacer("\\$\\[([^\\[\\]]+)\\]");
-	private static final RegexReplacer ROUND_BRACKET = new RegexReplacer("\\$\\(([^\\(\\)]+)\\)");
 
 	private final Player player;
 	private final Participant target;
@@ -84,8 +76,13 @@ public class AbilityGUI implements Listener, Observer {
 	private final Map<String, AbilityRegistration> values;
 	private int currentPage = 1;
 	private Inventory abilityGUI;
+	private CompletableFuture<Void> asyncWork;
 
 	public void openGUI(int page) {
+		if (asyncWork != null) {
+			asyncWork.cancel(true);
+			this.asyncWork = null;
+		}
 		int maxPage = ((values.size() - 1) / 36) + 1;
 		if (maxPage < page)
 			page = 1;
@@ -97,38 +94,22 @@ public class AbilityGUI implements Listener, Observer {
 
 		for (Entry<String, AbilityRegistration> entry : values.entrySet()) {
 			if (count / 36 == page - 1) {
-				AbilityRegistration registration = entry.getValue();
-				AbilityManifest manifest = registration.getManifest();
-				ItemStack stack = new ItemStack(Material.IRON_BLOCK);
-				ItemMeta meta = stack.getItemMeta();
+				final AbilityRegistration registration = entry.getValue();
+				final AbilityManifest manifest = registration.getManifest();
+				final ItemStack stack = MaterialX.WHITE_STAINED_GLASS.createItem();
+				final ItemMeta meta = stack.getItemMeta();
 				meta.setDisplayName("§b" + manifest.name());
-				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+				final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
 				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
-				List<String> lore = Messager.asList(
+				final List<String> lore = Messager.asList(
 						"§f등급: " + manifest.rank().getRankName(),
 						"§f종류: " + manifest.species().getSpeciesName(),
 						joiner.toString(),
 						"");
-				Function<MatchResult, String> valueProvider = new Function<MatchResult, String>() {
-					@Override
-					public String apply(MatchResult matchResult) {
-						try {
-							final Field field = registration.getAbilityClass().getDeclaredField(matchResult.group(1));
-							if (Modifier.isStatic(field.getModifiers())) {
-								try {
-									return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
-								} catch (IllegalAccessException ignored) {
-								}
-							}
-						} catch (NoSuchFieldException ignored) {
-						}
-						return "?";
-					}
-				};
-				for (String explain : manifest.explain()) {
-					lore.add(ChatColor.WHITE.toString().concat(ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(explain, valueProvider), valueProvider)));
+				for (final String line : registration.getManifest().explain()) {
+					lore.add(ChatColor.WHITE.toString().concat(line));
 				}
 				lore.add("");
 				lore.add("§2» §f이 능력을 부여하려면 클릭하세요.");
@@ -137,6 +118,46 @@ public class AbilityGUI implements Listener, Observer {
 				abilityGUI.setItem(count % 36, stack);
 			}
 			count++;
+		}
+
+		{
+			final int finalPage = page;
+			this.asyncWork = CompletableFuture.runAsync(new Runnable() {
+				@Override
+				public void run() {
+					int count = 0;
+
+					for (Entry<String, AbilityRegistration> entry : values.entrySet()) {
+						if (currentPage != finalPage) break;
+						if (count / 36 == finalPage - 1) {
+							final AbilityRegistration registration = entry.getValue();
+							final AbilityManifest manifest = registration.getManifest();
+							final ItemStack stack = new ItemStack(Material.IRON_BLOCK);
+							final ItemMeta meta = stack.getItemMeta();
+							meta.setDisplayName("§b" + manifest.name());
+							final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+							if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
+							if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+							if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
+							final List<String> lore = Messager.asList(
+									"§f등급: " + manifest.rank().getRankName(),
+									"§f종류: " + manifest.species().getSpeciesName(),
+									joiner.toString(),
+									"");
+							for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
+								lore.add(ChatColor.WHITE.toString().concat(iterator.next()));
+							}
+							lore.add("");
+							lore.add("§2» §f이 능력을 부여하려면 클릭하세요.");
+							meta.setLore(lore);
+							stack.setItemMeta(meta);
+							if (currentPage != finalPage) break;
+							abilityGUI.setItem(count % 36, stack);
+						}
+						count++;
+					}
+				}
+			});
 		}
 
 		abilityGUI.setItem(45, REMOVE_ABILITY);
@@ -175,11 +196,12 @@ public class AbilityGUI implements Listener, Observer {
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
 		if (e.getInventory().equals(abilityGUI)) {
-			Player p = (Player) e.getWhoClicked();
+			final Player p = (Player) e.getWhoClicked();
+			final ItemStack currentItem = e.getCurrentItem();
 			e.setCancelled(true);
-			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName()) {
-				if (e.getCurrentItem().getType().equals(Material.IRON_BLOCK)) {
-					AbilityRegistration registration = values.get(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
+			if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
+				if (currentItem.getType().equals(Material.IRON_BLOCK) || MaterialX.WHITE_STAINED_GLASS.compare(currentItem)) {
+					AbilityRegistration registration = values.get(ChatColor.stripColor(currentItem.getItemMeta().getDisplayName()));
 					try {
 						if (registration != null) {
 							if (GameManager.isGameRunning()) {
@@ -201,11 +223,11 @@ public class AbilityGUI implements Listener, Observer {
 					}
 					p.closeInventory();
 				} else {
-					if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
+					if (currentItem.getItemMeta().getDisplayName().equals(ChatColor.AQUA + "이전 페이지")) {
 						openGUI(currentPage - 1);
-					} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.AQUA + "다음 페이지")) {
+					} else if (currentItem.getItemMeta().getDisplayName().equals(ChatColor.AQUA + "다음 페이지")) {
 						openGUI(currentPage + 1);
-					} else if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.RED + "능력 제거")) {
+					} else if (currentItem.getItemMeta().getDisplayName().equals(ChatColor.RED + "능력 제거")) {
 						if (GameManager.isGameRunning()) {
 							AbstractGame game = GameManager.getGame();
 							if (target != null) {

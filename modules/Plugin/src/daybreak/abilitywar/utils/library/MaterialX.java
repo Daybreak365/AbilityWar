@@ -23,6 +23,7 @@
 package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Preconditions;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -1486,6 +1487,21 @@ public enum MaterialX {
         if (ServerVersion.getVersion() < 13 && !this.isDamageable()) item.setDurability(this.data);
         return item;
     }
+
+	/**
+	 * Parses an item from this XMaterial.
+	 * Uses data values on older versions.
+	 *
+	 * @return an ItemStack with the same material (and data value if in older versions.)
+	 * @see #setType(ItemStack)
+	 * @since 2.0.0
+	 */
+	@SuppressWarnings("deprecation")
+	public ItemStack createItem(final int amount) {
+		Objects.requireNonNull(material, "Unsupported material: " + this.name() + " (" + data + '\'');
+		Preconditions.checkArgument(amount > 0, "amount must be greater than 0");
+		return ServerVersion.getVersion() >= 13 ? new ItemStack(material, amount) : new ItemStack(material, amount, this.data);
+	}
 
 	/**
 	 * Parses an item from this XMaterial.

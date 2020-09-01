@@ -157,4 +157,8 @@ public class AddonClassLoader extends URLClassLoader {
 		return pluginFile;
 	}
 
+	public Addon getAddon() {
+		return addon;
+	}
+
 }

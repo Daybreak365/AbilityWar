@@ -5,14 +5,13 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.CustomSkullBuilder;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.CustomSkullBuilder;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,21 +23,21 @@ import org.bukkit.plugin.Plugin;
 public class GameWizard extends SettingWizard {
 
 	private final ItemStack AUTO_SKIP = new CustomSkullBuilder("dd993b8c13588919b9f8b42db065d5adfe78af182815b4e6f0f91ba683deac9").displayName("§b자동 스킵").build(),
-			WRECK = new ItemBuilder().type(MaterialX.NETHER_STAR).displayName("§bWRECK").build(),
-			SHIELD_COOLDOWN = new ItemBuilder().type(Material.SHIELD).displayName("§b방패 쿨타임").build(),
-			BOW_COOLDOWN = new ItemBuilder().type(MaterialX.SPECTRAL_ARROW).displayName("§b활 쿨타임").build(),
-			ARROW_DAMAGE = new ItemBuilder().type(MaterialX.BOW).displayName("§b화살 거리 비례 대미지").build(),
-			FOOD = new ItemBuilder().type(MaterialX.COOKED_BEEF).displayName("§b배고픔 무제한").build(),
-			LEVEL = new ItemBuilder().type(MaterialX.EXPERIENCE_BOTTLE).displayName("§b초반 지급 레벨").build(),
-			DURABILITY = new ItemBuilder().type(MaterialX.IRON_CHESTPLATE).displayName("§b내구도 무한").build(),
-			ZEROTICK = new ItemBuilder().type(MaterialX.DIAMOND_SWORD).displayName("§b제로틱").build(),
-			FIREWALL = new ItemBuilder().type(MaterialX.BARRIER).displayName("§b방화벽").build(),
-			TEAMGAME = new ItemBuilder().type(Material.CAKE).displayName("§b팀 게임").build(),
-			CLEAR_WEATHER = new ItemBuilder().type(MaterialX.SNOWBALL).displayName("§b맑은 날씨 고정").build(),
-			VISUALEFFECT = new ItemBuilder().type(MaterialX.BLAZE_POWDER).displayName("§b시각 효과").build(),
-			DURATION_TIMER_BEHAVIOR = new ItemBuilder().type(MaterialX.CLOCK).displayName("§b지속 타이머 작업").build(),
-			ABILITY_DRAW = new ItemBuilder().type(MaterialX.DISPENSER).displayName("§b능력 추첨").build(),
-			MAXHEALTH = new ItemBuilder().type(MaterialX.GOLDEN_APPLE).displayName("§b기본 최대 체력").build();
+			WRECK = new ItemBuilder(MaterialX.NETHER_STAR).displayName("§bWRECK").build(),
+			SHIELD_COOLDOWN = new ItemBuilder(MaterialX.SHIELD).displayName("§b방패 쿨타임").build(),
+			BOW_COOLDOWN = new ItemBuilder(MaterialX.SPECTRAL_ARROW).displayName("§b활 쿨타임").build(),
+			ARROW_DAMAGE = new ItemBuilder(MaterialX.BOW).displayName("§b화살 거리 비례 대미지").build(),
+			FOOD = new ItemBuilder(MaterialX.COOKED_BEEF).displayName("§b배고픔 무제한").build(),
+			LEVEL = new ItemBuilder(MaterialX.EXPERIENCE_BOTTLE).displayName("§b초반 지급 레벨").build(),
+			DURABILITY = new ItemBuilder(MaterialX.IRON_CHESTPLATE).displayName("§b내구도 무한").build(),
+			ZEROTICK = new ItemBuilder(MaterialX.DIAMOND_SWORD).displayName("§b제로틱").build(),
+			FIREWALL = new ItemBuilder(MaterialX.BARRIER).displayName("§b방화벽").build(),
+			TEAMGAME = new ItemBuilder(MaterialX.CAKE).displayName("§b팀 게임").build(),
+			CLEAR_WEATHER = new ItemBuilder(MaterialX.SNOWBALL).displayName("§b맑은 날씨 고정").build(),
+			VISUALEFFECT = new ItemBuilder(MaterialX.BLAZE_POWDER).displayName("§b시각 효과").build(),
+			DURATION_TIMER_BEHAVIOR = new ItemBuilder(MaterialX.CLOCK).displayName("§b지속 타이머 작업").build(),
+			ABILITY_DRAW = new ItemBuilder(MaterialX.DISPENSER).displayName("§b능력 추첨").build(),
+			MAXHEALTH = new ItemBuilder(MaterialX.GOLDEN_APPLE).displayName("§b기본 최대 체력").build();
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, "§2§l게임 진행 설정", plugin);

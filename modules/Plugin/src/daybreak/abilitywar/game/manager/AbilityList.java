@@ -130,6 +130,7 @@ public class AbilityList {
 		registerAbility(SurvivalInstinct.class);
 		registerAbility(Synchronize.class);
 		registerAbility(Ghoul.class);
+		registerAbility(Swap.class);
 	}
 
 	/**

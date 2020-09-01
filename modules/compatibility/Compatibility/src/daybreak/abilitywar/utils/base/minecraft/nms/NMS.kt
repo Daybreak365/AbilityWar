@@ -84,8 +84,8 @@ class NMS private constructor() {
 		}
 
 		@JvmStatic
-		override fun removeArrow(player: Player) {
-			INSTANCE.removeArrow(player)
+		override fun setArrowsInBody(player: Player, count: Int) {
+			INSTANCE.setArrowsInBody(player, count)
 		}
 
 		@JvmStatic
@@ -101,6 +101,11 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun hasCooldown(player: Player, material: Material): Boolean {
 			return INSTANCE.hasCooldown(player, material)
+		}
+
+		@JvmStatic
+		override fun getCooldown(player: Player, material: Material): Int {
+			return INSTANCE.getCooldown(player, material)
 		}
 
 		@JvmStatic

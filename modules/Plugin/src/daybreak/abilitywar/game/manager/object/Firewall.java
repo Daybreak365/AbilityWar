@@ -66,18 +66,15 @@ public class Firewall implements Listener, Observer {
 
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent e) {
-		Player p = e.getPlayer();
 		if (Settings.getFirewall()) {
 			for (Predicate<Player> predicate : predicates) {
-				if (!predicate.test(p)) return;
+				if (!predicate.test(e.getPlayer())) return;
 			}
-			e.disallow(Result.KICK_OTHER, "§2《§aAbilityWar§2》"
-					+ "\n" + "§f게임 진행중이므로 접속할 수 없습니다.");
+			e.disallow(Result.KICK_OTHER, "§2《§aAbilityWar§2》" + "\n" + "§f게임 진행 중이므로 접속할 수 없습니다.");
 		}
 		if (DeathSettings.getOperation().equals(OnDeath.탈락)) {
-			if (handler.getDeathManager().isExcluded(p) && !p.isOp()) {
-				e.disallow(Result.KICK_OTHER, "§2《§aAbilityWar§2》"
-						+ "\n" + "§f탈락하셨습니다.");
+			if (handler.getDeathManager().isExcluded(e.getPlayer()) && !e.getPlayer().isOp()) {
+				e.disallow(Result.KICK_OTHER, "§2《§aAbilityWar§2》" + "\n" + "§f탈락하셨습니다.");
 			}
 		}
 	}

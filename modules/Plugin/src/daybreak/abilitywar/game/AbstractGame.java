@@ -11,6 +11,7 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.config.game.GameSettings;
+import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
@@ -19,6 +20,7 @@ import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.event.EventManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Hashes;
+import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.io.FileUtil;
@@ -47,6 +49,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -54,6 +57,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractGame extends SimpleTimer implements IGame, Listener, CommandHandler {
 
@@ -241,10 +245,11 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 		private final Attributes attributes = new Attributes();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
-		private Player player;
+		@NotNull private Player player;
 		private final Listener listener;
+		protected AbilityBase ability;
 
-		protected Participant(Player player) {
+		protected Participant(@NotNull Player player) {
 			this.player = player;
 			this.listener = new Listener() {
 
@@ -259,15 +264,17 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 				@EventHandler
 				public void onPlayerInteract(PlayerInteractEvent e) {
+					if (e.useItemInHand() == Result.DENY || e.getAction() == Action.PHYSICAL) return;
 					final Player player = e.getPlayer();
 					if (player.equals(getPlayer()) && hasAbility()) {
 						final AbilityBase ability = getAbility();
 						if (ability instanceof ActiveHandler && !ability.isRestricted()) {
 							final Material material = player.getInventory().getItemInMainHand().getType();
-							final ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
+							if (NMS.hasCooldown(player, material)) return;
 							if (ability.usesMaterial(material)) {
 								final long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
+									final ClickType clickType = e.getAction().equals(Action.RIGHT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) ? ClickType.RIGHT_CLICK : ClickType.LEFT_CLICK;
 									final AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(ability, material, clickType);
 									Bukkit.getPluginManager().callEvent(preEvent);
 									if (!preEvent.isCancelled()) {
@@ -285,11 +292,13 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 				@EventHandler
 				public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent e) {
-					Player player = e.getPlayer();
+					if (e.isCancelled()) return;
+					final Player player = e.getPlayer();
 					if (player.equals(getPlayer()) && !e.isCancelled() && hasAbility()) {
-						AbilityBase ability = getAbility();
+						final AbilityBase ability = getAbility();
 						if ((ability instanceof ActiveHandler || ability instanceof TargetHandler) && !ability.isRestricted()) {
-							Material material = player.getInventory().getItemInMainHand().getType();
+							final Material material = player.getInventory().getItemInMainHand().getType();
+							if (NMS.hasCooldown(player, material)) return;
 							if (ability.usesMaterial(material)) {
 								long current = System.currentTimeMillis();
 								if (current - lastClick >= 250) {
@@ -333,8 +342,6 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 				HandlerList.unregisterAll(listener);
 			}
 		}
-
-		protected AbilityBase ability;
 
 		/**
 		 * 플레이어에게 새 능력을 부여합니다.
@@ -393,6 +400,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			return ability;
 		}
 
+		@NotNull
 		public Player getPlayer() {
 			return player;
 		}
@@ -550,12 +558,12 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 	}
 
-	private final Set<GameTimer> runningTimers = new HashSet<>();
+	private final Set<GameTimer> runningTimers = new QueueOnIterateHashSet<>();
 
 	/**
 	 * 현재 실행중인 모든 {@link GameTimer}를 반환합니다.
 	 */
-	public final Collection<GameTimer> getRunningTimers() {
+	public final Set<GameTimer> getRunningTimers() {
 		return Collections.unmodifiableSet(runningTimers);
 	}
 
@@ -564,8 +572,8 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	 *
 	 * @param type 종료할 타이머 타입
 	 */
-	public final void  stopTimers(Class<? extends GameTimer> type) {
-		for (GameTimer gameTimer : new HashSet<>(runningTimers)) {
+	public final void stopTimers(final @NotNull Class<? extends GameTimer> type) {
+		for (GameTimer gameTimer : runningTimers) {
 			if (type.isAssignableFrom(gameTimer.getClass())) {
 				gameTimer.stop(false);
 			}
@@ -576,14 +584,14 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	 * 현재 실행중인 {@link GameTimer}를 모두 종료합니다.
 	 */
 	public final void stopTimers() {
-		for (GameTimer gameTimer : new HashSet<>(runningTimers)) {
+		for (GameTimer gameTimer : runningTimers) {
 			gameTimer.stop(true);
 		}
 	}
 
 	public abstract class GameTimer extends SimpleTimer {
 
-		public GameTimer(TaskType taskType, int maximumCount) {
+		public GameTimer(final @NotNull TaskType taskType, final int maximumCount) {
 			super(taskType, maximumCount);
 			attachObserver(new SimpleTimer.Observer() {
 				@Override
@@ -609,14 +617,21 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			});
 		}
 
-		public GameTimer setInitialDelay(TimeUnit timeUnit, int initialDelay) {
+		@NotNull
+		public GameTimer setInitialDelay(@NotNull TimeUnit timeUnit, int initialDelay) {
 			super.setInitialDelay(timeUnit, initialDelay);
 			return this;
 		}
 
-		public GameTimer setPeriod(TimeUnit timeUnit, int period) {
+		@NotNull
+		public GameTimer setPeriod(@NotNull TimeUnit timeUnit, int period) {
 			super.setPeriod(timeUnit, period);
 			return this;
+		}
+
+		@NotNull
+		public AbstractGame getGame() {
+			return AbstractGame.this;
 		}
 
 	}
@@ -814,6 +829,40 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 				return CustomEntity.this.getLocation();
 			}
 
+		}
+
+	}
+
+	public abstract class Effect extends GameTimer {
+
+		private final ActionbarChannel channel;
+		private final String displayName;
+
+		protected Effect(final Participant participant, final String displayName, final TaskType taskType, final int maximumCount) {
+			super(taskType, maximumCount);
+			this.channel = participant.actionbar().newChannel();
+			this.displayName = displayName;
+		}
+
+		@Override
+		public boolean start() {
+			if (!channel.isValid()) return false;
+			return super.start();
+		}
+
+		@Override
+		protected void run(int count) {
+			channel.update(displayName + "§7: §f" + (count / (20.0 / getPeriod())) + "초");
+		}
+
+		@Override
+		protected void onEnd() {
+			channel.unregister();
+		}
+
+		@Override
+		protected void onSilentEnd() {
+			channel.unregister();
 		}
 
 	}

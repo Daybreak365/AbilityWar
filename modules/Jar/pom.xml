@@ -92,6 +92,12 @@
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>daybreak.abilitywar</groupId>
+			<artifactId>v1_16_R2</artifactId>
+			<version>${revision}</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

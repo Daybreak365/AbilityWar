@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "영혼 잠식", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 마지막으로 타격했던 플레이어가 $[DistanceConfig]칸 이내에 있는 경우에 한하여",
@@ -286,8 +287,8 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown() && !skillTimer.isDuration()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown() && !skillTimer.isDuration()) {
 			if (lastVictim != null) {
 				if (getGame().getParticipant(lastVictim).attributes().TARGETABLE.getValue()) {
 					final double distanceSquared = getPlayer().getWorld().equals(lastVictim.getWorld()) ? getPlayer().getLocation().distanceSquared(lastVictim.getLocation()) : Double.MAX_VALUE;

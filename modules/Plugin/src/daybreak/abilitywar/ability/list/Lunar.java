@@ -9,9 +9,9 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -42,6 +42,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "루나", rank = Rank.A, species = Species.OTHERS, explain = {
 		"생명체를 근접 공격할 때마다 해당 생명체에게 §e표식§f을 부여하고",
@@ -185,7 +186,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			if (isNight(getPlayer().getWorld().getTime())) {
 				new LunarSkill(6).start();
@@ -278,7 +279,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 			super(30);
 			setPeriod(TimeUnit.TICKS, 4);
 			this.entity = entity;
-			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 5 - stack)));
+			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§e✦", stack).concat(Strings.repeat("§e✧", 5 - stack)));
 			hologram.display(getPlayer());
 			stackMap.put(entity.getUniqueId(), this);
 			addStack();

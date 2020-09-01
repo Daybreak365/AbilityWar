@@ -17,11 +17,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(name = "데미갓", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"공격을 받으면 $[ChanceConfig]% 확률로 5초간 임의의 버프가 적용됩니다."
+		"공격을 받으면 $[CHANGE_CONFIG]% 확률로 5초간 임의의 버프가 적용됩니다."
 })
 public class Demigod extends AbilityBase {
 
-	public static final SettingObject<Integer> ChanceConfig = abilitySettings.new SettingObject<Integer>(Demigod.class, "Chance", 30,
+	public static final SettingObject<Integer> CHANGE_CONFIG = abilitySettings.new SettingObject<Integer>(Demigod.class, "Chance", 30,
 			"# 공격을 받았을 시 몇 퍼센트 확률로 랜덤 버프를 받을지 설정합니다.",
 			"# 30은 30%를 의미합니다.") {
 
@@ -36,7 +36,7 @@ public class Demigod extends AbilityBase {
 		super(participant);
 	}
 
-	private final int chance = ChanceConfig.getValue();
+	private final int chance = CHANGE_CONFIG.getValue();
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

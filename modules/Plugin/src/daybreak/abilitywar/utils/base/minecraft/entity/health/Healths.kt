@@ -1,6 +1,6 @@
-package daybreak.abilitywar.utils.base.minecraft.health
+package daybreak.abilitywar.utils.base.minecraft.entity.health
 
-import daybreak.abilitywar.utils.base.minecraft.health.event.PlayerSetHealthEvent
+import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent
 import org.bukkit.Bukkit
 import org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH
 import org.bukkit.entity.Player

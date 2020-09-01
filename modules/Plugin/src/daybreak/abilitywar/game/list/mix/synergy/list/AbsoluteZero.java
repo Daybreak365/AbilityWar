@@ -54,6 +54,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "절대 영도", rank = Rank.S, species = Species.OTHERS, explain = {
 		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[LeftCOOLDOWN_CONFIG]",
@@ -238,9 +239,9 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.LEFT_CLICK)) {
+			if (clickType == ClickType.LEFT_CLICK) {
 				if (!cooldownTimer.isCooldown()) {
 					FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
 						@Override
@@ -275,7 +276,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 					cooldownTimer.start();
 					return true;
 				}
-			} else if (clickType.equals(ClickType.RIGHT_CLICK)) {
+			} else if (clickType == ClickType.RIGHT_CLICK) {
 				if (!yetiCooldownTimer.isCooldown()) {
 					iceMaker.start();
 					yetiCooldownTimer.start();

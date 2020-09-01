@@ -25,7 +25,6 @@ import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,10 +45,7 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
-	@SuppressWarnings("deprecation")
-	private final Objective lifeObjective = ServerVersion.getVersion() >= 13 ?
-			getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy", "§c생명")
-			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
+	private final Objective lifeObjective = getScoreboardManager().registerNewObjective("생명", "dummy", "§c생명");
 
 	private final MixAbilityChanger changer = new MixAbilityChanger(this);
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
@@ -208,7 +204,6 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 				startGame();
 				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
 				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-				if (ServerVersion.getVersion() < 13) lifeObjective.setDisplayName("§c생명");
 				for (Members team : getTeams()) {
 					lifeObjective.getScore(getScoreboardName(team)).setScore(maxLife);
 				}

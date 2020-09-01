@@ -5,10 +5,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.Provider;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
+import daybreak.abilitywar.addon.AddonClassLoader;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -41,9 +44,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * {@link AbilityBase}를 기반으로 하는 모든 능력을 관리하는 클래스입니다.
@@ -133,6 +136,8 @@ public class AbilityFactory {
 		registerAbility(Synchronize.class);
 		// v2.2.2
 		registerAbility(Ghoul.class);
+		// v2.2.3
+		registerAbility(Swap.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -173,8 +178,6 @@ public class AbilityFactory {
 				} else {
 					logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 				}
-			} catch (NoSuchMethodException | NullPointerException | IllegalArgumentException e) {
-				logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? (ChatColor.YELLOW + abilityClass.getName() + ChatColor.WHITE + ": " + e.getMessage()) : ("§e" + abilityClass.getName() + " §f능력 등록 중 오류가 발생하였습니다."));
 			} catch (IllegalAccessException e) {
 				logger.error(abilityClass.getName() + " 능력 클래스에 public 생성자가 존재하지 않습니다.");
 			} catch (VersionNotSupportedException e) {
@@ -186,18 +189,6 @@ public class AbilityFactory {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static AbilityRegistration getRegistration(Class<? extends AbilityBase> clazz) {
-		return registeredAbilities.get(clazz);
-	}
-
-	public static boolean isRegistered(Class<? extends AbilityBase> clazz) {
-		return registeredAbilities.containsKey(clazz);
-	}
-
-	public static boolean isRegistered(String name) {
-		return usedNames.containsKey(name);
 	}
 
 	/**
@@ -218,6 +209,18 @@ public class AbilityFactory {
 		} catch (ClassCastException e) {
 			logger.error("§e" + className + " §f클래스는 AbilityBase를 확장하지 않습니다.");
 		}
+	}
+
+	public static AbilityRegistration getRegistration(Class<? extends AbilityBase> clazz) {
+		return registeredAbilities.get(clazz);
+	}
+
+	public static boolean isRegistered(Class<? extends AbilityBase> clazz) {
+		return registeredAbilities.containsKey(clazz);
+	}
+
+	public static boolean isRegistered(String name) {
+		return usedNames.containsKey(name);
 	}
 
 	/**
@@ -247,12 +250,14 @@ public class AbilityFactory {
 		private static final ImmutableSet<Material> DEFAULT_MATERIALS = ImmutableSet.of(Material.IRON_INGOT);
 
 		private final Class<? extends AbilityBase> clazz;
+		private final Provider provider;
 		private final Constructor<? extends AbilityBase> constructor;
 		private final AbilityManifest manifest;
 		private final Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 		private final Map<String, SettingObject<?>> settingObjects;
 		private final ImmutableSet<Material> materials;
 		private final ImmutableSet<Class<? extends AbstractGame>> notAvailable;
+		private final Explanation explain;
 		private final int flag;
 
 
@@ -277,6 +282,32 @@ public class AbilityFactory {
 			Preconditions.checkNotNull(manifest.name());
 			Preconditions.checkNotNull(manifest.rank());
 			Preconditions.checkNotNull(manifest.species());
+
+			if (clazz.getClassLoader() instanceof AddonClassLoader) {
+				this.provider = ((AddonClassLoader) clazz.getClassLoader()).getAddon();
+			} else {
+				Provider provider;
+				try {
+					final JavaPlugin javaPlugin = JavaPlugin.getProvidingPlugin(clazz);
+					if (javaPlugin instanceof AbilityWar) {
+						provider = AbilityWar.getPlugin();
+					} else {
+						provider = new Provider() {
+							@Override
+							public Object getInstance() {
+								return javaPlugin;
+							}
+							@Override
+							public String getName() {
+								return javaPlugin.getName();
+							}
+						};
+					}
+				} catch (IllegalArgumentException e) {
+					provider = AbilityWar.getPlugin();
+				}
+				this.provider = provider;
+			}
 
 			{
 				final Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = HashMultimap.create();
@@ -314,6 +345,8 @@ public class AbilityFactory {
 			final NotAvailable notAvailable = clazz.getAnnotation(NotAvailable.class);
 			this.notAvailable = notAvailable != null ? ImmutableSet.<Class<? extends AbstractGame>>builder().add(notAvailable.value()).build() : ImmutableSet.of();
 
+			this.explain = new Explanation();
+
 			int flag = 0x0;
 			if (ActiveHandler.class.isAssignableFrom(clazz)) flag |= Flag.ACTIVE_SKILL;
 			if (TargetHandler.class.isAssignableFrom(clazz)) flag |= Flag.TARGET_SKILL;
@@ -323,6 +356,10 @@ public class AbilityFactory {
 
 		public Class<? extends AbilityBase> getAbilityClass() {
 			return clazz;
+		}
+
+		public Provider getProvider() {
+			return provider;
 		}
 
 		public Constructor<? extends AbilityBase> getConstructor() {
@@ -354,6 +391,10 @@ public class AbilityFactory {
 			return true;
 		}
 
+		public Explanation getExplain() {
+			return explain;
+		}
+
 		public boolean hasFlag(int flag) {
 			return (this.flag & flag) == flag;
 		}
@@ -362,6 +403,24 @@ public class AbilityFactory {
 			public static final int ACTIVE_SKILL = 0x1;
 			public static final int TARGET_SKILL = 0x2;
 			public static final int BETA = 0x4;
+		}
+
+		public class Explanation {
+
+			private final boolean[] needsReplace;
+
+			private Explanation() {
+				this.needsReplace = new boolean[manifest.explain().length];
+				final String[] explain = manifest.explain();
+				for (int i = 0; i < explain.length; i++) {
+					needsReplace[i] = explain[i].contains("$");
+				}
+			}
+
+			public boolean needsReplace(final int index) {
+				return needsReplace[index];
+			}
+
 		}
 
 	}

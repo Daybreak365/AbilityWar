@@ -28,14 +28,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "스토커", rank = Rank.A, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 다른 플레이어가 타게팅할 수 없고 벽을 통과할 수 있는",
-		"상태로 변하여 마지막으로 타격했던 플레이어에게 돌진합니다. $[COOLDOWN_CONFIG]",
-		"동일한 플레이어를 계속 공격하면 §c스택§f이 쌓이며 §8실명 §f효과를 주고,",
-		"다른 플레이어를 공격하면 §c스택§f이 초기화됩니다. 플레이어를 공격할 때마다",
-		"스킬 쿨타임이 §c스택 §f만큼 감소하며, §c1 스택 §f당 §60.15§f의 추가 대미지를 냅니다.",
-		"철괴를 좌클릭하면 마지막으로 타격한 대상의 위치로 조금 돌진합니다. $[LEFT_COOLDOWN_CONFIG]"
+		"§7패시브 §8- §c오직 너만을§f: 같은 플레이어를 계속 공격하면 스택이 쌓이며 §8실명 §f효과를",
+		"§f줍니다. 스택이 쌓일 때마다 다른 모든 스킬의 쿨타임이 스택만큼 감소하며, 대상",
+		"§f플레이어에게 주는 추가 대미지가 0.15씩 증가합니다.",
+		"§7철괴 우클릭 §8- §c오직 나만이§f: 순간 벽을 통과할 수 있고 타게팅되지 않는 상태로",
+		"§f변하여 마지막으로 타격한 플레이어에게 빠르게 돌진합니다. $[COOLDOWN_CONFIG]",
+		"§7철괴 좌클릭 §8- §c간 보기§f: 마지막으로 타격한 플레이어에게 작게",
+		"§f돌진합니다. $[LEFT_COOLDOWN_CONFIG]"
 })
 public class Stalker extends AbilityBase implements ActiveHandler {
 
@@ -130,7 +132,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
 			if (clickType == ClickType.RIGHT_CLICK) {
 				if (cooldownTimer.isCooldown()) return false;

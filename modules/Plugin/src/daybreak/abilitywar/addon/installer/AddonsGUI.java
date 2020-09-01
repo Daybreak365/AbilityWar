@@ -8,8 +8,8 @@ import daybreak.abilitywar.addon.installer.info.AddonInfo.Link;
 import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,18 +34,15 @@ import org.bukkit.plugin.Plugin;
 
 public class AddonsGUI implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	private static final ItemStack QUIT = new ItemBuilder()
-			.type(MaterialX.SPRUCE_DOOR)
+	private static final ItemStack QUIT = new ItemBuilder(MaterialX.SPRUCE_DOOR)
 			.displayName(ChatColor.DARK_AQUA + "나가기")
 			.build();
 

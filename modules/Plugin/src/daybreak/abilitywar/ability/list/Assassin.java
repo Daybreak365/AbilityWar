@@ -20,15 +20,16 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "암살자", rank = Rank.A, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 $[DistanceConfig]칸 이내에 있는 생명체 $[TeleportCountConfig]명(마리)에게 이동하며",
-		"각각 $[DamageConfig]의 대미지를 줍니다. $[COOLDOWN_CONFIG]",
+		"철괴를 우클릭하면 $[DISTANCE_CONFIG]칸 이내에 있는 생명체 $[TELEPORT_COUNT_CONFIG]명(마리)에게 이동하며",
+		"각각 $[DAMAGE_CONFIG]의 대미지를 줍니다. $[COOLDOWN_CONFIG]",
 		"대미지를 받은 생명체는 3초간 추가로 출혈 피해를 입습니다."
 })
 public class Assassin extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Distance", 8,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "Distance", 8,
 			"# 스킬 대미지") {
 
 		@Override
@@ -38,7 +39,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "Damage", 8,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "Damage", 8,
 			"# 스킬 대미지") {
 
 		@Override
@@ -63,7 +64,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> TeleportCountConfig = abilitySettings.new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
+	public static final SettingObject<Integer> TELEPORT_COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
 			"# 능력 사용 시 텔레포트 횟수") {
 
 		@Override
@@ -99,21 +100,21 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private final int damage = DamageConfig.getValue();
-	private final int distance = DistanceConfig.getValue();
+	private final int damage = DAMAGE_CONFIG.getValue();
+	private final int distance = DISTANCE_CONFIG.getValue();
 	private LinkedList<LivingEntity> entities = null;
-	private final AbilityTimer skill = new AbilityTimer(TeleportCountConfig.getValue()) {
+	private final AbilityTimer skill = new AbilityTimer(TELEPORT_COUNT_CONFIG.getValue()) {
 
 		@Override
 		public void run(int count) {
 			if (entities != null) {
 				if (!entities.isEmpty()) {
-					LivingEntity e = entities.remove();
-					getPlayer().teleport(e);
-					e.damage(damage, getPlayer());
+					final LivingEntity target = entities.remove();
+					getPlayer().teleport(target);
+					target.damage(damage, getPlayer());
 					SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
-					Bleed.apply(getGame(), e, TimeUnit.SECONDS, 3);
+					Bleed.apply(getGame(), target, TimeUnit.SECONDS, 3);
 				} else {
 					stop(false);
 				}
@@ -123,8 +124,8 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 3).register();
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			this.entities = new LinkedList<>(LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate));
 			if (entities.size() > 0) {
 				skill.start();

@@ -14,7 +14,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(name = "해파리", rank = Rank.A, species = Species.ANIMAL, explain = {
-		"플레이어를 타격하면 대상을 $[DurationConfig]초간 움직이지 못하게 합니다."
+		"플레이어를 근접 공격하면 대상을 $[DurationConfig]초간 기절시켜 움직이지 못하게 합니다."
 })
 public class JellyFish extends AbilityBase {
 

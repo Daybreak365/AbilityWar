@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "호박", rank = Rank.C, species = Species.OTHERS, explain = {
 		"철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 $[DurationConfig]초간",
@@ -195,7 +196,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
 			durationTimer.start();
 			return true;

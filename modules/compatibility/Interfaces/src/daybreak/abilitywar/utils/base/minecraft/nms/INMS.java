@@ -31,11 +31,12 @@ public interface INMS {
 	void setLocation(Entity entity, double x, double y, double z, float yaw, float pitch);
 
 	void removeBoundingBox(ArmorStand armorStand);
-	void removeArrow(Player player);
+	void setArrowsInBody(Player player, int count);
 	void setInvisible(Player player, boolean invisible);
 
 	void setCooldown(Player player, Material material, int ticks);
 	boolean hasCooldown(Player player, Material material);
+	int getCooldown(Player player, Material material);
 
 	void fakeCollect(Entity entity, Item item);
 

@@ -20,17 +20,13 @@ public class Virus extends AbilityBase {
 		super(participant);
 	}
 
-	@SubscribeEvent
-	public void onPlayerDeath(ParticipantDeathEvent e) {
-		final Participant participant = e.getParticipant();
-		if (participant.equals(getParticipant())) {
-			Player killer = getPlayer().getKiller();
-			if (killer != null && GameManager.getGame().isParticipating(killer)) {
-				try {
-					getGame().getParticipant(killer).setAbility(Virus.class);
-				} catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
-				}
-			}
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerDeath(ParticipantDeathEvent e) {
+		Player killer = getPlayer().getKiller();
+		if (killer != null && GameManager.getGame().isParticipating(killer)) {
+			try {
+				getGame().getParticipant(killer).setAbility(Virus.class);
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {}
 		}
 	}
 

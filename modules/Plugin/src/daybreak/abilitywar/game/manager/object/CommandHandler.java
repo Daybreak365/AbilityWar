@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.manager.object;
 
+import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -51,8 +52,9 @@ public interface CommandHandler {
 					if (AbilityList.isRegistered(name)) {
 						if (args[0].equalsIgnoreCase("@a")) {
 							try {
+								final Class<? extends AbilityBase> clazz = AbilityList.getByString(name);
 								for (Participant participant : GameManager.getGame().getParticipants()) {
-									participant.setAbility(AbilityList.getByString(name));
+									participant.setAbility(clazz);
 								}
 								Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
 							} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {

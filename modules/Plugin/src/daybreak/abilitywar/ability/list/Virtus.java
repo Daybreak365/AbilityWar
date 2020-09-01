@@ -15,9 +15,13 @@ import org.bukkit.Material;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerVelocityEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "베르투스", rank = Rank.A, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 다음 $[DurationConfig]초간 받는 대미지가 75% 감소합니다. $[COOLDOWN_CONFIG]"
+		"철괴를 우클릭하면 다음 $[DurationConfig]초간 받는 대미지가 75% 감소합니다. $[COOLDOWN_CONFIG]",
+		"넉백 또는 끌어당겨지는 효과를 기본적으로 줄여 받으며, 능력 사용 중에는",
+		"효과가 증폭됩니다."
 })
 public class Virtus extends AbilityBase implements ActiveHandler {
 
@@ -55,13 +59,13 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 		@Override
 		public void run(int count) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());
-			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 3, 3, 3, 10);
+			ParticleLib.LAVA.spawnParticle(getPlayer().getLocation(), 1, 1, 1, 10);
 		}
 	}.register();
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			skill.start();
 			cooldownTimer.start();
 			return true;
@@ -70,24 +74,26 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 	}
 
 	@SubscribeEvent(onlyRelevant = true)
-	public void onEntityDamage(EntityDamageEvent e) {
+	private void onEntityDamage(final EntityDamageEvent e) {
 		if (skill.isRunning()) {
 			e.setDamage(e.getDamage() / 4);
+			SoundLib.ITEM_SHIELD_BLOCK.playSound(getPlayer());
 		}
 	}
 
 	@SubscribeEvent(onlyRelevant = true)
-	public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if (skill.isRunning()) {
-			e.setDamage(e.getDamage() / 4);
-		}
+	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
 	}
 
 	@SubscribeEvent(onlyRelevant = true)
-	public void onEntityDamage(EntityDamageByBlockEvent e) {
-		if (skill.isRunning()) {
-			e.setDamage(e.getDamage() / 4);
-		}
+	private void onEntityDamageByBlock(final EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerVelocity(final PlayerVelocityEvent e) {
+		e.setVelocity(e.getPlayer().getVelocity().multiply(skill.isRunning() ? .25 : .7));
 	}
 
 }

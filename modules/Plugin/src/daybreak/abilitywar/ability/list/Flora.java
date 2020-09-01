@@ -20,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "플로라", rank = Rank.A, species = Species.GOD, explain = {
 		"꽃과 풍요의 여신.",
@@ -115,9 +116,9 @@ public class Flora extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!cooldownTimer.isCooldown()) {
 					Player p = getPlayer();
 					if (type.equals(EffectType.SPEED)) {
@@ -130,7 +131,7 @@ public class Flora extends AbilityBase implements ActiveHandler {
 
 					cooldownTimer.start();
 				}
-			} else if (clickType.equals(ClickType.LEFT_CLICK)) {
+			} else if (clickType == ClickType.LEFT_CLICK) {
 				radius = radius.next();
 				getPlayer().sendMessage("§6범위 설정§f: " + radius.radius);
 			}

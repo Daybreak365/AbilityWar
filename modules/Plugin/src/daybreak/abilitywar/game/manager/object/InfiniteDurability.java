@@ -12,9 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 public class InfiniteDurability implements Listener, Observer {
 
@@ -22,6 +26,13 @@ public class InfiniteDurability implements Listener, Observer {
 	private static final Set<String> itemNames = ImmutableSet.of("BOW", "SHEARS", "FISHING_ROD", "FLINT_AND_STEEL");
 
 	private static final Set<Material> hasDurability;
+
+	private static final EquipmentSlot[] ARMOUR_SLOTS = {
+			EquipmentSlot.HEAD,
+			EquipmentSlot.CHEST,
+			EquipmentSlot.LEGS,
+			EquipmentSlot.FEET
+	};
 
 	static {
 		ImmutableSet.Builder<Material> builder = ImmutableSet.builder();
@@ -46,7 +57,7 @@ public class InfiniteDurability implements Listener, Observer {
 	}
 
 	@EventHandler
-	private void onItemDurability(PlayerInteractEvent e) {
+	private void onItemDurability(final PlayerInteractEvent e) {
 		if (e.getItem() != null) {
 			if (hasDurability.contains(e.getItem().getType())) {
 				ItemLib.setDurability(e.getItem(), (short) 0);
@@ -55,30 +66,27 @@ public class InfiniteDurability implements Listener, Observer {
 	}
 
 	@EventHandler
-	private void onArmorDurability(EntityDamageEvent e) {
+	private void onEntityDamage(final EntityDamageEvent e) {
 		if (e.getEntity() instanceof Player) {
-			final Player player = (Player) e.getEntity();
-			final ItemStack boots = player.getInventory().getBoots();
-			if (boots != null && hasDurability.contains(boots.getType())) {
-				ItemLib.setDurability(boots, (short) 0);
-				player.getInventory().setBoots(boots);
-			}
-			final ItemStack leggings = player.getInventory().getLeggings();
-			if (leggings != null && hasDurability.contains(leggings.getType())) {
-				ItemLib.setDurability(leggings, (short) 0);
-				player.getInventory().setLeggings(leggings);
-			}
-			final ItemStack chestplate = player.getInventory().getChestplate();
-			if (chestplate != null && hasDurability.contains(chestplate.getType())) {
-				ItemLib.setDurability(chestplate, (short) 0);
-				player.getInventory().setChestplate(chestplate);
-			}
-			final ItemStack helmet = player.getInventory().getHelmet();
-			if (helmet != null && hasDurability.contains(helmet.getType())) {
-				ItemLib.setDurability(helmet, (short) 0);
-				player.getInventory().setHelmet(helmet);
+			final PlayerInventory playerInventory = ((Player) e.getEntity()).getInventory();
+			for (final EquipmentSlot armourSlot : ARMOUR_SLOTS) {
+				final ItemStack stack = playerInventory.getItem(armourSlot);
+				if (stack != null && hasDurability.contains(stack.getType())) {
+					ItemLib.setDurability(stack, (short) 0);
+					playerInventory.setItem(armourSlot, stack);
+				}
 			}
 		}
+	}
+
+	@EventHandler
+	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
+		onEntityDamage(e);
+	}
+
+	@EventHandler
+	private void onEntityDamageByBlock(final EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
 	}
 
 	@Override

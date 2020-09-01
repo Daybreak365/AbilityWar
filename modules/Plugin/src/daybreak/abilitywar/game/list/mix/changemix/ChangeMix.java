@@ -25,7 +25,6 @@ import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +44,7 @@ import org.bukkit.scoreboard.Score;
 		"§f믹스, 그리고 체인지!",
 		"§f정신 없이 즐기는 두가지 게임의 조합",
 		"",
-		"§6● §f체인지 능력 전쟁 전용 콘피그가 적용됩니다. Config.yml을 확인해보세요."
+		"§6● §f체인지 능력 전쟁 전용 콘피그가 적용됩니다."
 })
 @GameAliases("체믹")
 @Beta
@@ -54,10 +53,7 @@ public class ChangeMix extends AbstractMix implements Winnable {
 
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
-	@SuppressWarnings("deprecation")
-	private final Objective lifeObjective = ServerVersion.getVersion() >= 13 ?
-			getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy", "§c생명")
-			: getScoreboardManager().getScoreboard().registerNewObjective("생명", "dummy");
+	private final Objective lifeObjective = getScoreboardManager().registerNewObjective("생명", "dummy", "§c생명");
 
 	private final MixAbilityChanger changer = new MixAbilityChanger(this);
 	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
@@ -113,8 +109,6 @@ public class ChangeMix extends AbstractMix implements Winnable {
 			case 7:
 				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");
 				lifeObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
-				if (ServerVersion.getVersion() < 13)
-					lifeObjective.setDisplayName("§c생명");
 				for (Participant p : getParticipants()) {
 					Score score = lifeObjective.getScore(p.getPlayer().getName());
 					score.setScore(maxLife);

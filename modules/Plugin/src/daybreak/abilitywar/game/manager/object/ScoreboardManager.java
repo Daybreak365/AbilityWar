@@ -4,8 +4,10 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
-import java.util.LinkedList;
-import java.util.List;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import java.util.HashSet;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,25 +15,52 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 public class ScoreboardManager implements Listener, Observer {
 
-	private final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-	private final List<Team> teams = new LinkedList<>();
+	private static final DisplaySlot[] SLOTS_TO_COPY = new DisplaySlot[]{DisplaySlot.BELOW_NAME, DisplaySlot.PLAYER_LIST};
+	private final Scoreboard scoreboard;
+	private final Set<Team> teams = new HashSet<>();
 
+	@SuppressWarnings("deprecation")
 	public ScoreboardManager(Game game) {
+		this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		game.attachObserver(this);
+		final Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+		for (final DisplaySlot displaySlot : SLOTS_TO_COPY) {
+			final Objective objective = mainScoreboard.getObjective(displaySlot);
+			if (objective != null) {
+				final Objective register = registerNewObjective(objective.getName(), objective.getCriteria(), objective.getDisplayName());
+				if (ServerVersion.isAboveOrEqual(NMSVersion.v1_13_R2)) {
+					register.setRenderType(objective.getRenderType());
+				}
+				register.setDisplaySlot(displaySlot);
+			}
+		}
 	}
 
 	public Scoreboard getScoreboard() {
 		return scoreboard;
 	}
 
+	@SuppressWarnings("deprecation")
+	public Objective registerNewObjective(final String name, final String criteria, final String displayName) {
+		if (ServerVersion.isAboveOrEqual(NMSVersion.v1_13_R1)) {
+			return scoreboard.registerNewObjective(name, criteria, displayName);
+		} else {
+			final Objective register = scoreboard.registerNewObjective(name, criteria);
+			register.setDisplayName(displayName);
+			return register;
+		}
+	}
+
 	public Team registerNewTeam(String name) {
-		Team team = scoreboard.registerNewTeam(name);
+		final Team team = scoreboard.registerNewTeam(name);
 		teams.add(team);
 		return team;
 	}

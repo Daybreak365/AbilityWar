@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
  * @since 2019-02-19
  */
 public class SoundLib {
+	public static final SimpleSound AMBIENT_CAVE = new SimpleSound("AMBIENT_CAVE");
 	public static final SimpleSound BLOCK_ANVIL_BREAK = new SimpleSound("BLOCK_ANVIL_BREAK");
 	public static final SimpleSound BLOCK_ANVIL_DESTROY = new SimpleSound("BLOCK_ANVIL_DESTROY");
 	public static final SimpleSound BLOCK_ANVIL_FALL = new SimpleSound("BLOCK_ANVIL_FALL");
@@ -37,11 +38,11 @@ public class SoundLib {
 	public static final SimpleSound BLOCK_DISPENSER_FAIL = new SimpleSound("BLOCK_DISPENSER_FAIL");
 	public static final SimpleSound BLOCK_DISPENSER_LAUNCH = new SimpleSound("BLOCK_DISPENSER_LAUNCH");
 	public static final SimpleSound BLOCK_ENCHANTMENT_TABLE_USE = new SimpleSound("BLOCK_ENCHANTMENT_TABLE_USE");
+	public static final SimpleSound BLOCK_ENDER_CHEST_CLOSE = new SimpleSound("BLOCK_ENDER_CHEST_CLOSE", "BLOCK_ENDERCHEST_CLOSE");
+	public static final SimpleSound BLOCK_ENDER_CHEST_OPEN = new SimpleSound("BLOCK_ENDER_CHEST_OPEN", "BLOCK_ENDERCHEST_OPEN");
 	public static final SimpleSound BLOCK_END_GATEWAY_SPAWN = new SimpleSound("BLOCK_END_GATEWAY_SPAWN");
 	public static final SimpleSound BLOCK_END_PORTAL_FRAME_FILL = new SimpleSound("BLOCK_END_PORTAL_FRAME_FILL");
 	public static final SimpleSound BLOCK_END_PORTAL_SPAWN = new SimpleSound("BLOCK_END_PORTAL_SPAWN");
-	public static final SimpleSound BLOCK_ENDER_CHEST_CLOSE = new SimpleSound("BLOCK_ENDER_CHEST_CLOSE", "BLOCK_ENDERCHEST_CLOSE");
-	public static final SimpleSound BLOCK_ENDER_CHEST_OPEN = new SimpleSound("BLOCK_ENDER_CHEST_OPEN", "BLOCK_ENDERCHEST_OPEN");
 	public static final SimpleSound BLOCK_FENCE_GATE_CLOSE = new SimpleSound("BLOCK_FENCE_GATE_CLOSE");
 	public static final SimpleSound BLOCK_FENCE_GATE_OPEN = new SimpleSound("BLOCK_FENCE_GATE_OPEN");
 	public static final SimpleSound BLOCK_FIRE_AMBIENT = new SimpleSound("BLOCK_FIRE_AMBIENT");
@@ -131,11 +132,6 @@ public class SoundLib {
 	public static final SimpleSound BLOCK_TRIPWIRE_CLICK_ON = new SimpleSound("BLOCK_TRIPWIRE_CLICK_ON");
 	public static final SimpleSound BLOCK_TRIPWIRE_DETACH = new SimpleSound("BLOCK_TRIPWIRE_DETACH");
 	public static final SimpleSound BLOCK_WATER_AMBIENT = new SimpleSound("BLOCK_WATER_AMBIENT");
-	public static final SimpleSound BLOCK_WOOD_BREAK = new SimpleSound("BLOCK_WOOD_BREAK");
-	public static final SimpleSound BLOCK_WOOD_FALL = new SimpleSound("BLOCK_WOOD_FALL");
-	public static final SimpleSound BLOCK_WOOD_HIT = new SimpleSound("BLOCK_WOOD_HIT");
-	public static final SimpleSound BLOCK_WOOD_PLACE = new SimpleSound("BLOCK_WOOD_PLACE");
-	public static final SimpleSound BLOCK_WOOD_STEP = new SimpleSound("BLOCK_WOOD_STEP");
 	public static final SimpleSound BLOCK_WOODEN_BUTTON_CLICK_OFF = new SimpleSound("BLOCK_WOODEN_BUTTON_CLICK_OFF", "BLOCK_WOOD_BUTTON_CLICK_OFF");
 	public static final SimpleSound BLOCK_WOODEN_BUTTON_CLICK_ON = new SimpleSound("BLOCK_WOODEN_BUTTON_CLICK_ON", "BLOCK_WOOD_BUTTON_CLICK_ON");
 	public static final SimpleSound BLOCK_WOODEN_DOOR_CLOSE = new SimpleSound("BLOCK_WOODEN_DOOR_CLOSE");
@@ -144,6 +140,11 @@ public class SoundLib {
 	public static final SimpleSound BLOCK_WOODEN_PRESSURE_PLATE_CLICK_ON = new SimpleSound("BLOCK_WOODEN_PRESSURE_PLATE_CLICK_ON", "BLOCK_WOOD_PRESSUREPLATE_CLICK_ON");
 	public static final SimpleSound BLOCK_WOODEN_TRAPDOOR_CLOSE = new SimpleSound("BLOCK_WOODEN_TRAPDOOR_CLOSE");
 	public static final SimpleSound BLOCK_WOODEN_TRAPDOOR_OPEN = new SimpleSound("BLOCK_WOODEN_TRAPDOOR_OPEN");
+	public static final SimpleSound BLOCK_WOOD_BREAK = new SimpleSound("BLOCK_WOOD_BREAK");
+	public static final SimpleSound BLOCK_WOOD_FALL = new SimpleSound("BLOCK_WOOD_FALL");
+	public static final SimpleSound BLOCK_WOOD_HIT = new SimpleSound("BLOCK_WOOD_HIT");
+	public static final SimpleSound BLOCK_WOOD_PLACE = new SimpleSound("BLOCK_WOOD_PLACE");
+	public static final SimpleSound BLOCK_WOOD_STEP = new SimpleSound("BLOCK_WOOD_STEP");
 	public static final SimpleSound BLOCK_WOOL_BREAK = new SimpleSound("BLOCK_WOOL_BREAK", "BLOCK_CLOTH_BREAK");
 	public static final SimpleSound BLOCK_WOOL_FALL = new SimpleSound("BLOCK_WOOL_FALL", "BLOCK_CLOTH_FALL");
 	public static final SimpleSound BLOCK_WOOL_HIT = new SimpleSound("BLOCK_WOOL_HIT", "BLOCK_CLOTH_HIT");
@@ -203,15 +204,6 @@ public class SoundLib {
 	public static final SimpleSound ENTITY_ELDER_GUARDIAN_FLOP = new SimpleSound("ENTITY_ELDER_GUARDIAN_FLOP");
 	public static final SimpleSound ENTITY_ELDER_GUARDIAN_HURT = new SimpleSound("ENTITY_ELDER_GUARDIAN_HURT");
 	public static final SimpleSound ENTITY_ELDER_GUARDIAN_HURT_LAND = new SimpleSound("ENTITY_ELDER_GUARDIAN_HURT_LAND");
-	public static final SimpleSound ENTITY_ENDER_DRAGON_AMBIENT = new SimpleSound("ENTITY_ENDER_DRAGON_AMBIENT", "ENTITY_ENDERDRAGON_AMBIENT");
-	public static final SimpleSound ENTITY_ENDER_DRAGON_DEATH = new SimpleSound("ENTITY_ENDER_DRAGON_DEATH", "ENTITY_ENDERDRAGON_DEATH");
-	public static final SimpleSound ENTITY_ENDER_DRAGON_FLAP = new SimpleSound("ENTITY_ENDER_DRAGON_FLAP", "ENTITY_ENDERDRAGON_FLAP");
-	public static final SimpleSound ENTITY_ENDER_DRAGON_GROWL = new SimpleSound("ENTITY_ENDER_DRAGON_GROWL", "ENTITY_ENDERDRAGON_GROWL");
-	public static final SimpleSound ENTITY_ENDER_DRAGON_HURT = new SimpleSound("ENTITY_ENDER_DRAGON_HURT", "ENTITY_ENDERDRAGON_HURT");
-	public static final SimpleSound ENTITY_ENDER_DRAGON_SHOOT = new SimpleSound("ENTITY_ENDER_DRAGON_SHOOT", "ENTITY_ENDERDRAGON_SHOOT");
-	public static final SimpleSound ENTITY_ENDER_EYE_DEATH = new SimpleSound("ENTITY_ENDER_EYE_DEATH", "ENTITY_ENDEREYE_DEATH");
-	public static final SimpleSound ENTITY_ENDER_EYE_LAUNCH = new SimpleSound("ENTITY_ENDER_EYE_LAUNCH", "ENTITY_ENDEREYE_LAUNCH");
-	public static final SimpleSound ENTITY_ENDER_PEARL_THROW = new SimpleSound("ENTITY_ENDER_PEARL_THROW", "ENTITY_ENDERPEARL_THROW");
 	public static final SimpleSound ENTITY_ENDERMAN_AMBIENT = new SimpleSound("ENTITY_ENDERMAN_AMBIENT", "ENTITY_ENDERMEN_AMBIENT");
 	public static final SimpleSound ENTITY_ENDERMAN_DEATH = new SimpleSound("ENTITY_ENDERMAN_DEATH", "ENTITY_ENDERMEN_DEATH");
 	public static final SimpleSound ENTITY_ENDERMAN_HURT = new SimpleSound("ENTITY_ENDERMAN_HURT", "ENTITY_ENDERMEN_HURT");
@@ -222,6 +214,15 @@ public class SoundLib {
 	public static final SimpleSound ENTITY_ENDERMITE_DEATH = new SimpleSound("ENTITY_ENDERMITE_DEATH");
 	public static final SimpleSound ENTITY_ENDERMITE_HURT = new SimpleSound("ENTITY_ENDERMITE_HURT");
 	public static final SimpleSound ENTITY_ENDERMITE_STEP = new SimpleSound("ENTITY_ENDERMITE_STEP");
+	public static final SimpleSound ENTITY_ENDER_DRAGON_AMBIENT = new SimpleSound("ENTITY_ENDER_DRAGON_AMBIENT", "ENTITY_ENDERDRAGON_AMBIENT");
+	public static final SimpleSound ENTITY_ENDER_DRAGON_DEATH = new SimpleSound("ENTITY_ENDER_DRAGON_DEATH", "ENTITY_ENDERDRAGON_DEATH");
+	public static final SimpleSound ENTITY_ENDER_DRAGON_FLAP = new SimpleSound("ENTITY_ENDER_DRAGON_FLAP", "ENTITY_ENDERDRAGON_FLAP");
+	public static final SimpleSound ENTITY_ENDER_DRAGON_GROWL = new SimpleSound("ENTITY_ENDER_DRAGON_GROWL", "ENTITY_ENDERDRAGON_GROWL");
+	public static final SimpleSound ENTITY_ENDER_DRAGON_HURT = new SimpleSound("ENTITY_ENDER_DRAGON_HURT", "ENTITY_ENDERDRAGON_HURT");
+	public static final SimpleSound ENTITY_ENDER_DRAGON_SHOOT = new SimpleSound("ENTITY_ENDER_DRAGON_SHOOT", "ENTITY_ENDERDRAGON_SHOOT");
+	public static final SimpleSound ENTITY_ENDER_EYE_DEATH = new SimpleSound("ENTITY_ENDER_EYE_DEATH", "ENTITY_ENDEREYE_DEATH");
+	public static final SimpleSound ENTITY_ENDER_EYE_LAUNCH = new SimpleSound("ENTITY_ENDER_EYE_LAUNCH", "ENTITY_ENDEREYE_LAUNCH");
+	public static final SimpleSound ENTITY_ENDER_PEARL_THROW = new SimpleSound("ENTITY_ENDER_PEARL_THROW", "ENTITY_ENDERPEARL_THROW");
 	public static final SimpleSound ENTITY_EVOKER_AMBIENT = new SimpleSound("ENTITY_EVOKER_AMBIENT", "ENTITY_EVOCATION_ILLAGER_AMBIENT");
 	public static final SimpleSound ENTITY_EVOKER_CAST_SPELL = new SimpleSound("ENTITY_EVOKER_CAST_SPELL", "ENTITY_EVOCATION_ILLAGER_CAST_SPELL");
 	public static final SimpleSound ENTITY_EVOKER_DEATH = new SimpleSound("ENTITY_EVOKER_DEATH", "ENTITY_EVOCATION_ILLAGER_DEATH");
@@ -347,9 +348,9 @@ public class SoundLib {
 	public static final SimpleSound ENTITY_PARROT_IMITATE_BLAZE = new SimpleSound("ENTITY_PARROT_IMITATE_BLAZE");
 	public static final SimpleSound ENTITY_PARROT_IMITATE_CREEPER = new SimpleSound("ENTITY_PARROT_IMITATE_CREEPER");
 	public static final SimpleSound ENTITY_PARROT_IMITATE_ELDER_GUARDIAN = new SimpleSound("ENTITY_PARROT_IMITATE_ELDER_GUARDIAN");
-	public static final SimpleSound ENTITY_PARROT_IMITATE_ENDER_DRAGON = new SimpleSound("ENTITY_PARROT_IMITATE_ENDER_DRAGON", "ENTITY_PARROT_IMITATE_ENDERDRAGON");
 	public static final SimpleSound ENTITY_PARROT_IMITATE_ENDERMAN = new SimpleSound("ENTITY_PARROT_IMITATE_ENDERMAN");
 	public static final SimpleSound ENTITY_PARROT_IMITATE_ENDERMITE = new SimpleSound("ENTITY_PARROT_IMITATE_ENDERMITE");
+	public static final SimpleSound ENTITY_PARROT_IMITATE_ENDER_DRAGON = new SimpleSound("ENTITY_PARROT_IMITATE_ENDER_DRAGON", "ENTITY_PARROT_IMITATE_ENDERDRAGON");
 	public static final SimpleSound ENTITY_PARROT_IMITATE_EVOKER = new SimpleSound("ENTITY_PARROT_IMITATE_EVOKER", "ENTITY_PARROT_IMITATE_EVOCATION_ILLAGER");
 	public static final SimpleSound ENTITY_PARROT_IMITATE_GHAST = new SimpleSound("ENTITY_PARROT_IMITATE_GHAST");
 	public static final SimpleSound ENTITY_PARROT_IMITATE_HUSK = new SimpleSound("ENTITY_PARROT_IMITATE_HUSK");
@@ -441,11 +442,11 @@ public class SoundLib {
 	public static final SimpleSound ENTITY_SLIME_JUMP_SMALL = new SimpleSound("ENTITY_SLIME_JUMP_SMALL", "ENTITY_SMALL_SLIME_JUMP");
 	public static final SimpleSound ENTITY_SLIME_SQUISH = new SimpleSound("ENTITY_SLIME_SQUISH");
 	public static final SimpleSound ENTITY_SLIME_SQUISH_SMALL = new SimpleSound("ENTITY_SLIME_SQUISH_SMALL", "ENTITY_SMALL_SLIME_SQUISH");
+	public static final SimpleSound ENTITY_SNOWBALL_THROW = new SimpleSound("ENTITY_SNOWBALL_THROW");
 	public static final SimpleSound ENTITY_SNOW_GOLEM_AMBIENT = new SimpleSound("ENTITY_SNOW_GOLEM_AMBIENT", "ENTITY_SNOWMAN_AMBIENT");
 	public static final SimpleSound ENTITY_SNOW_GOLEM_DEATH = new SimpleSound("ENTITY_SNOW_GOLEM_DEATH", "ENTITY_SNOWMAN_DEATH");
 	public static final SimpleSound ENTITY_SNOW_GOLEM_HURT = new SimpleSound("ENTITY_SNOW_GOLEM_HURT", "ENTITY_SNOWMAN_HURT");
 	public static final SimpleSound ENTITY_SNOW_GOLEM_SHOOT = new SimpleSound("ENTITY_SNOW_GOLEM_SHOOT", "ENTITY_SNOWMAN_SHOOT");
-	public static final SimpleSound ENTITY_SNOWBALL_THROW = new SimpleSound("ENTITY_SNOWBALL_THROW");
 	public static final SimpleSound ENTITY_SPIDER_AMBIENT = new SimpleSound("ENTITY_SPIDER_AMBIENT");
 	public static final SimpleSound ENTITY_SPIDER_DEATH = new SimpleSound("ENTITY_SPIDER_DEATH");
 	public static final SimpleSound ENTITY_SPIDER_HURT = new SimpleSound("ENTITY_SPIDER_HURT");

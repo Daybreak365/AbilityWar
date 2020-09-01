@@ -1,6 +1,6 @@
-package daybreak.abilitywar.utils.base.minecraft.health.event
+package daybreak.abilitywar.utils.base.minecraft.entity.health.event
 
-import daybreak.abilitywar.utils.base.minecraft.health.Healths
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList

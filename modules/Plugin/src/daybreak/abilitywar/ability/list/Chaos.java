@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "카오스", rank = Rank.S, species = Species.GOD, explain = {
 		"태초의 신 카오스.",
@@ -122,7 +123,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 1);
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skill.isDuration() && !cooldownTimer.isCooldown()) {
 			skill.start();
 			return true;

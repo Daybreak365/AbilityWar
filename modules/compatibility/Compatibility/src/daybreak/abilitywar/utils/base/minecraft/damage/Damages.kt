@@ -30,6 +30,11 @@ class Damages private constructor() {
 			return INSTANCE.damageFixed(entity, damager, damage)
 		}
 
+		@JvmStatic
+		override fun damageMagic(entity: Entity, damager: Player?, ignoreArmor: Boolean, damage: Float): Boolean {
+			return INSTANCE.damageMagic(entity, damager, ignoreArmor, damage)
+		}
+
 		private fun <T : EntityDamageEvent> canDamage(event: T, victim: Entity): Boolean {
 			Bukkit.getPluginManager().callEvent(event)
 			return if (event.isCancelled) false else {

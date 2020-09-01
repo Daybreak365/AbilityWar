@@ -15,6 +15,8 @@ import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.manager.effect.Stun;
@@ -26,6 +28,7 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
@@ -372,6 +375,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 	@Override
 	public DeathManager newDeathManager() {
 		return new DeathManager(this) {
+			@Override
 			public void Operation(Participant victim) {
 				switch (DeathSettings.getOperation()) {
 					case 탈락:
@@ -396,6 +400,23 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 					}
 				}
 				if (winner != null) Win(getParticipant(winner));
+			}
+			@Override
+			protected String getRevealMessage(Participant victim) {
+				final Mix mix = (Mix) victim.getAbility();
+				if (mix.hasAbility()) {
+					if (mix.hasSynergy()) {
+						final Synergy synergy = mix.getSynergy();
+						final Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+						final String name = synergy.getName() + " (" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + ")";
+						return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
+					} else {
+						final String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+						return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
+					}
+				} else {
+					return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님은 능력이 없습니다.";
+				}
 			}
 		};
 	}
@@ -464,15 +485,29 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 
 					final Mix mix = (Mix) participant.getAbility();
 					if (mix.hasAbility()) {
-						final AbilityRegistration oldFirst = mix.getFirst().getRegistration(), oldSecond = mix.getSecond().getRegistration();
-						final Class<? extends AbilityBase> first = abilities.get(random.nextInt(abilities.size())), second = abilities.get(random.nextInt(abilities.size()));
-						try {
-							participant.getPlayer().sendMessage("§7바꾸기 전의 능력은 §8" + oldFirst.getManifest().name() + " §7+ §8" + oldSecond.getManifest().name() + KoreanUtil.getJosa(oldSecond.getManifest().name(), Josa.이었였) + "습니다.");
-							mix.setAbility(first, second);
-							return true;
-						} catch (Exception e) {
-							logger.error(ChatColor.YELLOW + p.getName() + ChatColor.WHITE + "님의 능력을 변경하는 도중 오류가 발생하였습니다.");
-							logger.error("문제가 발생한 능력: §b" + first.getName() + " §f또는 §b" + second.getName());
+						if (mix.hasSynergy()) {
+							final AbilityRegistration old = mix.getSynergy().getRegistration();
+							final Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(old);
+							final Class<? extends AbilityBase> first = abilities.get(random.nextInt(abilities.size())), second = abilities.get(random.nextInt(abilities.size()));
+							try {
+								participant.getPlayer().sendMessage("§7바꾸기 전의 능력은 §8" + old.getManifest().name() + " §8(§7" + base.getLeft().getManifest().name() + " §f+ §7" + base.getRight().getManifest().name() + "§8)" + KoreanUtil.getJosa(old.getManifest().name(), Josa.이었였) + "습니다.");
+								mix.setAbility(first, second);
+								return true;
+							} catch (Exception e) {
+								logger.error(ChatColor.YELLOW + p.getName() + ChatColor.WHITE + "님의 능력을 변경하는 도중 오류가 발생하였습니다.");
+								logger.error("문제가 발생한 능력: §b" + first.getName() + " §f또는 §b" + second.getName());
+							}
+						} else {
+							final AbilityRegistration oldFirst = mix.getFirst().getRegistration(), oldSecond = mix.getSecond().getRegistration();
+							final Class<? extends AbilityBase> first = abilities.get(random.nextInt(abilities.size())), second = abilities.get(random.nextInt(abilities.size()));
+							try {
+								participant.getPlayer().sendMessage("§7바꾸기 전의 능력은 §8" + oldFirst.getManifest().name() + " §7+ §8" + oldSecond.getManifest().name() + KoreanUtil.getJosa(oldSecond.getManifest().name(), Josa.이었였) + "습니다.");
+								mix.setAbility(first, second);
+								return true;
+							} catch (Exception e) {
+								logger.error(ChatColor.YELLOW + p.getName() + ChatColor.WHITE + "님의 능력을 변경하는 도중 오류가 발생하였습니다.");
+								logger.error("문제가 발생한 능력: §b" + first.getName() + " §f또는 §b" + second.getName());
+							}
 						}
 					}
 				} else {

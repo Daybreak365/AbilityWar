@@ -119,7 +119,7 @@ public class AssassinMurderer extends AbstractMurderer {
 		if (e.isSneaking() && !cooldown.isRunning()) {
 			this.skill = true;
 			getPlayer().getInventory().setArmorContents(null);
-			NMS.removeArrow(getPlayer());
+			NMS.setArrowsInBody(getPlayer(), 0);
 			NMS.setInvisible(getPlayer(), true);
 			ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.15, 0.15, 0.15, 100, 0);
 			SoundLib.ENTITY_SILVERFISH_AMBIENT.playSound(getPlayer().getLocation(), 0.5f, 1f);

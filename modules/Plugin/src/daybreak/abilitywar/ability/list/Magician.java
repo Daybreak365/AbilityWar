@@ -16,6 +16,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attributable;
@@ -71,7 +72,7 @@ public class Magician extends AbilityBase {
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 					final Location center = e.getEntity().getLocation();
 					final HashMap<Damageable, Location> locationMap = new HashMap<>();
-					final ArrayList<Damageable> damageables = LocationUtil.getNearbyEntities(Damageable.class, center, 5, 5, ONLY_PARTICIPANTS);
+					final List<Damageable> damageables = LocationUtil.getNearbyEntities(Damageable.class, center, 5, 5, ONLY_PARTICIPANTS);
 					for (Damageable damageable : damageables) {
 						locationMap.put(damageable, damageable.getLocation());
 						if (!damageable.equals(getPlayer())) {

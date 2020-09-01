@@ -29,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "축복", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 광범위한 지역을 축복하여",
@@ -161,9 +162,9 @@ public class Bless extends Synergy implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT) {
-			if (clickType.equals(ClickType.RIGHT_CLICK)) {
+			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
 					skill.start();
 

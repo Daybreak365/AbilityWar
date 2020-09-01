@@ -23,6 +23,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "설인", rank = Rank.S, species = Species.HUMAN, explain = {
 		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
@@ -135,8 +136,8 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType.equals(ClickType.RIGHT_CLICK) && !cooldownTimer.isCooldown()) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			iceMaker.start();
 			cooldownTimer.start();
 			return true;

@@ -50,6 +50,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "소드 마스터", rank = Rank.S, species = Species.HUMAN, explain = {
 		"BETA"
@@ -152,7 +153,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (materials.contains(material) && clickType == ClickType.RIGHT_CLICK) {
 			swords.shoot();
 		}

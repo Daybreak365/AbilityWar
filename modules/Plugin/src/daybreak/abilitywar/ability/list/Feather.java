@@ -14,10 +14,10 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "깃털", rank = Rank.A, species = Species.OTHERS, explain = {
 		"철괴를 우클릭하면 $[DurationConfig]초간 §b비행§f할 수 있습니다. $[COOLDOWN_CONFIG]",
@@ -102,7 +102,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 	}
 
 	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
+	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !durationTimer.isDuration() && !cooldownTimer.isCooldown()) {
 			durationTimer.start();
 			return true;
@@ -112,8 +112,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onToggleSneak(PlayerToggleSneakEvent e) {
-		Player player = e.getPlayer();
-		if (player.isFlying() && e.isSneaking()) {
+		if (getPlayer().isFlying() && e.isSneaking()) {
 			dash.start();
 		} else {
 			dash.stop(false);

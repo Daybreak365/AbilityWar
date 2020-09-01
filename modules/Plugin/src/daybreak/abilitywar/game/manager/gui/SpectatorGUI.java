@@ -2,8 +2,8 @@ package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
 import java.util.Set;
@@ -28,39 +28,35 @@ import org.bukkit.plugin.Plugin;
  */
 public class SpectatorGUI implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	private final Player p;
+	private final Player player;
 
-	public SpectatorGUI(Player p, Plugin Plugin) {
-		this.p = p;
+	public SpectatorGUI(Player player, Plugin Plugin) {
+		this.player = player;
 		Bukkit.getPluginManager().registerEvents(this, Plugin);
 	}
 
 	private int currentPage = 1;
-
 	private Inventory gui;
 
 	private Set<String> getPlayers() {
-		Set<String> list = new TreeSet<>();
-
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			list.add(p.getName());
+		final Set<String> players = new TreeSet<>();
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			players.add(player.getName());
 		}
-		list.addAll(SpectatorManager.getSpectators());
-		return list;
+		players.addAll(SpectatorManager.getSpectators());
+		return players;
 	}
 
 	public void openGUI(int page) {
-		Set<String> players = getPlayers();
+		final Set<String> players = getPlayers();
 		int maxPage = ((players.size() - 1) / 36) + 1;
 		if (maxPage < page)
 			page = 1;
@@ -70,30 +66,29 @@ public class SpectatorGUI implements Listener {
 
 		int count = 0;
 		for (String player : players) {
-			ItemStack is;
-
+			final ItemStack stack;
 			if (SpectatorManager.isSpectator(player)) {
-				is = ItemLib.WOOL.getItemStack(ItemColor.RED);
-				ItemMeta im = is.getItemMeta();
+				stack = ItemLib.WOOL.getItemStack(ItemColor.RED);
+				ItemMeta im = stack.getItemMeta();
 				im.setDisplayName("§b" + player);
 				im.setLore(Messager.asList(
 						"§7이 플레이어는 게임에서 예외됩니다.",
 						"§b» §f예외 처리를 해제하려면 클릭하세요."
 				));
-				is.setItemMeta(im);
+				stack.setItemMeta(im);
 			} else {
-				is = ItemLib.WOOL.getItemStack(ItemColor.LIME);
-				ItemMeta im = is.getItemMeta();
+				stack = ItemLib.WOOL.getItemStack(ItemColor.LIME);
+				ItemMeta im = stack.getItemMeta();
 				im.setDisplayName("§b" + player);
 				im.setLore(Messager.asList(
 						"§7이 플레이어는 게임에서 예외되지 않습니다.",
 						"§b» §f예외 처리를 하려면 클릭하세요."
 				));
-				is.setItemMeta(im);
+				stack.setItemMeta(im);
 			}
 
 			if (count / 36 == page - 1) {
-				gui.setItem(count % 36, is);
+				gui.setItem(count % 36, stack);
 			}
 			count++;
 		}
@@ -101,13 +96,13 @@ public class SpectatorGUI implements Listener {
 		if (page > 1) gui.setItem(48, PREVIOUS_PAGE);
 		if (page != maxPage) gui.setItem(50, NEXT_PAGE);
 
-		ItemStack stack = new ItemStack(Material.PAPER, 1);
-		ItemMeta meta = stack.getItemMeta();
+		final ItemStack stack = new ItemStack(Material.PAPER, 1);
+		final ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
 		gui.setItem(49, stack);
 
-		p.openInventory(gui);
+		player.openInventory(gui);
 	}
 
 	@EventHandler
@@ -119,7 +114,7 @@ public class SpectatorGUI implements Listener {
 
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
-		if (e.getPlayer().getUniqueId().equals(p.getUniqueId())) {
+		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
 			HandlerList.unregisterAll(this);
 		}
 	}

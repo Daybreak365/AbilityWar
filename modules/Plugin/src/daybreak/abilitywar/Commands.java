@@ -55,6 +55,7 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,6 +68,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
 public class Commands implements CommandExecutor, TabCompleter {
@@ -74,6 +76,10 @@ public class Commands implements CommandExecutor, TabCompleter {
 	private static final Logger logger = Logger.getLogger(Commands.class);
 
 	private final Command mainCommand;
+
+	public Command getMainCommand() {
+		return mainCommand;
+	}
 
 	Commands(AbilityWar plugin) {
 		this.mainCommand = new Command() {
@@ -598,7 +604,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 										if (ability != null) {
 											for (GameTimer timer : ability.getTimers()) {
 												if (timer instanceof Duration.DurationTimer) {
-													timer.stop(false);
+													timer.stop(true);
 												}
 											}
 										}
@@ -874,7 +880,13 @@ public class Commands implements CommandExecutor, TabCompleter {
 					if (GameFactory.isRegistered(name)) {
 						final GameRegistration registration = GameFactory.getByName(name);
 						Configuration.modifyProperty(ConfigNodes.GAME_MODE, registration.getGameClass().getName());
-						sender.sendMessage("§2게임 모드§a가 §f" + registration.getManifest().name() + "§a" + KoreanUtil.getJosa(registration.getManifest().name(), Josa.으로로) + " 변경되었습니다.");
+						try {
+							Configuration.update();
+							sender.sendMessage("§2게임 모드§a가 §f" + registration.getManifest().name() + "§a" + KoreanUtil.getJosa(registration.getManifest().name(), Josa.으로로) + " 변경되었습니다.");
+						} catch (IOException | InvalidConfigurationException e) {
+							e.printStackTrace();
+							sender.sendMessage("§2게임 모드§a를 변경하는 도중 오류가 발생하였습니다.");
+						}
 					} else
 						Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 게임 모드입니다.");
 				}

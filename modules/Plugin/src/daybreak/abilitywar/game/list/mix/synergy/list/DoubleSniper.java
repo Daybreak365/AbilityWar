@@ -15,7 +15,6 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -26,6 +25,7 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -166,7 +166,23 @@ public class DoubleSniper extends Synergy {
 		@Override
 		protected void run(int i) {
 			Location newLocation = lastLocation.clone().add(forward);
-			for (Iterator<Location> iterator = Line.iteratorBetween(lastLocation, newLocation, 40); iterator.hasNext(); ) {
+			for (Iterator<Location> iterator = new Iterator<Location>() {
+				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
+				private final int amount = (int) (vectorBetween.length() / 0.1);
+				private int cursor = 0;
+
+				@Override
+				public boolean hasNext() {
+					return cursor < amount;
+				}
+
+				@Override
+				public Location next() {
+					if (cursor >= amount) throw new NoSuchElementException();
+					cursor++;
+					return lastLocation.clone().add(unit.clone().multiply(cursor));
+				}
+			}; iterator.hasNext(); ) {
 				Location location = iterator.next();
 				entity.setLocation(location);
 				Block block = location.getBlock();

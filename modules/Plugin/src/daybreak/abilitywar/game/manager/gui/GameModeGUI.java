@@ -11,8 +11,8 @@ import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -35,18 +35,15 @@ import org.bukkit.plugin.Plugin;
 
 public class GameModeGUI implements Listener {
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	protected static final ItemStack DECO = new ItemBuilder()
-			.type(MaterialX.GRAY_STAINED_GLASS_PANE)
+	protected static final ItemStack DECO = new ItemBuilder(MaterialX.GRAY_STAINED_GLASS_PANE)
 			.displayName(ChatColor.WHITE.toString())
 			.build();
 

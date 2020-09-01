@@ -263,23 +263,13 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 		@EventHandler
 		protected void onDeath(PlayerDeathEvent e) {
-			if (target.equals(e.getEntity())) {
+			if (target.equals(e.getEntity()) || getPlayer().equals(e.getEntity())) {
 				getGame().new GameTimer(TaskType.NORMAL, 3) {
 					@Override
 					protected void run(int count) {
-						SoundLib.PIANO.playInstrument(getPlayer(), C);
-						SoundLib.PIANO.playInstrument(getPlayer(), EFlat);
-						SoundLib.PIANO.playInstrument(getPlayer(), G);
-					}
-				}.setPeriod(TimeUnit.TICKS, 7).start();
-				stop(false);
-			} else if (getPlayer().equals(e.getEntity())) {
-				getGame().new GameTimer(TaskType.NORMAL, 3) {
-					@Override
-					protected void run(int count) {
-						SoundLib.PIANO.playInstrument(target, C);
-						SoundLib.PIANO.playInstrument(target, EFlat);
-						SoundLib.PIANO.playInstrument(target, G);
+						SoundLib.PIANO.playInstrument(getPlayer().getLocation(), 1.3f, C);
+						SoundLib.PIANO.playInstrument(getPlayer().getLocation(), 1.3f, EFlat);
+						SoundLib.PIANO.playInstrument(getPlayer().getLocation(), 1.3f, G);
 					}
 				}.setPeriod(TimeUnit.TICKS, 7).start();
 				stop(false);

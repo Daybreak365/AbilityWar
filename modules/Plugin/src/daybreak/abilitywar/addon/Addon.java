@@ -2,6 +2,7 @@ package daybreak.abilitywar.addon;
 
 import com.google.common.base.Enums;
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.Provider;
 import daybreak.abilitywar.addon.exception.InvalidDescriptionException;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import java.io.File;
@@ -17,7 +18,17 @@ import java.util.zip.ZipEntry;
  *
  * @author Daybreak 새벽
  */
-public abstract class Addon {
+public abstract class Addon implements Provider {
+
+	@Override
+	public Object getInstance() {
+		return this;
+	}
+
+	@Override
+	public String getName() {
+		return description.name;
+	}
 
 	private AddonClassLoader classLoader;
 	private AddonDescription description;
@@ -27,11 +38,9 @@ public abstract class Addon {
 		this.description = description;
 	}
 
-	protected void onEnable() {
-	}
+	protected void onEnable() {}
 
-	protected void onDisable() {
-	}
+	protected void onDisable() {}
 
 	/**
 	 * AbilityWar 플러그인을 받아옵니다.

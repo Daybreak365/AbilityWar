@@ -9,8 +9,8 @@ import daybreak.abilitywar.game.script.setter.special.LoopSetter;
 import daybreak.abilitywar.game.script.setter.special.MessageSetter;
 import daybreak.abilitywar.game.script.setter.special.TimeSetter;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import daybreak.abilitywar.utils.library.item.ItemBuilder;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -39,18 +39,15 @@ public class ScriptWizard implements Listener {
 
 	private static final Logger logger = Logger.getLogger(ScriptWizard.class);
 
-	private static final ItemStack DECO = new ItemBuilder()
-			.type(MaterialX.WHITE_STAINED_GLASS_PANE)
+	private static final ItemStack DECO = new ItemBuilder(MaterialX.WHITE_STAINED_GLASS_PANE)
 			.displayName(ChatColor.WHITE.toString())
 			.build();
 
-	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
 			.build();
 
-	private static final ItemStack NEXT_PAGE = new ItemBuilder()
-			.type(Material.ARROW)
+	private static final ItemStack NEXT_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
