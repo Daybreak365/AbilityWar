@@ -112,8 +112,13 @@ public class NMSImpl implements INMS {
 	}
 
 	@Override
-	public void setInvisible(Player player, boolean invisible) {
-		((CraftPlayer) player).getHandle().setInvisible(invisible);
+	public void setInvisible(Entity entity, boolean invisible) {
+		((CraftEntity) entity).getHandle().setInvisible(invisible);
+	}
+
+	@Override
+	public boolean isInvisible(Entity entity) {
+		return ((CraftEntity) entity).getHandle().isInvisible();
 	}
 
 	@Override

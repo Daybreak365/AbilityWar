@@ -24,10 +24,6 @@ package daybreak.abilitywar.utils.library;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,6 +46,11 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
 import org.bukkit.material.Wood;
 import org.bukkit.material.Wool;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("deprecation")
 public final class BlockX {
@@ -271,7 +272,7 @@ public final class BlockX {
 	}
 
 	public static boolean isWater(Material material) {
-		String name = material.name();
+		final String name = material.name();
 		return name.equals("WATER") || name.equals("STATIONARY_WATER");
 	}
 

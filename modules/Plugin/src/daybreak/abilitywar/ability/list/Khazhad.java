@@ -23,11 +23,6 @@ import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +44,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "카쟈드", rank = Rank.A, species = Species.GOD, explain = {
 		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[COOLDOWN_CONFIG]",
@@ -229,7 +228,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 
 	}
 
-	private final List<Projectile> projectiles = new ArrayList<Projectile>() {
+	private final Set<Projectile> projectiles = new HashSet<Projectile>() {
 		@Override
 		public boolean add(Projectile projectile) {
 			if (size() >= 15) clear();
@@ -240,7 +239,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 	@Override
 	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK && !cooldownTimer.isCooldown()) {
-			FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
+			final FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
 				@Override
 				public boolean onEntityChangeBlock(FallingBlock fallingBlock) {
 					Block block = fallingBlock.getLocation().getBlock();
@@ -254,7 +253,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 					return true;
 				}
 			});
-			BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
+			final BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
 			new AbilityTimer() {
 				@Override
 				protected void run(int count) {

@@ -15,8 +15,6 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import java.util.Iterator;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Damageable;
@@ -27,6 +25,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "제우스", rank = Rank.S, species = Species.GOD, explain = {
 		"번개의 신 제우스.",
@@ -100,7 +101,7 @@ public class Zeus extends AbilityBase implements ActiveHandler {
 						}
 					}
 				}
-				loc.getWorld().createExplosion(loc, 3);
+				loc.getWorld().createExplosion(loc.getX(), loc.getY(), loc.getZ(), 3, false, false);
 			}
 		}
 

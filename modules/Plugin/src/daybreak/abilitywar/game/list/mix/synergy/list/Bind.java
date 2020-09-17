@@ -16,10 +16,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -30,8 +26,13 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "결박", rank = Rank.B, species = Species.HUMAN, explain = {
-		"주위 15칸 안에 있는 생명체를 원거리에서 철괴 우클릭으로 타겟팅해",
+		"주위 15칸 안에 있는 생명체를 원거리에서 철괴 우클릭으로 타게팅해",
 		"세 겹의 유리막 속에 가둡니다. $[COOLDOWN_CONFIG]",
 		"10초마다 §e강도 스택§f이 1씩 오르며, 최대 $[MaxSolidityConfig] 스택을 모을 수 있습니다.",
 		"§e강도 스택§f은 능력을 사용하면 초기화됩니다."

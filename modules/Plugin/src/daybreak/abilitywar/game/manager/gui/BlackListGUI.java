@@ -16,14 +16,6 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import daybreak.abilitywar.utils.library.item.ItemLib.ItemColor;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.TreeSet;
-import java.util.logging.Level;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -41,6 +33,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.TreeSet;
+import java.util.logging.Level;
 
 /**
  * 능력 금지 GUI
@@ -96,7 +97,7 @@ public class BlackListGUI implements Listener {
 				if (registration != null) {
 					final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 					if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-					if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+					if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
 					if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 					final AbilityManifest manifest = registration.getManifest();
 					lore.add("§f등급: " + manifest.rank().getRankName());
@@ -116,7 +117,7 @@ public class BlackListGUI implements Listener {
 				if (registration != null) {
 					final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 					if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-					if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+					if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
 					if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 					final AbilityManifest manifest = registration.getManifest();
 					lore.add("§f등급: " + manifest.rank().getRankName());

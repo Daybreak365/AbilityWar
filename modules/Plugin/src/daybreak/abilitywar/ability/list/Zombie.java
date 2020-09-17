@@ -18,11 +18,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.WeakHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,6 +39,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 @AbilityManifest(name = "좀비", rank = Rank.A, species = Species.UNDEAD, explain = {
 		"좀비가 당신을 타게팅하지 않습니다. 다른 플레이어를 철괴로 우클릭하면 주변",
@@ -181,7 +182,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			}
 			if (getPlayer().equals(e.getEntity())) {
 				final Entity damager = getDamager(e.getDamager());
-				if (damager instanceof Player && getGame().isParticipating(damager.getUniqueId())) {
+				if (damager instanceof Player && getGame().isParticipating(damager.getUniqueId()) && !getPlayer().equals(damager)) {
 					this.target = (Player) damager;
 					for (org.bukkit.entity.Zombie zombie : zombies) {
 						zombie.setTarget(target);

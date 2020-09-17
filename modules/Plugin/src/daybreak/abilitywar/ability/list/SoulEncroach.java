@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Points;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.function.Predicate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,9 +35,11 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "영혼 잠식", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 마지막으로 타격했던 플레이어가 $[DistanceConfig]칸 이내에 있는 경우에 한하여",
-		"3초간 대상의 영혼에 잠식하여 타겟팅할 수 없는 상태로 변합니다. $[COOLDOWN_CONFIG]",
+		"3초간 대상의 영혼에 잠식하여 타게팅할 수 없는 상태로 변합니다. $[COOLDOWN_CONFIG]",
 		"영혼 잠식이 끝나면 영혼에서 빠져나오며 바라보는 방향으로 짧게 돌진하고",
 		"대상에게 대미지를 줍니다. 대상의 체력이 적을수록 더욱 큰 피해를 입히며,",
 		"잠식 도중 웅크리면 즉시 빠져나올 수 있습니다. 영혼에서 빠져나오며 입힌 피해로",
@@ -203,6 +204,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationStart() {
 			this.originalMode = getPlayer().getGameMode();
+			if (originalMode == GameMode.SPECTATOR) originalMode = GameMode.SURVIVAL;
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			getPlayer().setGameMode(GameMode.SPECTATOR);
 			this.originalSpeed = getPlayer().getFlySpeed();

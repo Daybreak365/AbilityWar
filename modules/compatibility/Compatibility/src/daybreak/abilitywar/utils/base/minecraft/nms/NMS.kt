@@ -4,11 +4,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException
 import org.bukkit.Material
 import org.bukkit.World
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.Entity
-import org.bukkit.entity.Item
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
 
 class NMS private constructor() {
 	companion object INSTANCE : INMS {
@@ -89,8 +85,13 @@ class NMS private constructor() {
 		}
 
 		@JvmStatic
-		override fun setInvisible(player: Player, invisible: Boolean) {
-			INSTANCE.setInvisible(player, invisible)
+		override fun isInvisible(entity: Entity): Boolean {
+			return INSTANCE.isInvisible(entity)
+		}
+
+		@JvmStatic
+		override fun setInvisible(entity: Entity, invisible: Boolean) {
+			INSTANCE.setInvisible(entity, invisible)
 		}
 
 		@JvmStatic

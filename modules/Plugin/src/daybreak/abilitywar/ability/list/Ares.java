@@ -5,6 +5,10 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -15,9 +19,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -30,12 +31,21 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "아레스", rank = Rank.A, species = Species.GOD, explain = {
 		"전쟁의 신 아레스.",
 		"철괴를 우클릭하면 앞으로 도약합니다. 도약 중 주위의 생명체들을 끌고 가며",
 		"대미지를 주고, 도약이 끝나 땅에 착지하면 주변의 생명체들을",
 		"모두 밀쳐냅니다. $[COOLDOWN_CONFIG]"
 })
+@Tips(tip = {
+		"낙하 대미지를 한 번 무시할 수 있기 때문에, 매우 높은 곳에서 착지할 때",
+		"사용할 수도 있습니다. 상대를 밀쳐내는 효과도 있기 때문에 기절을 사용하는",
+		"능력을 카운팅할 때도 유용하고, 멀리 도망가는 적을 잡을 때도 좋습니다."
+}, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.FIVE, mobility = Level.FOUR, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Ares extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "DamagePercent", 50,

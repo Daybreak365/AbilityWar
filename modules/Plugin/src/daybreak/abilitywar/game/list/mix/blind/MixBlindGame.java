@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
+import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.GameAliases;
@@ -36,14 +37,6 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -59,6 +52,15 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
+import javax.naming.OperationNotSupportedException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 @GameManifest(name = "블라인드 믹스", description = {
 		"§f블라인드와 믹스 능력자의 조합!", "",
 		"§f추가 컨텐츠가 있습니다.",
@@ -68,6 +70,13 @@ import org.bukkit.plugin.Plugin;
 @Beta
 @GameAliases("블믹")
 public class MixBlindGame extends AbstractMix implements Winnable, Observer {
+
+	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(MixBlindGame.class, "CHANGE_COUNT", 2, "# 능력 변경 횟수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
 
 	private static final Logger logger = Logger.getLogger(MixBlindGame.class);
 
@@ -423,27 +432,48 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 
 	@Override
 	public void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
-		if (commandType == CommandType.ABILITY_CHECK) {
-			final Player player = (Player) sender;
-			if (GameManager.isGameRunning()) {
-				final AbstractGame game = GameManager.getGame();
-				if (game.isParticipating(player)) {
-					final MixParticipant participant = getParticipant(player);
-					for (String line : getBlindInfo(participant.getAbility())) {
-						player.sendMessage(line);
+		switch (commandType) {
+			case ABILITY_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final MixParticipant participant = getParticipant(player);
+						for (String line : getBlindInfo(participant.getAbility())) {
+							player.sendMessage(line);
+						}
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
 					}
 				} else {
-					Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 				}
-			} else {
-				Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 			}
-		} else super.executeCommand(commandType, sender, command, args, plugin);
+			break;
+			case TIP_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						Messager.sendErrorMessage(sender, "이 게임에서 사용할 수 없는 명령어입니다.");
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+					}
+				} else {
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+				}
+			}
+			break;
+			default: {
+				super.executeCommand(commandType, sender, command, args, plugin);
+			}
+			break;
+		}
 	}
 
 	@Override
 	public AbilitySelect newAbilitySelect() {
-		return new AbilitySelect(this, getParticipants(), 2) {
+		return new AbilitySelect(this, getParticipants(), ABILITY_CHANGE_COUNT.getValue()) {
 
 			private List<Class<? extends AbilityBase>> abilities;
 
@@ -460,11 +490,11 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 						try {
 							((Mix) participant.getAbility()).setAbility(first, second);
 
-							p.sendMessage(new String[]{
-									"§7능력이 할당되었습니다. §8/aw check§f로 확인 할 수 있습니다.",
-									"§8/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-									"§8/aw no §f명령어를 사용하여 능력을 변경합니다."
-							});
+							final Player player = participant.getPlayer();
+							player.sendMessage("§a능력이 할당되었습니다. §e/aw check§f로 확인하세요.");
+							if (!hasDecided(participant)) {
+								player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
+							}
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: §b" + first.getName() + " §f또는 §b" + second.getName());

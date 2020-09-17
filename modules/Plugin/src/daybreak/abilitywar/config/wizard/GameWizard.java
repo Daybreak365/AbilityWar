@@ -8,9 +8,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.CustomSkullBuilder;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -19,6 +16,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class GameWizard extends SettingWizard {
 
@@ -37,7 +38,8 @@ public class GameWizard extends SettingWizard {
 			VISUALEFFECT = new ItemBuilder(MaterialX.BLAZE_POWDER).displayName("§b시각 효과").build(),
 			DURATION_TIMER_BEHAVIOR = new ItemBuilder(MaterialX.CLOCK).displayName("§b지속 타이머 작업").build(),
 			ABILITY_DRAW = new ItemBuilder(MaterialX.DISPENSER).displayName("§b능력 추첨").build(),
-			MAXHEALTH = new ItemBuilder(MaterialX.GOLDEN_APPLE).displayName("§b기본 최대 체력").build();
+			MAXHEALTH = new ItemBuilder(MaterialX.GOLDEN_APPLE).displayName("§b기본 최대 체력").build(),
+			ABILITY_CHANGE_COUNT = new CustomSkullBuilder("c9327a4573977cd378f06d1f832e907f5f66dbe5ea88ff1c3689ad958b7e7").displayName("§b능력 변경 횟수").build();
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, "§2§l게임 진행 설정", plugin);
@@ -224,6 +226,18 @@ public class GameWizard extends SettingWizard {
 					gui.setItem(i, MAXHEALTH);
 				}
 				break;
+				case 42: {
+					final ItemMeta meta = ABILITY_CHANGE_COUNT.getItemMeta();
+					meta.setLore(Arrays.asList("§f능력 추첨 시 능력 변경 가능 횟수를 설정합니다.",
+							"§f이 설정은 일부 게임 모드에서는 적용되지 않을 수 있으며,",
+							"§f해당 게임 모드에서는 모드별 설정을 이용해주세요.",
+							"", "§7능력을 §f" + Settings.getAbilityChangeCount() + "회 §7변경할 수 있습니다.", "",
+							"§c우클릭         §6» §e+ 1회",
+							"§c좌클릭         §6» §e- 1회"));
+					ABILITY_CHANGE_COUNT.setItemMeta(meta);
+					gui.setItem(i, ABILITY_CHANGE_COUNT);
+				}
+				break;
 				default:
 					gui.setItem(i, DECO);
 					break;
@@ -356,6 +370,18 @@ public class GameWizard extends SettingWizard {
 								break;
 							case SHIFT_LEFT:
 								Configuration.modifyProperty(ConfigNodes.GAME_DEFAULT_MAX_HEALTH_ENABLE, !Settings.isDefaultMaxHealthEnabled());
+								show();
+								break;
+						}
+						break;
+					case "§b능력 변경 횟수":
+						switch (e.getClick()) {
+							case RIGHT:
+								Configuration.modifyProperty(ConfigNodes.GAME_ABILITY_CHANGE_COUNT, Settings.getAbilityChangeCount() + 1);
+								show();
+								break;
+							case LEFT:
+								Configuration.modifyProperty(ConfigNodes.GAME_ABILITY_CHANGE_COUNT, Math.max(0, Settings.getAbilityChangeCount() - 1));
 								show();
 								break;
 						}

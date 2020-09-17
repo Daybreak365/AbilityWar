@@ -5,6 +5,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -12,8 +17,8 @@ import daybreak.abilitywar.game.manager.effect.EvilSpirit;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -27,6 +32,8 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "유령", rank = Rank.A, species = Species.OTHERS, explain = {
 		"§7철괴 우클릭 §8- §c유령화§f: 순간 벽을 통과할 수 있고 타게팅되지 않는 상태로 변하여",
 		"바라보는 방향으로 이동합니다. §c쿨타임 §7: §f$(currentCooldown)초",
@@ -36,6 +43,15 @@ import org.jetbrains.annotations.NotNull;
 		"§7악령 효과§f: 간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",
 		"플레이어를 타격한 대상에게도 이 효과가 부여됩니다."
 })
+@Tips(tip = {
+		"유령화로 벽을 넘고, 다른 플레이어의 스킬을 피하거나, 빠져 나오세요.",
+		"유령을 막을 수 있는 장애물은 존재하지 않습니다."
+}, strong = {
+		@Description(subject = "장애물이 많은 환경", explain = {
+				"유령의 능력은 장애물이 많은 환경에서 더욱 돋보입니다. 지형지물을 넘어",
+				"상대가 예측하지 못하는 곳에서 나오세요!"
+		})
+}, stats = @Stats(offense = Level.ZERO, survival = Level.FIVE, crowdControl = Level.ZERO, mobility = Level.SEVEN, utility = Level.FOUR), difficulty = Difficulty.NORMAL)
 public class Ghost extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_INCREASE_CONFIG = abilitySettings.new SettingObject<Integer>(Ghost.class, "CooldownIncrease", 1,
@@ -80,7 +96,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 			getPlayer().setFlySpeed(0f);
 			if (targetLocation != null && count <= 30) {
 				final Location playerLocation = getPlayer().getLocation();
-				getPlayer().setVelocity(validateVector(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.3)));
+				getPlayer().setVelocity(VectorUtil.validateVector(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.3)));
 				if (playerLocation.distanceSquared(targetLocation) < 1) {
 					stop(false);
 					getPlayer().teleport(targetLocation.setDirection(getPlayer().getLocation().getDirection()));
@@ -107,7 +123,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 			NMS.setInvisible(getPlayer(), false);
 		}
 	}.setPeriod(TimeUnit.TICKS, 1).register();
-	private final Cooldown cooldownTimer = new Cooldown(0, 25);
+	private final Cooldown cooldownTimer = new Cooldown(0, 15);
 	private int currentCooldown = 0;
 
 	@SubscribeEvent(onlyRelevant = true)
@@ -118,13 +134,6 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerTeleport(PlayerTeleportEvent e) {
 		if (skill.isRunning() && getPlayer().getGameMode() == GameMode.SPECTATOR) e.setCancelled(true);
-	}
-
-	private static Vector validateVector(Vector vector) {
-		if (Math.abs(vector.getX()) > Double.MAX_VALUE) vector.setX(0);
-		if (Math.abs(vector.getY()) > Double.MAX_VALUE) vector.setY(0);
-		if (Math.abs(vector.getZ()) > Double.MAX_VALUE) vector.setZ(0);
-		return vector;
 	}
 
 	@Override
@@ -144,7 +153,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 				if (lastEmpty != null) {
 					this.targetLocation = lastEmpty.getLocation();
 					skill.start();
-					cooldownTimer.setCooldown(currentCooldown += cooldownIncrease, 25);
+					cooldownTimer.setCooldown(currentCooldown += cooldownIncrease, 15);
 					cooldownTimer.start();
 					return true;
 				} else {

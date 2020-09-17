@@ -7,6 +7,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -20,7 +25,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,6 +34,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 @AbilityManifest(name = "플렉터", rank = Rank.S, species = Species.HUMAN, explain = {
 		"발사체를 바라본 상태로 검을 휘둘러 해당 발사체를",
 		"튕겨낼 수 있습니다. 본인이 발사한 발사체는 튕겨낼 수 없으며,",
@@ -37,6 +43,23 @@ import org.jetbrains.annotations.NotNull;
 		"§e추가 체력§f을 얻습니다. §e추가 체력§f은 5칸 이상 얻을 수 없습니다.",
 		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 주변의 모든 투사체를 튕겨냅니다. $[COOLDOWN_CONFIG]"
 })
+@Tips(tip = {
+		"멀리서 날아오는 화살, 더 이상 맞을 필요가 없습니다. 모두 튕겨내",
+		"추가 체력으로 만들어버리세요. 화살 뿐만 아니라 관통 화살, 스나이퍼,",
+		"로렘이 발사하는 파티클로 된 발사체도 튕겨낼 수 있습니다. 직접",
+		"튕겨내기 귀찮다면 액티브 스킬을 이용해 일정 시간동안 자동으로",
+		"튕겨낼 수도 있습니다."
+}, strong = {
+		@Description(subject = "발사체 돌려보내기", explain = {
+				"똑똑, 화살 도착했습니다.",
+				"원하지 않는 발사체는 모두 상대에게 다시 돌려보내세요."
+		})
+}, weak = {
+		@Description(subject = "너무 빠른 발사체", explain = {
+				"너무 빠른 발사체, 예를 들어 스나이퍼의 풀차지 공격은 막아내기",
+				"어렵습니다."
+		})
+}, stats = @Stats(offense = Level.THREE, survival = Level.THREE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.SEVEN), difficulty = Difficulty.HARD)
 public class Flector extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flector.class, "Cool", 40,

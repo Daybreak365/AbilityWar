@@ -2,6 +2,8 @@ package daybreak.abilitywar.utils.base.math;
 
 public class FastMath {
 
+	private FastMath() {}
+
 	private static final int accuracy = (int) Math.pow(10, 3);
 	private static final double[] sin = new double[accuracy * 360];
 

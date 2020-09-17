@@ -3,16 +3,18 @@ package daybreak.abilitywar.utils.base;
 import com.google.common.base.Strings;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.utils.installer.Installer.VersionObject;
+import org.bukkit.ChatColor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
-import org.bukkit.ChatColor;
 
 public class Formatter {
 
@@ -68,6 +70,22 @@ public class Formatter {
 		return list;
 	}
 
+	public static List<String> formatTip(AbilityRegistration registration) {
+		final Tip tip = registration.getTip();
+		final List<String> tips = tip != null ? tip.tips : Collections.emptyList();
+		final AbilityManifest manifest = registration.getManifest();
+		final List<String> messages = new ArrayList<>(3 + (tips.isEmpty() ? 1 : tips.size()));
+		messages.add(formatTitle(32, ChatColor.DARK_GREEN, ChatColor.GREEN, "능력 팁"));
+		messages.add("§b" + manifest.name() + " §r" + manifest.rank().getRankName() + " §r" + manifest.species().getSpeciesName());
+		if (tips.isEmpty()) {
+			messages.add("§f작성된 팁이 없습니다.");
+		} else {
+			messages.addAll(tips);
+		}
+		messages.add("§2---------------------------------");
+		return messages;
+	}
+
 	public static List<String> formatInfo(AbilityRegistration registration) {
 		final AbilityManifest manifest = registration.getManifest();
 		final List<String> info = new ArrayList<>(3 + manifest.explain().length);
@@ -76,7 +94,7 @@ public class Formatter {
 		for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
 			info.add(ChatColor.WHITE.toString().concat(iterator.next()));
 		}
-		info.add("§a---------------------------------");
+		info.add("§2---------------------------------");
 		return info;
 	}
 

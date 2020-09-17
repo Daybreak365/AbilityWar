@@ -23,6 +23,10 @@ public class SpectatorManager {
 		spectators.remove(name);
 	}
 
+	public static void resetSpectators() {
+		spectators.clear();
+	}
+
 	public static Set<String> getSpectators() {
 		return Collections.unmodifiableSet(spectators);
 	}

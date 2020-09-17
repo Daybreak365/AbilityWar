@@ -26,10 +26,6 @@ import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -39,7 +35,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 
@@ -315,10 +315,4 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 		lifeObjective.unregister();
 		super.onEnd();
 	}
-
-	@Override
-	public void Win(@NotNull Members winTeam) {
-		Winnable.DefaultImpls.Win(this, winTeam);
-	}
-
 }

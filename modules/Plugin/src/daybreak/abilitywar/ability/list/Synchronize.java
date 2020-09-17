@@ -16,13 +16,14 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import java.util.List;
-import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "동기화", rank = Rank.S, species = Species.OTHERS, explain = {
 		"철괴를 우클릭하면 높이 상관 없이 10칸 이내에 있는 모든 플레이어의",
@@ -122,12 +123,6 @@ public class Synchronize extends AbilityBase implements ActiveHandler {
 			public void onSilentEnd() {
 				Synchronization.this.stop(true);
 			}
-
-			@Override
-			public void onEnd() {}
-
-			@Override
-			public void onStart() {}
 		};
 		private final RGB color;
 		private final double amount;

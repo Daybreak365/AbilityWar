@@ -12,9 +12,11 @@ import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
+import daybreak.abilitywar.game.list.mix.gui.MixTipGUI;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.utils.base.Messager;
@@ -23,6 +25,13 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,12 +39,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 
 public abstract class AbstractMix extends Game implements DefaultKitHandler {
 
@@ -46,7 +49,7 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 	@Override
 	public void giveDefaultKit(Participant participant) {
 		if (!participant.getGame().equals(this)) return;
-		Player player = participant.getPlayer();
+		final Player player = participant.getPlayer();
 		player.setLevel(0);
 		if (Configuration.Settings.getStartLevel() > 0) {
 			player.giveExpLevels(Configuration.Settings.getStartLevel());
@@ -213,6 +216,30 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 				if (count == 0) sender.sendMessage("§f능력자가 발견되지 않았습니다.");
 				sender.sendMessage("§2========================");
 				Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 참가자들의 능력을 확인하였습니다.");
+			}
+			break;
+			case TIP_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final MixParticipant participant = getParticipant(player);
+						final Mix mix = participant.getAbility();
+						if (mix.hasAbility()) {
+							if (mix.hasSynergy()) {
+								new AbilityTipGUI(player, mix.getSynergy().getRegistration(), plugin).openGUI(1);
+							} else {
+								new MixTipGUI(player, mix, plugin).openGUI();
+							}
+						} else {
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
+						}
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+					}
+				} else {
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+				}
 			}
 			break;
 			default:

@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.list.mix.triplemix;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManager;
@@ -17,16 +18,17 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+
+import javax.naming.OperationNotSupportedException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 
 @GameManifest(name = "트리플 믹스", description = {
 		"§f두 개도 모자라서 능력 세 개를 동시에?",
@@ -166,7 +168,7 @@ public class TripleMixGame extends AbstractTripleMix implements DefaultKitHandle
 
 	@Override
 	public AbilitySelect newAbilitySelect() {
-		return new AbilitySelect(this, getParticipants(), 1) {
+		return new AbilitySelect(this, getParticipants(), Settings.getAbilityChangeCount()) {
 
 			private List<Class<? extends AbilityBase>> abilities;
 
@@ -183,11 +185,11 @@ public class TripleMixGame extends AbstractTripleMix implements DefaultKitHandle
 						try {
 							((TripleMix) participant.getAbility()).setAbility(abilityClass, secondAbilityClass, thirdAbilityClass);
 
-							p.sendMessage(new String[]{
-									"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
-									"§e/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-									"§e/aw no §f명령어를 사용하여 능력을 변경합니다."
-							});
+							final Player player = participant.getPlayer();
+							player.sendMessage("§a능력이 할당되었습니다. §e/aw check§f로 확인하세요.");
+							if (!hasDecided(participant)) {
+								player.sendMessage("§e/aw yes §f명령어로 능력을 확정하거나, §e/aw no §f명령어로 능력을 변경하세요.");
+							}
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: §b" + abilityClass.getName() + " §f또는 §b" + secondAbilityClass.getName() + " §f또는 §b" + thirdAbilityClass.getName());

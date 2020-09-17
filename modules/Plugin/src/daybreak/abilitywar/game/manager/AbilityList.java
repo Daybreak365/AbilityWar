@@ -1,5 +1,7 @@
 package daybreak.abilitywar.game.manager;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
@@ -14,6 +16,7 @@ import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 /**
@@ -35,6 +39,7 @@ public class AbilityList {
 
 	private static final Map<String, AbilityRegistration> abilities = new TreeMap<>();
 	private static final Set<AbilityRegistration> registered = new HashSet<>();
+	private static final ListMultimap<String, String> complete = MultimapBuilder.hashKeys().arrayListValues().build();
 
 	public static boolean isRegistered(String name) {
 		return abilities.containsKey(name);
@@ -54,14 +59,30 @@ public class AbilityList {
 	 *
 	 * @param abilityClass 능력 클래스
 	 */
-	public static void registerAbility(Class<? extends AbilityBase> abilityClass) {
+	public static void registerAbility(final Class<? extends AbilityBase> abilityClass) {
 		final AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 		if (registration != null) {
-			String name = registration.getManifest().name();
+			final String name = registration.getManifest().name();
 			if (!abilities.containsKey(name)) {
 				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
 				abilities.put(name, registration);
 				registered.add(registration);
+				final char[] chars = name.toCharArray();
+				if (chars.length >= 2) {
+					final StringTokenizer tokenizer = new StringTokenizer(name, " ");
+					final StringBuilder builder = new StringBuilder(chars.length - 1);
+					String token = tokenizer.nextToken();
+					for (int i = 0; i < chars.length - 1; i++) {
+						final char c = chars[i];
+						builder.append(c);
+						if (c == ' ') {
+							if (tokenizer.hasMoreTokens()) {
+								token = tokenizer.nextToken();
+							}
+						}
+						complete.put(builder.toString(), token);
+					}
+				}
 			} else {
 				logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 			}
@@ -124,13 +145,15 @@ public class AbilityList {
 		registerAbility(Flector.class);
 		registerAbility(Ghost.class);
 		registerAbility(Lunar.class);
-		registerAbility(Apology.class);
 		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getName() + ".Hermit");
 		registerAbility(SwordMaster.class);
 		registerAbility(SurvivalInstinct.class);
 		registerAbility(Synchronize.class);
 		registerAbility(Ghoul.class);
 		registerAbility(Swap.class);
+		registerAbility(Lorem.class);
+		registerAbility(Reverse.class);
+		registerAbility(Themis.class);
 	}
 
 	/**
@@ -155,6 +178,10 @@ public class AbilityList {
 
 	public static Collection<AbilityRegistration> values() {
 		return Collections.unmodifiableCollection(abilities.values());
+	}
+
+	public static List<String> getComplete(final String part) {
+		return complete.get(part);
 	}
 
 	public static List<String> nameValues() {

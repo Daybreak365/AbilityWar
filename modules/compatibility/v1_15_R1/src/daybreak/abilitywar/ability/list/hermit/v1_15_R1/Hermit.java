@@ -15,12 +15,6 @@ import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.UUID;
 import net.minecraft.server.v1_15_R1.DataWatcher.Item;
 import net.minecraft.server.v1_15_R1.DataWatcherObject;
 import net.minecraft.server.v1_15_R1.DataWatcherRegistry;
@@ -35,15 +29,25 @@ import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Arrow;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 @AbilityManifest(name = "헤르밋", rank = Rank.A, species = Species.HUMAN, explain = {
 		"비전투 상태로 20초가 지날 경우 은신합니다. 은신 상태에서는",
 		"갑옷과 들고 있는 아이템이 상대에게 보이지 않으며, 몸이 투명해집니다.",
-		"공격을 당하거나 공격을 할 경우 발각되고, 은신 상태가 해제됩니다."
+		"대미지를 입거나 공격을 할 경우 발각되고, 은신 상태가 해제됩니다."
 })
 public class Hermit extends AbilityBase {
 
@@ -83,8 +87,17 @@ public class Hermit extends AbilityBase {
 		}
 	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).register();
 
+	private boolean hiding = false;
+
 	public Hermit(Participant participant) {
 		super(participant);
+	}
+
+	@SubscribeEvent
+	private void onEntityTarget(EntityTargetLivingEntityEvent e) {
+		if (getPlayer().equals(e.getTarget()) && hiding) {
+			e.setCancelled(true);
+		}
 	}
 
 	@SubscribeEvent
@@ -122,6 +135,22 @@ public class Hermit extends AbilityBase {
 		}
 	}
 
+	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (!cooldown.start()) {
+			if (cooldown.getCount() < 2) {
+				cooldown.setCount(2);
+			}
+		} else {
+			cooldown.setCount(2);
+		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
+	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+		onEntityDamage(e);
+	}
+
 	@SubscribeEvent
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (getPlayer().equals(e.getEntity()) || getPlayer().equals(e.getDamager()) || (e.getDamager() instanceof Arrow && getPlayer().equals(((Arrow) e.getDamager()).getShooter()))) {
@@ -132,6 +161,7 @@ public class Hermit extends AbilityBase {
 	}
 
 	private void hide() {
+		this.hiding = true;
 		actionbarChannel.update("§7은신 중");
 		getParticipant().attributes().TARGETABLE.setValue(false);
 		final CraftPlayer craftPlayer = (CraftPlayer) getPlayer();
@@ -155,6 +185,7 @@ public class Hermit extends AbilityBase {
 	}
 
 	private void show() {
+		this.hiding = false;
 		actionbarChannel.update("§6발각됨");
 		getParticipant().attributes().TARGETABLE.setValue(true);
 		final PacketPlayOutEntityEquipment[] packets = {

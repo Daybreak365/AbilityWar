@@ -178,11 +178,16 @@ abstract class SimpleTimer(val taskType: TaskType, val maximumCount: Int) {
 
 	interface Observer {
 
-		fun onStart()
-		fun onEnd()
-		fun onSilentEnd()
-		fun onPause()
-		fun onResume()
+		@JvmDefault
+		fun onStart() {}
+		@JvmDefault
+		fun onEnd() {}
+		@JvmDefault
+		fun onSilentEnd() {}
+		@JvmDefault
+		fun onPause() {}
+		@JvmDefault
+		fun onResume() {}
 
 	}
 

@@ -5,6 +5,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -17,10 +22,6 @@ import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,10 +32,36 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "글래디에이터", rank = Rank.S, species = Species.HUMAN, explain = {
-		"상대방을 철괴로 우클릭하면 부셔지지 않는 투기장이 생성되며 추가 체력을 얻고,",
+		"상대방을 철괴로 우클릭하면 부셔지지 않는 투기장이 생성되며 §e흡수§f/§3저항 §f효과를 얻고,",
 		"상대방과 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
 })
+@Tips(tip = {
+		"다른 사람의 방해 없이, 유리한 1:1 전투를 펼치고 싶다면 글래디에이터를",
+		"사용하세요. 하지만 아무리 많은 효과를 받더라도, 승패를 결정하는 것은",
+		"상대방의 능력과 사용자의 실력입니다. 항상 방심하지 마세요."
+}, strong = {
+		@Description(subject = "좁은 공간에서 약한 상대", explain = {
+				"글래디에이터는 좁은 공간을 만들어 그 곳에서 전투를 펼치기",
+				"때문에, 좁은 공간에서 약한 상대에 강합니다. 예를 들어, §b깃털§f과 §b로렘§f",
+				"등이 있습니다."
+		})
+}, weak = {
+		@Description(subject = "좁은 공간에서 강한 상대", explain = {
+				"글래디에이터는 좁은 공간을 만들어 그 곳에서 전투를 펼치기",
+				"때문에, 좁은 공간에서 강한 상대에 약합니다."
+		}),
+		@Description(subject = "순간 이동", explain = {
+				"글래디에이터는 물리적으로 밖으로 나가지 못하도록 막을 뿐, 순간 이동을",
+				"막지는 않습니다. 글래디에이터의 투기장 밖으로 순간 이동할 수 있는 능력에게",
+				"카운터당할 수 있습니다."
+		})
+}, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Gladiator extends AbilityBase implements TargetHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,

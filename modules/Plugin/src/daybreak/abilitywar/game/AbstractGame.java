@@ -15,6 +15,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
+import daybreak.abilitywar.game.manager.GameFactory;
+import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.event.EventManager;
@@ -29,17 +31,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -58,6 +49,18 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.UUID;
 
 public abstract class AbstractGame extends SimpleTimer implements IGame, Listener, CommandHandler {
 
@@ -84,12 +87,18 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	private boolean restricted = true;
 	private boolean gameStarted = false;
 
+	private final GameRegistration registration;
 	protected final ParticipantStrategy participantStrategy;
 	private final EventManager eventManager = new EventManager(this);
 
 	public AbstractGame(Collection<Player> players) throws IllegalArgumentException {
 		super(TaskType.INFINITE, -1);
 		this.participantStrategy = newParticipantStrategy(players);
+		if (!GameFactory.isRegistered(getClass())) {
+			onEnd();
+			throw new IllegalArgumentException("GameFactory에 등록되지 않은 게임입니다.");
+		}
+		this.registration = GameFactory.getRegistration(getClass());
 	}
 
 	@Override
@@ -140,6 +149,10 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	 */
 	public EventManager getEventManager() {
 		return eventManager;
+	}
+
+	public GameRegistration getRegistration() {
+		return registration;
 	}
 
 	/**

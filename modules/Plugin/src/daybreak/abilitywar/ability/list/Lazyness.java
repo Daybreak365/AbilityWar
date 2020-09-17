@@ -10,8 +10,6 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -22,6 +20,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 @AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
 		"지금 받을 대미지와 회복을 3초 뒤의 나에게 미루고, 넉백을 무시합니다.",
@@ -60,13 +61,14 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 		if (e.getEntity().equals(getPlayer())) {
 			final long current = System.currentTimeMillis();
 			if (current - lastDamageMillis >= getPlayer().getMaximumNoDamageTicks() * 50) {
-				final DamageTimer damageTimer = new DamageTimer(e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION));
+				final DamageTimer damageTimer = new DamageTimer(e, e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION));
 				this.lastDamage = damageTimer;
 				timers.add(damageTimer);
 				this.lastDamageMillis = current;
 			} else if (lastDamage != null) {
 				final double damage = e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION);
 				if (lastDamage.damage < damage) {
+					lastDamage.event = e;
 					lastDamage.damage = damage;
 					lastDamage.setCount(3);
 				}
@@ -114,11 +116,13 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 	private class DamageTimer extends AbilityTimer {
 
 		private final ActionbarChannel channel;
+		private EntityDamageEvent event;
 		private double damage;
 
-		private DamageTimer(double damage) {
+		private DamageTimer(EntityDamageEvent event, double damage) {
 			super(3);
 			this.channel = newActionbarChannel();
+			this.event = event;
 			this.damage = damage;
 			start();
 		}
@@ -149,6 +153,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 					getPlayer().setHealth(Math.max(getPlayer().getHealth() - toDamage, 0.0));
 				}
 				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
+				getPlayer().setLastDamageCause(event);
 			}
 			channel.unregister();
 		}
@@ -167,7 +172,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 	private class RegainTimer extends AbilityTimer {
 
 		private final ActionbarChannel channel;
-		private double health;
+		private final double health;
 
 		private RegainTimer(double health) {
 			super(3);

@@ -4,19 +4,15 @@ import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.naming.OperationNotSupportedException;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -27,6 +23,14 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import javax.naming.OperationNotSupportedException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbilitySelect extends GameTimer {
 
@@ -52,6 +56,37 @@ public abstract class AbilitySelect extends GameTimer {
 		return Collections.unmodifiableCollection(selectorData.selectors);
 	}
 
+	protected void onChange(final Participant participant) {
+		final Player player = participant.getPlayer();
+		if (!hasDecided(participant)) {
+			player.sendMessage("§a능력이 변경되었습니다. §e/aw check§f로 확인하세요.");
+			player.sendMessage("§e/aw yes §f명령어로 능력을 확정하거나, §e/aw no §f명령어로 능력을 변경하세요.");
+		} else {
+			player.sendMessage("§a능력이 변경되었습니다. §e/aw check§f로 확인하세요.");
+		}
+		if (participant.hasAbility()) {
+			final Tip tip = participant.getAbility().getRegistration().getTip();
+			if (tip != null) {
+				player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
+			}
+		}
+	}
+
+	protected void onDecision(final Participant participant) {
+		final Player player = participant.getPlayer();
+		player.sendMessage("§6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요.");
+		Bukkit.broadcastMessage("§e" + player.getName() + "§f님이 능력을 확정하셨습니다.");
+		Bukkit.broadcastMessage("§a남은 인원 §7: §f" + getLeftPlayerCount() + "명");
+	}
+
+	protected void onSkip(final String admin) {
+		Bukkit.broadcastMessage(
+				admin != null ? (
+						"§f관리자 §e" + admin + "§f" + KoreanUtil.getJosa(admin.replaceAll("_", ""), Josa.이가) + " 모든 참가자의 능력을 강제로 확정했습니다."
+				) : "§e모든 참가자§f의 능력이 강제로 확정되었습니다."
+		);
+	}
+
 	@Override
 	public void onStart() {
 		started = true;
@@ -67,19 +102,9 @@ public abstract class AbilitySelect extends GameTimer {
 	 */
 	public final void alterAbility(Participant participant) {
 		if (isSelector(participant) && !hasDecided(participant)) {
-			updateRemainingChangeCount(participant, selectorMap.get(participant) - 1);
+			updateChangeCount(participant, selectorMap.get(participant) - 1);
 			if (changeAbility(participant)) {
-				Player p = participant.getPlayer();
-
-				if (!hasDecided(participant)) {
-					p.sendMessage(new String[]{
-							"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
-							"§e/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-							"§e/aw no §f명령어를 사용하여 능력을 변경합니다."
-					});
-				} else {
-					p.sendMessage("§a당신의 능력이 변경되었습니다. §e/aw check§f로 확인 할 수 있습니다.");
-				}
+				onChange(participant);
 			}
 		}
 	}
@@ -101,22 +126,17 @@ public abstract class AbilitySelect extends GameTimer {
 	/**
 	 * {@link Participant}에게 남은 능력 변경 횟수를 설정합니다.
 	 */
-	private void updateRemainingChangeCount(Participant participant, int count) {
+	private void updateChangeCount(final Participant participant, int count) {
+		count = Math.max(0, count);
 		selectorMap.put(participant, count);
-
 		if (count == 0) {
-			Player p = participant.getPlayer();
-
-			p.sendMessage("§6능력이 확정되셨습니다. 다른 플레이어를 기다려주세요.");
-
-			Bukkit.broadcastMessage("§e" + p.getName() + "§f님이 능력을 확정하셨습니다.");
-			Bukkit.broadcastMessage("§a남은 인원 §7: §f" + getLeftPlayers() + "명");
+			onDecision(participant);
 		}
 	}
 
-	private int getLeftPlayers() {
+	protected int getLeftPlayerCount() {
 		int count = 0;
-		for (Participant participant : getSelectors()) if (!hasDecided(participant)) count++;
+		for (final Participant participant : getSelectors()) if (!hasDecided(participant)) count++;
 		return count;
 	}
 
@@ -130,24 +150,20 @@ public abstract class AbilitySelect extends GameTimer {
 	 *
 	 * @param admin 출력할 관리자의 이름
 	 */
-	public final void skip(String admin) {
+	public final void skip(final String admin) {
 		if (this.stop(false)) {
-			for (Participant p : getSelectors())
-				if (!hasDecided(p))
-					decideAbility(p);
+			for (Participant participant : getSelectors()) {
+				if (!hasDecided(participant)) {
+					decideAbility(participant);
+				}
+			}
 
-			Bukkit.broadcastMessage("§f관리자 §e" + admin + "§f님이 모든 참가자의 능력을 강제로 확정시켰습니다.");
+			onSkip(admin);
 		}
 	}
 
-	private void skip() {
-		if (this.stop(false)) {
-			for (Participant participant : getSelectors())
-				if (!hasDecided(participant))
-					decideAbility(participant);
-
-			Bukkit.broadcastMessage("§e모든 참가자§f의 능력이 강제로 확정되었습니다.");
-		}
+	public final void skip() {
+		this.skip(null);
 	}
 
 	/**
@@ -160,7 +176,7 @@ public abstract class AbilitySelect extends GameTimer {
 	 */
 	public final void decideAbility(Participant participant) {
 		if (isSelector(participant))
-			updateRemainingChangeCount(participant, 0);
+			updateChangeCount(participant, 0);
 	}
 
 	/**
@@ -174,8 +190,8 @@ public abstract class AbilitySelect extends GameTimer {
 	public void run(int count) {
 		if (!hasEveryoneSelected()) {
 			if (count % 20 == 0) {
-				Bukkit.broadcastMessage("§c아직 모든 유저가 능력을 확정하지 않았습니다.");
-				Bukkit.broadcastMessage("§c/aw yes 또는 /aw no 명령어로 능력을 확정해주세요.");
+				Bukkit.broadcastMessage("§c아직 능력을 확정하지 않은 참가자가 있습니다.");
+				Bukkit.broadcastMessage("§4/aw yes §c또는 §4/aw no §c명령어로 능력을 확정해주세요.");
 			}
 		} else {
 			this.stop(false);
@@ -262,12 +278,6 @@ public abstract class AbilitySelect extends GameTimer {
 		private final BossBar bossBar;
 		private final SimpleTimer.Observer observer = new Observer() {
 			@Override
-			public void onResume() {}
-
-			@Override
-			public void onPause() {}
-
-			@Override
 			public void onSilentEnd() {
 				stop(true);
 			}
@@ -276,9 +286,6 @@ public abstract class AbilitySelect extends GameTimer {
 			public void onEnd() {
 				stop(true);
 			}
-
-			@Override
-			public void onStart() {}
 		};
 
 		public AutoSkip() {

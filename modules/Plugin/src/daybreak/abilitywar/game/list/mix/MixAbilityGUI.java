@@ -13,14 +13,6 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringJoiner;
-import java.util.TreeMap;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,6 +29,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringJoiner;
+import java.util.TreeMap;
+import java.util.concurrent.CompletableFuture;
 
 public class MixAbilityGUI implements Listener, Observer {
 
@@ -99,7 +100,7 @@ public class MixAbilityGUI implements Listener, Observer {
 				meta.setDisplayName("§b" + manifest.name());
 				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 				final List<String> lore = Messager.asList(
 						"§f등급: " + manifest.rank().getRankName(),
@@ -135,7 +136,7 @@ public class MixAbilityGUI implements Listener, Observer {
 							meta.setDisplayName("§b" + manifest.name());
 							StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 							if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-							if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+							if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
 							if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 							final List<String> lore = Messager.asList(
 									"§f등급: " + manifest.rank().getRankName(),

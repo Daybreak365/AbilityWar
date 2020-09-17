@@ -37,6 +37,16 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -51,15 +61,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.entity.EntityEvent;
-import org.bukkit.event.player.PlayerEvent;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * {@link AbilityWar} 플러그인에서 사용하는 <strong>모든 능력</strong>의 기반이 되는 클래스입니다.
@@ -280,6 +281,7 @@ public abstract class AbilityBase {
 		}
 	}
 
+	@NotNull
 	public final AbilityRegistration getRegistration() {
 		return registration;
 	}
@@ -295,6 +297,7 @@ public abstract class AbilityBase {
 	/**
 	 * 능력을 소유하는 참가자를 반환합니다.
 	 */
+	@NotNull
 	public final Participant getParticipant() {
 		return participant;
 	}
@@ -329,13 +332,23 @@ public abstract class AbilityBase {
 	/**
 	 * 능력의 이름을 반환합니다.
 	 */
+	@NotNull
 	public final String getName() {
+		return manifest.name();
+	}
+
+	/**
+	 * 능력의 표시 이름을 반환합니다.
+	 */
+	@NotNull
+	public String getDisplayName() {
 		return manifest.name();
 	}
 
 	/**
 	 * 능력의 등급을 반환합니다.
 	 */
+	@NotNull
 	public final Rank getRank() {
 		return manifest.rank();
 	}
@@ -343,13 +356,20 @@ public abstract class AbilityBase {
 	/**
 	 * 능력의 종족을 반환합니다.
 	 */
+	@NotNull
 	public final Species getSpecies() {
 		return manifest.species();
+	}
+
+	@NotNull
+	public final AbilityManifest getManifest() {
+		return manifest;
 	}
 
 	/**
 	 * 이 능력이 사용되는 게임을 반환합니다.
 	 */
+	@NotNull
 	protected final AbstractGame getGame() {
 		return game;
 	}
@@ -556,6 +576,10 @@ public abstract class AbilityBase {
 
 		public int getCount() {
 			return timer.getCount();
+		}
+
+		public int getMaximumCount() {
+			return timer.getMaximumCount();
 		}
 
 		public void setCount(int count) {

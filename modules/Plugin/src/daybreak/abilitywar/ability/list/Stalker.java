@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability.list;
 
+import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -11,12 +12,11 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Arrays;
-import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,11 +24,17 @@ import org.bukkit.Note;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @AbilityManifest(name = "스토커", rank = Rank.A, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c오직 너만을§f: 같은 플레이어를 계속 공격하면 스택이 쌓이며 §8실명 §f효과를",
@@ -36,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 		"§f플레이어에게 주는 추가 대미지가 0.15씩 증가합니다.",
 		"§7철괴 우클릭 §8- §c오직 나만이§f: 순간 벽을 통과할 수 있고 타게팅되지 않는 상태로",
 		"§f변하여 마지막으로 타격한 플레이어에게 빠르게 돌진합니다. $[COOLDOWN_CONFIG]",
-		"§7철괴 좌클릭 §8- §c간 보기§f: 마지막으로 타격한 플레이어에게 작게",
+		"§7검 우클릭 §8- §c간 보기§f: 마지막으로 타격한 플레이어에게 작게",
 		"§f돌진합니다. $[LEFT_COOLDOWN_CONFIG]"
 })
 public class Stalker extends AbilityBase implements ActiveHandler {
@@ -71,6 +77,16 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 
 	};
 
+	private static final Set<Material> swords;
+
+	static {
+		if (MaterialX.NETHERITE_SWORD.isSupported()) {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD, MaterialX.NETHERITE_SWORD.getMaterial());
+		} else {
+			swords = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
+		}
+	}
+
 	public Stalker(Participant participant) {
 		super(participant);
 	}
@@ -90,6 +106,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				ParticleLib.SPELL_MOB.spawnParticle(getPlayer().getLocation().add(Vector.getRandom()), BLACK);
 			}
 			this.originalMode = getPlayer().getGameMode();
+			if (originalMode == GameMode.SPECTATOR) originalMode = GameMode.SURVIVAL;
 			this.flySpeed = getPlayer().getFlySpeed();
 			getParticipant().attributes().TARGETABLE.setValue(false);
 			getPlayer().setGameMode(GameMode.SPECTATOR);
@@ -143,15 +160,6 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				} else {
 					getPlayer().sendMessage("§4마지막으로 때렸던 플레이어가 존재하지 않습니다.");
 				}
-			} else if (clickType == ClickType.LEFT_CLICK) {
-				if (leftCooldownTimer.isCooldown()) return false;
-				if (lastVictim != null) {
-					leftCooldownTimer.start();
-					getPlayer().setVelocity(lastVictim.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().setY(0));
-					return true;
-				} else {
-					getPlayer().sendMessage("§4마지막으로 때렸던 플레이어가 존재하지 않습니다.");
-				}
 			}
 		}
 		return false;
@@ -159,6 +167,19 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 
 	private Player lastVictim = null;
 	private int stack = 0;
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerInteract(final PlayerInteractEvent e) {
+		if ((e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType())) {
+			if (leftCooldownTimer.isCooldown()) return;
+			if (lastVictim != null) {
+				leftCooldownTimer.start();
+				getPlayer().setVelocity(lastVictim.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().setY(0));
+			} else {
+				getPlayer().sendMessage("§4마지막으로 때렸던 플레이어가 존재하지 않습니다.");
+			}
+		}
+	}
 
 	@SubscribeEvent
 	private void onParticipantDeath(ParticipantDeathEvent e) {

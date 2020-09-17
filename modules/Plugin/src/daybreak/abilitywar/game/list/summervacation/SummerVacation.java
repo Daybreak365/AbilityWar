@@ -22,11 +22,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,6 +36,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 신나는 여름 휴가
@@ -81,7 +82,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					Bukkit.broadcastMessage("§c" + count + ". §f" + p.getPlayer().getName());
 				}
 				Bukkit.broadcastMessage("§f총 인원수 §c: §e" + count + "명");
-				Bukkit.broadcastMessage("§6==========================");
+				Bukkit.broadcastMessage("§6===========================");
 				if (getParticipants().size() < 1) {
 					stop();
 					Bukkit.broadcastMessage("§c최소 참가자 수를 충족하지 못하여 게임을 중지합니다. §8(§71명§8)");
@@ -282,6 +283,11 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 		} else {
 			super.executeCommand(commandType, sender, command, args, plugin);
 		}
+	}
+
+	@Override
+	public List<String> tabComplete(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
+		return null;
 	}
 
 }

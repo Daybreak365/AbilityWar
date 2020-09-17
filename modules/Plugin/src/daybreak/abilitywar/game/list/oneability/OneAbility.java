@@ -2,7 +2,9 @@ package daybreak.abilitywar.game.list.oneability;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
@@ -16,17 +18,19 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import javax.naming.OperationNotSupportedException;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
 
 
 @GameManifest(name = "단일전", description = {
@@ -34,6 +38,13 @@ import org.bukkit.World;
 		"§f모두 같은 능력으로 펼치는 능력자 전쟁!"
 })
 public class OneAbility extends Game implements DefaultKitHandler {
+
+	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(OneAbility.class, "CHANGE_COUNT", 2, "# 능력 변경 횟수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
 
 	private static final Logger logger = Logger.getLogger(OneAbility.class);
 
@@ -44,7 +55,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 
 	@Override
 	public AbilitySelect newAbilitySelect() {
-		return new AbilitySelect(this, getParticipants(), 2) {
+		return new AbilitySelect(this, getParticipants(), ABILITY_CHANGE_COUNT.getValue()) {
 
 			private Participant selector;
 			private List<Class<? extends AbilityBase>> abilities;
@@ -66,14 +77,17 @@ public class OneAbility extends Game implements DefaultKitHandler {
 					for (Participant participant : getParticipants()) {
 						try {
 							participant.setAbility(abilityClass);
+							final AbilityBase ability = participant.getAbility();
 							abilities.remove(abilityClass);
 
-							participant.getPlayer().sendMessage("§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.");
-							if (participant.equals(selector)) {
-								participant.getPlayer().sendMessage(new String[]{
-										"§e/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-										"§e/aw no §f명령어를 사용하여 능력을 변경합니다."
-								});
+							final Player player = participant.getPlayer();
+							player.sendMessage("§a능력이 할당되었습니다. §e/aw check§f로 확인하세요.");
+							if (participant.equals(selector) && !hasDecided(participant)) {
+								player.sendMessage("§e/aw yes §f명령어로 능력을 확정하거나, §e/aw no §f명령어로 능력을 변경하세요.");
+							}
+							final Tip tip = ability.getRegistration().getTip();
+							if (tip != null) {
+								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
 							}
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
@@ -96,6 +110,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 						for (Participant part : getParticipants()) {
 							try {
 								part.setAbility(abilityClass);
+								part.getPlayer().sendMessage("§a능력이 변경되었습니다. §e/aw check§f로 확인하세요.");
 								abilities.remove(abilityClass);
 							} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 								logger.error(ChatColor.YELLOW + part.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
@@ -123,7 +138,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 					lines.add("§a" + count + ". §f" + p.getPlayer().getName());
 				}
 				lines.add("§e총 인원수 : " + count + "명");
-				lines.add("§6==========================");
+				lines.add("§6===========================");
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);

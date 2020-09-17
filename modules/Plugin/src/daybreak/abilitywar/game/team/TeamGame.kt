@@ -36,10 +36,16 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.player.AsyncPlayerChatEvent
-import java.util.ArrayList
-import java.util.Collections
-import java.util.StringJoiner
-import java.util.UUID
+import java.util.*
+import kotlin.collections.Collection
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+import kotlin.collections.MutableCollection
+import kotlin.collections.MutableMap
+import kotlin.collections.MutableSet
+import kotlin.collections.Set
+import kotlin.collections.isNotEmpty
+import kotlin.collections.set
 
 abstract class TeamGame(players: Collection<Player>, args: Array<String>): Game(players), Teamable {
 
@@ -349,6 +355,7 @@ abstract class TeamGame(players: Collection<Player>, args: Array<String>): Game(
 	}
 
 	interface Winnable: daybreak.abilitywar.game.interfaces.Winnable {
+		@JvmDefault
 		fun Win(winTeam: Members) {
 			if (!isRunning()) return
 			Messager.clearChat()

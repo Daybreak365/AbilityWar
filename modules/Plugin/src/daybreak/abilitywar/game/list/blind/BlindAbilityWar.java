@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
+import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
@@ -32,12 +33,6 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -53,6 +48,13 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
+import javax.naming.OperationNotSupportedException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 @GameManifest(name = "블라인드 능력 전쟁", description = {
 		"§f능력 설명이 보이지 않는다!",
 		"§f내 능력을 모르는 상태로 플레이하는 능력자 게임",
@@ -62,6 +64,13 @@ import org.bukkit.plugin.Plugin;
 })
 @GameAliases({"블능전", "블라인드"})
 public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable, Observer {
+
+	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(BlindAbilityWar.class, "CHANGE_COUNT", 2, "# 능력 변경 횟수") {
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+	};
 
 	private static final Logger logger = Logger.getLogger(BlindAbilityWar.class);
 
@@ -378,33 +387,82 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 
 	@Override
 	public void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
-		if (commandType == CommandType.ABILITY_CHECK) {
-			final Player player = (Player) sender;
-			if (GameManager.isGameRunning()) {
-				final AbstractGame game = GameManager.getGame();
-				if (game.isParticipating(player)) {
-					final Participant participant = game.getParticipant(player);
-					if (participant.hasAbility()) {
-						for (String line : getBlindInfo(participant.getAbility())) {
-							player.sendMessage(line);
+		switch (commandType) {
+			case ABILITY_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final Participant participant = game.getParticipant(player);
+						if (participant.hasAbility()) {
+							for (String line : getBlindInfo(participant.getAbility())) {
+								player.sendMessage(line);
+							}
+						} else {
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
 						}
 					} else {
-						Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
 					}
 				} else {
-					Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 				}
-			} else {
-				Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 			}
-		} else super.executeCommand(commandType, sender, command, args, plugin);
+			break;
+			case TIP_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						Messager.sendErrorMessage(sender, "이 게임에서 사용할 수 없는 명령어입니다.");
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+					}
+				} else {
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+				}
+			}
+			break;
+			default: {
+				super.executeCommand(commandType, sender, command, args, plugin);
+			}
+			break;
+		}
 	}
 
 	@Override
 	public AbilitySelect newAbilitySelect() {
-		return new AbilitySelect(this, getParticipants(), 2) {
+		return new AbilitySelect(this, getParticipants(), ABILITY_CHANGE_COUNT.getValue()) {
 
 			private List<Class<? extends AbilityBase>> abilities;
+
+			@Override
+			protected void onChange(final Participant participant) {
+				final Player player = participant.getPlayer();
+				if (!hasDecided(participant)) {
+					player.sendMessage("§7능력이 변경되었습니다. §8/aw check§f로 확인하세요.");
+					player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
+				} else {
+					player.sendMessage("§7능력이 변경되었습니다. §8/aw check§f로 확인하세요.");
+				}
+			}
+
+			@Override
+			protected void onDecision(final Participant participant) {
+				final Player player = participant.getPlayer();
+				player.sendMessage("§7능력이 확정되셨습니다. 다른 플레이어를 기다려주세요.");
+				Bukkit.broadcastMessage("§8" + player.getName() + "§f님이 능력을 확정하셨습니다.");
+				Bukkit.broadcastMessage("§8남은 인원 §7: §f" + getLeftPlayerCount() + "명");
+			}
+
+			@Override
+			protected void onSkip(final String admin) {
+				Bukkit.broadcastMessage(
+						admin != null ? (
+								"§f관리자 §7" + admin + "§f" + KoreanUtil.getJosa(admin.replaceAll("_", ""), Josa.이가) + " 모든 참가자의 능력을 강제로 확정했습니다."
+						) : "§7모든 참가자§f의 능력이 강제로 확정되었습니다."
+				);
+			}
 
 			@Override
 			protected void drawAbility(Collection<? extends Participant> selectors) {
@@ -418,11 +476,11 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 							participant.setAbility(abilityClass);
 							abilities.remove(abilityClass);
 
-							participant.getPlayer().sendMessage(new String[]{
-									"§7능력이 할당되었습니다. §8/aw check§f로 확인 할 수 있습니다.",
-									"§8/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-									"§8/aw no §f명령어를 사용하여 능력을 변경합니다."
-							});
+							final Player player = participant.getPlayer();
+							player.sendMessage("§7능력이 할당되었습니다. §8/aw check§f로 확인하세요.");
+							if (!hasDecided(participant)) {
+								player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
+							}
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
@@ -435,11 +493,11 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
 						try {
 							participant.setAbility(abilityClass);
-							participant.getPlayer().sendMessage(new String[]{
-									"§7능력이 할당되었습니다. §8/aw check§f로 확인 할 수 있습니다.",
-									"§8/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-									"§8/aw no §f명령어를 사용하여 능력을 변경합니다."
-							});
+							final Player player = participant.getPlayer();
+							player.sendMessage("§7능력이 할당되었습니다. §8/aw check§f로 확인하세요.");
+							if (!hasDecided(participant)) {
+								player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
+							}
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());

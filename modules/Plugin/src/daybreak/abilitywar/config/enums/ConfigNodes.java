@@ -5,12 +5,13 @@ import daybreak.abilitywar.config.serializable.SpawnLocation;
 import daybreak.abilitywar.config.serializable.team.PresetContainer;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.Messager;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.MemorySection;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.MemorySection;
 
 public enum ConfigNodes {
 
@@ -90,6 +91,8 @@ public enum ConfigNodes {
 			"# 초반 스폰 이동 활성화 여부"),
 	GAME_VISUAL_EFFECT("게임.시각효과", true,
 			"# 파티클 활성화 여부"),
+	GAME_ABILITY_CHANGE_COUNT("게임.능력변경횟수", 1,
+			"# 능력 변경 가능 횟수"),
 	GAME_BLACKLIST("게임.블랙리스트", Messager.asList(), new Cacher() {
 		@Override
 		public Object toCache(Object object) {

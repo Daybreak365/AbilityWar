@@ -22,6 +22,7 @@ import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.Assassi
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMurderer;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -34,17 +35,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -77,6 +67,19 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 @GameManifest(name = "머더 미스터리", description = {
 
@@ -497,45 +500,91 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		}
 	}
 
+	public static List<String> formatAbilityInfo(AbilityBase ability) {
+		List<String> list = Messager.asList(
+				Formatter.formatTitle(32, ChatColor.DARK_RED, ChatColor.RED, "능력 정보"),
+				"§b" + ability.getName() + " " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§c능력 활성화됨§f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
+		for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
+			list.add(iterator.next());
+		}
+		list.add("§4---------------------------------");
+		return list;
+	}
+
 	@Override
 	public void executeCommand(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
-		if (commandType == CommandType.ABILITY_CHECK) super.executeCommand(commandType, sender, command, args, plugin);
-		else if (commandType == CommandType.ABI) {
-			if (args.length < 2) {
-				Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [직업]");
-				return;
-			}
-			final String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-
-			if (JobList.isRegistered(name)) {
-				if (args[0].equalsIgnoreCase("@a")) {
-					try {
-						for (Participant participant : GameManager.getGame().getParticipants()) {
-							participant.setAbility(JobList.getByString(name));
+		switch (commandType) {
+			case ABILITY_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final Participant participant = game.getParticipant(player);
+						if (participant.hasAbility()) {
+							for (String line : formatAbilityInfo(participant.getAbility())) {
+								player.sendMessage(line);
+							}
+						} else {
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
 						}
-						Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 직업을 임의로 부여하였습니다.");
-					} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-						Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
-						if (DeveloperSettings.isEnabled()) e.printStackTrace();
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
 					}
 				} else {
-					final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
-					if (targetPlayer != null) {
-						final AbstractGame game = GameManager.getGame();
-						if (game.isParticipating(targetPlayer)) {
-							try {
-								game.getParticipant(targetPlayer).setAbility(JobList.getByString(name));
-								Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 직업을 임의로 부여하였습니다.");
-							} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-								Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
-								if (DeveloperSettings.isEnabled()) e.printStackTrace();
-							}
-						} else Messager.sendErrorMessage(sender, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
-					} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 				}
-			} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 직업입니다.");
+			}
+			break;
+			case TIP_CHECK: {
+				super.executeCommand(commandType, sender, command, args, plugin);
+			}
+			break;
+			case ABI: {
+				if (args.length < 2) {
+					Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [직업]");
+					return;
+				}
+				final String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+
+				if (JobList.isRegistered(name)) {
+					if (args[0].equalsIgnoreCase("@a")) {
+						try {
+							for (Participant participant : GameManager.getGame().getParticipants()) {
+								participant.setAbility(JobList.getByString(name));
+							}
+							Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 직업을 임의로 부여하였습니다.");
+						} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+							Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
+							if (DeveloperSettings.isEnabled()) e.printStackTrace();
+						}
+					} else {
+						final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
+						if (targetPlayer != null) {
+							final AbstractGame game = GameManager.getGame();
+							if (game.isParticipating(targetPlayer)) {
+								try {
+									game.getParticipant(targetPlayer).setAbility(JobList.getByString(name));
+									Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 직업을 임의로 부여하였습니다.");
+								} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+									Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
+									if (DeveloperSettings.isEnabled()) e.printStackTrace();
+								}
+							} else Messager.sendErrorMessage(sender, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+						} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+					}
+				} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 직업입니다.");
+			}
+			break;
+			default: {
+				sender.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
+			}
+			break;
 		}
-		else sender.sendMessage(ChatColor.RED + "사용할 수 없는 명령어입니다.");
+	}
+
+	@Override
+	public List<String> tabComplete(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
+		return null;
 	}
 
 	public static class ArrowKillEvent extends Event implements Cancellable {

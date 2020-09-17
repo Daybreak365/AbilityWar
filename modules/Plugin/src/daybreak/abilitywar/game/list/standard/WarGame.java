@@ -17,8 +17,6 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.List;
-import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -27,6 +25,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import javax.naming.OperationNotSupportedException;
+import java.util.List;
 
 
 @GameManifest(name = "능력자 전쟁", description = {"§f우승 조건이 있는 능력자 전쟁 플러그인의 기본 게임입니다.", "", "§a● §f일부 콘피그가 임의로 변경될 수 있습니다."})
@@ -51,7 +52,7 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 					lines.add("§a" + count + ". §f" + p.getPlayer().getName());
 				}
 				lines.add("§e총 인원수 : " + count + "명");
-				lines.add("§6==========================");
+				lines.add("§6===========================");
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);

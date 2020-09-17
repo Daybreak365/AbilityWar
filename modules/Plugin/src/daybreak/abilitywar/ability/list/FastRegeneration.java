@@ -4,6 +4,10 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -19,9 +23,14 @@ import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "빠른 회복", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 빠른 회복 능력을 사용합니다. $[COOLDOWN_CONFIG]",
-		"능력 사용 중 체력을 빠르게 회복하며, 체력이 적을 수록",
-		"더 빠른 속도로 회복합니다."
+		"능력 사용 중 체력을 빠르게 회복하며, 체력이 적을 수록 더 빨리 회복합니다."
 })
+@Tips(tip = {
+		"전투가 시작하기 전에, 전투 중에, 전투가 끝난 후에 등 언제",
+		"써도 좋은 능력입니다. 전투 전에 사용할 경우 체력이 상대보다",
+		"더 많은 것과 같은 효과를 얻을 수 있기 때문에, 전투를 앞두고 있다면",
+		"바로 사용해주는 것이 좋습니다."
+}, strong = {}, weak = {}, stats = @Stats(offense = Level.ZERO, survival = Level.EIGHT, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
@@ -39,7 +48,7 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Duration", 10,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Duration", 10,
 			"# 지속 시간 (단위: 초)") {
 
 		@Override
@@ -55,63 +64,19 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
-	private final Duration healthGain = new Duration(DurationConfig.getValue() * 2, cooldownTimer) {
-
-		@Override
-		public void onDurationStart() {
-			sound.start();
-		}
-
-		@Override
-		public void onDurationProcess(int count) {
-			Player player = getPlayer();
-			if (!player.isDead()) {
-				final double playerHealth = player.getHealth();
-				final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-				if (playerHealth < maxHealth) {
-					final double gain;
-					if (playerHealth <= 2) {
-						gain = 1.2;
-					} else if (playerHealth <= 5) {
-						gain = 1;
-					} else if (playerHealth <= 10) {
-						gain = 0.8;
-					} else if (playerHealth <= 15) {
-						gain = 0.6;
-					} else {
-						gain = 0.4;
-					}
-
-					player.setHealth(Math.min(player.getHealth() + gain, maxHealth));
-				}
-			}
-		}
-
-		@Override
-		public void onDurationEnd() {
-			sound.stop(false);
-		}
-
-		@Override
-		public void onDurationSilentEnd() {
-			sound.stop(false);
-		}
-
-	}.setPeriod(TimeUnit.TICKS, 10);
-
-	private final AbilityTimer sound = new AbilityTimer() {
+	private final Duration healthGain = new Duration(DURATION_CONFIG.getValue() * 2, cooldownTimer) {
 
 		private int tick;
 
 		@Override
-		public void onStart() {
+		public void onDurationStart() {
 			tick = 0;
 		}
 
 		@Override
-		public void run(int count) {
+		public void onDurationProcess(int count) {
+			final Player player = getPlayer();
 			tick++;
-			Player player = getPlayer();
 			if (!player.isDead()) {
 				switch (tick) {
 					case 1:
@@ -127,9 +92,27 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 			if (tick >= 8) {
 				tick = 0;
 			}
+			if (count % 2 == 0) {
+				if (!player.isDead()) {
+					final double playerHealth = player.getHealth();
+					final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+					if (playerHealth < maxHealth) {
+						final double gain;
+						if (playerHealth <= 5) {
+							gain = .9;
+						} else if (playerHealth <= 10) {
+							gain = .7;
+						} else {
+							gain = .5;
+						}
+
+						player.setHealth(Math.min(player.getHealth() + gain, maxHealth));
+					}
+				}
+			}
 		}
 
-	}.setPeriod(TimeUnit.TICKS, 5).register();
+	}.setPeriod(TimeUnit.TICKS, 5);
 
 	@Override
 	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {

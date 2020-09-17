@@ -7,16 +7,19 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
+import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
 
 public interface CommandHandler {
 
@@ -123,13 +126,40 @@ public interface CommandHandler {
 				}
 			}
 			break;
+			case TIP_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final Participant participant = game.getParticipant(player);
+						if (participant.hasAbility()) {
+							new AbilityTipGUI(player, participant.getAbility().getRegistration(), plugin).openGUI(1);
+						} else {
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
+						}
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+					}
+				} else {
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+				}
+			}
+			break;
 		}
+	}
+
+	default List<String> tabComplete(CommandType commandType, CommandSender sender, String command, String[] args, Plugin plugin) {
+		if (commandType == CommandType.ABI) {
+			return AbilityList.getComplete(String.join(" ", Arrays.copyOfRange(args, 3, args.length)));
+		}
+		return null;
 	}
 
 	enum CommandType {
 		ABI,
 		ABLIST,
-		ABILITY_CHECK
+		ABILITY_CHECK,
+		TIP_CHECK
 	}
 
 }

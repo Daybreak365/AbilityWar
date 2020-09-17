@@ -15,15 +15,15 @@ import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @AbilityManifest(name = "설인", rank = Rank.S, species = Species.HUMAN, explain = {
 		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
@@ -88,8 +88,6 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public void run(int sec) {
-			Location playerLocation = getPlayer().getLocation();
-			World world = getPlayer().getWorld();
 			for (Block block : LocationUtil.getBlocks2D(center, count, true, true, true)) {
 				Block belowBlock = block.getRelative(BlockFace.DOWN);
 				if (belowBlock.getType() == Material.SNOW) {

@@ -19,17 +19,12 @@ import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DeathManager;
 import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.manager.object.Invincibility;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -40,6 +35,11 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @GameManifest(name = "체인지! 믹스 전쟁", description = {
 		"§f믹스, 그리고 체인지!",
 		"§f정신 없이 즐기는 두가지 게임의 조합",
@@ -47,7 +47,6 @@ import org.bukkit.scoreboard.Score;
 		"§6● §f체인지 능력 전쟁 전용 콘피그가 적용됩니다."
 })
 @GameAliases("체믹")
-@Beta
 @TeamSupport(TeamChangeMix.class)
 public class ChangeMix extends AbstractMix implements Winnable {
 

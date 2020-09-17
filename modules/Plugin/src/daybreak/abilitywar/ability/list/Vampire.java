@@ -21,9 +21,6 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,6 +32,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.UNDEAD, explain = {
 		"철괴를 우클릭하면 $[DurationConfig]초간 주위 $[DistanceConfig]칸 안에 있는 생명체들에게서",
@@ -169,7 +170,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationProcess(int seconds) {
-			getPlayer().setFlySpeed(0.1f);
+			getPlayer().setFlySpeed(0.2f);
 			getPlayer().setAllowFlight(true);
 			getPlayer().setFlying(true);
 			if (count % 5 == 0) {
@@ -225,7 +226,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onDurationSilentEnd() {
 			getPlayer().setFlying(false);
-			getPlayer().setFlySpeed(1f);
+			getPlayer().setFlySpeed(.1f);
 			GameMode mode = getPlayer().getGameMode();
 			getPlayer().setAllowFlight(mode != GameMode.SURVIVAL && mode != GameMode.ADVENTURE);
 		}

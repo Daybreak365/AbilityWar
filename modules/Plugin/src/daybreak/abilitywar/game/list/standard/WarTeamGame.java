@@ -19,8 +19,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.List;
-import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -28,7 +26,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
+
+import javax.naming.OperationNotSupportedException;
+import java.util.List;
 
 
 public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable, Observer {
@@ -51,7 +51,7 @@ public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable
 					lines.add("§a" + count + ". §f" + p.getPlayer().getName());
 				}
 				lines.add("§e총 인원수 : " + count + "명");
-				lines.add("§6==========================");
+				lines.add("§6===========================");
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);
@@ -230,10 +230,5 @@ public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable
 		if (update == GameUpdate.END) {
 			HandlerList.unregisterAll(this);
 		}
-	}
-
-	@Override
-	public void Win(@NotNull Members winTeam) {
-		Winnable.DefaultImpls.Win(this, winTeam);
 	}
 }

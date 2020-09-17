@@ -11,6 +11,9 @@ import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.ClassUtil;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,8 +23,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.inventory.ItemStack;
 
 public class Configuration {
 
@@ -215,6 +216,10 @@ public class Configuration {
 
 		public static boolean getVisualEffect() {
 			return get(ConfigNodes.GAME_VISUAL_EFFECT);
+		}
+
+		public static int getAbilityChangeCount() {
+			return get(ConfigNodes.GAME_ABILITY_CHANGE_COUNT);
 		}
 
 		public static Set<String> getBlackList() {

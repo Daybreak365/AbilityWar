@@ -3,6 +3,7 @@ package daybreak.abilitywar.game;
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.event.GameEndEvent;
 import daybreak.abilitywar.game.event.GameReadyEvent;
@@ -17,11 +18,6 @@ import daybreak.abilitywar.game.manager.object.ZeroTick;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
-import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -39,6 +35,12 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import javax.naming.OperationNotSupportedException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 
 public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
 
@@ -146,7 +148,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	 */
 	@Override
 	public AbilitySelect newAbilitySelect() {
-		return new AbilitySelect(this, getParticipants(), 1) {
+		return new AbilitySelect(this, getParticipants(), Settings.getAbilityChangeCount()) {
 
 			private List<Class<? extends AbilityBase>> abilities;
 
@@ -160,13 +162,18 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
 						try {
 							participant.setAbility(abilityClass);
+							final AbilityBase ability = participant.getAbility();
 							abilities.remove(abilityClass);
 
-							participant.getPlayer().sendMessage(new String[]{
-									"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
-									"§e/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-									"§e/aw no §f명령어를 사용하여 능력을 변경합니다."
-							});
+							final Player player = participant.getPlayer();
+							player.sendMessage("§a능력이 할당되었습니다. §e/aw check§f로 확인하세요.");
+							if (!hasDecided(participant)) {
+								player.sendMessage("§e/aw yes §f명령어로 능력을 확정하거나, §e/aw no §f명령어로 능력을 변경하세요.");
+							}
+							final Tip tip = ability.getRegistration().getTip();
+							if (tip != null) {
+								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
+							}
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
@@ -179,11 +186,16 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 						Class<? extends AbilityBase> abilityClass = abilities.get(random.nextInt(abilities.size()));
 						try {
 							participant.setAbility(abilityClass);
-							participant.getPlayer().sendMessage(new String[]{
-									"§a능력이 할당되었습니다. §e/aw check§f로 확인 할 수 있습니다.",
-									"§e/aw yes §f명령어를 사용하여 능력을 확정합니다.",
-									"§e/aw no §f명령어를 사용하여 능력을 변경합니다."
-							});
+							final AbilityBase ability = participant.getAbility();
+							final Player player = participant.getPlayer();
+							player.sendMessage("§a능력이 할당되었습니다. §e/aw check§f로 확인하세요.");
+							if (!hasDecided(participant)) {
+								player.sendMessage("§e/aw yes §f명령어로 능력을 확정하거나, §e/aw no §f명령어로 능력을 변경하세요.");
+							}
+							final Tip tip = ability.getRegistration().getTip();
+							if (tip != null) {
+								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
+							}
 						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());

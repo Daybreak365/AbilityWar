@@ -13,11 +13,12 @@ import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.List;
-import javax.naming.OperationNotSupportedException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import javax.naming.OperationNotSupportedException;
+import java.util.List;
 
 
 @GameManifest(name = "게임", description = {"§f능력자 전쟁 플러그인의 기본 게임입니다."})
@@ -40,7 +41,7 @@ public class StandardGame extends Game implements DefaultKitHandler {
 					lines.add("§a" + count + ". §f" + p.getPlayer().getName());
 				}
 				lines.add("§e총 인원수 : " + count + "명");
-				lines.add("§6==========================");
+				lines.add("§6===========================");
 
 				for (String line : lines) {
 					Bukkit.broadcastMessage(line);

@@ -12,9 +12,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.minecraft.entity.death.Deaths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -24,6 +21,10 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Death Manager
@@ -74,7 +75,7 @@ public class DeathManager implements Listener, Observer {
 
 	protected String getRevealMessage(final Participant victim) {
 		if (victim.hasAbility()) {
-			final String name = victim.getAbility().getName();
+			final String name = victim.getAbility().getDisplayName();
 			return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
 		} else {
 			return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님은 능력이 없습니다.";

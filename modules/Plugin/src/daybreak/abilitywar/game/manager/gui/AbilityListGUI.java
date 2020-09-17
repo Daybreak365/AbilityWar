@@ -1,20 +1,15 @@
 package daybreak.abilitywar.game.manager.gui;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringJoiner;
-import java.util.TreeMap;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +25,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-public class AbilityListGUI implements Listener {
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringJoiner;
+import java.util.TreeMap;
+import java.util.concurrent.CompletableFuture;
+
+public class AbilityListGUI implements Listener, PagedGUI {
 
 	private static final ItemStack PREVIOUS_PAGE = new ItemBuilder(MaterialX.ARROW)
 			.displayName(ChatColor.AQUA + "이전 페이지")
@@ -40,22 +43,38 @@ public class AbilityListGUI implements Listener {
 			.displayName(ChatColor.AQUA + "다음 페이지")
 			.build();
 
-	private final Player player;
-	private final Map<String, AbilityRegistration> values;
-	private int currentPage = 1;
-	private Inventory abilityGUI;
-	private CompletableFuture<Void> asyncWork;
+	private static Map<String, AbilityRegistration> values = new TreeMap<>();
 
-	public AbilityListGUI(Player player, Plugin plugin) {
-		this.player = player;
-		Bukkit.getPluginManager().registerEvents(this, plugin);
-
-		values = new TreeMap<>();
+	static {
 		for (AbilityRegistration registration : AbilityList.values()) {
 			values.put(registration.getManifest().name(), registration);
 		}
 	}
 
+	private final Plugin plugin;
+	private final Player player;
+	private int currentPage = 1;
+	private Inventory gui;
+	private CompletableFuture<Void> asyncWork;
+
+	@Override
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public AbilityListGUI(Player player, Plugin plugin) {
+		this.plugin = plugin;
+		this.player = player;
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+		if (values.size() != AbilityFactory.getRegistrations().size()) {
+			values = new TreeMap<>();
+			for (AbilityRegistration registration : AbilityList.values()) {
+				values.put(registration.getManifest().name(), registration);
+			}
+		}
+	}
+
+	@Override
 	public void openGUI(int page) {
 		if (asyncWork != null) {
 			asyncWork.cancel(true);
@@ -64,7 +83,7 @@ public class AbilityListGUI implements Listener {
 		int maxPage = ((values.size() - 1) / 36) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
-		abilityGUI = Bukkit.createInventory(null, 54, "§cAbilityWar §e능력 목록");
+		gui = Bukkit.createInventory(null, 54, "§0능력 목록");
 		this.currentPage = page;
 		int count = 0;
 
@@ -77,19 +96,19 @@ public class AbilityListGUI implements Listener {
 				meta.setDisplayName("§b" + manifest.name());
 				final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
 				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 				final List<String> lore = Messager.asList(
 						"§f등급: " + manifest.rank().getRankName(),
 						"§f종류: " + manifest.species().getSpeciesName(),
 						joiner.toString(),
-						"");
+						"", "§7※ 팁을 보려면 클릭하세요.", "");
 				for (final String line : registration.getManifest().explain()) {
 					lore.add(ChatColor.WHITE.toString().concat(line));
 				}
 				meta.setLore(lore);
 				stack.setItemMeta(meta);
-				abilityGUI.setItem(count % 36, stack);
+				gui.setItem(count % 36, stack);
 			}
 			count++;
 		}
@@ -111,20 +130,20 @@ public class AbilityListGUI implements Listener {
 							meta.setDisplayName("§b" + manifest.name());
 							final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
 							if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-							if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타겟팅");
+							if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
 							if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
 							final List<String> lore = Messager.asList(
 									"§f등급: " + manifest.rank().getRankName(),
 									"§f종류: " + manifest.species().getSpeciesName(),
 									joiner.toString(),
-									"");
+									"", "§7※ 팁을 보려면 클릭하세요.", "");
 							for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
 								lore.add(ChatColor.WHITE.toString().concat(iterator.next()));
 							}
 							meta.setLore(lore);
 							stack.setItemMeta(meta);
 							if (currentPage != finalPage) break;
-							abilityGUI.setItem(count % 36, stack);
+							gui.setItem(count % 36, stack);
 						}
 						count++;
 					}
@@ -133,25 +152,25 @@ public class AbilityListGUI implements Listener {
 		}
 
 		if (page > 1) {
-			abilityGUI.setItem(48, PREVIOUS_PAGE);
+			gui.setItem(48, PREVIOUS_PAGE);
 		}
 
 		if (page != maxPage) {
-			abilityGUI.setItem(50, NEXT_PAGE);
+			gui.setItem(50, NEXT_PAGE);
 		}
 
 		ItemStack stack = new ItemStack(Material.PAPER, 1);
 		ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName("§6페이지 §e" + page + " §6/ §e" + maxPage);
 		stack.setItemMeta(meta);
-		abilityGUI.setItem(49, stack);
+		gui.setItem(49, stack);
 
-		player.openInventory(abilityGUI);
+		player.openInventory(gui);
 	}
 
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
-		if (e.getInventory().equals(this.abilityGUI)) {
+		if (e.getInventory().equals(this.gui)) {
 			HandlerList.unregisterAll(this);
 		}
 	}
@@ -165,14 +184,22 @@ public class AbilityListGUI implements Listener {
 
 	@EventHandler
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (e.getInventory().equals(abilityGUI)) {
+		if (e.getInventory().equals(gui)) {
 			e.setCancelled(true);
-			if (e.getCurrentItem() != null && e.getCurrentItem().hasItemMeta() && e.getCurrentItem().getItemMeta().hasDisplayName() && e.getCurrentItem().getType() != Material.IRON_BLOCK) {
-				String displayName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-				if (displayName.equals("이전 페이지")) {
-					openGUI(currentPage - 1);
-				} else if (displayName.equals("다음 페이지")) {
-					openGUI(currentPage + 1);
+			final ItemStack currentItem = e.getCurrentItem();
+			if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
+				final String displayName = ChatColor.stripColor(currentItem.getItemMeta().getDisplayName());
+				if (currentItem.getType() == Material.IRON_BLOCK || MaterialX.WHITE_STAINED_GLASS.compare(currentItem)) {
+					final AbilityRegistration registration = AbilityFactory.getByName(displayName);
+					if (registration != null) {
+						new AbilityTipGUI(player, registration, this, plugin).openGUI(1);
+					}
+				} else {
+					if (displayName.equals("이전 페이지")) {
+						openGUI(currentPage - 1);
+					} else if (displayName.equals("다음 페이지")) {
+						openGUI(currentPage + 1);
+					}
 				}
 			}
 		}

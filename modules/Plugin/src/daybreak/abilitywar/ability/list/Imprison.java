@@ -20,10 +20,6 @@ import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -35,6 +31,11 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "구속", rank = Rank.B, species = Species.HUMAN, explain = {
 		"플레이어를 바라보고 철괴를 우클릭해 대상을 유리구 속에 가두거나,",
@@ -113,12 +114,6 @@ public class Imprison extends AbilityBase implements ActiveHandler {
 		public void onEnd() {
 			stackAdder.start();
 		}
-		@Override
-		public void onSilentEnd() {}
-		@Override
-		public void onPause() {}
-		@Override
-		public void onResume() {}
 	});
 	private final int maxSolidity = MAX_SOLIDITY_CONFIG.getValue(), maxSize = MAX_SIZE_CONFIG.getValue();
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();

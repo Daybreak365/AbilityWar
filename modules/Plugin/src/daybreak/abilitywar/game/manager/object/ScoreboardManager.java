@@ -6,8 +6,6 @@ import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import java.util.HashSet;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,13 +18,15 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ScoreboardManager implements Listener, Observer {
 
 	private static final DisplaySlot[] SLOTS_TO_COPY = new DisplaySlot[]{DisplaySlot.BELOW_NAME, DisplaySlot.PLAYER_LIST};
 	private final Scoreboard scoreboard;
 	private final Set<Team> teams = new HashSet<>();
 
-	@SuppressWarnings("deprecation")
 	public ScoreboardManager(Game game) {
 		this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());

@@ -1,11 +1,22 @@
 package daybreak.abilitywar.utils.base.math;
 
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
-import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+
 public class VectorUtil {
+
+	private VectorUtil() {}
+
+	public static Vector validateVector(Vector vector) {
+		final double x = vector.getX(), y = vector.getY(), z = vector.getZ();
+		if (Double.isInfinite(x) || Double.isNaN(x)) vector.setX(0);
+		if (Double.isInfinite(y) || Double.isNaN(y)) vector.setY(0);
+		if (Double.isInfinite(z) || Double.isNaN(z)) vector.setZ(0);
+		return vector;
+	}
 
 	public static Vector rotateAroundAxis(Vector vector, Vector axis, double angle) {
 		if (angle < 0) {

@@ -4,6 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -20,7 +25,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,11 +32,41 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "해커", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 자신에게 가장 가까운 플레이어를 해킹해 좌표를 알아내고",
-		"$[DurationConfig]초간 해당 플레이어를 움직이지 못하게 합니다. $[COOLDOWN_CONFIG]",
+		"$[DURATION_CONFIG]초간 해당 플레이어를 움직이지 못하게 합니다. $[COOLDOWN_CONFIG]",
 		"해킹을 당하는 플레이어는 해킹 진척도를 볼 수 있습니다."
 })
+@Tips(tip = {
+		"상대를 불시에 해킹해 움직이지 못하게 만든 다음, 뒤에서 공격해 빠르게",
+		"죽이세요. 타게팅이 불가능한 상대라도, 타게팅이 가능할 때 해킹이 시작되어",
+		"이미 해킹이 진행 중인 경우, 타게팅 여부에 상관 없이 이동이 불가능해집니다."
+}, strong = {
+		@Description(subject = "스턴", explain = {
+				"한 대상을 긴 시간동안 기절시킬 수 있다는 것은, 굉장히 의미가",
+				"큽니다. 그 시간동안 상대는 무방비해지며, 자신을 보호할 수 없게",
+				"되죠. 물론 일부 능력은 이에 대처할 수 있게 해주기도 합니다."
+		})
+}, weak = {
+		@Description(subject = "선쿨", explain = {
+				"해커는 해킹을 시작하면 약 5초간 선쿨을 가지며, 그 동안",
+				"해킹을 당하는 상대는 해킹의 진척도를 확인할 수 있습니다.",
+				"빠르게 이에 대처할 수 있는 상대라면, 해커가 할 수 있는건",
+				"아무것도 없겠죠."
+		}),
+		@Description(subject = "접근 불가능", explain = {
+				"사용자를 바라보지 않은 상태로도 밀쳐낼 수 있는 능력을 가진",
+				"상대에게 취약합니다. 해킹을 했는데도 접근을 할 수 없다면,",
+				"아무 의미가 없을겁니다."
+		}),
+		@Description(subject = "순간 이동", explain = {
+				"해킹은 이동만 막을 뿐, 순간 이동은 막지 않습니다. 순간 이동을",
+				"통해 다른 장소로 이동할 수 있는 능력들은 해킹을 해도 별 효과가",
+				"없을겁니다."
+		})
+}, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.SEVEN), difficulty = Difficulty.EASY)
 public class Hacker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
@@ -50,8 +84,8 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Hacker.class, "Duration", 5,
-			"# 능력 지속시간") {
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Hacker.class, "DURATION", 5,
+			"# 스턴 지속시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -67,7 +101,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 	private Player target = null;
 
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final int stunDuration = DurationConfig.getValue();
+	private final int stunDuration = DURATION_CONFIG.getValue();
 	private static final RGB PURPLE = RGB.of(113, 43, 204);
 
 	private final int amount = 25;

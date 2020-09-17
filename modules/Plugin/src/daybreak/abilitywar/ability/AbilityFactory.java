@@ -2,11 +2,14 @@ package daybreak.abilitywar.ability;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.Provider;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
@@ -34,6 +37,12 @@ import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
+import daybreak.abilitywar.utils.library.MaterialX;
+import org.bukkit.Material;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -44,20 +53,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.Material;
-import org.bukkit.event.Event;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * {@link AbilityBase}를 기반으로 하는 모든 능력을 관리하는 클래스입니다.
  */
 public class AbilityFactory {
 
-	private AbilityFactory() {
-	}
-
 	private static final Logger logger = Logger.getLogger(AbilityFactory.class);
-
 	private static final Map<String, AbilityRegistration> usedNames = new HashMap<>();
 	private static final Map<Class<? extends AbilityBase>, AbilityRegistration> registeredAbilities = new HashMap<>();
 
@@ -124,8 +126,6 @@ public class AbilityFactory {
 		registerAbility(Ghost.class);
 		// v2.1.8.2
 		registerAbility(Lunar.class);
-		// v2.1.8.6
-		registerAbility(Apology.class);
 		// v2.1.8.8
 		registerAbility("daybreak.abilitywar.ability.list.hermit." + ServerVersion.getName() + ".Hermit");
 		// v2.1.9.3
@@ -138,6 +138,10 @@ public class AbilityFactory {
 		registerAbility(Ghoul.class);
 		// v2.2.3
 		registerAbility(Swap.class);
+		// v2.2.4
+		registerAbility(Lorem.class);
+		registerAbility(Reverse.class);
+		registerAbility(Themis.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -155,6 +159,9 @@ public class AbilityFactory {
 		registerAbility(Doctor.class);
 		registerAbility(AssassinMurderer.class);
 		registerAbility(BlackMurderer.class);
+	}
+
+	private AbilityFactory() {
 	}
 
 	/**
@@ -253,6 +260,7 @@ public class AbilityFactory {
 		private final Provider provider;
 		private final Constructor<? extends AbilityBase> constructor;
 		private final AbilityManifest manifest;
+		private final Tip tip;
 		private final Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers;
 		private final Map<String, SettingObject<?>> settingObjects;
 		private final ImmutableSet<Material> materials;
@@ -277,11 +285,15 @@ public class AbilityFactory {
 			this.clazz = clazz;
 			this.constructor = clazz.getConstructor(Participant.class);
 
-			if (!clazz.isAnnotationPresent(AbilityManifest.class)) throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
+			if (!clazz.isAnnotationPresent(AbilityManifest.class))
+				throw new IllegalArgumentException("AbilityManfiest가 없는 능력입니다.");
 			this.manifest = clazz.getAnnotation(AbilityManifest.class);
 			Preconditions.checkNotNull(manifest.name());
 			Preconditions.checkNotNull(manifest.rank());
 			Preconditions.checkNotNull(manifest.species());
+
+			final Tips tips = clazz.getAnnotation(Tips.class);
+			this.tip = tips != null ? new Tip(tips) : null;
 
 			if (clazz.getClassLoader() instanceof AddonClassLoader) {
 				this.provider = ((AddonClassLoader) clazz.getClassLoader()).getAddon();
@@ -297,6 +309,7 @@ public class AbilityFactory {
 							public Object getInstance() {
 								return javaPlugin;
 							}
+
 							@Override
 							public String getName() {
 								return javaPlugin.getName();
@@ -370,6 +383,11 @@ public class AbilityFactory {
 			return manifest;
 		}
 
+		@Nullable
+		public Tip getTip() {
+			return tip;
+		}
+
 		public Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> getEventhandlers() {
 			return eventhandlers;
 		}
@@ -401,8 +419,8 @@ public class AbilityFactory {
 
 		public static class Flag {
 			public static final int ACTIVE_SKILL = 0x1;
-			public static final int TARGET_SKILL = 0x2;
 			public static final int BETA = 0x4;
+			public static final int TARGET_SKILL = 0x2;
 		}
 
 		public class Explanation {
@@ -419,6 +437,49 @@ public class AbilityFactory {
 
 			public boolean needsReplace(final int index) {
 				return needsReplace[index];
+			}
+
+		}
+
+		public static class Tip {
+
+			public final ImmutableList<String> tips;
+			public final ImmutableSet<Description> strong, weak;
+			public final Stats stats;
+			public final Difficulty difficulty;
+
+			private Tip(final Tips tips) {
+				this.tips = ImmutableList.copyOf(tips.tip());
+				{
+					final ImmutableSet.Builder<Description> strong = ImmutableSet.builder();
+					for (final Tips.Description description : tips.strong()) {
+						strong.add(new Description(description));
+					}
+					this.strong = strong.build();
+				}
+				{
+					final ImmutableSet.Builder<Description> weak = ImmutableSet.builder();
+					for (final Tips.Description description : tips.weak()) {
+						weak.add(new Description(description));
+					}
+					this.weak = weak.build();
+				}
+				this.stats = tips.stats();
+				this.difficulty = tips.difficulty();
+			}
+
+			public static class Description {
+
+				public final String subject;
+				public final ImmutableList<String> explain;
+				public final MaterialX icon;
+
+				private Description(final Tips.Description description) {
+					this.subject = description.subject();
+					this.explain = ImmutableList.copyOf(description.explain());
+					this.icon = description.icon();
+				}
+
 			}
 
 		}

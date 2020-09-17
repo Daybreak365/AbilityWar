@@ -5,24 +5,45 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import java.util.Random;
-import java.util.function.Consumer;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+import java.util.function.Consumer;
+
 @AbilityManifest(name = "다이스 갓", rank = Rank.A, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 §c재생 §f/ §6힘 §f/ §3저항 §f/ §5시듦 §f/ §8구속 §f/ §7나약함 §f효과 중 하나를",
 		"7초간 받습니다. $[COOLDOWN_CONFIG]",
 		"공격을 받았을 때 1/6 확률로 대미지를 받는 대신 대미지만큼 체력을 회복합니다."
 })
+@Tips(tip = {
+		"사용자의 운에 따라 이득이 될 수도, 해가 될 수도 있습니다.",
+		"좋은 버프가 나왔을 때 바로 공격하고, 디버프가 나왔을 때 바로",
+		"빠져나올 수 있는 판단력도 중요합니다."
+}, strong = {
+		@Description(subject = "운", explain = {
+				"사용자의 운이 곧 강점입니다.",
+				"오늘 느낌이 좋으신가요? 이 능력은 당신에게 딱입니다."
+		})
+}, weak = {
+		@Description(subject = "운", explain = {
+				"사용자의 운이 곧 약점입니다.",
+				"오늘 느낌이 좋지 않으신가요? 이 능력은 피하세요."
+		})
+}, stats = @Stats(offense = Level.THREE, survival = Level.THREE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.THREE), difficulty = Difficulty.EASY)
 public class DiceGod extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(DiceGod.class, "Cooldown", 14,

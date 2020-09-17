@@ -34,6 +34,7 @@ import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
+import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.CommandHandler.CommandType;
@@ -54,15 +55,6 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -70,11 +62,24 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Commands implements CommandExecutor, TabCompleter {
 
 	private static final Logger logger = Logger.getLogger(Commands.class);
 
+	private final AbilityWar plugin;
 	private final Command mainCommand;
 
 	public Command getMainCommand() {
@@ -82,6 +87,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 	}
 
 	Commands(AbilityWar plugin) {
+		this.plugin = plugin;
 		this.mainCommand = new Command() {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -141,6 +147,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 					case 3:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(command, "abtip", "자신의 능력 팁을 확인합니다.", true),
+								Formatter.formatCommand(command, "abtip [능력]", "[능력] 능력의 팁을 확인합니다.", true),
 								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true),
 								Formatter.formatCommand(command, "patch", "쾌적한 플레이를 위한 패치를 진행합니다.", true),
 								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true)});
@@ -245,6 +253,39 @@ public class Commands implements CommandExecutor, TabCompleter {
 					final String name = String.join(" ", args);
 					if (AbilityFactory.isRegistered(name) && AbilityList.isRegistered(name)) {
 						for (String line : Formatter.formatInfo(AbilityFactory.getByName(name))) {
+							sender.sendMessage(line);
+						}
+					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
+				}
+				return true;
+			}
+		});
+		mainCommand.addSubCommand("abtip", new Command(Condition.PLAYER) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (args.length == 0) {
+					if (GameManager.isGameRunning()) {
+						GameManager.getGame().executeCommand(CommandType.TIP_CHECK, sender, command, args, plugin);
+					} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+				} else {
+					final String name = String.join(" ", args);
+					if (AbilityFactory.isRegistered(name) && AbilityList.isRegistered(name)) {
+						new AbilityTipGUI((Player) sender, AbilityFactory.getByName(name), plugin).openGUI(1);
+					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
+				}
+				return true;
+			}
+		});
+		mainCommand.addSubCommand("abtips", new Command() {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (args.length == 0) {
+					if (sender instanceof Player) new AbilityListGUI((Player) sender, AbilityWar.getPlugin()).openGUI(1); else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " abilities <능력>");
+					return true;
+				} else {
+					final String name = String.join(" ", args);
+					if (AbilityFactory.isRegistered(name) && AbilityList.isRegistered(name)) {
+						for (String line : Formatter.formatTip(AbilityFactory.getByName(name))) {
 							sender.sendMessage(line);
 						}
 					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
@@ -1031,12 +1072,12 @@ public class Commands implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
+	public List<String> onTabComplete(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command cmd, String label, String[] args) {
 		if (label.equalsIgnoreCase("abilitywar") || label.equalsIgnoreCase("ability") || label.equalsIgnoreCase("aw")
 				|| label.equalsIgnoreCase("va") || label.equalsIgnoreCase("능력자")) {
 			switch (args.length) {
 				case 1:
-					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "skip", "anew",
+					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "abtip", "skip", "anew",
 							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon", "patch");
 					if (args[0].isEmpty()) {
 						return subCommands;
@@ -1142,8 +1183,19 @@ public class Commands implements CommandExecutor, TabCompleter {
 						}
 					}
 			}
+			if (args.length >= 2) {
+				if (args[0].equalsIgnoreCase("abilities") || args[0].equalsIgnoreCase("abtip")) {
+					return AbilityList.getComplete(String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+				}
+			}
+			if (args.length >= 4) {
+				if (args[0].equalsIgnoreCase("util") && args[1].equalsIgnoreCase("abi")) {
+					if (GameManager.isGameRunning()) {
+						return GameManager.getGame().tabComplete(CommandHandler.CommandType.ABI, sender, label, args, plugin);
+					}
+				}
+			}
 		}
-
 		return null;
 	}
 

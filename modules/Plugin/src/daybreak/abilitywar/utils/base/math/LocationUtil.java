@@ -8,11 +8,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundaryData;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -21,6 +16,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 /**
  * Location Util
@@ -401,6 +403,14 @@ public class LocationUtil {
 			}
 		}
 		return entities;
+	}
+
+	public static boolean isConflicting(@NotNull final Entity a, @NotNull final Entity b) {
+		final BoundaryData aData = BoundaryData.of(a.getType()), bData = BoundaryData.of(b.getType());
+		final Location aLocation = a.getLocation(), bLocation = b.getLocation();
+		final double aX = aLocation.getX(), aY = aLocation.getY(), aZ = aLocation.getZ(), bX = bLocation.getX(), bY = bLocation.getY(), bZ = bLocation.getZ();
+		return aX + aData.getMinX() < bX + bData.getMaxX() && bX + bData.getMinX() < aX + aData.getMaxX() && aY + aData.getMinY() < bY + bData.getMaxY() &&
+				bY + bData.getMinY() < aY + aData.getMaxY() && aZ + aData.getMinZ() < bZ + bData.getMaxZ() && bZ + bData.getMinZ() < aZ + aData.getMaxZ();
 	}
 
 	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<Entity> predicate) {

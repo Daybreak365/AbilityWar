@@ -32,7 +32,8 @@ public interface INMS {
 
 	void removeBoundingBox(ArmorStand armorStand);
 	void setArrowsInBody(Player player, int count);
-	void setInvisible(Player player, boolean invisible);
+	void setInvisible(Entity entity, boolean invisible);
+	boolean isInvisible(Entity entity);
 
 	void setCooldown(Player player, Material material, int ticks);
 	boolean hasCooldown(Player player, Material material);

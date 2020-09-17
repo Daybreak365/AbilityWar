@@ -4,6 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -14,7 +19,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -22,12 +26,27 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "플로라", rank = Rank.A, species = Species.GOD, explain = {
 		"꽃과 풍요의 여신.",
 		"주변에 있는 모든 플레이어를 §c재생§f시키거나 §b신속 §f효과를 줍니다.",
 		"철괴를 우클릭하면 효과를 뒤바꿉니다. $[COOLDOWN_CONFIG]",
 		"철괴를 좌클릭하면 범위를 변경합니다."
 })
+@Tips(tip = {
+		"신속, 그리고 재생. 버프를 같이 받고싶은 플레이어가 있다면 범위를 넓게",
+		"설정하고 이용하세요. 개인전에서는 그럭저럭 사용할 만한 능력이지만,",
+		"팀전에서는 서포팅 능력으로 유용하게 사용할 수 있습니다."
+}, strong = {
+		@Description(subject = "모두 함께", explain = {
+				"범위 안의 모든 플레이어가 버프를 함께 받을 수 있습니다."
+		})
+}, weak = {
+		@Description(subject = "모두 함께", explain = {
+				"범위 안의 적 플레이어가 버프를 함께 받습니다."
+		})
+}, stats = @Stats(offense = Level.ZERO, survival = Level.FOUR, crowdControl = Level.ZERO, mobility = Level.FIVE, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Flora extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flora.class, "Cooldown", 3,
@@ -92,12 +111,12 @@ public class Flora extends AbilityBase implements ActiveHandler {
 
 			for (Player player : LocationUtil.getEntitiesInCircle(Player.class, center, radius.radius, ONLY_PARTICIPANTS)) {
 				if (type.equals(EffectType.SPEED)) {
-					PotionEffects.SPEED.addPotionEffect(player, 20, 1, true);
+					PotionEffects.SPEED.addPotionEffect(player, 3, 1, true);
 				} else {
 					if (!player.isDead()) {
 						final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 						if (player.getHealth() < maxHealth) {
-							player.setHealth(Math.min(player.getHealth() + 0.04, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+							player.setHealth(Math.min(player.getHealth() + .04, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 						}
 					}
 				}
@@ -167,16 +186,16 @@ public class Flora extends AbilityBase implements ActiveHandler {
 				return Radius.SMALL;
 			}
 		},
-		SMALL(2, Circle.of(2, 40)) {
+		SMALL(2.5, Circle.of(2.5, 40)) {
 			protected Radius next() {
 				return Radius.BIG;
 			}
 		};
 
-		private final int radius;
+		private final double radius;
 		private final Circle circle;
 
-		Radius(int radius, Circle circle) {
+		Radius(double radius, Circle circle) {
 			this.radius = radius;
 			this.circle = circle;
 		}

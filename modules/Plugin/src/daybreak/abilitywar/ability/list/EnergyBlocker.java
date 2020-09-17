@@ -5,13 +5,17 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
@@ -21,6 +25,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 @AbilityManifest(name = "에너지 블로커", rank = Rank.A, species = Species.HUMAN, explain = {
 		"원거리 피해를 3분의 1로, 근거리 피해를 두 배로 받거나",
 		"원거리 피해를 두 배로, 근거리 피해를 3분의 1로 받을 수 있습니다.",
@@ -28,6 +34,25 @@ import org.jetbrains.annotations.Nullable;
 		"한 번 이상 공격을 받아야만 다시 피해 정도를 뒤바꿀 수 있습니다.",
 		"$[PARTICLE_NOTICE]"
 })
+@Tips(tip = {
+		"근접 공격과 원거리 공격을 번갈아 가며 방어할 수 있지만,",
+		"현재 방어 중이지 않은 공격은 큰 대미지를 받을 수 있으니",
+		"타이밍을 잘 생각해서 변경하세요. 내가 현재 방어중인 공격의",
+		"색이 머리 위에 뜨는지, 내가 현재 취약한 공격의 색이 머리 위에",
+		"뜨는지 상대는 모르기 때문에, 심리전 또한 중요합니다. 공격을",
+		"방어했을 때, 마치 내가 큰 대미지를 받은 것처럼 연기해보세요!"
+}, strong = {
+		@Description(subject = "대미지 감소", explain = {
+				"대미지를 무려 3분의 1로 줄여받을 수 있습니다. 예를 들어 날카로움 V",
+				"다이아 검의 대미지를 방어하면, 마법 부여가 되지 않은 나무 검으로",
+				"공격받는 것과 같습니다."
+		})
+}, weak = {
+		@Description(subject = "대미지 증가", explain = {
+				"대미지를 무려 2배로 늘려받습니다. 예를 들어 마법 부여가 되지 않은",
+				"돌 검으로 공격받으면, 날카로움 V 다이아 검으로 공격받는 것과 같습니다."
+		})
+}, stats = @Stats(offense = Level.ZERO, survival = Level.FIVE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.VERY_HARD)
 public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 
 	private boolean projectileBlocking = true;

@@ -4,6 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -20,11 +25,6 @@ import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,11 +37,33 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "유명 인사", rank = Rank.C, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
-		"능력으로 인해 깔린 레드 카펫 위에 있을 때 주변 $[DistanceConfig]칸 이내의 모든 생명체가",
+		"능력 사용 중 레드 카펫 위에 있으면 주변 $[DistanceConfig]칸 이내의 모든 생명체가",
 		"자신을 바라보며, 깔린 레드 카펫은 $[DurationConfig]초 후 사라집니다."
 })
+@Tips(tip = {
+		"주위 사람들의 관심을 끌기 딱 좋은 능력입니다.",
+		"도망가는 상대가 나만 바라보도록 해 도망가기 어렵게 하는 플레이를",
+		"펼칠 수도 있습니다. 만약 팀전을 플레이 중이라면, 모든 적이 나를",
+		"바라보게 해 팀원들을 지키는 탱킹 플레이를 할 수도 있습니다."
+}, strong = {
+		@Description(subject = "관심 받기", explain = {
+				"상대가 나에게 싸움 중이더라도, 도망가는 중이더라도 관심을",
+				"손쉽게 받을 수 있습니다. 마음 속을 따듯한 관심으로 채우세요!"
+		})
+}, weak = {
+		@Description(subject = "공격 노출", explain = {
+				"능력을 사용하는 순간 주위의 모든 플레이어가 나를 바라보게 되며,",
+				"모두가 당신을 공격하게 될 것입니다."
+		})
+}, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.SIX, mobility = Level.ZERO, utility = Level.FOUR), difficulty = Difficulty.EASY)
 public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,

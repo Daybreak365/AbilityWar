@@ -21,12 +21,16 @@ public class Bleed {
 	}
 
 	public static void apply(Participant participant, TimeUnit timeUnit, int duration) {
-		new ParticipantBleed(participant, timeUnit, duration).start();
+		new ParticipantBleed(participant, timeUnit.toTicks(duration)).start();
+	}
+
+	public static void apply(Participant participant, TimeUnit timeUnit, int duration, int period) {
+		new ParticipantBleed(participant, timeUnit.toTicks(duration), period).start();
 	}
 
 	public static void apply(AbstractGame game, LivingEntity livingEntity, TimeUnit timeUnit, int duration) {
 		if (game.isParticipating(livingEntity.getUniqueId())) {
-			new ParticipantBleed(game.getParticipant(livingEntity.getUniqueId()), timeUnit, duration).start();
+			new ParticipantBleed(game.getParticipant(livingEntity.getUniqueId()), timeUnit.toTicks(duration)).start();
 		} else {
 			new LivingEntityBleed(game, livingEntity, timeUnit, duration).start();
 		}
@@ -36,10 +40,14 @@ public class Bleed {
 
 		private final Player player;
 
-		private ParticipantBleed(Participant participant, TimeUnit timeUnit, int duration) {
-			super(participant, "§c출혈", TaskType.REVERSE, timeUnit.toTicks(duration) / 5);
+		private ParticipantBleed(Participant participant, int duration, int period) {
+			super(participant, "§c출혈", TaskType.REVERSE, duration / period);
 			this.player = participant.getPlayer();
-			setPeriod(TimeUnit.TICKS, 5);
+			setPeriod(TimeUnit.TICKS, period);
+		}
+
+		private ParticipantBleed(Participant participant, int duration) {
+			this(participant, duration, 5);
 		}
 
 		@Override

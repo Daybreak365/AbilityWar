@@ -22,7 +22,6 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -46,13 +45,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "진검승부", rank = Rank.A, species = Species.HUMAN, explain = {
 		"다른 플레이어를 철괴로 우클릭하면 대상과의 진검승부를 시작합니다. $[COOLDOWN_CONFIG]",
 		"진검승부가 시작되면 밖으로 나갈 수 없는 지름 5칸의 링이 생성",
 		"되고, 일시적으로 체력이 모두 회복되며 인벤토리 내의 모든 아이템이",
 		"제거됩니다. 진검승부 중에는 대상의 능력이 비활성화 되며,",
 		"상호 간의 공격 대미지 이외의 대미지는 받지 않습니다.",
-		"능력 사용 후 $[DurationConfig]초가 지나거나 둘 중 한명이 죽은 경우",
+		"능력 사용 후 $[DURATION_CONFIG]초가 지나거나 둘 중 한명이 죽은 경우",
 		"진검승부가 종료되며, 체력이 능력 사용 전의 상태로 회복되고",
 		"모든 아이템이 되돌아옵니다."
 })
@@ -73,7 +74,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Duration", 60,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Duration", 60,
 			"# 능력 지속시간") {
 
 		@Override
@@ -125,7 +126,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 			return true;
 		}
 	};
-	private final int duration = DurationConfig.getValue();
+	private final int duration = DURATION_CONFIG.getValue();
 
 	@Override
 	public void TargetSkill(Material material, LivingEntity entity) {

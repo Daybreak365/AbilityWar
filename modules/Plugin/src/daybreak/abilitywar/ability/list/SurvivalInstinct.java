@@ -16,7 +16,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import java.util.function.Predicate;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -26,14 +25,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "생존 본능", rank = Rank.B, species = Species.HUMAN, explain = {
-	"게임 중 단 한 번 §c치명적인 공격§f을 받았을 때 체력을 §c반 칸 §f남기고",
-	"살아납니다. 능력이 발동되면 주변의 생명체들을 모두 밀쳐내고",
-	"§b신속 II §f효과를 5초간 받으며, 3초간 §d무적§f/§d공격 불능 §f상태가 됩니다."
+		"게임 중 단 한 번 §c치명적인 공격§f을 받았을 때 체력을 §c반 칸 §f남기고 살아납니다.",
+		"능력이 발동되면 주변의 생명체들을 모두 밀쳐내고 §b신속 II §f효과를 5초간 받으며,",
+		"4초간 §d무적§f/§d공격 불능 §f상태가 됩니다."
 })
 public class SurvivalInstinct extends AbilityBase {
 
-	private final Invincibility invincibility = new Invincibility(60);
+	private final Invincibility invincibility = new Invincibility(80);
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override

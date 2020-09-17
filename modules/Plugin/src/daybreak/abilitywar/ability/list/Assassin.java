@@ -4,6 +4,11 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -14,19 +19,34 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.LinkedList;
-import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedList;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "암살자", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 $[DISTANCE_CONFIG]칸 이내에 있는 생명체 $[TELEPORT_COUNT_CONFIG]명(마리)에게 이동하며",
 		"각각 $[DAMAGE_CONFIG]의 대미지를 줍니다. $[COOLDOWN_CONFIG]",
 		"대미지를 받은 생명체는 3초간 추가로 출혈 피해를 입습니다."
 })
+@Tips(tip = {
+		"텔레포트로 적에게 빠르게 접근하고, 출혈로 추가 대미지를 주면서 적이 도망가지",
+		"못하도록 막아 빠르게 암살하세요."
+}, strong = {
+		@Description(subject = "빠른 접근", explain = {
+				"능력 사용 시 텔레포트를 이용해 적에게 빠르게 접근할 수 있습니다."
+		})
+}, weak = {
+		@Description(subject = "근접이 유리한 상대", explain = {
+				"근접이 유리한 상대에게 이 능력을 사용하게 되면, 스스로 호랑이 굴로",
+				"들어가는 꼴 밖에 되지 않습니다. 신중하게 능력을 사용하고 싶다면,",
+				"상대의 능력을 파악하고 사용해보세요."
+		})
+}, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.TWO, mobility = Level.FIVE, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Assassin extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "Distance", 8,

@@ -5,6 +5,10 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -16,10 +20,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -35,10 +35,20 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "황제", rank = Rank.B, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내",
-		"앞에 있는 모든 생명체와 물체를 밀쳐냅니다. $[COOLDOWN_CONFIG]"
+		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내 앞에 있는 모든",
+		"생명체와 물체를 밀쳐냅니다. $[COOLDOWN_CONFIG]"
 })
+@Tips(tip = {
+		"위협적인 상대가 다가올 때, 상대의 스킬에 당했을 때 방패 부대를",
+		"이용해 밀쳐내세요. 높은 곳에서 상대를 밀쳐내 낙하 대미지를 받게",
+		"할 수도 있습니다."
+}, strong = {}, weak = {}, stats = @Stats(offense = Level.ZERO, survival = Level.FOUR, crowdControl = Level.THREE, mobility = Level.ZERO, utility = Level.FIVE), difficulty = Difficulty.EASY)
 public class Emperor extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Emperor.class, "Cooldown", 50,
@@ -84,9 +94,9 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationStart() {
-			Location playerLocation = getPlayer().getLocation();
+			final Location playerLocation = getPlayer().getLocation();
 			direction = playerLocation.getDirection();
-			Location lineTarget = playerLocation.clone().add(direction.clone().setY(0).normalize().multiply(3.75));
+			final Location lineTarget = playerLocation.clone().add(direction.clone().setY(0).normalize().multiply(3.75));
 			for (Vector vector : Line.between(playerLocation, lineTarget, 5)) {
 				final double originX = vector.getX();
 				final double originZ = vector.getZ();

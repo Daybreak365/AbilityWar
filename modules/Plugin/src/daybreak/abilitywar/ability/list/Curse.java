@@ -5,6 +5,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -19,7 +24,6 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -32,12 +36,31 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
-		"주위 13칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타겟팅해 $[DurationConfig]초간",
+		"주위 13칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타게팅해 $[DurationConfig]초간",
 		"지속되는 저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
 		"대미지의 일부가 상대에게 전이됩니다. $[COOLDOWN_CONFIG]",
 		"대상의 체력이 적을수록 더욱 큰 대미지를 입힐 수 있습니다."
 })
+@Tips(tip = {
+		"저주 인형을 만들어 상대를 고통스럽게 하십시오. 한 번 저주 인형이",
+		"생겨난 이상 상대가 아무리 멀리 가더라도 공격할 수 있기 때문에,",
+		"많은 상황에서 유용하게 사용될 수 있습니다. 또한 대상의 체력이 적을",
+		"수록 대미지가 강해지기 때문에, 체력이 적은 상태에서 도망가는 적을",
+		"죽이기에도 적합합니다."
+}, strong = {
+		@Description(subject = "원거리 공격", explain = {
+				"저주 인형을 만들어낸 후, 멀리서 적을 공격하세요."
+		})
+}, weak = {
+		@Description(subject = "저주 인형", explain = {
+				"저주 인형은 고정되지 않습니다. 납치 등의 능력으로 이동시킬 수 있으며",
+				"이로 인해 능력이 의미가 없어질 수 있습니다. 또한, 능력 사용자를 저주",
+				"인형으로부터 멀리 떨어뜨릴 수 있는 능력에게도 취약합니다."
+		})
+}, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Curse extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Curse.class, "Cooldown", 100,

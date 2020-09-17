@@ -5,6 +5,11 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.Tips;
+import daybreak.abilitywar.ability.Tips.Description;
+import daybreak.abilitywar.ability.Tips.Difficulty;
+import daybreak.abilitywar.ability.Tips.Level;
+import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -24,6 +29,24 @@ import org.jetbrains.annotations.NotNull;
 		"§b비행 §f중 웅크리면 바라보는 방향으로 돌진합니다.",
 		"낙하 대미지를 무시합니다."
 })
+@Tips(tip = {
+		"깃털은 모든 능력을 통틀어서 가장 강력한 기동력을 뽐내는 능력입니다.",
+		"비행이라는 강력한 이동 스킬로 전투에서 우위를 점하세요."
+}, strong = {
+		@Description(subject = "빠른 이동", explain = {
+				"빠른 이동으로 전투에 빠르게 합류하고 적을 손쉽게 쫓아가세요."
+		}),
+		@Description(subject = "낙하 대미지 무시", explain = {
+				"낙하 대미지를 완전히 무시하기 때문에 이를 이용해 큰 대미지를 넣는",
+				"능력에 강합니다."
+		})
+}, weak = {
+		@Description(subject = "좁은 공간", explain = {
+				"이동할 곳이 많지 않은 좁은 공간에서는 비행 능력이 힘을 발하기 어렵습니다.",
+				"건물 내부와 같은 좁은 환경, 또는 그런 환경을 만들어내는 능력에 취약합니다.",
+				"넓은 공간에서 사용하세요."
+		})
+}, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.TEN, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Feather extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Feather.class, "Cooldown", 80,

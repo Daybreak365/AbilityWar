@@ -2,9 +2,6 @@ package daybreak.abilitywar.utils.base.minecraft.nms.v1_11_R1;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import net.minecraft.server.v1_11_R1.EntityArmorStand;
 import net.minecraft.server.v1_11_R1.EntityPlayer;
 import net.minecraft.server.v1_11_R1.PacketPlayOutEntityDestroy;
@@ -21,7 +18,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class HologramImpl implements IHologram, Listener {
 
@@ -47,8 +49,15 @@ public class HologramImpl implements IHologram, Listener {
 	}
 
 	@EventHandler
-	private void onPlayerQuit(PlayerQuitEvent e) {
-		viewers.remove(e.getPlayer());
+	private void onPlayerRespawn(PlayerRespawnEvent e) {
+		if (viewers.contains(e.getPlayer())) {
+			new BukkitRunnable() {
+				@Override
+				public void run() {
+					display0((CraftPlayer) e.getPlayer());
+				}
+			}.runTaskLater(AbilityWar.getPlugin(), 2L);
+		}
 	}
 
 	@Override
@@ -56,10 +65,14 @@ public class HologramImpl implements IHologram, Listener {
 		if (viewers == null) throw new IllegalStateException("Hologram unregistered");
 		final CraftPlayer craftPlayer = (CraftPlayer) player;
 		if (viewers.add(craftPlayer)) {
-			PlayerConnection connection = craftPlayer.getHandle().playerConnection;
-			connection.sendPacket(packetPlayOutSpawnEntityLiving);
-			connection.sendPacket(new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true));
+			display0(craftPlayer);
 		}
+	}
+
+	private void display0(CraftPlayer player) {
+		final PlayerConnection connection = player.getHandle().playerConnection;
+		connection.sendPacket(packetPlayOutSpawnEntityLiving);
+		connection.sendPacket(new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true));
 	}
 
 	@Override
