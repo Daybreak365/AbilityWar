@@ -25,6 +25,15 @@ package daybreak.abilitywar.utils.library;
 import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.WordUtils;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -34,14 +43,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public enum MaterialX {
 	ACACIA_BOAT("BOAT_ACACIA"),
@@ -1526,8 +1527,7 @@ public enum MaterialX {
 	 */
 	@SuppressWarnings("deprecation")
 	public boolean compare(final @Nullable ItemStack item) {
-		if (item == null) return false;
-		if (item.getType() != material) return false;
+		if (!isSupported() || item == null || item.getType() != material) return false;
 		return ServerVersion.getVersion() >= 13 || this.isDamageable() || item.getDurability() == this.data;
 	}
 
@@ -1538,7 +1538,7 @@ public enum MaterialX {
 	}
 
 	public boolean isSupported() {
-		return materialVersion.version <= ServerVersion.getVersion();
+		return materialVersion.version <= ServerVersion.getVersion() && material != null;
 	}
 
 	public enum MaterialVersion {

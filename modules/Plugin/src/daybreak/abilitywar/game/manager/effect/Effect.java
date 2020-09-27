@@ -4,6 +4,7 @@ import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 
+@Deprecated
 public abstract class Effect extends GameTimer {
 
 	private final ActionbarChannel channel;

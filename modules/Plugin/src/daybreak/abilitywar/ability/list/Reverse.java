@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class Reverse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "RADIUS", 7,
+	public static final SettingObject<Integer> RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "RADIUS", 5,
 			"# 스킬 쿨타임") {
 
 		@Override

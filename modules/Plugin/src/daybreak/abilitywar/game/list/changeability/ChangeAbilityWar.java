@@ -12,18 +12,14 @@ import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
-import daybreak.abilitywar.game.manager.object.Invincibility;
+import daybreak.abilitywar.game.module.Invincibility;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -33,6 +29,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 체인지 능력 전쟁
@@ -76,7 +78,6 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
 	private final AbilityChanger changer = new AbilityChanger(this);
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
-	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 
 	@Override
 	protected void progressGame(int seconds) {
@@ -191,7 +192,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				}
 
 				if (Settings.getInfiniteDurability()) {
-					attachObserver(infiniteDurability);
+					addModule(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}
@@ -238,7 +239,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 	}
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			public void Operation(Participant victim) {

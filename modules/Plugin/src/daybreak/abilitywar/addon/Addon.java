@@ -21,7 +21,7 @@ import java.util.zip.ZipEntry;
 public abstract class Addon implements Provider {
 
 	@Override
-	public Object getInstance() {
+	public Addon getInstance() {
 		return this;
 	}
 

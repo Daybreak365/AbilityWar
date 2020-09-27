@@ -130,4 +130,9 @@ public class HologramImpl implements IHologram, Listener {
 		viewers = null;
 	}
 
+	@Override
+	public boolean isUnregistered() {
+		return viewers == null;
+	}
+
 }

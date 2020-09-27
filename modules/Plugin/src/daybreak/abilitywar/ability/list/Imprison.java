@@ -9,9 +9,10 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.Random;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.Observer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -34,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "구속", rank = Rank.B, species = Species.HUMAN, explain = {
@@ -217,10 +217,10 @@ public class Imprison extends AbilityBase implements ActiveHandler {
 			if (state == State.UNKNOWN) return;
 			switch (state) {
 				case UP:
-					size = limit(size + 1, maxSize, 3);
+					size = limit(size + 1, maxSize, 4);
 					break;
 				case DOWN:
-					size = limit(size - 1, maxSize, 3);
+					size = limit(size - 1, maxSize, 4);
 					break;
 			}
 			NMS.sendTitle(getPlayer(), state == State.UP ? "§c↑" : "§9↓", String.valueOf(size), 0, 20, 0);
@@ -315,7 +315,7 @@ public class Imprison extends AbilityBase implements ActiveHandler {
 				blocks.remove(block);
 				return true;
 			} else {
-				BlockX.setType(block, materials[random.nextInt(materials.length)]);
+				BlockX.setType(block, random.pick(materials));
 				return false;
 			}
 		}

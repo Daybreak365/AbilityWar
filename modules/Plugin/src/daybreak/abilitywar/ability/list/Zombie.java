@@ -9,8 +9,8 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.Effect;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -234,7 +234,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		private final Participant participant;
 
 		private Infection(final Participant participant, final TimeUnit timeUnit, final int duration) {
-			super(participant, "§5감염", TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
+			Zombie.this.getGame().super(participant, "§5감염", TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
 			this.participant = participant;
 			setPeriod(TimeUnit.TICKS, 4);
 		}

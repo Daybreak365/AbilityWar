@@ -39,7 +39,8 @@ import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.manager.object.CommandHandler.CommandType;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.object.Invincibility;
+import daybreak.abilitywar.game.module.DummyManager;
+import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.script.AbstractScript;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
@@ -62,6 +63,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -151,7 +153,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 								Formatter.formatCommand(command, "abtip [능력]", "[능력] 능력의 팁을 확인합니다.", true),
 								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true),
 								Formatter.formatCommand(command, "patch", "쾌적한 플레이를 위한 패치를 진행합니다.", true),
-								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true)});
+								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true),
+								Formatter.formatCommand(command, "debug", "디버그 명령어를 도움말을 확인합니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -266,7 +269,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 				if (args.length == 0) {
 					if (GameManager.isGameRunning()) {
 						GameManager.getGame().executeCommand(CommandType.TIP_CHECK, sender, command, args, plugin);
-					} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+					} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 				} else {
 					final String name = String.join(" ", args);
 					if (AbilityFactory.isRegistered(name) && AbilityList.isRegistered(name)) {
@@ -877,6 +880,106 @@ public class Commands implements CommandExecutor, TabCompleter {
 			}
 		};
 		mainCommand.addSubCommand("util", utilCommand);
+		mainCommand.addSubCommand("debug", new Command(Condition.OP, Condition.PLAYER) {
+			{
+				addSubCommand("dummy", new Command() {
+					private final String dummyPrefix = "§5[§d더미§5] §f";
+					{
+						addSubCommand("create", new Command() {
+							@Override
+							protected boolean onCommand(CommandSender sender, String command, String[] args) {
+								if (GameManager.isGameRunning()) {
+									final AbstractGame game = GameManager.getGame();
+									final DummyManager dummyManager = game.getModule(DummyManager.class);
+									if (dummyManager != null) {
+										try {
+											dummyManager.createDummy(((Player) sender).getLocation());
+											sender.sendMessage(dummyPrefix + "연습용 봇 하나가 소환되었습니다.");
+										} catch (RuntimeException e) {
+											sender.sendMessage(dummyPrefix + "연습용 봇 소환 중 문제가 발생했습니다.");
+											e.printStackTrace();
+										}
+									} else Messager.sendErrorMessage(sender, "연습용 봇을 지원하는 게임이 아닙니다.");
+								} else Messager.sendErrorMessage(sender, "게임이 진행중이지 않습니다.");
+								return true;
+							}
+						});
+						addSubCommand("clear", new Command() {
+							@Override
+							protected boolean onCommand(CommandSender sender, String command, String[] args) {
+								if (GameManager.isGameRunning()) {
+									final AbstractGame game = GameManager.getGame();
+									final DummyManager dummyManager = game.getModule(DummyManager.class);
+									if (dummyManager != null) {
+										sender.sendMessage(dummyPrefix + "연습용 봇 §d" + dummyManager.clearDummies() + "개§f를 제거했습니다.");
+									} else Messager.sendErrorMessage(sender, "연습용 봇을 지원하는 게임이 아닙니다.");
+								} else Messager.sendErrorMessage(sender, "게임이 진행중이지 않습니다.");
+								return true;
+							}
+						});
+					}
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						if (args.length > 0) {
+							Messager.sendErrorMessage(sender, "'§4" + args[0] + "§c'" + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 연습용 봇 명령어입니다.");
+						} else {
+							sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "연습용 봇 명령어"),
+									Formatter.formatCommand(command + " debug dummy", "create", "연습용 봇을 하나 소환합니다.", true),
+									Formatter.formatCommand(command + " debug dummy", "clear", "연습용 봇을 모두 제거합니다.", true)});
+						}
+						return true;
+					}
+
+				});
+				addSubCommand("gravitate", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						if (args.length > 0) {
+							final Player target = Bukkit.getPlayerExact(args[0]);
+							if (target != null) {
+								target.setGravity(true);
+								sender.sendMessage("§f" + target.getName() + "§a" + KoreanUtil.getJosa(target.getName().replaceAll("_", ""), Josa.을를) + " 중력에 영향받도록 설정했습니다.");
+							} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug gravitate <대상>");
+						return true;
+					}
+				});
+				addSubCommand("test", new Command() {
+					private int size = 0;
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						final Inventory gui = Bukkit.createInventory(null, size += 9);
+						((Player) sender).openInventory(gui);
+						return true;
+					}
+				});
+			}
+
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (args.length > 0) {
+					if (NumberUtil.isInt(args[0])) {
+						sendHelp(sender, command, Integer.parseInt(args[0]));
+					} else Messager.sendErrorMessage(sender, "'§4" + args[0] + "§c'" + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 디버그 명령어입니다.");
+				} else sendHelp(sender, command, 1);
+				return true;
+			}
+
+			private void sendHelp(CommandSender sender, String label, int page) {
+				final int allPage = 1;
+				switch (page) {
+					case 1:
+						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 디버그"),
+								"§b/" + label + " debug <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(label + " debug", "dummy", "연습용 봇 명령어 도움말을 확인합니다.", true),
+								Formatter.formatCommand(label + " debug", "gravitate <대상>", "대상이 중력에 영향받도록 설정합니다.", true)});
+						break;
+					default:
+						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
+						break;
+				}
+			}
+		});
 		mainCommand.addSubCommand("script", new Command(Condition.PLAYER, Condition.OP) {
 			private final Pattern SCRIPT_NAME_PATTERN = Pattern.compile("^[가-힣a-zA-Z0-9_]+$");
 
@@ -1078,7 +1181,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 			switch (args.length) {
 				case 1:
 					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "abtip", "skip", "anew",
-							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon", "patch");
+							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon", "patch", "debug");
 					if (args[0].isEmpty()) {
 						return subCommands;
 					} else {
@@ -1119,6 +1222,14 @@ public class Commands implements CommandExecutor, TabCompleter {
 							commands.removeIf(util -> !util.toLowerCase().startsWith(args[1].toLowerCase()));
 							return commands;
 						}
+					} else if (args[0].equalsIgnoreCase("debug")) {
+						final List<String> commands = Messager.asList("dummy", "gravitate");
+						if (args[1].isEmpty()) {
+							return commands;
+						} else {
+							commands.removeIf(part -> !part.toLowerCase().startsWith(args[1].toLowerCase()));
+							return commands;
+						}
 					}
 					break;
 				case 3:
@@ -1148,6 +1259,16 @@ public class Commands implements CommandExecutor, TabCompleter {
 							} else {
 								teamUtils.removeIf(util -> !util.toLowerCase().startsWith(args[2].toLowerCase()));
 								return teamUtils;
+							}
+						}
+					} else if (args[0].equalsIgnoreCase("debug")) {
+						if (args[1].equalsIgnoreCase("dummy")) {
+							final List<String> commands = Messager.asList("create", "clear");
+							if (args[2].isEmpty()) {
+								return commands;
+							} else {
+								commands.removeIf(part -> !part.toLowerCase().startsWith(args[2].toLowerCase()));
+								return commands;
 							}
 						}
 					}

@@ -63,7 +63,7 @@ public class GameWizard extends SettingWizard {
 				break;
 				case 4: {
 					ItemMeta wreckMeta = WRECK.getItemMeta();
-					List<String> lore = Messager.asList("§7상태 : " + (Settings.isWRECKEnabled() ? "§a활성화" : "§c비활성화"));
+					List<String> lore = Messager.asList("§7상태 : " + (Settings.isWreckEnabled() ? "§a활성화" : "§c비활성화"));
 					lore.add("");
 					CooldownDecrease cooldownDecrease = Settings.getCooldownDecrease();
 					for (CooldownDecrease value : CooldownDecrease.values()) {
@@ -272,7 +272,7 @@ public class GameWizard extends SettingWizard {
 						break;
 					case "§bWRECK":
 						if (e.getClick() == ClickType.LEFT) {
-							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, !Settings.isWRECKEnabled());
+							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_ENABLE, !Settings.isWreckEnabled());
 							show();
 						} else if (e.getClick() == ClickType.RIGHT) {
 							Configuration.modifyProperty(ConfigNodes.GAME_WRECK_DECREASE, Settings.getCooldownDecrease().next().name());

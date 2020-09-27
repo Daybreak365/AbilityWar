@@ -154,6 +154,7 @@ public class AbilityList {
 		registerAbility(Lorem.class);
 		registerAbility(Reverse.class);
 		registerAbility(Themis.class);
+		registerAbility(Paranoia.class);
 	}
 
 	/**

@@ -7,10 +7,16 @@ import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,10 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public abstract class AbstractTripleMix extends Game {
 
@@ -105,7 +107,7 @@ public abstract class AbstractTripleMix extends Game {
 	}
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			protected String getRevealMessage(Participant victim) {
@@ -136,13 +138,13 @@ public abstract class AbstractTripleMix extends Game {
 	}
 
 	@Override
-	public ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
+	protected ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
 		return new MixParticipantStrategy(players);
 	}
 
 	public class MixParticipant extends Participant {
 
-		private MixParticipant(Player player) {
+		protected MixParticipant(Player player) {
 			super(player);
 		}
 

@@ -369,7 +369,7 @@ public class Configuration {
 			return StandardGame.class;
 		}
 
-		public static boolean isWRECKEnabled() {
+		public static boolean isWreckEnabled() {
 			return get(ConfigNodes.GAME_WRECK_ENABLE);
 		}
 

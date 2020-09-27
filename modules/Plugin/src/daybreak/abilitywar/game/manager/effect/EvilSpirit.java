@@ -1,16 +1,13 @@
 package daybreak.abilitywar.game.manager.effect;
 
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.SoundLib.SimpleSound;
-import java.util.Map;
-import java.util.Random;
-import java.util.WeakHashMap;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -24,7 +21,12 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EvilSpirit extends Effect implements Listener {
+import java.util.Map;
+import java.util.Random;
+import java.util.WeakHashMap;
+import java.util.function.Predicate;
+
+public class EvilSpirit extends AbstractGame.Effect implements Listener {
 
 	private static final Map<Participant, EvilSpirit> evilSpirits = new WeakHashMap<>();
 
@@ -56,7 +58,7 @@ public class EvilSpirit extends Effect implements Listener {
 	};
 
 	private EvilSpirit(final Participant participant, final TimeUnit timeUnit, final int duration) {
-		super(participant, "§c악령", TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
+		participant.getGame().super(participant, "§c악령", TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
 		this.participant = participant;
 		setPeriod(TimeUnit.TICKS, 4);
 	}

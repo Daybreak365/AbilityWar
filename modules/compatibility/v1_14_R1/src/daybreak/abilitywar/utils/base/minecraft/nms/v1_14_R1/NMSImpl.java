@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms.v1_14_R1;
 
+import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
 import net.minecraft.server.v1_14_R1.DataWatcherObject;
@@ -17,9 +18,11 @@ import net.minecraft.server.v1_14_R1.PacketPlayOutTitle;
 import net.minecraft.server.v1_14_R1.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_14_R1.PlayerConnection;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftLivingEntity;
@@ -77,6 +80,11 @@ public class NMSImpl implements INMS {
 	@Override
 	public IHologram newHologram(World world, double x, double y, double z) {
 		return new HologramImpl(world, x, y, z);
+	}
+
+	@Override
+	public IDummy createDummy(Location location) {
+		return new DummyImpl(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) location.getWorld()).getHandle(), location);
 	}
 
 	@Override
@@ -150,5 +158,4 @@ public class NMSImpl implements INMS {
 	public void clearActiveItem(LivingEntity livingEntity) {
 		((CraftLivingEntity) livingEntity).getHandle().clearActiveItem();
 	}
-
 }

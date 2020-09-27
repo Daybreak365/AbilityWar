@@ -14,6 +14,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.Random;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -21,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Random;
 import java.util.function.Consumer;
 
 @AbilityManifest(name = "다이스 갓", rank = Rank.A, species = Species.GOD, explain = {
@@ -116,7 +116,7 @@ public class DiceGod extends AbilityBase implements ActiveHandler {
 	@Override
 	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
-			events[random.nextInt(events.length)].accept(getPlayer());
+			random.pick(events).accept(getPlayer());
 			cooldownTimer.start();
 			return true;
 		}

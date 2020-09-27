@@ -27,6 +27,10 @@ public class SpectatorManager {
 		spectators.clear();
 	}
 
+	public static int getSpectatorCount() {
+		return spectators.size();
+	}
+
 	public static Set<String> getSpectators() {
 		return Collections.unmodifiableSet(spectators);
 	}

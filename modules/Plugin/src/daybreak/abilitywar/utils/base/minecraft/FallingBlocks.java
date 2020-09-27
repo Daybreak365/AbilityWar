@@ -32,7 +32,7 @@ public class FallingBlocks {
 				@EventHandler
 				public void onEntityChangeBlock(EntityChangeBlockEvent event) {
 					if (event.getEntity().equals(fallingBlock)) {
-						if (!behavior.onEntityChangeBlock(fallingBlock)) {
+						if (!behavior.onEntityChangeBlock(fallingBlock, event)) {
 							event.setCancelled(true);
 							event.getEntity().remove();
 						}
@@ -98,18 +98,18 @@ public class FallingBlocks {
 
 		Behavior TRUE = new Behavior() {
 			@Override
-			public boolean onEntityChangeBlock(FallingBlock fallingBlock) {
+			public boolean onEntityChangeBlock(FallingBlock fallingBlock, EntityChangeBlockEvent event) {
 				return true;
 			}
 		};
 		Behavior FALSE = new Behavior() {
 			@Override
-			public boolean onEntityChangeBlock(FallingBlock fallingBlock) {
+			public boolean onEntityChangeBlock(FallingBlock fallingBlock, EntityChangeBlockEvent event) {
 				return false;
 			}
 		};
 
-		boolean onEntityChangeBlock(FallingBlock fallingBlock);
+		boolean onEntityChangeBlock(FallingBlock fallingBlock, EntityChangeBlockEvent event);
 
 	}
 

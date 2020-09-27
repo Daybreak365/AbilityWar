@@ -2,6 +2,7 @@ package daybreak.abilitywar.utils.base.minecraft.nms
 
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.entity.*
@@ -52,6 +53,11 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun newHologram(world: World, x: Double, y: Double, z: Double): IHologram {
 			return INSTANCE.newHologram(world, x, y, z)
+		}
+
+		@JvmStatic
+		override fun createDummy(location: Location): IDummy {
+			return INSTANCE.createDummy(location)
 		}
 
 		@JvmStatic

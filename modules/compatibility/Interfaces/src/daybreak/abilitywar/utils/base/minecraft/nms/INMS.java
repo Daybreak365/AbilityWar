@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -22,6 +23,8 @@ public interface INMS {
 
 	IHologram newHologram(World world, double x, double y, double z, String text);
 	IHologram newHologram(World world, double x, double y, double z);
+
+	default IDummy createDummy(Location location) {return null;}
 
 	float getAbsorptionHearts(Player player);
 	void setAbsorptionHearts(Player player, float absorptionHearts);

@@ -8,8 +8,8 @@ import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -121,7 +121,7 @@ public class MixTeamGame extends AbstractTeamMix {
 				}
 
 				if (Configuration.Settings.getInfiniteDurability()) {
-					attachObserver(new InfiniteDurability());
+					addModule(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}

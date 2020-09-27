@@ -2,6 +2,8 @@ package daybreak.abilitywar.ability.list;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.AbilityManifest.Rank;
+import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
@@ -9,8 +11,8 @@ import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.WRECK;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -23,14 +25,6 @@ import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Random;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -47,7 +41,16 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-@AbilityManifest(name = "관통화살", rank = AbilityManifest.Rank.S, species = AbilityManifest.Species.OTHERS, explain = {
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.Predicate;
+
+@AbilityManifest(name = "관통화살", rank = Rank.S, species = Species.OTHERS, explain = {
 		"활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다.",
 		"투사체에는 특수한 능력이 있으며, 활을 §e$[BulletConfig]번 §f쏠 때마다 능력이 변경됩니다.",
 		"능력을 변경할 때 3초의 재장전 시간이 소요됩니다.",
@@ -144,7 +147,7 @@ public class PenetrationArrow extends AbilityBase {
 				arrowBullet--;
 				actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
 				if (arrowBullet <= 0) {
-					final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (WRECK.calculateDecreasedAmount(70) * 15.0) : 15;
+					final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(70) * 15.0) : 15;
 					this.reload = new AbilityTimer(reloadCount) {
 						private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -161,7 +164,7 @@ public class PenetrationArrow extends AbilityBase {
 							PenetrationArrow.this.reload = null;
 							actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
 						}
-					}.setPeriod(TimeUnit.TICKS, 4);
+					}.setPeriod(TimeUnit.TICKS, 4).setBehavior(RestrictionBehavior.PAUSE_RESUME);
 					reload.start();
 				}
 			} else {

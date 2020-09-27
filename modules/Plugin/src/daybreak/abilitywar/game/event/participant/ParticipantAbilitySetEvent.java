@@ -3,13 +3,14 @@ package daybreak.abilitywar.game.event.participant;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class ParticipantAbilitySetEvent extends ParticipantEvent {
 
 	private static final HandlerList handlers = new HandlerList();
 
 	@Override
-	public HandlerList getHandlers() {
+	public @NotNull HandlerList getHandlers() {
 		return handlers;
 	}
 

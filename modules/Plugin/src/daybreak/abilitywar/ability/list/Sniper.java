@@ -9,8 +9,8 @@ import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.WRECK;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -24,9 +24,6 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.function.Predicate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,6 +38,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "스나이퍼", rank = Rank.S, species = Species.HUMAN, explain = {
 		"활을 쏠 때 매우 빠른 속도로 나아가는 특수한 투사체를 쏩니다.",
@@ -89,10 +90,10 @@ public class Sniper extends AbilityBase {
 				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
 					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
 				}
-				Arrow arrow = (Arrow) e.getProjectile();
+				final Arrow arrow = (Arrow) e.getProjectile();
 				new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 				SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
-				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (WRECK.calculateDecreasedAmount(20) * 25.0) : 25;
+				final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(20) * 25.0) : 25;
 				this.reload = new AbilityTimer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -108,7 +109,7 @@ public class Sniper extends AbilityBase {
 						actionbarChannel.update(null);
 						SoundLib.BLOCK_STONE_PRESSURE_PLATE_CLICK_ON.playSound(getPlayer());
 					}
-				}.setPeriod(TimeUnit.TICKS, 2);
+				}.setPeriod(TimeUnit.TICKS, 2).setBehavior(RestrictionBehavior.PAUSE_RESUME);
 				reload.start();
 			} else {
 				getPlayer().sendMessage("§b재장전 §f중입니다.");
@@ -180,10 +181,10 @@ public class Sniper extends AbilityBase {
 					return lastLocation.clone().add(unit.clone().multiply(cursor));
 				}
 			}; iterator.hasNext(); ) {
-				Location location = iterator.next();
+				final Location location = iterator.next();
 				entity.setLocation(location);
-				Block block = location.getBlock();
-				Material type = block.getType();
+				final Block block = location.getBlock();
+				final Material type = block.getType();
 				if (type.isSolid()) {
 					if (ItemLib.STAINED_GLASS.compareType(type) || Material.GLASS == type || ItemLib.STAINED_GLASS_PANE.compareType(type) || type == GLASS_PANE) {
 						block.breakNaturally();

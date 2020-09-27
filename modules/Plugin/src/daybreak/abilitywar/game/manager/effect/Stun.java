@@ -1,23 +1,25 @@
 package daybreak.abilitywar.game.manager.effect;
 
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
-import java.util.Map;
-import java.util.WeakHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-public class Stun extends Effect implements Listener {
+import java.util.Map;
+import java.util.WeakHashMap;
+
+public class Stun extends AbstractGame.Effect implements Listener {
 
 	private static final Map<Participant, Stun> stuns = new WeakHashMap<>();
 	private final Participant participant;
 
 	private Stun(Participant participant, TimeUnit timeUnit, int duration) {
-		super(participant, "§e기절", TaskType.REVERSE, timeUnit.toTicks(duration));
+		participant.getGame().super(participant, "§e기절", TaskType.REVERSE, timeUnit.toTicks(duration));
 		this.participant = participant;
 		setPeriod(TimeUnit.TICKS, 1);
 	}

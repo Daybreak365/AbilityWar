@@ -17,7 +17,7 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -232,13 +233,13 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 								new MixTipGUI(player, mix, plugin).openGUI();
 							}
 						} else {
-							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 						}
 					} else {
-						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 					}
 				} else {
-					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 				}
 			}
 			break;
@@ -249,7 +250,7 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 	}
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			protected String getRevealMessage(Participant victim) {
@@ -287,21 +288,21 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 	}
 
 	@Override
-	public ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
+	protected ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
 		return new MixParticipantStrategy(players);
 	}
 
 	public class MixParticipant extends Participant {
 
-		private MixParticipant(Player player) {
+		protected MixParticipant(Player player) {
 			super(player);
 		}
 
 		@Override
 		public AbilityBase removeAbility() {
-			AbilityBase ability = getAbility();
+			final Mix ability = getAbility();
 			if (ability != null) {
-				((Mix) ability).removeAbility();
+				ability.removeAbility();
 			}
 			return null;
 		}

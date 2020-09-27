@@ -19,11 +19,11 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
-import daybreak.abilitywar.game.manager.object.Invincibility;
+import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -47,6 +47,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
@@ -297,7 +298,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 				}
 
 				if (Settings.getInfiniteDurability()) {
-					attachObserver(new InfiniteDurability());
+					addModule(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage("§4내구도 무제한§0이 적용되지 않습니다.");
 				}
@@ -355,7 +356,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 	}
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			public void Operation(Participant victim) {
 				switch (DeathSettings.getOperation()) {
@@ -414,12 +415,12 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 				if (GameManager.isGameRunning()) {
 					final AbstractGame game = GameManager.getGame();
 					if (game.isParticipating(player)) {
-						Messager.sendErrorMessage(sender, "이 게임에서 사용할 수 없는 명령어입니다.");
+						Messager.sendErrorMessage(sender, "이 게임에서 사용할 수 없는 명령어입니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 					} else {
-						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 					}
 				} else {
-					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 				}
 			}
 			break;

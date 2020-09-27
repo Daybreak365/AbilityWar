@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft;
 
-import java.util.Random;
+import daybreak.abilitywar.utils.base.Random;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -21,8 +21,8 @@ public class FireworkUtil {
 		FireworkMeta fireworkMeta = firework.getFireworkMeta();
 		fireworkMeta.addEffect(FireworkEffect.builder()
 				.flicker(random.nextBoolean())
-				.withColor(colors[random.nextInt(colors.length)])
-				.withFade(colors[random.nextInt(colors.length)])
+				.withColor(random.pick(colors))
+				.withFade(random.pick(colors))
 				.with(Type.values()[random.nextInt(Type.values().length)])
 				.trail(random.nextBoolean())
 				.build());

@@ -7,14 +7,14 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.game.team.TeamGame;
 import daybreak.abilitywar.game.team.TeamGame.Winnable;
 import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
 import daybreak.abilitywar.game.team.interfaces.Members;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
@@ -26,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.List;
@@ -139,7 +140,7 @@ public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable
 				}
 
 				if (Settings.getInfiniteDurability()) {
-					attachObserver(new InfiniteDurability());
+					addModule(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}
@@ -182,7 +183,7 @@ public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable
 	}
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			public void Operation(AbstractGame.Participant victim) {
 				switch (DeathSettings.getOperation()) {

@@ -1,15 +1,17 @@
 package daybreak.abilitywar.utils.base;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Messager {
 
@@ -20,13 +22,11 @@ public class Messager {
 	private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
 	public static List<String> asList(String... strings) {
-		List<String> list = new ArrayList<>(strings.length);
-		Collections.addAll(list, strings);
-		return list;
+		return new ArrayList<>(Arrays.asList(strings));
 	}
 
 	public static Set<String> asSet(String... strings) {
-		Set<String> list = new HashSet<>(strings.length);
+		final Set<String> list = new HashSet<>(strings.length);
 		Collections.addAll(list, strings);
 		return list;
 	}

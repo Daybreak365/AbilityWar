@@ -12,8 +12,8 @@ import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -233,7 +233,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 				}
 
 				if (Settings.getInfiniteDurability()) {
-					attachObserver(new InfiniteDurability());
+					addModule(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}

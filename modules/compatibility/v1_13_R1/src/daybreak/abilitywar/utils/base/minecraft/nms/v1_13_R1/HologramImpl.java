@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -48,6 +49,11 @@ public class HologramImpl implements IHologram, Listener {
 
 	HologramImpl(World world, double x, double y, double z) {
 		this(world, x, y, z, "");
+	}
+
+	@EventHandler
+	private void onPlayerQuit(PlayerQuitEvent e) {
+		viewers.remove(e.getPlayer());
 	}
 
 	@EventHandler
@@ -125,6 +131,11 @@ public class HologramImpl implements IHologram, Listener {
 			iterator.remove();
 		}
 		viewers = null;
+	}
+
+	@Override
+	public boolean isUnregistered() {
+		return viewers == null;
 	}
 
 }

@@ -6,6 +6,7 @@ import com.google.common.collect.SetMultimap;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
@@ -18,8 +19,10 @@ import daybreak.abilitywar.game.interfaces.IGame;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
-import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.event.EventManager;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.EventManager;
+import daybreak.abilitywar.game.module.Module;
+import daybreak.abilitywar.game.module.ModuleBase;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Hashes;
 import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
@@ -56,8 +59,11 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -84,12 +90,33 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		observers.remove(observer);
 	}
 
+	private final Map<Class<? extends Module>, Module> modules = new HashMap<>();
+
+	protected final <M extends Module> M addModule(final @NotNull M module) throws IllegalStateException {
+		final Class<? extends Module> type = module.getClass();
+		final ModuleBase base = type.getAnnotation(ModuleBase.class);
+		if (base == null || base.value() == Module.class) throw new IllegalStateException("There is no valid @ModuleBase for " + type.getName() + " module.");
+		if (modules.containsKey(base.value())) throw new IllegalStateException("Module with " + base.value().getName() + " base is already registered.");
+		modules.put(base.value(), module);
+		module.register();
+		return module;
+	}
+
+	public final boolean hasModule(final Class<? extends Module> type) {
+		return modules.containsKey(type);
+	}
+
+	public final <M extends Module> M getModule(final Class<M> type) {
+		final Module module = modules.get(type);
+		return module != null ? type.cast(module) : null;
+	}
+
 	private boolean restricted = true;
 	private boolean gameStarted = false;
 
 	private final GameRegistration registration;
 	protected final ParticipantStrategy participantStrategy;
-	private final EventManager eventManager = new EventManager(this);
+	private final EventManager eventManager = addModule(new EventManager());
 
 	public AbstractGame(Collection<Player> players) throws IllegalArgumentException {
 		super(TaskType.INFINITE, -1);
@@ -250,15 +277,25 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			participant.removeAbility();
 		}
 		HandlerList.unregisterAll(this);
+		for (final Iterator<Module> iterator = modules.values().iterator(); iterator.hasNext();) {
+			iterator.next().unregister();
+			iterator.remove();
+		}
 		observers.forEach(observer -> observer.update(GameUpdate.END));
-		Bukkit.broadcastMessage(ChatColor.GRAY.toString().concat("게임이 중지되었습니다."));
+		Bukkit.broadcastMessage("§7게임이 중지되었습니다.");
+	}
+
+	@Override
+	protected final void onSilentEnd() {
+		this.onEnd();
 	}
 
 	public class Participant implements AbstractGame.Observer {
 
+		private final Map<Class<? extends Effect>, Effect> effects = new HashMap<>();
 		private final Attributes attributes = new Attributes();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
-		@NotNull private Player player;
+		private @NotNull Player player;
 		private final Listener listener;
 		protected AbilityBase ability;
 
@@ -356,12 +393,19 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			}
 		}
 
+		public void setAbility(final AbilityRegistration registration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+			final AbilityBase oldAbility = removeAbility();
+			final AbilityBase ability = AbilityBase.create(registration, this);
+			ability.setRestricted(false);
+			this.ability = ability;
+			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
+		}
+
 		/**
 		 * 플레이어에게 새 능력을 부여합니다.
-		 *
 		 * @param abilityClass 부여할 능력의 클래스
 		 */
-		public void setAbility(Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+		public void setAbility(final Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
 			final AbilityBase oldAbility = removeAbility();
 			final AbilityBase ability = AbilityBase.create(abilityClass, this);
 			ability.setRestricted(false);
@@ -371,7 +415,6 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 		/**
 		 * 플레이어에게 해당 능력을 그대로 적용합니다.
-		 *
 		 * @param ability 부여할 능력
 		 */
 		@Beta
@@ -602,7 +645,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		}
 	}
 
-	public abstract class GameTimer extends SimpleTimer {
+	public abstract class GameTimer extends daybreak.abilitywar.utils.base.concurrent.SimpleTimer {
 
 		public GameTimer(final @NotNull TaskType taskType, final int maximumCount) {
 			super(taskType, maximumCount);

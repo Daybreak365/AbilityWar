@@ -36,12 +36,12 @@ public class Bleed {
 		}
 	}
 
-	private static final class ParticipantBleed extends Effect implements Listener {
+	private static final class ParticipantBleed extends AbstractGame.Effect implements Listener {
 
 		private final Player player;
 
 		private ParticipantBleed(Participant participant, int duration, int period) {
-			super(participant, "§c출혈", TaskType.REVERSE, duration / period);
+			participant.getGame().super(participant, "§c출혈", TaskType.REVERSE, duration / period);
 			this.player = participant.getPlayer();
 			setPeriod(TimeUnit.TICKS, period);
 		}

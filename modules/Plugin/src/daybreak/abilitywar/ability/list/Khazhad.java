@@ -11,7 +11,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -38,6 +38,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -241,7 +242,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clickType == ClickType.LEFT_CLICK && !cooldownTimer.isCooldown()) {
 			final FallingBlock fallingBlock = FallingBlocks.spawnFallingBlock(getPlayer().getEyeLocation(), Material.PACKED_ICE, true, getPlayer().getLocation().getDirection().multiply(1.7), new Behavior() {
 				@Override
-				public boolean onEntityChangeBlock(FallingBlock fallingBlock) {
+				public boolean onEntityChangeBlock(FallingBlock fallingBlock, EntityChangeBlockEvent event) {
 					Block block = fallingBlock.getLocation().getBlock();
 					for (int x = -1; x < 1; x++) {
 						for (int y = -1; y < 1; y++) {

@@ -9,12 +9,12 @@ import daybreak.abilitywar.game.event.GameEndEvent;
 import daybreak.abilitywar.game.event.GameReadyEvent;
 import daybreak.abilitywar.game.event.GameStartEvent;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.Firewall;
-import daybreak.abilitywar.game.manager.object.Invincibility;
-import daybreak.abilitywar.game.manager.object.ScoreboardManager;
-import daybreak.abilitywar.game.manager.object.WRECK;
-import daybreak.abilitywar.game.manager.object.ZeroTick;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Invincibility;
+import daybreak.abilitywar.game.module.ScoreboardManager;
+import daybreak.abilitywar.game.module.Wreck;
+import daybreak.abilitywar.game.module.Firewall;
+import daybreak.abilitywar.game.module.ZeroTick;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
@@ -35,6 +35,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
@@ -42,7 +43,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, WRECK.Handler, ScoreboardManager.Handler, Firewall.Handler {
+public abstract class Game extends AbstractGame implements AbilitySelect.Handler, DeathManager.Handler, Invincibility.Handler, Wreck.Handler, ScoreboardManager.Handler, Firewall.Handler {
 
 	private static final Logger logger = Logger.getLogger(Game.class);
 
@@ -50,11 +51,11 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		super(players);
 	}
 
-	private final DeathManager deathManager = Preconditions.checkNotNull(newDeathManager());
-	private final Invincibility invincibility = new Invincibility(this);
-	private final WRECK wreck = newWreck();
-	private final ScoreboardManager scoreboardManager = new ScoreboardManager(this);
-	private final Firewall fireWall = new Firewall(this, this);
+	private final DeathManager deathManager = addModule(Preconditions.checkNotNull(newDeathManager()));
+	private final Invincibility invincibility = addModule(new Invincibility(this));
+	private final Wreck wreck = addModule(newWreck());
+	private final ScoreboardManager scoreboardManager = addModule(new ScoreboardManager(this));
+	private final Firewall fireWall = addModule(new Firewall(this, this));
 	private final AbilitySelect abilitySelect = newAbilitySelect();
 	private final Listener listener = new Listener() {
 		@EventHandler
@@ -265,12 +266,11 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		return scoreboardManager;
 	}
 
-	/**
-	 * DeathManager 초깃값 설정
-	 * null을 반환하지 않습니다.
-	 */
-	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull Wreck newWreck() {
+		return new Wreck();
+	}
+
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this);
 	}
 
@@ -279,7 +279,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	 * null을 반환하지 않습니다.
 	 */
 	@Override
-	public DeathManager getDeathManager() {
+	public @NotNull DeathManager getDeathManager() {
 		return deathManager;
 	}
 
@@ -288,13 +288,8 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	 * null을 반환하지 않습니다.
 	 */
 	@Override
-	public WRECK getWreck() {
+	public @NotNull Wreck getWreck() {
 		return wreck;
-	}
-
-	@Override
-	public boolean isWreckEnabled() {
-		return wreck.isEnabled();
 	}
 
 	/**
@@ -314,7 +309,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		}
 		if (Settings.isZeroTickEnabled()) {
 			Bukkit.broadcastMessage("§f제로틱 §a모드가 활성화되었습니다! §2(§f공격 딜레이 §a없이 타격할 수 있습니다.§2)");
-			new ZeroTick(this);
+			addModule(new ZeroTick(this));
 		}
 		if (Settings.isDefaultMaxHealthEnabled()) {
 			for (Participant participant : getParticipants()) {

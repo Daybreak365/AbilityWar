@@ -20,4 +20,20 @@ public class TimeUtil {
 		return time;
 	}
 
+	public static class ParsedTime {
+
+		public static ParsedTime parse(final int seconds) {
+			return new ParsedTime(seconds);
+		}
+
+		public final int minutes, seconds;
+
+		private ParsedTime(int seconds) {
+			this.minutes = seconds / 60;
+			seconds -= this.minutes * 60;
+			this.seconds = seconds;
+		}
+
+	}
+
 }

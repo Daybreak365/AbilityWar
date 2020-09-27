@@ -22,13 +22,14 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
-import daybreak.abilitywar.game.manager.object.Invincibility;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Random;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
@@ -51,6 +52,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.InvocationTargetException;
@@ -59,7 +61,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 @GameManifest(name = "블라인드 믹스", description = {
 		"§f블라인드와 믹스 능력자의 조합!", "",
@@ -100,7 +101,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 			new GameTimer(TaskType.NORMAL, 15) {
 				@Override
 				protected void run(int count) {
-					final String title = chatColors[random.nextInt(chatColors.length)] + participants.get(random.nextInt(participants.size())).getPlayer().getName();
+					final String title = random.pick(chatColors) + random.pick(participants).getPlayer().getName();
 					for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 						NMS.sendTitle(onlinePlayer, title, "", 0, 6, 0);
 						SoundLib.PIANO.playInstrument(onlinePlayer, C);
@@ -110,7 +111,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 
 				@Override
 				protected void onEnd() {
-					final MixParticipant target = participants.get(random.nextInt(participants.size()));
+					final MixParticipant target = random.pick(participants);
 					final String title = "§e" + target.getPlayer().getName();
 					for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 						NMS.sendTitle(onlinePlayer, title, "", 0, 40, 0);
@@ -119,7 +120,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 					new GameTimer(TaskType.NORMAL, 15) {
 						@Override
 						protected void run(int count) {
-							final String subtitle = chatColors[random.nextInt(chatColors.length)] + roulettes[random.nextInt(roulettes.length)].getDisplayName(participants.get(random.nextInt(participants.size())));
+							final String subtitle = random.pick(chatColors) + random.pick(roulettes).getDisplayName(random.pick(participants));
 							for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 								NMS.sendTitle(onlinePlayer, title, subtitle, 0, 6, 0);
 								SoundLib.PIANO.playInstrument(onlinePlayer, C);
@@ -129,8 +130,8 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 
 						@Override
 						protected void onEnd() {
-							final Roulette roulette = roulettes[random.nextInt(roulettes.length)];
-							final MixParticipant castingTarget = participants.get(random.nextInt(participants.size()));
+							final Roulette roulette = random.pick(roulettes);
+							final MixParticipant castingTarget = random.pick(participants);
 							final String subtitle = ChatColor.GOLD + roulette.getDisplayName(castingTarget);
 							for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 								NMS.sendTitle(onlinePlayer, title, subtitle, 0, 5, 0);
@@ -324,7 +325,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 				}
 
 				if (Settings.getInfiniteDurability()) {
-					attachObserver(new InfiniteDurability());
+					addModule(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage("§4내구도 무제한§0이 적용되지 않습니다.");
 				}
@@ -382,7 +383,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 	}
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			public void Operation(Participant victim) {
@@ -455,12 +456,12 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 				if (GameManager.isGameRunning()) {
 					final AbstractGame game = GameManager.getGame();
 					if (game.isParticipating(player)) {
-						Messager.sendErrorMessage(sender, "이 게임에서 사용할 수 없는 명령어입니다.");
+						Messager.sendErrorMessage(sender, "이 게임에서 사용할 수 없는 명령어입니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 					} else {
-						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 					}
 				} else {
-					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 				}
 			}
 			break;
@@ -491,7 +492,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 							((Mix) participant.getAbility()).setAbility(first, second);
 
 							final Player player = participant.getPlayer();
-							player.sendMessage("§a능력이 할당되었습니다. §e/aw check§f로 확인하세요.");
+							player.sendMessage("§7능력이 할당되었습니다. §8/aw check§f로 확인하세요.");
 							if (!hasDecided(participant)) {
 								player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
 							}

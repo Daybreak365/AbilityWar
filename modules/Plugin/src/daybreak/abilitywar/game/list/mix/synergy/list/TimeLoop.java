@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.list.mix.synergy.list;
 
+import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -13,17 +14,23 @@ import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 @AbilityManifest(name = "타임 루프", rank = Rank.S, species = Species.HUMAN, explain = {
 		"다른 플레이어가 나를 공격하거나, 내가 다른 플레이어를 공격한 경우",
@@ -132,9 +139,9 @@ public class TimeLoop extends Synergy {
 		onEntityDamage(e);
 		if (cooldownTimer.isCooldown() || e.getEntity().equals(e.getDamager())) return;
 		if (e.getEntity().equals(getPlayer()) && e.getDamager() instanceof Player) {
-			Player damager = (Player) e.getDamager();
+			final Player damager = (Player) e.getDamager();
 			if (getGame().isParticipating(damager)) {
-				Participant dParticipant = getGame().getParticipant(damager);
+				final Participant dParticipant = getGame().getParticipant(damager);
 				if (!loggers.containsKey(dParticipant)) {
 					loggers.put(dParticipant, new PlayerLogger(damager));
 				}
@@ -208,7 +215,25 @@ public class TimeLoop extends Synergy {
 		private final Player player;
 		private final PlayerData primal;
 		private final LimitedPushingList<PlayerData> playerDatas = new LimitedPushingList<>(100);
+		private final Listener listener = new Listener() {
+			@EventHandler
+			private void onEntityDamageEvent(final EntityDamageEvent e) {
+				if (player.equals(e.getEntity())) e.setCancelled(true);
+			}
+			@EventHandler
+			private void onEntityDamageByEntityEvent(final EntityDamageByEntityEvent e) {
+				onEntityDamageEvent(e);
+			}
+			@EventHandler
+			private void onEntityDamageByBlockEvent(final EntityDamageByBlockEvent e) {
+				onEntityDamageEvent(e);
+			}
+		};
 		private final AbilityTimer rewind = new AbilityTimer(100) {
+			@Override
+			protected void onStart() {
+				Bukkit.getPluginManager().registerEvents(listener, AbilityWar.getPlugin());
+			}
 			@Override
 			public void run(int seconds) {
 				PlayerData data = playerDatas.pollLast();
@@ -218,9 +243,9 @@ public class TimeLoop extends Synergy {
 					stop(false);
 				}
 			}
-
 			@Override
 			public void onEnd() {
+				HandlerList.unregisterAll(listener);
 				if (!player.isDead()) {
 					primal.apply();
 				}
@@ -228,6 +253,10 @@ public class TimeLoop extends Synergy {
 				SoundLib.BELL.playInstrument(player, Note.sharp(0, Tone.F));
 				SoundLib.BELL.playInstrument(player, Note.natural(1, Tone.A));
 				inCombat.stop(false);
+			}
+			@Override
+			protected void onSilentEnd() {
+				HandlerList.unregisterAll(listener);
 			}
 		}.setPeriod(TimeUnit.TICKS, 1);
 

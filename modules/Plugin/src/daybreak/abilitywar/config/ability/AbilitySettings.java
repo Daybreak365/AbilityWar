@@ -9,6 +9,8 @@ import daybreak.abilitywar.config.Cache;
 import daybreak.abilitywar.config.CommentedConfiguration;
 import daybreak.abilitywar.config.interfaces.Configurable;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -17,13 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import org.bukkit.configuration.InvalidConfigurationException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * 능력 콘피그
- *
  * @author Daybreak 새벽
  */
 public class AbilitySettings {
@@ -31,7 +31,11 @@ public class AbilitySettings {
 	private static final Logger logger = Logger.getLogger(AbilitySettings.class.getName());
 	private static final Map<String, AbilitySettings> abilitySettings = new HashMap<>();
 	private final Table<String, String, SettingObject<?>> settings = TreeBasedTable.create();
-
+	private final File configFile;
+	private final CommentedConfiguration config;
+	private final Map<SettingObject<?>, Cache> cache = new HashMap<>();
+	private long lastModified;
+	private boolean error = false;
 	public AbilitySettings(File configFile) {
 		this.configFile = configFile;
 		if (!configFile.exists()) {
@@ -56,16 +60,9 @@ public class AbilitySettings {
 		abilitySettings.put(configFile.getName(), this);
 	}
 
-	private final File configFile;
-	private final CommentedConfiguration config;
-
 	public static Collection<AbilitySettings> getAbilitySettings() {
 		return abilitySettings.values();
 	}
-
-	private final Map<SettingObject<?>, Cache> cache = new HashMap<>();
-	private long lastModified;
-	private boolean error = false;
 
 	public static AbilitySettings getAbilitySetting(String fileName) {
 		return abilitySettings.get(fileName);
@@ -141,7 +138,6 @@ public class AbilitySettings {
 			} else {
 				throw new IllegalArgumentException(abilityClass.getName() + " 클래스에 AbilityManifest 어노테이션이 존재하지 않습니다.");
 			}
-
 			this.key = key;
 			this.defaultValue = checkNotNull(defaultValue);
 			this.comments = comments;

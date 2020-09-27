@@ -9,8 +9,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
-import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.WRECK;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -24,9 +24,6 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.function.Predicate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,6 +38,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "더블 스나이퍼", rank = Rank.S, species = Species.HUMAN, explain = {
 		"활을 쏘면 매우 빠른 속도로 나아가는 특수한 투사체를 다섯 번 연속으로 쏩니다.",
@@ -96,7 +97,7 @@ public class DoubleSniper extends Synergy {
 						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
 					}
 				}.setPeriod(TimeUnit.TICKS, 1).start();
-				final int reloadCount = WRECK.isEnabled(GameManager.getGame()) ? (int) (WRECK.calculateDecreasedAmount(20) * 25.0) : 25;
+				final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(20) * 25.0) : 25;
 				this.reload = new AbilityTimer(reloadCount) {
 					private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
 
@@ -112,7 +113,7 @@ public class DoubleSniper extends Synergy {
 						actionbarChannel.update(null);
 						SoundLib.BLOCK_STONE_PRESSURE_PLATE_CLICK_ON.playSound(getPlayer());
 					}
-				}.setPeriod(TimeUnit.TICKS, 4);
+				}.setPeriod(TimeUnit.TICKS, 4).setBehavior(RestrictionBehavior.PAUSE_RESUME);
 				reload.start();
 			} else {
 				getPlayer().sendMessage("§b재장전 §f중입니다.");

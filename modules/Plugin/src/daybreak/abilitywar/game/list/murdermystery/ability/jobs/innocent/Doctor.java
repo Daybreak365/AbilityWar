@@ -11,13 +11,12 @@ import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery.ArrowKillEvent;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractInnocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer.MurderEvent;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -26,6 +25,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "시민: 의사", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",

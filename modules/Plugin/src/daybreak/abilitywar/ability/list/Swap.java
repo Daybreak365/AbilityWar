@@ -7,17 +7,18 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Random;
-import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "스왑", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 주변 $[DISTANCE_CONFIG]칸 이내에 있는 모든 플레이어의 핫바 슬롯을",

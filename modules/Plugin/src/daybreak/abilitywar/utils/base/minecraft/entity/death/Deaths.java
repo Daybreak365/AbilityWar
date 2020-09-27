@@ -1,10 +1,10 @@
 package daybreak.abilitywar.utils.base.minecraft.entity.death;
 
 import com.google.common.collect.ImmutableMap;
+import daybreak.abilitywar.utils.base.Random;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.library.Entities;
-import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -195,7 +195,7 @@ public class Deaths {
 	}
 
 	private static String pick(final String[] strings) {
-		return "§7" + strings[random.nextInt(strings.length)];
+		return "§7" + random.pick(strings);
 	}
 
 	private static String getJosa(final Entity entity, final Josa josa) {

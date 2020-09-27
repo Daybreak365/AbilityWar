@@ -22,9 +22,9 @@ import daybreak.abilitywar.game.event.participant.ParticipantEvent;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.manager.object.WRECK;
-import daybreak.abilitywar.game.manager.object.event.EventManager;
-import daybreak.abilitywar.game.manager.object.event.EventManager.EventObserver;
+import daybreak.abilitywar.game.module.Wreck;
+import daybreak.abilitywar.game.module.EventManager;
+import daybreak.abilitywar.game.module.EventManager.EventObserver;
 import daybreak.abilitywar.utils.base.BracketReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
@@ -131,6 +131,12 @@ public abstract class AbilityBase {
 		Preconditions.checkNotNull(participant);
 		if (!AbilityFactory.isRegistered(abilityClass)) throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
 		return abilityClass.cast(AbilityFactory.getRegistration(abilityClass).getConstructor().newInstance(participant));
+	}
+
+	public static AbilityBase create(final AbilityRegistration registration, final Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+		Preconditions.checkNotNull(registration);
+		Preconditions.checkNotNull(participant);
+		return registration.getConstructor().newInstance(participant);
 	}
 
 	private final Function<String, String> fieldValueProvider = new Function<String, String>() {
@@ -524,7 +530,7 @@ public abstract class AbilityBase {
 		private CooldownTimer timer;
 
 		public Cooldown(final int cooldown, final String name, final int maxDecrease) {
-			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(Math.min(100, Math.max(0, maxDecrease))) : cooldown);
+			this.cooldown = (int) (Wreck.isEnabled(getGame()) ? cooldown * Wreck.calculateDecreasedAmount(Math.min(100, Math.max(0, maxDecrease))) : cooldown);
 			this.timer = new CooldownTimer(this.cooldown);
 			this.name = name;
 		}
@@ -590,7 +596,7 @@ public abstract class AbilityBase {
 			timer.actionbarChannel.unregister();
 			timer.stop(true);
 			timer.unregister();
-			this.cooldown = (int) (WRECK.isEnabled(getGame()) ? cooldown * WRECK.calculateDecreasedAmount(Math.min(100, Math.max(0, maxDecrease))) : cooldown);
+			this.cooldown = (int) (Wreck.isEnabled(getGame()) ? cooldown * Wreck.calculateDecreasedAmount(Math.min(100, Math.max(0, maxDecrease))) : cooldown);
 			this.timer = new CooldownTimer(this.cooldown);
 		}
 

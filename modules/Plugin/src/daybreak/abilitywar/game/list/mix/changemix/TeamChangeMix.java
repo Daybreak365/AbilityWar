@@ -12,14 +12,14 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.DeathManager;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
-import daybreak.abilitywar.game.manager.object.Invincibility;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.team.TeamGame.Winnable;
 import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
 import daybreak.abilitywar.game.team.event.TeamCreatedEvent;
 import daybreak.abilitywar.game.team.event.TeamRemovedEvent;
 import daybreak.abilitywar.game.team.interfaces.Members;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
@@ -35,6 +35,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,7 +49,6 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 	private final Objective lifeObjective = getScoreboardManager().registerNewObjective("생명", "dummy", "§c생명");
 
 	private final MixAbilityChanger changer = new MixAbilityChanger(this);
-	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
 	private final int maxLife;
 	private final Set<Members> noLife = new HashSet<Members>() {
 		@Override
@@ -190,7 +190,7 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 				}
 
 				if (Settings.getInfiniteDurability()) {
-					attachObserver(infiniteDurability);
+					addModule(new InfiniteDurability());
 				} else {
 					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}
@@ -257,7 +257,7 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 	}
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			public void Operation(Participant victim) {

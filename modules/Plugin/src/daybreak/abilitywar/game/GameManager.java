@@ -27,9 +27,8 @@ public class GameManager {
 		return currentGame;
 	}
 
-	public static boolean startGame(String[] args) throws IllegalArgumentException {
+	public static boolean startGame(final GameRegistration registration, final String[] args) throws IllegalArgumentException {
 		try {
-			final GameRegistration registration = GameFactory.getRegistration(Settings.getGameMode());
 			if (registration != null) {
 				if (registration.hasFlag(Flag.TEAM_GAME_SUPPORTED) && Settings.isTeamGameEnabled()) {
 					final TeamGameRegistration teamGame = registration.getTeamGame();
@@ -56,6 +55,14 @@ public class GameManager {
 		}
 		Configuration.modifyProperty(ConfigNodes.GAME_MODE, StandardGame.class.getName());
 		return new StandardGame().start();
+	}
+
+	public static boolean startGame(final Class<? extends AbstractGame> clazz, final String[] args) throws IllegalArgumentException {
+		return startGame(GameFactory.getRegistration(clazz), args);
+	}
+
+	public static boolean startGame(final String[] args) throws IllegalArgumentException {
+		return startGame(GameFactory.getRegistration(Settings.getGameMode()), args);
 	}
 
 	public static boolean stopGame() {

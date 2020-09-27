@@ -142,6 +142,7 @@ public class AbilityFactory {
 		registerAbility(Lorem.class);
 		registerAbility(Reverse.class);
 		registerAbility(Themis.class);
+		registerAbility(Paranoia.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -306,7 +307,7 @@ public class AbilityFactory {
 					} else {
 						provider = new Provider() {
 							@Override
-							public Object getInstance() {
+							public JavaPlugin getInstance() {
 								return javaPlugin;
 							}
 

@@ -7,17 +7,15 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,6 +29,10 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "물총", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
 		"물 안에서 웅크리면 빠른 속도로 앞으로 나아갑니다.",
@@ -104,9 +106,10 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 	private final AbilityTimer passive = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
-			for (Arrow arrow : arrows) {
+			for (final Arrow arrow : arrows) {
 				ParticleLib.DRIP_WATER.spawnParticle(arrow.getLocation(), 10, 1, 1, 1);
 			}
+			PotionEffects.WATER_BREATHING.addPotionEffect(getPlayer(), 400, 0, true);
 			PotionEffects.NIGHT_VISION.addPotionEffect(getPlayer(), 400, 0, true);
 		}
 	}.setPeriod(TimeUnit.TICKS, 3).register();
@@ -132,13 +135,12 @@ public class SquirtGun extends AbilityBase implements ActiveHandler {
 			arrows.remove(e.getEntity());
 			if (getPlayer().equals(e.getEntity().getShooter())) {
 				if (!gunCool.isCooldown()) {
-					if (e.getHitEntity() != null && e.getHitEntity() instanceof Damageable) {
-						((Damageable) e.getHitEntity()).damage(200, getPlayer());
+					if (e.getHitEntity() instanceof Damageable && !getPlayer().equals(e.getHitEntity())) {
+						Damages.damageFixed(e.getHitEntity(), getPlayer(), 100);
 					}
 					SoundLib.ENTITY_PLAYER_SPLASH.playSound(getPlayer());
-					Location center = e.getHitEntity() != null ? e.getHitEntity().getLocation() : e.getHitBlock().getLocation();
-					for (Location l : LocationUtil.getRandomLocations(center, 10, 20)) {
-						l.getBlock().setType(Material.WATER);
+					for (Location loc : LocationUtil.getRandomLocations(e.getHitEntity() != null ? e.getHitEntity().getLocation() : e.getHitBlock().getLocation(), 10, 20)) {
+						loc.getBlock().setType(Material.WATER);
 					}
 
 					gunCool.start();

@@ -10,7 +10,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -18,9 +18,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,6 +34,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "보이드", rank = Rank.A, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §5공허 차원문§f: 보이드는 순간 이동할 때 그 자리에 이동할 위치로",
@@ -231,7 +232,7 @@ public class Void extends AbilityBase implements ActiveHandler {
 		}
 
 		private boolean isInRadius(final Location loc) {
-			return from.distanceSquared(loc) <= 4;
+			return from.getWorld().equals(loc.getWorld()) && from.distanceSquared(loc) <= 4;
 		}
 
 		@Override

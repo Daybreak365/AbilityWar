@@ -11,9 +11,9 @@ import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.manager.object.DeathManager;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.manager.object.InfiniteDurability;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -36,6 +36,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -68,8 +69,6 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 
 	private final Objective killObjective = getScoreboardManager().registerNewObjective("킬 횟수", "dummy", "§c킬 횟수");
 
-	private final InfiniteDurability infiniteDurability = new InfiniteDurability();
-
 	@Override
 	protected void progressGame(int seconds) {
 		switch (seconds) {
@@ -93,7 +92,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 				for (String msg : Arrays.asList("§eSummer Vacation §f- §c여름 휴가",
 						"§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b모드 개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §fDayBreak§7#5908")) {
+						"§9디스코드 §7: §f새벽§7#5908")) {
 					Bukkit.broadcastMessage(msg);
 				}
 				break;
@@ -164,7 +163,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					}
 				}
 
-				attachObserver(infiniteDurability);
+				addModule(new InfiniteDurability());
 
 				for (World w : Bukkit.getWorlds()) {
 					if (Settings.getClearWeather()) {
@@ -172,6 +171,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					}
 				}
 
+				getDeathManager().setAbilityRemoval(false);
 				startGame();
 				setRestricted(false);
 				break;
@@ -192,7 +192,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 	private final int killsToWin;
 
 	@Override
-	public DeathManager newDeathManager() {
+	protected @NotNull DeathManager newDeathManager() {
 		return new DeathManager(this) {
 			@Override
 			public void Operation(Participant victim) {

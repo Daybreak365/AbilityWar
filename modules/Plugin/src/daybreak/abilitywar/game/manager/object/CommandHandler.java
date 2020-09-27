@@ -93,9 +93,7 @@ public interface CommandHandler {
 					if (participant.hasAbility()) {
 						count++;
 						String name = participant.getAbility().getName();
-						if (name != null) {
-							sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: §c" + name);
-						}
+						sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: §c" + name);
 					}
 				}
 				if (count == 0) sender.sendMessage("§f능력자가 발견되지 않았습니다.");
@@ -135,13 +133,13 @@ public interface CommandHandler {
 						if (participant.hasAbility()) {
 							new AbilityTipGUI(player, participant.getAbility().getRegistration(), plugin).openGUI(1);
 						} else {
-							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 						}
 					} else {
-						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 					}
 				} else {
-					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 				}
 			}
 			break;
