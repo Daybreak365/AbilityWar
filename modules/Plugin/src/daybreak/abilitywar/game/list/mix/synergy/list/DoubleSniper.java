@@ -136,7 +136,7 @@ public class DoubleSniper extends Synergy {
 			super(160);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-.75, -.75, -.75, .75, .75, .75);
+			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(10);
 			this.powerEnchant = powerEnchant;
 			this.color = color;
@@ -198,7 +198,7 @@ public class DoubleSniper extends Synergy {
 						return;
 					}
 				}
-				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable)) {
 						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
 						stop(false);

@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.list.mix.triplemix;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -68,13 +69,21 @@ public class TripleMix extends AbilityBase implements ActiveHandler, TargetHandl
 	}
 
 	public void setAbility(final Class<? extends AbilityBase> first, final Class<? extends AbilityBase> second, final Class<? extends AbilityBase> third) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		setAbility0(create(first, getParticipant()), create(second, getParticipant()), create(third, getParticipant()));
+	}
+
+	public void setAbility(final AbilityRegistration first, final AbilityRegistration second, final AbilityRegistration third) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		setAbility0(create(first, getParticipant()), create(second, getParticipant()), create(third, getParticipant()));
+	}
+
+	private void setAbility0(AbilityBase abilityBase, AbilityBase abilityBase2, AbilityBase abilityBase3) {
 		removeAbility();
-		this.first = create(first, getParticipant());
-		this.first.setRestricted(false);
-		this.second = create(second, getParticipant());
-		this.second.setRestricted(false);
-		this.third = create(third, getParticipant());
-		this.third.setRestricted(false);
+		this.first = abilityBase;
+		abilityBase.setRestricted(false);
+		this.second = abilityBase2;
+		abilityBase2.setRestricted(false);
+		this.third = abilityBase3;
+		abilityBase3.setRestricted(false);
 	}
 
 	@Override

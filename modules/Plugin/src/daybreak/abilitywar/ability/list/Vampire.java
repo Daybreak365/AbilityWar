@@ -21,6 +21,8 @@ import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
+import kotlin.ranges.RangesKt;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,6 +32,8 @@ import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +49,7 @@ import java.util.function.Predicate;
 })
 public class Vampire extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Distance", 12,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Vampire.class, "distance", 12,
 			"# 스킬 거리 (기본값: 12)") {
 
 		@Override
@@ -55,7 +59,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Vampire.class, "Cool", 160,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Vampire.class, "cooldown", 160,
 			"# 쿨타임") {
 
 		@Override
@@ -70,7 +74,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "Duration", 4,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "duration", 4,
 			"# 지속시간 (초 단위)",
 			"# 지속시간이 변할 경우 흡혈 횟수 또한 동일하게 변경됨. ( 1초 = 1회, 4초 = 4회 )") {
 
@@ -128,7 +132,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 		}
 	};
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final int distance = DistanceConfig.getValue();
+	private final int distance = DISTANCE_CONFIG.getValue();
 	private final Circle circle = Circle.of(distance, distance * 15);
 	private static final RGB COLOR_BLOOD_RED = new RGB(138, 7, 7);
 	private final Duration skill = new Duration(DurationConfig.getValue() * 10, cooldownTimer) {
@@ -191,7 +195,11 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 				count++;
 			} else {
 				if (!getPlayer().isDead()) {
-					getPlayer().setHealth(Math.min(getPlayer().getHealth() + blood, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+					final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), blood, RegainReason.CUSTOM);
+					Bukkit.getPluginManager().callEvent(event);
+					if (!event.isCancelled()) {
+						getPlayer().setHealth(RangesKt.coerceIn(getPlayer().getHealth() + event.getAmount(), 0, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+					}
 				}
 				blood = 0;
 				count = 1;

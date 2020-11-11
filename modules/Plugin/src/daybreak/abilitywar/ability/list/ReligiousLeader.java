@@ -12,8 +12,6 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
-import java.util.HashSet;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -27,6 +25,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @AbilityManifest(name = "교주", rank = Rank.A, species = Species.HUMAN, explain = {
 		"처음 시작하면 새로운 종교를 창시하며, 이름을 정할 수 있습니다.",
 		"상대방을 철괴로 §6우클릭§f하면 신자로 영입할 수 있습니다.",
@@ -38,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class ReligiousLeader extends AbilityBase implements TargetHandler, ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(ReligiousLeader.class, "Cooldown", 150,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(ReligiousLeader.class, "cooldown", 150,
 			"# 쿨타임") {
 
 		@Override

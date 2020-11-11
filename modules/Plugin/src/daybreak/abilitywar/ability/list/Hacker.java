@@ -69,7 +69,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.SEVEN), difficulty = Difficulty.EASY)
 public class Hacker extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Hacker.class, "Cooldown", 180,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Hacker.class, "cooldown", 180,
 			"# 쿨타임") {
 
 		@Override
@@ -84,7 +84,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Hacker.class, "DURATION", 5,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Hacker.class, "duration", 5,
 			"# 스턴 지속시간") {
 
 		@Override

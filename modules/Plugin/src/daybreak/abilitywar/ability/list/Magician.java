@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 })
 public class Magician extends AbilityBase {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Magician.class, "Cooldown", 8,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Magician.class, "cooldown", 8,
 			"# 쿨타임") {
 
 		@Override

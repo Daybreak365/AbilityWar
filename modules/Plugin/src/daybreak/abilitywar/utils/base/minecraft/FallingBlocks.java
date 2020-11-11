@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 /**
@@ -28,18 +29,27 @@ public class FallingBlocks {
 			fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
 		else fallingBlock = location.getWorld().spawnFallingBlock(location, type, data);
 		if (behavior != null) {
-			Bukkit.getPluginManager().registerEvents(new Listener() {
+			final BlockHandler handler = new BlockHandler() {
+				@Override
+				public void run() {
+					if (!fallingBlock.isValid()) {
+						unregister();
+					}
+				}
+
 				@EventHandler
-				public void onEntityChangeBlock(EntityChangeBlockEvent event) {
+				public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
 					if (event.getEntity().equals(fallingBlock)) {
 						if (!behavior.onEntityChangeBlock(fallingBlock, event)) {
 							event.setCancelled(true);
 							event.getEntity().remove();
 						}
-						HandlerList.unregisterAll(this);
+						unregister();
 					}
 				}
-			}, AbilityWar.getPlugin());
+			};
+			handler.runTaskTimer(AbilityWar.getPlugin(), 0L, 200L);
+			Bukkit.getPluginManager().registerEvents(handler, AbilityWar.getPlugin());
 		}
 
 		fallingBlock.setGlowing(glowing);
@@ -110,6 +120,15 @@ public class FallingBlocks {
 		};
 
 		boolean onEntityChangeBlock(FallingBlock fallingBlock, EntityChangeBlockEvent event);
+
+	}
+
+	private abstract static class BlockHandler extends BukkitRunnable implements Listener {
+
+		protected void unregister() {
+			HandlerList.unregisterAll(this);
+			cancel();
+		}
 
 	}
 

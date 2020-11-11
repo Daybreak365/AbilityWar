@@ -188,7 +188,7 @@ public class WarTeamGame extends TeamGame implements DefaultKitHandler, Winnable
 			public void Operation(AbstractGame.Participant victim) {
 				switch (DeathSettings.getOperation()) {
 					case 탈락:
-						Eliminate(victim);
+						eliminate(victim);
 						excludedPlayers.add(victim.getPlayer().getUniqueId());
 						break;
 					case 관전모드:

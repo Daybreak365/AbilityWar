@@ -125,7 +125,7 @@ public class AbilitySettings {
 		config.save();
 	}
 
-	public abstract class SettingObject<T> implements Configurable<T> {
+	public class SettingObject<T> implements Configurable<T> {
 
 		private final String key, path;
 		private final T defaultValue;
@@ -165,7 +165,9 @@ public class AbilitySettings {
 		}
 
 		@Override
-		public abstract boolean condition(T value);
+		public boolean condition(T value) {
+			return true;
+		}
 
 		@Override
 		@SuppressWarnings("unchecked")

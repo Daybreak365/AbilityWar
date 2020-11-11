@@ -18,9 +18,6 @@ import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -37,13 +34,17 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "죽음의 손아귀", rank = Rank.A, species = Species.OTHERS, explain = {
 		"철괴를 우클릭하면 공중으로 올라갔다 마지막으로 때린 플레이어의 방향으로 날아가",
 		"내려 찍으며 주변의 플레이어들에게 대미지를 입히고 날려보냅니다. $[COOLDOWN_CONFIG]"
 })
 public class DeathGrasp extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -57,7 +58,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "Damage", 30, "# 대미지") {
+	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "damage", 30, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {

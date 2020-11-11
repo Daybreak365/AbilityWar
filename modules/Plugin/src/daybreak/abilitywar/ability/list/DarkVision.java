@@ -19,6 +19,7 @@ import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.function.Predicate;
 
@@ -46,7 +47,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.SIX, utility = Level.FIVE), difficulty = Difficulty.NORMAL)
 public class DarkVision extends AbilityBase {
 
-	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(DarkVision.class, "Distance", 30,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(DarkVision.class, "distance", 30,
 			"# 거리 설정") {
 
 		@Override
@@ -85,7 +86,7 @@ public class DarkVision extends AbilityBase {
 	private final AbilityTimer darkVision = new AbilityTimer() {
 		@Override
 		public void run(int count) {
-			PotionEffects.BLINDNESS.addPotionEffect(getPlayer(), 40, 0, true);
+			PotionEffects.BLINDNESS.addPotionEffect(getPlayer(), 600, 0, true);
 			PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 5, true);
 			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate)) {
 				PotionEffects.GLOWING.addPotionEffect(entity, 10, 0, true);
@@ -97,6 +98,8 @@ public class DarkVision extends AbilityBase {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			darkVision.start();
+		} else if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
+			getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
 		}
 	}
 

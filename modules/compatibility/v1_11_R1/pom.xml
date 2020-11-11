@@ -23,7 +23,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>Interfaces</artifactId>
+			<artifactId>Common</artifactId>
 			<version>${revision}</version>
 			<scope>provided</scope>
 		</dependency>

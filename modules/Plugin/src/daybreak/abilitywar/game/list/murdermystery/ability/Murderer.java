@@ -108,7 +108,7 @@ public class Murderer extends AbstractMurderer {
 					try {
 						getParticipant().setAbility(MurderMystery.getRandomMurderJob());
 						getGame().executeCommand(CommandType.ABILITY_CHECK, getPlayer(), "aw", EMPTY_STRING_ARRAY, AbilityWar.getPlugin());
-					} catch (IllegalAccessException | InstantiationException | InvocationTargetException ignored) {
+					} catch (ReflectiveOperationException ignored) {
 					}
 				}
 			}

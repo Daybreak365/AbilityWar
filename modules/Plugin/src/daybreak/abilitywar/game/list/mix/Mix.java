@@ -93,6 +93,20 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	}
 
+	public void setAbility(final AbilityRegistration first, final AbilityRegistration second) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		removeAbility();
+		final AbilityRegistration synergyReg = SynergyFactory.getSynergy(first.getAbilityClass(), second.getAbilityClass());
+		if (synergyReg != null) {
+			this.synergy = (Synergy) create(synergyReg.getAbilityClass(), getParticipant());
+			this.synergy.setRestricted(false);
+		} else {
+			this.first = create(first, getParticipant());
+			this.first.setRestricted(false);
+			this.second = create(second, getParticipant());
+			this.second.setRestricted(false);
+		}
+	}
+
 	@Override
 	public boolean usesMaterial(Material material) {
 		return (synergy != null && synergy.usesMaterial(material)) || (first != null && first.usesMaterial(material)) || (second != null && second.usesMaterial(material));

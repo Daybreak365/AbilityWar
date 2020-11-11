@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 })
 public class Yeti extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Yeti.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Yeti.class, "cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -45,7 +45,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Yeti.class, "Range", 15,
+	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Yeti.class, "range", 15,
 			"# 스킬 사용 시 눈 지형으로 바꿀 범위") {
 
 		@Override

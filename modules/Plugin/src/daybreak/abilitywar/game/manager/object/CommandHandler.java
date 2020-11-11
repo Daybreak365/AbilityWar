@@ -60,7 +60,7 @@ public interface CommandHandler {
 									participant.setAbility(clazz);
 								}
 								Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
-							} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+							} catch (ReflectiveOperationException e) {
 								Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
 								if (DeveloperSettings.isEnabled()) e.printStackTrace();
 							}
@@ -72,7 +72,7 @@ public interface CommandHandler {
 									try {
 										game.getParticipant(targetPlayer).setAbility(AbilityList.getByString(name));
 										Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 능력을 임의로 부여하였습니다.");
-									} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+									} catch (ReflectiveOperationException e) {
 										Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
 										if (DeveloperSettings.isEnabled()) e.printStackTrace();
 									}

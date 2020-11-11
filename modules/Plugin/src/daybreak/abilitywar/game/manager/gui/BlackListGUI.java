@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.manager.gui;
 
+import com.google.common.collect.ImmutableMap;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
@@ -57,6 +58,14 @@ public class BlackListGUI implements Listener {
 			.build();
 
 	private static final Logger logger = Logger.getLogger(BlackListGUI.class.getName());
+
+	private static final ImmutableMap<Rank, MaterialX> materials = ImmutableMap.<Rank, MaterialX>builder()
+			.put(Rank.C, MaterialX.YELLOW_WOOL)
+			.put(Rank.B, MaterialX.CYAN_WOOL)
+			.put(Rank.A, MaterialX.LIME_WOOL)
+			.put(Rank.S, MaterialX.PINK_WOOL)
+			.put(Rank.L, MaterialX.ORANGE_WOOL)
+			.build();
 
 	private final Player p;
 
@@ -137,37 +146,21 @@ public class BlackListGUI implements Listener {
 			count++;
 		}
 
-		int rankCount = 38;
-		Rank[] forEach = Rank.values();
-		ArrayUtils.reverse(forEach);
-		for (Rank rank : forEach) {
-			ItemStack rankItem;
-			switch (rank) {
-				case C:
-					rankItem = new ItemStack(Material.IRON_BLOCK);
-					break;
-				case B:
-					rankItem = new ItemStack(Material.GOLD_BLOCK);
-					break;
-				case A:
-					rankItem = new ItemStack(Material.DIAMOND_BLOCK);
-					break;
-				case S:
-					rankItem = new ItemStack(Material.EMERALD_BLOCK);
-					break;
-				default:
-					rankItem = new ItemStack(Material.BARRIER);
-					break;
-			}
-			ItemMeta rankMeta = rankItem.getItemMeta();
-			String rankName = rank.getRankName();
-			rankMeta.setDisplayName(rankName);
-			rankMeta.setLore(Messager.asList(
-					"§f모든 " + rankName + " §f능력을 예외 처리 하려면 좌클릭,",
-					"§f모든 " + rankName + " §f능력을 예외 처리 해제하려면 우클릭을 해주세요."));
-			rankItem.setItemMeta(rankMeta);
-			gui.setItem(rankCount, rankItem);
-			rankCount++;
+		int rankIndex = 38;
+		final Rank[] ranks = Rank.values();
+		ArrayUtils.reverse(ranks);
+		for (Rank rank : ranks) {
+			final MaterialX material = materials.get(rank);
+			if (material == null) continue;
+			final ItemStack stack = material.createItem();
+			final ItemMeta meta = stack.getItemMeta();
+			final String name = rank.getRankName();
+			meta.setDisplayName(name);
+			meta.setLore(Messager.asList(
+					"§f모든 " + name + " §f능력을 예외 처리 하려면 좌클릭,",
+					"§f모든 " + name + " §f능력을 예외 처리 해제하려면 우클릭을 해주세요."));
+			stack.setItemMeta(meta);
+			gui.setItem(rankIndex++, stack);
 		}
 
 		if (page > 1) gui.setItem(48, PREVIOUS_PAGE);

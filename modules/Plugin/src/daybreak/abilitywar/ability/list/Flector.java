@@ -19,7 +19,6 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -27,13 +26,16 @@ import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Set;
 
 @AbilityManifest(name = "플렉터", rank = Rank.S, species = Species.HUMAN, explain = {
@@ -62,7 +64,7 @@ import java.util.Set;
 }, stats = @Stats(offense = Level.THREE, survival = Level.THREE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.SEVEN), difficulty = Difficulty.HARD)
 public class Flector extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flector.class, "Cool", 40,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flector.class, "cooldown", 40,
 			"# 쿨타임") {
 
 		@Override
@@ -77,7 +79,7 @@ public class Flector extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Flector.class, "Duration", 7,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Flector.class, "duration", 7,
 			"# 쿨타임") {
 
 		@Override
@@ -94,7 +96,6 @@ public class Flector extends AbilityBase implements ActiveHandler {
 	private static final Set<Material> materials = ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 
 	private static final double particleRadius = 5;
-	private final CenteredBoundingBox boundingBox = CenteredBoundingBox.of(getPlayer().getLocation(), -1.5, -1.5, -1.5, 1.5, 1.5, 1.5);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 		private int particle;
@@ -117,8 +118,8 @@ public class Flector extends AbilityBase implements ActiveHandler {
 				}
 				particle++;
 			}
-			for (Projectile projectile : LocationUtil.getNearbyEntities(Projectile.class, getPlayer().getLocation(), 8, 8, null)) {
-				deflect(projectile, false);
+			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, getPlayer().getLocation(), 8, 8, null)) {
+				deflect(entity, false);
 			}
 			for (Deflectable deflectable : LocationUtil.getNearbyCustomEntities(Deflectable.class, getPlayer().getLocation(), 8, 8, null)) {
 				deflect(deflectable, false);
@@ -129,10 +130,26 @@ public class Flector extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(PlayerInteractEvent e) {
 		if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) && e.getItem() != null && materials.contains(e.getItem().getType())) {
-			if (!deflect(LocationUtil.getEntityLookingAt(Projectile.class, boundingBox, getPlayer(), 5, null), true)) {
-				deflect(LocationUtil.getCustomEntityLookingAt(Deflectable.class, getGame(), boundingBox, getPlayer(), 5, null), true);
+			if (!deflect(LocationUtil.getEntityLookingAt(Entity.class, getPlayer(), 5, .75, null), true)) {
+				deflect(LocationUtil.getCustomEntityLookingAt(Deflectable.class, getGame(), getPlayer(), 5, .75,  null), true);
 			}
 		}
+	}
+
+	private boolean deflect(Entity entity, boolean playerDirection) {
+		if (entity == null) return false;
+		if (entity instanceof Projectile) {
+			return deflect((Projectile) entity, playerDirection);
+		} else {
+			final List<MetadataValue> metadatas = entity.getMetadata("deflectable");
+			if (!metadatas.isEmpty()) {
+				final Object value = metadatas.get(0).value();
+				if (value instanceof Deflectable) {
+					return deflect((Deflectable) value, playerDirection);
+				}
+			}
+		}
+		return false;
 	}
 
 	private boolean deflect(Projectile projectile, boolean playerDirection) {

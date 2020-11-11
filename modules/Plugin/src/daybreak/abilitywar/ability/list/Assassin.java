@@ -49,7 +49,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.TWO, mobility = Level.FIVE, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Assassin extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "Distance", 8,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "distance", 8,
 			"# 스킬 대미지") {
 
 		@Override
@@ -59,7 +59,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "Damage", 8,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "damage", 8,
 			"# 스킬 대미지") {
 
 		@Override
@@ -69,7 +69,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "Cooldown", 35,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "cooldown", 35,
 			"# 쿨타임") {
 
 		@Override
@@ -84,7 +84,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> TELEPORT_COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "TeleportCount", 4,
+	public static final SettingObject<Integer> TELEPORT_COUNT_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "teleport-count", 4,
 			"# 능력 사용 시 텔레포트 횟수") {
 
 		@Override

@@ -26,6 +26,7 @@ public class AddonLoader {
 	 */
 	public static void loadAll() {
 		for (final File file : FileUtil.newDirectory("Addon").listFiles()) {
+			if (file.isDirectory()) continue;
 			load(file);
 		}
 	}

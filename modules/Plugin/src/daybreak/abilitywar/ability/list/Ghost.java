@@ -54,7 +54,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.FIVE, crowdControl = Level.ZERO, mobility = Level.SEVEN, utility = Level.FOUR), difficulty = Difficulty.NORMAL)
 public class Ghost extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_INCREASE_CONFIG = abilitySettings.new SettingObject<Integer>(Ghost.class, "CooldownIncrease", 1,
+	public static final SettingObject<Integer> COOLDOWN_INCREASE_CONFIG = abilitySettings.new SettingObject<Integer>(Ghost.class, "cooldown-increase", 1,
 			"# 쿨타임") {
 
 		@Override
@@ -181,7 +181,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 			cooldownTimer.setCooldown(0, 0);
 		} else if (getPlayer().equals(entity)) {
 			final Player killer = getPlayer().getKiller();
-			if (killer != null && !getPlayer().equals(killer) && !predicate.test(getPlayer().getKiller())) return;
+			if (killer == null || getPlayer().equals(killer) || !predicate.test(getPlayer().getKiller())) return;
 			EvilSpirit.apply(getGame().getParticipant(killer), TimeUnit.SECONDS, 30);
 		}
 	}

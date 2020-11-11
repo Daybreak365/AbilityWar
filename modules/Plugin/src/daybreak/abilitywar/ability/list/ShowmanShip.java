@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -35,11 +36,21 @@ import java.util.function.Predicate;
 @Support.Version(min = NMSVersion.v1_11_R1)
 @AbilityManifest(name = "쇼맨쉽", rank = Rank.B, species = Species.HUMAN, explain = {
 		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
-		"플레이어는 1명, 플레이어가 아닌 생명체는 0.2명 취급합니다.",
+		"플레이어는 1명, 플레이어가 아닌 생명체는 $[ENTITY_COUNT]명 취급합니다.",
 		"§a0명 이상, 2명 미만 §7: §f나약함  §a2명 이상, 4명 미만 §7: §f힘 II",
 		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 처형"
 })
 public class ShowmanShip extends AbilityBase {
+
+	public static final SettingObject<Float> ENTITY_COUNT = abilitySettings.new SettingObject<Float>(ShowmanShip.class, "entity-count", .2f,
+			"# 플레이어가 아닌 엔티티를 몇 명으로 취급할지 설정합니다.") {
+
+		@Override
+		public boolean condition(Float value) {
+			return value >= 0;
+		}
+
+	};
 
 	public ShowmanShip(Participant participant) {
 		super(participant);
@@ -52,11 +63,10 @@ public class ShowmanShip extends AbilityBase {
 			Type.BALL_LARGE, Type.STAR
 	};
 	private static final int radius = 7;
-	private final RGB WEAK = new RGB(214, 255, 212);
-	private final RGB POWER = new RGB(255, 184, 150);
-	private final RGB POWERFUL = new RGB(255, 59, 59);
-	private final Circle circle = Circle.of(radius, 100);
+	private static final RGB WEAK = new RGB(214, 255, 212), POWER = new RGB(255, 184, 150), POWERFUL = new RGB(255, 59, 59);
+	private static final Circle circle = Circle.of(radius, 100);
 
+	private final float entityCount = ENTITY_COUNT.getValue();
 	private final Map<Firework, LivingEntity> execution = new HashMap<>();
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -144,17 +154,17 @@ public class ShowmanShip extends AbilityBase {
 		}
 	}
 
-	private double getPoint(int horizontal, int vertical) {
+	private float getPoint(int horizontal, int vertical) {
 		final Location center = getPlayer().getLocation();
 		final double centerX = center.getX(), centerZ = center.getZ();
-		double point = 0;
+		float point = 0;
 		for (Entity entity : LocationUtil.collectEntities(center, horizontal)) {
 			final Location entityLocation = entity.getLocation();
 			if (LocationUtil.distanceSquared2D(centerX, centerZ, entityLocation.getX(), entityLocation.getZ()) <= (horizontal * horizontal) && NumberUtil.subtract(center.getY(), entityLocation.getY()) <= vertical && (notEqualPredicate == null || notEqualPredicate.test(entity))) {
 				if (entity instanceof Player) {
-					point += 1.0;
+					point += 1f;
 				} else if (entity instanceof LivingEntity) {
-					point += 0.2;
+					point += entityCount;
 				}
 			}
 		}

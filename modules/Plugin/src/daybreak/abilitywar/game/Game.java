@@ -3,17 +3,17 @@ package daybreak.abilitywar.game;
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.game.event.GameEndEvent;
-import daybreak.abilitywar.game.event.GameReadyEvent;
-import daybreak.abilitywar.game.event.GameStartEvent;
+import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
+import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Firewall;
 import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.module.ScoreboardManager;
 import daybreak.abilitywar.game.module.Wreck;
-import daybreak.abilitywar.game.module.Firewall;
 import daybreak.abilitywar.game.module.ZeroTick;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -36,9 +36,9 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -55,7 +55,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	private final Invincibility invincibility = addModule(new Invincibility(this));
 	private final Wreck wreck = addModule(newWreck());
 	private final ScoreboardManager scoreboardManager = addModule(new ScoreboardManager(this));
-	private final Firewall fireWall = addModule(new Firewall(this, this));
+	private final Firewall firewall = addModule(new Firewall(this, this));
 	private final AbilitySelect abilitySelect = newAbilitySelect();
 	private final Listener listener = new Listener() {
 		@EventHandler
@@ -117,8 +117,8 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	@Override
 	protected void onStart() {
+		super.onStart();
 		Bukkit.getPluginManager().registerEvents(listener, AbilityWar.getPlugin());
-		Bukkit.getPluginManager().callEvent(new GameReadyEvent(this));
 	}
 
 	private int seconds = 0;
@@ -133,9 +133,8 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	@Override
 	protected void onEnd() {
-		super.onEnd();
 		HandlerList.unregisterAll(listener);
-		Bukkit.getPluginManager().callEvent(new GameEndEvent(this));
+		super.onEnd();
 	}
 
 	/**
@@ -175,7 +174,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 							if (tip != null) {
 								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
 							}
-						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (ReflectiveOperationException | SecurityException | IllegalArgumentException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
@@ -197,7 +196,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 							if (tip != null) {
 								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
 							}
-						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (SecurityException | ReflectiveOperationException | IllegalArgumentException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
@@ -239,6 +238,11 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 		};
 	}
 
+	@Override
+	protected ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
+		return new DefaultManagement(this, players);
+	}
+
 	/**
 	 * AbilitySelect를 반환합니다.
 	 * null을 반환할 수 있습니다. 능력 할당 전이거나 능력 할당 기능을 사용하지 않을 경우 null을 반환합니다.
@@ -258,7 +262,7 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 
 	@Override
 	public Firewall getFirewall() {
-		return fireWall;
+		return firewall;
 	}
 
 	@Override
@@ -318,7 +322,52 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 			}
 		}
 		super.startGame();
-		Bukkit.getPluginManager().callEvent(new GameStartEvent(this));
+	}
+
+	protected class ParticipantImpl extends Participant {
+
+		private AbilityBase ability = null;
+		private final Attributes attributes = new Attributes();
+
+		protected ParticipantImpl(@NotNull Player player) {
+			super(player);
+		}
+
+		@Override
+		public void setAbility(AbilityRegistration registration) throws ReflectiveOperationException {
+			final AbilityBase oldAbility = removeAbility();
+			final AbilityBase ability = AbilityBase.create(registration, this);
+			ability.setRestricted(false);
+			this.ability = ability;
+			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
+		}
+
+		@Override
+		public boolean hasAbility() {
+			return ability != null;
+		}
+
+		@Override
+		@Nullable
+		public AbilityBase getAbility() {
+			return ability;
+		}
+
+		@Override
+		@Nullable
+		public AbilityBase removeAbility() {
+			final AbilityBase ability = this.ability;
+			if (ability != null) {
+				ability.destroy();
+				this.ability = null;
+			}
+			return ability;
+		}
+
+		@Override
+		public Attributes attributes() {
+			return attributes;
+		}
 	}
 
 }

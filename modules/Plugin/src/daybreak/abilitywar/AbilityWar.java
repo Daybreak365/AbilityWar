@@ -121,7 +121,6 @@ public class AbilityWar extends JavaPlugin implements Provider {
 				ScriptManager.loadAll();
 			}
 		});
-
 		Messager.sendConsoleMessage("플러그인이 활성화되었습니다. §8(§7" + ServerVersion.getName() + "§8)");
 	}
 

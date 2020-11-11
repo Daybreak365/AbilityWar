@@ -20,6 +20,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
@@ -63,6 +64,24 @@ public class HologramImpl implements IHologram, Listener {
 					display0((CraftPlayer) e.getPlayer());
 				}
 			}.runTaskLater(AbilityWar.getPlugin(), 2L);
+		}
+	}
+
+	@EventHandler
+	private void onPlayerTeleport(PlayerTeleportEvent e) {
+		if (viewers.contains(e.getPlayer())) {
+			final net.minecraft.server.v1_9_R2.World nmsWorld = armorStand.getWorld();
+			if (nmsWorld != null) {
+				final World bukkitWorld = nmsWorld.getWorld();
+				if (bukkitWorld != null && !bukkitWorld.equals(e.getFrom().getWorld()) && bukkitWorld.equals(e.getTo().getWorld())) {
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							display0((CraftPlayer) e.getPlayer());
+						}
+					}.runTaskLater(AbilityWar.getPlugin(), 2L);
+				}
+			}
 		}
 	}
 

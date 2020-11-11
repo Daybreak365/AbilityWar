@@ -31,7 +31,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 })
 public class Lazyness extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lazyness.class, "Cooldown", 30,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lazyness.class, "cooldown", 30,
 			"# 쿨타임") {
 
 		@Override

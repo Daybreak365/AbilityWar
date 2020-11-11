@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>daybreak.abilitywar</groupId>
-			<artifactId>Interfaces</artifactId>
+			<artifactId>Common</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>

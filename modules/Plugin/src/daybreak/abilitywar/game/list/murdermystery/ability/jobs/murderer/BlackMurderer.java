@@ -12,11 +12,11 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.PlayerInventory;
+
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "머더: 블랙", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"모든 시민을 죽이세요!",
@@ -27,14 +27,15 @@ import org.bukkit.inventory.PlayerInventory;
 })
 public class BlackMurderer extends AbstractMurderer {
 
-	private final AbilityTimer PASSIVE = new AbilityTimer() {
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
-		protected void run(int count) {
-			if (Items.isMurdererSword(getPlayer().getInventory().getItemInMainHand())) {
-				getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15);
-			}
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			return getGame().isParticipating(entity.getUniqueId())
+					&& !((MurderMystery) getGame()).isDead(entity.getUniqueId())
+					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue();
 		}
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+	};
 
 	public BlackMurderer(Participant participant) {
 		super(participant);
@@ -42,51 +43,15 @@ public class BlackMurderer extends AbstractMurderer {
 
 	@Override
 	protected void onUpdate(Update update) {
+		super.onUpdate(update);
 		if (update == Update.RESTRICTION_CLEAR) {
-			PlayerInventory inventory = getPlayer().getInventory();
-			final boolean hadSword = Items.isMurdererSword(inventory.getItem(1));
-			inventory.clear();
-			getPlayer().getInventory().setHeldItemSlot(0);
-			((MurderMystery) getGame()).updateGold(getParticipant());
 			NMS.sendTitle(getPlayer(), "§e직업§f: §5블랙", "§7시야를 차단하세요.", 10, 80, 10);
 			new AbilityTimer(1) {
-				@Override
-				protected void run(int count) {
-				}
-
 				@Override
 				protected void onEnd() {
 					NMS.clearTitle(getPlayer());
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
-			if (!hadSword) {
-				getPlayer().sendMessage("§e15초 §f뒤에 §4살인자§c의 검§f을 얻습니다.");
-				new AbilityTimer(1) {
-					@Override
-					protected void run(int count) {
-						getPlayer().getInventory().setHeldItemSlot(0);
-						inventory.setItem(1, Items.MURDERER_SWORD.getStack());
-						getPlayer().sendMessage("§4살인자§c의 검§f을 들고 있을 때 더 빠르게 움직일 수 있습니다.");
-						for (Player player : Bukkit.getOnlinePlayers()) {
-							NMS.sendTitle(player, "§4머더§c가 검을 얻었습니다.", "", 10, 80, 10);
-							new AbilityTimer(1) {
-								@Override
-								protected void run(int count) {
-								}
-
-								@Override
-								protected void onEnd() {
-									NMS.clearTitle(player);
-								}
-							}.setInitialDelay(TimeUnit.SECONDS, 5).start();
-						}
-					}
-				}.setInitialDelay(TimeUnit.SECONDS, 15).start();
-			} else {
-				getPlayer().getInventory().setHeldItemSlot(0);
-				inventory.setItem(1, Items.MURDERER_SWORD.getStack());
-			}
-			PASSIVE.start();
 		}
 	}
 
@@ -95,7 +60,7 @@ public class BlackMurderer extends AbstractMurderer {
 		protected void onDurationStart() {
 			Bukkit.broadcastMessage("§8암전.");
 			for (Participant participant : getGame().getParticipants()) {
-				if (participant.getAbility() instanceof AbstractMurderer) continue;
+				if (participant.getAbility() instanceof AbstractMurderer || !predicate.test(participant.getPlayer())) continue;
 				PotionEffects.BLINDNESS.addPotionEffect(participant.getPlayer(), 60, 0, true);
 			}
 		}

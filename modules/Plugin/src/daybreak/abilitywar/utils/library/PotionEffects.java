@@ -2,6 +2,7 @@ package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -56,9 +57,23 @@ public enum PotionEffects {
 		this.positive = positive;
 	}
 
+	public void addPotionEffect(LivingEntity entity, int duration, int amplifier, boolean ambient, boolean particles, boolean force) {
+		if (effect != null) {
+			if (ServerVersion.getVersion() <= 14) {
+				entity.addPotionEffect(new PotionEffect(effect, duration, amplifier, ambient, particles), force);
+			} else {
+				entity.addPotionEffect(new PotionEffect(effect, duration, amplifier, ambient, particles));
+			}
+		}
+	}
+
 	public void addPotionEffect(LivingEntity entity, int duration, int amplifier, boolean force) {
 		if (effect != null) {
-			entity.addPotionEffect(new PotionEffect(effect, duration, amplifier), force);
+			if (ServerVersion.getVersion() <= 14) {
+				entity.addPotionEffect(new PotionEffect(effect, duration, amplifier), force);
+			} else {
+				entity.addPotionEffect(new PotionEffect(effect, duration, amplifier));
+			}
 		}
 	}
 

@@ -27,7 +27,9 @@ import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Doctor;
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Police;
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.AssassinMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMurderer;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.SniperMurderer;
 import daybreak.abilitywar.game.list.summervacation.SquirtGun;
+import daybreak.abilitywar.game.list.tnt.ability.TNT;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.collect.Pair;
@@ -142,7 +144,12 @@ public class AbilityFactory {
 		registerAbility(Lorem.class);
 		registerAbility(Reverse.class);
 		registerAbility(Themis.class);
-		registerAbility(Paranoia.class);
+		// v2.3.0
+		registerAbility(Ferda.class);
+		registerAbility(Lux.class);
+		registerAbility(Loki.class);
+		registerAbility("daybreak.abilitywar.ability.list.grapplinghook." + ServerVersion.getName() + ".GrapplingHook");
+		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -160,6 +167,10 @@ public class AbilityFactory {
 		registerAbility(Doctor.class);
 		registerAbility(AssassinMurderer.class);
 		registerAbility(BlackMurderer.class);
+		registerAbility(SniperMurderer.class);
+
+		// 폭탄 돌리기 게임모드
+		registerAbility(TNT.class);
 	}
 
 	private AbilityFactory() {
@@ -326,7 +337,7 @@ public class AbilityFactory {
 			{
 				final Multimap<Class<? extends Event>, Pair<Method, SubscribeEvent>> eventhandlers = HashMultimap.create();
 				Class<?> current = clazz;
-				while (AbilityBase.class.isAssignableFrom(current) && current != AbilityBase.class) {
+				while (current != null && AbilityBase.class.isAssignableFrom(current) && current != AbilityBase.class) {
 					for (Method method : current.getDeclaredMethods()) {
 						final SubscribeEvent subscribeEvent = method.getAnnotation(SubscribeEvent.class);
 						if (subscribeEvent != null) {
@@ -341,17 +352,22 @@ public class AbilityFactory {
 				this.eventhandlers = Multimaps.unmodifiableMultimap(eventhandlers);
 			}
 
-			final Map<String, SettingObject<?>> settingObjects = new HashMap<>();
-			for (Field field : clazz.getDeclaredFields()) {
-				final Class<?> type = field.getType();
-				if (Modifier.isStatic(field.getModifiers())) {
-					if (SettingObject.class.isAssignableFrom(type)) {
-						SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
-						settingObjects.put(settingObject.getKey(), settingObject);
+			{
+				final Map<String, SettingObject<?>> settingObjects = new HashMap<>();
+				Class<?> current = clazz;
+				while (current != null && AbilityBase.class.isAssignableFrom(current) && current != AbilityBase.class) {
+					for (Field field : current.getDeclaredFields()) {
+						if (Modifier.isStatic(field.getModifiers())) {
+							if (SettingObject.class.isAssignableFrom(field.getType())) {
+								SettingObject<?> settingObject = (SettingObject<?>) ReflectionUtil.setAccessible(field).get(null);
+								settingObjects.put(settingObject.getKey(), settingObject);
+							}
+						}
 					}
+					current = current.getSuperclass();
 				}
+				this.settingObjects = Collections.unmodifiableMap(settingObjects);
 			}
-			this.settingObjects = Collections.unmodifiableMap(settingObjects);
 
 			final Materials materials = clazz.getAnnotation(Materials.class);
 			this.materials = materials != null ? ImmutableSet.<Material>builder().add(materials.materials()).build() : DEFAULT_MATERIALS;

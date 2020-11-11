@@ -1,6 +1,6 @@
 package daybreak.abilitywar.game.event;
 
-import daybreak.abilitywar.game.Game;
+import daybreak.abilitywar.game.AbstractGame;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class GameEndEvent extends GameEvent {
 		return handlers;
 	}
 
-	public GameEndEvent(Game game) {
+	public GameEndEvent(AbstractGame game) {
 		super(game);
 	}
 

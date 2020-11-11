@@ -24,6 +24,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.list.mix.synergy.game.SynergyBlackListGUI;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
@@ -55,6 +56,7 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,13 +65,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -406,8 +408,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 						if (args.length == 0) {
 							if (sender instanceof Player) {
 								new BlackListGUI((Player) sender, plugin).openGUI(1);
-							} else
-								Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " config blacklist [대상]");
+							} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " config blacklist [대상]");
+						} else if ("synergy".equalsIgnoreCase(args[0])) {
+							if (sender instanceof Player) {
+								new SynergyBlackListGUI((Player) sender, plugin).openGUI(1);
+							}
 						} else {
 							String name = String.join(" ", args);
 							if (AbilityFactory.isRegistered(name)) {
@@ -486,6 +491,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					case 3:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
 								"§b/" + label + " config <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(label + " config", "blacklist synergy", "시너지 블랙리스트 설정 GUI를 엽니다.", true),
 								Formatter.formatCommand(label + " config", "developer", "개발자 모드를 토글합니다.", true)});
 						break;
 					default:
@@ -880,9 +886,9 @@ public class Commands implements CommandExecutor, TabCompleter {
 			}
 		};
 		mainCommand.addSubCommand("util", utilCommand);
-		mainCommand.addSubCommand("debug", new Command(Condition.OP, Condition.PLAYER) {
+		mainCommand.addSubCommand("debug", new Command(Condition.OP) {
 			{
-				addSubCommand("dummy", new Command() {
+				addSubCommand("dummy", new Command(Condition.PLAYER) {
 					private final String dummyPrefix = "§5[§d더미§5] §f";
 					{
 						addSubCommand("create", new Command() {
@@ -944,12 +950,18 @@ public class Commands implements CommandExecutor, TabCompleter {
 						return true;
 					}
 				});
-				addSubCommand("test", new Command() {
-					private int size = 0;
+				addSubCommand("respawn", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						final Inventory gui = Bukkit.createInventory(null, size += 9);
-						((Player) sender).openInventory(gui);
+						if (args.length > 0) {
+							final Player target = Bukkit.getPlayerExact(args[0]);
+							if (target != null) {
+								if (target.isDead()) {
+									NMS.respawn(target);
+									sender.sendMessage("§f" + target.getName() + "§a" + KoreanUtil.getJosa(target.getName().replaceAll("_", ""), Josa.을를) + " 리스폰시켰습니다.");
+								} else Messager.sendErrorMessage(sender, target.getName() + KoreanUtil.getJosa(target.getName().replaceAll("_", ""), Josa.은는) + " 사망하지 않았습니다.");
+							} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0].replaceAll("_", ""), Josa.은는) + " 존재하지 않는 플레이어입니다.");
+						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug respawn <대상>");
 						return true;
 					}
 				});
@@ -972,7 +984,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 디버그"),
 								"§b/" + label + " debug <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(label + " debug", "dummy", "연습용 봇 명령어 도움말을 확인합니다.", true),
-								Formatter.formatCommand(label + " debug", "gravitate <대상>", "대상이 중력에 영향받도록 설정합니다.", true)});
+								Formatter.formatCommand(label + " debug", "gravitate <대상>", "대상이 중력에 영향받도록 설정합니다.", true),
+								Formatter.formatCommand(label + " debug", "respawn <대상>", "사망한 대상을 리스폰시킵니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -1022,7 +1035,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 				} else {
 					String name = String.join(" ", args);
 					if (GameFactory.isRegistered(name)) {
-						final GameRegistration registration = GameFactory.getByName(name);
+						final GameRegistration<?> registration = GameFactory.getByName(name);
 						Configuration.modifyProperty(ConfigNodes.GAME_MODE, registration.getGameClass().getName());
 						try {
 							Configuration.update();
@@ -1223,7 +1236,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 							return commands;
 						}
 					} else if (args[0].equalsIgnoreCase("debug")) {
-						final List<String> commands = Messager.asList("dummy", "gravitate");
+						final List<String> commands = Messager.asList("dummy", "gravitate", "respawn");
 						if (args[1].isEmpty()) {
 							return commands;
 						} else {
@@ -1269,6 +1282,12 @@ public class Commands implements CommandExecutor, TabCompleter {
 							} else {
 								commands.removeIf(part -> !part.toLowerCase().startsWith(args[2].toLowerCase()));
 								return commands;
+							}
+						}
+					} else if ("config".equalsIgnoreCase(args[0])) {
+						if ("blacklist".equalsIgnoreCase(args[1])) {
+							if (args[2].isEmpty() || "synergy".startsWith(args[2])) {
+								return Collections.singletonList("synergy");
 							}
 						}
 					}

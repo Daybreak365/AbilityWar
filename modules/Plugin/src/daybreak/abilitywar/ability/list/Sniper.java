@@ -17,6 +17,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
+import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -87,7 +88,7 @@ public class Sniper extends AbilityBase {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
 			if (reload == null) {
-				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
+				if (getPlayer().getGameMode() != GameMode.CREATIVE && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
 					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
 				}
 				final Arrow arrow = (Arrow) e.getProjectile();
@@ -131,7 +132,7 @@ public class Sniper extends AbilityBase {
 			super(160);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-.75, -.75, -.75, .75, .75, .75);
+			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(10);
 			this.powerEnchant = powerEnchant;
 			this.color = color;
@@ -189,12 +190,12 @@ public class Sniper extends AbilityBase {
 					if (ItemLib.STAINED_GLASS.compareType(type) || Material.GLASS == type || ItemLib.STAINED_GLASS_PANE.compareType(type) || type == GLASS_PANE) {
 						block.breakNaturally();
 						SoundLib.BLOCK_GLASS_BREAK.playSound(block.getLocation(), 3, 1);
-					} else {
+					} else if (RayTrace.hitsBlock(location.getWorld(), lastLocation.getX(), lastLocation.getY(), lastLocation.getZ(), location.getX(), location.getY(), location.getZ())) {
 						stop(false);
 						return;
 					}
 				}
-				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable)) {
 						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
 						stop(false);

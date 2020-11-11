@@ -199,7 +199,7 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 			public void Operation(Participant victim) {
 				switch (DeathSettings.getOperation()) {
 					case 탈락:
-						Eliminate(victim);
+						eliminate(victim);
 						excludedPlayers.add(victim.getPlayer().getUniqueId());
 						break;
 					case 관전모드:

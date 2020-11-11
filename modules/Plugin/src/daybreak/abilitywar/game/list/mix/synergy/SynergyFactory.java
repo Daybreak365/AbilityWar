@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.list.mix.synergy;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
@@ -46,6 +47,7 @@ import daybreak.abilitywar.game.list.mix.synergy.list.SuperLazy;
 import daybreak.abilitywar.game.list.mix.synergy.list.TimeLoop;
 import daybreak.abilitywar.utils.base.collect.Pair;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -83,7 +85,11 @@ public class SynergyFactory {
 	}
 
 	public static Set<AbilityRegistration> getSynergies() {
-		return synergyBases.keySet();
+		return Collections.unmodifiableSet(synergyBases.keySet());
+	}
+
+	public static Set<Cell<AbilityRegistration, AbilityRegistration, AbilityRegistration>> cellSet() {
+		return Collections.unmodifiableSet(synergies.cellSet());
 	}
 
 	public static boolean isSynergy(AbilityRegistration registration) {

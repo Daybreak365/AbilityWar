@@ -48,7 +48,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.FIVE, mobility = Level.FOUR, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Ares extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "DamagePercent", 50,
+	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "damage-percent", 40,
 			"# 스킬 대미지 (단위: 백분율)",
 			"# 10으로 설정한 경우 대상의 최대 체력 10% 만큼의 대미지를 줍니다.") {
 
@@ -59,7 +59,7 @@ public class Ares extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ares.class, "Cooldown", 90,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ares.class, "cooldown", 90,
 			"# 쿨타임") {
 
 		@Override

@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 public @interface AbilityManifest {
 	enum Rank {
 		SPECIAL("§cSPECIAL 등급"),
+		L("§6L 등급"),
 		S("§dS 등급"),
 		A("§aA 등급"),
 		B("§bB 등급"),

@@ -13,6 +13,7 @@ import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Doctor;
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Police;
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.AssassinMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMurderer;
+import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.SniperMurderer;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import java.util.Collection;
@@ -76,6 +77,7 @@ public class JobList {
 		registerJob(Doctor.class, "의사");
 		registerJob(AssassinMurderer.class, "암살자");
 		registerJob(BlackMurderer.class, "블랙");
+		registerJob(SniperMurderer.class, "스나이퍼");
 	}
 
 	public static Collection<AbilityRegistration> values() {

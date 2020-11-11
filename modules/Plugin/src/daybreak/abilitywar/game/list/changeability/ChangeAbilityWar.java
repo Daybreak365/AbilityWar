@@ -53,14 +53,14 @@ import java.util.Set;
 @GameAliases({"체능전", "체인지"})
 public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandler, Observer {
 
-	public static final Setting<Integer> CHANGE_PERIOD = gameSettings.new Setting<Integer>(ChangeAbilityWar.class, "주기", 20, "# 능력 변경 주기 (단위: 초)") {
+	public static final Setting<Integer> CHANGE_PERIOD = gameSettings.new Setting<Integer>(ChangeAbilityWar.class, "period", 20, "# 능력 변경 주기 (단위: 초)") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 1;
 		}
 	};
 
-	public static final Setting<Integer> MAX_LIFE = gameSettings.new Setting<Integer>(ChangeAbilityWar.class, "생명", 3, "# 죽었을 때 다시 태어날 수 있는 횟수") {
+	public static final Setting<Integer> MAX_LIFE = gameSettings.new Setting<Integer>(ChangeAbilityWar.class, "life-amount", 3, "# 죽었을 때 다시 태어날 수 있는 횟수") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 1;
@@ -76,7 +76,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 
 	private final Objective lifeObjective = getScoreboardManager().registerNewObjective("생명", "dummy", "§c생명");
 
-	private final AbilityChanger changer = new AbilityChanger(this);
+	private final AbilityChanger changer = addModule(new AbilityChanger(this));
 	private final boolean invincible = Settings.InvincibilitySettings.isEnabled();
 
 	@Override

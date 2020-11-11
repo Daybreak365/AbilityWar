@@ -1,16 +1,10 @@
 package daybreak.abilitywar.ability.list.hermit.v1_9_R1;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.ability.AbilityManifest.Rank;
-import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.list.hermit.AbstractHermit;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
-import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -24,15 +18,9 @@ import net.minecraft.server.v1_9_R1.ItemStack;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_9_R1.PacketPlayOutEntityMetadata;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_9_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
-import org.bukkit.entity.Arrow;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -44,12 +32,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-@AbilityManifest(name = "헤르밋", rank = Rank.A, species = Species.HUMAN, explain = {
-		"비전투 상태로 20초가 지날 경우 은신합니다. 은신 상태에서는",
-		"갑옷과 들고 있는 아이템이 상대에게 보이지 않으며, 몸이 투명해집니다.",
-		"대미지를 입거나 공격을 할 경우 발각되고, 은신 상태가 해제됩니다."
-})
-public class Hermit extends AbilityBase {
+public class Hermit extends AbstractHermit {
 
 	private static final ItemStack NULL_ITEMSTACK = new ItemStack((net.minecraft.server.v1_9_R1.Item) null);
 	private static final DataWatcherObject<Byte> BYTE_DATA_WATCHER_OBJECT;
@@ -63,63 +46,33 @@ public class Hermit extends AbilityBase {
 	}
 
 	private final Map<UUID, Pair<CraftPlayer, ChannelOutboundHandlerAdapter>> channelHandlers = new HashMap<>();
-	private final ActionbarChannel cooldownActionbarChannel = newActionbarChannel();
-	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-	private final AbilityTimer cooldown = new AbilityTimer(TaskType.REVERSE, 20) {
-		@Override
-		protected void onStart() {
-			show();
-		}
-
-		@Override
-		protected void run(int count) {
-			cooldownActionbarChannel.update(ChatColor.RED.toString() + "은신까지 " + ChatColor.WHITE.toString() + ": " + ChatColor.GOLD + TimeUtil.parseTimeAsString(getCount()));
-		}
-
-		@Override
-		protected void onCountSet() {
-			cooldownActionbarChannel.update(ChatColor.RED.toString() + "은신까지 " + ChatColor.WHITE.toString() + ": " + ChatColor.GOLD + TimeUtil.parseTimeAsString(getCount()));
-		}
-
-		@Override
-		protected void onEnd() {
-			cooldownActionbarChannel.update(null);
-			hide();
-		}
-	}.setBehavior(RestrictionBehavior.PAUSE_RESUME).register();
-
-	private boolean hiding = false;
 
 	public Hermit(Participant participant) {
 		super(participant);
 	}
 
 	@SubscribeEvent
-	private void onEntityTarget(EntityTargetLivingEntityEvent e) {
-		if (getPlayer().equals(e.getTarget()) && hiding) {
-			e.setCancelled(true);
-		}
-	}
-
-	@SubscribeEvent
 	private void onJoin(PlayerJoinEvent e) {
-		if (cooldown.isRunning()) return;
+		if (!isHiding()) return;
 		final CraftPlayer player = (CraftPlayer) e.getPlayer();
-		if (player.equals(getPlayer())) return;
 		new BukkitRunnable() {
 			@Override
 			public void run() {
-				for (PacketPlayOutEntityEquipment packet : new PacketPlayOutEntityEquipment[] {
-						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, NULL_ITEMSTACK),
-						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, NULL_ITEMSTACK),
-						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.HEAD, NULL_ITEMSTACK),
-						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.CHEST, NULL_ITEMSTACK),
-						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, NULL_ITEMSTACK),
-						new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, NULL_ITEMSTACK)
-				}) {
-					player.getHandle().playerConnection.sendPacket(packet);
+				if (player.equals(getPlayer())) {
+					injectSelf();
+				} else {
+					for (PacketPlayOutEntityEquipment packet : new PacketPlayOutEntityEquipment[] {
+							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, NULL_ITEMSTACK),
+							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, NULL_ITEMSTACK),
+							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.HEAD, NULL_ITEMSTACK),
+							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.CHEST, NULL_ITEMSTACK),
+							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, NULL_ITEMSTACK),
+							new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, NULL_ITEMSTACK)
+					}) {
+						player.getHandle().playerConnection.sendPacket(packet);
+					}
+					injectPlayer(player);
 				}
-				injectPlayer(player);
 			}
 		}.runTaskLater(AbilityWar.getPlugin(), 2L);
 	}
@@ -127,7 +80,6 @@ public class Hermit extends AbilityBase {
 	@SubscribeEvent
 	private void onQuit(PlayerQuitEvent e) {
 		final CraftPlayer player = (CraftPlayer) e.getPlayer();
-		if (player.equals(getPlayer())) return;
 		if (channelHandlers.containsKey(player.getUniqueId())) {
 			try {
 				player.getHandle().playerConnection.networkManager.channel.pipeline().remove(channelHandlers.remove(player.getUniqueId()).getRight());
@@ -136,35 +88,8 @@ public class Hermit extends AbilityBase {
 		}
 	}
 
-	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
-	private void onEntityDamage(EntityDamageEvent e) {
-		if (!cooldown.start()) {
-			if (cooldown.getCount() < 2) {
-				cooldown.setCount(2);
-			}
-		} else {
-			cooldown.setCount(2);
-		}
-	}
-
-	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
-	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
-		onEntityDamage(e);
-	}
-
-	@SubscribeEvent
-	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (getPlayer().equals(e.getEntity()) || getPlayer().equals(e.getDamager()) || (e.getDamager() instanceof Arrow && getPlayer().equals(((Arrow) e.getDamager()).getShooter()))) {
-			if (!cooldown.start()) {
-				cooldown.setCount(20);
-			}
-		}
-	}
-
-	private void hide() {
-		this.hiding = true;
-		actionbarChannel.update("§7은신 중");
-		getParticipant().attributes().TARGETABLE.setValue(false);
+	@Override
+	protected void hide0() {
 		final CraftPlayer craftPlayer = (CraftPlayer) getPlayer();
 		craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(9, DataWatcherRegistry.b), 0);
 		craftPlayer.getHandle().setInvisible(true);
@@ -176,6 +101,7 @@ public class Hermit extends AbilityBase {
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.LEGS, NULL_ITEMSTACK),
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.FEET, NULL_ITEMSTACK)
 		};
+		injectSelf();
 		for (CraftPlayer player : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
 			if (player.equals(getPlayer())) continue;
 			for (PacketPlayOutEntityEquipment packet : packets) {
@@ -185,10 +111,8 @@ public class Hermit extends AbilityBase {
 		}
 	}
 
-	private void show() {
-		this.hiding = false;
-		actionbarChannel.update("§6발각됨");
-		getParticipant().attributes().TARGETABLE.setValue(true);
+	@Override
+	protected void show0() {
 		final PacketPlayOutEntityEquipment[] packets = {
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInMainHand())),
 				new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), EnumItemSlot.OFFHAND, CraftItemStack.asNMSCopy(getPlayer().getInventory().getItemInOffHand())),
@@ -216,17 +140,6 @@ public class Hermit extends AbilityBase {
 		}.runTaskLater(AbilityWar.getPlugin(), 2L);
 	}
 
-	@Override
-	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR) {
-			if (!cooldown.isRunning()) {
-				hide();
-			}
-		} else if (update == Update.RESTRICTION_SET || update == Update.ABILITY_DESTROY) {
-			show();
-			actionbarChannel.update(null);
-		}
-	}
 	private void injectPlayer(CraftPlayer player) {
 		if (!player.isValid()) return;
 		if (channelHandlers.containsKey(player.getUniqueId())) {
@@ -245,6 +158,40 @@ public class Hermit extends AbilityBase {
 						FieldUtil.setValue(packet, "c", NULL_ITEMSTACK);
 					}
 				} else if (packet instanceof PacketPlayOutEntityMetadata) {
+					if ((int) FieldUtil.getValue(packet, "a") == getPlayer().getEntityId()) {
+						List<Item<?>> items = FieldUtil.getValue(packet, "b");
+						if (items.size() != 0) {
+							Item<?> item = items.get(0);
+							if (BYTE_DATA_WATCHER_OBJECT.equals(item.a())) {
+								Item<Byte> byteItem = (Item<Byte>) item;
+								byteItem.a((byte) (byteItem.b() | 1 << 5));
+								((CraftPlayer) getPlayer()).getHandle().setInvisible(true);
+							}
+						}
+					}
+				}
+				super.write(ctx, packet, promise);
+			}
+		};
+		channelHandlers.put(player.getUniqueId(), Pair.of(player, handler));
+		player.getHandle().playerConnection.networkManager.channel.pipeline().addBefore("packet_handler", hashCode() + ":" + player.getName(), handler);
+	}
+
+	private void injectSelf() {
+		final CraftPlayer player = (CraftPlayer) getPlayer();
+		if (!player.isValid()) return;
+		if (channelHandlers.containsKey(player.getUniqueId())) {
+			final Pair<CraftPlayer, ChannelOutboundHandlerAdapter> pair = channelHandlers.get(player.getUniqueId());
+			if (!pair.getLeft().isValid()) {
+				try {
+					pair.getLeft().getHandle().playerConnection.networkManager.channel.pipeline().remove(pair.getRight());
+				} catch (NoSuchElementException ignored) {}
+			} else return;
+		}
+		final ChannelOutboundHandlerAdapter handler = new ChannelOutboundHandlerAdapter() {
+			@Override
+			public void write(ChannelHandlerContext ctx, Object packet, ChannelPromise promise) throws Exception {
+				if (packet instanceof PacketPlayOutEntityMetadata) {
 					if ((int) FieldUtil.getValue(packet, "a") == getPlayer().getEntityId()) {
 						List<Item<?>> items = FieldUtil.getValue(packet, "b");
 						if (items.size() != 0) {

@@ -19,11 +19,11 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
-import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -50,7 +50,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -66,7 +65,7 @@ import java.util.Random;
 @GameAliases({"블능전", "블라인드"})
 public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable, Observer {
 
-	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(BlindAbilityWar.class, "CHANGE_COUNT", 2, "# 능력 변경 횟수") {
+	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(BlindAbilityWar.class, "change-count", 2, "# 능력 변경 횟수") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -294,13 +293,13 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 				if (Settings.getNoHunger()) {
 					Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");
 				} else {
-					Bukkit.broadcastMessage("§4배고픔 무제한§0이 적용되지 않습니다.");
+					Bukkit.broadcastMessage("§4배고픔 무제한§c이 적용되지 않습니다.");
 				}
 
 				if (Settings.getInfiniteDurability()) {
 					addModule(new InfiniteDurability());
 				} else {
-					Bukkit.broadcastMessage("§4내구도 무제한§0이 적용되지 않습니다.");
+					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}
 
 				if (Settings.getClearWeather()) {
@@ -323,7 +322,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 				if (isRestricted()) {
 					getInvincibility().start(false);
 				} else {
-					Bukkit.broadcastMessage("§4초반 무적§0이 적용되지 않습니다.");
+					Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
 					blindRoulette.start();
 					setRestricted(false);
 				}
@@ -361,7 +360,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 			public void Operation(Participant victim) {
 				switch (DeathSettings.getOperation()) {
 					case 탈락:
-						Eliminate(victim);
+						eliminate(victim);
 						excludedPlayers.add(victim.getPlayer().getUniqueId());
 						break;
 					case 관전모드:
@@ -482,7 +481,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 							if (!hasDecided(participant)) {
 								player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
 							}
-						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (SecurityException | IllegalArgumentException | ReflectiveOperationException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
@@ -499,7 +498,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 							if (!hasDecided(participant)) {
 								player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
 							}
-						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (SecurityException | IllegalArgumentException | ReflectiveOperationException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}

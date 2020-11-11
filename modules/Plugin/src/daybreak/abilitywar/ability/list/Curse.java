@@ -63,7 +63,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Curse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Curse.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Curse.class, "cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -78,7 +78,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Curse.class, "Duration", 10,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Curse.class, "duration", 10,
 			"# 지속시간") {
 
 		@Override

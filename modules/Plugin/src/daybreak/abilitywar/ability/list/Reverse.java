@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class Reverse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "RADIUS", 5,
+	public static final SettingObject<Integer> RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "radius", 5,
 			"# 스킬 쿨타임") {
 
 		@Override
@@ -40,7 +40,7 @@ public class Reverse extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "DURATION", 8,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "duration", 8,
 			"# 스킬 쿨타임") {
 
 		@Override
@@ -50,7 +50,7 @@ public class Reverse extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "COOLDOWN", 30,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Reverse.class, "cooldown", 30,
 			"# 스킬 쿨타임") {
 
 		@Override

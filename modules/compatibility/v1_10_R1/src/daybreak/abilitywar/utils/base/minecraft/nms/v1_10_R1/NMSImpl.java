@@ -45,7 +45,9 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void clearTitle(Player player) {
-		((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.CLEAR, null));
+		final PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+		if (connection == null) return;
+		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.CLEAR, null));
 	}
 
 	@Override
@@ -59,6 +61,7 @@ public class NMSImpl implements INMS {
 	@Override
 	public void sendActionbar(Player player, String string, int fadeIn, int stay, int fadeOut) {
 		final PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+		if (connection == null) return;
 		IChatBaseComponent component = ChatSerializer.a("{\"text\":\"" + string + "\"}");
 		connection.sendPacket(new PacketPlayOutTitle(fadeIn, stay, fadeOut));
 		connection.sendPacket(new PacketPlayOutChat(component, (byte) 2));
@@ -72,6 +75,7 @@ public class NMSImpl implements INMS {
 	@Override
 	public void rotateHead(Player receiver, Entity entity, float yaw, float pitch) {
 		final PlayerConnection connection = ((CraftPlayer) receiver).getHandle().playerConnection;
+		if (connection == null) return;
 		connection.sendPacket(new PacketPlayOutEntityTeleport(((CraftEntity) entity).getHandle()));
 		final byte fixedYaw = (byte) (yaw * (256F / 360F));
 		connection.sendPacket(new PacketPlayOutEntityLook(entity.getEntityId(), fixedYaw, (byte) (pitch * (256F / 360F)), entity.isOnGround()));
@@ -94,13 +98,13 @@ public class NMSImpl implements INMS {
 	}
 
 	@Override
-	public float getAbsorptionHearts(Player player) {
-		return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+	public float getAbsorptionHearts(LivingEntity livingEntity) {
+		return ((CraftLivingEntity) livingEntity).getHandle().getAbsorptionHearts();
 	}
 
 	@Override
-	public void setAbsorptionHearts(Player player, float absorptionHearts) {
-		((CraftPlayer) player).getHandle().setAbsorptionHearts(absorptionHearts);
+	public void setAbsorptionHearts(LivingEntity livingEntity, float absorptionHearts) {
+		((CraftLivingEntity) livingEntity).getHandle().setAbsorptionHearts(absorptionHearts);
 	}
 
 	@Override

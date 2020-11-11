@@ -59,7 +59,7 @@ import java.util.function.Predicate;
 })
 public class VictoryBySword extends AbilityBase implements TargetHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Cooldown", 110,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "cooldown", 110,
 			"# 쿨타임") {
 
 		@Override
@@ -74,7 +74,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "Duration", 60,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "duration", 60,
 			"# 능력 지속시간") {
 
 		@Override

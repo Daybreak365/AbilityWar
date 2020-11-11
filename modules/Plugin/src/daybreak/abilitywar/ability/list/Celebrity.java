@@ -66,7 +66,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.SIX, mobility = Level.ZERO, utility = Level.FOUR), difficulty = Difficulty.EASY)
 public class Celebrity extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "Cooldown", 40,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "cooldown", 40,
 			"# 쿨타임") {
 
 		@Override
@@ -81,7 +81,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> DistanceConfig = abilitySettings.new SettingObject<Double>(Celebrity.class, "Distance", 10.0,
+	public static final SettingObject<Double> DistanceConfig = abilitySettings.new SettingObject<Double>(Celebrity.class, "distance", 10.0,
 			"# 능력 거리") {
 
 		@Override
@@ -91,7 +91,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Celebrity.class, "Duration", 5,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Celebrity.class, "duration", 5,
 			"# 쿨타임") {
 
 		@Override

@@ -18,6 +18,7 @@ public class EmptyNetworkManager extends NetworkManager {
             throw new RuntimeException(e);
         }
     }
+    private boolean connected = true;
 
     public EmptyNetworkManager(EnumProtocolDirection flag) throws IllegalAccessException {
         super(flag);
@@ -28,10 +29,13 @@ public class EmptyNetworkManager extends NetworkManager {
 
     @Override
     public boolean isConnected() {
-        return true;
+        return connected;
     }
 
-    @Override
+    public void setConnected(final boolean connected) {
+         this.connected = connected;
+    }
+@Override
     public void sendPacket(Packet packet) {
     }
 }

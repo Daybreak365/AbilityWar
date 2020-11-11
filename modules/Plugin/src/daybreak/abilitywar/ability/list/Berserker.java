@@ -52,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 }, stats = @Stats(offense = Level.SEVEN, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.NORMAL)
 public class Berserker extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "COOLDOWN", 60,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "cooldown", 60,
 			"# 쿨타임") {
 
 		@Override
@@ -67,7 +67,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> STRENGTH_CONFIG = abilitySettings.new SettingObject<Double>(Berserker.class, "STRENGTH", 2.2,
+	public static final SettingObject<Double> STRENGTH = abilitySettings.new SettingObject<Double>(Berserker.class, "strength", 2.2,
 			"# 공격 강화 배수") {
 
 		@Override
@@ -77,8 +77,8 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DEBUFF_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "NO_ATTACK_TIME", 4,
-			"# 능력 사용 후 디버프를 받는 시간",
+	public static final SettingObject<Integer> GROGGY_DURATION = abilitySettings.new SettingObject<Integer>(Berserker.class, "groggy-duration", 4,
+			"# 능력 사용 후 공격 불가 지속 시간",
 			"# 단위 : 초") {
 
 		@Override
@@ -132,8 +132,8 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	private final double strength = STRENGTH_CONFIG.getValue();
-	private final int debuff = DEBUFF_CONFIG.getValue();
+	private final double strength = STRENGTH.getValue();
+	private final int debuff = GROGGY_DURATION.getValue();
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

@@ -2,14 +2,15 @@ package daybreak.abilitywar.utils.base.reflect;
 
 import com.google.common.base.Preconditions;
 import daybreak.abilitywar.addon.AddonClassLoader;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Reflection Util
- *
  * @author Daybreak 새벽
  */
 public class ReflectionUtil {
@@ -17,7 +18,7 @@ public class ReflectionUtil {
 	private ReflectionUtil() {
 	}
 
-	public static <T extends AccessibleObject> T setAccessible(T accessibleObject) {
+	public static <T extends AccessibleObject> T setAccessible(final T accessibleObject) {
 		accessibleObject.setAccessible(true);
 		return accessibleObject;
 	}
@@ -27,18 +28,16 @@ public class ReflectionUtil {
 		private ClassUtil() {
 		}
 
-		public static Class<?> forName(String name) throws ClassNotFoundException {
+		public static Class<?> forName(final String name) throws ClassNotFoundException {
 			try {
 				return Class.forName(name);
-			} catch (ClassNotFoundException first) {
-				for (ClassLoader classLoader : AddonClassLoader.getLoaders()) {
+			} catch (final ClassNotFoundException exception) {
+				for (final ClassLoader classLoader : AddonClassLoader.getLoaders()) {
 					try {
 						return Class.forName(name, true, classLoader);
-					} catch (ClassNotFoundException ignore) {
-					}
+					} catch (ClassNotFoundException ignored) {}
 				}
 			}
-
 			throw new ClassNotFoundException(name + " 클래스를 찾지 못하였습니다.");
 		}
 
@@ -71,48 +70,38 @@ public class ReflectionUtil {
 			return fields;
 		}
 
-		@SuppressWarnings("unchecked")
-		public static <T> T getStaticValue(Class<?> clazz, String field) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
-			Preconditions.checkNotNull(clazz);
-			Preconditions.checkNotNull(field);
-			return (T) setAccessible(clazz.getDeclaredField(field)).get(null);
+		public static <T> T getStaticValue(@NotNull Class<?> clazz, @NotNull String name) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+			return getValue(clazz, null, name);
 		}
 
 		@SuppressWarnings("unchecked")
-		public static <T> T getValue(Class<?> clazz, Object object, String field) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+		public static <T> T getValue(@NotNull Class<?> clazz, @Nullable Object obj, @NotNull String name) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
 			Preconditions.checkNotNull(clazz);
-			Preconditions.checkNotNull(object);
-			Preconditions.checkNotNull(field);
-			return (T) setAccessible(clazz.getDeclaredField(field)).get(object);
+			Preconditions.checkNotNull(name);
+			return (T) setAccessible(clazz.getDeclaredField(name)).get(obj);
 		}
 
-		@SuppressWarnings("unchecked")
-		public static <T> T getValue(Object object, String field) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
-			Preconditions.checkNotNull(object);
-			Preconditions.checkNotNull(field);
-			return (T) setAccessible(object.getClass().getDeclaredField(field)).get(object);
+		public static <T> T getValue(@NotNull Object obj, @NotNull String name) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+			return getValue(obj.getClass(), obj, name);
 		}
 
-		public static void setValue(Class<?> clazz, Object object, String field, Object value) throws NoSuchFieldException, IllegalAccessException {
+		public static void setValue(@NotNull Class<?> clazz, @Nullable Object obj, @NotNull String name, @Nullable Object value) throws NoSuchFieldException, IllegalAccessException {
 			Preconditions.checkNotNull(clazz);
-			Preconditions.checkNotNull(object);
-			Preconditions.checkNotNull(field);
-			setAccessible(clazz.getDeclaredField(field)).set(object, value);
+			Preconditions.checkNotNull(name);
+			setAccessible(clazz.getDeclaredField(name)).set(obj, value);
 		}
 
-		public static void setValue(Object object, String field, Object value) throws NoSuchFieldException, IllegalAccessException {
-			Preconditions.checkNotNull(object);
-			Preconditions.checkNotNull(field);
-			setAccessible(object.getClass().getDeclaredField(field)).set(object, value);
+		public static void setValue(@NotNull Object obj, @NotNull String name, @Nullable Object value) throws NoSuchFieldException, IllegalAccessException {
+			setValue(obj.getClass(), obj, name, value);
 		}
 
-		public static Field removeFlag(Field field, int modifiers) throws NoSuchFieldException, IllegalAccessException {
-			setAccessible(Field.class.getDeclaredField("modifiers")).setInt(field, field.getModifiers() & ~modifiers);
+		public static Field addFlag(@NotNull Field field, int modifiers) throws NoSuchFieldException, IllegalAccessException {
+			setAccessible(Field.class.getDeclaredField("modifiers")).setInt(field, field.getModifiers() | modifiers);
 			return field;
 		}
 
-		public static Field addFlag(Field field, int modifiers) throws NoSuchFieldException, IllegalAccessException {
-			setAccessible(Field.class.getDeclaredField("modifiers")).setInt(field, field.getModifiers() | modifiers);
+		public static Field removeFlag(@NotNull Field field, int modifiers) throws NoSuchFieldException, IllegalAccessException {
+			setAccessible(Field.class.getDeclaredField("modifiers")).setInt(field, field.getModifiers() & ~modifiers);
 			return field;
 		}
 

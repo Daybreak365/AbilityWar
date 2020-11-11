@@ -49,7 +49,7 @@ import java.util.function.Predicate;
 })
 public class Void extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Void.class, "COOLDOWN", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Void.class, "cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -64,7 +64,7 @@ public class Void extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> INVINCIBILITY_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Void.class, "INVINCIBILITY_DURATION", 50,
+	public static final SettingObject<Integer> INVINCIBILITY_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Void.class, "invincibility-duration", 50,
 			"# 순간이동 후 무적 지속시간 (틱 단위)") {
 
 		@Override
@@ -106,8 +106,6 @@ public class Void extends AbilityBase implements ActiveHandler {
 			return true;
 		}
 	};
-
-	private Location saved = null;
 
 	@Override
 	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {

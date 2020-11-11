@@ -17,8 +17,8 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
-import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
@@ -33,7 +33,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -170,7 +169,7 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 										participant.getAbility().setAbility(AbilityList.getByString(names[0]), AbilityList.getByString(names[1]));
 									}
 									Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
-								} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+								} catch (ReflectiveOperationException e) {
 									Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
 									if (DeveloperSettings.isEnabled()) e.printStackTrace();
 								}
@@ -181,7 +180,7 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 										try {
 											getParticipant(targetPlayer).getAbility().setAbility(AbilityList.getByString(names[0]), AbilityList.getByString(names[1]));
 											Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 능력을 임의로 부여하였습니다.");
-										} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+										} catch (ReflectiveOperationException e) {
 											Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
 											if (DeveloperSettings.isEnabled()) e.printStackTrace();
 										}
@@ -294,38 +293,33 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 
 	public class MixParticipant extends Participant {
 
+		private final Mix ability = new Mix(this);
+		private final Attributes attributes = new Attributes();
+
 		protected MixParticipant(Player player) {
 			super(player);
 		}
 
 		@Override
+		public void setAbility(AbilityRegistration registration) throws ReflectiveOperationException {
+			ability.setAbility(registration, registration);
+			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, ability, ability));
+		}
+
+		@Override
 		public AbilityBase removeAbility() {
-			final Mix ability = getAbility();
-			if (ability != null) {
-				ability.removeAbility();
-			}
+			ability.removeAbility();
 			return null;
 		}
 
 		@Override
-		public Mix getAbility() {
-			if (!(this.ability instanceof Mix)) {
-				try {
-					if (this.ability != null) {
-						this.ability.destroy();
-					}
-					this.ability = AbilityBase.create(Mix.class, this);
-				} catch (IllegalAccessException | InvocationTargetException | InstantiationException ignored) {
-				}
-			}
-			return (Mix) ability;
+		public Attributes attributes() {
+			return attributes;
 		}
 
 		@Override
-		public void setAbility(Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-			Mix mix = (Mix) this.ability;
-			mix.setAbility(abilityClass, abilityClass);
-			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, mix, mix));
+		public Mix getAbility() {
+			return ability;
 		}
 
 		@Override
@@ -371,6 +365,5 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 		}
 
 	}
-
 
 }

@@ -72,7 +72,7 @@ import java.util.List;
 @GameAliases("블믹")
 public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 
-	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(MixBlindGame.class, "CHANGE_COUNT", 2, "# 능력 변경 횟수") {
+	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(MixBlindGame.class, "change-count", 2, "# 능력 변경 횟수") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -321,13 +321,13 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 				if (Settings.getNoHunger()) {
 					Bukkit.broadcastMessage("§2배고픔 무제한§a이 적용됩니다.");
 				} else {
-					Bukkit.broadcastMessage("§4배고픔 무제한§0이 적용되지 않습니다.");
+					Bukkit.broadcastMessage("§4배고픔 무제한§c이 적용되지 않습니다.");
 				}
 
 				if (Settings.getInfiniteDurability()) {
 					addModule(new InfiniteDurability());
 				} else {
-					Bukkit.broadcastMessage("§4내구도 무제한§0이 적용되지 않습니다.");
+					Bukkit.broadcastMessage("§4내구도 무제한§c이 적용되지 않습니다.");
 				}
 
 				if (Settings.getClearWeather()) {
@@ -350,7 +350,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 				if (isRestricted()) {
 					getInvincibility().start(false);
 				} else {
-					Bukkit.broadcastMessage("§4초반 무적§0이 적용되지 않습니다.");
+					Bukkit.broadcastMessage("§4초반 무적§c이 적용되지 않습니다.");
 					blindRoulette.start();
 					setRestricted(false);
 				}
@@ -389,7 +389,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 			public void Operation(Participant victim) {
 				switch (DeathSettings.getOperation()) {
 					case 탈락:
-						Eliminate(victim);
+						eliminate(victim);
 						excludedPlayers.add(victim.getPlayer().getUniqueId());
 						break;
 					case 관전모드:

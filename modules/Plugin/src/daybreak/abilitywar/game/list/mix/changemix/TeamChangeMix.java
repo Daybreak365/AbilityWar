@@ -48,7 +48,7 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 
 	private final Objective lifeObjective = getScoreboardManager().registerNewObjective("생명", "dummy", "§c생명");
 
-	private final MixAbilityChanger changer = new MixAbilityChanger(this);
+	private final MixAbilityChanger changer = addModule(new MixAbilityChanger(this));
 	private final int maxLife;
 	private final Set<Members> noLife = new HashSet<Members>() {
 		@Override

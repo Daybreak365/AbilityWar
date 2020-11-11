@@ -63,7 +63,7 @@ import java.util.function.Predicate;
 @Beta
 public class Explosion extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Explosion.class, "COOLDOWN", 40,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Explosion.class, "cooldown", 40,
 			"# 스킬 쿨타임") {
 
 		@Override
@@ -77,7 +77,7 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	public static final SettingObject<Integer> MAX_STACK_CONFIG = abilitySettings.new SettingObject<Integer>(Explosion.class, "MAXSTACK", 3,
+	public static final SettingObject<Integer> MAX_STACK_CONFIG = abilitySettings.new SettingObject<Integer>(Explosion.class, "max-stack", 3,
 			"# 쌓을 수 있는 최대 스택 수를 설정합니다.") {
 
 		@Override
@@ -117,7 +117,7 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 		}
 	};
 	private final Map<UUID, Stack> stackMap = new HashMap<>();
-
+ 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (e.getCause() == DamageCause.BLOCK_EXPLOSION || e.getCause() == DamageCause.ENTITY_EXPLOSION) e.setCancelled(true);
@@ -320,8 +320,8 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 
 		@EventHandler
 		private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-			if (e.getEntity().equals(armorStand) && !e.getDamager().equals(getPlayer())) {
-				e.setCancelled(true);
+			if (e.getEntity().equals(armorStand)) {
+				e.setCancelled(!e.getDamager().equals(getPlayer()));
 			}
 		}
 

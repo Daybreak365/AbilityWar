@@ -47,7 +47,7 @@ import java.util.Set;
 })
 public class Stalker extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> LEFT_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Stalker.class, "LEFT_SKILL_COOLDOWN", 4,
+	public static final SettingObject<Integer> LEFT_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Stalker.class, "left-skill-cooldown", 4,
 			"# 쿨타임") {
 
 		@Override
@@ -62,7 +62,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Stalker.class, "COOLDOWN", 210,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Stalker.class, "cooldown", 210,
 			"# 쿨타임") {
 
 		@Override
@@ -203,9 +203,8 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 					stack = 1;
 				}
 
-				double ceil = Math.ceil(stack / 3.0);
-				int soundNumber = (int) (ceil - ((Math.ceil(ceil / SOUND_RUNNABLES.size()) - 1) * SOUND_RUNNABLES.size())) - 1;
-				SOUND_RUNNABLES.get(soundNumber).run();
+				final double ceil = Math.ceil(stack / 3.0);
+				SOUND_RUNNABLES.get((int) (ceil - ((Math.ceil(ceil / SOUND_RUNNABLES.size()) - 1) * SOUND_RUNNABLES.size())) - 1).run();
 				if (cooldownTimer.isRunning()) cooldownTimer.setCount(Math.max(0, cooldownTimer.getCount() - stack));
 				if (leftCooldownTimer.isRunning())
 					leftCooldownTimer.setCount(Math.max(0, leftCooldownTimer.getCount() - stack));

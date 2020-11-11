@@ -1,28 +1,61 @@
 package daybreak.abilitywar.utils.base.math;
 
+import daybreak.abilitywar.utils.base.io.FileUtil;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class FastMath {
 
 	private FastMath() {}
 
-	private static final int accuracy = (int) Math.pow(10, 3);
-	private static final double[] sin = new double[accuracy * 360];
-
-	private static final double NINETY_RADIANS = Math.toRadians(90);
+	private static final String CACHE_PATH = "cache/math.cache";
+	private static final int accuracy = (int) Math.pow(10, 5);
+	private static final int length = (int) (6.283185307179586476925286766559 * accuracy);
+	private static final double[] sin;
 
 	static {
-		for (int i = 0; i < accuracy * 360; i++) {
-			sin[i] = Math.sin(((double) i + 1) / accuracy);
+		final double[] cache = loadCache();
+		if (cache != null) {
+			sin = cache;
+		} else {
+			sin = new double[length];
+			for (int i = 0; i < length; i++) {
+				sin[i] = Math.sin(((double) i + 1) / accuracy);
+			}
+			final File file = FileUtil.newFile(CACHE_PATH);
+			try (final ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(file))) {
+				stream.writeObject(sin);
+				stream.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	public static double sin(double radians) {
-		if (radians > 0) return sin[Math.max((int) ((radians % 360.0) * accuracy) - 1, 0)];
-		else if (radians < 0) return -sin[Math.max((int) ((radians % 360.0) * accuracy) - 1, 0)];
+	private static double[] loadCache() {
+		final File file = FileUtil.getFile(CACHE_PATH);
+		if (file.exists()) {
+			try (final ObjectInputStream stream = new ObjectInputStream(new FileInputStream(file))) {
+				final double[] cache = (double[]) stream.readObject();
+				return cache.length == length ? cache : null;
+			} catch (Exception ignored) {}
+		}
+		return null;
+	}
+
+	public static double sin(final double a) {
+		final double radians = Math.abs(a) % 6.283185307179586476925286766559;
+		if (a > 0) return sin[Math.max((int) (radians * accuracy) - 1, 0)];
+		else if (a < 0) return -sin[Math.max((int) (radians * accuracy) - 1, 0)];
 		else return 0;
 	}
 
 	public static double cos(double radians) {
-		return sin(radians + NINETY_RADIANS);
+		return sin(radians + 1.57079632679489661923);
 	}
 
 	public static double tan(double radians) {

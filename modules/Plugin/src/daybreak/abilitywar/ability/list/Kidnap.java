@@ -48,7 +48,7 @@ import java.util.function.Predicate;
 })
 public class Kidnap extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Cooldown", 35,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Kidnap.class, "cooldown", 35,
 			"# 쿨타임") {
 
 		@Override
@@ -63,7 +63,7 @@ public class Kidnap extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Kidnap.class, "Duration", 3,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Kidnap.class, "duration", 3,
 			"# 지속 시간") {
 
 		@Override

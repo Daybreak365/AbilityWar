@@ -55,7 +55,7 @@ public class ChangeMix extends AbstractMix implements Winnable {
 
 	private final Objective lifeObjective = getScoreboardManager().registerNewObjective("생명", "dummy", "§c생명");
 
-	private final MixAbilityChanger changer = new MixAbilityChanger(this);
+	private final MixAbilityChanger changer = addModule(new MixAbilityChanger(this));
 	private final int maxLife;
 	private final Set<Participant> noLife = new HashSet<>();
 

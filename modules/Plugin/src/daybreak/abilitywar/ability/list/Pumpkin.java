@@ -41,7 +41,7 @@ import java.util.function.Predicate;
 })
 public class Pumpkin extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -56,7 +56,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "Duration", 15,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "duration", 15,
 			"# 지속 시간") {
 
 		@Override

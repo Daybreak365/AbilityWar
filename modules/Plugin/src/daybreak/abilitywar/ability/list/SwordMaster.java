@@ -25,6 +25,7 @@ import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Location;
@@ -60,7 +61,7 @@ import java.util.function.Predicate;
 @Support.Server(ServerType.PAPER)
 public class SwordMaster extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> BACKSTEP_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "COOLDOWN.BACKSTEP", 10,
+	public static final SettingObject<Integer> BACKSTEP_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "backstep-cooldown", 10,
 			"# 백스텝 쿨타임") {
 
 		@Override
@@ -75,8 +76,8 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> ULTIMATE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "COOLDOWN.ULTIMATE", 50,
-			"# 난사 쿨타임") {
+	public static final SettingObject<Integer> ULTIMATE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "ultimate-cooldown", 50,
+			"# 궁극기 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -119,6 +120,25 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 5).register();
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+	};
 
 	public SwordMaster(Participant participant) {
 		super(participant);
@@ -351,8 +371,11 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 						final Location swordLocation = location.clone().add(0, 0.8, 0).add(direction.clone().multiply(0.75)).add(right);
 						final Block block = swordLocation.getBlock();
 						if (!block.isEmpty() && block.getType().isSolid()) {
-							stop(false);
-							return;
+							final Location nextLoc = swordLocation.clone().add(direction);
+							 if (RayTrace.hitsBlock(location.getWorld(), swordLocation.getX(), swordLocation.getY(), swordLocation.getZ(), nextLoc.getX(), nextLoc.getY(), nextLoc.getZ())) {
+								stop(false);
+								return;
+							}
 						}
 						swordEntity.setLocation(swordLocation);
 						NMS.setLocation(armorStand, location.getX(), location.getY(), location.getZ(), yaw, pitch);

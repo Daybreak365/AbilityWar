@@ -154,7 +154,11 @@ public class AbilityList {
 		registerAbility(Lorem.class);
 		registerAbility(Reverse.class);
 		registerAbility(Themis.class);
-		registerAbility(Paranoia.class);
+		registerAbility(Ferda.class);
+		registerAbility(Lux.class);
+		registerAbility(Loki.class);
+		registerAbility("daybreak.abilitywar.ability.list.grapplinghook." + ServerVersion.getName() + ".GrapplingHook");
+		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
 	}
 
 	/**

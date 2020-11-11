@@ -65,7 +65,7 @@ import java.util.function.Predicate;
 @Support.Version(min = NMSVersion.v1_11_R1)
 public class ShowTime extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "Cooldown", 40,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "cooldown", 40,
 			"# 쿨타임") {
 
 		@Override
@@ -79,7 +79,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 		}
 
 	};
-	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(ShowTime.class, "Duration", 10,
+	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(ShowTime.class, "duration", 10,
 			"# 쿨타임") {
 
 		@Override

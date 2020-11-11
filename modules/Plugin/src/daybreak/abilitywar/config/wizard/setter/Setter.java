@@ -14,6 +14,8 @@ public abstract class Setter {
 			return BooleanSetter.instance;
 		} else if (value instanceof Double) {
 			return DoubleSetter.instance;
+		} else if (value instanceof Float) {
+			return FloatSetter.instance;
 		}
 		return NotSupportedSetter.instance;
 	}

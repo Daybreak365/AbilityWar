@@ -39,7 +39,7 @@ import java.util.function.Predicate;
 })
 public class Bless extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Bless.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Bless.class, "cooldown", 80,
 			"# 쿨타임") {
 
 		@Override

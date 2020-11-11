@@ -19,12 +19,9 @@ import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.event.participant.ParticipantEvent;
-import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
-import daybreak.abilitywar.game.list.standard.StandardGame;
-import daybreak.abilitywar.game.manager.AbilityList;
-import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.module.EventManager;
 import daybreak.abilitywar.game.module.EventManager.EventObserver;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.BracketReplacer;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
@@ -64,19 +61,6 @@ import java.util.logging.Level;
 
 /**
  * {@link AbilityWar} 플러그인에서 사용하는 <strong>모든 능력</strong>의 기반이 되는 클래스입니다.
- * <p>
- * 만들어진 <strong>모든 능력은 반드시 {@link AbilityFactory}에 등록되어야 합니다.</strong>
- * <p>
- * <ul>
- * {@link AbilityFactory#registerAbility}
- * </ul>
- * {@link StandardGame}, {@link ChangeAbilityWar} 등에서 사용할 능력은 추가적으로
- * {@link AbilityList}에 등록해야 합니다.
- * <p>
- * <ul>
- * {@link AbilityList#registerAbility}
- * </ul>
- *
  * @author Daybreak 새벽
  */
 public abstract class AbilityBase {
@@ -182,7 +166,6 @@ public abstract class AbilityBase {
 	protected AbilityBase(final Participant participant) throws IllegalStateException {
 		this.participant = participant;
 		this.game = participant.getGame();
-		if (!game.isRunning()) throw new IllegalStateException("게임이 진행 되고 있지 않습니다.");
 		if (!AbilityFactory.isRegistered(getClass())) throw new IllegalStateException("AbilityFactory에 등록되지 않은 능력입니다.");
 		this.registration = AbilityFactory.getRegistration(getClass());
 		this.manifest = registration.getManifest();
@@ -205,8 +188,13 @@ public abstract class AbilityBase {
 					if (subscriber.ignoreCancelled() && event instanceof Cancellable && ((Cancellable) event).isCancelled()) return;
 					try {
 						ReflectionUtil.setAccessible(method).invoke(AbilityBase.this, event);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-						logger.log(Level.SEVERE, method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.", ex);
+					} catch (IllegalAccessException | IllegalArgumentException ex) {
+						logger.error(method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.");
+						ex.printStackTrace();
+					} catch (InvocationTargetException ex) {
+						logger.error(method.getDeclaringClass().getName() + ":" + method.getName() + "를 호출하는 도중 오류가 발생하였습니다.");
+						final Throwable cause = ex.getCause();
+						(cause != null ? cause : ex).printStackTrace();
 					}
 				}
 			};
@@ -252,6 +240,28 @@ public abstract class AbilityBase {
 	public interface EventConsumer<T> {
 		void onEvent(final T event);
 	}
+
+	/*
+	protected <E extends Entity> void subscribeTarget(final Class<E> entityType, final Function<? super E, Boolean> function) {
+		final EventObserver observer = new EventObserver(PlayerInteractAtEntityEvent.class, 5) {
+			@Override
+			@SuppressWarnings("unchecked")
+			protected void onEvent(Event event) {
+				if (isRestricted() || !(event instanceof PlayerInteractAtEntityEvent)) return;
+				final PlayerInteractAtEntityEvent e = (PlayerInteractAtEntityEvent) event;
+				if (!getPlayer().equals(e.getPlayer()) || e.isCancelled()) return;
+				final Entity rightClicked = e.getRightClicked();
+				if (!entityType.isAssignableFrom(rightClicked.getClass())) return;
+				final AbilityPreTargetEvent targetEvent = new AbilityPreTargetEvent(AbilityBase.this, e.getHand());
+				Bukkit.getPluginManager().callEvent(targetEvent);
+				if (!targetEvent.isCancelled()) {
+					if (function.apply((E) rightClicked)) {
+
+					}
+				}
+			}
+		};
+	}*/
 
 	public enum Update {
 		RESTRICTION_SET,
@@ -312,14 +322,15 @@ public abstract class AbilityBase {
 	 * 능력의 설명을 반환합니다.
 	 */
 	public final Iterator<String> getExplanation() {
-		if (explanation == null) {
+		if (this.explanation == null) {
 			this.explanation = new String[manifest.explain().length];
-			System.arraycopy(manifest.explain(), 0, explanation, 0, explanation.length);
-			for (int i = 0; i < explanation.length; i++) {
-				explanation[i] = SQUARE_BRACKET.replaceAll(explanation[i], fieldValueProvider);
+			System.arraycopy(manifest.explain(), 0, this.explanation, 0, this.explanation.length);
+			for (int i = 0; i < this.explanation.length; i++) {
+				this.explanation[i] = SQUARE_BRACKET.replaceAll(this.explanation[i], fieldValueProvider);
 			}
 		}
 
+		final String[] explanation = this.explanation;
 		return new Iterator<String>() {
 			private int cursor = 0;
 
@@ -910,7 +921,7 @@ public abstract class AbilityBase {
 			conditions.add(new Condition() {
 				@Override
 				public boolean condition() {
-					return game.isRestricted() || !game.isGameStarted() || destroyed;
+					return !game.isRunning() || game.isRestricted() || !game.isGameStarted() || destroyed;
 				}
 			});
 		}

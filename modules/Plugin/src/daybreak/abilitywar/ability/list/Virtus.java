@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class Virtus extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Virtus.class, "Duration", 5,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Virtus.class, "duration", 5,
 			"# 능력 지속시간") {
 
 		@Override
@@ -35,7 +35,7 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Virtus.class, "Cooldown", 70,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Virtus.class, "cooldown", 70,
 			"# 쿨타임") {
 
 		@Override
@@ -55,7 +55,7 @@ public class Virtus extends AbilityBase implements ActiveHandler {
 	}
 
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final AbilityTimer skill = new AbilityTimer(DurationConfig.getValue()) {
+	private final AbilityTimer skill = new AbilityTimer(DURATION_CONFIG.getValue()) {
 		@Override
 		public void run(int count) {
 			SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer());

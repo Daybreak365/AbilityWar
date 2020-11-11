@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 })
 public class Zeus extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Zeus.class, "Cooldown", 180,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Zeus.class, "cooldown", 180,
 			"# 쿨타임") {
 
 		@Override

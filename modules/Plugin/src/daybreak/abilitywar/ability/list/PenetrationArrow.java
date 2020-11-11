@@ -60,7 +60,7 @@ import java.util.function.Predicate;
 })
 public class PenetrationArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> BulletConfig = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "ArrowCount", 3,
+	public static final SettingObject<Integer> BulletConfig = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "arrow-count", 3,
 			"# 능력 당 화살 개수") {
 
 		@Override
@@ -244,7 +244,7 @@ public class PenetrationArrow extends AbilityBase {
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
 			this.onHitBehavior = onHitBehavior;
-			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
 			this.velocity = Math.sqrt((arrowVelocity.getX() * arrowVelocity.getX()) + (arrowVelocity.getY() * arrowVelocity.getY()) + (arrowVelocity.getZ() * arrowVelocity.getZ()));
 			this.powerEnchant = powerEnchant;
 			this.forward = arrowVelocity.setY(arrowVelocity.getY() * 0.7);
@@ -306,7 +306,7 @@ public class PenetrationArrow extends AbilityBase {
 					return;
 				}
 				entity.setLocation(location);
-				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (damageable.isValid() && !damageable.isDead() && !shooter.equals(damageable) && !attacked.contains(damageable)) {
 						Damages.damageArrow(damageable, getPlayer(), EnchantLib.getDamageWithPowerEnchantment(Math.round(2.5f * velocity * 10) / 10.0f, powerEnchant));
 						onHitBehavior.onHit(PenetrationArrow.this, shooter, damageable);

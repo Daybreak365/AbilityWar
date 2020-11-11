@@ -39,9 +39,9 @@ import java.util.Random;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.THREE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.THREE), difficulty = Difficulty.VERY_EASY)
 public class Demigod extends AbilityBase {
 
-	public static final SettingObject<Integer> CHANGE_CONFIG = abilitySettings.new SettingObject<Integer>(Demigod.class, "Chance", 30,
-			"# 공격을 받았을 시 몇 퍼센트 확률로 랜덤 버프를 받을지 설정합니다.",
-			"# 30은 30%를 의미합니다.") {
+	public static final SettingObject<Integer> CHANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Demigod.class, "chance", 30,
+			"# 피격시 랜덤 버프를 받을 확률",
+			"# 30 = 30%") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -62,7 +62,7 @@ public class Demigod extends AbilityBase {
 		super(participant);
 	}
 
-	private final int chance = CHANGE_CONFIG.getValue();
+	private final int chance = CHANCE_CONFIG.getValue();
 
 	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
 	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {

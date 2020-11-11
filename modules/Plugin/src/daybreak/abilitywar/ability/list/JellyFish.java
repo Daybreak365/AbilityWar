@@ -18,7 +18,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 })
 public class JellyFish extends AbilityBase {
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(JellyFish.class, "Duration", 2,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(JellyFish.class, "duration", 2,
 			"# 지속 시간 (틱 단위)") {
 
 		@Override

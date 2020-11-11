@@ -127,12 +127,12 @@ public class EnchantLib {
 
 	public static double getDamageWithSharpnessEnchantment(final double damage, final int sharpness) {
 		if (sharpness <= 0) return damage;
-		return damage + 1 + ((sharpness - 1) * 1.2);
+		return damage + .5 + (sharpness * .5);
 	}
 
 	public static float getDamageWithSharpnessEnchantment(final float damage, final int sharpness) {
 		if (sharpness <= 0) return damage;
-		return damage + 1 + ((sharpness - 1) * 1.2f);
+		return damage + .5f + (sharpness * .5f);
 	}
 
 	public static double getDamageWithPowerEnchantment(double damage, int powerLevel) {

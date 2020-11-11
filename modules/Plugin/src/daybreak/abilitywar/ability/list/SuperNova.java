@@ -20,7 +20,7 @@ import org.bukkit.Location;
 })
 public class SuperNova extends AbilityBase {
 
-	public static final SettingObject<Integer> SizeConfig = abilitySettings.new SettingObject<Integer>(SuperNova.class, "Size", 10,
+	public static final SettingObject<Integer> SizeConfig = abilitySettings.new SettingObject<Integer>(SuperNova.class, "size", 10,
 			"# 초신성이 사망할 때 일어날 폭발의 크기") {
 
 		@Override

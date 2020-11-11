@@ -46,7 +46,7 @@ import java.util.function.Consumer;
 }, stats = @Stats(offense = Level.THREE, survival = Level.THREE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.THREE), difficulty = Difficulty.EASY)
 public class DiceGod extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(DiceGod.class, "Cooldown", 14,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(DiceGod.class, "cooldown", 14,
 			"# 쿨타임") {
 
 		@Override

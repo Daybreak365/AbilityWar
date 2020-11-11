@@ -11,8 +11,8 @@ import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -38,7 +38,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +54,7 @@ import java.util.Set;
 @Category(GameCategory.MINIGAME)
 public class SummerVacation extends Game implements Winnable, DefaultKitHandler {
 
-	public static final Setting<Integer> KILLS_TO_WIN = gameSettings.new Setting<Integer>(SummerVacation.class, "킬횟수", 10, "# 우승을 위해 필요한 킬 횟수") {
+	public static final Setting<Integer> KILLS_TO_WIN = gameSettings.new Setting<Integer>(SummerVacation.class, "kills-to-win", 10, "# 우승을 위해 필요한 킬 횟수") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 1;
@@ -102,8 +101,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 					for (Participant participant : getParticipants()) {
 						participant.setAbility(SquirtGun.class);
 					}
-				} catch (InstantiationException | InvocationTargetException | IllegalAccessException ignored) {
-				}
+				} catch (ReflectiveOperationException ignored) {}
 				break;
 			case 13:
 				Bukkit.broadcastMessage("§7스코어보드 §f설정 중...");

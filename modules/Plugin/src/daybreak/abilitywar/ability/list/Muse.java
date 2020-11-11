@@ -39,7 +39,7 @@ import java.util.function.Predicate;
 })
 public class Muse extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Muse.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Muse.class, "cooldown", 80,
 			"# 쿨타임") {
 
 		@Override

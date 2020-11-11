@@ -72,7 +72,7 @@ import java.util.function.Predicate;
 		"검기를 발사합니다. 검기를 생명체에 적중시킨 경우 대미지를 주고 움직이던",
 		"방향으로 도약하며, 한 생명체에 검기를 네 번 적중시킬 때마다 강력한 대미지를",
 		"줍니다. 대상이 5칸 이내에 있는 경우, 검기의 대미지가 약해집니다. 검기를",
-		"빗맞춘 경우, 2.5초간 탈진 상태에 빠지며 탈진 중에는 움직임이 둔해지고 공격이",
+		"빗맞춘 경우, 2초간 탈진 상태에 빠지며 탈진 중에는 움직임이 둔해지고 공격이",
 		"불가능해집니다."
 })
 @Tips(tip = {
@@ -112,7 +112,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.FIVE, crowdControl = Level.ZERO, mobility = Level.SIX, utility = Level.ZERO), difficulty = Difficulty.HARD)
 public class Lorem extends AbilityBase {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lorem.class, "COOLDOWN", 10,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lorem.class, "cooldown", 10,
 			"# 스킬 쿨타임") {
 
 		@Override
@@ -221,7 +221,7 @@ public class Lorem extends AbilityBase {
 
 	private void startCooldown() {
 		cooldown.start();
-		new Exhaustion(TimeUnit.TICKS, 50).start();
+		new Exhaustion(TimeUnit.TICKS, 40).start();
 	}
 
 	public class Bullet extends AbilityTimer {
@@ -241,7 +241,7 @@ public class Lorem extends AbilityBase {
 			Lorem.this.bullet = this;
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-.75, -.75, -.75, .75, .75, .75);
+			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(10);
 			this.sharpnessEnchant = sharpnessEnchant;
 			this.damage = damage;
@@ -300,7 +300,7 @@ public class Lorem extends AbilityBase {
 					stop(true);
 					return;
 				}
-				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, entity.getBoundingBox(), predicate)) {
+				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(livingEntity)) {
 						if (addStack(livingEntity)) {
 							Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant) * Math.max(0.25, Math.min(30, livingEntity.getLocation().distanceSquared(shooter.getLocation())) / 30) * 2));

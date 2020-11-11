@@ -64,7 +64,7 @@ public class DebugMode extends Game implements DefaultKitHandler, AbstractGame.O
 		}
 	}
 
-	private class DebugParticipant extends Participant {
+	private class DebugParticipant extends ParticipantImpl {
 		protected DebugParticipant(@NotNull Player player) {
 			super(player);
 		}

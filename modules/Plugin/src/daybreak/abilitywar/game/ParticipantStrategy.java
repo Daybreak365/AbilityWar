@@ -1,12 +1,13 @@
 package daybreak.abilitywar.game;
 
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import org.bukkit.entity.Player;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.entity.Player;
 
 public interface ParticipantStrategy {
 
@@ -24,9 +25,9 @@ public interface ParticipantStrategy {
 
 		private final Map<String, Participant> participants = new HashMap<>();
 
-		public DefaultManagement(AbstractGame game, Collection<Player> players) {
+		public DefaultManagement(Game game, Collection<Player> players) {
 			for (Player player : players) {
-				participants.put(player.getUniqueId().toString(), game.new Participant(player));
+				participants.put(player.getUniqueId().toString(), game.new ParticipantImpl(player));
 			}
 		}
 

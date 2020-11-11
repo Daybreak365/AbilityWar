@@ -18,8 +18,6 @@ import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Iterator;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,6 +32,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "유성", rank = Rank.A, species = Species.OTHERS, explain = {
 		"철괴를 우클릭하면 공중으로 올라갔다 바라보는 방향으로 날아가",
 		"내려 찍으며 주변의 플레이어들에게 대미지를 입히고 날려보내고,",
@@ -42,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class Meteor extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Meteor.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Meteor.class, "cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -56,7 +57,7 @@ public class Meteor extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(Meteor.class, "Damage", 20, "# 대미지") {
+	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(Meteor.class, "damage", 20, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {

@@ -68,7 +68,7 @@ public class Nex extends AbilityBase implements ActiveHandler {
 			{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false}
 	});
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Nex.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Nex.class, "cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -82,7 +82,7 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Nex.class, "Damage", 20, "# 대미지") {
+	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Nex.class, "damage", 20, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {

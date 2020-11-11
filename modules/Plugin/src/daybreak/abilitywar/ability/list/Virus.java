@@ -8,7 +8,6 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
-import java.lang.reflect.InvocationTargetException;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "바이러스", rank = Rank.C, species = Species.OTHERS, explain = {
@@ -22,11 +21,11 @@ public class Virus extends AbilityBase {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerDeath(ParticipantDeathEvent e) {
-		Player killer = getPlayer().getKiller();
+		final Player killer = getPlayer().getKiller();
 		if (killer != null && GameManager.getGame().isParticipating(killer)) {
 			try {
 				getGame().getParticipant(killer).setAbility(Virus.class);
-			} catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {}
+			} catch (ReflectiveOperationException ignored) {}
 		}
 	}
 

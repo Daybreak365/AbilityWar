@@ -1,0 +1,19 @@
+package daybreak.abilitywar.ability.list.scarecrow;
+
+import org.bukkit.entity.Player;
+
+import java.util.UUID;
+
+public interface ScareCrowEntity {
+
+	String TEXTURE = "eyJ0aW1lc3RhbXAiOjE1NjY2ODczODQ4NDksInByb2ZpbGVJZCI6IjVkZTZlMTg0YWY4ZDQ5OGFiYmRlMDU1ZTUwNjUzMzE2IiwicHJvZmlsZU5hbWUiOiJBc3Nhc2luSmlhbmVyMjUiLCJzaWduYXR1cmVSZXF1aXJlZCI6dHJ1ZSwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2I0ZDFlZGRlYWM4MzBkOWRlYTEyYjg4ODk5N2IyODlmYTg0YjY5YzkwMWYyYzU3NDRhZjk3NWZjNDk0ZWJlMyJ9fX0=";
+	String SIGNATURE = "ftigk4MFKjI58b1oG2hURk+gVUwydeOGscCS9RQdykF456YEdMoMOBR7js8JBbeJO3PFwVa/yOb91FKSQIC9ghwXcKE9NGsaYFGzzOj33ogJRUy0QqIsiy6gSUjCi2pDg3Xlss7KQaRvg+MRhd1WN/arpKbXprQK8no+EcH8ienokDbn5SOIsnHRXeE4kmW/vx/vaa8ioF7xGF0KwljYlc313DsjSgnKgvAOcQQ3r082O8FHMTblfGiz4ujNZ6tc19lNI24KIwN7jFJ5qvsu8cpbj0EogSEn2KijcW8eMUd8NU3ZU8aIX7rIJb5UjIhmH4kClOM1cMoYUbVxTVh/gZZt51iKyVQSDtXa+p4gaB2RanyrfHKgXWSb+O9jS8cKA84je8DDL7F69PX0Q5mxRe8jlHXdg0xDD3NkzJJyePsvZA5A8gzVu/420KjW8/PONctcqJMOv7KyhDS3ptxbg7KqvaC5+fb8LG9n/7UZ4/fOMkfCiLtROZkyJr1Cv16UPygtpFRNhTEr6PvbSX3+F3P2tqKtel9wUd3yNDQlE3g/f/N208WykyVeqoqEX3qiwL+b+5M1K+titfpqPt5grsTnEvpIDu6oKIS+F9s3sfBnXmRRaOH0cFnn2GlqNstO99evJJsrevCLtqUycnIN4zgaQYDyyIe1WlCnvq88hrI=";
+	byte SKIN_BIT_LAYER = 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40;
+
+	Player getBukkitEntity();
+	UUID getUniqueID();
+	int getId();
+	void display(Player player);
+	void remove();
+
+}

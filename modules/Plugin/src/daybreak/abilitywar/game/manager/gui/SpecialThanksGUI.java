@@ -4,10 +4,6 @@ import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,6 +18,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 기여자 목록 GUI
@@ -70,12 +72,19 @@ public class SpecialThanksGUI implements Listener {
 		for (SpecialThank thank : SpecialThanks) {
 			final ItemStack stack = Skulls.createSkull(thank.getName());
 			final ItemMeta meta = stack.getItemMeta();
-			if (thank.getName().equals("error")) {
-				meta.setDisplayName("§c오류");
-				meta.setLore(Collections.singletonList("§bMojang API§f에 연결할 수 없습니다."));
-			} else {
-				meta.setDisplayName("§e" + thank.getName());
-				meta.setLore(thank.getRole());
+			switch (thank.getName()) {
+				case "error":
+					meta.setDisplayName("§c오류");
+					meta.setLore(Collections.singletonList("§bMojang API§f에 연결할 수 없습니다."));
+					break;
+				case "not_loaded":
+					meta.setDisplayName("§c아직 불러와지지 않았습니다.");
+					meta.setLore(thank.getRole());
+					break;
+				default:
+					meta.setDisplayName("§e" + thank.getName());
+					meta.setLore(thank.getRole());
+					break;
 			}
 
 			stack.setItemMeta(meta);
@@ -118,14 +127,19 @@ public class SpecialThanksGUI implements Listener {
 	public static class SpecialThank {
 
 		private final String[] role;
-		private String name;
+		private String name = "not_loaded";
 
 		public SpecialThank(String uuid, String... role) {
-			try {
-				this.name = MojangAPI.getNickname(uuid);
-			} catch (IOException e) {
-				this.name = "error";
-			}
+			CompletableFuture.runAsync(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						SpecialThank.this.name = MojangAPI.getNickname(uuid);
+					} catch (IOException e) {
+						SpecialThank.this.name = "error";
+					}
+				}
+			});
 			this.role = role;
 			for (int i = 0; i < role.length; i++) {
 				role[i] = ChatColor.WHITE + role[i];

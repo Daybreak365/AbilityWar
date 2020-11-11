@@ -16,12 +16,13 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.EntityBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,6 +45,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -57,7 +61,7 @@ import java.util.function.Predicate;
 })
 public class Khazhad extends AbilityBase implements ActiveHandler {
 
-	private static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Khazhad.class, "Cooldown", 10, "# 좌클릭 쿨타임") {
+	private static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Khazhad.class, "cooldown", 10, "# 좌클릭 쿨타임") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -79,7 +83,6 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
 			if (entity instanceof Player) {
 				if (!getGame().isParticipating(entity.getUniqueId())
 						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
@@ -254,12 +257,65 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 					return true;
 				}
 			});
+			fallingBlock.setMetadata("deflectable", new FixedMetadataValue(AbilityWar.getPlugin(), new Deflectable() {
+				@Override
+				public Vector getDirection() {
+					return fallingBlock.getVelocity();
+				}
+
+				@Override
+				public Location getLocation() {
+					return fallingBlock.getLocation();
+				}
+
+				@Override
+				public void onDeflect(Participant deflector, Vector newDirection) {
+					fallingBlock.remove();
+					final Player player = deflector.getPlayer();
+					final FallingBlock newBlock = FallingBlocks.spawnFallingBlock(fallingBlock.getLocation(), Material.PACKED_ICE, true, newDirection, new Behavior() {
+						@Override
+						public boolean onEntityChangeBlock(FallingBlock fallingBlock, EntityChangeBlockEvent event) {
+							final Block block = fallingBlock.getLocation().getBlock();
+							for (int x = -1; x < 1; x++) {
+								for (int y = -1; y < 1; y++) {
+									for (int z = -1; z < 1; z++) {
+										block.getRelative(x, y, z).setType(Material.PACKED_ICE);
+									}
+								}
+							}
+							return true;
+						}
+					});
+					final BoundingBox boundingBox = EntityBoundingBox.of(newBlock).expand(.5, .5, .5, .5, .5, .5);
+					new AbilityTimer() {
+						@Override
+						protected void run(int count) {
+							if (newBlock.isValid() && !newBlock.isDead()) {
+								for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, newBlock.getWorld(), boundingBox, predicate)) {
+									if (livingEntity.equals(player)) continue;
+									if (frozenEntities.add(livingEntity)) {
+										new Frost(livingEntity).start();
+									}
+								}
+							} else {
+								stop(false);
+							}
+						}
+					}.setPeriod(TimeUnit.TICKS, 1).start();
+				}
+
+				@Override
+				public ProjectileSource getShooter() {
+					return getPlayer();
+				}
+			}));
 			final BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
 			new AbilityTimer() {
 				@Override
 				protected void run(int count) {
 					if (fallingBlock.isValid() && !fallingBlock.isDead()) {
-						for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, boundingBox, predicate)) {
+						for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, fallingBlock.getWorld(), boundingBox, predicate)) {
+							if (livingEntity.equals(getPlayer())) continue;
 							if (frozenEntities.add(livingEntity)) {
 								new Frost(livingEntity).start();
 							}

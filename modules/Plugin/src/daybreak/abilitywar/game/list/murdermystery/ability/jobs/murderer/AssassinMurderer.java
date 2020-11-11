@@ -9,16 +9,15 @@ import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.math.FastMath;
+import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Player;
+import org.bukkit.Location;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.PlayerInventory;
 
 @AbilityManifest(name = "머더: 암살자", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"모든 시민을 죽이세요!",
@@ -28,69 +27,51 @@ import org.bukkit.inventory.PlayerInventory;
 })
 public class AssassinMurderer extends AbstractMurderer {
 
-	private final AbilityTimer PASSIVE = new AbilityTimer() {
-		@Override
-		protected void run(int count) {
-			if (Items.isMurdererSword(getPlayer().getInventory().getItemInMainHand())) {
-				getPlayer().getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15);
-			}
-		}
-	}.setPeriod(TimeUnit.TICKS, 1).register();
+	private static final int TELEPORT_RADIUS = 6;
 
 	public AssassinMurderer(Participant participant) {
 		super(participant);
 	}
 
 	private final Cooldown cooldown = new Cooldown(20);
-	private boolean skill = false;
+	private final Duration skill = new Duration(7, cooldown) {
+		@Override
+		protected void onDurationStart() {
+			NMS.setInvisible(getPlayer(), true);
+			final Location center = getPlayer().getLocation();
+			final double radians = Math.toRadians(random.nextDouble() * 360);
+			getPlayer().teleport(LocationUtil.floorY(new Location(
+					center.getWorld(),
+					center.getX() + (random.nextDouble() * TELEPORT_RADIUS * FastMath.cos(radians)),
+					center.getY(),
+					center.getZ() + (random.nextDouble() * TELEPORT_RADIUS * FastMath.sin(radians))
+			)));
+		}
+		@Override
+		protected void onDurationProcess(int count) {
+			NMS.setInvisible(getPlayer(), true);
+		}
+		@Override
+		protected void onDurationEnd() {
+			NMS.setInvisible(getPlayer(), false);
+		}
+		@Override
+		protected void onDurationSilentEnd() {
+			NMS.setInvisible(getPlayer(), false);
+		}
+	};
 
 	@Override
 	protected void onUpdate(Update update) {
+		super.onUpdate(update);
 		if (update == Update.RESTRICTION_CLEAR) {
-			PlayerInventory inventory = getPlayer().getInventory();
-			final boolean hadSword = Items.isMurdererSword(inventory.getItem(1));
-			inventory.clear();
-			getPlayer().getInventory().setHeldItemSlot(0);
-			((MurderMystery) getGame()).updateGold(getParticipant());
 			NMS.sendTitle(getPlayer(), "§e직업§f: §5암살자", "§f모든 §a시민§f과 §5탐정§f을 조용히 죽이세요.", 10, 80, 10);
 			new AbilityTimer(1) {
-				@Override
-				protected void run(int count) {
-				}
-
 				@Override
 				protected void onEnd() {
 					NMS.clearTitle(getPlayer());
 				}
 			}.setInitialDelay(TimeUnit.SECONDS, 5).start();
-			if (!hadSword) {
-				getPlayer().sendMessage("§e15초 §f뒤에 §4살인자§c의 검§f을 얻습니다.");
-				new AbilityTimer(1) {
-					@Override
-					protected void run(int count) {
-						getPlayer().getInventory().setHeldItemSlot(0);
-						inventory.setItem(1, Items.MURDERER_SWORD.getStack());
-						getPlayer().sendMessage("§4살인자§c의 검§f을 들고 있을 때 더 빠르게 움직일 수 있습니다.");
-						for (Player player : Bukkit.getOnlinePlayers()) {
-							NMS.sendTitle(player, "§4머더§c가 검을 얻었습니다.", "", 10, 80, 10);
-							new AbilityTimer(1) {
-								@Override
-								protected void run(int count) {
-								}
-
-								@Override
-								protected void onEnd() {
-									NMS.clearTitle(player);
-								}
-							}.setInitialDelay(TimeUnit.SECONDS, 5).start();
-						}
-					}
-				}.setInitialDelay(TimeUnit.SECONDS, 15).start();
-			} else {
-				getPlayer().getInventory().setHeldItemSlot(0);
-				inventory.setItem(1, Items.MURDERER_SWORD.getStack());
-			}
-			PASSIVE.start();
 		} else if (update == Update.ABILITY_DESTROY) {
 			NMS.setInvisible(getPlayer(), false);
 		}
@@ -116,17 +97,14 @@ public class AssassinMurderer extends AbstractMurderer {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onToggleSneak(final PlayerToggleSneakEvent e) {
-		if (e.isSneaking() && !cooldown.isRunning()) {
-			this.skill = true;
+		if (e.isSneaking() && !skill.isRunning() && !cooldown.isRunning()) {
+			ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.15, 0.15, 0.15, 100, 0);
+			skill.start();
 			getPlayer().getInventory().setArmorContents(null);
 			NMS.setArrowsInBody(getPlayer(), 0);
-			NMS.setInvisible(getPlayer(), true);
-			ParticleLib.DRIP_LAVA.spawnParticle(getPlayer().getLocation().clone().add(0, 1, 0), 0.15, 0.15, 0.15, 100, 0);
 			SoundLib.ENTITY_SILVERFISH_AMBIENT.playSound(getPlayer().getLocation(), 0.5f, 1f);
-		} else if (skill) {
-			cooldown.start();
-			NMS.setInvisible(getPlayer(), false);
-			this.skill = false;
+		} else if (skill.isRunning()) {
+			skill.stop(false);
 		}
 	}
 

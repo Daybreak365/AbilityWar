@@ -9,7 +9,7 @@
 
     <modules>
         <module>modules/compatibility/Compatibility</module>
-        <module>modules/compatibility/Interfaces</module>
+        <module>modules/compatibility/Common</module>
         <module>modules/compatibility/v1_9_R1</module>
         <module>modules/compatibility/v1_9_R2</module>
         <module>modules/compatibility/v1_10_R1</module>
@@ -21,6 +21,7 @@
         <module>modules/compatibility/v1_15_R1</module>
         <module>modules/compatibility/v1_16_R1</module>
         <module>modules/compatibility/v1_16_R2</module>
+        <module>modules/compatibility/v1_16_R3</module>
         <module>modules/Patch</module>
         <module>modules/Plugin</module>
         <module>modules/Jar</module>
@@ -30,7 +31,7 @@
         <encoding>UTF-8</encoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <revision>2.2.4</revision>
+        <revision>2.3.0</revision>
         <bukkit-api.version>1.15.2-R0.1-SNAPSHOT</bukkit-api.version>
         <guava.version>29.0-jre</guava.version>
         <kotlin.version>1.4.10</kotlin.version>

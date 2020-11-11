@@ -18,9 +18,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.math.geometry.vector.VectorIterator;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Damageable;
@@ -33,6 +30,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "로켓런쳐", rank = Rank.S, species = Species.OTHERS, explain = {
 		"전쟁의 신 아레스.",
 		"철괴를 우클릭하면 앞으로 돌진하며 주위의 엔티티에게 대미지를 주며,",
@@ -41,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class RocketLauncher extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "DamagePercent", 50,
+	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "damage-percent", 50,
 			"# 스킬 대미지 (단위: 백분율)") {
 
 		@Override
@@ -51,7 +52,7 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "Cooldown", 60,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "cooldown", 60,
 			"# 쿨타임") {
 
 		@Override
@@ -66,7 +67,7 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Boolean> DashConfig = synergySettings.new SettingObject<Boolean>(RocketLauncher.class, "DashIntoTheAir", false,
+	public static final SettingObject<Boolean> DashConfig = synergySettings.new SettingObject<Boolean>(RocketLauncher.class, "dash-into-air", false,
 			"# true로 설정하면 로켓런쳐 능력 사용 시 공중으로 돌진 할 수 있습니다.") {
 
 		@Override

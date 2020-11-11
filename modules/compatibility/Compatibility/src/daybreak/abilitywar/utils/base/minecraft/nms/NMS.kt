@@ -5,7 +5,11 @@ import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedExcep
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
-import org.bukkit.entity.*
+import org.bukkit.entity.ArmorStand
+import org.bukkit.entity.Entity
+import org.bukkit.entity.Item
+import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 
 class NMS private constructor() {
 	companion object INSTANCE : INMS {
@@ -61,13 +65,13 @@ class NMS private constructor() {
 		}
 
 		@JvmStatic
-		override fun getAbsorptionHearts(player: Player): Float {
-			return INSTANCE.getAbsorptionHearts(player)
+		override fun getAbsorptionHearts(livingEntity: LivingEntity): Float {
+			return INSTANCE.getAbsorptionHearts(livingEntity)
 		}
 
 		@JvmStatic
-		override fun setAbsorptionHearts(player: Player, absorptionHearts: Float) {
-			INSTANCE.setAbsorptionHearts(player, absorptionHearts)
+		override fun setAbsorptionHearts(livingEntity: LivingEntity, absorptionHearts: Float) {
+			INSTANCE.setAbsorptionHearts(livingEntity, absorptionHearts)
 		}
 
 		@JvmStatic
@@ -121,7 +125,7 @@ class NMS private constructor() {
 		}
 
 		@JvmStatic
-		override fun clearActiveItem(livingEntity: LivingEntity?) {
+		override fun clearActiveItem(livingEntity: LivingEntity) {
 			INSTANCE.clearActiveItem(livingEntity)
 		}
 	}

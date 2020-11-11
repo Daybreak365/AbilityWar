@@ -28,7 +28,7 @@ import java.util.Set;
  * @author Daybreak 새벽
  */
 @ModuleBase(Invincibility.class)
-public final class Invincibility implements Module {
+public class Invincibility implements Module {
 
 	private final int duration = InvincibilitySettings.getDuration();
 	private final String message = InvincibilitySettings.getBossbarMessage(), infiniteMessage = InvincibilitySettings.getBossbarInfiniteMessage();

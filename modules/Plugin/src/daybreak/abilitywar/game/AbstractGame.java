@@ -6,6 +6,7 @@ import com.google.common.collect.SetMultimap;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.ClickType;
+import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
@@ -13,8 +14,9 @@ import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.ParticipantStrategy.DefaultManagement;
-import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
+import daybreak.abilitywar.game.event.GameEndEvent;
+import daybreak.abilitywar.game.event.GameReadyEvent;
+import daybreak.abilitywar.game.event.GameStartEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
@@ -23,23 +25,21 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.EventManager;
 import daybreak.abilitywar.game.module.Module;
 import daybreak.abilitywar.game.module.ModuleBase;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Hashes;
 import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -51,11 +51,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -114,18 +113,18 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	private boolean restricted = true;
 	private boolean gameStarted = false;
 
-	private final GameRegistration registration;
+	private final GameRegistration<?> registration;
 	protected final ParticipantStrategy participantStrategy;
 	private final EventManager eventManager = addModule(new EventManager());
 
 	public AbstractGame(Collection<Player> players) throws IllegalArgumentException {
 		super(TaskType.INFINITE, -1);
 		this.participantStrategy = newParticipantStrategy(players);
-		if (!GameFactory.isRegistered(getClass())) {
+		this.registration = GameFactory.getRegistration(getClass());
+		if (this.registration == null) {
 			onEnd();
 			throw new IllegalArgumentException("GameFactory에 등록되지 않은 게임입니다.");
 		}
-		this.registration = GameFactory.getRegistration(getClass());
 	}
 
 	@Override
@@ -165,9 +164,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		return false;
 	}
 
-	protected ParticipantStrategy newParticipantStrategy(Collection<Player> players) {
-		return new DefaultManagement(this, players);
-	}
+	protected abstract ParticipantStrategy newParticipantStrategy(Collection<Player> players);
 
 	/**
 	 * EventManager를 반환합니다.
@@ -178,7 +175,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		return eventManager;
 	}
 
-	public GameRegistration getRegistration() {
+	public GameRegistration<?> getRegistration() {
 		return registration;
 	}
 
@@ -268,6 +265,12 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 				}
 			}
 		}
+		Bukkit.getPluginManager().callEvent(new GameStartEvent(this));
+	}
+
+	@Override
+	protected void onStart() {
+		Bukkit.getPluginManager().callEvent(new GameReadyEvent(this));
 	}
 
 	@Override
@@ -283,6 +286,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		}
 		observers.forEach(observer -> observer.update(GameUpdate.END));
 		Bukkit.broadcastMessage("§7게임이 중지되었습니다.");
+		Bukkit.getPluginManager().callEvent(new GameEndEvent(this));
 	}
 
 	@Override
@@ -290,19 +294,15 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		this.onEnd();
 	}
 
-	public class Participant implements AbstractGame.Observer {
+	public abstract class Participant implements AbstractGame.Observer {
 
-		private final Map<Class<? extends Effect>, Effect> effects = new HashMap<>();
-		private final Attributes attributes = new Attributes();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
 		private @NotNull Player player;
 		private final Listener listener;
-		protected AbilityBase ability;
 
 		protected Participant(@NotNull Player player) {
 			this.player = player;
 			this.listener = new Listener() {
-
 				private long lastClick = System.currentTimeMillis();
 
 				@EventHandler
@@ -364,7 +364,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 												if (isParticipating(targetPlayer)) {
 													if (AbstractGame.this instanceof DeathManager.Handler && ((DeathManager.Handler) AbstractGame.this).getDeathManager().isExcluded(targetPlayer))
 														return;
-													if (!getParticipant(targetPlayer).attributes.TARGETABLE.getValue())
+													if (!getParticipant(targetPlayer).attributes().TARGETABLE.getValue())
 														return;
 
 													this.lastClick = current;
@@ -393,68 +393,28 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			}
 		}
 
-		public void setAbility(final AbilityRegistration registration) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-			final AbilityBase oldAbility = removeAbility();
-			final AbilityBase ability = AbilityBase.create(registration, this);
-			ability.setRestricted(false);
-			this.ability = ability;
-			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
-		}
+		public abstract void setAbility(final AbilityRegistration registration) throws ReflectiveOperationException, UnsupportedOperationException;
 
 		/**
 		 * 플레이어에게 새 능력을 부여합니다.
 		 * @param abilityClass 부여할 능력의 클래스
 		 */
-		public void setAbility(final Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-			final AbilityBase oldAbility = removeAbility();
-			final AbilityBase ability = AbilityBase.create(abilityClass, this);
-			ability.setRestricted(false);
-			this.ability = ability;
-			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
+		public void setAbility(final Class<? extends AbilityBase> abilityClass) throws ReflectiveOperationException, UnsupportedOperationException {
+			if (!AbilityFactory.isRegistered(abilityClass)) throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
+			this.setAbility(AbilityFactory.getRegistration(abilityClass));
 		}
 
-		/**
-		 * 플레이어에게 해당 능력을 그대로 적용합니다.
-		 * @param ability 부여할 능력
-		 */
-		@Beta
-		public void setAbility(AbilityBase ability) throws NoSuchFieldException, IllegalAccessException {
-			if (hasAbility() && this.ability.equals(ability)) return;
-			final AbilityBase oldAbility = removeAbility();
-			if (ability != null) {
-				ability.getParticipant().ability = null;
+		public abstract boolean hasAbility();
 
-				Field participant = FieldUtil.removeFlag(AbilityBase.class.getDeclaredField("participant"), Modifier.FINAL);
-				ReflectionUtil.setAccessible(participant).set(ability, Participant.this);
-				FieldUtil.addFlag(participant, Modifier.FINAL);
-				ability.setRestricted(false);
-			}
-
-			this.ability = ability;
-			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
-		}
-
-		public boolean hasAbility() {
-			return ability != null;
-		}
-
-		public AbilityBase getAbility() {
-			return ability;
-		}
+		@Nullable
+		public abstract AbilityBase getAbility();
 
 		/**
 		 * 참가자의 능력을 제거합니다.
-		 *
 		 * @return 제거된 능력
 		 */
-		public AbilityBase removeAbility() {
-			final AbilityBase ability = getAbility();
-			if (ability != null) {
-				ability.destroy();
-				this.ability = null;
-			}
-			return ability;
-		}
+		@Nullable
+		public abstract AbilityBase removeAbility();
 
 		@NotNull
 		public Player getPlayer() {
@@ -465,9 +425,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			return AbstractGame.this;
 		}
 
-		public Attributes attributes() {
-			return attributes;
-		}
+		public abstract Attributes attributes();
 
 		public class Attributes {
 			public final Attribute<Boolean> TEAM_CHAT = new Attribute<>(false);
@@ -479,7 +437,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			private final T defaultValue;
 			private T value;
 
-			private Attribute(T defaultValue) {
+			public Attribute(T defaultValue) {
 				this.defaultValue = defaultValue;
 				this.value = defaultValue;
 			}
@@ -505,7 +463,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			private final Set<E> set;
 
 			@SafeVarargs
-			private SetAttribute(E... defaultElements) {
+			public SetAttribute(E... defaultElements) {
 				this.set = new HashSet<>();
 				Collections.addAll(set, defaultElements);
 			}
@@ -769,17 +727,12 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			return new Location(world, x, y, z);
 		}
 
-		public CustomEntity setBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-			this.boundingBox.minX = minX;
-			this.boundingBox.minY = minY;
-			this.boundingBox.minZ = minZ;
-			this.boundingBox.maxX = maxX;
-			this.boundingBox.maxY = maxY;
-			this.boundingBox.maxZ = maxZ;
+		public CustomEntity resizeBoundingBox(double x1, double y1, double z1, double X2, double y2, double z2) {
+			this.boundingBox.resize(x1, y1, z1, X2, y2, z2);
 			return this;
 		}
 
-		public BoundingBox getBoundingBox() {
+		public CustomEntityBoundingBox getBoundingBox() {
 			return boundingBox;
 		}
 
@@ -787,104 +740,87 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			customEntities.remove(lastChunkHash, this);
 		}
 
-		public class CustomEntityBoundingBox implements BoundingBox {
-
-			private double minX, minY, minZ, maxX, maxY, maxZ;
+		public class CustomEntityBoundingBox extends BoundingBox {
 
 			public CustomEntityBoundingBox(double x1, double y1, double z1, double x2, double y2, double z2) {
-				this.minX = Math.min(x1, x2);
-				this.minY = Math.min(y1, y2);
-				this.minZ = Math.min(z1, z2);
-				this.maxX = Math.max(x1, x2);
-				this.maxY = Math.max(y1, y2);
-				this.maxZ = Math.max(z1, z2);
+				super(x1, y1, z1, x2, y2, z2);
 			}
 
 			@Override
-			public double getMinX() {
-				return x + minX;
+			public @NotNull CustomEntityBoundingBox copy() {
+				return new CustomEntityBoundingBox(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
 			}
 
 			@Override
-			public double getMinY() {
-				return y + minY;
+			public @NotNull Vector getCenter() {
+				return CustomEntity.this.getLocation().toVector();
 			}
 
 			@Override
-			public double getMinZ() {
-				return z + minZ;
-			}
-
-			@Override
-			public double getMaxX() {
-				return x + maxX;
-			}
-
-			@Override
-			public double getMaxY() {
-				return y + maxY;
-			}
-
-			@Override
-			public double getMaxZ() {
-				return z + maxZ;
-			}
-
-			@Override
-			public BoundingBox expand(double negativeX, double negativeY, double negativeZ, double positiveX, double positiveY, double positiveZ) {
-				if (negativeX == 0.0D && negativeY == 0.0D && negativeZ == 0.0D && positiveX == 0.0D && positiveY == 0.0D && positiveZ == 0.0D) {
-					return this;
-				}
-				double newMinX = minX - negativeX, newMinY = minY - negativeY, newMinZ = minZ - negativeZ, newMaxX = maxX + positiveX, newMaxY = maxY + positiveY, newMaxZ = maxZ + positiveZ;
-
-				if (newMinX > newMaxX) {
-					double centerX = getLocation().getX();
-					if (newMaxX >= centerX) {
-						newMinX = newMaxX;
-					} else if (newMinX <= centerX) {
-						newMaxX = newMinX;
-					} else {
-						newMinX = centerX;
-						newMaxX = centerX;
-					}
-				}
-				if (newMinY > newMaxY) {
-					double centerY = getLocation().getY();
-					if (newMaxY >= centerY) {
-						newMinY = newMaxY;
-					} else if (newMinY <= centerY) {
-						newMaxY = newMinY;
-					} else {
-						newMinY = centerY;
-						newMaxY = centerY;
-					}
-				}
-				if (newMinZ > newMaxZ) {
-					double centerZ = getLocation().getZ();
-					if (newMaxZ >= centerZ) {
-						newMinZ = newMaxZ;
-					} else if (newMinZ <= centerZ) {
-						newMaxZ = newMinZ;
-					} else {
-						newMinZ = centerZ;
-						newMaxZ = centerZ;
-					}
-				}
-
-				this.minX = newMinX;
-				this.minY = newMinY;
-				this.minZ = newMinZ;
-				this.maxX = newMaxX;
-				this.maxY = newMaxY;
-				this.maxZ = newMaxZ;
+			public @NotNull CustomEntityBoundingBox resize(double x1, double y1, double z1, double x2, double y2, double z2) {
+				super.resize(x1, y1, z1, x2, y2, z2);
 				return this;
 			}
 
 			@Override
-			public Location getCenter() {
-				return CustomEntity.this.getLocation();
+			public @NotNull CustomEntityBoundingBox expand(double negativeX, double negativeY, double negativeZ, double positiveX, double positiveY, double positiveZ) {
+				super.expand(negativeX, negativeY, negativeZ, positiveX, positiveY, positiveZ);
+				return this;
 			}
 
+			@Override
+			public @NotNull CustomEntityBoundingBox expand(double x, double y, double z) {
+				super.expand(x, y, z);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox expand(double expansion) {
+				super.expand(expansion);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox expand(double dirX, double dirY, double dirZ, double expansion) {
+				super.expand(dirX, dirY, dirZ, expansion);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox expand(@NotNull Vector direction, double expansion) {
+				super.expand(direction, expansion);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox expand(@NotNull BlockFace blockFace, double expansion) {
+				super.expand(blockFace, expansion);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox expandDirectional(double dirX, double dirY, double dirZ) {
+				super.expandDirectional(dirX, dirY, dirZ);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox expandDirectional(@NotNull Vector direction) {
+				super.expandDirectional(direction);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox shift(double shiftX, double shiftY, double shiftZ) {
+				super.shift(shiftX, shiftY, shiftZ);
+				return this;
+			}
+
+			@Override
+			public @NotNull CustomEntityBoundingBox shift(@NotNull Vector shift) {
+				super.shift(shift);
+				return this;
+			}
 		}
 
 	}

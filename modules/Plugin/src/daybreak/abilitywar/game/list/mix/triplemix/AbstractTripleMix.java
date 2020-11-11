@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.list.mix.triplemix;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.GameManager;
@@ -17,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public abstract class AbstractTripleMix extends Game {
 										participant.getAbility().setAbility(AbilityList.getByString(names[0]), AbilityList.getByString(names[1]), AbilityList.getByString(names[2]));
 									}
 									Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
-								} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+								} catch (ReflectiveOperationException e) {
 									Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
 									if (DeveloperSettings.isEnabled()) e.printStackTrace();
 								}
@@ -68,7 +68,7 @@ public abstract class AbstractTripleMix extends Game {
 										try {
 											getParticipant(targetPlayer).getAbility().setAbility(AbilityList.getByString(names[0]), AbilityList.getByString(names[1]), AbilityList.getByString(names[2]));
 											Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 능력을 임의로 부여하였습니다.");
-										} catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+										} catch (ReflectiveOperationException e) {
 											Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
 											if (DeveloperSettings.isEnabled()) e.printStackTrace();
 										}
@@ -144,38 +144,34 @@ public abstract class AbstractTripleMix extends Game {
 
 	public class MixParticipant extends Participant {
 
+		private final TripleMix ability = new TripleMix(this);
+		private final Attributes attributes = new Attributes();
+
 		protected MixParticipant(Player player) {
 			super(player);
 		}
 
 		@Override
+		public void setAbility(AbilityRegistration registration) throws ReflectiveOperationException {
+			ability.setAbility(registration, registration, registration);
+			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, ability, ability));
+		}
+
+		@Override
 		public AbilityBase removeAbility() {
-			final TripleMix ability = getAbility();
-			if (ability != null) {
-				ability.removeAbility();
-			}
+			ability.removeAbility();
 			return null;
 		}
 
 		@Override
-		public TripleMix getAbility() {
-			if (!(this.ability instanceof TripleMix)) {
-				try {
-					if (this.ability != null) {
-						this.ability.destroy();
-					}
-					this.ability = AbilityBase.create(TripleMix.class, this);
-				} catch (IllegalAccessException | InvocationTargetException | InstantiationException ignored) {
-				}
-			}
-			return (TripleMix) ability;
+		public Attributes attributes() {
+			return attributes;
 		}
 
 		@Override
-		public void setAbility(Class<? extends AbilityBase> abilityClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-			TripleMix mix = (TripleMix) this.ability;
-			mix.setAbility(abilityClass, abilityClass, abilityClass);
-			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, mix, mix));
+		@NotNull
+		public TripleMix getAbility() {
+			return ability;
 		}
 
 		@Override

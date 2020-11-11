@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "카오스", rank = Rank.S, species = Species.GOD, explain = {
+@AbilityManifest(name = "카오스", rank = Rank.L, species = Species.GOD, explain = {
 		"태초의 신 카오스.",
 		"철괴를 우클릭하면 $[DurationConfig]초간 짙은 암흑 속으로 주변",
 		"$[DurationConfig]칸 이내의 모든 물체와 생명체들을 끌어당기며",
@@ -58,7 +58,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.SEVEN, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Chaos extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Chaos.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Chaos.class, "cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -73,7 +73,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Duration", 5,
+	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "duration", 5,
 			"# 능력 지속 시간") {
 
 		@Override
@@ -83,7 +83,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "Distance", 5,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Chaos.class, "distance", 5,
 			"# 거리 설정") {
 
 		@Override
@@ -98,7 +98,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 	}
 
 	private static final RGB BLACK = RGB.of(1, 1, 1);
-	private final int distance = DistanceConfig.getValue();
+	private final int distance = DISTANCE_CONFIG.getValue();
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override

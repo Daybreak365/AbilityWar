@@ -17,12 +17,6 @@ import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -37,6 +31,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "암흑 암살자", rank = Rank.S, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 주변의 생명체들을 끌고 공중으로 올라가 각각 4번씩 공격한 후",
 		"바라보는 방향으로 날아가 내려 찍으며 주변의 플레이어들에게",
@@ -44,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class NexAssassin extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "Cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "cooldown", 120, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -58,7 +59,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> NexDamageConfig = synergySettings.new SettingObject<Integer>(NexAssassin.class, "NexDamage", 20, "# 대미지") {
+	public static final SettingObject<Integer> NEX_DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "nex-damage", 20, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -67,7 +68,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DistanceConfig = synergySettings.new SettingObject<Integer>(NexAssassin.class, "Distance", 10,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "distance", 10,
 			"# 스킬 대미지") {
 
 		@Override
@@ -77,7 +78,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> TeleportCountConfig = synergySettings.new SettingObject<Integer>(NexAssassin.class, "TeleportCount", 6,
+	public static final SettingObject<Integer> TeleportCountConfig = synergySettings.new SettingObject<Integer>(NexAssassin.class, "teleport-count", 6,
 			"# 능력 사용 시 텔레포트 횟수") {
 
 		@Override
@@ -87,7 +88,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(NexAssassin.class, "AssassinDamage", 9,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "assassin-damage", 9,
 			"# 스킬 대미지") {
 
 		@Override
@@ -118,8 +119,8 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 	};
 
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final int damage = DamageConfig.getValue();
-	private final int distance = DistanceConfig.getValue();
+	private final int damage = DAMAGE_CONFIG.getValue();
+	private final int distance = DISTANCE_CONFIG.getValue();
 	private final AbilityTimer fallBlockTimer = new AbilityTimer(5) {
 
 		Location center;
@@ -320,7 +321,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 				if (!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
 					skillEnabled = false;
-					final double damage = NexDamageConfig.getValue();
+					final double damage = NEX_DAMAGE_CONFIG.getValue();
 					for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
 						if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
 						d.damage(damage, getPlayer());

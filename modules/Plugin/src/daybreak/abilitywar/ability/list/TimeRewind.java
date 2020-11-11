@@ -16,11 +16,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -42,12 +37,18 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
 @AbilityManifest(name = "시간 역행", rank = Rank.S, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 시간을 역행해 $[TIME_CONFIG]초 전으로 돌아갑니다. $[COOLDOWN_CONFIG]"
 })
 public class TimeRewind extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "COOLDOWN", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -62,7 +63,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> TIME_CONFIG = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "TIME", 5,
+	public static final SettingObject<Integer> TIME_CONFIG = abilitySettings.new SettingObject<Integer>(TimeRewind.class, "rewinding-time", 5,
 			"# 능력을 사용했을 때 몇초 전으로 돌아갈지 설정합니다.") {
 
 		@Override

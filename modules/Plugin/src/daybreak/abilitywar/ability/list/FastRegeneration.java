@@ -14,11 +14,15 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.SoundLib;
+import kotlin.ranges.RangesKt;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "빠른 회복", rank = Rank.A, species = Species.HUMAN, explain = {
@@ -33,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 }, strong = {}, weak = {}, stats = @Stats(offense = Level.ZERO, survival = Level.EIGHT, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Cooldown", 25,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "cooldown", 25,
 			"# 쿨타임") {
 
 		@Override
@@ -48,7 +52,7 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "Duration", 10,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(FastRegeneration.class, "duration", 10,
 			"# 지속 시간 (단위: 초)") {
 
 		@Override
@@ -106,7 +110,11 @@ public class FastRegeneration extends AbilityBase implements ActiveHandler {
 							gain = .5;
 						}
 
-						player.setHealth(Math.min(player.getHealth() + gain, maxHealth));
+						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, gain, RegainReason.CUSTOM);
+						Bukkit.getPluginManager().callEvent(event);
+						if (!event.isCancelled()) {
+							player.setHealth(RangesKt.coerceIn(player.getHealth() + event.getAmount(), 0, maxHealth));
+						}
 					}
 				}
 			}

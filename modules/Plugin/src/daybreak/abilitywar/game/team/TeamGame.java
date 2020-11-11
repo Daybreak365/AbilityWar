@@ -80,7 +80,7 @@ public abstract class TeamGame extends Game implements Teamable {
 						joiner.add(name);
 					}
 					super.onEnd();
-					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 2개 이상 있습니다. '/.. start <팀 프리셋 이름>'과 같은 방법으로 사용할 프리셋을 선택해주세요. 사용 가능한 프리셋: $joiner");
+					throw new IllegalArgumentException("팀 전투에서 사용 가능한 팀 프리셋이 2개 이상 있습니다. '/.. start <팀 프리셋 이름>'과 같은 방법으로 사용할 프리셋을 선택해주세요. 사용 가능한 프리셋: " + joiner.toString());
 				}
 			}
 		}
@@ -399,7 +399,7 @@ public abstract class TeamGame extends Game implements Teamable {
 
 	}
 
-	public class Participant extends AbstractGame.Participant {
+	public class Participant extends ParticipantImpl {
 
 		private Participant(final Player player) {
 			super(player);

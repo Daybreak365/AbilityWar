@@ -31,7 +31,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 })
 public class SuperLazy extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(SuperLazy.class, "Cooldown", 30,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(SuperLazy.class, "cooldown", 30,
 			"# 쿨타임") {
 
 		@Override

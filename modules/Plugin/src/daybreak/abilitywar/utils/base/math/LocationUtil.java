@@ -1,26 +1,29 @@
 package daybreak.abilitywar.utils.base.math;
 
+import com.google.common.base.Preconditions;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundaryData;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.CenteredBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.Boundary.BoundaryData;
+import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.CenteredBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -50,6 +53,12 @@ public class LocationUtil {
 		}
 	}
 
+	private static final BlockFace[] axis = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+
+	public static @NotNull BlockFace getFacing(final float yaw) {
+		return axis[Math.round(yaw / 90f) & 0x3].getOppositeFace();
+	}
+
 	/**
 	 * 평면상에서 두 좌표의 거리의 제곱을 구합니다.
 	 *
@@ -71,10 +80,10 @@ public class LocationUtil {
 	 * @param radius   원의 반지름
 	 */
 	public static boolean isInCircle(Location center, Location location, double radius) {
-		return center.getWorld().equals(location.getWorld()) && distanceSquared2D(center.getX(), center.getZ(), location.getX(), location.getZ()) <= (radius * radius);
+		return Objects.equals(center.getWorld(), location.getWorld()) && distanceSquared2D(center.getX(), center.getZ(), location.getX(), location.getZ()) <= (radius * radius);
 	}
 
-	public static <T extends Entity> List<T> getEntitiesInCircle(Class<T> entityType, Location center, double radius, Predicate<Entity> predicate) {
+	public static <T extends Entity> List<T> getEntitiesInCircle(Class<T> entityType, Location center, double radius, Predicate<? super T> predicate) {
 		double centerX = center.getX(), centerZ = center.getZ(), SQUARED_RADIUS = radius * radius;
 		List<T> entities = new ArrayList<>();
 		for (Entity e : collectEntities(center, (int) Math.floor(radius))) {
@@ -89,97 +98,137 @@ public class LocationUtil {
 		return entities;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T extends Entity> T getEntityLookingAt(final Class<T> entityType, final CenteredBoundingBox boundingBox, final LivingEntity criterion, final int maxDistance, final  Predicate<Entity> predicate) {
+	public static <T extends Entity> T getEntityLookingAt(final Class<T> entityType, final LivingEntity criterion, final int maxDistance, final double raySize, final Predicate<? super T> predicate) {
 		if (criterion == null || maxDistance <= 0) return null;
 		final World world = criterion.getWorld();
-		for (final Iterator<Block> iterator = new BlockIterator(criterion, maxDistance); iterator.hasNext();) {
-			Block block = iterator.next();
-			if (block.getType().isSolid()) return null;
-			boundingBox.setCenter(block.getLocation());
-			Chunk blockChunk = block.getChunk();
-			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
-			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
-				for (int z = blockChunkZ - 1; z <= blockChunkZ + 1; z++) {
-					Chunk chunk = world.getChunkAt(x, z);
-					for (Entity e : chunk.getEntities()) {
-						if (!criterion.equals(e) && entityType.isAssignableFrom(e.getClass())) {
-							Boundary.BoundaryData boundaryData = Boundary.BoundaryData.of(e.getType());
-							Location entityLocation = e.getLocation();
-							double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
-							if (entityX + boundaryData.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < boundingBox.getMaxY() &&
-									boundingBox.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityZ + boundaryData.getMaxZ() &&
-									(predicate == null || predicate.test(e))) {
-								return (T) e;
-							}
-						}
-					}
+		final Vector direction = criterion.getLocation().getDirection(), startPos = criterion.getEyeLocation().toVector(), dir = direction.normalize().multiply(maxDistance);
+		final CenteredBoundingBox aabb = CenteredBoundingBox.of(startPos, 0, 0, 0, 0, 0, 0).expandDirectional(dir).expand(raySize);
+		T nearestHitEntity = null;
+		double nearestDistanceSq = Double.MAX_VALUE;
+		for (T entity : getConflictingEntities(entityType, world, aabb, null)) {
+			if (criterion.equals(entity)) continue;
+			final EntityBoundingBox boundingBox = EntityBoundingBox.of(entity).expand(raySize);
+			final Vector hitPosition = boundingBox.rayTrace(startPos, direction, maxDistance);
+			if (hitPosition != null && !RayTrace.hitsBlock(world, startPos.getX(), startPos.getY(), startPos.getZ(), hitPosition.getX(), hitPosition.getY(), hitPosition.getZ()) && (predicate == null || predicate.test(entity))) {
+				final double distanceSquared = startPos.distanceSquared(hitPosition);
+				if (distanceSquared < nearestDistanceSq) {
+					nearestHitEntity = entity;
+					nearestDistanceSq = distanceSquared;
 				}
 			}
 		}
-		return null;
+		return nearestHitEntity;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T extends Entity> T getEntityLookingAt(Class<T> entityType, LivingEntity criterion, int maxDistance, Predicate<Entity> predicate) {
-		return getEntityLookingAt(entityType, CenteredBoundingBox.of(null, 0, 0, 0, 1, 1, 1), criterion, maxDistance, predicate);
+	public static <T extends Entity> T getEntityLookingAt(final Class<T> entityType, final LivingEntity criterion, final int maxDistance, final Predicate<? super T> predicate) {
+		return getEntityLookingAt(entityType, criterion, maxDistance, .3, predicate);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T getCustomEntityLookingAt(Class<T> entityType, AbstractGame game, CenteredBoundingBox boundingBox, LivingEntity criterion, int maxDistance, Predicate<CustomEntity> predicate) {
+	public static <T> T getCustomEntityLookingAt(final Class<T> entityType, final AbstractGame game, final LivingEntity criterion, final int maxDistance, final double raySize, final Predicate<CustomEntity> predicate) {
 		if (criterion == null || maxDistance <= 0) return null;
-		World world = criterion.getWorld();
-		Iterator<Block> iterator = new BlockIterator(criterion, maxDistance);
-		while (iterator.hasNext()) {
-			Block block = iterator.next();
-			if (block.getType().isOccluding()) return null;
-			boundingBox.setCenter(block.getLocation());
-			Chunk blockChunk = block.getChunk();
-			int blockChunkX = blockChunk.getX(), blockChunkZ = blockChunk.getZ();
-			for (int x = blockChunkX - 1; x <= blockChunkX + 1; x++) {
-				for (int z = blockChunkZ - 1; z <= blockChunkZ + 1; z++) {
-					Chunk chunk = world.getChunkAt(x, z);
-					for (CustomEntity entity : game.getCustomEntities(chunk)) {
-						if (entityType.isAssignableFrom(entity.getClass())) {
-							BoundingBox entityBox = entity.getBoundingBox();
-							if (entityBox.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityBox.getMaxX() && entityBox.getMinY() < boundingBox.getMaxY() &&
-									boundingBox.getMinY() < entityBox.getMaxY() && entityBox.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityBox.getMaxZ() &&
-									(predicate == null || predicate.test(entity))) {
-								return (T) entity;
-							}
-						}
-					}
+		final World world = criterion.getWorld();
+		final Vector direction = criterion.getLocation().getDirection(), startPos = criterion.getEyeLocation().toVector(), dir = direction.normalize().multiply(maxDistance);
+		final CenteredBoundingBox aabb = CenteredBoundingBox.of(startPos, 0, 0, 0, 0, 0, 0).expandDirectional(dir).expand(raySize);
+		T nearestHitEntity = null;
+		double nearestDistanceSq = Double.MAX_VALUE;
+		for (T e : getConflictingCustomEntities(entityType, game, world, aabb, null)) {
+			final CustomEntity entity = (CustomEntity) e;
+			final BoundingBox boundingBox = entity.getBoundingBox().copy().expand(raySize);
+			final Vector hitPosition = boundingBox.rayTrace(startPos, direction, maxDistance);
+			if (hitPosition != null && !RayTrace.hitsBlock(world, startPos.getX(), startPos.getY(), startPos.getZ(), hitPosition.getX(), hitPosition.getY(), hitPosition.getZ()) && (predicate == null || predicate.test(entity))) {
+				final double distanceSquared = startPos.distanceSquared(hitPosition);
+				if (distanceSquared < nearestDistanceSq) {
+					nearestHitEntity = e;
+					nearestDistanceSq = distanceSquared;
 				}
 			}
 		}
-		return null;
+		return nearestHitEntity;
 	}
 
-	public static int getFloorYAt(final World world, final double referenceY, final int x, final int z) {
-		int y = getHighestBlockYAt(world, x, z);
-		if (y > referenceY) {
-			for (int yCheck = y; yCheck >= referenceY; yCheck--) {
-				if (world.getBlockAt(x, yCheck, z).isEmpty()) y = yCheck;
+	public static <T> T getCustomEntityLookingAt(final Class<T> entityType, final AbstractGame game, final LivingEntity criterion, final int maxDistance, final Predicate<CustomEntity> predicate) {
+		return getCustomEntityLookingAt(entityType, game, criterion, maxDistance, 0, predicate);
+	}
+
+	public static <T extends Entity> List<T> rayTraceEntities(final Class<T> entityType, final @NotNull Location a, final @NotNull Location b, final double raySize, final Predicate<? super T> predicate) {
+		final World world = a.getWorld();
+		Preconditions.checkArgument(Objects.equals(world, b.getWorld()), "world of location a and b must be the same.");
+		Preconditions.checkNotNull(world, "world must not be null");
+		final CenteredBoundingBox aabb = CenteredBoundingBox.of(a, b).expand(raySize);
+		final Vector startPos = a.toVector(), direction = b.toVector().subtract(a.toVector());
+		return getConflictingEntities(entityType, world, aabb, new Predicate<T>() {
+			@Override
+			public boolean test(T entity) {
+				return EntityBoundingBox.of(entity).expand(raySize).rayTrace(startPos, direction) != null && (predicate == null || predicate.test(entity));
 			}
-			if (world.getBlockAt(x, y - 1, z).isEmpty()) {
-				while (world.getBlockAt(x, y - 1, z).isEmpty() && y >= 0) y--;
+		});
+	}
+
+	public static int getFloorYAt(final World world, final double criterionY, final int x, final int z, final @NotNull Predicate<Block> predicate) {
+		int floorY = getHighestBlockYAt(world, x, z);
+		if (floorY > criterionY) {
+			for (int checkY = floorY; checkY >= criterionY && floorY > 0; checkY--) {
+				final Block block = world.getBlockAt(x, checkY, z);
+				if (block.isEmpty() || predicate.test(block)) {
+					floorY = checkY;
+				}
+			}
+			Block block = world.getBlockAt(x, floorY - 1, z);
+			if (block.isEmpty() || predicate.test(block)) {
+				floorY--;
+				while (((block = world.getBlockAt(x, floorY - 1, z)).isEmpty() || predicate.test(block)) && floorY > 0) {
+					floorY--;
+				}
 			}
 		}
-		return y;
+		return floorY;
 	}
 
-	public static Location floorY(final Location location, final double referenceY) {
+	public static int getFloorYAt(final World world, final double criterionY, final int x, final int z) {
+		int floorY = getHighestBlockYAt(world, x, z);
+		if (floorY > criterionY) {
+			for (int checkY = floorY; checkY >= criterionY && floorY > 0; checkY--) {
+				if (world.getBlockAt(x, checkY, z).isEmpty()) floorY = checkY;
+			}
+			if (world.getBlockAt(x, floorY - 1, z).isEmpty()) {
+				floorY--;
+				while (world.getBlockAt(x, floorY - 1, z).isEmpty() && floorY > 0) floorY--;
+			}
+		}
+		return floorY;
+	}
+
+	public static @NotNull Location floorY(final Location location, final double criterionY, final @NotNull Predicate<Block> predicate) {
 		final Location clone = location.clone();
-		clone.setY(getFloorYAt(clone.getWorld(), referenceY, clone.getBlockX(), clone.getBlockZ()));
+		clone.setY(getFloorYAt(clone.getWorld(), criterionY, clone.getBlockX(), clone.getBlockZ(), predicate));
 		return clone;
 	}
 
-	public static int getHighestBlockYAt(World world, int x, int z) {
+	public static @NotNull Location floorY(final @NotNull Location location, final double criterionY) {
+		final Location clone = location.clone();
+		clone.setY(getFloorYAt(clone.getWorld(), criterionY, clone.getBlockX(), clone.getBlockZ()));
+		return clone;
+	}
+
+	public static @NotNull Location floorY(final @NotNull Location location, final @NotNull Predicate<Block> predicate) {
+		return floorY(location, location.getY(), predicate);
+	}
+
+	public static @NotNull Location floorY(final @NotNull Location location) {
+		return floorY(location, location.getY());
+	}
+
+	public static int getHighestBlockYAt(final @NotNull World world, int x, int z) {
 		return ServerVersion.getVersion() >= 15 ? (world.getHighestBlockYAt(x, z) + 1) : world.getHighestBlockYAt(x, z);
 	}
 
-	public static int getHighestBlockYAt(World world, Location location) {
+	public static int getHighestBlockYAt(final @NotNull World world, final @NotNull Location location) {
 		return ServerVersion.getVersion() >= 15 ? (world.getHighestBlockYAt(location) + 1) : world.getHighestBlockYAt(location);
+	}
+
+	public static @NotNull Location getBlockCenter(final @NotNull Block block) {
+		final Location location = block.getLocation();
+		return location.add(location.getX() >= 0 ? .5 : -.5, -.5, location.getZ() >= 0 ? .5 : -.5);
 	}
 
 	/**
@@ -268,7 +317,7 @@ public class LocationUtil {
 	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Entity> T getNearestEntity(Class<T> entityType, Location center, Predicate<Entity> predicate) {
+	public static <T extends Entity> T getNearestEntity(Class<T> entityType, Location center, Predicate<? super T> predicate) {
 		double distance = Double.MAX_VALUE;
 		T current = null;
 
@@ -366,7 +415,7 @@ public class LocationUtil {
 	 * @param predicate  커스텀 조건
 	 * @return 주변에 있는 특정 타입의 엔티티 목록
 	 */
-	public static <T extends Entity> List<T> getNearbyEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<Entity> predicate) {
+	public static <T extends Entity> List<T> getNearbyEntities(Class<T> entityType, Location center, double horizontal, double vertical, Predicate<? super T> predicate) {
 		final double centerX = center.getX(), centerZ = center.getZ();
 		final List<T> entities = new ArrayList<>();
 		for (Entity e : collectEntities(center, (int) Math.floor(horizontal))) {
@@ -413,9 +462,8 @@ public class LocationUtil {
 				bY + bData.getMinY() < aY + aData.getMaxY() && aZ + aData.getMinZ() < bZ + bData.getMaxZ() && bZ + bData.getMinZ() < aZ + aData.getMaxZ();
 	}
 
-	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, BoundingBox boundingBox, Predicate<Entity> predicate) {
+	public static <T extends Entity> List<T> getConflictingEntities(@NotNull Class<T> entityType, @NotNull final World world, @NotNull BoundingBox boundingBox, @Nullable Predicate<? super T> predicate) {
 		final List<T> entities = new ArrayList<>();
-		final World world = boundingBox.getCenter().getWorld();
 		final Chunk minChunk = world.getChunkAt(((int) boundingBox.getMinX()) >> 4, ((int) boundingBox.getMinZ()) >> 4), maxChunk = world.getChunkAt(((int) boundingBox.getMaxX()) >> 4, ((int) boundingBox.getMaxZ()) >> 4);
 		final int minX = minChunk.getX(), maxX = maxChunk.getX(), minZ = minChunk.getZ(), maxZ = maxChunk.getZ();
 		for (int x = minX; x <= maxX; x++) {
@@ -423,12 +471,7 @@ public class LocationUtil {
 				for (Entity e : world.getChunkAt(x, z).getEntities()) {
 					if (entityType.isAssignableFrom(e.getClass())) {
 						final T entity = entityType.cast(e);
-						final BoundaryData boundaryData = BoundaryData.of(entity.getType());
-						final Location entityLocation = entity.getLocation();
-						final double entityX = entityLocation.getX(), entityY = entityLocation.getY(), entityZ = entityLocation.getZ();
-						if (entityX + boundaryData.getMinX() < boundingBox.getMaxX() && boundingBox.getMinX() < entityX + boundaryData.getMaxX() && entityY + boundaryData.getMinY() < boundingBox.getMaxY() &&
-								boundingBox.getMinY() < entityY + boundaryData.getMaxY() && entityZ + boundaryData.getMinZ() < boundingBox.getMaxZ() && boundingBox.getMinZ() < entityZ + boundaryData.getMaxZ() &&
-								(predicate == null || predicate.test(entity))) {
+						if (boundingBox.conflicts(entity) && (predicate == null || predicate.test(entity))) {
 							entities.add(entity);
 						}
 					}
@@ -438,7 +481,7 @@ public class LocationUtil {
 		return entities;
 	}
 
-	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, Entity base, Predicate<Entity> predicate) {
+	public static <T extends Entity> List<T> getConflictingEntities(Class<T> entityType, Entity base, Predicate<? super T> predicate) {
 		final List<T> entities = new ArrayList<>();
 		final World world = base.getWorld();
 		final Location center = base.getLocation();
@@ -466,6 +509,22 @@ public class LocationUtil {
 		return entities;
 	}
 
+	public static <T> List<T> getConflictingCustomEntities(@NotNull Class<T> entityType, @NotNull final AbstractGame game, @NotNull final World world, @NotNull BoundingBox boundingBox, @Nullable Predicate<CustomEntity> predicate) {
+		final List<T> entities = new ArrayList<>();
+		final Chunk minChunk = world.getChunkAt(((int) boundingBox.getMinX()) >> 4, ((int) boundingBox.getMinZ()) >> 4), maxChunk = world.getChunkAt(((int) boundingBox.getMaxX()) >> 4, ((int) boundingBox.getMaxZ()) >> 4);
+		final int minX = minChunk.getX(), maxX = maxChunk.getX(), minZ = minChunk.getZ(), maxZ = maxChunk.getZ();
+		for (int x = minX; x <= maxX; x++) {
+			for (int z = minZ; z <= maxZ; z++) {
+				for (CustomEntity e : game.getCustomEntities(world.getChunkAt(x, z))) {
+					if (entityType.isAssignableFrom(e.getClass()) && boundingBox.conflicts(e.getBoundingBox()) && (predicate == null || predicate.test(e))) {
+						entities.add(entityType.cast(e));
+					}
+				}
+			}
+		}
+		return entities;
+	}
+
 	public static class Locations extends ArrayList<Location> {
 
 		public Locations(int initialCapacity) {
@@ -476,9 +535,9 @@ public class LocationUtil {
 			super();
 		}
 
-		public Locations floor(double referenceY) {
+		public Locations floor(double criterionY) {
 			for (Location location : this) {
-				location.setY(getFloorYAt(location.getWorld(), referenceY, location.getBlockX(), location.getBlockZ()) + 0.1);
+				location.setY(getFloorYAt(location.getWorld(), criterionY, location.getBlockX(), location.getBlockZ()) + 0.1);
 			}
 			return this;
 		}

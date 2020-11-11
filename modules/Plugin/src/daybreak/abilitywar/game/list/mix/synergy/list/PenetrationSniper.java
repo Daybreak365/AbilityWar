@@ -242,7 +242,7 @@ public class PenetrationSniper extends Synergy {
 			super(80);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).setBoundingBox(-.75, -.75, -.75, .75, .75, .75);
+			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
 			this.forward = arrowVelocity.multiply(10);
 			this.circle = Iterables.cycle(CIRCLE.clone().rotateAroundAxisY(-shooter.getLocation().getYaw()).rotateAroundAxis(VectorUtil.rotateAroundAxisY(shooter.getLocation().getDirection().setY(0).normalize(), 90), shooter.getLocation().getPitch() + 90)).iterator();
 			this.onHitBehavior = onHitBehavior;
@@ -301,7 +301,7 @@ public class PenetrationSniper extends Synergy {
 					block.breakNaturally();
 					SoundLib.BLOCK_GLASS_BREAK.playSound(block.getLocation(), 3, 1);
 				}
-				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, entity.getBoundingBox(), predicate)) {
+				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable) && damageable.isValid() && !damageable.isDead() && !attacked.contains(damageable)) {
 						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
 						onHitBehavior.onHit(PenetrationSniper.this, shooter, damageable);

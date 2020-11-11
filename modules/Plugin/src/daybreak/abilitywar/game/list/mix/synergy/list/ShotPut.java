@@ -7,16 +7,15 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +35,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Predicate;
+
 @Support.Version(min = NMSVersion.v1_11_R1)
 @AbilityManifest(name = "투포환", rank = Rank.B, species = Species.HUMAN, explain = {
 		"아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. $[COOLDOWN_CONFIG]",
@@ -47,7 +48,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class ShotPut extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShotPut.class, "Cooldown", 30,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShotPut.class, "cooldown", 30,
 			"# 쿨타임") {
 
 		@Override
@@ -62,7 +63,7 @@ public class ShotPut extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(ShotPut.class, "Duration", 6,
+	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(ShotPut.class, "duration", 6,
 			"# 지속 시간") {
 
 		@Override

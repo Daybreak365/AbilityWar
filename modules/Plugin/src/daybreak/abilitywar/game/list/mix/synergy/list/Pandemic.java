@@ -7,21 +7,21 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.list.Virus;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import java.lang.reflect.InvocationTargetException;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "팬데믹", rank = Rank.A, species = Species.OTHERS, explain = {
 		"치명적인 피해를 입은 마지막 순간에 큰 폭발을 일으키고 사망합니다.",
@@ -29,7 +29,7 @@ import org.bukkit.entity.Player;
 })
 public class Pandemic extends Synergy {
 
-	public static final SettingObject<Integer> SizeConfig = synergySettings.new SettingObject<Integer>(Pandemic.class, "Size", 10,
+	public static final SettingObject<Integer> SizeConfig = synergySettings.new SettingObject<Integer>(Pandemic.class, "size", 10,
 			"# 팬데믹이 사망할 때 일어날 폭발의 크기",
 			"# 바이러스 감염 범위") {
 
@@ -75,7 +75,7 @@ public class Pandemic extends Synergy {
 				if (getGame().isParticipating(player)) {
 					try {
 						getGame().getParticipant(player).setAbility(Virus.class);
-					} catch (IllegalAccessException | InstantiationException | InvocationTargetException ignored) {
+					} catch (ReflectiveOperationException ignored) {
 					}
 				}
 			}

@@ -8,6 +8,7 @@ import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
+import daybreak.abilitywar.game.manager.GameFactory.GeneralRegistration;
 import daybreak.abilitywar.game.manager.GameFactory.TeamGameRegistration;
 import java.lang.reflect.InvocationTargetException;
 
@@ -27,11 +28,11 @@ public class GameManager {
 		return currentGame;
 	}
 
-	public static boolean startGame(final GameRegistration registration, final String[] args) throws IllegalArgumentException {
+	public static boolean startGame(final GameRegistration<?> registration, final String[] args) throws IllegalArgumentException {
 		try {
 			if (registration != null) {
-				if (registration.hasFlag(Flag.TEAM_GAME_SUPPORTED) && Settings.isTeamGameEnabled()) {
-					final TeamGameRegistration teamGame = registration.getTeamGame();
+				if (registration.hasFlag(Flag.TEAM_GAME_SUPPORTED) && Settings.isTeamGameEnabled() && registration instanceof GeneralRegistration) {
+					final TeamGameRegistration<?> teamGame = ((GeneralRegistration<?>) registration).getTeamGame();
 					if (teamGame.hasFlag(Flag.CONSTRUCTOR_ARGS)) {
 						return teamGame.getConstructor().newInstance((Object) args).start();
 					} else {

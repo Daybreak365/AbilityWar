@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 })
 public class Swap extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Swap.class, "COOLDOWN", 35,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Swap.class, "cooldown", 35,
 			"# 쿨타임") {
 
 		@Override
@@ -41,7 +41,7 @@ public class Swap extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Swap.class, "DURATION", 4,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Swap.class, "duration", 4,
 			"# 지속 시간") {
 
 		@Override
@@ -51,7 +51,7 @@ public class Swap extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Swap.class, "DISTANCE", 8,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Swap.class, "distance", 8,
 			"# 스킬 범위") {
 
 		@Override

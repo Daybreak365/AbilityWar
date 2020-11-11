@@ -57,7 +57,7 @@ import java.util.function.Predicate;
 })
 public class Lunar extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lunar.class, "Cool", 50,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lunar.class, "cooldown", 50,
 			"# 쿨타임") {
 
 		@Override

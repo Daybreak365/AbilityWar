@@ -51,7 +51,7 @@ import java.util.function.Predicate;
 }, strong = {}, weak = {}, stats = @Stats(offense = Level.ZERO, survival = Level.FOUR, crowdControl = Level.THREE, mobility = Level.ZERO, utility = Level.FIVE), difficulty = Difficulty.EASY)
 public class Emperor extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Emperor.class, "Cooldown", 50,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Emperor.class, "cooldown", 50,
 			"# 쿨타임") {
 
 		@Override

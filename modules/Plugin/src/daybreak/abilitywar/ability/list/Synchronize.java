@@ -31,8 +31,23 @@ import java.util.function.Predicate;
 })
 public class Synchronize extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Synchronize.class, "COOLDOWN", 45,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Synchronize.class, "cooldown", 45,
 			"# 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+
+	};
+
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Synchronize.class, "duration", 9,
+			"# 지속 시간") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -67,7 +82,7 @@ public class Synchronize extends AbilityBase implements ActiveHandler {
 			4.1887902047863909846168578443727
 	};
 	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final Duration skill = new Duration(180, cooldown) {
+	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldown) {
 		@Override
 		protected void onDurationProcess(int count) {
 			for (int i = 0; i < 10; i++) {

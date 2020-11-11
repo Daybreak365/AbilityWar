@@ -15,8 +15,8 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.BoundingBox;
-import daybreak.abilitywar.utils.base.math.geometry.Boundary.EntityBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
@@ -68,7 +68,7 @@ import java.util.function.Predicate;
 })
 public class AbsoluteZero extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -82,7 +82,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "Range", 15,
+	public static final SettingObject<Integer> RangeConfig = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "range", 15,
 			"# 스킬 사용 시 눈 지형으로 바꿀 범위") {
 
 		@Override
@@ -264,7 +264,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 						@Override
 						protected void run(int count) {
 							if (fallingBlock.isValid() && !fallingBlock.isDead()) {
-								for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, boundingBox, predicate)) {
+								for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, fallingBlock.getWorld(), boundingBox, predicate)) {
 									if (frozenEntities.add(livingEntity)) {
 										new Frost(livingEntity).start();
 									}

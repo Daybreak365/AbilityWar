@@ -9,17 +9,15 @@ import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractInnocent;
 import daybreak.abilitywar.game.manager.effect.Stun;
-import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import java.util.function.Predicate;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "시민: 경찰", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
@@ -36,28 +34,18 @@ public class Police extends AbstractInnocent {
 		@Override
 		public boolean test(Entity entity) {
 			if (entity.equals(getPlayer())) return false;
-			return (!(entity instanceof Player)) || (getGame().isParticipating(entity.getUniqueId())
-					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+			return !(entity instanceof Player) || (getGame().isParticipating(entity.getUniqueId())
+					&& !((MurderMystery) getGame()).isDead(entity.getUniqueId())
 					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue());
 		}
 	};
 
 	@Override
 	protected void onUpdate(Update update) {
+		super.onUpdate(update);
 		if (update == Update.RESTRICTION_CLEAR) {
-			PlayerInventory inventory = getPlayer().getInventory();
-			ItemStack two = inventory.getItem(2), three = inventory.getItem(3);
-			inventory.clear();
-			inventory.setItem(2, two);
-			inventory.setItem(3, three);
-			getPlayer().getInventory().setHeldItemSlot(0);
-			((MurderMystery) getGame()).updateGold(getParticipant());
 			NMS.sendTitle(getPlayer(), "§e직업§f: §a경찰", "§c머더§f를 제압하세요!", 10, 80, 10);
 			new AbilityTimer(1) {
-				@Override
-				protected void run(int count) {
-				}
-
 				@Override
 				protected void onEnd() {
 					NMS.clearTitle(getPlayer());

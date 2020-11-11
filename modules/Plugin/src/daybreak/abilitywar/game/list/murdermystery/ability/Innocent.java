@@ -11,10 +11,11 @@ import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.manager.object.CommandHandler.CommandType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import java.lang.reflect.InvocationTargetException;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.lang.reflect.InvocationTargetException;
 
 @AbilityManifest(name = "시민", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
@@ -69,7 +70,7 @@ public class Innocent extends AbstractInnocent {
 					try {
 						getParticipant().setAbility(MurderMystery.getRandomJob());
 						getGame().executeCommand(CommandType.ABILITY_CHECK, getPlayer(), "aw", EMPTY_STRING_ARRAY, AbilityWar.getPlugin());
-					} catch (IllegalAccessException | InstantiationException | InvocationTargetException ignored) {
+					} catch (ReflectiveOperationException ignored) {
 					}
 				}
 			}

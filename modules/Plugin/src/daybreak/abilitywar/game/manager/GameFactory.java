@@ -24,6 +24,7 @@ import daybreak.abilitywar.game.list.oneability.OneAbility;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.list.standard.WarGame;
 import daybreak.abilitywar.game.list.summervacation.SummerVacation;
+import daybreak.abilitywar.game.list.tnt.TNTTag;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.annotations.Beta;
@@ -34,6 +35,7 @@ import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -48,14 +50,14 @@ import java.util.Map;
 
 public class GameFactory {
 
-	private GameFactory() {
-	}
+	private GameFactory() {}
 
 	private static final Logger logger = Logger.getLogger(GameFactory.class);
 
-	private static final Map<String, GameRegistration> usedNames = new LinkedHashMap<>();
-	private static final Map<Class<? extends AbstractGame>, GameRegistration> registeredModes = new HashMap<>();
-	private static final Multimap<GameCategory, GameRegistration> byCategory = LinkedHashMultimap.create();
+	private static final Map<String, GameRegistration<?>> usedNames = new LinkedHashMap<>();
+	private static final Map<Class<? extends AbstractGame>, GameRegistration<?>> registeredModes = new HashMap<>();
+	private static final Multimap<GameCategory, GameRegistration<?>> byCategory = LinkedHashMultimap.create();
+	private static final Map<Class<? extends AbstractGame>, TeamGameRegistration<?>> teamGames = new HashMap<>();
 
 	static {
 		registerMode(StandardGame.class);
@@ -69,18 +71,20 @@ public class GameFactory {
 		registerMode(BlindAbilityWar.class);
 		registerMode(TripleMixGame.class);
 		registerMode(MixBlindGame.class);
+		registerMode(TNTTag.class);
 		if (DeveloperSettings.isEnabled()) {
 			registerMode(DebugMode.class);
 			registerMode(MixDebugMode.class);
 		}
 	}
 
-	public static Collection<GameRegistration> getRegistrations() {
+	public static Collection<GameRegistration<?>> getRegistrations() {
 		return registeredModes.values();
 	}
 
-	public static GameRegistration getRegistration(Class<? extends AbstractGame> clazz) {
-		return registeredModes.get(clazz);
+	public static GameRegistration<?> getRegistration(Class<? extends AbstractGame> clazz) {
+		final GameRegistration<?> registration = registeredModes.get(clazz);
+		return registration != null ? registration : teamGames.get(clazz);
 	}
 
 	public static boolean isRegistered(String name) {
@@ -94,7 +98,7 @@ public class GameFactory {
 	public static void registerMode(Class<? extends AbstractGame> gameClass) {
 		if (!registeredModes.containsKey(gameClass)) {
 			try {
-				final GameRegistration registration = new GameRegistration(gameClass);
+				final GameRegistration<?> registration = new GeneralRegistration<>(gameClass);
 				final String name = registration.getManifest().name();
 				if (!usedNames.containsKey(name)) {
 					if (!registration.hasFlag(Flag.BETA) || DeveloperSettings.isEnabled()) {
@@ -123,28 +127,31 @@ public class GameFactory {
 		return new ArrayList<>(usedNames.keySet());
 	}
 
-	public static GameRegistration getByName(String name) {
+	public static GameRegistration<?> getByName(String name) {
 		return usedNames.get(name);
 	}
 
-	public static Collection<GameRegistration> getByCategory(final GameCategory category) {
+	public static Collection<GameRegistration<?>> getByCategory(final GameCategory category) {
 		return byCategory.get(category);
 	}
 
-	public static class GameRegistration {
+	public static TeamGameRegistration<?> getTeamGameRegistration(final Class<? extends AbstractGame> clazz) {
+		return teamGames.get(clazz);
+	}
+
+	public static class GameRegistration<G extends AbstractGame> {
 
 		private static final String[] EMPTY = new String[0];
 
-		private final Class<? extends AbstractGame> clazz;
-		private final Constructor<? extends AbstractGame> constructor;
+		private final Class<G> clazz;
+		private final Constructor<G> constructor;
 		private final GameManifest manifest;
 		private final GameCategory category;
 		private final String[] aliases;
-		private final TeamGameRegistration teamGame;
 		private final Map<String, Setting<?>> settings;
-		private final int flag;
+		protected int flag = 0x0;
 
-		private GameRegistration(Class<? extends AbstractGame> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException, IllegalAccessException {
+		private GameRegistration(Class<G> clazz, final GameManifest manifest) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException, IllegalAccessException {
 			if (clazz.isAnnotationPresent(Support.Version.class)) {
 				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
 				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
@@ -159,7 +166,7 @@ public class GameFactory {
 			}
 			this.clazz = clazz;
 
-			Constructor<? extends AbstractGame> constructor;
+			Constructor<G> constructor;
 			try {
 				constructor = clazz.getConstructor(String[].class);
 			} catch (NoSuchMethodException ex) {
@@ -179,40 +186,27 @@ public class GameFactory {
 			}
 			this.settings = Collections.unmodifiableMap(settings);
 
-			if (!clazz.isAnnotationPresent(GameManifest.class))
+			if (manifest == null)
 				throw new IllegalArgumentException("GameManifest가 없는 게임 모드입니다.");
-			this.manifest = clazz.getAnnotation(GameManifest.class);
+			this.manifest = manifest;
 			Preconditions.checkNotNull(manifest.name());
 			Preconditions.checkNotNull(manifest.description());
 			this.category = clazz.isAnnotationPresent(Category.class) ? clazz.getAnnotation(Category.class).value() : GameCategory.GAME;
 			this.aliases = clazz.isAnnotationPresent(GameAliases.class) ? clazz.getAnnotation(GameAliases.class).value() : EMPTY;
-			if (clazz.isAnnotationPresent(TeamSupport.class)) {
-				final TeamSupport teamSupport = clazz.getAnnotation(TeamSupport.class);
-				TeamGameRegistration teamGame = null;
-				try {
-					teamGame = new TeamGameRegistration(teamSupport.value());
-				} catch (VersionNotSupportedException e) {
-					logger.debug("§e" + teamSupport.value().getName() + " §f게임 모드는 이 버전에서 지원되지 않습니다.");
-				} catch (ServerNotSupportedException e) {
-					logger.debug("§e" + teamSupport.value().getName() + " §f게임 모드는 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
-				} catch (Exception e) {
-					logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + teamSupport.value().getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
-				}
-				this.teamGame = teamGame;
-			} else this.teamGame = null;
 
-			int flag = 0x0;
-			if (clazz.isAnnotationPresent(Beta.class)) flag |= Flag.BETA;
-			if (this.constructor.getParameterCount() == 1 && this.constructor.getParameterTypes()[0] == String[].class) flag |= Flag.CONSTRUCTOR_ARGS;
-			if (this.teamGame != null) flag |= Flag.TEAM_GAME_SUPPORTED;
-			this.flag = flag;
+			if (clazz.isAnnotationPresent(Beta.class)) this.flag |= Flag.BETA;
+			if (this.constructor.getParameterCount() == 1 && this.constructor.getParameterTypes()[0] == String[].class) this.flag |= Flag.CONSTRUCTOR_ARGS;
 		}
 
-		public Class<? extends AbstractGame> getGameClass() {
+		private GameRegistration(Class<G> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException, IllegalAccessException {
+			this(clazz, clazz.getAnnotation(GameManifest.class));
+		}
+
+		public Class<G> getGameClass() {
 			return clazz;
 		}
 
-		public Constructor<? extends AbstractGame> getConstructor() {
+		public Constructor<G> getConstructor() {
 			return constructor;
 		}
 
@@ -232,10 +226,6 @@ public class GameFactory {
 			return manifest;
 		}
 
-		public TeamGameRegistration getTeamGame() {
-			return teamGame;
-		}
-
 		public boolean hasFlag(int flag) {
 			return (this.flag & flag) == flag;
 		}
@@ -248,56 +238,62 @@ public class GameFactory {
 
 	}
 
-	public static class TeamGameRegistration {
+	public static class GeneralRegistration<G extends AbstractGame> extends GameRegistration<G> {
 
-		private final Class<? extends Teamable> clazz;
-		private final Constructor<? extends Teamable> constructor;
-		private final int flag;
+		private final TeamGameRegistration<?> teamGame;
 
-		private TeamGameRegistration(Class<? extends Teamable> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException {
-			if (clazz.isAnnotationPresent(Support.Version.class)) {
-				final Support.Version supportedVersion = clazz.getAnnotation(Support.Version.class);
-				if (!(ServerVersion.isAboveOrEqual(supportedVersion.min()) && ServerVersion.isBelowOrEqual(supportedVersion.max()))) {
-					throw new VersionNotSupportedException();
+		private GeneralRegistration(Class<G> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException, IllegalAccessException {
+			super(clazz);
+			if (clazz.isAnnotationPresent(TeamSupport.class)) {
+				final TeamSupport teamSupport = clazz.getAnnotation(TeamSupport.class);
+				TeamGameRegistration<?> teamGame = null;
+				try {
+					final Class<? extends Teamable> teamClass = teamSupport.value();
+					if (AbstractGame.class.isAssignableFrom(teamClass)) {
+						teamGame = new TeamGameRegistration<>(this, teamClass.asSubclass(AbstractGame.class));
+					} else {
+						logger.debug("§e" + teamSupport.value().getName() + " §f게임 모드는 AbstractGame을 확장하지 않습니다.");
+					}
+				} catch (VersionNotSupportedException e) {
+					logger.debug("§e" + teamSupport.value().getName() + " §f게임 모드는 이 버전에서 지원되지 않습니다.");
+				} catch (ServerNotSupportedException e) {
+					logger.debug("§e" + teamSupport.value().getName() + " §f게임 모드는 이 서버에서 지원되지 않습니다. (이 서버: " + ServerType.getServerType().name() + ") (지원되는 서버: " + Arrays.toString(e.getSupported()) + ")");
+				} catch (Exception e) {
+					logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + teamSupport.value().getName() + " §f게임 모드 등록 중 오류가 발생하였습니다."));
 				}
-			}
-			if (clazz.isAnnotationPresent(Support.Server.class)) {
-				final ServerType[] supportedServers = clazz.getAnnotation(Support.Server.class).value();
-				if (!Arrays.asList(supportedServers).contains(ServerType.getServerType())) {
-					throw new ServerNotSupportedException(supportedServers);
-				}
-			}
-			this.clazz = clazz;
-
-			Constructor<? extends Teamable> constructor;
-			try {
-				constructor = clazz.getConstructor(String[].class);
-			} catch (NoSuchMethodException ex) {
-				constructor = clazz.getConstructor();
-			}
-			this.constructor = constructor;
-
-			int flag = 0x0;
-			if (clazz.isAnnotationPresent(Beta.class)) flag |= Flag.BETA;
-			if (this.constructor.getParameterCount() == 1 && this.constructor.getParameterTypes()[0] == String[].class) flag |= Flag.CONSTRUCTOR_ARGS;
-			this.flag = flag;
+				this.teamGame = teamGame;
+			} else this.teamGame = null;
+			if (this.teamGame != null) this.flag |= Flag.TEAM_GAME_SUPPORTED;
 		}
 
-		public Class<? extends Teamable> getGameClass() {
-			return clazz;
+		public TeamGameRegistration<?> getTeamGame() {
+			return teamGame;
 		}
 
-		public Constructor<? extends Teamable> getConstructor() {
-			return constructor;
+	}
+
+	public static class TeamGameRegistration<G extends AbstractGame> extends GameRegistration<G> {
+
+		private final GeneralRegistration<?> pair;
+
+		private TeamGameRegistration(final GeneralRegistration<?> pair, final Class<G> clazz) throws NullPointerException, NoSuchMethodException, SecurityException, VersionNotSupportedException, ServerNotSupportedException, IllegalAccessException {
+			super(clazz, pair.getManifest());
+			this.pair = pair;
+			teamGames.put(clazz, this);
 		}
 
-		public boolean hasFlag(int flag) {
-			return (this.flag & flag) == flag;
+		public GeneralRegistration<?> getPair() {
+			return pair;
 		}
 
-		public static class Flag {
-			public static final int BETA = 0x1;
-			public static final int CONSTRUCTOR_ARGS = 0x2;
+		@Override
+		public Class<G> getGameClass() {
+			return super.getGameClass();
+		}
+
+		@Override
+		public Constructor<G> getConstructor() {
+			return super.getConstructor();
 		}
 
 	}

@@ -19,11 +19,15 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import kotlin.ranges.RangesKt;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -49,7 +53,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.FOUR, crowdControl = Level.ZERO, mobility = Level.FIVE, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Flora extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flora.class, "Cooldown", 3,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flora.class, "cooldown", 3,
 			"# 쿨타임") {
 
 		@Override
@@ -109,14 +113,20 @@ public class Flora extends AbilityBase implements ActiveHandler {
 				ParticleLib.REDSTONE.spawnParticle(location.subtract(0, y - 1, 0), type.color);
 			}
 
-			for (Player player : LocationUtil.getEntitiesInCircle(Player.class, center, radius.radius, ONLY_PARTICIPANTS)) {
-				if (type.equals(EffectType.SPEED)) {
+			if (type.equals(EffectType.SPEED)) {
+				for (Player player : LocationUtil.getEntitiesInCircle(Player.class, center, radius.radius, ONLY_PARTICIPANTS)) {
 					PotionEffects.SPEED.addPotionEffect(player, 3, 1, true);
-				} else {
+				}
+			} else if (count % 10 == 0) {
+				for (Player player : LocationUtil.getEntitiesInCircle(Player.class, center, radius.radius, ONLY_PARTICIPANTS)) {
 					if (!player.isDead()) {
 						final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 						if (player.getHealth() < maxHealth) {
-							player.setHealth(Math.min(player.getHealth() + .04, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, .4, RegainReason.CUSTOM);
+							Bukkit.getPluginManager().callEvent(event);
+							if (!event.isCancelled()) {
+								player.setHealth(RangesKt.coerceIn(player.getHealth() + event.getAmount(), 0, maxHealth));
+							}
 						}
 					}
 				}

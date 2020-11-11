@@ -49,7 +49,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.THREE, crowdControl = Level.THREE, mobility = Level.ZERO, utility = Level.FIVE), difficulty = Difficulty.EASY)
 public class Clown extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Clown.class, "Cooldown", 45,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Clown.class, "cooldown", 45,
 			"# 쿨타임") {
 
 		@Override
@@ -64,7 +64,7 @@ public class Clown extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Clown.class, "Range", 10,
+	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Clown.class, "range", 10,
 			"# 스킬 범위") {
 
 		@Override

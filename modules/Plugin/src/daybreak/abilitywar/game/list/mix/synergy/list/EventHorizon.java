@@ -21,8 +21,6 @@ import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
-import java.util.LinkedList;
-import java.util.function.Predicate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,13 +31,16 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedList;
+import java.util.function.Predicate;
+
 @AbilityManifest(name = "사건의 지평선", rank = Rank.S, species = Species.GOD, explain = {
 		"철괴를 우클릭하면 $[DurationConfig]초간 짙은 암흑 속으로 주변의 모든 생명체와",
 		"투사체, 블록들을 강한 힘으로 끌어당깁니다. $[COOLDOWN_CONFIG]"
 })
 public class EventHorizon extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(EventHorizon.class, "Cooldown", 80,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(EventHorizon.class, "cooldown", 80,
 			"# 쿨타임") {
 
 		@Override
@@ -54,7 +55,7 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(EventHorizon.class, "Duration", 8,
+	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(EventHorizon.class, "duration", 8,
 			"# 능력 지속 시간") {
 
 		@Override

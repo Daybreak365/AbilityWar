@@ -38,8 +38,8 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "글래디에이터", rank = Rank.S, species = Species.HUMAN, explain = {
-		"상대방을 철괴로 우클릭하면 부셔지지 않는 투기장이 생성되며 §e흡수§f/§3저항 §f효과를 얻고,",
-		"상대방과 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
+		"상대를 철괴 우클릭하면 부술 수 없는 투기장이 생성되며 §e흡수§f/§3저항 §f효과를 얻고,",
+		"상대와 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
 })
 @Tips(tip = {
 		"다른 사람의 방해 없이, 유리한 1:1 전투를 펼치고 싶다면 글래디에이터를",
@@ -64,7 +64,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Gladiator extends AbilityBase implements TargetHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Gladiator.class, "Cooldown", 120,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Gladiator.class, "cooldown", 120,
 			"# 쿨타임") {
 
 		@Override

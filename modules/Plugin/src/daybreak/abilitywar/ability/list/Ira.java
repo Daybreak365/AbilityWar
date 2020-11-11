@@ -19,7 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 })
 public class Ira extends AbilityBase {
 
-	public static final SettingObject<Integer> AttackConfig = abilitySettings.new SettingObject<Integer>(Ira.class, "AttackTime", 3,
+	public static final SettingObject<Integer> ATTACK_CONFIG = abilitySettings.new SettingObject<Integer>(Ira.class, "attack-times", 3,
 			"# 몇번 공격을 당하면 폭발을 일으킬지 설정합니다.",
 			"# 기본값: 3") {
 
@@ -34,7 +34,7 @@ public class Ira extends AbilityBase {
 		super(participant);
 	}
 
-	private final int maxStack = AttackConfig.getValue();
+	private final int maxStack = ATTACK_CONFIG.getValue();
 	private int explodeStack = 0;
 
 	@SubscribeEvent

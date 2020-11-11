@@ -39,7 +39,7 @@ import java.util.function.Predicate;
 })
 public class Bind extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "Cooldown", 25, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "cooldown", 25, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -53,7 +53,7 @@ public class Bind extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> SizeConfig = synergySettings.new SettingObject<Integer>(Bind.class, "Size", 6, "# 유리 구의 크기") {
+	public static final SettingObject<Integer> SizeConfig = synergySettings.new SettingObject<Integer>(Bind.class, "size", 6, "# 유리 구의 크기") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -62,7 +62,7 @@ public class Bind extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> MaxSolidityConfig = synergySettings.new SettingObject<Integer>(Bind.class, "MaxSolidity", 4, "# 최대 강도") {
+	public static final SettingObject<Integer> MaxSolidityConfig = synergySettings.new SettingObject<Integer>(Bind.class, "max-solidity", 4, "# 최대 강도") {
 
 		@Override
 		public boolean condition(Integer value) {

@@ -12,8 +12,8 @@ import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.game.module.InfiniteDurability;
+import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
@@ -25,7 +25,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +38,7 @@ import java.util.Random;
 })
 public class OneAbility extends Game implements DefaultKitHandler {
 
-	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(OneAbility.class, "CHANGE_COUNT", 2, "# 능력 변경 횟수") {
+	private static final GameSettings.Setting<Integer> ABILITY_CHANGE_COUNT = gameSettings.new Setting<Integer>(OneAbility.class, "change-count", 2, "# 능력 변경 횟수") {
 		@Override
 		public boolean condition(Integer value) {
 			return value >= 0;
@@ -89,7 +88,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 							if (tip != null) {
 								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
 							}
-						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (SecurityException | IllegalArgumentException | ReflectiveOperationException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 						}
@@ -112,7 +111,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 								part.setAbility(abilityClass);
 								part.getPlayer().sendMessage("§a능력이 변경되었습니다. §e/aw check§f로 확인하세요.");
 								abilities.remove(abilityClass);
-							} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+							} catch (SecurityException | IllegalArgumentException | ReflectiveOperationException e) {
 								logger.error(ChatColor.YELLOW + part.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 								logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
 							}

@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -218,7 +217,7 @@ public class AbilityGUI implements Listener, Observer {
 								}
 							}
 						}
-					} catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+					} catch (SecurityException | IllegalArgumentException | ReflectiveOperationException ex) {
 						Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
 						if (DeveloperSettings.isEnabled()) ex.printStackTrace();
 					}

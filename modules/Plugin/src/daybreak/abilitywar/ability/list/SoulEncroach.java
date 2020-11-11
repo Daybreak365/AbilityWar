@@ -16,9 +16,13 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Points;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages.INSTANCE.Flag;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
+import kotlin.ranges.RangesKt;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,6 +33,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -49,7 +55,7 @@ import java.util.function.Predicate;
 })
 public class SoulEncroach extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SoulEncroach.class, "Cooldown", 120,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SoulEncroach.class, "cooldown", 120,
 			"# 쿨타임") {
 
 		@Override
@@ -63,7 +69,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 		}
 
 	};
-	public static final SettingObject<Integer> DistanceConfig = abilitySettings.new SettingObject<Integer>(SoulEncroach.class, "Distance", 7,
+	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(SoulEncroach.class, "distance", 7,
 			"# 능력 거리 설정") {
 
 		@Override
@@ -158,7 +164,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	});
 	private static final RGB BLACK = RGB.of(1, 1, 1), WHITE = RGB.of(250, 250, 250);
 
-	private final int distance = DistanceConfig.getValue(), distanceSquared = distance * distance;
+	private final int distance = DISTANCE_CONFIG.getValue(), distanceSquared = distance * distance;
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -189,14 +195,21 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 		protected void run(int count) {
 			if (last != null) {
 				if (lastVictim != null) {
-					noticeChannel.update(lastVictim.getHealth() <= 6 ? "§4마지막으로 때린 상대의 체력이 적습니다." : null);
+					if (lastVictim.getHealth() - Damages.getFinalDamage(lastVictim, getDamage(), Flag.ALL) + 1 < 0) {
+						noticeChannel.update("§4마지막으로 때린 상대의 체력이 적습니다.");
+					} else noticeChannel.update(null);
 				} else {
 					noticeChannel.update(null);
 				}
 			}
 			this.last = lastVictim;
 		}
-	}.setPeriod(TimeUnit.TICKS, 5).register();
+	}.setPeriod(TimeUnit.TICKS, 3).register();
+
+	private double getDamage() {
+		return lastVictim == null ? 0.0 : Math.max(1, (21.5 * (1 - (lastVictim.getHealth() / lastVictim.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()))) * (1 + (killCount * 0.15)));
+	}
+
 	private final Duration skillTimer = new Duration(60) {
 		private GameMode originalMode;
 		private float originalSpeed;
@@ -244,7 +257,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 		protected void onDurationEnd() {
 			onDurationSilentEnd();
 			getPlayer().setVelocity(getPlayer().getLocation().getDirection().setY(-1));
-			lastVictim.damage(Math.max(1, (21.5 * (1 - (lastVictim.getHealth() / lastVictim.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()))) * (1 + (killCount * 0.15))), getPlayer());
+			lastVictim.damage(getDamage(), getPlayer());
 			if (lastVictim.isDead()) {
 				killCount++;
 				new AbilityTimer(Math.min(3, killCount)) {
@@ -317,8 +330,10 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	}
 
 	private void gainHealth(double amount) {
-		if (!getPlayer().isDead()) {
-			getPlayer().setHealth(Math.min(getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue(), getPlayer().getHealth() + amount));
+		final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), amount, RegainReason.CUSTOM);
+		Bukkit.getPluginManager().callEvent(event);
+		if (!event.isCancelled() && !getPlayer().isDead()) {
+			getPlayer().setHealth(RangesKt.coerceIn(getPlayer().getHealth() + event.getAmount(), 0, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 		}
 	}
 

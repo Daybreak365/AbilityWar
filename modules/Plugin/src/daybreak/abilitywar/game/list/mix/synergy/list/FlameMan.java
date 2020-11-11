@@ -19,10 +19,6 @@ import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -34,6 +30,11 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Map.Entry;
+
 @AbilityManifest(name = "염인", rank = Rank.S, species = Species.HUMAN, explain = {
 		""
 })
@@ -41,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 @Beta
 public class FlameMan extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(FlameMan.class, "Cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(FlameMan.class, "cooldown", 80, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -55,7 +56,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = synergySettings.new SettingObject<Integer>(FlameMan.class, "Range", 15,
+	public static final SettingObject<Integer> RangeConfig = synergySettings.new SettingObject<Integer>(FlameMan.class, "range", 15,
 			"# 스킬 사용 시 불 지형으로 바꿀 범위") {
 
 		@Override

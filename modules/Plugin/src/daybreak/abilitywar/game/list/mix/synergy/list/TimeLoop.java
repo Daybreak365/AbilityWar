@@ -45,7 +45,7 @@ import java.util.Map;
 })
 public class TimeLoop extends Synergy {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(TimeLoop.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(TimeLoop.class, "cooldown", 100,
 			"# 쿨타임") {
 
 		@Override

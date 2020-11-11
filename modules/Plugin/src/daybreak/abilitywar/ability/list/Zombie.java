@@ -48,15 +48,15 @@ import java.util.WeakHashMap;
 
 @AbilityManifest(name = "좀비", rank = Rank.A, species = Species.UNDEAD, explain = {
 		"좀비가 당신을 타게팅하지 않습니다. 다른 플레이어를 철괴로 우클릭하면 주변",
-		"$[RadiusConfig]칸 안에 무적 상태의 §5좀비§f $[ZombieCountConfig]마리를",
-		"소환합니다. $[COOLDOWN_CONFIG]",
+		"$[RADIUS]칸 안에 무적 §5좀비§f $[ZOMBIE_COUNT]마리를 소환합니다. $[COOLDOWN]",
 		"능력으로 소환된 좀비에게 공격당한 플레이어는 5초간 §5감염 §f효과가 생기며,",
-		"다른 플레이어가 나를 공격할 경우 좀비의 타겟이 그 플레이어로 변경됩니다."
+		"다른 플레이어가 나를 공격할 경우 좀비의 타겟이 그 플레이어로 변경됩니다.",
+		"§7상태 이상 §8- §5감염§f: 간헐적으로 시야가 돌아가며, 대미지를 25% 줄여받습니다."
 })
 @Support.Version(min = NMSVersion.v1_9_R1, max = NMSVersion.v1_14_R1)
 public class Zombie extends AbilityBase implements TargetHandler {
 
-	private static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Zombie.class, "Cooldown", 100, "# 쿨타임") {
+	private static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Zombie.class, "cooldown", 100, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -70,7 +70,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 
 	};
 
-	private static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Zombie.class, "Duration", 20, "# 지속시간") {
+	private static final SettingObject<Integer> DURATION = abilitySettings.new SettingObject<Integer>(Zombie.class, "duration", 10, "# 지속 시간") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -79,7 +79,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 
 	};
 
-	private static final SettingObject<Double> RadiusConfig = abilitySettings.new SettingObject<Double>(Zombie.class, "Radius", 10.0, "# 스킬 반경") {
+	private static final SettingObject<Double> RADIUS = abilitySettings.new SettingObject<Double>(Zombie.class, "radius", 10.0, "# 스킬 반경") {
 
 		@Override
 		public boolean condition(Double arg0) {
@@ -88,7 +88,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 
 	};
 
-	private static final SettingObject<Integer> ZombieCountConfig = abilitySettings.new SettingObject<Integer>(Zombie.class, "ZombieCount", 15, "# 생성할 좀비 수") {
+	private static final SettingObject<Integer> ZOMBIE_COUNT = abilitySettings.new SettingObject<Integer>(Zombie.class, "zombie-count", 6, "# 생성할 좀비 수") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -111,18 +111,19 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		}
 	}
 
-	private final double radius = RadiusConfig.getValue();
-	private final int zombieCount = ZombieCountConfig.getValue();
+	private final double radius = RADIUS.getValue();
+	private final int zombieCount = ZOMBIE_COUNT.getValue();
 	private final Set<org.bukkit.entity.Zombie> zombies = new HashSet<>(zombieCount);
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN.getValue());
 	private Player target;
-	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DURATION.getValue() * 20, cooldownTimer) {
 
 		@Override
 		protected void onDurationStart() {
-			final double referenceY = getPlayer().getLocation().getY();
+			final double criterionY = getPlayer().getLocation().getY();
 			for (final Location location : LocationUtil.getRandomLocations(getPlayer().getLocation(), radius, zombieCount)) {
-				org.bukkit.entity.Zombie zombie = getPlayer().getWorld().spawn(LocationUtil.floorY(location, referenceY), org.bukkit.entity.Zombie.class);
+				org.bukkit.entity.Zombie zombie = getPlayer().getWorld().spawn(LocationUtil.floorY(location, criterionY), org.bukkit.entity.Zombie.class);
+				zombie.setBaby(false);
 				zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.65);
 				zombies.add(zombie);
 			}
@@ -246,6 +247,15 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			}
 		}
 
+		@EventHandler
+		private void onEntityDamage(final EntityDamageEvent e) {
+			if (participant.getPlayer().equals(e.getEntity())) {
+				Bukkit.broadcastMessage("원래대미지 " + e.getDamage());
+				e.setDamage(e.getDamage() * .75);
+				Bukkit.broadcastMessage("적용후대미지 " + e.getDamage());
+			}
+		}
+
 		@Override
 		protected void onStart() {
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
@@ -255,11 +265,19 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		@Override
 		protected void run(int count) {
 			super.run(count);
-			if (Math.random() <= 0.2) {
-				final float yaw = random.nextInt(360) - 180, pitch = random.nextInt(180) - 90;
-				for (final Player player : Bukkit.getOnlinePlayers()) {
-					NMS.rotateHead(player, participant.getPlayer(), yaw, pitch);
+			if (Math.random() <= 0.65) {
+				final Player player = participant.getPlayer();
+				final Location location = player.getLocation();
+				float yaw = location.getYaw() + random.nextInt(130) - 65;
+				if (yaw > 180 || yaw < -180) {
+					float mod = yaw % 180;
+					if (mod < 0) {
+						yaw = 180 + mod;
+					} else if (mod > 0) {
+						yaw = -180 + mod;
+					}
 				}
+				NMS.rotateHead(player, player, yaw, location.getPitch() + random.nextInt(90) - 45);
 			}
 		}
 

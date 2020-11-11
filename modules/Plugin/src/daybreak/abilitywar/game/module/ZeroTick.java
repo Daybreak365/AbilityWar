@@ -104,7 +104,8 @@ public final class ZeroTick implements ListenerModule {
 		for (final Iterator<Entry<LivingEntity, Integer>> iterator = entities.entrySet().iterator(); iterator.hasNext();) {
 			final Entry<LivingEntity, Integer> entry = iterator.next();
 			final LivingEntity livingEntity = entry.getKey();
-			livingEntity.setMaximumNoDamageTicks(entry.getValue());
+			final int value = entry.getValue();
+			livingEntity.setMaximumNoDamageTicks(value == 0 ? 20 : value);
 			if (livingEntity instanceof Player) {
 				removeModifier(livingEntity);
 			}

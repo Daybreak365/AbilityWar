@@ -5,12 +5,13 @@ import com.mojang.authlib.properties.Property;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
-import daybreak.abilitywar.utils.base.minecraft.nms.v1_12_R1.network.EmptyNetworkManager;
 import daybreak.abilitywar.utils.base.minecraft.nms.v1_12_R1.network.EmptyNetworkHandler;
+import daybreak.abilitywar.utils.base.minecraft.nms.v1_12_R1.network.EmptyNetworkManager;
+import net.minecraft.server.v1_12_R1.DamageSource;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import net.minecraft.server.v1_12_R1.EnumProtocolDirection;
 import net.minecraft.server.v1_12_R1.MinecraftServer;
-import net.minecraft.server.v1_12_R1.NetworkManager;
+import net.minecraft.server.v1_12_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_12_R1.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
@@ -40,11 +41,12 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 	private final IHologram hologram;
 	private double elapsedSeconds = 1, damages = 0;
 	private int untilReset = -1;
+	private final EmptyNetworkManager networkManager;
 
 	public DummyImpl(final MinecraftServer server, final WorldServer world, final Location location) {
 		super(server, world, createProfile(), new PlayerInteractManager(world));
 		try {
-			final NetworkManager networkManager = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
+			this.networkManager = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
 			this.playerConnection = new EmptyNetworkHandler(server, networkManager, this);
 			networkManager.setPacketListener(playerConnection);
 		} catch (IllegalAccessException e) {
@@ -87,11 +89,29 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 	}
 
 	@Override
+	public void die(DamageSource damagesource) {
+		networkManager.setConnected(false);
+		super.die(damagesource);
+	}
+
+	@Override
+	public void die() {
+		networkManager.setConnected(false);
+		super.die();
+	}
+
+	@Override
 	public void display(final Player player) {
 		hologram.display(player);
 		final PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().playerConnection;
 		playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, this));
 		playerConnection.sendPacket(new PacketPlayOutNamedEntitySpawn(this));
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				playerConnection.sendPacket(new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, DummyImpl.this));
+			}
+		}.runTaskLater(AbilityWar.getPlugin(), 50L);
 	}
 
 	private void updateHologram() {
@@ -120,7 +140,7 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 		if (!hologram.isUnregistered()) {
 			hologram.unregister();
 		}
-		final PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, DummyImpl.this);
+		final PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(getId());
 		for (CraftPlayer player : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
 			player.getHandle().playerConnection.sendPacket(packet);
 		}

@@ -20,6 +20,8 @@ public class EmptyNetworkManager extends NetworkManager {
         }
     }
 
+    private boolean connected = true;
+
     public EmptyNetworkManager(EnumProtocolDirection flag) throws IllegalAccessException {
         super(flag);
         this.channel = new EmptyChannel(null);
@@ -29,7 +31,11 @@ public class EmptyNetworkManager extends NetworkManager {
 
     @Override
     public boolean isConnected() {
-        return true;
+        return connected;
+    }
+
+    public void setConnected(final boolean connected) {
+         this.connected = connected;
     }
 
     @Override

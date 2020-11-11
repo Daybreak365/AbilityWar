@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class Terrorist extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Terrorist.class, "Cooldown", 100,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Terrorist.class, "cooldown", 100,
 			"# 쿨타임") {
 
 		@Override
@@ -39,7 +39,7 @@ public class Terrorist extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> CountConfig = abilitySettings.new SettingObject<Integer>(Terrorist.class, "Count", 15,
+	public static final SettingObject<Integer> CountConfig = abilitySettings.new SettingObject<Integer>(Terrorist.class, "count", 15,
 			"# TNT 개수") {
 
 		@Override

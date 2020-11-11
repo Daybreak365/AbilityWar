@@ -47,7 +47,7 @@ import java.util.function.Predicate;
 })
 public class Imprison extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "Cooldown", 25, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "cooldown", 25, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -61,7 +61,7 @@ public class Imprison extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> MAX_SIZE_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "MAX_SIZE", 7, "# 유리 구의 최대 크기") {
+	public static final SettingObject<Integer> MAX_SIZE_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "max-size", 7, "# 유리 구의 최대 크기") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -70,7 +70,7 @@ public class Imprison extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> MAX_SOLIDITY_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "MaxSolidity", 4, "# 최대 강도") {
+	public static final SettingObject<Integer> MAX_SOLIDITY_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "max-solidity", 4, "# 최대 강도") {
 
 		@Override
 		public boolean condition(Integer value) {

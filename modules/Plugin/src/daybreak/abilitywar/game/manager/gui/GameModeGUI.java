@@ -13,9 +13,6 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -32,6 +29,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
 
 public class GameModeGUI implements Listener {
 
@@ -71,7 +72,7 @@ public class GameModeGUI implements Listener {
 
 		final Class<? extends AbstractGame> gameClass = Settings.getGameMode();
 
-		for (final GameRegistration registration : GameFactory.getByCategory(category)) {
+		for (final GameRegistration<?> registration : GameFactory.getByCategory(category)) {
 			final Class<? extends AbstractGame> mode = registration.getGameClass();
 			final GameManifest manifest = registration.getManifest();
 			final ItemStack stack;
@@ -172,7 +173,7 @@ public class GameModeGUI implements Listener {
 				}
 
 				if (e.getCurrentItem().getType().equals(Material.BOOK)) {
-					final GameRegistration gameMode = GameFactory.getByName(stripName);
+					final GameRegistration<?> gameMode = GameFactory.getByName(stripName);
 					if (gameMode != null) {
 						Configuration.modifyProperty(ConfigNodes.GAME_MODE, gameMode.getGameClass().getName());
 					} else {
