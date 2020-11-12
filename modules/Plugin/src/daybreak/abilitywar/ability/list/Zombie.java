@@ -250,9 +250,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		@EventHandler
 		private void onEntityDamage(final EntityDamageEvent e) {
 			if (participant.getPlayer().equals(e.getEntity())) {
-				Bukkit.broadcastMessage("원래대미지 " + e.getDamage());
 				e.setDamage(e.getDamage() * .75);
-				Bukkit.broadcastMessage("적용후대미지 " + e.getDamage());
 			}
 		}
 
