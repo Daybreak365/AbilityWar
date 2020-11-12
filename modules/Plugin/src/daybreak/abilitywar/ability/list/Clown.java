@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "광대", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 스폰으로 이동합니다. $[COOLDOWN_CONFIG]",
 		"스폰으로 이동한 후 10초 안에 철괴를 다시 우클릭하면 원래 위치로 돌아가",
-		"주변 $[RangeConfig]칸 이내의 플레이어들을 5초간 실명시킵니다."
+		"주변 $[RANGE_CONFIG]칸 이내의 플레이어들을 5초간 실명시킵니다."
 })
 @Tips(tip = {
 		"정신 없는 플레이를 보여줄 수 있는 능력. 능력으로 상대의 능력을 피한 후",
@@ -64,7 +64,7 @@ public class Clown extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Clown.class, "range", 10,
+	public static final SettingObject<Integer> RANGE_CONFIG = abilitySettings.new SettingObject<Integer>(Clown.class, "range", 10,
 			"# 스킬 범위") {
 
 		@Override
@@ -100,7 +100,7 @@ public class Clown extends AbilityBase implements ActiveHandler {
 
 	};
 
-	private final int range = RangeConfig.getValue();
+	private final int range = RANGE_CONFIG.getValue();
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override

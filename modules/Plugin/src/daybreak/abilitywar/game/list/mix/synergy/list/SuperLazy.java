@@ -168,7 +168,7 @@ public class SuperLazy extends Synergy implements ActiveHandler {
 	private class RegainTimer extends AbilityTimer {
 
 		private final ActionbarChannel channel;
-		private double health;
+		private final double health;
 
 		private RegainTimer(double health) {
 			super(6);

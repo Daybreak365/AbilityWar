@@ -42,7 +42,7 @@ import java.util.function.Predicate;
 })
 public class RocketLauncher extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "damage-percent", 50,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(RocketLauncher.class, "damage-percent", 50,
 			"# 스킬 대미지 (단위: 백분율)") {
 
 		@Override
@@ -124,13 +124,13 @@ public class RocketLauncher extends Synergy implements ActiveHandler {
 
 			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, p.getLocation(), 4, 4, predicate)) {
 				if (!attacked.contains(livingEntity)) {
-					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue(), p);
+					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DAMAGE_CONFIG.getValue(), p);
 					attacked.add(livingEntity);
 					SoundLib.BLOCK_ANVIL_LAND.playSound(p, 0.5f, 1);
 					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
 				} else if (seconds % 2 == 0) {
 					livingEntity.setNoDamageTicks(0);
-					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue()) / 5, p);
+					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DAMAGE_CONFIG.getValue()) / 5, p);
 					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
 				}
 				livingEntity.setVelocity(livingEntity.getLocation().toVector().subtract(p.getLocation().toVector()).multiply(0.5).setY(0.5));

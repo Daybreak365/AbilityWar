@@ -42,8 +42,8 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "뱀파이어", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.UNDEAD, explain = {
-		"철괴를 우클릭하면 $[DurationConfig]초간 주위 $[DistanceConfig]칸 안에 있는 생명체들에게서",
-		"체력을 §c반칸§f씩 $[DurationConfig]번 흡혈합니다. $[COOLDOWN_CONFIG]",
+		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 주위 $[DISTANCE_CONFIG]칸 안에 있는 생명체들에게서",
+		"체력을 §c반칸§f씩 $[DURATION_CONFIG]번 흡혈합니다. $[COOLDOWN_CONFIG]",
 		"§e밤§f에는 쿨타임이 더 빠르게 끝나며, 체력을 매번 §c반칸§f씩 더 흡혈해",
 		"§c한칸§f씩 흡혈합니다. 능력 사용 중에는 땅 위에서 느리게 날 수 있습니다."
 })
@@ -74,7 +74,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Vampire.class, "duration", 4,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Vampire.class, "duration", 4,
 			"# 지속시간 (초 단위)",
 			"# 지속시간이 변할 경우 흡혈 횟수 또한 동일하게 변경됨. ( 1초 = 1회, 4초 = 4회 )") {
 
@@ -135,7 +135,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 	private final int distance = DISTANCE_CONFIG.getValue();
 	private final Circle circle = Circle.of(distance, distance * 15);
 	private static final RGB COLOR_BLOOD_RED = new RGB(138, 7, 7);
-	private final Duration skill = new Duration(DurationConfig.getValue() * 10, cooldownTimer) {
+	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 10, cooldownTimer) {
 		private int count;
 		private double blood;
 		private List<Damageable> targets;

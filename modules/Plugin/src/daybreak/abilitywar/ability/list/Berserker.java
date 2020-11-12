@@ -33,8 +33,8 @@ import org.jetbrains.annotations.Nullable;
 
 @AbilityManifest(name = "버서커", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭한 후 4초 안에 하는 다음 근접 공격이 강화됩니다. $[COOLDOWN_CONFIG]",
-		"강화된 공격은 $[STRENGTH_CONFIG]배의 대미지를 내며, 강화된 공격을 사용한 후",
-		"$[DEBUFF_CONFIG]초간 대미지를 입힐 수 없습니다.",
+		"강화된 공격은 $[STRENGTH]배의 대미지를 내며, 강화된 공격을 사용한 후",
+		"$[GROGGY_DURATION]초간 대미지를 입힐 수 없습니다.",
 		"지속시간 내에 공격하지 못한 경우, 쿨타임을 1/3만 갖습니다."
 })
 @Tips(tip = {

@@ -35,7 +35,7 @@ import java.util.LinkedList;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "사건의 지평선", rank = Rank.S, species = Species.GOD, explain = {
-		"철괴를 우클릭하면 $[DurationConfig]초간 짙은 암흑 속으로 주변의 모든 생명체와",
+		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 짙은 암흑 속으로 주변의 모든 생명체와",
 		"투사체, 블록들을 강한 힘으로 끌어당깁니다. $[COOLDOWN_CONFIG]"
 })
 public class EventHorizon extends Synergy implements ActiveHandler {
@@ -55,7 +55,7 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(EventHorizon.class, "duration", 8,
+	public static final SettingObject<Integer> DURATION_CONFIG = synergySettings.new SettingObject<Integer>(EventHorizon.class, "duration", 8,
 			"# 능력 지속 시간") {
 
 		@Override
@@ -87,7 +87,7 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 		}
 	};
 	private Location center;
-	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 
 		private final int distance = 10;
 		private LinkedList<Block> blocks;

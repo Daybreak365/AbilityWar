@@ -59,7 +59,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "절대 영도", rank = Rank.S, species = Species.OTHERS, explain = {
-		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[LeftCOOLDOWN_CONFIG]",
+		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[LEFT_COOLDOWN_CONFIG]",
 		"§b얼음§f에 맞은 생명체는 2초간 얼어붙으며, 대미지를 입지 않습니다.",
 		"주변을 지나가는 발사체들이 모두 얼어붙어 바닥으로 떨어집니다.",
 		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
@@ -92,7 +92,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	};
 
-	private static final SettingObject<Integer> LeftCOOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "LeftCooldown", 10, "# 좌클릭 쿨타임") {
+	private static final SettingObject<Integer> LEFT_COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(AbsoluteZero.class, "LeftCooldown", 10, "# 좌클릭 쿨타임") {
 
 		@Override
 		public boolean condition(Integer arg0) {
@@ -165,7 +165,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 	private final Cooldown yetiCooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final Cooldown cooldownTimer = new Cooldown(LeftCOOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(LEFT_COOLDOWN_CONFIG.getValue());
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {

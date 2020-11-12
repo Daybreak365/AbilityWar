@@ -31,8 +31,8 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "카오스", rank = Rank.L, species = Species.GOD, explain = {
 		"태초의 신 카오스.",
-		"철괴를 우클릭하면 $[DurationConfig]초간 짙은 암흑 속으로 주변",
-		"$[DurationConfig]칸 이내의 모든 물체와 생명체들을 끌어당기며",
+		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 짙은 암흑 속으로 주변",
+		"$[DURATION_CONFIG]칸 이내의 모든 물체와 생명체들을 끌어당기며",
 		"대미지를 줍니다. $[COOLDOWN_CONFIG]"
 })
 @Tips(tip = {
@@ -73,7 +73,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Chaos.class, "duration", 5,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Chaos.class, "duration", 5,
 			"# 능력 지속 시간") {
 
 		@Override
@@ -120,7 +120,7 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 		}
 	};
 	private final Circle CIRCLE = Circle.of(distance, distance * 4);
-	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 
 		private Location center;
 		private Circle pCircle, sCircle;

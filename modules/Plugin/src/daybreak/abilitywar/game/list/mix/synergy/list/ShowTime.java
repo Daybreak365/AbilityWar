@@ -55,7 +55,7 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "쇼 타임", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
 		"능력으로 인해 깔린 레드 카펫 위에 있을 때 같은 월드의 모든 생명체가",
-		"자신을 바라보며, 깔린 레드 카펫은 $[DurationConfig]초 후 사라집니다.",
+		"자신을 바라보며, 깔린 레드 카펫은 $[DURATION_CONFIG]초 후 사라집니다.",
 		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받으며,",
 		"플레이어는 1명, 플레이어가 아닌 생명체는 0.2명 취급합니다.",
 		"§a0명 이상, 2명 미만 §7: §f나약함  §a2명 이상, 4명 미만 §7: §f힘 II",
@@ -79,7 +79,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 		}
 
 	};
-	public static final SettingObject<Integer> DurationConfig = synergySettings.new SettingObject<Integer>(ShowTime.class, "duration", 10,
+	public static final SettingObject<Integer> DURATION_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "duration", 10,
 			"# 쿨타임") {
 
 		@Override
@@ -98,7 +98,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 	private static final int radius = 7;
 	private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final Duration skillTimer = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skillTimer = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
 			final World world = getPlayer().getWorld();

@@ -41,7 +41,7 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "납치", rank = Rank.B, species = Species.HUMAN, explain = {
 		"아무 생명체나 철괴로 우클릭해 대상을 납치할 수 있습니다. $[COOLDOWN_CONFIG]",
 		"능력 사용 중에는 신속 버프를 받고, 납치 대상은 지속 시간동안",
-		"실명에 걸리며 대미지를 받지 않습니다. 대상은 $[DurationConfig]초 뒤에",
+		"실명에 걸리며 대미지를 받지 않습니다. 대상은 $[DURATION_CONFIG]초 뒤에",
 		"자동으로 내려지며, 지속 시간이 끝나기 전에 스스로 내릴 수 없습니다.",
 		"능력 사용 중 철괴를 좌클릭하면 지속 시간을 즉시 끝냅니다.",
 		"지속 시간이 종료되면 대상을 바라보는 방향으로 던집니다."
@@ -63,7 +63,7 @@ public class Kidnap extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Kidnap.class, "duration", 3,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Kidnap.class, "duration", 3,
 			"# 지속 시간") {
 
 		@Override
@@ -116,7 +116,7 @@ public class Kidnap extends AbilityBase implements ActiveHandler {
 		}
 	}
 
-	private final Duration skill = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
 			if (target != null && target.isValid()) {

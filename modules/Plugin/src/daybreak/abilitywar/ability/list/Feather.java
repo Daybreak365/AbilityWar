@@ -25,7 +25,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.jetbrains.annotations.NotNull;
 
 @AbilityManifest(name = "깃털", rank = Rank.A, species = Species.OTHERS, explain = {
-		"철괴를 우클릭하면 $[DurationConfig]초간 §b비행§f할 수 있습니다. $[COOLDOWN_CONFIG]",
+		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 §b비행§f할 수 있습니다. $[COOLDOWN_CONFIG]",
 		"§b비행 §f중 웅크리면 바라보는 방향으로 돌진합니다.",
 		"낙하 대미지를 무시합니다."
 })
@@ -64,7 +64,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Feather.class, "duration", 10,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Feather.class, "duration", 10,
 			"# 지속시간") {
 
 		@Override
@@ -79,7 +79,7 @@ public class Feather extends AbilityBase implements ActiveHandler {
 	}
 
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final Duration durationTimer = new Duration(DurationConfig.getValue() * 4, cooldownTimer) {
+	private final Duration durationTimer = new Duration(DURATION_CONFIG.getValue() * 4, cooldownTimer) {
 
 		@Override
 		public void onDurationProcess(int seconds) {

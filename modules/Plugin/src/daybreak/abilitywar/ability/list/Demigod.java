@@ -22,7 +22,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import java.util.Random;
 
 @AbilityManifest(name = "데미갓", rank = Rank.S, species = Species.DEMIGOD, explain = {
-		"공격을 받으면 $[CHANGE_CONFIG]% 확률로 5초간 §e흡수§f/§c재생§f/§3저항§f 중 하나의 효과가 적용됩니다."
+		"공격을 받으면 $[CHANCE_CONFIG]% 확률로 5초간 §e흡수§f/§c재생§f/§3저항§f 중 하나의 효과가 적용됩니다."
 })
 @Tips(tip = {
 		"모든 것은 사용자의 운에 달려있습니다."

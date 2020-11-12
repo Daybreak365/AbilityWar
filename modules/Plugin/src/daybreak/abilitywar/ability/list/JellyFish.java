@@ -14,11 +14,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(name = "해파리", rank = Rank.A, species = Species.ANIMAL, explain = {
-		"플레이어를 근접 공격하면 대상을 $[DurationConfig]초간 기절시켜 움직이지 못하게 합니다."
+		"플레이어를 근접 공격하면 대상을 $[DURATION_CONFIG]초간 기절시켜 움직이지 못하게 합니다."
 })
 public class JellyFish extends AbilityBase {
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(JellyFish.class, "duration", 2,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(JellyFish.class, "duration", 2,
 			"# 지속 시간 (틱 단위)") {
 
 		@Override
@@ -37,7 +37,7 @@ public class JellyFish extends AbilityBase {
 		super(participant);
 	}
 
-	private final int stunDuration = DurationConfig.getValue();
+	private final int stunDuration = DURATION_CONFIG.getValue();
 
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {

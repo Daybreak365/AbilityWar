@@ -48,7 +48,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.ZERO, crowdControl = Level.FIVE, mobility = Level.FOUR, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Ares extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Ares.class, "damage-percent", 40,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Ares.class, "damage-percent", 40,
 			"# 스킬 대미지 (단위: 백분율)",
 			"# 10으로 설정한 경우 대상의 최대 체력 10% 만큼의 대미지를 줍니다.") {
 
@@ -118,13 +118,13 @@ public class Ares extends AbilityBase implements ActiveHandler {
 			getPlayer().setVelocity(getPlayer().getVelocity().add(getPlayer().getLocation().getDirection().multiply(0.25).setY(((count / 20.0) - .5) * .45)));
 			for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
 				if (!attacked.contains(livingEntity)) {
-					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue(), getPlayer());
+					livingEntity.damage((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DAMAGE_CONFIG.getValue(), getPlayer());
 					attacked.add(livingEntity);
 					SoundLib.BLOCK_ANVIL_LAND.playSound(getPlayer(), 0.5f, 1);
 					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
 				} else if (count % 2 == 0) {
 					livingEntity.setNoDamageTicks(0);
-					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DamageConfig.getValue()) / 9, getPlayer());
+					livingEntity.damage(((livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 100) * DAMAGE_CONFIG.getValue()) / 9, getPlayer());
 					ParticleLib.SWEEP_ATTACK.spawnParticle(livingEntity.getEyeLocation(), 0, 0, 0, 1);
 				}
 				livingEntity.setVelocity(getPlayer().getLocation().toVector().subtract(livingEntity.getLocation().toVector()).multiply((getPlayer().getLocation().distanceSquared(livingEntity.getLocation()) / 36) * 0.75));

@@ -44,13 +44,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "영혼 잠식", rank = Rank.S, species = Species.GOD, explain = {
-		"철괴를 우클릭하면 마지막으로 타격했던 플레이어가 $[DistanceConfig]칸 이내에 있는 경우에 한하여",
+		"철괴를 우클릭하면 마지막으로 타격했던 플레이어가 $[DISTANCE_CONFIG]칸 이내에 있는 경우에 한하여",
 		"3초간 대상의 영혼에 잠식하여 타게팅할 수 없는 상태로 변합니다. $[COOLDOWN_CONFIG]",
 		"영혼 잠식이 끝나면 영혼에서 빠져나오며 바라보는 방향으로 짧게 돌진하고",
 		"대상에게 대미지를 줍니다. 대상의 체력이 적을수록 더욱 큰 피해를 입히며,",
 		"잠식 도중 웅크리면 즉시 빠져나올 수 있습니다. 영혼에서 빠져나오며 입힌 피해로",
 		"대상을 죽일 경우 잃은 체력의 절반을 회복하고 능력 쿨타임이 즉시 초기화되며,",
-		"주변 $[DistanceConfig]칸 이내의 가장 가까운 플레이어가 자동으로 대상으로 설정되고",
+		"주변 $[DISTANCE_CONFIG]칸 이내의 가장 가까운 플레이어가 자동으로 대상으로 설정되고",
 		"다음 스킬이 강화됩니다."
 })
 public class SoulEncroach extends AbilityBase implements ActiveHandler {

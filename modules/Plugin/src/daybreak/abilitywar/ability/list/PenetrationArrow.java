@@ -52,7 +52,7 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "관통화살", rank = Rank.S, species = Species.OTHERS, explain = {
 		"활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다.",
-		"투사체에는 특수한 능력이 있으며, 활을 §e$[BulletConfig]번 §f쏠 때마다 능력이 변경됩니다.",
+		"투사체에는 특수한 능력이 있으며, 활을 §e$[BULLET_CONFIG]번 §f쏠 때마다 능력이 변경됩니다.",
 		"능력을 변경할 때 3초의 재장전 시간이 소요됩니다.",
 		"§c절단§f: 투사체를 맞은 대상에게 추가 대미지를 입힙니다.",
 		"§5중력§f: 투사체를 맞은 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
@@ -60,7 +60,7 @@ import java.util.function.Predicate;
 })
 public class PenetrationArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> BulletConfig = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "arrow-count", 3,
+	public static final SettingObject<Integer> BULLET_CONFIG = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "arrow-count", 3,
 			"# 능력 당 화살 개수") {
 
 		@Override
@@ -78,7 +78,7 @@ public class PenetrationArrow extends AbilityBase {
 	private static final RGB PURPLE = new RGB(138, 9, 173);
 	private static final RGB YELLOW = new RGB(255, 246, 122);
 
-	private final int bulletCount = BulletConfig.getValue();
+	private final int bulletCount = BULLET_CONFIG.getValue();
 
 	private static final Sphere sphere = Sphere.of(4, 10);
 	private final Random random = new Random();

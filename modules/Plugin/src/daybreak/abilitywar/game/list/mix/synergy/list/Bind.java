@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "결박", rank = Rank.B, species = Species.HUMAN, explain = {
 		"주위 15칸 안에 있는 생명체를 원거리에서 철괴 우클릭으로 타게팅해",
 		"세 겹의 유리막 속에 가둡니다. $[COOLDOWN_CONFIG]",
-		"10초마다 §e강도 스택§f이 1씩 오르며, 최대 $[MaxSolidityConfig] 스택을 모을 수 있습니다.",
+		"10초마다 §e강도 스택§f이 1씩 오르며, 최대 $[MAX_SOLIDITY_CONFIG] 스택을 모을 수 있습니다.",
 		"§e강도 스택§f은 능력을 사용하면 초기화됩니다."
 })
 public class Bind extends Synergy implements ActiveHandler {
@@ -53,7 +53,7 @@ public class Bind extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> SizeConfig = synergySettings.new SettingObject<Integer>(Bind.class, "size", 6, "# 유리 구의 크기") {
+	public static final SettingObject<Integer> SIZE_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "size", 6, "# 유리 구의 크기") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -62,7 +62,7 @@ public class Bind extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> MaxSolidityConfig = synergySettings.new SettingObject<Integer>(Bind.class, "max-solidity", 4, "# 최대 강도") {
+	public static final SettingObject<Integer> MAX_SOLIDITY_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "max-solidity", 4, "# 최대 강도") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -79,7 +79,7 @@ public class Bind extends Synergy implements ActiveHandler {
 	};
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
-	private final int maxSolidity = MaxSolidityConfig.getValue();
+	private final int maxSolidity = MAX_SOLIDITY_CONFIG.getValue();
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 	private final Map<Block, Integer> blocks = new HashMap<>();
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
@@ -124,7 +124,7 @@ public class Bind extends Synergy implements ActiveHandler {
 			LivingEntity entity = LocationUtil.getEntityLookingAt(LivingEntity.class, getPlayer(), 15, predicate);
 			if (entity != null) {
 				if (!cooldownTimer.isCooldown()) {
-					final int size = SizeConfig.getValue();
+					final int size = SIZE_CONFIG.getValue();
 					for (int i = 0; i < 3; i++) {
 						for (Block block : LocationUtil.getBlocks3D(entity.getLocation(), size - i, true, true)) {
 							if (!BlockX.isIndestructible(block.getType())) {

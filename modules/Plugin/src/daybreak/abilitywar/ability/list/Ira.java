@@ -14,7 +14,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 @AbilityManifest(name = "이라", rank = Rank.A, species = Species.HUMAN, explain = {
-		"다른 생명체에게 $[AttackConfig]번 공격을 당할 때마다 상대방의 위치에 폭발을 일으킵니다.",
+		"다른 생명체에게 $[ATTACK_CONFIG]번 공격을 당할 때마다 상대방의 위치에 폭발을 일으킵니다.",
 		"자기 자신도 폭발 대미지를 입습니다."
 })
 public class Ira extends AbilityBase {

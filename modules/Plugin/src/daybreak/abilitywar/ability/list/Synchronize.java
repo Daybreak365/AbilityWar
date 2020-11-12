@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "동기화", rank = Rank.S, species = Species.OTHERS, explain = {
-		"철괴를 우클릭하면 높이 상관 없이 10칸 이내에 있는 모든 플레이어의",
+		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 높이 상관 없이 10칸 이내에 있는 모든 플레이어의",
 		"체력을 평균값으로 서서히 맞춥니다. $[COOLDOWN_CONFIG]"
 })
 public class Synchronize extends AbilityBase implements ActiveHandler {

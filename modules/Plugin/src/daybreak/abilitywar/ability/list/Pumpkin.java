@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "호박", rank = Rank.C, species = Species.OTHERS, explain = {
-		"철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 $[DurationConfig]초간",
+		"철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 $[DURATION_CONFIG]초간",
 		"귀속 저주가 걸린 호박을 씌웁니다. $[COOLDOWN_CONFIG]",
 		"§5♪ §f호박 같은 네 얼굴 §5♪"
 })
@@ -56,7 +56,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "duration", 15,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Pumpkin.class, "duration", 15,
 			"# 지속 시간") {
 
 		@Override
@@ -150,7 +150,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 	private Map<Player, ItemStack> players;
 
-	private final Duration durationTimer = new Duration(DurationConfig.getValue(), cooldownTimer) {
+	private final Duration durationTimer = new Duration(DURATION_CONFIG.getValue(), cooldownTimer) {
 
 		@Override
 		public void onDurationStart() {

@@ -45,8 +45,8 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "유명 인사", rank = Rank.C, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
-		"능력 사용 중 레드 카펫 위에 있으면 주변 $[DistanceConfig]칸 이내의 모든 생명체가",
-		"자신을 바라보며, 깔린 레드 카펫은 $[DurationConfig]초 후 사라집니다."
+		"능력 사용 중 레드 카펫 위에 있으면 주변 $[DISTANCE_CONFIG]칸 이내의 모든 생명체가",
+		"자신을 바라보며, 깔린 레드 카펫은 $[DURATION_CONFIG]초 후 사라집니다."
 })
 @Tips(tip = {
 		"주위 사람들의 관심을 끌기 딱 좋은 능력입니다.",
@@ -81,7 +81,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> DistanceConfig = abilitySettings.new SettingObject<Double>(Celebrity.class, "distance", 10.0,
+	public static final SettingObject<Double> DISTANCE_CONFIG = abilitySettings.new SettingObject<Double>(Celebrity.class, "distance", 10.0,
 			"# 능력 거리") {
 
 		@Override
@@ -91,7 +91,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Celebrity.class, "duration", 5,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "duration", 5,
 			"# 쿨타임") {
 
 		@Override
@@ -127,10 +127,10 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private final double distance = DistanceConfig.getValue();
+	private final double distance = DISTANCE_CONFIG.getValue();
 	private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final Duration skillTimer = new Duration(DurationConfig.getValue() * 20, cooldownTimer) {
+	private final Duration skillTimer = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {
 			final World world = getPlayer().getWorld();

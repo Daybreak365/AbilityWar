@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "컬스", rank = Rank.A, species = Species.OTHERS, explain = {
-		"주위 13칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타게팅해 $[DurationConfig]초간",
+		"주위 13칸 안에 있는 상대를 원거리에서 철괴 우클릭으로 타게팅해 $[DURATION_CONFIG]초간",
 		"지속되는 저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
 		"대미지의 일부가 상대에게 전이됩니다. $[COOLDOWN_CONFIG]",
 		"대상의 체력이 적을수록 더욱 큰 대미지를 입힐 수 있습니다."
@@ -78,7 +78,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DurationConfig = abilitySettings.new SettingObject<Integer>(Curse.class, "duration", 10,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Curse.class, "duration", 10,
 			"# 지속시간") {
 
 		@Override
@@ -129,7 +129,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		}
 		return false;
 	}
-	private final Duration skill = new Duration(DurationConfig.getValue() * 10, cooldownTimer) {
+	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 10, cooldownTimer) {
 		private int particle;
 
 		@Override
