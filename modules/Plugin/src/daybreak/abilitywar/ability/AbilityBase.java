@@ -241,7 +241,7 @@ public abstract class AbilityBase {
 		void onEvent(final T event);
 	}
 
-	/**
+	/*
 	protected <E extends Entity> void subscribeTarget(final Class<E> entityType, final Function<? super E, Boolean> function) {
 		final EventObserver observer = new EventObserver(PlayerInteractAtEntityEvent.class, 5) {
 			@Override

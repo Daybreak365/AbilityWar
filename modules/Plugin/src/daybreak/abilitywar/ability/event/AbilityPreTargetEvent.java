@@ -1,8 +1,21 @@
 package daybreak.abilitywar.ability.event;
 
-/*public class AbilityPreTargetEvent extends AbilityEvent implements Cancellable {
+import daybreak.abilitywar.ability.AbilityBase;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
+
+class AbilityPreTargetEvent extends AbilityEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
+	private final @NotNull EquipmentSlot hand;
+	private boolean cancelled = false;
+
+	public AbilityPreTargetEvent(@NotNull AbilityBase ability, @NotNull EquipmentSlot hand) {
+		super(ability);
+		this.hand = hand;
+	}
 
 	public static HandlerList getHandlerList() {
 		return handlers;
@@ -11,14 +24,6 @@ package daybreak.abilitywar.ability.event;
 	@Override
 	public @NotNull HandlerList getHandlers() {
 		return handlers;
-	}
-
-	private boolean cancelled = false;
-	private final @NotNull EquipmentSlot hand;
-
-	public AbilityPreTargetEvent(@NotNull AbilityBase ability, @NotNull EquipmentSlot hand) {
-		super(ability);
-		this.hand = hand;
 	}
 
 	@Override
@@ -34,4 +39,4 @@ package daybreak.abilitywar.ability.event;
 	public @NotNull EquipmentSlot getHand() {
 		return hand;
 	}
-}*/
+}

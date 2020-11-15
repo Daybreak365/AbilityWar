@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.module;
 
 import com.google.common.collect.ImmutableSet;
+import daybreak.abilitywar.utils.base.minecraft.inventory.Inventories;
 import daybreak.abilitywar.utils.library.item.ItemLib;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,10 +63,10 @@ public final class InfiniteDurability implements ListenerModule {
 		if (e.getEntity() instanceof Player) {
 			final PlayerInventory playerInventory = ((Player) e.getEntity()).getInventory();
 			for (final EquipmentSlot armourSlot : ARMOUR_SLOTS) {
-				final ItemStack stack = playerInventory.getItem(armourSlot);
+				final ItemStack stack = Inventories.getItem(playerInventory, armourSlot);
 				if (stack != null && hasDurability.contains(stack.getType())) {
 					ItemLib.setDurability(stack, (short) 0);
-					playerInventory.setItem(armourSlot, stack);
+					Inventories.setItem(playerInventory, armourSlot, stack);
 				}
 			}
 		}

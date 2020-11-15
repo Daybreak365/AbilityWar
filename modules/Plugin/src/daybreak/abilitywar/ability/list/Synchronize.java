@@ -54,11 +54,6 @@ public class Synchronize extends AbilityBase implements ActiveHandler {
 			return value >= 0;
 		}
 
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-
 	};
 
 	private static final RGB RED = RGB.of(254, 69, 69), BLUE = RGB.of(69, 122, 254);
