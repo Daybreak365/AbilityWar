@@ -8,4 +8,4 @@
 ## 조건
 ℹ️ 플러그인의 원 저작자는 수정된 플러그인에 대한 어떠한 법적 책임도 지지 않습니다.<br>
 ℹ️ 원 저작자의 이름과 소스의 출처를 반드시 명시하여야 합니다.<br>
-ℹ️ [동일한 라이선스](https://github.com/DayBreak365/AbilityWar/edit/master/LICENSE.md)가 적용되여야 합니다.<br>
+ℹ️ [동일한 라이선스](https://github.com/DayBreak365/AbilityWar/blob/master/LICENSE.md)가 적용되여야 합니다.<br>
