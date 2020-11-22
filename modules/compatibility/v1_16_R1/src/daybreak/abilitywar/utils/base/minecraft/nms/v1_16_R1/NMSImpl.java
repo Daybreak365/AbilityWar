@@ -1,10 +1,14 @@
 package daybreak.abilitywar.utils.base.minecraft.nms.v1_16_R1;
 
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
+import net.minecraft.server.v1_16_R1.AxisAlignedBB;
 import net.minecraft.server.v1_16_R1.DataWatcherObject;
 import net.minecraft.server.v1_16_R1.DataWatcherRegistry;
+import net.minecraft.server.v1_16_R1.EnumHand;
 import net.minecraft.server.v1_16_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_16_R1.ItemCooldown;
 import net.minecraft.server.v1_16_R1.ItemCooldown.Info;
@@ -163,6 +167,19 @@ public class NMSImpl implements INMS {
 	@Override
 	public void clearActiveItem(LivingEntity livingEntity) {
 		((CraftLivingEntity) livingEntity).getHandle().clearActiveItem();
+	}
+
+	@Override
+	public void swingHand(LivingEntity livingEntity, Hand hand) {
+		((CraftLivingEntity) livingEntity).getHandle().swingHand(hand == Hand.MAIN_HAND ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND, true);
+	}
+
+	@Override
+	public EntityBoundingBox getBoundingBox(Entity entity) {
+		final net.minecraft.server.v1_16_R1.Entity nmsEntity = ((CraftEntity) entity).getHandle();
+		final AxisAlignedBB boundingBox = nmsEntity.getBoundingBox();
+		final double locX = nmsEntity.locX(), locY = nmsEntity.locY(), locZ = nmsEntity.locZ();
+		return new EntityBoundingBox(entity, boundingBox.minX - locX, boundingBox.minY - locY, boundingBox.minZ - locZ, boundingBox.maxX - locX, boundingBox.maxY - locY, boundingBox.maxZ - locZ);
 	}
 
 }

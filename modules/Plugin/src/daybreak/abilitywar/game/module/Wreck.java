@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.module;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.GameManager;
 
 @ModuleBase(Wreck.class)
 public class Wreck implements Module {
@@ -16,8 +17,8 @@ public class Wreck implements Module {
 	}
 
 	public static double calculateDecreasedAmount(final int maxDecrease) {
-		if (maxDecrease < 0 || maxDecrease > 100)
-			throw new IllegalArgumentException("maxDecrease must be between 0 ~ 100: (value = " + maxDecrease + ")");
+		if (maxDecrease < 0 || maxDecrease > 100) throw new IllegalArgumentException("maxDecrease must be between 0 ~ 100: (value = " + maxDecrease + ")");
+		if (!isEnabled(GameManager.getGame())) return 1;
 		final CooldownDecrease cooldownDecrease = Settings.getCooldownDecrease();
 		if (cooldownDecrease == CooldownDecrease._100) return 0.0;
 		return Math.max(100 - maxDecrease, 100 - cooldownDecrease.getPercentage()) / 100.0;

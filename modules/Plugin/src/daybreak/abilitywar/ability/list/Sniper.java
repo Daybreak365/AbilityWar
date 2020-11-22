@@ -166,8 +166,8 @@ public class Sniper extends AbilityBase {
 		protected void run(int i) {
 			final Location newLocation = lastLocation.clone().add(forward);
 			for (Iterator<Location> iterator = new Iterator<Location>() {
-				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
-				private final int amount = (int) (vectorBetween.length() / 0.1);
+				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.35);
+				private final int amount = (int) (vectorBetween.length() / .35);
 				private int cursor = 0;
 
 				@Override
@@ -186,6 +186,11 @@ public class Sniper extends AbilityBase {
 				entity.setLocation(location);
 				final Block block = location.getBlock();
 				final Material type = block.getType();
+				final double y = location.getY();
+				if (y < 0 || y > 256 || !location.getChunk().isLoaded()) {
+					stop(false);
+					return;
+				}
 				if (type.isSolid()) {
 					if (ItemLib.STAINED_GLASS.compareType(type) || Material.GLASS == type || ItemLib.STAINED_GLASS_PANE.compareType(type) || type == GLASS_PANE) {
 						block.breakNaturally();

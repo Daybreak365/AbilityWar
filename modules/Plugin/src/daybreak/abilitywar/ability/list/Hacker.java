@@ -20,7 +20,6 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.math.VectorUtil.Vectors;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -105,8 +104,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 	private static final RGB PURPLE = RGB.of(113, 43, 204);
 
 	private final int amount = 25;
-	private final Vectors top = Circle.of(1, amount);
-	private final Vectors bottom = Circle.of(1, amount);
+	private final Circle top = Circle.of(1, amount), bottom = Circle.of(1, amount);
 	private final AbilityTimer particleShow = new AbilityTimer(stunDuration * 20) {
 
 		private double y;

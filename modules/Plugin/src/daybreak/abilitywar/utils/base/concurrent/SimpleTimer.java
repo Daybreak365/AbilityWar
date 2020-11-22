@@ -101,9 +101,11 @@ public class SimpleTimer {
 
 	public boolean stop(final boolean silent) {
 		if (isRunning() || isPaused()) {
-			bukkitTask.cancel();
 			this.task = null;
-			this.bukkitTask = null;
+			if (bukkitTask != null) {
+				bukkitTask.cancel();
+				this.bukkitTask = null;
+			}
 			if (silent) {
 				if (observers != null) {
 					for (final Observer observer : observers) {

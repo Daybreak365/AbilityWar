@@ -1,4 +1,4 @@
-package daybreak.abilitywar.utils.base;
+package daybreak.abilitywar.utils.base.random;
 
 import org.jetbrains.annotations.NotNull;
 

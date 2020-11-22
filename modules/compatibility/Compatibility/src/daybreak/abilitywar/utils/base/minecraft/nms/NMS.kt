@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms
 
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException
 import org.bukkit.Location
@@ -127,6 +128,16 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun clearActiveItem(livingEntity: LivingEntity) {
 			INSTANCE.clearActiveItem(livingEntity)
+		}
+
+		@JvmStatic
+		override fun swingHand(livingEntity: LivingEntity, hand: Hand) {
+			INSTANCE.swingHand(livingEntity, hand)
+		}
+
+		@JvmStatic
+		override fun getBoundingBox(entity: Entity): EntityBoundingBox {
+			return INSTANCE.getBoundingBox(entity)
 		}
 	}
 }

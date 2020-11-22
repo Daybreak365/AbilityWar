@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "마술사", rank = Rank.A, species = Species.HUMAN, explain = {
@@ -72,7 +73,7 @@ public class Magician extends AbilityBase {
 				if (!cooldownTimer.isCooldown()) {
 					SoundLib.ENTITY_EXPERIENCE_ORB_PICKUP.playSound(getPlayer());
 					final Location center = e.getEntity().getLocation();
-					final HashMap<Damageable, Location> locationMap = new HashMap<>();
+					final Map<Damageable, Location> locationMap = new HashMap<>();
 					final List<Damageable> damageables = LocationUtil.getNearbyEntities(Damageable.class, center, 5, 5, ONLY_PARTICIPANTS);
 					for (Damageable damageable : damageables) {
 						locationMap.put(damageable, damageable.getLocation());
@@ -87,16 +88,15 @@ public class Magician extends AbilityBase {
 					}
 
 					Collections.shuffle(damageables);
-					ArrayList<Damageable> keySet = new ArrayList<>(locationMap.keySet());
+					final List<Damageable> keySet = new ArrayList<>(locationMap.keySet());
 					for (int i = 0; i < damageables.size(); i++) {
 						damageables.get(i).teleport(locationMap.get(keySet.get(i)));
 					}
 
-					for (Location l : circle.toLocations(center).floor(center.getY())) {
-						ParticleLib.SPELL_WITCH.spawnParticle(l);
+					for (Location loc : circle.toLocations(center).floor(center.getY())) {
+						ParticleLib.SPELL_WITCH.spawnParticle(loc);
 					}
 					ParticleLib.CLOUD.spawnParticle(center, 5, 5, 5, 50);
-
 					cooldownTimer.start();
 				}
 			}

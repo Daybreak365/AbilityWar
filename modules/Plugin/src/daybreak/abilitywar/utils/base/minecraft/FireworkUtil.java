@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft;
 
-import daybreak.abilitywar.utils.base.Random;
+import daybreak.abilitywar.utils.base.random.Random;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;

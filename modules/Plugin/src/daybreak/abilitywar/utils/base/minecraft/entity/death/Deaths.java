@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft.entity.death;
 
 import com.google.common.collect.ImmutableMap;
-import daybreak.abilitywar.utils.base.Random;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.library.Entities;

@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.interfaces;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.GameWinEvent;
+import daybreak.abilitywar.game.event.GameWinEvent.PlayerWinner;
 import daybreak.abilitywar.game.event.GameWinEvent.Winner;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
@@ -26,11 +27,9 @@ public interface Winnable extends IGame {
 		Messager.clearChat();
 		StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", " + ChatColor.LIGHT_PURPLE, ChatColor.LIGHT_PURPLE.toString(), ChatColor.WHITE + ".");
 		final List<Player> winnerList = new ArrayList<>(winners.length);
-		final List<String> winnerNames = new ArrayList<>(winners.length);
 		for (Participant participant : winners) {
 			final Player player = participant.getPlayer();
 			winnerList.add(player);
-			winnerNames.add(player.getName());
 			joiner.add(player.getName());
 			SoundLib.UI_TOAST_CHALLENGE_COMPLETE.playSound(player);
 			new SimpleTimer(TaskType.REVERSE, 8) {
@@ -42,7 +41,7 @@ public interface Winnable extends IGame {
 		}
 		Bukkit.broadcastMessage("§5§l우승자§f: " + joiner.toString());
 		stop();
-		Bukkit.getPluginManager().callEvent(new GameWinEvent((AbstractGame) this, new Winner(winnerList, winnerNames)));
+		Bukkit.getPluginManager().callEvent(new GameWinEvent((AbstractGame) this, new PlayerWinner(winnerList)));
 	}
 
 	default void Win(String... winners) {
@@ -54,7 +53,7 @@ public interface Winnable extends IGame {
 		}
 		Bukkit.broadcastMessage("§5§l우승자§f: " + joiner.toString());
 		stop();
-		Bukkit.getPluginManager().callEvent(new GameWinEvent((AbstractGame) this, new Winner(null, Arrays.asList(winners))));
+		Bukkit.getPluginManager().callEvent(new GameWinEvent((AbstractGame) this, new Winner(Arrays.asList(winners))));
 	}
 
 }

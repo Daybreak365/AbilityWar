@@ -239,7 +239,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 				} catch (IllegalArgumentException ignored) {
 				}
 			}
-			if (count % 2 == 0) {
+			if (count % 6 == 0) {
 				final Location baseLocation = headLocation.clone().subtract(0, 1.4, 0);
 				final float yaw = lastVictim.getLocation().getYaw();
 				for (Location loc : PARTICLES_WHITE_LAYER.rotateAroundAxisY(-yaw).toLocations(baseLocation)) {

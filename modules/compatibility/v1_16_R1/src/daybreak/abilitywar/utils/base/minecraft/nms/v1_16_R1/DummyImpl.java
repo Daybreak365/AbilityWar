@@ -124,6 +124,7 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 	@Override
 	public void remove() {
 		die();
+		((WorldServer) getWorld()).removeEntity(this);
 		if (!hologram.isUnregistered()) {
 			hologram.unregister();
 		}

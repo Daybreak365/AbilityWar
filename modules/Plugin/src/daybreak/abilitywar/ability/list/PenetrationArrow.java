@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability.list;
 
+import com.google.common.base.Strings;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -11,6 +12,7 @@ import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -20,6 +22,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -44,53 +47,46 @@ import org.bukkit.util.Vector;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "관통화살", rank = Rank.S, species = Species.OTHERS, explain = {
-		"활을 쏠 때 벽과 생명체를 통과하는 특수한 투사체를 쏩니다.",
-		"투사체에는 특수한 능력이 있으며, 활을 §e$[BULLET_CONFIG]번 §f쏠 때마다 능력이 변경됩니다.",
-		"능력을 변경할 때 3초의 재장전 시간이 소요됩니다.",
-		"§c절단§f: 투사체를 맞은 대상에게 추가 대미지를 입힙니다.",
-		"§5중력§f: 투사체를 맞은 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
-		"§e풍월§f: 투사체를 맞은 대상을 멀리 날려보냅니다."
+		"활을 쏘면 벽과 생명체를 통과하며 특수한 능력이 있는 발사체를 쏩니다.",
+		"탄창에는 $[BULLET_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 3초간 재장전하며,",
+		"임의의 능력을 가진 탄약으로 탄창이 다시 채워집니다.",
+		"§c절단§f: 대상에게 추가 근접 대미지를 입힙니다.",
+		"§5중력§f: 대상을 0.5초간 기절시키고, 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
+		"§e풍월§f: 대상을 멀리 밀쳐냅니다."
 })
 public class PenetrationArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> BULLET_CONFIG = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "arrow-count", 3,
+	public static final SettingObject<Integer> BULLET_CONFIG = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "arrow-count", 4,
 			"# 능력 당 화살 개수") {
 
 		@Override
 		public boolean condition(Integer value) {
-			return value >= 1 && value <= 100 && value % 2 != 0;
+			return value >= 1;
 		}
 
 	};
-
-	public PenetrationArrow(AbstractGame.Participant participant) {
-		super(participant);
-	}
-
 	private static final RGB RED = new RGB(219, 64, 66);
 	private static final RGB PURPLE = new RGB(138, 9, 173);
 	private static final RGB YELLOW = new RGB(255, 246, 122);
-
-	private final int bulletCount = BULLET_CONFIG.getValue();
-
 	private static final Sphere sphere = Sphere.of(4, 10);
+	private static final double GRAVITATIONAL_CONSTANT = 3;
 	private final Random random = new Random();
 	private final List<ArrowType> arrowTypes = Arrays.asList(
-			new ArrowType(ChatColor.RED + "절단") {
+			new ArrowType(ChatColor.RED, "절단") {
 				@Override
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
 					new Parabola(getPlayer(), OnHitBehavior.CUT, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getPitch(), powerLevel, RED).start();
 				}
 			},
-			new ArrowType(ChatColor.DARK_PURPLE + "중력") {
+			new ArrowType(ChatColor.DARK_PURPLE, "중력") {
 				@Override
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
@@ -98,7 +94,7 @@ public class PenetrationArrow extends AbilityBase {
 					new Parabola(getPlayer(), OnHitBehavior.GRAVITY, arrow.getLocation(), arrow.getVelocity(), getPlayer().getLocation().getPitch(), powerLevel, PURPLE).start();
 				}
 			},
-			new ArrowType(ChatColor.YELLOW + "풍월") {
+			new ArrowType(ChatColor.YELLOW, "풍월") {
 				@Override
 				protected void launchArrow(Arrow arrow, int powerLevel) {
 					SoundLib.ENTITY_ARROW_SHOOT.playSound(getPlayer());
@@ -108,69 +104,98 @@ public class PenetrationArrow extends AbilityBase {
 			}
 	);
 
-	private ArrowType arrowType = arrowTypes.get(0);
-	private int arrowBullet = bulletCount;
-	private AbilityTimer reload = null;
+	private class Ammo {
+
+		private final int ammoSize = BULLET_CONFIG.getValue();
+		private final LinkedList<ArrowType> ammo = new LinkedList<>();
+
+		private Ammo() {
+			reload();
+		}
+
+		private void reload() {
+			ammo.clear();
+			for (int i = 0; i < ammoSize; i++) {
+				ammo.add(random.pick(arrowTypes));
+			}
+		}
+
+		private ArrowType poll() {
+			return ammo.poll();
+		}
+
+		private boolean hasAmmo() {
+			return !ammo.isEmpty();
+		}
+
+		@Override
+		public String toString() {
+			final StringBuilder builder = new StringBuilder();
+			for (ArrowType type : ammo) {
+				builder.append(type.color).append("▐");
+			}
+			builder.append(ChatColor.GRAY.toString()).append(Strings.repeat("▐", ammoSize - ammo.size()));
+			return builder.toString();
+		}
+	}
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
+	private final Ammo ammo = new Ammo();
+	private AbilityTimer reload = null;
+
+	public PenetrationArrow(AbstractGame.Participant participant) {
+		super(participant);
+	}
 
 	@Override
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
-			actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
+			actionbarChannel.update(ammo.toString());
 		}
 	}
-
-	private abstract static class ArrowType {
-
-		private final String name;
-
-		private ArrowType(String name) {
-			this.name = name;
-		}
-
-		protected abstract void launchArrow(Arrow arrow, int powerEnchant);
-
-	}
-
-	private static final double GRAVITATIONAL_CONSTANT = 3;
 
 	@SubscribeEvent(ignoreCancelled = true)
 	private void onProjectileLaunch(EntityShootBowEvent e) {
 		if (getPlayer().equals(e.getEntity()) && e.getProjectile() instanceof Arrow) {
 			e.setCancelled(true);
 			if (reload == null) {
+				if (!ammo.hasAmmo()) {
+					startReload();
+					return;
+				}
 				if (!getPlayer().getGameMode().equals(GameMode.CREATIVE) && (!e.getBow().hasItemMeta() || !e.getBow().getItemMeta().hasEnchant(Enchantment.ARROW_INFINITE))) {
 					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
 				}
-				arrowType.launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
-				arrowBullet--;
-				actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
-				if (arrowBullet <= 0) {
-					final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(70) * 15.0) : 15;
-					this.reload = new AbilityTimer(reloadCount) {
-						private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
-
-						@Override
-						protected void run(int count) {
-							progressBar.step();
-							actionbarChannel.update("재장전: " + progressBar.toString());
-						}
-
-						@Override
-						protected void onEnd() {
-							arrowType = arrowTypes.get(random.nextInt(arrowTypes.size()));
-							arrowBullet = bulletCount;
-							PenetrationArrow.this.reload = null;
-							actionbarChannel.update("§f능력: " + arrowType.name + "   §f화살: §e" + arrowBullet + "§f개");
-						}
-					}.setPeriod(TimeUnit.TICKS, 4).setBehavior(RestrictionBehavior.PAUSE_RESUME);
-					reload.start();
+				ammo.poll().launchArrow((Arrow) e.getProjectile(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE));
+				actionbarChannel.update(ammo.toString());
+				if (!ammo.hasAmmo()) {
+					startReload();
 				}
 			} else {
 				getPlayer().sendMessage("§b재장전 §f중입니다.");
 			}
 		}
+	}
+
+	private void startReload() {
+		final int reloadCount = Wreck.isEnabled(GameManager.getGame()) ? (int) (Wreck.calculateDecreasedAmount(70) * 15.0) : 15;
+		this.reload = new AbilityTimer(reloadCount) {
+			private final ProgressBar progressBar = new ProgressBar(reloadCount, 15);
+
+			@Override
+			protected void run(int count) {
+				progressBar.step();
+				actionbarChannel.update("재장전: " + progressBar.toString());
+			}
+
+			@Override
+			protected void onEnd() {
+				ammo.reload();
+				PenetrationArrow.this.reload = null;
+				actionbarChannel.update(ammo.toString());
+			}
+		}.setPeriod(TimeUnit.TICKS, 4).setBehavior(RestrictionBehavior.PAUSE_RESUME);
+		reload.start();
 	}
 
 	public interface OnHitBehavior {
@@ -211,6 +236,10 @@ public class PenetrationArrow extends AbilityBase {
 				})) {
 					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
 				}
+				final Participant participant = ability.getGame().getParticipant(victim.getUniqueId());
+				if (participant != null) {
+					Stun.apply(participant, TimeUnit.TICKS, 10);
+				}
 			}
 		};
 		OnHitBehavior WIND = new OnHitBehavior() {
@@ -227,6 +256,20 @@ public class PenetrationArrow extends AbilityBase {
 		void onHit(PenetrationArrow ability, Damageable damager, Damageable victim);
 	}
 
+	private abstract static class ArrowType {
+
+		private final ChatColor color;
+		private final String name;
+
+		private ArrowType(ChatColor color, String name) {
+			this.color = color;
+			this.name = color.toString() + name;
+		}
+
+		protected abstract void launchArrow(Arrow arrow, int powerEnchant);
+
+	}
+
 	public class Parabola extends AbilityTimer {
 
 		private final LivingEntity shooter;
@@ -238,7 +281,9 @@ public class PenetrationArrow extends AbilityBase {
 		private final Predicate<Entity> predicate;
 
 		private final ParticleLib.RGB color;
-
+		private final Set<Damageable> attacked = new HashSet<>();
+		private Location lastLocation;
+		private double time;
 		private Parabola(LivingEntity shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, int powerEnchant, ParticleLib.RGB color) {
 			super(300);
 			setPeriod(TimeUnit.TICKS, 1);
@@ -274,18 +319,14 @@ public class PenetrationArrow extends AbilityBase {
 			};
 		}
 
-		private Location lastLocation;
-		private double time;
-		private final Set<Damageable> attacked = new HashSet<>();
-
 		@Override
 		protected void run(int i) {
 			time += 0.025;
 			double height = -0.5 * GRAVITATIONAL_CONSTANT * (time * time);
 			Location newLocation = lastLocation.clone().add(forward).add(0, height, 0);
 			for (Iterator<Location> iterator = new Iterator<Location>() {
-				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
-				private final int amount = (int) (vectorBetween.length() / 0.1);
+				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.2);
+				private final int amount = (int) (vectorBetween.length() / 0.2);
 				private int cursor = 0;
 
 				@Override

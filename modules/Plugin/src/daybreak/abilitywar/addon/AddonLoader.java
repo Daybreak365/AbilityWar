@@ -44,7 +44,7 @@ public class AddonLoader {
 			if (!ServerVersion.isAboveOrEqual(description.getMinVersion())) {
 				throw new InvalidAddonException(name + ": 이 서버 버전에서 지원되는 애드온이 아닙니다. (최소 " + description.getMinVersion().name() + ")");
 			}
-			Addon instance = new AddonClassLoader(Addon.class.getClassLoader(), description, file).addon;
+			final Addon instance = new AddonClassLoader(Addon.class.getClassLoader(), description, file).addon;
 			if (checkAddon(name)) {
 				throw new InvalidAddonException(name + ": 중복되는 이름의 애드온이 존재하거나 이미 등록된 애드온입니다.");
 			}
@@ -61,9 +61,12 @@ public class AddonLoader {
 		for (final Addon addon : addons.values()) {
 			try {
 				addon.onEnable();
-			} catch (Exception | ExceptionInInitializerError | NoSuchMethodError | NoSuchFieldError | NoClassDefFoundError e) {
+			} catch (Throwable e) {
 				logger.error(addon.getDescription().getName() + " (" + addon.getClassLoader().getPluginFile().getName() + "): 애드온을 활성화하는 도중 오류가 발생하였습니다");
 				e.printStackTrace();
+				if (e instanceof OutOfMemoryError) {
+					throw e;
+				}
 			}
 		}
 	}
@@ -72,9 +75,12 @@ public class AddonLoader {
 		for (final Addon addon : addons.values()) {
 			try {
 				addon.onDisable();
-			} catch (Exception | ExceptionInInitializerError | NoSuchMethodError | NoSuchFieldError | NoClassDefFoundError e) {
+			} catch (Throwable e) {
 				logger.error(addon.getDescription().getName() + " (" + addon.getClassLoader().getPluginFile().getName() + "): 애드온을 비활성화하는 도중 오류가 발생하였습니다");
 				e.printStackTrace();
+				if (e instanceof OutOfMemoryError) {
+					throw e;
+				}
 			}
 		}
 	}

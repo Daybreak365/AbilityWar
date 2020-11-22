@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms;
 
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -45,5 +46,8 @@ public interface INMS {
 	void fakeCollect(Entity entity, Item item);
 
 	void clearActiveItem(LivingEntity livingEntity);
+	void swingHand(LivingEntity livingEntity, Hand hand);
+
+	EntityBoundingBox getBoundingBox(Entity entity);
 
 }

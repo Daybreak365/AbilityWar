@@ -409,6 +409,10 @@ public abstract class AbilityBase {
 		return restriction;
 	}
 
+	public boolean isDestroyed() {
+		return destroyed;
+	}
+
 	public Set<GameTimer> getTimers() {
 		return Collections.unmodifiableSet(timers);
 	}

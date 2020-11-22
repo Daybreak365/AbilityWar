@@ -1,16 +1,22 @@
 package daybreak.abilitywar.utils.base.minecraft.nms.v1_9_R2;
 
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
+import net.minecraft.server.v1_9_R2.AxisAlignedBB;
 import net.minecraft.server.v1_9_R2.DataWatcherObject;
 import net.minecraft.server.v1_9_R2.DataWatcherRegistry;
 import net.minecraft.server.v1_9_R2.EntityArmorStand;
+import net.minecraft.server.v1_9_R2.EntityLiving;
+import net.minecraft.server.v1_9_R2.EntityTrackerEntry;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent;
 import net.minecraft.server.v1_9_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_9_R2.ItemCooldown;
 import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand;
 import net.minecraft.server.v1_9_R2.PacketPlayInClientCommand.EnumClientCommand;
+import net.minecraft.server.v1_9_R2.PacketPlayOutAnimation;
 import net.minecraft.server.v1_9_R2.PacketPlayOutChat;
 import net.minecraft.server.v1_9_R2.PacketPlayOutCollect;
 import net.minecraft.server.v1_9_R2.PacketPlayOutEntity.PacketPlayOutEntityLook;
@@ -19,6 +25,7 @@ import net.minecraft.server.v1_9_R2.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle;
 import net.minecraft.server.v1_9_R2.PacketPlayOutTitle.EnumTitleAction;
 import net.minecraft.server.v1_9_R2.PlayerConnection;
+import net.minecraft.server.v1_9_R2.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -170,6 +177,24 @@ public class NMSImpl implements INMS {
 	@Override
 	public void clearActiveItem(LivingEntity livingEntity) {
 		((CraftLivingEntity) livingEntity).getHandle().clearActiveItem();
+	}
+
+	@Override
+	public void swingHand(LivingEntity livingEntity, Hand hand) {
+		final EntityLiving nmsEntity = ((CraftLivingEntity) livingEntity).getHandle();
+		final PacketPlayOutAnimation packet = new PacketPlayOutAnimation(nmsEntity, hand == Hand.MAIN_HAND ? 0 : 3);
+		final EntityTrackerEntry entitytrackerentry = ((WorldServer) nmsEntity.getWorld()).getTracker().trackedEntities.get(nmsEntity.getId());
+		if (entitytrackerentry != null) {
+			entitytrackerentry.broadcastIncludingSelf(packet);
+		}
+	}
+
+	@Override
+	public EntityBoundingBox getBoundingBox(Entity entity) {
+		final net.minecraft.server.v1_9_R2.Entity nmsEntity = ((CraftEntity) entity).getHandle();
+		final AxisAlignedBB boundingBox = nmsEntity.getBoundingBox();
+		final double locX = nmsEntity.locX, locY = nmsEntity.locY, locZ = nmsEntity.locZ;
+		return new EntityBoundingBox(entity, boundingBox.a - locX, boundingBox.b - locY, boundingBox.c - locZ, boundingBox.d - locX, boundingBox.e - locY, boundingBox.f - locZ);
 	}
 
 }

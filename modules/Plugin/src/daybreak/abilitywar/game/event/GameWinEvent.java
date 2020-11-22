@@ -1,12 +1,14 @@
 package daybreak.abilitywar.game.event;
 
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.team.interfaces.Members;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameWinEvent extends GameEvent {
 
@@ -35,20 +37,40 @@ public class GameWinEvent extends GameEvent {
 	}
 
 	public static class Winner {
-		private final @Nullable List<Player> winners;
 		private final @NotNull List<String> winnerNames;
 
-		public Winner(final @Nullable List<Player> winners, final @NotNull List<String> winnerNames) {
-			this.winners = winners;
+		public Winner(final @NotNull List<String> winnerNames) {
 			this.winnerNames = winnerNames;
-		}
-
-		public @Nullable List<Player> getWinners() {
-			return winners;
 		}
 
 		public @NotNull List<String> getWinnerNames() {
 			return winnerNames;
+		}
+	}
+
+	public static class PlayerWinner extends Winner {
+		private final @NotNull List<Player> winners;
+
+		public PlayerWinner(final @NotNull List<Player> winners) {
+			super(winners.stream().map(Player::getName).collect(Collectors.toList()));
+			this.winners = winners;
+		}
+
+		public @NotNull List<Player> getWinners() {
+			return winners;
+		}
+	}
+
+	public static class TeamWinner extends Winner {
+		private final @NotNull Members winner;
+
+		public TeamWinner(final @NotNull Members winner) {
+			super(Collections.singletonList(winner.getName()));
+			this.winner = winner;
+		}
+
+		public @NotNull Members getWinner() {
+			return winner;
 		}
 	}
 

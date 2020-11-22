@@ -506,10 +506,14 @@ public class Ferda extends AbilityBase implements ActiveHandler {
 			public boolean test(Entity entity) {
 				if (entity.equals(getPlayer())) return false;
 				if (rooted.containsKey(entity.getUniqueId())) return false;
-				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-					return false;
+				{
+					final Participant participant = getGame().getParticipant(entity.getUniqueId());
+					if (participant == null
+							|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+							|| !participant.attributes().TARGETABLE.getValue()
+							|| participant.getAbility() instanceof Ferda) {
+						return false;
+					}
 				}
 				if (getGame() instanceof Teamable) {
 					final Teamable teamGame = (Teamable) getGame();

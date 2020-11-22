@@ -40,7 +40,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
-public class EntityScareCrow extends EntityPlayer implements ScareCrowEntity {
+public class  EntityScareCrow extends EntityPlayer implements ScareCrowEntity {
 
 	private static GameProfile createProfile(final Player skinOwner) {
 		final GameProfile profile = new GameProfile(UUID.randomUUID(), "§ " + skinOwner.getName());

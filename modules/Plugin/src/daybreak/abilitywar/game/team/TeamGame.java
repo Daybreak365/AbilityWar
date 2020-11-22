@@ -8,6 +8,8 @@ import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.ParticipantStrategy;
+import daybreak.abilitywar.game.event.GameWinEvent;
+import daybreak.abilitywar.game.event.GameWinEvent.TeamWinner;
 import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
 import daybreak.abilitywar.game.team.event.TeamCreatedEvent;
 import daybreak.abilitywar.game.team.event.TeamRemovedEvent;
@@ -435,6 +437,7 @@ public abstract class TeamGame extends Game implements Teamable {
 			}
 			Bukkit.broadcastMessage("§5§l우승자§f: §d" + winTeam + ".");
 			stop();
+			Bukkit.getPluginManager().callEvent(new GameWinEvent((AbstractGame) this, new TeamWinner(winTeam)));
 		}
 
 	}

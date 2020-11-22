@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.list.murdermystery.ability;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
-import daybreak.abilitywar.utils.base.Random;
+import daybreak.abilitywar.utils.base.random.Random;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

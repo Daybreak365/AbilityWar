@@ -202,17 +202,17 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 
 	private class SoundTimer extends AbilityTimer {
 
-		private final Player player;
+		private final Player center;
 
-		private SoundTimer(Player player) {
+		private SoundTimer(Player center) {
 			super(TaskType.NORMAL, NOTES.length);
-			setPeriod(TimeUnit.TICKS, 2);
-			this.player = player;
+			setPeriod(TimeUnit.TICKS, 3);
+			this.center = center;
 		}
 
 		@Override
 		protected void run(int count) {
-			SoundLib.BELL.playInstrument(player, NOTES[count - 1]);
+			SoundLib.BELL.playInstrument(center.getLocation(), .4f, NOTES[count - 1]);
 		}
 
 	}
@@ -223,8 +223,8 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		private final double radius;
 
 		private LunarSkill(double radius) {
-			super(5);
-			setPeriod(TimeUnit.TICKS, 2);
+			super(2);
+			setPeriod(TimeUnit.TICKS, 4);
 			this.baseLocation = getPlayer().getLocation().clone();
 			this.radius = radius;
 		}
@@ -233,9 +233,6 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		protected void onStart() {
 			new SoundTimer(getPlayer()).start();
 			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), radius, radius, predicate)) {
-				if (entity instanceof Player) {
-					new SoundTimer((Player) entity).start();
-				}
 				PotionEffects.SLOW.addPotionEffect(entity, 80, 1, true);
 				if (stackMap.containsKey(entity.getUniqueId())) {
 					Stack stack = stackMap.get(entity.getUniqueId());
@@ -259,10 +256,10 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void run(int count) {
-			final double divided = 6.283185307179586 / 8;
-			for (int i = 1; i <= 8; i++) {
+			final double divided = 6.283185307179586 / 6;
+			for (int i = 1; i <= 6; i++) {
 				final double radians = divided * i;
-				Vector offset = new Vector(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius);
+				final Vector offset = new Vector(FastMath.cos(radians) * radius, 0, FastMath.sin(radians) * radius);
 				for (Location loc : BIG_CRESCENT.clone().rotateAroundAxisZ(90).rotateAroundAxisY(-Math.toDegrees(radians)).toLocations(baseLocation)) {
 					ParticleLib.REDSTONE.spawnParticle(loc.add(offset), MOONLIGHT_COLOUR);
 				}

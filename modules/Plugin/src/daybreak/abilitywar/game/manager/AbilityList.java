@@ -159,6 +159,7 @@ public class AbilityList {
 		registerAbility(Loki.class);
 		registerAbility("daybreak.abilitywar.ability.list.grapplinghook." + ServerVersion.getName() + ".GrapplingHook");
 		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
+		registerAbility(Solar.class);
 	}
 
 	/**

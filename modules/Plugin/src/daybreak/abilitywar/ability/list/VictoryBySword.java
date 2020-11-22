@@ -131,7 +131,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 	@Override
 	public void TargetSkill(Material material, LivingEntity entity) {
 		if (entity instanceof Player && predicate.test(entity) && !cooldownTimer.isCooldown() && ring == null) {
-			this.ring = new Ring(cooldownTimer, 5, (Player) entity);
+			this.ring = new Ring(cooldownTimer, 4, (Player) entity);
 			ring.start();
 		}
 	}
@@ -257,8 +257,10 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				effect.removePotionEffect(getPlayer());
 				effect.removePotionEffect(target);
 			}
-			for (Location loc : locations) {
-				ParticleLib.REDSTONE.spawnParticle(loc, COLOR);
+			if (count % 4 == 0) {
+				for (Location loc : locations) {
+					ParticleLib.REDSTONE.spawnParticle(loc, COLOR);
+				}
 			}
 		}
 
@@ -291,9 +293,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 			target.getInventory().setContents(targetContents);
 			if (restrictCondition != null) {
 				restrictCondition.unregister();
-				if (restrictCondition.getAbility().equals(targetParticipant.getAbility())) {
-					restrictCondition.getAbility().setRestricted(false);
-				}
+				restrictCondition.getAbility().setRestricted(false);
 			}
 			if (!target.isDead()) {
 				target.setHealth(Math.min(targetHealth, target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));

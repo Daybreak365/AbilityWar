@@ -133,8 +133,10 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 		}
 
 		@Override
-		public void onDurationProcess(int seconds) {
-			ParticleLib.SMOKE_LARGE.spawnParticle(center, 1, 1, 1, 50, 0.05);
+		public void onDurationProcess(int count) {
+			if (count % 2 == 0) {
+				ParticleLib.SMOKE_LARGE.spawnParticle(center, 1.4, 1.4, 1.4, 35, 0.05);
+			}
 			for (Location loc : pCircle.rotateAroundAxisX(-5).rotateAroundAxisZ(5).rotateAroundAxisY(3).toLocations(center)) {
 				ParticleLib.REDSTONE.spawnParticle(loc, BLACK);
 			}

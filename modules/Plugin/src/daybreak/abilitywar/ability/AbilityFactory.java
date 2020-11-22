@@ -150,6 +150,8 @@ public class AbilityFactory {
 		registerAbility(Loki.class);
 		registerAbility("daybreak.abilitywar.ability.list.grapplinghook." + ServerVersion.getName() + ".GrapplingHook");
 		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
+		// v2.3.3
+		registerAbility(Solar.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

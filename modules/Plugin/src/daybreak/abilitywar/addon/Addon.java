@@ -38,9 +38,9 @@ public abstract class Addon implements Provider {
 		this.description = description;
 	}
 
-	protected void onEnable() {}
+	public void onEnable() {}
 
-	protected void onDisable() {}
+	public void onDisable() {}
 
 	/**
 	 * AbilityWar 플러그인을 받아옵니다.
@@ -59,7 +59,7 @@ public abstract class Addon implements Provider {
 	/**
 	 * 이 애드온을 불러올 때 사용된 ClassLoader를 받아옵니다.
 	 */
-	protected AddonClassLoader getClassLoader() {
+	public AddonClassLoader getClassLoader() {
 		return classLoader;
 	}
 

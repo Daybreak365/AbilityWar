@@ -42,9 +42,9 @@ public class JellyFish extends AbilityBase {
 	@SubscribeEvent
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (e.getDamager().equals(getPlayer())) {
-			Entity entity = e.getEntity();
+			final Entity entity = e.getEntity();
 			if (getGame().isParticipating(entity.getUniqueId())) {
-				Participant target = getGame().getParticipant(entity.getUniqueId());
+				final Participant target = getGame().getParticipant(entity.getUniqueId());
 				SoundLib.ENTITY_ITEM_PICKUP.playSound(getPlayer());
 				SoundLib.ENTITY_ITEM_PICKUP.playSound(target.getPlayer());
 				Stun.apply(target, TimeUnit.TICKS, stunDuration);

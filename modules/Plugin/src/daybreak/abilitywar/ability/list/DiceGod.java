@@ -14,7 +14,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.Random;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;

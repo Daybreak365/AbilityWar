@@ -12,7 +12,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.Random;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.Observer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;

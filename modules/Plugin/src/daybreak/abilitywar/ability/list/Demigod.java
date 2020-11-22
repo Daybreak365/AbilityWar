@@ -14,6 +14,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.random.RouletteWheel;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -62,25 +63,32 @@ public class Demigod extends AbilityBase {
 		super(participant);
 	}
 
-	private final int chance = CHANCE_CONFIG.getValue();
+	private final RouletteWheel rouletteWheel = new RouletteWheel();
+	private final RouletteWheel.Slice positive = rouletteWheel.newSlice(CHANCE_CONFIG.getValue() * 10), negative = rouletteWheel.newSlice(1000 - positive.getWeight());
 
 	@SubscribeEvent(onlyRelevant = true, ignoreCancelled = true)
 	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
-		if ((random.nextInt(100) + 1) <= chance) {
-			switch (random.nextInt(3)) {
+		final RouletteWheel.Slice select = rouletteWheel.select();
+		if (select == positive) {
+			switch (random.nextInt(5)) {
 				case 0:
 					showHelix(ABSORPTION);
 					PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 100, 1, true);
 					break;
-				case 1:
+				case 1: case 2:
 					showHelix(REGENERATION);
 					PotionEffects.REGENERATION.addPotionEffect(getPlayer(), 100, 0, true);
 					break;
-				case 2:
+				case 3: case 4:
 					showHelix(DAMAGE_RESISTANCE);
 					PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 100, 1, true);
 					break;
 			}
+			negative.increaseWeight(5);
+			positive.resetWeight();
+		} else {
+			positive.increaseWeight(5);
+			negative.resetWeight();
 		}
 	}
 

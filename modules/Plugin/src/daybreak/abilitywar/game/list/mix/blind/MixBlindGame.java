@@ -29,7 +29,7 @@ import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.base.Random;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;

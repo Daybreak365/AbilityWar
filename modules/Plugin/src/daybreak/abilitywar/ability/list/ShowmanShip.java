@@ -15,6 +15,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -27,6 +28,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FireworkExplodeEvent;
 
 import java.util.HashMap;
@@ -42,11 +44,11 @@ import java.util.function.Predicate;
 })
 public class ShowmanShip extends AbilityBase {
 
-	public static final SettingObject<Float> ENTITY_COUNT = abilitySettings.new SettingObject<Float>(ShowmanShip.class, "entity-count", .2f,
+	public static final SettingObject<Double> ENTITY_COUNT = abilitySettings.new SettingObject<Double>(ShowmanShip.class, "entity-count", .2,
 			"# 플레이어가 아닌 엔티티를 몇 명으로 취급할지 설정합니다.") {
 
 		@Override
-		public boolean condition(Float value) {
+		public boolean condition(Double value) {
 			return value >= 0;
 		}
 
@@ -66,7 +68,7 @@ public class ShowmanShip extends AbilityBase {
 	private static final RGB WEAK = new RGB(214, 255, 212), POWER = new RGB(255, 184, 150), POWERFUL = new RGB(255, 59, 59);
 	private static final Circle circle = Circle.of(radius, 100);
 
-	private final float entityCount = ENTITY_COUNT.getValue();
+	private final double entityCount = ENTITY_COUNT.getValue();
 	private final Map<Firework, LivingEntity> execution = new HashMap<>();
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -130,16 +132,15 @@ public class ShowmanShip extends AbilityBase {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 4, 2, true);
 				color = POWERFUL;
 				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, playerLocation, radius, predicate)) {
-					if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead()) {
+					if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead() && Damages.canDamage(livingEntity, DamageCause.MAGIC, Double.MAX_VALUE)) {
 						if (!execution.containsValue(livingEntity)) {
-							Firework firework = FireworkUtil.spawnRandomFirework(livingEntity.getEyeLocation().clone().add(0, 0.5, 0), colors, colors, types, 1);
+							final Firework firework = FireworkUtil.spawnRandomFirework(livingEntity.getEyeLocation().clone().add(0, 0.5, 0), colors, colors, types, 1);
 							firework.addPassenger(livingEntity);
 							execution.put(firework, livingEntity);
 						}
 					}
 				}
 			}
-
 			for (Location loc : circle.toLocations(playerLocation).floor(playerLocation.getY())) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);
 			}
