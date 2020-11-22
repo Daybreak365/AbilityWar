@@ -55,7 +55,7 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "관통화살", rank = Rank.S, species = Species.OTHERS, explain = {
 		"활을 쏘면 벽과 생명체를 통과하며 특수한 능력이 있는 발사체를 쏩니다.",
-		"탄창에는 $[BULLET_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 3초간 재장전하며,",
+		"탄창에는 $[AMMO_SIZE_CONFIG]개의 탄약이 들어있습니다. 탄약을 모두 소진하면 3초간 재장전하며,",
 		"임의의 능력을 가진 탄약으로 탄창이 다시 채워집니다.",
 		"§c절단§f: 대상에게 추가 근접 대미지를 입힙니다.",
 		"§5중력§f: 대상을 0.5초간 기절시키고, 대상 주위 4칸의 생명체를 대상에게 끌어갑니다.",
@@ -63,8 +63,8 @@ import java.util.function.Predicate;
 })
 public class PenetrationArrow extends AbilityBase {
 
-	public static final SettingObject<Integer> BULLET_CONFIG = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "arrow-count", 4,
-			"# 능력 당 화살 개수") {
+	public static final SettingObject<Integer> AMMO_SIZE_CONFIG = abilitySettings.new SettingObject<Integer>(PenetrationArrow.class, "ammo-size", 4,
+			"# 탄창 크기") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -106,7 +106,7 @@ public class PenetrationArrow extends AbilityBase {
 
 	private class Ammo {
 
-		private final int ammoSize = BULLET_CONFIG.getValue();
+		private final int ammoSize = AMMO_SIZE_CONFIG.getValue();
 		private final LinkedList<ArrowType> ammo = new LinkedList<>();
 
 		private Ammo() {
