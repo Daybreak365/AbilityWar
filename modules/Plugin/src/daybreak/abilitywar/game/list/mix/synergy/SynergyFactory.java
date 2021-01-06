@@ -1,6 +1,8 @@
 package daybreak.abilitywar.game.list.mix.synergy;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 import daybreak.abilitywar.ability.AbilityBase;
@@ -8,6 +10,7 @@ import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.list.Ares;
 import daybreak.abilitywar.ability.list.Assassin;
+import daybreak.abilitywar.ability.list.Canis;
 import daybreak.abilitywar.ability.list.Celebrity;
 import daybreak.abilitywar.ability.list.Chaos;
 import daybreak.abilitywar.ability.list.Curse;
@@ -30,6 +33,7 @@ import daybreak.abilitywar.ability.list.Virus;
 import daybreak.abilitywar.ability.list.Yeti;
 import daybreak.abilitywar.game.list.mix.synergy.list.AbsoluteZero;
 import daybreak.abilitywar.game.list.mix.synergy.list.Bind;
+import daybreak.abilitywar.game.list.mix.synergy.list.BlackKnight;
 import daybreak.abilitywar.game.list.mix.synergy.list.Bless;
 import daybreak.abilitywar.game.list.mix.synergy.list.DeathGrasp;
 import daybreak.abilitywar.game.list.mix.synergy.list.DoubleSniper;
@@ -49,8 +53,10 @@ import daybreak.abilitywar.utils.base.collect.Pair;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * {@link Synergy}를 기반으로 하는 모든 능력을 관리하는 클래스입니다.
@@ -60,6 +66,7 @@ public class SynergyFactory {
 	private static final Table<AbilityRegistration, AbilityRegistration, AbilityRegistration> synergies = HashBasedTable.create();
 	private static final Map<AbilityRegistration, Pair<AbilityRegistration, AbilityRegistration>> synergyBases = new HashMap<>();
 	private static final Map<String, AbilityRegistration> usedNames = new HashMap<>();
+	private static final ListMultimap<String, String> complete = MultimapBuilder.hashKeys().arrayListValues().build();
 
 	static {
 		registerSynergy(SuperNova.class, Virus.class, Pandemic.class);
@@ -79,6 +86,7 @@ public class SynergyFactory {
 		registerSynergy(Kidnap.class, Kidnap.class, ShotPut.class);
 		registerSynergy(Ghost.class, Curse.class, Grudge.class);
 		registerSynergy(Lazyness.class, Lazyness.class, SuperLazy.class);
+		registerSynergy(Canis.class, Canis.class, BlackKnight.class);
 	}
 
 	private SynergyFactory() {
@@ -115,6 +123,23 @@ public class SynergyFactory {
 				synergies.put(secondReg, firstReg, synergyReg);
 				synergyBases.put(synergyReg, Pair.of(firstReg, secondReg));
 				usedNames.put(synergyReg.getManifest().name(), synergyReg);
+				final String name = synergyReg.getManifest().name();
+				final char[] chars = name.toCharArray();
+				if (chars.length >= 2) {
+					final StringTokenizer tokenizer = new StringTokenizer(name, " ");
+					final StringBuilder builder = new StringBuilder(chars.length - 1);
+					String token = tokenizer.nextToken();
+					for (int i = 0; i < chars.length - 1; i++) {
+						final char c = chars[i];
+						builder.append(c);
+						if (c == ' ') {
+							if (tokenizer.hasMoreTokens()) {
+								token = tokenizer.nextToken();
+							}
+						}
+						complete.put(builder.toString(), token);
+					}
+				}
 			}
 		}
 	}
@@ -128,6 +153,10 @@ public class SynergyFactory {
 
 	public static Pair<AbilityRegistration, AbilityRegistration> getSynergyBase(AbilityRegistration synergyReg) {
 		return synergyBases.get(synergyReg);
+	}
+
+	public static List<String> getComplete(final String part) {
+		return complete.get(part);
 	}
 
 }

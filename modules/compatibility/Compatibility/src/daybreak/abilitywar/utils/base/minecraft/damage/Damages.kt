@@ -74,7 +74,7 @@ class Damages private constructor() {
 		}
 
 		@JvmStatic
-		override fun damageFixed(entity: Entity, damager: Player, damage: Float): Boolean {
+		override fun damageFixed(entity: Entity, damager: LivingEntity, damage: Float): Boolean {
 			return INSTANCE.damageFixed(entity, damager, damage)
 		}
 

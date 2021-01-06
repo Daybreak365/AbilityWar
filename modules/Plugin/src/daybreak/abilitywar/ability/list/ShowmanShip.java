@@ -16,6 +16,7 @@ import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
@@ -28,6 +29,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FireworkExplodeEvent;
 
@@ -99,6 +103,32 @@ public class ShowmanShip extends AbilityBase {
 		}
 	};
 
+	@SubscribeEvent(priority = 6, onlyRelevant = true, ignoreCancelled = true)
+	private void onPlayerSetHealth(final PlayerSetHealthEvent e) {
+		if (e.getHealth() <= 0) {
+			e.setCancelled(true);
+			execute(getPlayer(), true);
+		}
+	}
+
+	@SubscribeEvent(priority = 6, onlyRelevant = true, ignoreCancelled = true)
+	private void onEntityDamage(final EntityDamageEvent e) {
+		if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
+			e.setCancelled(true);
+			execute(getPlayer(), true);
+		}
+	}
+
+	@SubscribeEvent(priority = 6, onlyRelevant = true, ignoreCancelled = true)
+	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
+		this.onEntityDamage(e);
+	}
+
+	@SubscribeEvent(priority = 6, onlyRelevant = true, ignoreCancelled = true)
+	private void onEntityDamageByBlock(final EntityDamageByBlockEvent e) {
+		this.onEntityDamage(e);
+	}
+
 	@SubscribeEvent
 	private void onFireworkExplode(FireworkExplodeEvent e) {
 		if (execution.containsKey(e.getEntity())) {
@@ -133,11 +163,7 @@ public class ShowmanShip extends AbilityBase {
 				color = POWERFUL;
 				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, playerLocation, radius, predicate)) {
 					if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead() && Damages.canDamage(livingEntity, DamageCause.MAGIC, Double.MAX_VALUE)) {
-						if (!execution.containsValue(livingEntity)) {
-							final Firework firework = FireworkUtil.spawnRandomFirework(livingEntity.getEyeLocation().clone().add(0, 0.5, 0), colors, colors, types, 1);
-							firework.addPassenger(livingEntity);
-							execution.put(firework, livingEntity);
-						}
+						execute(livingEntity, false);
 					}
 				}
 			}
@@ -147,6 +173,14 @@ public class ShowmanShip extends AbilityBase {
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1).register();
+
+	public void execute(final LivingEntity livingEntity, final boolean winner) {
+		if (!execution.containsValue(livingEntity)) {
+			final Firework firework = winner ? FireworkUtil.spawnWinnerFirework(livingEntity.getEyeLocation().clone().add(0, 0.5, 0)) : FireworkUtil.spawnRandomFirework(livingEntity.getEyeLocation().clone().add(0, 0.5, 0), colors, colors, types, 1);;
+			firework.addPassenger(livingEntity);
+			execution.put(firework, livingEntity);
+		}
+	}
 
 	@Override
 	protected void onUpdate(Update update) {

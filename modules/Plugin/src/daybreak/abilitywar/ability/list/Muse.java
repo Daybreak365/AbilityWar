@@ -170,7 +170,6 @@ public class Muse extends AbilityBase implements ActiveHandler {
 			if (clickType == ClickType.RIGHT_CLICK) {
 				if (!skill.isDuration() && !cooldownTimer.isCooldown()) {
 					skill.start();
-
 					return true;
 				}
 			}

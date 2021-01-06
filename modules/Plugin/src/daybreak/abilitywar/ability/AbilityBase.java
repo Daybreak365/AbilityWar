@@ -10,6 +10,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
+import daybreak.abilitywar.ability.event.AbilityPreTargetEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings;
@@ -37,11 +38,13 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -241,7 +244,6 @@ public abstract class AbilityBase {
 		void onEvent(final T event);
 	}
 
-	/*
 	protected <E extends Entity> void subscribeTarget(final Class<E> entityType, final Function<? super E, Boolean> function) {
 		final EventObserver observer = new EventObserver(PlayerInteractAtEntityEvent.class, 5) {
 			@Override
@@ -261,7 +263,7 @@ public abstract class AbilityBase {
 				}
 			}
 		};
-	}*/
+	}
 
 	public enum Update {
 		RESTRICTION_SET,

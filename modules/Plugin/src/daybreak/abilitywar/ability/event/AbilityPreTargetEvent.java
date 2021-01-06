@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-class AbilityPreTargetEvent extends AbilityEvent implements Cancellable {
+public class AbilityPreTargetEvent extends AbilityEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 	private final @NotNull EquipmentSlot hand;

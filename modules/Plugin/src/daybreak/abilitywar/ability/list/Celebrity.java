@@ -15,6 +15,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -23,6 +24,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Bukkit;
@@ -101,11 +103,19 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	};
 
+	private static final Random random = new Random();
+	private static final MaterialX[] materials = Seasons.isChristmas() ? new MaterialX[] {
+			MaterialX.RED_CARPET,
+			MaterialX.GREEN_CARPET
+	} : new MaterialX[] {
+			MaterialX.RED_CARPET
+	};
+
+	private static final double radians = Math.toRadians(90);
+
 	public Celebrity(Participant participant) {
 		super(participant);
 	}
-
-	private static final double radians = Math.toRadians(90);
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -150,6 +160,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 			direction.multiply(0.75);
 			new AbilityTimer(30) {
 				final Set<String> set = new HashSet<>();
+				final MaterialX material = random.pick(materials);
 
 				@Override
 				protected void run(int count) {
@@ -163,7 +174,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 							);
 							if (!carpets.containsKey(block)) {
 								carpets.put(block, Blocks.createSnapshot(block));
-								BlockX.setType(block, MaterialX.RED_CARPET);
+								BlockX.setType(block, material);
 							}
 						}
 					}

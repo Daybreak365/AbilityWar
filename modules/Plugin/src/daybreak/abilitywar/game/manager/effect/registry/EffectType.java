@@ -1,0 +1,14 @@
+package daybreak.abilitywar.game.manager.effect.registry;
+
+public enum EffectType {
+
+	MOVEMENT_RESTRICTION,
+	SIGHT_RESTRICTION,
+	SIGHT_CONTROL,
+	ABILITY_RESTRICTION,
+	COMBAT_RESTRICTION,
+	HEALING_REDUCTION,
+	HEALING_BAN,
+	INVINCIBILITY
+
+}

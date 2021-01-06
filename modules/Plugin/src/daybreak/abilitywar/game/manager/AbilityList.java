@@ -11,6 +11,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
+import daybreak.abilitywar.ability.list.prophet.Prophet;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.StandardGame;
@@ -140,7 +141,7 @@ public class AbilityList {
 		registerAbility(PenetrationArrow.class);
 		registerAbility(SoulEncroach.class);
 		registerAbility(Hedgehog.class);
-		registerAbility(ReligiousLeader.class);
+		registerAbility(Prophet.class);
 		registerAbility(Kidnap.class);
 		registerAbility(Flector.class);
 		registerAbility(Ghost.class);
@@ -160,6 +161,8 @@ public class AbilityList {
 		registerAbility("daybreak.abilitywar.ability.list.grapplinghook." + ServerVersion.getName() + ".GrapplingHook");
 		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
 		registerAbility(Solar.class);
+		registerAbility(Canis.class);
+		registerAbility(Ruber.class);
 	}
 
 	/**

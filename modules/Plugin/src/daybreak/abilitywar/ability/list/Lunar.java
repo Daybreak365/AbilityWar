@@ -46,18 +46,18 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "루나", rank = Rank.A, species = Species.OTHERS, explain = {
-		"생명체를 근접 공격할 때마다 해당 생명체에게 §e표식§f을 부여하고",
-		"시간을 점점 밤으로 바꿉니다. 저녁에 철괴를 우클릭하면 주변 6칸 이내의 모든",
-		"생명체에게 §e표식§f 2개를 부여하고 4초간 구속 효과를 줍니다. $[COOLDOWN_CONFIG]",
-		"§e표식§f이 부여될 때마다 해당 생명체를 나에게 조금 끌어옵니다.",
-		"§e표식§f을 5개 이상 쌓으면 0.75초간 기절시키며 스킬 쿨타임이 10초 감소합니다.",
-		"근접 공격으로 §e표식§f을 5개 이상 쌓은 경우, 0.4배의 대미지를 추가로 줍니다.",
-		"6초간 §e표식§f을 추가로 쌓지 않거나 §e표식§f이 5개가 넘은 경우,",
-		"대상에게 쌓인 §e표식§f이 초기화됩니다."
+		"§7패시브 §8- §e달 표식§f: 다른 생명체에게 표식을 쌓을 때마다 나에게로 끌어오며,",
+		"세계의 시간을 점점 밤으로 바꿉니다. 표식이 다섯 개 이상 쌓이면 대상의 표식이",
+		"초기화되고 대상을 0.75초간 기절시키며, 월광의 쿨타임을 10초 단축합니다.",
+		"대상에게 6초간 표식이 추가로 쌓이지 않을 경우 표식이 초기화됩니다.",
+		"§7공격 무기 §8- §e명월도§f: 대상을 근접 공격할 때마다 대상에게 표식을 하나 쌓습니다.",
+		"이 공격으로 표식을 다섯 개 이상 쌓으면 해당 공격은 1.4배의 대미지를 냅니다.",
+		"§7철괴 우클릭 §8- §e월광§f: 주변 6칸 내의 모든 생명체에게 표식 두 개를 부여하고",
+		"4초간의 구속 디버프를 줍니다. 밤에만 사용할 수 있습니다. $[COOLDOWN_CONFIG]"
 })
 public class Lunar extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lunar.class, "cooldown", 50,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lunar.class, "cooldown", 30,
 			"# 쿨타임") {
 
 		@Override
@@ -81,7 +81,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 			Note.natural(1, Tone.A),
 			Note.sharp(1, Tone.C)
 	};
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), 50);
 
 	public Lunar(Participant participant) {
 		super(participant);
@@ -163,7 +163,6 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 	private void onAttack(EntityDamageByEntityEvent e) {
 		if (getPlayer().equals(e.getDamager()) && e.getEntity() instanceof LivingEntity && !e.isCancelled() && predicate.test(e.getEntity())) {
 			new CutParticle(particleSide).start();
-			updateTime(getPlayer().getWorld());
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			particleSide *= -1;
 			if (stackMap.containsKey(e.getEntity().getUniqueId())) {
@@ -194,7 +193,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 				cooldownTimer.start();
 				return true;
 			} else {
-				getPlayer().sendMessage("§e저녁§6에만 사용할 수 있는 능력입니다.");
+				getPlayer().sendMessage("§e밤§6에만 사용할 수 있는 능력입니다.");
 			}
 		}
 		return false;
@@ -289,6 +288,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		}
 
 		private boolean addStack() {
+			updateTime(getPlayer().getWorld());
 			setCount(30);
 			stack++;
 			hologram.setText(Strings.repeat("§e✦", stack).concat(Strings.repeat("§e✧", 5 - stack)));

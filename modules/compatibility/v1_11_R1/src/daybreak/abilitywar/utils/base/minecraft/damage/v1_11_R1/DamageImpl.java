@@ -37,8 +37,8 @@ public class DamageImpl implements IDamages {
 	}
 
 	@Override
-	public boolean damageFixed(@NotNull Entity entity, @NotNull Player damager, float damage) {
-		return ((CraftEntity) entity).getHandle().damageEntity(new EntityDamageSource("player", ((CraftPlayer) damager).getHandle()) {
+	public boolean damageFixed(@NotNull Entity entity, @NotNull LivingEntity damager, float damage) {
+		return ((CraftEntity) entity).getHandle().damageEntity(new EntityDamageSource(damager instanceof Player ? "player" : "mob", ((CraftLivingEntity) damager).getHandle()) {
 			{
 				setIgnoreArmor();
 				m();

@@ -9,6 +9,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -56,7 +57,16 @@ public class Synchronize extends AbilityBase implements ActiveHandler {
 
 	};
 
-	private static final RGB RED = RGB.of(254, 69, 69), BLUE = RGB.of(69, 122, 254);
+	private static final RGB FIRST, SECOND;
+
+	static {
+		FIRST = RGB.of(254, 69, 69);
+		if (Seasons.isChristmas()) {
+			SECOND = RGB.of(50, 168, 82);
+		} else {
+			SECOND = RGB.of(69, 122, 254);
+		}
+	}
 
 	public Synchronize(Participant participant) {
 		super(participant);
@@ -85,8 +95,8 @@ public class Synchronize extends AbilityBase implements ActiveHandler {
 				for (final double d : RADIANS) {
 					final double radians = 0.00411233516712056609118103791661 * index + d;
 					final double cos = FastMath.cos(radians), sin = FastMath.sin(radians);
-					ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(cos * 10, FastMath.sin(0.01644934066848226436472415166644 * index) + 1.25, sin * 10), RED);
-					ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(cos * 10, FastMath.cos(0.01644934066848226436472415166644 * index + 1.5707963267948966192313216916398) + 1.25, sin * 10), BLUE);
+					ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(cos * 10, FastMath.sin(0.01644934066848226436472415166644 * index) + 1.25, sin * 10), FIRST);
+					ParticleLib.REDSTONE.spawnParticle(getPlayer().getLocation().clone().add(cos * 10, FastMath.cos(0.01644934066848226436472415166644 * index + 1.5707963267948966192313216916398) + 1.25, sin * 10), SECOND);
 				}
 			}
 			if (count % 6 == 0) {
@@ -147,7 +157,7 @@ public class Synchronize extends AbilityBase implements ActiveHandler {
 			skill.attachObserver(observer);
 			this.target = target;
 			this.flag = flag;
-			this.color = flag ? RED : BLUE;
+			this.color = flag ? FIRST : SECOND;
 			this.amount = amount;
 		}
 

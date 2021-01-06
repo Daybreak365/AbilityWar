@@ -5,6 +5,8 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityBase.Cooldown;
 import daybreak.abilitywar.ability.AbilityBase.Duration;
 import daybreak.abilitywar.ability.AbilityFactory;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.addon.installer.AddonsGUI;
 import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.config.Configuration;
@@ -24,6 +26,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.list.mix.synergy.game.SynergyBlackListGUI;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
@@ -35,6 +38,7 @@ import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
+import daybreak.abilitywar.game.manager.gui.SynergyListGUI;
 import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
@@ -52,6 +56,7 @@ import daybreak.abilitywar.patch.list.Patches;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.TimeUtil;
+import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -153,6 +158,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(command, "abtip", "자신의 능력 팁을 확인합니다.", true),
 								Formatter.formatCommand(command, "abtip [능력]", "[능력] 능력의 팁을 확인합니다.", true),
+								Formatter.formatCommand(command, "synergies", "능력자 전쟁 시너지 목록을 확인합니다.", false),
+								Formatter.formatCommand(command, "synergies [시너지]", "[시너지] 시너지의 정보를 확인합니다.", false),
 								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true),
 								Formatter.formatCommand(command, "patch", "쾌적한 플레이를 위한 패치를 진행합니다.", true),
 								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true),
@@ -261,6 +268,30 @@ public class Commands implements CommandExecutor, TabCompleter {
 							sender.sendMessage(line);
 						}
 					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
+				}
+				return true;
+			}
+		});
+		mainCommand.addSubCommand("synergies", new Command() {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (args.length == 0) {
+					if (sender instanceof Player) new SynergyListGUI((Player) sender, AbilityWar.getPlugin()).openGUI(1); else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " synergies <시너지>");
+				} else {
+					final String name = String.join(" ", args);
+					final AbilityRegistration registration = SynergyFactory.getByName(name);
+					if (registration != null) {
+						sender.sendMessage(Formatter.formatTitle(32, ChatColor.DARK_GREEN, ChatColor.GREEN, "시너지 정보"));
+						final Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(registration);
+						sender.sendMessage("§f시너지: §a" + base.getLeft().getManifest().name() + " §f+ §a" + base.getRight().getManifest().name());
+						sender.sendMessage("§a---------------------------------");
+						final AbilityManifest manifest = registration.getManifest();
+						sender.sendMessage("§b" + manifest.name() + " " + manifest.rank().getRankName() + " " + manifest.species().getSpeciesName());
+						for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
+							sender.sendMessage(ChatColor.RESET + iterator.next());
+						}
+						sender.sendMessage("§2§m§l-----------------------------");
+					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 시너지입니다.");
 				}
 				return true;
 			}
@@ -1193,7 +1224,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 				|| label.equalsIgnoreCase("va") || label.equalsIgnoreCase("능력자")) {
 			switch (args.length) {
 				case 1:
-					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "abtip", "skip", "anew",
+					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "synergies", "abtip", "skip", "anew",
 							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon", "patch", "debug");
 					if (args[0].isEmpty()) {
 						return subCommands;
@@ -1326,6 +1357,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 			if (args.length >= 2) {
 				if (args[0].equalsIgnoreCase("abilities") || args[0].equalsIgnoreCase("abtip")) {
 					return AbilityList.getComplete(String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+				} else if (args[0].equalsIgnoreCase("synergies")) {
+					return SynergyFactory.getComplete(String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
 				}
 			}
 			if (args.length >= 4) {

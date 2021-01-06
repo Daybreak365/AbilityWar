@@ -8,6 +8,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.v1_13_R2.network.EmptyNetworkHandler;
 import daybreak.abilitywar.utils.base.minecraft.nms.v1_13_R2.network.EmptyNetworkManager;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
+import net.minecraft.server.v1_13_R2.EnumGamemode;
 import net.minecraft.server.v1_13_R2.EnumProtocolDirection;
 import net.minecraft.server.v1_13_R2.MinecraftServer;
 import net.minecraft.server.v1_13_R2.PacketPlayOutEntityDestroy;
@@ -44,6 +45,7 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 
 	public DummyImpl(final MinecraftServer server, final WorldServer world, final Location location) {
 		super(server, world, createProfile(), new PlayerInteractManager(world));
+		this.playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
 		try {
 			this.networkManager = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
 			this.playerConnection = new EmptyNetworkHandler(server, networkManager, this);

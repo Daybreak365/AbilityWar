@@ -1,6 +1,8 @@
 package daybreak.abilitywar.game;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
 import daybreak.abilitywar.AbilityWar;
@@ -20,6 +22,7 @@ import daybreak.abilitywar.game.event.GameStartEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
+import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.EventManager;
@@ -91,7 +94,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 	private final Map<Class<? extends Module>, Module> modules = new HashMap<>();
 
-	protected final <M extends Module> M addModule(final @NotNull M module) throws IllegalStateException {
+	public final <M extends Module> M addModule(final @NotNull M module) throws IllegalStateException {
 		final Class<? extends Module> type = module.getClass();
 		final ModuleBase base = type.getAnnotation(ModuleBase.class);
 		if (base == null || base.value() == Module.class) throw new IllegalStateException("There is no valid @ModuleBase for " + type.getName() + " module.");
@@ -296,6 +299,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 	public abstract class Participant implements AbstractGame.Observer {
 
+		private final Multimap<EffectRegistration<?>, Effect> effects = HashMultimap.create();
 		private final ActionbarNotification actionbarNotification = new ActionbarNotification();
 		private @NotNull Player player;
 		private final Listener listener;
@@ -384,6 +388,32 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			};
 			attachObserver(this);
 			Bukkit.getPluginManager().registerEvents(listener, AbilityWar.getPlugin());
+		}
+
+		public boolean hasEffect(final EffectRegistration<?> registration) {
+			return effects.containsKey(registration);
+		}
+
+		@NotNull
+		@SuppressWarnings("unchecked")
+		public <E extends Effect> Collection<E> getEffects(final EffectRegistration<E> registration) {
+			return (Collection<E>) effects.get(registration);
+		}
+
+		@Nullable
+		public <E extends Effect> E getPrimaryEffect(final EffectRegistration<E> registration) {
+			for (E effect : getEffects(registration)) {
+				return effect;
+			}
+			return null;
+		}
+
+		public void removeEffects(final EffectRegistration<?> registration) {
+			for (final Iterator<Effect> iterator = effects.get(registration).iterator(); iterator.hasNext();) {
+				final Effect effect = iterator.next();
+				iterator.remove();
+				effect.stop(true);
+			}
 		}
 
 		@Override
@@ -827,34 +857,40 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 	public abstract class Effect extends GameTimer {
 
+		private final EffectRegistration<?> registration;
+		private final Participant participant;
 		private final ActionbarChannel channel;
-		private final String displayName;
 
-		protected Effect(final Participant participant, final String displayName, final TaskType taskType, final int maximumCount) {
-			super(taskType, maximumCount);
+		protected Effect(final EffectRegistration<?> registration, final Participant participant, final int maximumCount) {
+			super(TaskType.REVERSE, maximumCount);
+			this.registration = registration;
+			this.participant = participant;
 			this.channel = participant.actionbar().newChannel();
-			this.displayName = displayName;
 		}
 
 		@Override
 		public boolean start() {
 			if (!channel.isValid()) return false;
-			return super.start();
+			if (super.start()) {
+				participant.effects.put(registration, this);
+				return true;
+			} else return false;
 		}
 
 		@Override
 		protected void run(int count) {
-			channel.update(displayName + "§7: §f" + (count / (20.0 / getPeriod())) + "초");
+			channel.update(registration.getManifest().displayName() + "§7: §f" + Math.floor(count / (20.0 / getPeriod()) * 100) / 100 + "초");
 		}
 
 		@Override
 		protected void onEnd() {
-			channel.unregister();
+			onSilentEnd();
 		}
 
 		@Override
 		protected void onSilentEnd() {
 			channel.unregister();
+			participant.effects.remove(registration, this);
 		}
 
 	}

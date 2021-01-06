@@ -1,14 +1,12 @@
 package daybreak.abilitywar.utils.base.minecraft.item;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil.FieldUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -20,16 +18,28 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+
 public class Skulls {
 
 	private Skulls() {
 	}
 
 	private static final String LINK_HEAD = "http://textures.minecraft.net/texture/";
+	private static final Cache<String, ItemStack> customSkulls = CacheBuilder.newBuilder()
+			.expireAfterAccess(Duration.ofMinutes(10))
+			.build();
 
-	public static ItemStack createCustomSkull(String url) {
+	public static ItemStack createCustomSkull(@NotNull String url) {
+		final String key = url.startsWith(LINK_HEAD) ? url.substring(LINK_HEAD.length()) : url;
+		final ItemStack cachedSkull = customSkulls.getIfPresent(key);
+		if (cachedSkull != null) return cachedSkull;
 		final ItemStack stack = MaterialX.PLAYER_HEAD.createItem();
-		if (url == null || url.isEmpty()) return stack;
+		if (url.isEmpty()) return stack;
 		if (!url.startsWith(LINK_HEAD)) url = LINK_HEAD + url;
 		final SkullMeta meta = (SkullMeta) stack.getItemMeta();
 		final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
@@ -38,6 +48,7 @@ public class Skulls {
 			FieldUtil.setValue(meta.getClass(), meta, "profile", profile);
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ignored) {}
 		stack.setItemMeta(meta);
+		customSkulls.put(key, stack);
 		return stack;
 	}
 

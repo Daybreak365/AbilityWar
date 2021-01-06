@@ -5,10 +5,13 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.Provider;
 import daybreak.abilitywar.addon.exception.InvalidDescriptionException;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -28,6 +31,11 @@ public abstract class Addon implements Provider {
 	@Override
 	public String getName() {
 		return description.name;
+	}
+
+	@Nullable
+	public String getDisplayName() {
+		return description.displayName;
 	}
 
 	private AddonClassLoader classLoader;
@@ -65,7 +73,7 @@ public abstract class Addon implements Provider {
 
 	public static class AddonDescription {
 
-		private final String name, main, version;
+		private final String name, displayName, main, version;
 		private final NMSVersion minVersion;
 
 		AddonDescription(File pluginFile) throws InvalidDescriptionException {
@@ -73,9 +81,10 @@ public abstract class Addon implements Provider {
 				ZipEntry entry = jarFile.getEntry("addon.yml");
 				if (entry != null) {
 					Properties description = new Properties();
-					description.load(new InputStreamReader(jarFile.getInputStream(entry)));
+					description.load(new InputStreamReader(jarFile.getInputStream(entry), StandardCharsets.UTF_8));
 
 					this.name = description.getProperty("name", "");
+					this.displayName = description.getProperty("displayName", null);
 					this.main = description.getProperty("main", "");
 					this.version = description.getProperty("version", "");
 					this.minVersion = description.containsKey("minVersion") ? Enums.getIfPresent(NMSVersion.class, description.getProperty("minVersion")).orNull() : NMSVersion.v1_9_R1;
@@ -95,6 +104,11 @@ public abstract class Addon implements Provider {
 
 		public String getName() {
 			return name;
+		}
+
+		@Nullable
+		public String getDisplayName() {
+			return displayName;
 		}
 
 		public String getMain() {

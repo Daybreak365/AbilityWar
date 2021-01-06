@@ -1,10 +1,12 @@
 package daybreak.abilitywar.utils.base;
 
 import com.google.common.base.Strings;
+import daybreak.abilitywar.Provider;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.addon.Addon;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.utils.installer.Installer.VersionObject;
@@ -60,9 +62,11 @@ public class Formatter {
 	 * 능력 설명을 구성합니다.
 	 */
 	public static List<String> formatAbilityInfo(AbilityBase ability) {
-		List<String> list = Messager.asList(
+		final Provider provider = ability.getRegistration().getProvider();
+		final String providerName = provider instanceof Addon ? ((Addon) provider).getDisplayName() : null;
+		final List<String> list = Messager.asList(
 				formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
-				"§b" + ability.getName() + " " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
+				"§b" + ability.getName() + " " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName() + (providerName != null ? " §7| §f" + providerName : ""));
 		for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
 			list.add(iterator.next());
 		}
@@ -87,10 +91,12 @@ public class Formatter {
 	}
 
 	public static List<String> formatInfo(AbilityRegistration registration) {
+		final Provider provider = registration.getProvider();
+		final String providerName = provider instanceof Addon ? ((Addon) provider).getDisplayName() : null;
 		final AbilityManifest manifest = registration.getManifest();
 		final List<String> info = new ArrayList<>(3 + manifest.explain().length);
 		info.add(formatTitle(32, ChatColor.DARK_GREEN, ChatColor.GREEN, "능력 정보"));
-		info.add("§b" + manifest.name() + " §r" + manifest.rank().getRankName() + " §r" + manifest.species().getSpeciesName());
+		info.add("§b" + manifest.name() + " §r" + manifest.rank().getRankName() + " §r" + manifest.species().getSpeciesName() + (providerName != null ? " §7| §f" + providerName : ""));
 		for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
 			info.add(ChatColor.WHITE.toString().concat(iterator.next()));
 		}

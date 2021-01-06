@@ -16,6 +16,7 @@ import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.music.christmas.ChristmasMusic;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -96,6 +97,7 @@ public class AbilityWar extends JavaPlugin implements Provider {
 		try {
 			Class.forName(FastMath.class.getName());
 			Class.forName(SpecialThanksGUI.class.getName());
+			Class.forName(ChristmasMusic.class.getName());
 		} catch (ClassNotFoundException ignored) {
 		}
 

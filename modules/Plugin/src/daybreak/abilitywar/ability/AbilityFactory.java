@@ -14,6 +14,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
+import daybreak.abilitywar.ability.list.prophet.Prophet;
 import daybreak.abilitywar.addon.AddonClassLoader;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame;
@@ -118,7 +119,7 @@ public class AbilityFactory {
 		registerAbility(SoulEncroach.class);
 		registerAbility(Hedgehog.class);
 		// v2.0.9.2
-		registerAbility(ReligiousLeader.class);
+		registerAbility(Prophet.class);
 		// v2.1.3
 		registerAbility(Kidnap.class);
 		// v2.1.4.8
@@ -152,6 +153,8 @@ public class AbilityFactory {
 		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
 		// v2.3.3
 		registerAbility(Solar.class);
+		registerAbility(Canis.class);
+		registerAbility(Ruber.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

@@ -122,7 +122,7 @@ public class Flora extends AbilityBase implements ActiveHandler {
 					if (!player.isDead()) {
 						final double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
 						if (player.getHealth() < maxHealth) {
-							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, .4, RegainReason.CUSTOM);
+							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(player, .3, RegainReason.CUSTOM);
 							Bukkit.getPluginManager().callEvent(event);
 							if (!event.isCancelled()) {
 								player.setHealth(RangesKt.coerceIn(player.getHealth() + event.getAmount(), 0, maxHealth));

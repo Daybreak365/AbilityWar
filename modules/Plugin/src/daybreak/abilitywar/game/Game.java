@@ -15,7 +15,10 @@ import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.module.ScoreboardManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.module.ZeroTick;
+import daybreak.abilitywar.music.MusicRadio;
+import daybreak.abilitywar.music.christmas.ChristmasMusic;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.Bukkit;
@@ -320,6 +323,18 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 				participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Settings.getDefaultMaxHealth());
 				participant.getPlayer().setHealth(participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			}
+		}
+		if (Seasons.isChristmas()) {
+			new MusicRadio(ChristmasMusic.getRandom()) {
+				{
+					Game.this.attachObserver(new Observer() {
+						@Override
+						public void onEnd() {
+							stop(false);
+						}
+					});
+				}
+			}.start();
 		}
 		super.startGame();
 	}

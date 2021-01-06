@@ -1,4 +1,4 @@
-package daybreak.abilitywar.ability.list;
+package daybreak.abilitywar.ability.list.prophet;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
@@ -11,6 +11,7 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,18 +29,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-@AbilityManifest(name = "교주", rank = Rank.A, species = Species.HUMAN, explain = {
-		"처음 시작하면 새로운 종교를 창시하며, 이름을 정할 수 있습니다.",
-		"상대방을 철괴로 §6우클릭§f하면 신자로 영입할 수 있습니다.",
-		"신자는 최대 게임에 참가중인 참가자 수의 §e1/2§f만큼 모을 수 있으며,",
-		"신자가 참가자 수의 §e1/4 §f이상 모이면 철괴를 §6좌클릭§f해",
-		"§c이단 심판§f을 시작할 수 있습니다. $[COOLDOWN_CONFIG]",
-		"§c이단 심판§f이 진행중일 때 신자들과 교주는 서로 물리적으로 공격할 수 없으며,",
-		"§f이 종교를 믿지 않는 참가자를 공격할 때 추가 대미지를 주며 심판합니다."
+@AbilityManifest(name = "선지자", rank = Rank.A, species = Species.HUMAN, explain = {
+		"베타"
 })
-public class ReligiousLeader extends AbilityBase implements TargetHandler, ActiveHandler {
+@Beta
+public class Prophet extends AbilityBase implements TargetHandler, ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(ReligiousLeader.class, "cooldown", 150,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Prophet.class, "cooldown", 150,
 			"# 쿨타임") {
 
 		@Override
@@ -54,8 +50,11 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 
 	};
 
-	public ReligiousLeader(Participant participant) {
+	public Prophet(Participant participant) {
 		super(participant);
+		if (!getGame().hasModule(Religions.class)) {
+			getGame().addModule(new Religions());
+		}
 	}
 
 	private final int maxBelivers = getGame().getParticipants().size() / 2, minBelivers = getGame().getParticipants().size() / 4;
@@ -244,7 +243,7 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 
 		private final Participant leader;
 
-		private ReligionEvent(boolean async, ReligiousLeader religiousLeader) {
+		private ReligionEvent(boolean async, Prophet religiousLeader) {
 			super(async);
 			this.leader = religiousLeader.getParticipant();
 		}
@@ -255,12 +254,12 @@ public class ReligiousLeader extends AbilityBase implements TargetHandler, Activ
 
 	}
 
-	public class NewReligionEvent extends ReligiousLeader.ReligionEvent implements Cancellable {
+	public class NewReligionEvent extends Prophet.ReligionEvent implements Cancellable {
 
 		private final String name;
 
 		private NewReligionEvent(boolean async, String name) {
-			super(async, ReligiousLeader.this);
+			super(async, Prophet.this);
 			this.name = name;
 		}
 

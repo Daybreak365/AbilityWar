@@ -119,7 +119,7 @@ public class Vampire extends AbilityBase implements ActiveHandler {
 						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
 					return false;
 				}
-				if (!Damages.canDamage(getPlayer(), entity, DamageCause.MAGIC, 1)) {
+				if (!Damages.canDamage(entity, getPlayer(), DamageCause.MAGIC, 1)) {
 					return false;
 				}
 				if (getGame() instanceof Teamable) {

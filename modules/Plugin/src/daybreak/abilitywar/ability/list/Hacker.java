@@ -18,10 +18,12 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.ProgressBar;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import org.bukkit.ChatColor;
@@ -93,6 +95,8 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 
 	};
 
+	private static final Random random = new Random();
+
 	public Hacker(Participant participant) {
 		super(participant);
 	}
@@ -102,6 +106,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final int stunDuration = DURATION_CONFIG.getValue();
 	private static final RGB PURPLE = RGB.of(113, 43, 204);
+	public static final RGB[] CHRISTMAS_COLORS = {RGB.of(255, 122, 124), RGB.of(159, 214, 154)};
 
 	private final int amount = 25;
 	private final Circle top = Circle.of(1, amount), bottom = Circle.of(1, amount);
@@ -131,10 +136,17 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 					y -= 0.1;
 				}
 
-				for (Location location : top.toLocations(target.getLocation().add(0, y, 0)))
-					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
-				for (Location location : bottom.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
-					ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
+				if (Seasons.isChristmas()) {
+					for (Location location : top.toLocations(target.getLocation().add(0, y, 0)))
+						ParticleLib.REDSTONE.spawnParticle(location, random.pick(CHRISTMAS_COLORS));
+					for (Location location : bottom.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
+						ParticleLib.REDSTONE.spawnParticle(location, random.pick(CHRISTMAS_COLORS));
+				} else {
+					for (Location location : top.toLocations(target.getLocation().add(0, y, 0)))
+						ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
+					for (Location location : bottom.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
+						ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
+				}
 			}
 		}
 

@@ -167,33 +167,28 @@ public class LocationUtil {
 	public static int getFloorYAt(final World world, final double criterionY, final int x, final int z, final @NotNull Predicate<Block> predicate) {
 		int floorY = getHighestBlockYAt(world, x, z);
 		if (floorY > criterionY) {
-			for (int checkY = floorY; checkY >= criterionY && floorY > 0; checkY--) {
+			for (int checkY = floorY; checkY >= criterionY && checkY > 0; checkY--) {
 				final Block block = world.getBlockAt(x, checkY, z);
 				if (block.isEmpty() || predicate.test(block)) {
 					floorY = checkY;
 				}
 			}
-			Block block = world.getBlockAt(x, floorY - 1, z);
-			if (block.isEmpty() || predicate.test(block)) {
+			Block block;
+			while (((block = world.getBlockAt(x, floorY - 1, z)).isEmpty() || predicate.test(block)) && floorY > 0) {
 				floorY--;
-				while (((block = world.getBlockAt(x, floorY - 1, z)).isEmpty() || predicate.test(block)) && floorY > 0) {
-					floorY--;
-				}
 			}
 		}
 		return floorY;
 	}
 
-	public static int getFloorYAt(final World world, final double criterionY, final int x, final int z) {
+	public static int getFloorYAt(final World world, double criterionY, final int x, final int z) {
+		if (criterionY > world.getMaxHeight()) criterionY = world.getMaxHeight();
 		int floorY = getHighestBlockYAt(world, x, z);
 		if (floorY > criterionY) {
-			for (int checkY = floorY; checkY >= criterionY && floorY > 0; checkY--) {
+			for (int checkY = floorY; checkY >= criterionY && checkY > 0; checkY--) {
 				if (world.getBlockAt(x, checkY, z).isEmpty()) floorY = checkY;
 			}
-			if (world.getBlockAt(x, floorY - 1, z).isEmpty()) {
-				floorY--;
-				while (world.getBlockAt(x, floorY - 1, z).isEmpty() && floorY > 0) floorY--;
-			}
+			while (world.getBlockAt(x, floorY - 1, z).isEmpty() && floorY > 0) floorY--;
 		}
 		return floorY;
 	}

@@ -45,7 +45,7 @@ import java.util.function.Predicate;
 		"수 있습니다. 공허 차원문은 10초간 남으며, 12초에 한 번씩만 열 수 있습니다.",
 		"§7철괴 우클릭 §8- §5순간 이동§f: 철괴를 우클릭하면 보이드가 공허를 통하여",
 		"가장 가까이 있는 플레이어에게 순간 이동하고 $[INVINCIBILITY_DURATION_CONFIG]초간",
-		"무적 상태에 돌입합니다. $[COOLDOWN_CONFIG]"
+		"타게팅 불가능 무적 상태에 돌입합니다. $[COOLDOWN_CONFIG]"
 })
 public class Void extends AbilityBase implements ActiveHandler {
 
@@ -150,6 +150,11 @@ public class Void extends AbilityBase implements ActiveHandler {
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		}
 
+		@Override
+		protected void onStart() {
+			getParticipant().attributes().TARGETABLE.setValue(false);
+		}
+
 		@EventHandler
 		private void onEntityDamage(EntityDamageEvent e) {
 			if (getPlayer().equals(e.getEntity()) && isRunning()) {
@@ -182,6 +187,7 @@ public class Void extends AbilityBase implements ActiveHandler {
 		protected void onSilentEnd() {
 			actionbarChannel.unregister();
 			HandlerList.unregisterAll(this);
+			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
 	}
 

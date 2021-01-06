@@ -17,6 +17,7 @@ import net.minecraft.server.v1_9_R2.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 import net.minecraft.server.v1_9_R2.PlayerConnection;
 import net.minecraft.server.v1_9_R2.PlayerInteractManager;
 import net.minecraft.server.v1_9_R2.WorldServer;
+import net.minecraft.server.v1_9_R2.WorldSettings.EnumGamemode;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_9_R2.CraftServer;
@@ -44,6 +45,7 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 
 	public DummyImpl(final MinecraftServer server, final WorldServer world, final Location location) {
 		super(server, world, createProfile(), new PlayerInteractManager(world));
+		this.playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
 		try {
 			this.networkManager = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
 			this.playerConnection = new EmptyNetworkHandler(server, networkManager, this);

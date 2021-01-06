@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -54,7 +55,7 @@ public class Magician extends AbilityBase {
 		super(participant);
 	}
 
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
 	private final Circle circle = Circle.of(5, 70);
 
 	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {

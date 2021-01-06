@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.list.oneability;
 
+import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
@@ -15,6 +16,7 @@ import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
 import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -208,12 +210,20 @@ public class OneAbility extends Game implements DefaultKitHandler {
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 15:
-				for (String line : Messager.asList(
-						"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
-						"§f                     §c단일전                ",
-						"§f                    게임 시작                ",
-						"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
-					Bukkit.broadcastMessage(line);
+				if (Seasons.isChristmas()) {
+					final String blocks = Strings.repeat("§c■§2■", 22);
+					Bukkit.broadcastMessage(blocks);
+					Bukkit.broadcastMessage("§f                     §c단일전                ");
+					Bukkit.broadcastMessage("§f                   게임 시작                ");
+					Bukkit.broadcastMessage(blocks);
+				} else {
+					for (String line : Messager.asList(
+							"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+							"§f                     §c단일전                ",
+							"§f                    게임 시작                ",
+							"§e■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")) {
+						Bukkit.broadcastMessage(line);
+					}
 				}
 
 				giveDefaultKit(getParticipants());

@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
@@ -135,9 +136,9 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 	private final double strength = STRENGTH.getValue();
 	private final int debuff = GROGGY_DURATION.getValue();
 
-	@SubscribeEvent
+	@SubscribeEvent(ignoreCancelled = true, priority = Priority.HIGH)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-		if (e.getDamager().equals(getPlayer()) && !e.isCancelled()) {
+		if (e.getDamager().equals(getPlayer())) {
 			if (skill.isRunning()) {
 				skill.stop();
 				e.setDamage(e.getDamage() * strength);

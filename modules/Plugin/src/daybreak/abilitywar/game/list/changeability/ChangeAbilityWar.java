@@ -12,11 +12,12 @@ import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
-import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.module.Invincibility;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.InfiniteDurability;
+import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -149,12 +150,20 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 14:
-				for (String m : new String[]{
-						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
-						"§f                §5§l체인지! §d§l능력 §f§l전쟁",
-						"§f                    게임 시작                ",
-						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"}) {
-					Bukkit.broadcastMessage(m);
+				if (Seasons.isChristmas()) {
+					final String blocks = Strings.repeat("§c■§2■", 22);
+					Bukkit.broadcastMessage(blocks);
+					Bukkit.broadcastMessage("§f               §c§l체인지! §2§l능력 §f§l전쟁  ");
+					Bukkit.broadcastMessage("§f                   게임 시작                ");
+					Bukkit.broadcastMessage(blocks);
+				} else {
+					for (String line : new String[]{
+							"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+							"§f                §5§l체인지! §d§l능력 §f§l전쟁",
+							"§f                    게임 시작                ",
+							"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"}) {
+						Bukkit.broadcastMessage(line);
+					}
 				}
 				SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
 

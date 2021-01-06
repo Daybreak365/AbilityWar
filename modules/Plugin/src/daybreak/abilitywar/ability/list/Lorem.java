@@ -137,25 +137,6 @@ public class Lorem extends AbilityBase {
 		}
 	}
 
-	private final Predicate<Entity> predicate = new Predicate<Entity>() {
-		@Override
-		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
-			if (entity instanceof Player) {
-				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-					return false;
-				}
-				if (getGame() instanceof Teamable) {
-					final Teamable teamGame = (Teamable) getGame();
-					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
-				}
-			}
-			return true;
-		}
-	};
 	private final Map<UUID, Stack> stackMap = new HashMap<>();
 	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), 35);
 	private Bullet bullet = null;
@@ -186,7 +167,7 @@ public class Lorem extends AbilityBase {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(final PlayerInteractEvent e) {
 		if (e.getItem() != null && swords.contains(e.getItem().getType())) {
-			if ((e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
+			if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 				ability();
 			}
 		}

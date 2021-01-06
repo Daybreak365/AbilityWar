@@ -31,11 +31,12 @@
         <encoding>UTF-8</encoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <revision>2.3.3</revision>
+        <revision>2.4.0</revision>
         <bukkit-api.version>1.15.2-R0.1-SNAPSHOT</bukkit-api.version>
-        <guava.version>29.0-jre</guava.version>
-        <kotlin.version>1.4.10</kotlin.version>
-        <annotations.version>20.0.0</annotations.version>
+        <guava.version>30.1-jre</guava.version>
+        <kotlin.version>1.4.21</kotlin.version>
+        <noteblockapi.version>1.6.1</noteblockapi.version>
+        <annotations.version>20.1.0</annotations.version>
     </properties>
 
     <build>
@@ -47,6 +48,7 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <configuration>
                         <archive>
+                            <compress>false</compress>
                             <addMavenDescriptor>false</addMavenDescriptor>
                             <manifest>
                                 <addClasspath>false</addClasspath>

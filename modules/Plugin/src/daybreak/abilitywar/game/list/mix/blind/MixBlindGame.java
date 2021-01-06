@@ -23,13 +23,11 @@ import daybreak.abilitywar.game.manager.effect.Bleed;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
-import daybreak.abilitywar.game.module.InfiniteDurability;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
-import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
@@ -37,6 +35,7 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -68,7 +67,6 @@ import java.util.List;
 		"§f모두를 탈락시키고 최후의 1인으로 남는 플레이어가 승리합니다.", "",
 		"§a● §f일부 콘피그가 임로 변경될 수 있습니다."
 })
-@Beta
 @GameAliases("블믹")
 public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 

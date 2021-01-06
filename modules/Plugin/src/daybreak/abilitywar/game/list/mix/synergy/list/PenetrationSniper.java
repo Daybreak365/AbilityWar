@@ -10,6 +10,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -207,6 +208,10 @@ public class PenetrationSniper extends Synergy {
 					}
 				})) {
 					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
+				}
+				final Participant participant = ability.getGame().getParticipant(victim.getUniqueId());
+				if (participant != null) {
+					Stun.apply(participant, TimeUnit.TICKS, 10);
 				}
 			}
 		};

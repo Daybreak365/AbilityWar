@@ -15,6 +15,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
@@ -63,6 +64,23 @@ import java.util.function.Predicate;
 		})
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Gladiator extends AbilityBase implements TargetHandler {
+
+	private static final MaterialX COMMON_BLOCK, RARE_BLOCK, BAR_BLOCK;
+	private static final int RARE_BOUND;
+
+	static {
+		if (Seasons.isChristmas()) {
+			COMMON_BLOCK = MaterialX.SPRUCE_PLANKS;
+			RARE_BLOCK = MaterialX.SPRUCE_PLANKS;
+			BAR_BLOCK = MaterialX.DARK_OAK_FENCE;
+			RARE_BOUND = 1;
+		} else {
+			COMMON_BLOCK = MaterialX.STONE_BRICKS;
+			RARE_BLOCK = MaterialX.MOSSY_STONE_BRICKS;
+			BAR_BLOCK = MaterialX.IRON_BARS;
+			RARE_BOUND = 5;
+		}
+	}
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Gladiator.class, "cooldown", 120,
 			"# 쿨타임") {
@@ -143,10 +161,10 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			if (totalCount <= 10) {
 				for (Block block : LocationUtil.getBlocks2D(center, buildCount, true, false, true)) {
 					saves.putIfAbsent(block, Blocks.createSnapshot(block));
-					if (random.nextInt(5) <= 1) {
-						BlockX.setType(block, MaterialX.STONE_BRICKS);
+					if (random.nextInt(RARE_BOUND) > 1) {
+						BlockX.setType(block, COMMON_BLOCK);
 					} else {
-						BlockX.setType(block, MaterialX.MOSSY_STONE_BRICKS);
+						BlockX.setType(block, RARE_BLOCK);
 					}
 				}
 				for (LivingEntity livingEntity : LocationUtil.getNearbyEntities(LivingEntity.class, center, buildCount, 6, predicate)) {
@@ -157,20 +175,20 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			} else if (totalCount <= 15) {
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 2, true, false, true)) {
 					saves.putIfAbsent(block, Blocks.createSnapshot(block));
-					BlockX.setType(block, MaterialX.IRON_BARS);
+					BlockX.setType(block, BAR_BLOCK);
 				}
 
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, totalCount - 10, 0), buildCount - 1, true, false, true)) {
 					saves.putIfAbsent(block, Blocks.createSnapshot(block));
-					BlockX.setType(block, MaterialX.IRON_BARS);
+					BlockX.setType(block, BAR_BLOCK);
 				}
 			} else if (totalCount <= 26) {
 				for (Block block : LocationUtil.getBlocks2D(center.clone().add(0, 6, 0), buildCount, true, false, true)) {
 					saves.putIfAbsent(block, Blocks.createSnapshot(block));
-					if (random.nextInt(5) <= 1) {
-						BlockX.setType(block, MaterialX.STONE_BRICKS);
+					if (random.nextInt(RARE_BOUND) > 1) {
+						BlockX.setType(block, COMMON_BLOCK);
 					} else {
-						BlockX.setType(block, MaterialX.MOSSY_STONE_BRICKS);
+						BlockX.setType(block, RARE_BLOCK);
 					}
 				}
 
@@ -183,9 +201,9 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		public void onEnd() {
 			Block check = center.getBlock().getRelative(0, 6, 0);
 
-			if (!BlockX.isType(check, MaterialX.STONE_BRICKS)) {
+			if (!BlockX.isType(check, COMMON_BLOCK)) {
 				saves.putIfAbsent(check, Blocks.createSnapshot(check));
-				BlockX.setType(check, MaterialX.STONE_BRICKS);
+				BlockX.setType(check, COMMON_BLOCK);
 			}
 
 			final Location teleport = center.clone().add(0, 1, 0);

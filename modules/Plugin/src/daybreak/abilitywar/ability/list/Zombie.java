@@ -11,10 +11,17 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
+import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
+import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
+import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
+import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -41,17 +48,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 @AbilityManifest(name = "좀비", rank = Rank.A, species = Species.UNDEAD, explain = {
 		"좀비가 당신을 타게팅하지 않습니다. 다른 플레이어를 철괴로 우클릭하면 주변",
 		"$[RADIUS]칸 안에 무적 §5좀비§f $[ZOMBIE_COUNT]마리를 소환합니다. $[COOLDOWN]",
-		"능력으로 소환된 좀비에게 공격당한 플레이어는 5초간 §5감염 §f효과가 생기며,",
+		"능력으로 소환된 좀비에게 공격당한 플레이어는 1.5초간 §5감염 §f효과가 생기며,",
 		"다른 플레이어가 나를 공격할 경우 좀비의 타겟이 그 플레이어로 변경됩니다.",
-		"§7상태 이상 §8- §5감염§f: 간헐적으로 시야가 돌아가며, 대미지를 25% 줄여받습니다."
+		"§7상태 이상 §8- §5감염§f: 간헐적으로 시야가 돌아가며, 대미지를 25% 줄여받습니다.",
+		"감염 효과를 중복으로 받으면 지속 시간이 계속 쌓입니다."
 })
 @Support.Version(min = NMSVersion.v1_9_R1, max = NMSVersion.v1_14_R1)
 public class Zombie extends AbilityBase implements TargetHandler {
@@ -123,6 +129,9 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			final double criterionY = getPlayer().getLocation().getY();
 			for (final Location location : LocationUtil.getRandomLocations(getPlayer().getLocation(), radius, zombieCount)) {
 				org.bukkit.entity.Zombie zombie = getPlayer().getWorld().spawn(LocationUtil.floorY(location, criterionY), org.bukkit.entity.Zombie.class);
+				if (Seasons.isChristmas()) {
+					zombie.getEquipment().setHelmet(Skulls.createCustomSkull("f30026f3f14eda13f96070e2bb501d7b919169a6d1582f4121633b37798aead"));
+				}
 				zombie.setBaby(false);
 				zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.65);
 				zombies.add(zombie);
@@ -178,7 +187,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			if (zombies.contains(e.getEntity())) {
 				e.setCancelled(true);
 			} else if (zombies.contains(e.getDamager()) && getGame().isParticipating(e.getEntity().getUniqueId())) {
-				infect(getGame().getParticipant(e.getEntity().getUniqueId()), TimeUnit.SECONDS, 5);
+				infect(getGame().getParticipant(e.getEntity().getUniqueId()), TimeUnit.TICKS, 20);
 				e.setDamage(e.getDamage() / 2);
 			}
 			if (getPlayer().equals(e.getEntity())) {
@@ -214,28 +223,23 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		}
 	}
 
-	private final Map<Participant, Infection> infections = new WeakHashMap<>();
+	public static final EffectRegistration<Infection> INFECTION_REGISTRATION = EffectRegistry.registerEffect(Infection.class);
 
 	private void infect(Participant participant, TimeUnit timeUnit, int duration) {
-		if (infections.containsKey(participant)) {
-			final Infection applied = infections.get(participant);
-			final int toTicks = timeUnit.toTicks(duration) / 4;
-			if (toTicks > applied.getCount()) {
-				applied.setCount(toTicks);
-			}
-		} else {
-			new Infection(participant, timeUnit, duration).start();
-		}
+		INFECTION_REGISTRATION.apply(participant, timeUnit, duration);
 	}
 
 	private static final Random random = new Random();
 
-	public class Infection extends Effect implements Listener {
+	@EffectManifest(name = "감염", displayName = "§5감염", method = ApplicationMethod.UNIQUE_STACK, type = {
+			EffectType.SIGHT_CONTROL
+	})
+	public static class Infection extends Effect implements Listener {
 
 		private final Participant participant;
 
-		private Infection(final Participant participant, final TimeUnit timeUnit, final int duration) {
-			Zombie.this.getGame().super(participant, "§5감염", TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
+		public Infection(final Participant participant, final TimeUnit timeUnit, final int duration) {
+			participant.getGame().super(INFECTION_REGISTRATION, participant, timeUnit.toTicks(duration) / 4);
 			this.participant = participant;
 			setPeriod(TimeUnit.TICKS, 4);
 		}
@@ -257,7 +261,6 @@ public class Zombie extends AbilityBase implements TargetHandler {
 		@Override
 		protected void onStart() {
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-			infections.put(participant, this);
 		}
 
 		@Override
@@ -281,14 +284,12 @@ public class Zombie extends AbilityBase implements TargetHandler {
 
 		@Override
 		protected void onEnd() {
-			infections.remove(participant);
 			HandlerList.unregisterAll(this);
 			super.onEnd();
 		}
 
 		@Override
 		protected void onSilentEnd() {
-			infections.remove(participant);
 			HandlerList.unregisterAll(this);
 			super.onSilentEnd();
 		}

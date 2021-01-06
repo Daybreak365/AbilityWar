@@ -72,11 +72,11 @@ public class PenetrationArrow extends AbilityBase {
 		}
 
 	};
-	private static final RGB RED = new RGB(219, 64, 66);
-	private static final RGB PURPLE = new RGB(138, 9, 173);
-	private static final RGB YELLOW = new RGB(255, 246, 122);
+
+	private static final RGB RED = new RGB(219, 64, 66), PURPLE = new RGB(138, 9, 173), YELLOW = new RGB(255, 246, 122);
 	private static final Sphere sphere = Sphere.of(4, 10);
 	private static final double GRAVITATIONAL_CONSTANT = 3;
+
 	private final Random random = new Random();
 	private final List<ArrowType> arrowTypes = Arrays.asList(
 			new ArrowType(ChatColor.RED, "절단") {

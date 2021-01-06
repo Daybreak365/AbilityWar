@@ -13,14 +13,15 @@ import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.team.TeamGame.Winnable;
 import daybreak.abilitywar.game.team.event.ParticipantTeamChangedEvent;
 import daybreak.abilitywar.game.team.event.TeamCreatedEvent;
 import daybreak.abilitywar.game.team.event.TeamRemovedEvent;
 import daybreak.abilitywar.game.team.interfaces.Members;
-import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
@@ -153,12 +154,20 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 				SoundLib.BLOCK_NOTE_BLOCK_HARP.broadcastSound();
 				break;
 			case 13:
-				for (String m : new String[]{
-						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
-						"§f                §5§l체인지! §d§l믹스 §f§l전쟁",
-						"§f                    게임 시작                ",
-						"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"}) {
-					Bukkit.broadcastMessage(m);
+				if (Seasons.isChristmas()) {
+					final String blocks = Strings.repeat("§c■§2■", 22);
+					Bukkit.broadcastMessage(blocks);
+					Bukkit.broadcastMessage("§f               §c§l체인지! §2§l믹스 §f§l전쟁  ");
+					Bukkit.broadcastMessage("§f                   게임 시작                ");
+					Bukkit.broadcastMessage(blocks);
+				} else {
+					for (String line : new String[]{
+							"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+							"§f                §5§l체인지! §d§l믹스 §f§l전쟁",
+							"§f                    게임 시작                ",
+							"§d■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■"}) {
+						Bukkit.broadcastMessage(line);
+					}
 				}
 				SoundLib.ENTITY_WITHER_SPAWN.broadcastSound();
 

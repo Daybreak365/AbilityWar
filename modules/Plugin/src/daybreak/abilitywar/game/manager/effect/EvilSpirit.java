@@ -3,6 +3,11 @@ package daybreak.abilitywar.game.manager.effect;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
+import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
+import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
+import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
+import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -21,25 +26,18 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.Random;
-import java.util.WeakHashMap;
 import java.util.function.Predicate;
 
+@EffectManifest(name = "악령", displayName = "§c악령", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+		EffectType.SIGHT_RESTRICTION
+})
 public class EvilSpirit extends AbstractGame.Effect implements Listener {
 
-	private static final Map<Participant, EvilSpirit> evilSpirits = new WeakHashMap<>();
+	public static final EffectRegistration<EvilSpirit> registration = EffectRegistry.registerEffect(EvilSpirit.class);
 
 	public static void apply(final @NotNull Participant participant, final @NotNull TimeUnit timeUnit, final int duration) {
-		if (evilSpirits.containsKey(participant)) {
-			final EvilSpirit applied = evilSpirits.get(participant);
-			final int toTicks = timeUnit.toTicks(duration) / 4;
-			if (toTicks > applied.getCount()) {
-				applied.setCount(toTicks);
-			}
-		} else {
-			new EvilSpirit(participant, timeUnit, duration).start();
-		}
+		registration.apply(participant, timeUnit, duration);
 	}
 
 	private static final Random random = new Random();
@@ -57,8 +55,8 @@ public class EvilSpirit extends AbstractGame.Effect implements Listener {
 		}
 	};
 
-	private EvilSpirit(final Participant participant, final TimeUnit timeUnit, final int duration) {
-		participant.getGame().super(participant, "§c악령", TaskType.REVERSE, timeUnit.toTicks(duration) / 4);
+	public EvilSpirit(final Participant participant, final TimeUnit timeUnit, final int duration) {
+		participant.getGame().super(registration, participant, timeUnit.toTicks(duration) / 4);
 		this.participant = participant;
 		setPeriod(TimeUnit.TICKS, 4);
 	}
@@ -66,7 +64,6 @@ public class EvilSpirit extends AbstractGame.Effect implements Listener {
 	@Override
 	protected void onStart() {
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		evilSpirits.put(participant, this);
 	}
 
 	@EventHandler
@@ -115,14 +112,12 @@ public class EvilSpirit extends AbstractGame.Effect implements Listener {
 
 	@Override
 	protected void onEnd() {
-		evilSpirits.remove(participant);
 		HandlerList.unregisterAll(this);
 		super.onEnd();
 	}
 
 	@Override
 	protected void onSilentEnd() {
-		evilSpirits.remove(participant);
 		HandlerList.unregisterAll(this);
 		super.onSilentEnd();
 	}
