@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.TeamSupport;
+import daybreak.abilitywar.game.list.baskinrobbins.BaskinRobbins;
 import daybreak.abilitywar.game.list.blind.BlindAbilityWar;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.debug.DebugMode;
@@ -24,7 +25,6 @@ import daybreak.abilitywar.game.list.oneability.OneAbility;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.list.standard.WarGame;
 import daybreak.abilitywar.game.list.summervacation.SummerVacation;
-import daybreak.abilitywar.game.list.tnt.TNTTag;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.annotations.Beta;
@@ -71,7 +71,7 @@ public class GameFactory {
 		registerMode(BlindAbilityWar.class);
 		registerMode(TripleMixGame.class);
 		registerMode(MixBlindGame.class);
-		registerMode(TNTTag.class);
+		registerMode(BaskinRobbins.class);
 		if (DeveloperSettings.isEnabled()) {
 			registerMode(DebugMode.class);
 			registerMode(MixDebugMode.class);

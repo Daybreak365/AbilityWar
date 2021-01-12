@@ -9,12 +9,17 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleTimer {
 
 	private final TaskType taskType;
-	private final int maximumCount;
 	private QueueOnIterateHashSet<Observer> observers = null;
+
+	private Task task = null;
+	private BukkitTask bukkitTask = null;
+	private int maximumCount;
+	private int initialDelay = 0;
+	private int period = 20;
 
 	public SimpleTimer(final @NotNull TaskType taskType, final int maximumCount) {
 		this.taskType = taskType;
-		this.maximumCount = maximumCount;
+		this.maximumCount = taskType == TaskType.INFINITE ? -1 : maximumCount;
 	}
 
 	public void attachObserver(final Observer observer) {
@@ -29,11 +34,6 @@ public class SimpleTimer {
 			observers.remove(observer);
 		}
 	}
-
-	private Task task = null;
-	private BukkitTask bukkitTask = null;
-	private int initialDelay = 0;
-	private int period = 20;
 
 	public SimpleTimer setInitialDelay(final @NotNull TimeUnit timeUnit, final int initialDelay) {
 		this.initialDelay = timeUnit.toTicks(initialDelay);
@@ -73,7 +73,12 @@ public class SimpleTimer {
 	}
 
 	public int getMaximumCount() {
-		return maximumCount;
+		return taskType == TaskType.INFINITE ? -1 : maximumCount;
+	}
+
+	public void setMaximumCount(int maximumCount) {
+		if (taskType == TaskType.INFINITE) return;
+		this.maximumCount = maximumCount;
 	}
 
 	public int getInitialDelay() {
@@ -86,7 +91,7 @@ public class SimpleTimer {
 
 	public boolean start() {
 		if (!isRunning()) {
-			this.task = taskType.newRunnable(this);
+			this.task = taskType.newRunnable(this, maximumCount);
 			this.bukkitTask = Bukkit.getScheduler().runTaskTimer(AbilityWar.getPlugin(), task, initialDelay, period);
 			if (observers != null) {
 				for (final Observer observer : observers) {
@@ -166,7 +171,7 @@ public class SimpleTimer {
 	public enum TaskType {
 		INFINITE {
 			@Override
-			Task newRunnable(SimpleTimer simpleTimer) {
+			Task newRunnable(final SimpleTimer simpleTimer, final int maximumCount) {
 				return new Task() {
 					private int count = 0;
 
@@ -189,7 +194,7 @@ public class SimpleTimer {
 		},
 		NORMAL {
 			@Override
-			Task newRunnable(SimpleTimer simpleTimer) {
+			Task newRunnable(final SimpleTimer simpleTimer, final int maximumCount) {
 				return new Task() {
 					private int count = 0;
 
@@ -205,16 +210,16 @@ public class SimpleTimer {
 
 					@Override
 					public void run() {
-						if (count < simpleTimer.maximumCount) simpleTimer.run(++count); else simpleTimer.stop(false);
+						if (count < maximumCount) simpleTimer.run(++count); else simpleTimer.stop(false);
 					}
 				};
 			}
 		},
 		REVERSE {
 			@Override
-			Task newRunnable(SimpleTimer simpleTimer) {
+			Task newRunnable(final SimpleTimer simpleTimer, final int maximumCount) {
 				return new Task() {
-					private int count = simpleTimer.maximumCount + 1;
+					private int count = maximumCount + 1;
 
 					@Override
 					public int getCount() {
@@ -234,7 +239,7 @@ public class SimpleTimer {
 			}
 		};
 
-		abstract Task newRunnable(final SimpleTimer simpleTimer);
+		abstract Task newRunnable(final SimpleTimer simpleTimer, final int maximumCount);
 	}
 
 	private interface Task extends Runnable {

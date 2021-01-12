@@ -392,6 +392,7 @@ public class Canis extends AbilityBase implements ActiveHandler {
 		horse.setStyle(horseStyle);
 		horse.setColor(horseColor);
 		horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(60);
+		horse.getAttribute(Attribute.GENERIC_ARMOR).setBaseValue(12);
 		horse.setHealth(60);
 		horse.setAdult();
 		horse.setOwner(getPlayer());

@@ -46,6 +46,16 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 
 	};
 
+	public static final SettingObject<Integer> INVINCIBLE_TICKS = abilitySettings.new SettingObject<Integer>(Lazyness.class, "invincible-ticks", 10,
+			"# 무적 틱") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+
 	public Lazyness(AbstractGame.Participant participant) {
 		super(participant);
 	}
@@ -55,12 +65,13 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 
 	private long lastDamageMillis = System.currentTimeMillis();
+	private final int invincibleTicks = INVINCIBLE_TICKS.getValue();
 
 	@SubscribeEvent(ignoreCancelled = true, priority = Priority.HIGHEST)
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (e.getEntity().equals(getPlayer())) {
 			final long current = System.currentTimeMillis();
-			if (current - lastDamageMillis >= getPlayer().getMaximumNoDamageTicks() * 50) {
+			if (current - lastDamageMillis >= invincibleTicks * 50) {
 				final DamageTimer damageTimer = new DamageTimer(e, e.getFinalDamage() - e.getDamage(DamageModifier.ABSORPTION));
 				this.lastDamage = damageTimer;
 				timers.add(damageTimer);

@@ -155,6 +155,8 @@ public class AbilityFactory {
 		registerAbility(Solar.class);
 		registerAbility(Canis.class);
 		registerAbility(Ruber.class);
+		// v2.4.1
+		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

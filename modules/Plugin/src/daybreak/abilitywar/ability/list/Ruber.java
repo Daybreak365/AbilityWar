@@ -13,7 +13,6 @@ import daybreak.abilitywar.game.manager.effect.Bleed.ParticipantBleedEvent;
 import daybreak.abilitywar.game.manager.effect.Hemophilia;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -40,23 +39,28 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.util.Vector;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "루베르", rank = Rank.A, species = Species.HUMAN, explain = {//|
-		"§7스택 §8- §c피 스택§f: 스킬 적중 대상에게 쌓이며, 영구히 지속됩니다. 두 개 까지 쌓을",
-		" 수 있고, 스택이 모두 쌓인 대상에게 스킬을 사용하면 스킬이 강화되고 스택이",
+@AbilityManifest(name = "루베르", rank = Rank.A, species = Species.HUMAN, explain = {
+		"§7스택 §8- §c피의 잔§f: 스킬 적중 대상에게 쌓이며, 영구히 지속됩니다. 두 개 까지 쌓을",
+		" 수 있고, 스택이 모두 쌓인 대상에게 스킬을 사용하면 강화 스킬이 시전되고 스택이",
 		" 초기화됩니다.",
-		"§7철괴 우클릭 §8- §c흡혈§f: 상대를 바라보고 이 능력을 사용하면 체력을 반 칸만큼",
-		" 흡혈합니다. §4(§c강화§4) §f체력을 한 칸만큼 흡혈하고 대상을 3초간 출혈시킵니다.",
-		"§7철괴 좌클릭 §8- §c전염병 창궐§f: 주변 10칸 이내의 모든 플레이어를 5초간 §4혈사병§f에",
-		" 감염시킵니다. §4(§c강화§4) §f10초간 §4혈사병§f에 감염시키고 대상을 출혈시킵니다."
+		"§7철괴 우클릭 §8- §c흡혈§f: 상대를 바라보고 이 능력을 사용하면 체력을 반 칸",
+		" 흡혈합니다. §4(§c강화§4) §f체력을 한 칸 흡혈하고 대상을 3초간 출혈시킵니다.",
+		" $[COOLDOWN_CONFIG]",
+		"§7철괴 좌클릭 §8- §c전염병 창궐§f: 주변 10칸 이내의 모든 플레이어를 3초간 §4혈사병§f에",
+		" 감염시킵니다. §4(§c강화§4) §f6초간 §4혈사병§f에 감염시키고 대상을 출혈시킵니다.",
+		" $[PLAGUE_COOLDOWN_CONFIG]",
+		"§7상태 이상 §8- §4혈사병§f: 혈사병 지속 중 플레이어가 가지고 있는 모든 출혈 효과가",
+		" 멈추지 않습니다. 움직일 경우 최대 5초만큼 지속 시간이 증가하며, 혈사병이",
+		" 종료되면 모든 출혈 효과가 함께 사라집니다."
 })
-@Beta
 public class Ruber extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lorem.class, "cooldown", 5,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "cooldown", 5,
 			"# 흡혈 쿨타임") {
 
 		@Override
@@ -70,7 +74,21 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	public static final SettingObject<Integer> PLAGUE_RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Lorem.class, "plague-radius", 10,
+	public static final SettingObject<Integer> PLAGUE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "plague-cooldown", 15,
+			"# 전염병 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+	};
+
+	public static final SettingObject<Integer> PLAGUE_RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "plague-radius", 10,
 			"# 전염병 범위") {
 
 		@Override
@@ -110,7 +128,7 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 	};
 
 	private final Map<UUID, Stack> stacks = new HashMap<>();
-	private final Cooldown cooldown = new Cooldown(PLAGUE_RADIUS_CONFIG.getValue(), "흡혈", 0);
+	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), "흡혈", 0), plagueCooldown = new Cooldown(PLAGUE_COOLDOWN_CONFIG.getValue(), "전염병 창궐", 25);
 	private final int plagueRadius = PLAGUE_RADIUS_CONFIG.getValue();
 	private final Circle circle = Circle.of(plagueRadius, plagueRadius * 15);
 
@@ -137,13 +155,16 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 						final Participant participant = getGame().getParticipant(target);
 						new Transfusion(participant, true, 1, addStack(participant)).start();
 						cooldown.start();
-						if (participant.hasEffect(Hemophilia.registration)) {
-							cooldown.setCount(3);
-						}
 					}
 				}
 			} else if (clickType == ClickType.LEFT_CLICK) {
-				for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 10, 10, predicate)) {
+				if (plagueCooldown.isCooldown()) return false;
+				final List<Player> players = LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), plagueRadius, plagueRadius, predicate);
+				if (players.isEmpty()) {
+					getPlayer().sendMessage("§c" + plagueRadius + "칸 이내에 대상이 존재하지 않습니다.");
+					return false;
+				}
+				for (Player target : players) {
 					final Participant participant = getGame().getParticipant(target);
 					if (addStack(participant)) {
 						Bleed.apply(participant, TimeUnit.SECONDS, 3, 5);
@@ -157,6 +178,7 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 				for (Location location : circle.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {
 					ParticleLib.REDSTONE.spawnParticle(location, DARK_RED);
 				}
+				plagueCooldown.start();
 			}
 		}
 		return false;

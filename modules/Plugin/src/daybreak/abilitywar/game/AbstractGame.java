@@ -883,6 +883,11 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		}
 
 		@Override
+		protected void onCountSet() {
+			channel.update(registration.getManifest().displayName() + "§7: §f" + Math.floor(getCount() / (20.0 / getPeriod()) * 100) / 100 + "초");
+		}
+
+		@Override
 		protected void onEnd() {
 			onSilentEnd();
 		}

@@ -163,6 +163,7 @@ public class AbilityList {
 		registerAbility(Solar.class);
 		registerAbility(Canis.class);
 		registerAbility(Ruber.class);
+		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
 	}
 
 	/**

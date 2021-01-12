@@ -36,7 +36,6 @@ import daybreak.abilitywar.game.manager.gui.AbilityListGUI;
 import daybreak.abilitywar.game.manager.gui.BlackListGUI;
 import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
-import daybreak.abilitywar.game.manager.gui.SpecialThanksGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
 import daybreak.abilitywar.game.manager.gui.SynergyListGUI;
 import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
@@ -49,6 +48,7 @@ import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.script.AbstractScript;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.specialthanks.SpecialThanksGUI;
 import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.patch.Patchable;
@@ -1165,7 +1165,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 		mainCommand.addSubCommand("specialthanks", new Command(Condition.PLAYER) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				new SpecialThanksGUI((Player) sender, plugin).openGUI(1);
+				SpecialThanksGUI.openGUI((Player) sender);
 				return true;
 			}
 		});
