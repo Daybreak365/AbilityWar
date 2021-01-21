@@ -184,10 +184,10 @@ public abstract class TeamGame extends Game implements Teamable {
 		return new TeamGameStrategy(players);
 	}
 
-	public class TeamGameStrategy implements ParticipantStrategy {
+	protected class TeamGameStrategy implements ParticipantStrategy {
 		private final Map<UUID, Participant> participants = new HashMap<>();
 
-		public TeamGameStrategy(final Collection<Player> players) {
+		protected TeamGameStrategy(final Collection<Player> players) {
 			for (Player player : players) {
 				participants.put(player.getUniqueId(), new Participant(player));
 			}
@@ -403,7 +403,7 @@ public abstract class TeamGame extends Game implements Teamable {
 
 	public class Participant extends ParticipantImpl {
 
-		private Participant(final Player player) {
+		protected Participant(final Player player) {
 			super(player);
 		}
 
