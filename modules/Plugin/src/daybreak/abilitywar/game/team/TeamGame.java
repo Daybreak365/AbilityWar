@@ -184,10 +184,10 @@ public abstract class TeamGame extends Game implements Teamable {
 		return new TeamGameStrategy(players);
 	}
 
-	private class TeamGameStrategy implements ParticipantStrategy {
+	public class TeamGameStrategy implements ParticipantStrategy {
 		private final Map<UUID, Participant> participants = new HashMap<>();
 
-		private TeamGameStrategy(final Collection<Player> players) {
+		public TeamGameStrategy(final Collection<Player> players) {
 			for (Player player : players) {
 				participants.put(player.getUniqueId(), new Participant(player));
 			}

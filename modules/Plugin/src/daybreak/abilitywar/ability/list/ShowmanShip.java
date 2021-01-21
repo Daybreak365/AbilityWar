@@ -29,11 +29,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FireworkExplodeEvent;
+import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +47,7 @@ import java.util.function.Predicate;
 		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
 		"플레이어는 1명, 플레이어가 아닌 생명체는 $[ENTITY_COUNT]명 취급합니다.",
 		"§a0명 이상, 2명 미만 §7: §f나약함  §a2명 이상, 4명 미만 §7: §f힘 II",
-		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 처형"
+		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 공격시 처형"
 })
 public class ShowmanShip extends AbilityBase {
 
@@ -124,6 +127,25 @@ public class ShowmanShip extends AbilityBase {
 		this.onEntityDamage(e);
 	}
 
+	@SubscribeEvent(priority = 6, ignoreCancelled = true)
+	private void playerExecution(final EntityDamageByEntityEvent e) {
+		final Entity entity = e.getEntity();
+		if (!getPlayer().equals(e.getEntity()) && getPlayer().equals(getDamager(e.getDamager())) && entity instanceof LivingEntity) {
+			final LivingEntity livingEntity = (LivingEntity) entity;
+			if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead() && Damages.canDamage(livingEntity, DamageCause.MAGIC, Double.MAX_VALUE)) {
+				execute(livingEntity, false);
+			}
+		}
+	}
+
+	@Nullable
+	private static Entity getDamager(final Entity damager) {
+		if (damager instanceof Projectile) {
+			final ProjectileSource shooter = ((Projectile) damager).getShooter();
+			return shooter instanceof Entity ? (Entity) shooter : null;
+		} else return damager;
+	}
+
 	@SubscribeEvent(priority = 6, onlyRelevant = true, ignoreCancelled = true)
 	private void onEntityDamageByBlock(final EntityDamageByBlockEvent e) {
 		this.onEntityDamage(e);
@@ -151,7 +173,7 @@ public class ShowmanShip extends AbilityBase {
 		public void run(int count) {
 			final double point = getPoint(7, 7);
 			final RGB color;
-			Location playerLocation = getPlayer().getLocation();
+			final Location playerLocation = getPlayer().getLocation();
 			if (point < 2) {
 				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), 4, 0, true);
 				color = WEAK;
@@ -161,11 +183,6 @@ public class ShowmanShip extends AbilityBase {
 			} else {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 4, 2, true);
 				color = POWERFUL;
-				for (LivingEntity livingEntity : LocationUtil.getEntitiesInCircle(LivingEntity.class, playerLocation, radius, predicate)) {
-					if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead() && Damages.canDamage(livingEntity, DamageCause.MAGIC, Double.MAX_VALUE)) {
-						execute(livingEntity, false);
-					}
-				}
 			}
 			for (Location loc : circle.toLocations(playerLocation).floor(playerLocation.getY())) {
 				ParticleLib.REDSTONE.spawnParticle(getPlayer(), loc, color);

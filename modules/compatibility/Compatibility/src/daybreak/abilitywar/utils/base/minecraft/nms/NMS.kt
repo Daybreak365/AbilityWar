@@ -6,6 +6,7 @@ import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedExcep
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
+import org.bukkit.WorldBorder
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
@@ -58,6 +59,16 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun newHologram(world: World, x: Double, y: Double, z: Double): IHologram {
 			return INSTANCE.newHologram(world, x, y, z)
+		}
+
+		@JvmStatic
+		fun newHologram(world: World, location: Location, text: String): IHologram {
+			return INSTANCE.newHologram(world, location.x, location.y, location.z, text)
+		}
+
+		@JvmStatic
+		fun newHologram(world: World, location: Location): IHologram {
+			return INSTANCE.newHologram(world, location.x, location.y, location.z)
 		}
 
 		@JvmStatic
@@ -138,6 +149,31 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun getBoundingBox(entity: Entity): EntityBoundingBox {
 			return INSTANCE.getBoundingBox(entity)
+		}
+
+		@JvmStatic
+		override fun setCamera(receiver: Player, entity: Entity) {
+			INSTANCE.setCamera(receiver, entity)
+		}
+
+		@JvmStatic
+		override fun createWorldBorder(world: World): IWorldBorder {
+			return INSTANCE.createWorldBorder(world)
+		}
+
+		@JvmStatic
+		override fun createWorldBorder(bukkit: WorldBorder): IWorldBorder {
+			return INSTANCE.createWorldBorder(bukkit)
+		}
+
+		@JvmStatic
+		override fun setWorldBorder(receiver: Player, worldBorder: IWorldBorder) {
+			INSTANCE.setWorldBorder(receiver, worldBorder)
+		}
+
+		@JvmStatic
+		override fun resetWorldBorder(receiver: Player) {
+			INSTANCE.resetWorldBorder(receiver)
 		}
 	}
 }

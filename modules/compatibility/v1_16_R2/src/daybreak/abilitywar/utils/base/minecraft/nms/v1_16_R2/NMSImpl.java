@@ -5,22 +5,28 @@ import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
+import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import net.minecraft.server.v1_16_R2.AxisAlignedBB;
 import net.minecraft.server.v1_16_R2.DataWatcherObject;
 import net.minecraft.server.v1_16_R2.DataWatcherRegistry;
+import net.minecraft.server.v1_16_R2.EntityPlayer;
 import net.minecraft.server.v1_16_R2.EnumHand;
 import net.minecraft.server.v1_16_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_16_R2.ItemCooldown;
 import net.minecraft.server.v1_16_R2.ItemCooldown.Info;
 import net.minecraft.server.v1_16_R2.PacketPlayInClientCommand;
 import net.minecraft.server.v1_16_R2.PacketPlayInClientCommand.EnumClientCommand;
+import net.minecraft.server.v1_16_R2.PacketPlayOutCamera;
 import net.minecraft.server.v1_16_R2.PacketPlayOutCollect;
 import net.minecraft.server.v1_16_R2.PacketPlayOutEntity.PacketPlayOutEntityLook;
 import net.minecraft.server.v1_16_R2.PacketPlayOutEntityHeadRotation;
 import net.minecraft.server.v1_16_R2.PacketPlayOutEntityTeleport;
 import net.minecraft.server.v1_16_R2.PacketPlayOutTitle;
 import net.minecraft.server.v1_16_R2.PacketPlayOutTitle.EnumTitleAction;
+import net.minecraft.server.v1_16_R2.PacketPlayOutWorldBorder;
+import net.minecraft.server.v1_16_R2.PacketPlayOutWorldBorder.EnumWorldBorderAction;
 import net.minecraft.server.v1_16_R2.PlayerConnection;
+import net.minecraft.server.v1_16_R2.WorldBorder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -182,4 +188,41 @@ public class NMSImpl implements INMS {
 		return new EntityBoundingBox(entity, boundingBox.minX - locX, boundingBox.minY - locY, boundingBox.minZ - locZ, boundingBox.maxX - locX, boundingBox.maxY - locY, boundingBox.maxZ - locZ);
 	}
 
+	@Override
+	public void setCamera(Player receiver, Entity entity) {
+		((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(new PacketPlayOutCamera(((CraftEntity) entity).getHandle()));
+	}
+
+	@Override
+	public IWorldBorder createWorldBorder(World world) {
+		return new WorldBorderImpl(world);
+	}
+
+	@Override
+	public IWorldBorder createWorldBorder(org.bukkit.WorldBorder bukkit) {
+		final WorldBorderImpl impl = new WorldBorderImpl(bukkit.getCenter().getWorld());
+		final Location center = bukkit.getCenter();
+		impl.setCenter(center.getX(), center.getZ());
+		impl.setDamageAmount(bukkit.getDamageAmount());
+		impl.setDamageBuffer(bukkit.getDamageBuffer());
+		impl.setSize(bukkit.getSize());
+		impl.setWarningDistance(bukkit.getWarningDistance());
+		impl.setWarningTime(bukkit.getWarningTime());
+		return impl;
+	}
+
+	@Override
+	public void setWorldBorder(Player receiver, final IWorldBorder worldBorder) {
+		if (!(worldBorder instanceof WorldBorder)) throw new IllegalArgumentException();
+		((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(new PacketPlayOutWorldBorder((WorldBorder) worldBorder, EnumWorldBorderAction.INITIALIZE));
+	}
+
+	@Override
+	public void resetWorldBorder(Player receiver) {
+		final EntityPlayer nms = ((CraftPlayer) receiver).getHandle();
+		final net.minecraft.server.v1_16_R2.World world = nms.getWorld();
+		if (world != null) {
+			nms.playerConnection.sendPacket(new PacketPlayOutWorldBorder(world.getWorldBorder(), EnumWorldBorderAction.INITIALIZE));
+		}
+	}
 }

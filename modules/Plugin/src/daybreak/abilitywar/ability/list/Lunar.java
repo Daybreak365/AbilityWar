@@ -73,7 +73,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 	};
 
 	private static final RGB MOONLIGHT_COLOUR = RGB.of(235, 200, 21);
-	private final Crescent crescent = Crescent.of(1, 20);
+	private static final Crescent crescent = Crescent.of(1, 20);
 	private static final Crescent BIG_CRESCENT = Crescent.of(5, 50);
 	private static final Note[] NOTES = {
 			Note.natural(0, Tone.E),

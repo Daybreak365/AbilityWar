@@ -3,7 +3,6 @@ package daybreak.abilitywar.utils.base.minecraft.nms.v1_12_R1;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import net.minecraft.server.v1_12_R1.EntityArmorStand;
-import net.minecraft.server.v1_12_R1.EntityPlayer;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityTeleport;
@@ -103,9 +102,9 @@ public class HologramImpl implements IHologram, Listener {
 	@Override
 	public void hide(Player player) throws IllegalStateException {
 		if (viewers == null) throw new IllegalStateException("Hologram unregistered");
-		EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-		if (viewers.remove(entityPlayer)) {
-			entityPlayer.playerConnection.sendPacket(packetPlayOutEntityDestroy);
+		final CraftPlayer craftPlayer = (CraftPlayer) player;
+		if (viewers.remove(craftPlayer)) {
+			craftPlayer.getHandle().playerConnection.sendPacket(packetPlayOutEntityDestroy);
 		}
 	}
 

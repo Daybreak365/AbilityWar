@@ -50,13 +50,13 @@ public class BaskinRobbins extends AbstractGame {
 
 	private static final Random random = new Random();
 	private boolean tutorial = true;
-	private final TurnManager turnManager;
+	private final GameManager turnManager;
 
 	public BaskinRobbins(final String[] args) throws IllegalArgumentException {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 		if (args.length != 0 && "speed".equals(args[0])) this.tutorial = false;
-		this.turnManager = new TurnManager();
+		this.turnManager = new GameManager();
 	}
 
 	@Override
@@ -216,27 +216,34 @@ public class BaskinRobbins extends AbstractGame {
 		this.turnManager.currentTurn++;
 	}
 
-	public class TurnManager extends GameTimer implements Listener {
+	public class GameManager extends GameTimer implements Listener {
 
 		private final int maxCount = 31;
-		private int count = 0, streak = 0;
-		private int currentTurn = -1;
-		private BaskinParticipant current = null;
+		private int count = 0, currentTurn = -1;
+		private BaskinParticipant current = null, next;
 		private final List<BaskinParticipant> turn;
+
+		private int streak = 0;
 
 		public BaskinParticipant getTurn(final int turn) {
 			if (turn < 0) throw new IllegalArgumentException();
+			if (this.turn.isEmpty()) throw new IllegalStateException();
 			return this.turn.get(turn % this.turn.size());
 		}
 
-		public BaskinParticipant nextTurn() {
-			final BaskinParticipant participant = getTurn(++currentTurn);
-			this.current = participant;
-			return participant;
+		public void nextTurn() {
+			currentTurn++;
+			final BaskinParticipant next = getTurn(currentTurn + 1), participant = this.next;
+			if (participant != null) {
+				this.current = participant;
+			} else {
+				this.current = getTurn(currentTurn);
+			}
+			this.next = next;
 		}
 
-		private TurnManager() {
-			super(TaskType.REVERSE, 25);
+		private GameManager() {
+			super(TaskType.REVERSE, 15);
 			setPeriod(TimeUnit.TICKS, 4);
 			this.turn = new ArrayList<>(getParticipants());
 		}
@@ -312,14 +319,14 @@ public class BaskinRobbins extends AbstractGame {
 		@Override
 		protected void run(int count) {
 			if (current != null) {
-				current.timeChannel.update("§7" + (count / 5) + "초 남음");
+				current.timeChannel.update("§d" + (count / 5.0) + "§f초 남음");
 			}
 		}
 
 		@Override
 		protected void onCountSet() {
 			if (current != null) {
-				current.timeChannel.update("§7" + (getCount() / 5) + "초 남음");
+				current.timeChannel.update("§d" + (getCount() / 5.0) + "§f초 남음");
 			}
 		}
 
@@ -374,7 +381,7 @@ public class BaskinRobbins extends AbstractGame {
 			super(player);
 		}
 
-		public void reset(final TurnManager turnManager) {// 31 -> 2 ~ 30
+		public void reset(final GameManager turnManager) {// 31 -> 2 ~ 30
 			this.deathNumber = random.nextInt(turnManager.maxCount - 2) + 2;
 		}
 

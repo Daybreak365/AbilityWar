@@ -4,6 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.Tips;
 import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
@@ -36,6 +37,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +50,8 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "유명 인사", rank = Rank.C, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
 		"능력 사용 중 레드 카펫 위에 있으면 주변 $[DISTANCE_CONFIG]칸 이내의 모든 생명체가",
-		"자신을 바라보며, 깔린 레드 카펫은 $[DURATION_CONFIG]초 후 사라집니다."
+		"자신을 바라보며, 넉백 또는 끌어당겨지는 효과를 줄여 받습니다. 깔린 레드 카펫은",
+		"$[DURATION_CONFIG]초 후 사라집니다."
 })
 @Tips(tip = {
 		"주위 사람들의 관심을 끌기 딱 좋은 능력입니다.",
@@ -167,7 +170,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 					locations.add(direction);
 					for (Location location : locations) {
 						if (set.add(location.getBlockX() + ":" + location.getBlockZ())) {
-							Block block = world.getBlockAt(
+							final Block block = world.getBlockAt(
 									location.getBlockX(),
 									LocationUtil.getFloorYAt(world, playerLocation.getY(), location.getBlockX(), location.getBlockZ()),
 									location.getBlockZ()
@@ -184,7 +187,7 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onDurationProcess(int seconds) {
-			Block block = getPlayer().getLocation().getBlock();
+			final Block block = getPlayer().getLocation().getBlock();
 			if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
 				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate)) {
 					for (Player player : Bukkit.getOnlinePlayers()) {
@@ -227,6 +230,14 @@ public class Celebrity extends AbilityBase implements ActiveHandler {
 
 	private double rotateZ(double x, double z, double radians) {
 		return (-x * FastMath.sin(radians)) + (z * FastMath.cos(radians));
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onPlayerVelocity(final PlayerVelocityEvent e) {
+		final Block block = getPlayer().getLocation().getBlock();
+		if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
+			e.setVelocity(e.getPlayer().getVelocity().multiply(.45));
+		}
 	}
 
 }

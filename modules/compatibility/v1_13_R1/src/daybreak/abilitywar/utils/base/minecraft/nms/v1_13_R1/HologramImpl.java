@@ -105,9 +105,9 @@ public class HologramImpl implements IHologram, Listener {
 	@Override
 	public void hide(Player player) throws IllegalStateException {
 		if (viewers == null) throw new IllegalStateException("Hologram unregistered");
-		EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-		if (viewers.remove(entityPlayer)) {
-			entityPlayer.playerConnection.sendPacket(packetPlayOutEntityDestroy);
+		final CraftPlayer craftPlayer = (CraftPlayer) player;
+		if (viewers.remove(craftPlayer)) {
+			craftPlayer.getHandle().playerConnection.sendPacket(packetPlayOutEntityDestroy);
 		}
 	}
 

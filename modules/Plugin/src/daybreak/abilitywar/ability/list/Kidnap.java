@@ -63,7 +63,7 @@ public class Kidnap extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Kidnap.class, "duration", 3,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Kidnap.class, "duration", 5,
 			"# 지속 시간") {
 
 		@Override

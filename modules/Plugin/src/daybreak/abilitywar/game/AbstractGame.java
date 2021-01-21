@@ -359,6 +359,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 									if (ability instanceof ActiveHandler && ((ActiveHandler) ability).ActiveSkill(material, ClickType.RIGHT_CLICK)) {
 										Bukkit.getPluginManager().callEvent(new AbilityActiveSkillEvent(ability, material, ClickType.RIGHT_CLICK));
 										ability.getPlayer().sendMessage("§d능력을 사용하였습니다.");
+										return;
 									}
 									if (ability instanceof TargetHandler) {
 										final Entity targetEntity = e.getRightClicked();

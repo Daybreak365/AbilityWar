@@ -11,6 +11,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
+import daybreak.abilitywar.ability.list.grapplinghook.GrapplingHook;
 import daybreak.abilitywar.ability.list.prophet.Prophet;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
@@ -158,12 +159,13 @@ public class AbilityList {
 		registerAbility(Ferda.class);
 		registerAbility(Lux.class);
 		registerAbility(Loki.class);
-		registerAbility("daybreak.abilitywar.ability.list.grapplinghook." + ServerVersion.getName() + ".GrapplingHook");
+		registerAbility(GrapplingHook.class);
 		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
 		registerAbility(Solar.class);
 		registerAbility(Canis.class);
 		registerAbility(Ruber.class);
 		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
+		registerAbility(Liberator.class);
 	}
 
 	/**

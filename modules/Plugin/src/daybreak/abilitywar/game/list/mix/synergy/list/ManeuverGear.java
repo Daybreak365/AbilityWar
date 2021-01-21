@@ -1,15 +1,17 @@
-package daybreak.abilitywar.ability.list.grapplinghook;
+package daybreak.abilitywar.game.list.mix.synergy.list;
 
 import com.google.common.base.Strings;
-import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.ability.list.grapplinghook.Hooks;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
@@ -17,6 +19,7 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
+import daybreak.abilitywar.utils.base.minecraft.ability.list.grapplinghook.HookEntity;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -34,6 +37,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,23 +45,33 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-@AbilityManifest(name = "그래플링 훅", rank = Rank.L, species = Species.HUMAN, explain = {
-		"후크는 한 번에 최대 4개를 보유할 수 있으며, 첫 번째 후크 사용 후 35초가 지나면",
+@AbilityManifest(name = "입체 기동 장치", rank = Rank.L, species = Species.HUMAN, explain = {
+		"후크는 한 번에 최대 4개를 보유할 수 있으며, 첫 번째 후크 사용 후 10초가 지나면",
 		"후크 4개가 모두 충전됩니다. 철괴를 우클릭하면 바라보는 방향으로 후크를",
-		"발사합니다. 후크가 블록에 고정되면 빠르게 해당 위치로 이동하며, 웅크려서 이동을",
+		"발사합니다. 후크가 블록 또는 플레이어에 고정되면 빠르게 해당 위치로 이동하며, 웅크려서",
 		"취소하고 그 자리에 멈출 수 있습니다. 목적지에 도착했을 때 그 자리에 최대 6초간",
 		"고정되며, 웅크려서 후크 고정을 풀고 바라보는 방향으로 짧게 돌진할 수 있습니다.",
 		"5칸 이내의 플레이어를 바라본 상태로 돌진했다면, 해당 플레이어를 기절시키고",
 		"최대 체력에 비례하여 대미지를 입힙니다. 낙하 대미지를 받지 않습니다."
 })
-public abstract class AbstractGrapplingHook extends AbilityBase implements ActiveHandler {
+public class ManeuverGear extends Synergy implements ActiveHandler {
 
-	protected AbstractGrapplingHook(Participant participant) {
+	public static final SettingObject<Integer> MAX_CHARGE = synergySettings.new SettingObject<Integer>(ManeuverGear.class, "max-charge", 4,
+			"# 후크 최대 충전",
+			"# 기본값: 4") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+
+	};
+
+	public ManeuverGear(Participant participant) {
 		super(participant);
 	}
-
-	protected abstract HookEntity createHook(Location targetLoc);
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onEntityDamage(final EntityDamageEvent e) {
@@ -88,7 +102,7 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 		}
 	};
 
-	private final int maxCharge = 4;
+	private final int maxCharge = MAX_CHARGE.getValue();
 
 	private class Charge extends AbilityTimer {
 
@@ -96,7 +110,7 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 		private int charges = maxCharge;
 
 		private Charge() {
-			super(TaskType.REVERSE, (int) (35 * Wreck.calculateDecreasedAmount(25)));
+			super(TaskType.REVERSE, (int) (20 * Wreck.calculateDecreasedAmount(25)));
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 		}
 
@@ -152,8 +166,8 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 							@Override
 							public boolean consume(double x, double y, double z) {
 								if (move == null) {
-									if (AbstractGrapplingHook.this.charge.subtractCharge()) {
-										AbstractGrapplingHook.this.move = new Move(new Location(getPlayer().getWorld(), x, y, z));
+									if (ManeuverGear.this.charge.subtractCharge()) {
+										ManeuverGear.this.move = new Move(new Location(getPlayer().getWorld(), x, y, z));
 										SoundLib.ENTITY_FISHING_BOBBER_RETRIEVE.playSound(getPlayer());
 									}
 								}
@@ -162,7 +176,11 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 
 							@Override
 							public boolean consume(Player player) {
-								return false;
+								if (ManeuverGear.this.charge.subtractCharge()) {
+									ManeuverGear.this.move = new Move(player);
+									SoundLib.ENTITY_FISHING_BOBBER_RETRIEVE.playSound(getPlayer());
+								}
+								return true;
 							}
 						};
 						return true;
@@ -199,26 +217,49 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 
 	private class Move extends AbilityTimer {
 
-		private final Location targetLoc;
+		private final @Nullable Player target;
+		private final Supplier<Location> targetLoc;
 		private final HookEntity entityHook;
 		private boolean dash = false;
 
 		private Move(final Location targetLoc) {
 			super(TaskType.NORMAL, 260);
 			setPeriod(TimeUnit.TICKS, 1);
-			this.targetLoc = targetLoc;
-			this.entityHook = createHook(targetLoc);
+			this.targetLoc = new Supplier<Location>() {
+				@Override
+				public Location get() {
+					return targetLoc;
+				}
+			};
+			this.entityHook = Hooks.createHook(getPlayer(), targetLoc);
+			this.target = null;
+			start();
+		}
+
+		private Move(final Player player) {
+			super(TaskType.NORMAL, 260);
+			setPeriod(TimeUnit.TICKS, 1);
+			this.targetLoc = new Supplier<Location>() {
+				@Override
+				public Location get() {
+					return player.getLocation();
+				}
+			};
+			this.entityHook = Hooks.createHook(getPlayer(), player);
+			this.target = player;
 			start();
 		}
 
 		@Override
 		protected void run(int count) {
+			final Location targetLoc = this.targetLoc.get();
 			if (!getPlayer().getWorld().equals(targetLoc.getWorld())) {
 				stop(true);
 				return;
 			}
 			getPlayer().setFallDistance(0f);
-			if (getPlayer().getLocation().distanceSquared(targetLoc) <= 4) {
+			final double distanceSquared = getPlayer().getLocation().distanceSquared(targetLoc);
+			if (distanceSquared <= 9) {
 				if (!dash) {
 					this.dash = true;
 					SoundLib.BLOCK_METAL_STEP.playSound(getPlayer());
@@ -230,7 +271,7 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 			} else {
 				this.dash = false;
 			}
-			getPlayer().setVelocity(VectorUtil.validateVector(targetLoc.toVector().subtract(getPlayer().getLocation().toVector()).normalize()).multiply(dash ? .1 : 1));
+			getPlayer().setVelocity(VectorUtil.validateVector(targetLoc.toVector().subtract(getPlayer().getLocation().toVector()).normalize()).multiply(dash ? .1 : (distanceSquared >= 36 ? 3 : 1)));
 		}
 
 		@Override
@@ -241,7 +282,7 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 		@Override
 		protected void onSilentEnd() {
 			entityHook.die();
-			AbstractGrapplingHook.this.move = null;
+			ManeuverGear.this.move = null;
 		}
 	}
 
@@ -261,7 +302,7 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 			super(8);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
-			this.forward = hookVelocity.multiply(6);
+			this.forward = hookVelocity.multiply(16);
 			this.lastLocation = startLocation;
 			start();
 		}
@@ -323,7 +364,7 @@ public abstract class AbstractGrapplingHook extends AbilityBase implements Activ
 		@Override
 		protected void onSilentEnd() {
 			entity.remove();
-			AbstractGrapplingHook.this.hook = null;
+			ManeuverGear.this.hook = null;
 		}
 
 		public class ArrowEntity extends CustomEntity implements Deflectable {

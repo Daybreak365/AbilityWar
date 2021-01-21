@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -32,7 +33,7 @@ import java.util.function.Predicate;
 })
 public class Synchronize extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Synchronize.class, "cooldown", 45,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Synchronize.class, "cooldown", 60,
 			"# 쿨타임") {
 
 		@Override
@@ -86,7 +87,7 @@ public class Synchronize extends AbilityBase implements ActiveHandler {
 			2.0943951023931954923084289221863,
 			4.1887902047863909846168578443727
 	};
-	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 	private final Duration skill = new Duration(DURATION_CONFIG.getValue() * 20, cooldown) {
 		@Override
 		protected void onDurationProcess(int count) {

@@ -14,6 +14,15 @@
       <resource>
         <filtering>true</filtering>
         <directory>resources</directory>
+        <includes>
+          <include>plugin.yml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
+        <includes>
+          <include>daybreak/**</include>
+        </includes>
       </resource>
     </resources>
     <plugins>
@@ -59,6 +68,7 @@
                   <include>org.jetbrains.kotlin:**</include>
                   <include>com.google.guava:guava</include>
                   <include>com.google.code.gson:gson</include>
+                  <include>com.github.koca2000:NoteBlockAPI</include>
                 </includes>
               </artifactSet>
               <relocations>
@@ -72,6 +82,13 @@
                   <artifact>*:*</artifact>
                   <excludes>
                     <exclude>META-INF/**</exclude>
+                    <exclude>com/xxmicloxx/NoteBlockAPI/**.class</exclude>
+                    <exclude>com/xxmicloxx/NoteBlockAPI/bukkit/</exclude>
+                    <exclude>com/xxmicloxx/NoteBlockAPI/songplayer/</exclude>
+                    <exclude>com/xxmicloxx/NoteBlockAPI/event/</exclude>
+                    <exclude>com/xxmicloxx/NoteBlockAPI/model/NotePitch.class</exclude>
+                    <exclude>com/xxmicloxx/NoteBlockAPI/model/playmode/</exclude>
+                    <exclude>com/xxmicloxx/NoteBlockAPI/utils/TimeUtils.class</exclude>
                   </excludes>
                 </filter>
               </filters>
@@ -89,6 +106,10 @@
     <repository>
       <id>mojang-repo</id>
       <url>https://libraries.minecraft.net/</url>
+    </repository>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
     </repository>
   </repositories>
   <dependencies>
@@ -155,7 +176,7 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-      <version>20.0.0</version>
+      <version>20.1.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

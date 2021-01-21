@@ -50,4 +50,11 @@ public interface INMS {
 
 	EntityBoundingBox getBoundingBox(Entity entity);
 
+	void setCamera(Player receiver, Entity entity);
+
+	IWorldBorder createWorldBorder(final World world);
+	IWorldBorder createWorldBorder(org.bukkit.WorldBorder bukkit);
+	void setWorldBorder(Player receiver, final IWorldBorder worldBorder);
+	void resetWorldBorder(Player receiver);
+
 }

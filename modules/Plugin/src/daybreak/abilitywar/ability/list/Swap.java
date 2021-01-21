@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -67,12 +68,22 @@ public class Swap extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
-	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
-			return getGame().isParticipating(entity.getUniqueId())
-					&& (!(getGame() instanceof DeathManager.Handler) || !((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-					&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue();
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
 		}
 	};
 
@@ -81,7 +92,7 @@ public class Swap extends AbilityBase implements ActiveHandler {
 	private final Duration duration = new Duration(DURATION_CONFIG.getValue() * 10, cooldown) {
 		@Override
 		protected void onDurationProcess(int count) {
-			for (final Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), distance, distance, ONLY_PARTICIPANTS)) {
+			for (final Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), distance, distance, predicate)) {
 				player.getInventory().setHeldItemSlot(random.nextInt(9));
 				if (count % 3 == 0) {
 					SoundLib.UI_BUTTON_CLICK.playSound(player);

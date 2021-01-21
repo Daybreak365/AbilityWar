@@ -1,11 +1,14 @@
 package daybreak.abilitywar.ability.list.grapplinghook.v1_9_R1;
 
-import daybreak.abilitywar.ability.list.grapplinghook.HookEntity;
+import daybreak.abilitywar.utils.base.minecraft.ability.list.grapplinghook.HookEntity;
 import net.minecraft.server.v1_9_R1.DataWatcherObject;
+import net.minecraft.server.v1_9_R1.Entity;
 import net.minecraft.server.v1_9_R1.EntityFishingHook;
 import net.minecraft.server.v1_9_R1.EntityHuman;
 import net.minecraft.server.v1_9_R1.World;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.LivingEntity;
 
 import java.lang.reflect.Field;
 
@@ -23,21 +26,30 @@ public class EntityHook extends EntityFishingHook implements HookEntity {
 		}
 	}
 
-	private final EntityStand stand;
+	private final Entity target;
 
 	EntityHook(World world, EntityHuman entityhuman, Location location) {
 		super(world, entityhuman);
-		this.stand = new EntityStand(world, location);
-		this.hooked = stand;
-		this.getDataWatcher().set(c, stand.getId() + 1);
+		this.target = new EntityStand(world, location);
+		this.hooked = target;
+		this.getDataWatcher().set(c, target.getId() + 1);
 		setPosition(location.getX(), location.getY(), location.getZ());
+		world.addEntity(this);
+	}
+
+	EntityHook(World world, EntityHuman entityhuman, LivingEntity targetEntity) {
+		super(world, entityhuman);
+		this.target = ((CraftLivingEntity) targetEntity).getHandle();
+		this.hooked = target;
+		this.getDataWatcher().set(c, target.getId() + 1);
+		setPosition(target.locX, target.locY, target.locZ);
 		world.addEntity(this);
 	}
 
 	@Override
 	public void m() {
-		this.hooked = stand;
-		this.getDataWatcher().set(c, stand.getId() + 1);
+		this.hooked = target;
+		this.getDataWatcher().set(c, target.getId() + 1);
 	}
 
 	@Override
@@ -47,7 +59,7 @@ public class EntityHook extends EntityFishingHook implements HookEntity {
 
 	@Override
 	public void die() {
-		stand.die();
+		if (target instanceof EntityStand) target.die();
 		super.die();
 	}
 }

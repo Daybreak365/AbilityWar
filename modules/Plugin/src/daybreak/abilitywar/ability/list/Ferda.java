@@ -741,7 +741,7 @@ public class Ferda extends AbilityBase implements ActiveHandler {
 								SoundLib.ENTITY_PLAYER_LEVELUP.playSound(player);
 							}
 						} else {
-							regainHealth(livingEntity, e.getAmount());
+							regainHealth(livingEntity, e.getAmount() / 2);
 						}
 					}
 				}

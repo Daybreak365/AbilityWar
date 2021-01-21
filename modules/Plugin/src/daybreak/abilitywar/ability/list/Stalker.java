@@ -93,7 +93,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 
 	private static final RGB BLACK = new RGB(0, 0, 0);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final Cooldown leftCooldownTimer = new Cooldown(LEFT_COOLDOWN_CONFIG.getValue(), "돌진");
+	private final Cooldown rightCooldownTimer = new Cooldown(LEFT_COOLDOWN_CONFIG.getValue(), "돌진", 0);
 	private final AbilityTimer skill = new AbilityTimer() {
 		private GameMode originalMode;
 		private Player target;
@@ -171,10 +171,10 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(final PlayerInteractEvent e) {
 		if ((e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) && e.getItem() != null && swords.contains(e.getItem().getType())) {
-			if (leftCooldownTimer.isCooldown()) return;
+			if (rightCooldownTimer.isCooldown()) return;
 			if (lastVictim != null) {
-				leftCooldownTimer.start();
-				getPlayer().setVelocity(lastVictim.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().setY(0));
+				rightCooldownTimer.start();
+				getPlayer().setVelocity(lastVictim.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(0.75).setY(0));
 			} else {
 				getPlayer().sendMessage("§4마지막으로 때렸던 플레이어가 존재하지 않습니다.");
 			}
@@ -206,8 +206,6 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				final double ceil = Math.ceil(stack / 3.0);
 				SOUND_RUNNABLES.get((int) (ceil - ((Math.ceil(ceil / SOUND_RUNNABLES.size()) - 1) * SOUND_RUNNABLES.size())) - 1).run();
 				if (cooldownTimer.isRunning()) cooldownTimer.setCount(Math.max(0, cooldownTimer.getCount() - stack));
-				if (leftCooldownTimer.isRunning())
-					leftCooldownTimer.setCount(Math.max(0, leftCooldownTimer.getCount() - stack));
 				PotionEffects.BLINDNESS.addPotionEffect(victim, 30, 0, true);
 				e.setDamage(e.getDamage() + (stack * .15));
 			}

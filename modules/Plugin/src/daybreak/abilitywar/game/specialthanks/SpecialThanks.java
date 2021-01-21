@@ -134,6 +134,16 @@ public class SpecialThanks {
 							"능력자 플러그인을 이용해 재밌고 활기찬 방송을 진행해주셨습니다.",
 							"블라인드 게임 모드를 주로 즐기십니다."
 					)
+			)
+			.addSpecialThanks(
+					new SpecialThank("b24e310e236e453ba97e364097ad45c3",
+							"§7심승훈님"
+					)
+			)
+			.addSpecialThanks(
+					new SpecialThank("53a21633738243ae9f7956b67ffed044",
+							"§7빠이어곰님"
+					)
 			);
 
 	public static final Category[] categories = {

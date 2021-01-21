@@ -45,7 +45,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> RangeConfig = abilitySettings.new SettingObject<Integer>(Yeti.class, "range", 15,
+	public static final SettingObject<Integer> RANGE_CONFIG = abilitySettings.new SettingObject<Integer>(Yeti.class, "range", 15,
 			"# 스킬 사용 시 눈 지형으로 바꿀 범위") {
 
 		@Override
@@ -75,7 +75,7 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 
 	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
 
-	private final AbilityTimer iceMaker = new AbilityTimer(RangeConfig.getValue()) {
+	private final AbilityTimer iceMaker = new AbilityTimer(RANGE_CONFIG.getValue()) {
 
 		private int count;
 		private Location center;

@@ -47,7 +47,7 @@ import java.util.function.Predicate;
 })
 public class Imprison extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "cooldown", 25, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Imprison.class, "cooldown", 30, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {

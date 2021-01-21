@@ -14,6 +14,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
+import daybreak.abilitywar.ability.list.grapplinghook.GrapplingHook;
 import daybreak.abilitywar.ability.list.prophet.Prophet;
 import daybreak.abilitywar.addon.AddonClassLoader;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -149,14 +150,16 @@ public class AbilityFactory {
 		registerAbility(Ferda.class);
 		registerAbility(Lux.class);
 		registerAbility(Loki.class);
-		registerAbility("daybreak.abilitywar.ability.list.grapplinghook." + ServerVersion.getName() + ".GrapplingHook");
+		registerAbility(GrapplingHook.class);
 		registerAbility("daybreak.abilitywar.ability.list.scarecrow." + ServerVersion.getName() + ".ScareCrow");
 		// v2.3.3
 		registerAbility(Solar.class);
 		registerAbility(Canis.class);
 		registerAbility(Ruber.class);
-		// v2.4.1
+		// v2.4.2
 		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
+		registerAbility(Liberator.class);
+
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

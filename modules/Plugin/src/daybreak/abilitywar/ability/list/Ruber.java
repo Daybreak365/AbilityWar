@@ -74,7 +74,7 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	public static final SettingObject<Integer> PLAGUE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "plague-cooldown", 15,
+	public static final SettingObject<Integer> PLAGUE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "plague-cooldown", 20,
 			"# 전염병 쿨타임") {
 
 		@Override
@@ -141,7 +141,7 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 		if (getParticipant().equals(e.getParticipant())) return;
 		final Location playerLocation = getPlayer().getLocation(), targetLocation = e.getPlayer().getLocation();
 		if (playerLocation.getWorld() != targetLocation.getWorld() || playerLocation.distanceSquared(targetLocation) > 400) return;
-		new Transfusion(e.getParticipant(), false, e.getAmount(), false).start();
+		new Transfusion(e.getParticipant(), false, e.getAmount() / 2, false).start();
 	}
 
 	@Override
