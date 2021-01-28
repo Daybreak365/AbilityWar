@@ -20,7 +20,7 @@ import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
@@ -184,6 +184,9 @@ public class Sniper extends AbilityBase {
 			}; iterator.hasNext(); ) {
 				final Location location = iterator.next();
 				entity.setLocation(location);
+				if (!isRunning()) {
+					return;
+				}
 				final Block block = location.getBlock();
 				final Material type = block.getType();
 				final double y = location.getY();
@@ -243,6 +246,11 @@ public class Sniper extends AbilityBase {
 			@Override
 			public ProjectileSource getShooter() {
 				return shooter;
+			}
+
+			@Override
+			protected void onRemove() {
+				Bullet.this.stop(false);
 			}
 
 		}

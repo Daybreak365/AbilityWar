@@ -15,7 +15,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -68,11 +67,11 @@ public class TripleMix extends AbilityBase implements ActiveHandler, TargetHandl
 		return third;
 	}
 
-	public void setAbility(final Class<? extends AbilityBase> first, final Class<? extends AbilityBase> second, final Class<? extends AbilityBase> third) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setAbility(final Class<? extends AbilityBase> first, final Class<? extends AbilityBase> second, final Class<? extends AbilityBase> third) throws ReflectiveOperationException {
 		setAbility0(create(first, getParticipant()), create(second, getParticipant()), create(third, getParticipant()));
 	}
 
-	public void setAbility(final AbilityRegistration first, final AbilityRegistration second, final AbilityRegistration third) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setAbility(final AbilityRegistration first, final AbilityRegistration second, final AbilityRegistration third) throws ReflectiveOperationException {
 		setAbility0(create(first, getParticipant()), create(second, getParticipant()), create(third, getParticipant()));
 	}
 

@@ -48,6 +48,7 @@ import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.script.AbstractScript;
 import daybreak.abilitywar.game.script.ScriptWizard;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
+import daybreak.abilitywar.game.specialthanks.SpecialThanks;
 import daybreak.abilitywar.game.specialthanks.SpecialThanksGUI;
 import daybreak.abilitywar.game.team.interfaces.Members;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -61,6 +62,7 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
+import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
@@ -930,8 +932,16 @@ public class Commands implements CommandExecutor, TabCompleter {
 									final DummyManager dummyManager = game.getModule(DummyManager.class);
 									if (dummyManager != null) {
 										try {
-											dummyManager.createDummy(((Player) sender).getLocation());
-											sender.sendMessage(dummyPrefix + "연습용 봇 하나가 소환되었습니다.");
+											if (args.length == 0) {
+												dummyManager.createDummy(((Player) sender).getLocation());
+												sender.sendMessage(dummyPrefix + "연습용 봇 하나가 소환되었습니다.");
+											} else {
+												final SkinInfo skinInfo = SpecialThanks.getSkinInfo(args[0]);
+												if (skinInfo != null) {
+													dummyManager.createDummy(((Player) sender).getLocation(), skinInfo);
+													sender.sendMessage(dummyPrefix + "연습용 봇 하나가 소환되었습니다.");
+												} else Messager.sendErrorMessage(sender, "존재하지 않는 스킨입니다.");
+											}
 										} catch (RuntimeException e) {
 											sender.sendMessage(dummyPrefix + "연습용 봇 소환 중 문제가 발생했습니다.");
 											e.printStackTrace();

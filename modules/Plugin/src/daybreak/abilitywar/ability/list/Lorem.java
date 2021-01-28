@@ -20,6 +20,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
@@ -29,7 +30,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
@@ -274,6 +274,9 @@ public class Lorem extends AbilityBase {
 			}; iterator.hasNext(); ) {
 				final Location location = iterator.next();
 				entity.setLocation(location);
+				if (!isRunning()) {
+					return;
+				}
 				final Block block = location.getBlock();
 				final Material type = block.getType();
 				if (type.isSolid()) {
@@ -334,6 +337,11 @@ public class Lorem extends AbilityBase {
 			@Override
 			public ProjectileSource getShooter() {
 				return shooter;
+			}
+
+			@Override
+			protected void onRemove() {
+				Bullet.this.stop(false);
 			}
 
 		}

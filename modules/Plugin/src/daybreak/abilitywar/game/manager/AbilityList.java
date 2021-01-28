@@ -12,6 +12,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.ability.list.grapplinghook.GrapplingHook;
+import daybreak.abilitywar.ability.list.magnet.Magnet;
 import daybreak.abilitywar.ability.list.prophet.Prophet;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
@@ -166,6 +167,7 @@ public class AbilityList {
 		registerAbility(Ruber.class);
 		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
 		registerAbility(Liberator.class);
+		registerAbility(Magnet.class);
 	}
 
 	/**

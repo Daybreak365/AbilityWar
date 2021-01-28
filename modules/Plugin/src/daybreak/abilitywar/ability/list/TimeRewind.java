@@ -14,7 +14,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.LimitedPushingList;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;

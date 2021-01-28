@@ -16,7 +16,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import java.util.function.Predicate;
 import org.bukkit.Bukkit;

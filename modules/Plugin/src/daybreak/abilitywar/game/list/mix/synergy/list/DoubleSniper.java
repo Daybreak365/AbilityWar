@@ -19,7 +19,7 @@ import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
@@ -186,6 +186,9 @@ public class DoubleSniper extends Synergy {
 			}; iterator.hasNext(); ) {
 				Location location = iterator.next();
 				entity.setLocation(location);
+				if (!isRunning()) {
+					return;
+				}
 				Block block = location.getBlock();
 				Material type = block.getType();
 				if (type.isSolid()) {
@@ -241,6 +244,11 @@ public class DoubleSniper extends Synergy {
 			@Override
 			public ProjectileSource getShooter() {
 				return shooter;
+			}
+
+			@Override
+			protected void onRemove() {
+				Bullet.this.stop(false);
 			}
 
 		}

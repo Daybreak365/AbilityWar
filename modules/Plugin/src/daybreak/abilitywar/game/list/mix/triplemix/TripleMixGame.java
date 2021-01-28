@@ -11,8 +11,8 @@ import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
-import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.game.module.InfiniteDurability;
+import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -25,7 +25,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -190,7 +189,7 @@ public class TripleMixGame extends AbstractTripleMix implements DefaultKitHandle
 							if (!hasDecided(participant)) {
 								player.sendMessage("§e/aw yes §f명령어로 능력을 확정하거나, §e/aw no §f명령어로 능력을 변경하세요.");
 							}
-						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (ReflectiveOperationException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: §b" + abilityClass.getName() + " §f또는 §b" + secondAbilityClass.getName() + " §f또는 §b" + thirdAbilityClass.getName());
 						}

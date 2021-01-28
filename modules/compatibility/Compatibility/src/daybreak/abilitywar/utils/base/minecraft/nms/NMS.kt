@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms
 
+import daybreak.abilitywar.utils.base.minecraft.SkinInfo
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion
 import daybreak.abilitywar.utils.base.minecraft.version.VersionNotSupportedException
@@ -74,6 +75,11 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun createDummy(location: Location): IDummy {
 			return INSTANCE.createDummy(location)
+		}
+
+		@JvmStatic
+		override fun createDummy(location: Location, skinInfo: SkinInfo): IDummy {
+			return INSTANCE.createDummy(location, skinInfo)
 		}
 
 		@JvmStatic

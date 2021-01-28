@@ -24,7 +24,7 @@ import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -280,11 +280,11 @@ public class PenetrationArrow extends AbilityBase {
 		private final Vector forward;
 		private final Predicate<Entity> predicate;
 
-		private final ParticleLib.RGB color;
+		private final RGB color;
 		private final Set<Damageable> attacked = new HashSet<>();
 		private Location lastLocation;
 		private double time;
-		private Parabola(LivingEntity shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, int powerEnchant, ParticleLib.RGB color) {
+		private Parabola(LivingEntity shooter, OnHitBehavior onHitBehavior, Location startLocation, Vector arrowVelocity, double angle, int powerEnchant, RGB color) {
 			super(300);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
@@ -390,6 +390,11 @@ public class PenetrationArrow extends AbilityBase {
 			@Override
 			public ProjectileSource getShooter() {
 				return shooter;
+			}
+
+			@Override
+			protected void onRemove() {
+				Parabola.this.stop(false);
 			}
 
 		}

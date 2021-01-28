@@ -446,6 +446,11 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 				return owner;
 			}
 
+			@Override
+			protected void onRemove() {
+				Sword.this.stop(false);
+			}
+
 		}
 
 	}

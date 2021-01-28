@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms.v1_11_R1;
 
+import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
@@ -93,6 +94,11 @@ public class NMSImpl implements INMS {
 	@Override
 	public IHologram newHologram(World world, double x, double y, double z, String text) {
 		return new HologramImpl(world, x, y, z, text);
+	}
+
+	@Override
+	public IDummy createDummy(Location location, SkinInfo skinInfo) {
+		return new DummyImpl(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) location.getWorld()).getHandle(), location, skinInfo);
 	}
 
 	@Override

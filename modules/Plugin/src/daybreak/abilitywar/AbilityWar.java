@@ -98,7 +98,7 @@ public class AbilityWar extends JavaPlugin implements Provider {
 			Class.forName(FastMath.class.getName());
 			Class.forName(SpecialThanks.class.getName());
 			Class.forName(ChristmasMusic.class.getName());
-		} catch (ClassNotFoundException ignored) {
+		} catch (Exception ignored) {
 		}
 
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {

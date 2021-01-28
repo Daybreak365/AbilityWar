@@ -2,14 +2,13 @@ package daybreak.abilitywar.utils.library;
 
 import com.google.common.base.Enums;
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.material.MaterialData;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * 파티클 라이브러리
@@ -158,7 +157,7 @@ public class ParticleLib {
 			super(name);
 		}
 
-		public void spawnParticle(Player player, Location location, ParticleLib.RGB rgb) {
+		public void spawnParticle(Player player, Location location, RGB rgb) {
 			if (ServerVersion.getVersion() >= 13) {
 				if (this.particle.getDataType().equals(Particle.DustOptions.class)) {
 					this.spawnParticle(player, location, 0, 0, 0, 0, new Particle.DustOptions(rgb.getColor(), 1));
@@ -170,7 +169,7 @@ public class ParticleLib {
 			}
 		}
 
-		public void spawnParticle(Location location, ParticleLib.RGB rgb) {
+		public void spawnParticle(Location location, RGB rgb) {
 			if (ServerVersion.getVersion() >= 13) {
 				if (this.particle.getDataType().equals(Particle.DustOptions.class)) {
 					this.spawnParticle(location, 0, 0, 0, 0, new Particle.DustOptions(rgb.getColor(), 1));
@@ -181,77 +180,6 @@ public class ParticleLib {
 				this.spawnParticle(location, rgb.getRed(), rgb.getGreen(), rgb.getBlue(), 0);
 			}
 		}
-	}
-
-	public static class RGB {
-
-		public static final RGB AQUA = fromRGB(65535);
-		public static final RGB BLACK = of(1, 1, 1);
-		public static final RGB BLUE = fromRGB(255);
-		public static final RGB FUCHSIA = fromRGB(16711935);
-		public static final RGB GRAY = fromRGB(8421504);
-		public static final RGB GREEN = fromRGB(32768);
-		public static final RGB LIME = fromRGB(65280);
-		public static final RGB MAROON = fromRGB(8388608);
-		public static final RGB NAVY = fromRGB(128);
-		public static final RGB OLIVE = fromRGB(8421376);
-		public static final RGB ORANGE = fromRGB(16753920);
-		public static final RGB PURPLE = fromRGB(8388736);
-		public static final RGB RED = fromRGB(16711680);
-		public static final RGB SILVER = fromRGB(12632256);
-		public static final RGB TEAL = fromRGB(32896);
-		public static final RGB WHITE = fromRGB(16777215);
-		public static final RGB YELLOW = fromRGB(16776960);
-
-		public static RGB fromRGB(int rgb) {
-			return new RGB(rgb >> 16 & 255, rgb >> 8 & 255, rgb & 255);
-		}
-
-		public static RGB of(int red, int green, int blue) {
-			return new RGB(red, green, blue);
-		}
-
-		private final int red;
-		private final int green;
-		private final int blue;
-
-		public RGB(int red, int green, int blue) {
-			this.red = red;
-			this.green = green;
-			this.blue = blue;
-		}
-
-		public float getRed() {
-			return red / 255.0F;
-		}
-
-		@NotNull
-		public RGB setRed(int red) {
-			return new RGB(red, this.green, this.blue);
-		}
-
-		public float getGreen() {
-			return green / 255.0F;
-		}
-
-		@NotNull
-		public RGB setGreen(int green) {
-			return new RGB(this.red, green, this.blue);
-		}
-
-		public float getBlue() {
-			return blue / 255.0F;
-		}
-
-		@NotNull
-		public RGB setBlue(int blue) {
-			return new RGB(this.red, this.green, blue);
-		}
-
-		public Color getColor() {
-			return Color.fromRGB(red, green, blue);
-		}
-
 	}
 
 	public static class ItemParticle extends SimpleParticle {

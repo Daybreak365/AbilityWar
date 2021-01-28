@@ -113,17 +113,31 @@ public abstract class AbilityBase {
 		};
 	}
 
-	public static <T extends AbilityBase> T create(final Class<T> abilityClass, final Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+	public static <T extends AbilityBase> T create(final Class<T> abilityClass, final Participant participant) throws ReflectiveOperationException {
 		Preconditions.checkNotNull(abilityClass);
 		Preconditions.checkNotNull(participant);
 		if (!AbilityFactory.isRegistered(abilityClass)) throw new IllegalArgumentException(abilityClass.getSimpleName() + " 능력은 AbilityFactory에 등록되지 않은 능력입니다.");
-		return abilityClass.cast(AbilityFactory.getRegistration(abilityClass).getConstructor().newInstance(participant));
+		try {
+			return abilityClass.cast(AbilityFactory.getRegistration(abilityClass).getConstructor().newInstance(participant));
+		} catch (Error error) {
+			if (error instanceof OutOfMemoryError) {
+				throw error;
+			}
+			throw new ReflectiveOperationException(error);
+		}
 	}
 
-	public static AbilityBase create(final AbilityRegistration registration, final Participant participant) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+	public static AbilityBase create(final AbilityRegistration registration, final Participant participant) throws ReflectiveOperationException {
 		Preconditions.checkNotNull(registration);
 		Preconditions.checkNotNull(participant);
-		return registration.getConstructor().newInstance(participant);
+		try {
+			return registration.getConstructor().newInstance(participant);
+		} catch (Error error) {
+			if (error instanceof OutOfMemoryError) {
+				throw error;
+			}
+			throw new ReflectiveOperationException(error);
+		}
 	}
 
 	private final Function<String, String> fieldValueProvider = new Function<String, String>() {

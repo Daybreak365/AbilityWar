@@ -54,7 +54,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -494,7 +493,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 							if (!hasDecided(participant)) {
 								player.sendMessage("§8/aw yes §f명령어로 능력을 확정하거나, §8/aw no §f명령어로 능력을 변경하세요.");
 							}
-						} catch (IllegalAccessException | SecurityException | InstantiationException | IllegalArgumentException | InvocationTargetException e) {
+						} catch (ReflectiveOperationException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: §b" + first.getName() + " §f또는 §b" + second.getName());
 						}

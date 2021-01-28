@@ -14,7 +14,9 @@ import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.event.customentity.CustomEntitySetLocationEvent;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -121,11 +123,18 @@ public class Flector extends AbilityBase implements ActiveHandler {
 			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, getPlayer().getLocation(), 8, 8, null)) {
 				deflect(entity, false);
 			}
-			for (Deflectable deflectable : LocationUtil.getNearbyCustomEntities(Deflectable.class, getPlayer().getLocation(), 8, 8, null)) {
-				deflect(deflectable, false);
-			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1);
+
+	@SubscribeEvent
+	private void onCustomEntitySetLocation(final CustomEntitySetLocationEvent e) {
+		if (!skill.isRunning()) return;
+		final CustomEntity customEntity = e.getCustomEntity();
+		if (customEntity instanceof Deflectable && customEntity.getWorld() == getPlayer().getWorld() && customEntity.getLocation().distanceSquared(getPlayer().getLocation()) <= 64) {
+			final Deflectable deflectable = (Deflectable) customEntity;
+			deflect(deflectable, false);
+		}
+	}
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(PlayerInteractEvent e) {

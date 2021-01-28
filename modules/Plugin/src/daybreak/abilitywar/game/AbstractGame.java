@@ -19,6 +19,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.event.GameEndEvent;
 import daybreak.abilitywar.game.event.GameReadyEvent;
 import daybreak.abilitywar.game.event.GameStartEvent;
+import daybreak.abilitywar.game.event.customentity.CustomEntitySetLocationEvent;
 import daybreak.abilitywar.game.interfaces.IGame;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
@@ -687,8 +688,9 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		return new ArrayList<>(customEntities.get(Hashes.hashCode(chunk.getX(), chunk.getZ())));
 	}
 
-	public class CustomEntity {
+	public abstract class CustomEntity {
 
+		private boolean valid = true;
 		private final CustomEntityBoundingBox boundingBox = new CustomEntityBoundingBox(0, 0, 0, 0, 0, 0);
 		private World world;
 		private double x, y, z;
@@ -737,12 +739,18 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			updateLocation();
 		}
 
+		public boolean isValid() {
+			return valid;
+		}
+
 		public void setLocation(Location location) {
+			final CustomEntitySetLocationEvent event = new CustomEntitySetLocationEvent(this, location);
 			this.world = Preconditions.checkNotNull(location.getWorld());
 			this.x = location.getX();
 			this.y = location.getY();
 			this.z = location.getZ();
 			updateLocation();
+			Bukkit.getPluginManager().callEvent(event);
 		}
 
 		private void updateLocation() {
@@ -768,8 +776,12 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		}
 
 		public void remove() {
+			this.valid = false;
 			customEntities.remove(lastChunkHash, this);
+			onRemove();
 		}
+
+		protected abstract void onRemove();
 
 		public class CustomEntityBoundingBox extends BoundingBox {
 

@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "루베르", rank = Rank.A, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "루베르", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7스택 §8- §c피의 잔§f: 스킬 적중 대상에게 쌓이며, 영구히 지속됩니다. 두 개 까지 쌓을",
 		" 수 있고, 스택이 모두 쌓인 대상에게 스킬을 사용하면 강화 스킬이 시전되고 스택이",
 		" 초기화됩니다.",
@@ -60,7 +60,7 @@ import java.util.function.Predicate;
 })
 public class Ruber extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "cooldown", 5,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "cooldown", 6,
 			"# 흡혈 쿨타임") {
 
 		@Override

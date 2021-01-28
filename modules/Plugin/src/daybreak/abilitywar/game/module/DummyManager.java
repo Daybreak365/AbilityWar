@@ -3,6 +3,7 @@ package daybreak.abilitywar.game.module;
 
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.Bukkit;
@@ -37,6 +38,15 @@ public class DummyManager implements Module, Listener {
 	}
 
 	private final Map<UUID, IDummy> dummies = new HashMap<>();
+
+	public void createDummy(final Location location, final SkinInfo skinInfo) {
+		final IDummy dummy = NMS.createDummy(location, skinInfo);
+		dummies.put(dummy.getUniqueID(), dummy);
+		game.addParticipant(dummy.getBukkitEntity());
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			dummy.display(player);
+		}
+	}
 
 	public void createDummy(final Location location) {
 		final IDummy dummy = NMS.createDummy(location);

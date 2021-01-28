@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms;
 
+import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ public interface INMS {
 	IHologram newHologram(World world, double x, double y, double z);
 
 	IDummy createDummy(Location location);
+	IDummy createDummy(Location location, SkinInfo skinInfo);
 
 	float getAbsorptionHearts(LivingEntity livingEntity);
 	void setAbsorptionHearts(LivingEntity livingEntity, float absorptionHearts);

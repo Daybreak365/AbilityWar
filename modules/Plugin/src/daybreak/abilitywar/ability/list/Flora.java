@@ -14,6 +14,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
@@ -171,13 +172,13 @@ public class Flora extends AbilityBase implements ActiveHandler {
 
 	private enum EffectType {
 
-		REGENERATION("§c재생", ParticleLib.RGB.of(255, 93, 82)),
-		SPEED("§b신속", ParticleLib.RGB.of(46, 219, 202));
+		REGENERATION("§c재생", RGB.of(255, 93, 82)),
+		SPEED("§b신속", RGB.of(46, 219, 202));
 
 		private final String name;
-		private final ParticleLib.RGB color;
+		private final RGB color;
 
-		EffectType(String name, ParticleLib.RGB color) {
+		EffectType(String name, RGB color) {
 			this.name = name;
 			this.color = color;
 		}

@@ -30,7 +30,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -222,7 +221,7 @@ public class MixAbilityGUI implements Listener, Observer {
 									}
 								}
 							}
-						} catch (SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+						} catch (ReflectiveOperationException ex) {
 							ex.printStackTrace();
 							if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
 								Messager.sendErrorMessage(player, ex.getMessage());

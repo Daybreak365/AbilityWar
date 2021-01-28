@@ -3,10 +3,13 @@ package daybreak.abilitywar.utils.base.minecraft.nms.v1_13_R2;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.v1_13_R2.network.EmptyNetworkHandler;
 import daybreak.abilitywar.utils.base.minecraft.nms.v1_13_R2.network.EmptyNetworkManager;
+import net.minecraft.server.v1_13_R2.DataWatcherObject;
+import net.minecraft.server.v1_13_R2.DataWatcherRegistry;
 import net.minecraft.server.v1_13_R2.EntityPlayer;
 import net.minecraft.server.v1_13_R2.EnumGamemode;
 import net.minecraft.server.v1_13_R2.EnumProtocolDirection;
@@ -31,9 +34,9 @@ import java.util.UUID;
 
 public class DummyImpl extends EntityPlayer implements IDummy {
 
-	private static GameProfile createProfile() {
-		final GameProfile profile = new GameProfile(UUID.randomUUID(), DUMMY_NAME);
-		profile.getProperties().put("textures", new Property("textures", TEXTURE, SIGNATURE));
+	private static GameProfile createProfile(final SkinInfo skinInfo) {
+		final GameProfile profile = new GameProfile(UUID.randomUUID(), skinInfo.getName());
+		profile.getProperties().put("textures", new Property("textures", skinInfo.getValue(), skinInfo.getSignature()));
 		return profile;
 	}
 
@@ -43,8 +46,8 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 	private int untilReset = -1;
 	private final EmptyNetworkManager networkManager;
 
-	public DummyImpl(final MinecraftServer server, final WorldServer world, final Location location) {
-		super(server, world, createProfile(), new PlayerInteractManager(world));
+	public DummyImpl(final MinecraftServer server, final WorldServer world, final Location location, final SkinInfo skinInfo) {
+		super(server, world, createProfile(skinInfo), new PlayerInteractManager(world));
 		this.playerInteractManager.setGameMode(EnumGamemode.SURVIVAL);
 		try {
 			this.networkManager = new EmptyNetworkManager(EnumProtocolDirection.CLIENTBOUND);
@@ -53,6 +56,7 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+		getDataWatcher().set(new DataWatcherObject<>(13, DataWatcherRegistry.a), SKIN_BIT_LAYER);
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -62,6 +66,10 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 		setPosition(location.getX(), location.getY(), location.getZ());
 		this.invulnerableTicks = 0;
 		this.hologram = new HologramImpl(world.getWorld(), locX, locY + 2, locZ, IDLE_MESSAGE);
+	}
+
+	public DummyImpl(final MinecraftServer server, final WorldServer world, final Location location) {
+		this(server, world, location, DEFAULT_SKIN);
 	}
 
 	@Override

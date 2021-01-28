@@ -18,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -79,7 +78,7 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 		return second;
 	}
 
-	public void setAbility(final Class<? extends AbilityBase> first, final Class<? extends AbilityBase> second) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setAbility(final Class<? extends AbilityBase> first, final Class<? extends AbilityBase> second) throws ReflectiveOperationException {
 		removeAbility();
 		final AbilityRegistration synergyReg = SynergyFactory.getSynergy(first, second);
 		if (synergyReg != null) {
@@ -93,7 +92,7 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 		}
 	}
 
-	public void setAbility(final AbilityRegistration first, final AbilityRegistration second) throws SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void setAbility(final AbilityRegistration first, final AbilityRegistration second) throws ReflectiveOperationException {
 		removeAbility();
 		final AbilityRegistration synergyReg = SynergyFactory.getSynergy(first.getAbilityClass(), second.getAbilityClass());
 		if (synergyReg != null) {

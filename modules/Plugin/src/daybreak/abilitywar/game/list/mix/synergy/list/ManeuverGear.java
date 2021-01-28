@@ -23,7 +23,7 @@ import daybreak.abilitywar.utils.base.minecraft.ability.list.grapplinghook.HookE
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.library.ParticleLib.RGB;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -397,6 +397,11 @@ public class ManeuverGear extends Synergy implements ActiveHandler {
 			@Override
 			public ProjectileSource getShooter() {
 				return getPlayer();
+			}
+
+			@Override
+			protected void onRemove() {
+				Hook.this.stop(false);
 			}
 
 		}

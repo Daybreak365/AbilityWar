@@ -15,6 +15,7 @@ import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.list.Void;
 import daybreak.abilitywar.ability.list.*;
 import daybreak.abilitywar.ability.list.grapplinghook.GrapplingHook;
+import daybreak.abilitywar.ability.list.magnet.Magnet;
 import daybreak.abilitywar.ability.list.prophet.Prophet;
 import daybreak.abilitywar.addon.AddonClassLoader;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
@@ -159,6 +160,8 @@ public class AbilityFactory {
 		// v2.4.2
 		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
 		registerAbility(Liberator.class);
+		// v2.4.3
+		registerAbility(Magnet.class);
 
 
 		// 게임모드 전용

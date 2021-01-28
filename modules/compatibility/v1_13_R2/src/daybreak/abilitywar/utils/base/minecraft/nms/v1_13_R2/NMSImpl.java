@@ -1,5 +1,6 @@
 package daybreak.abilitywar.utils.base.minecraft.nms.v1_13_R2;
 
+import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
@@ -103,6 +104,11 @@ public class NMSImpl implements INMS {
 	@Override
 	public IDummy createDummy(Location location) {
 		return new DummyImpl(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) location.getWorld()).getHandle(), location);
+	}
+
+	@Override
+	public IDummy createDummy(Location location, SkinInfo skinInfo) {
+		return new DummyImpl(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) location.getWorld()).getHandle(), location, skinInfo);
 	}
 
 	@Override
