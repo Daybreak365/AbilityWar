@@ -31,14 +31,18 @@ public class RGB {
 		return new RGB(red, green, blue);
 	}
 
+	private static int fixCode(int code) {
+		return code == 0 ? 1 : (code == 255 ? 254 : code);
+	}
+
 	public final int red;
 	public final int green;
 	public final int blue;
 
 	public RGB(int red, int green, int blue) {
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
+		this.red = fixCode(red);
+		this.green = fixCode(green);
+		this.blue = fixCode(blue);
 	}
 
 	public float getRed() {
@@ -47,7 +51,7 @@ public class RGB {
 
 	@NotNull
 	public RGB setRed(int red) {
-		return new RGB(red, this.green, this.blue);
+		return new RGB(fixCode(red), this.green, this.blue);
 	}
 
 	public float getGreen() {
@@ -56,7 +60,7 @@ public class RGB {
 
 	@NotNull
 	public RGB setGreen(int green) {
-		return new RGB(this.red, green, this.blue);
+		return new RGB(this.red, fixCode(green), this.blue);
 	}
 
 	public float getBlue() {
@@ -65,7 +69,7 @@ public class RGB {
 
 	@NotNull
 	public RGB setBlue(int blue) {
-		return new RGB(this.red, this.green, blue);
+		return new RGB(this.red, this.green, fixCode(blue));
 	}
 
 	public Color getColor() {

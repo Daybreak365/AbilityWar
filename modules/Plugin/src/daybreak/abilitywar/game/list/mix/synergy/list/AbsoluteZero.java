@@ -1,6 +1,5 @@
 package daybreak.abilitywar.game.list.mix.synergy.list;
 
-import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
@@ -8,24 +7,22 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
+import daybreak.abilitywar.game.manager.effect.Frost;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
-import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
-import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -36,16 +33,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -266,7 +254,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 							if (fallingBlock.isValid() && !fallingBlock.isDead()) {
 								for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, fallingBlock.getWorld(), boundingBox, predicate)) {
 									if (frozenEntities.add(livingEntity)) {
-										new Frost(livingEntity).start();
+										Frost.apply(getGame(), livingEntity, TimeUnit.SECONDS, 2);
 									}
 								}
 							} else {
@@ -284,7 +272,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 					yetiCooldownTimer.start();
 					for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
 						if (entity instanceof Player && !getGame().isParticipating((Player) entity)) continue;
-						new Frost(entity, 6).start();
+						Frost.apply(getGame(), entity, TimeUnit.SECONDS, 62);
 					}
 					return true;
 				}
@@ -296,106 +284,6 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 	@SubscribeEvent
 	private void onProjectileHit(ProjectileHitEvent e) {
 		projectiles.remove(e.getEntity());
-	}
-
-	public class Frost extends AbilityTimer implements Listener {
-
-		private final LivingEntity target;
-		private final Block[] blocks = new Block[2];
-		private final IBlockSnapshot[] snapshots = new IBlockSnapshot[2];
-		private final Location teleport;
-		private ActionbarChannel actionbarChannel;
-
-		private Frost(LivingEntity target, int seconds) {
-			super(TaskType.REVERSE, seconds * 20);
-			setPeriod(TimeUnit.TICKS, 1);
-			this.target = target;
-			blocks[0] = target.getEyeLocation().getBlock();
-			blocks[1] = blocks[0].getRelative(BlockFace.DOWN);
-			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(true);
-			for (int i = 0; i < 2; i++) {
-				snapshots[i] = Blocks.createSnapshot(blocks[i]);
-				blocks[i].setType(Material.ICE);
-			}
-			this.teleport = blocks[1].getLocation().clone().add(0.5, 0, 0.5).setDirection(target.getLocation().getDirection());
-			if (target instanceof Player) {
-				Player player = (Player) target;
-				if (getGame().isParticipating(player)) {
-					this.actionbarChannel = getGame().getParticipant(player).actionbar().newChannel();
-				}
-			}
-		}
-
-		private Frost(LivingEntity target) {
-			this(target, 2);
-		}
-
-		@EventHandler
-		public void onBlockBreak(BlockBreakEvent e) {
-			if (e.getBlock().equals(blocks[0]) || e.getBlock().equals(blocks[1])) e.setCancelled(true);
-		}
-
-		@EventHandler
-		public void onExplode(BlockExplodeEvent e) {
-			e.blockList().removeIf(block -> block.equals(blocks[0]) || block.equals(blocks[1]));
-		}
-
-		@EventHandler
-		public void onExplode(EntityExplodeEvent e) {
-			e.blockList().removeIf(block -> block.equals(blocks[0]) || block.equals(blocks[1]));
-		}
-
-		@EventHandler
-		private void onEntityDamage(EntityDamageEvent e) {
-			if (e.getEntity().equals(target)) {
-				e.setCancelled(true);
-			}
-		}
-
-		@EventHandler
-		private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-			onEntityDamage(e);
-		}
-
-		@EventHandler
-		private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
-			onEntityDamage(e);
-		}
-
-		@Override
-		protected void onStart() {
-			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		}
-
-		@Override
-		protected void run(int count) {
-			target.teleport(teleport);
-			if (actionbarChannel != null)
-				actionbarChannel.update("§b빙결§f: " + (getCount() / 20.0) + "초");
-		}
-
-		@Override
-		protected void onEnd() {
-			HandlerList.unregisterAll(this);
-			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(false);
-			for (int i = 0; i < 2; i++) {
-				snapshots[i].apply();
-			}
-			if (actionbarChannel != null) actionbarChannel.unregister();
-			frozenEntities.remove(target);
-		}
-
-		@Override
-		protected void onSilentEnd() {
-			HandlerList.unregisterAll(this);
-			if (ServerVersion.getVersion() >= 10) target.setInvulnerable(false);
-			for (int i = 0; i < 2; i++) {
-				snapshots[i].apply();
-			}
-			if (actionbarChannel != null) actionbarChannel.unregister();
-			frozenEntities.remove(target);
-		}
-
 	}
 
 }
