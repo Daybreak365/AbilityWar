@@ -22,7 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @AbilityManifest(name = "폭탄", rank = Rank.SPECIAL, species = Species.SPECIAL, explain = {
 
 })
-@Support.Version(min = NMSVersion.v1_11_R1)
+
 public class TNT extends TNTAbility {
 
 	private static final ItemStack ITEM_TNT = new ItemStack(Material.TNT);

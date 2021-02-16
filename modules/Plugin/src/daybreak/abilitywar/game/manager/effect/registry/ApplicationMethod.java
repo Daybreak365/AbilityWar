@@ -34,6 +34,11 @@ public enum ApplicationMethod {
 			}
 			return null;
 		}
+	}, UNIQUE_IGNORE {
+		@Override
+		public <E extends Effect> E tryApply(EffectRegistration<E> registration, Participant participant, TimeUnit timeUnit, int duration) {
+			return participant.getPrimaryEffect(registration);
+		}
 	};
 
 	abstract <E extends Effect> E tryApply(EffectRegistration<E> registration, Participant participant, TimeUnit timeUnit, int duration);

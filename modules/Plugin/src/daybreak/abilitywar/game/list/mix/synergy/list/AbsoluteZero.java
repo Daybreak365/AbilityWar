@@ -272,7 +272,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 					yetiCooldownTimer.start();
 					for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), range, range, predicate)) {
 						if (entity instanceof Player && !getGame().isParticipating((Player) entity)) continue;
-						Frost.apply(getGame(), entity, TimeUnit.SECONDS, 62);
+						Frost.apply(getGame(), entity, TimeUnit.SECONDS, 6);
 					}
 					return true;
 				}

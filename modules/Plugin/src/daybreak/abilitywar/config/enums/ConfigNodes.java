@@ -128,6 +128,8 @@ public enum ConfigNodes {
 			"# 게임 중 능력이 비활성화 되었을 때 지속 시간 타이머를 어떻게 처리할지 설정합니다.",
 			"# false: 타이머 종료",
 			"# true: 타이머 일시 정지, 능력 활성화시 타이머 재개"),
+	WORLD_RESET_ON_GAME_END("월드초기화.자동", false,
+			"# 활성화하면 게임 종료 시 자동으로 월드 초기화 기능을 실행합니다."),
 	GAME_MODE("게임모드", StandardGame.class.getName(),
 			"# 게임 모드 클래스"),
 	DEVELOPER("개발자", false,

@@ -19,8 +19,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 @AbilityManifest(name = "헤르밋", rank = Rank.A, species = Species.HUMAN, explain = {
-		"비전투 상태로 $[HIDE_PREPARE_TIME]초가 지날 경우 은신합니다. 은신 상태에서는",
-		"갑옷과 들고 있는 아이템이 상대에게 보이지 않으며, 몸이 투명해집니다.",
+		"비전투 상태로 $[HIDE_PREPARE_TIME]초가 지날 경우 은신합니다. 은신 상태에서는 갑옷과 들고 있는",
+		"아이템이 상대에게 보이지 않으며, 몸이 투명해지고 타게팅의 대상이 되지 않습니다.",
 		"대미지를 입거나 공격을 할 경우 발각되고, 은신 상태가 해제됩니다."
 })
 public abstract class AbstractHermit extends AbilityBase {

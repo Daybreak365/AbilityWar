@@ -43,7 +43,7 @@ import java.util.Set;
 @AbilityManifest(name = "플렉터", rank = Rank.S, species = Species.HUMAN, explain = {
 		"발사체를 바라본 상태로 검을 휘둘러 해당 발사체를",
 		"튕겨낼 수 있습니다. 본인이 발사한 발사체는 튕겨낼 수 없으며,",
-		"다른 플레이어가가 발사한 발사체를 튕겨낼 경우 §e♥ §f만큼의",
+		"다른 플레이어가 발사한 발사체를 튕겨낼 경우 §e♥ §f만큼의",
 		"§e추가 체력§f을 얻습니다. §e추가 체력§f은 5칸 이상 얻을 수 없습니다.",
 		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 주변의 모든 투사체를 튕겨냅니다. $[COOLDOWN_CONFIG]"
 })

@@ -6,10 +6,10 @@ import com.google.common.collect.TreeBasedTable;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.config.Cache;
-import daybreak.abilitywar.config.CommentedConfiguration;
 import daybreak.abilitywar.config.interfaces.Configurable;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class AbilitySettings {
 	private static final Map<String, AbilitySettings> abilitySettings = new HashMap<>();
 	private final Table<String, String, SettingObject<?>> settings = TreeBasedTable.create();
 	private final File configFile;
-	private final CommentedConfiguration config;
+	private final YamlConfiguration config = new YamlConfiguration();
 	private final Map<SettingObject<?>, Cache> cache = new HashMap<>();
 	private long lastModified;
 	private boolean error = false;
@@ -49,14 +49,12 @@ public class AbilitySettings {
 			}
 		}
 		this.lastModified = configFile.lastModified();
-		CommentedConfiguration config;
 		try {
-			config = new CommentedConfiguration(configFile);
+			config.load(configFile);
 		} catch (IOException | InvalidConfigurationException e) {
-			config = null;
+			e.printStackTrace();
 			this.error = true;
 		}
-		this.config = config;
 		abilitySettings.put(configFile.getName(), this);
 	}
 
@@ -101,7 +99,7 @@ public class AbilitySettings {
 	}
 
 	private void _update() throws IOException, InvalidConfigurationException {
-		config.load();
+		config.load(configFile);
 
 		for (Entry<SettingObject<?>, Cache> entry : cache.entrySet()) {
 			final Cache cache = entry.getValue();
@@ -120,9 +118,8 @@ public class AbilitySettings {
 				config.set(setting.getPath(), setting.getDefaultValue());
 				cache.put(setting, new Cache(false, setting.getDefaultValue()));
 			}
-			config.addComment(setting.getPath(), setting.getComments());
 		}
-		config.save();
+		config.save(configFile);
 	}
 
 	public class SettingObject<T> implements Configurable<T> {

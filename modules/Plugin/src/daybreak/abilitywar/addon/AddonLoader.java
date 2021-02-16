@@ -5,7 +5,10 @@ import daybreak.abilitywar.addon.exception.InvalidAddonException;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -103,6 +106,10 @@ public class AddonLoader {
 	 */
 	public static Addon getAddon(String name) {
 		return addons.get(name);
+	}
+
+	public static Collection<Addon> getAddons() {
+		return Collections.unmodifiableCollection(addons.values());
 	}
 
 }

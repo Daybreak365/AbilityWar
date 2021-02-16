@@ -9,7 +9,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
-import daybreak.abilitywar.utils.annotations.Support;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
@@ -17,9 +17,7 @@ import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
@@ -41,8 +39,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
-
-@Support.Version(min = NMSVersion.v1_11_R1)
 @AbilityManifest(name = "쇼맨쉽", rank = Rank.B, species = Species.HUMAN, explain = {
 		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
 		"플레이어는 1명, 플레이어가 아닌 생명체는 $[ENTITY_COUNT]명 취급합니다.",

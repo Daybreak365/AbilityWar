@@ -70,7 +70,9 @@ public class Bleed {
 		}
 	}
 
-	@EffectManifest(name = "출혈", displayName = "§c출혈", method = ApplicationMethod.MULTIPLE)
+	@EffectManifest(name = "출혈", displayName = "§c출혈", method = ApplicationMethod.MULTIPLE, description = {
+			"주기적으로 고정 피해를 입습니다."
+	})
 	public static final class ParticipantBleed extends AbstractGame.Effect implements Listener {
 
 		private final Participant participant;

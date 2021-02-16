@@ -64,7 +64,8 @@ import java.util.function.BooleanSupplier;
 		" 방어 관통 공격을 합니다. §3쾌속 질주 §f중 §3랜스§f로 공격하면 말의 기력 단계에 따라",
 		" 공격 위력이 각각 50%, 75%, 100%로 증가합니다.",
 		"§7패시브 §8- §3하나가 되어§f: 말에서 내리면 말의 현재 체력 일부를 §e흡수 체력§f으로",
-		" 전환합니다. §e흡수 체력§f은 2초간 지속되며, 이후 급격히 사라집니다."
+		" 전환합니다. §e흡수 체력§f은 2초간 지속되며, 이후 급격히 사라집니다.",
+		"§7패시브 §8- §3저지 불가§f: 넉백 또는 끌어당겨지는 효과를 받지 않습니다."
 })
 public class Canis extends AbilityBase implements ActiveHandler {
 
@@ -129,7 +130,7 @@ public class Canis extends AbilityBase implements ActiveHandler {
 	}
 
 	private enum Tier {
-		RELAXED(BarColor.GREEN, new AttributeModifier("add-horse-speed", .4, Operation.ADD_SCALAR), new Note[] {
+		RELAXED(BarColor.GREEN, new AttributeModifier("add-horse-speed", .3, Operation.ADD_SCALAR), new Note[] {
 			Note.flat(0, Tone.E)
 		}, .5) {
 			@Override
@@ -140,7 +141,7 @@ public class Canis extends AbilityBase implements ActiveHandler {
 			Tier nextTier() {
 				return POISED;
 			}
-		}, POISED(BarColor.YELLOW, new AttributeModifier("add-horse-speed", .65, Operation.ADD_SCALAR), new Note[] {
+		}, POISED(BarColor.YELLOW, new AttributeModifier("add-horse-speed", .55, Operation.ADD_SCALAR), new Note[] {
 				Note.flat(0, Tone.B),
 				Note.flat(0, Tone.E),
 				Note.natural(1, Tone.G)
@@ -153,7 +154,7 @@ public class Canis extends AbilityBase implements ActiveHandler {
 			Tier nextTier() {
 				return EXCITED;
 			}
-		}, EXCITED(BarColor.RED, new AttributeModifier("add-horse-speed", .95, Operation.ADD_SCALAR), new Note[] {
+		}, EXCITED(BarColor.RED, new AttributeModifier("add-horse-speed", .9, Operation.ADD_SCALAR), new Note[] {
 				Note.natural(0, Tone.G),
 				Note.flat(0, Tone.B),
 				Note.flat(0, Tone.E),
@@ -400,7 +401,7 @@ public class Canis extends AbilityBase implements ActiveHandler {
 		inventory.setArmor(armorItem);
 		inventory.setSaddle(saddleItem);
 		horse.setJumpStrength(.7);
-		horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(.175);
+		horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(.225);
 		horse.addPassenger(getPlayer());
 		this.horse = horse;
 		lanceCharge.start();

@@ -85,7 +85,7 @@ public class SynergyBlackListGUI implements Listener {
 	}
 
 	public void openGUI(int page) {
-		int maxPage = ((synergies.size() - 1) / 36) + 1;
+		int maxPage = ((synergies.size() - 1) / 27) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
 		gui = Bukkit.createInventory(null, 36, "§c§l✖ §8§l시너지 블랙리스트 §c§l✖");
@@ -93,7 +93,7 @@ public class SynergyBlackListGUI implements Listener {
 		int count = 0;
 
 		for (Cell<AbilityRegistration, AbilityRegistration, AbilityRegistration> cell : synergies) {
-			if (count / 36 == page - 1) {
+			if (count / 27 == page - 1) {
 				final AbilityRegistration synergy = cell.getValue();
 				final String name = synergy.getManifest().name();
 				final ItemStack stack;
@@ -136,7 +136,7 @@ public class SynergyBlackListGUI implements Listener {
 					meta.setLore(lore);
 					stack.setItemMeta(meta);
 				}
-				gui.setItem(count % 36, stack);
+				gui.setItem(count % 27, stack);
 			}
 			count++;
 		}

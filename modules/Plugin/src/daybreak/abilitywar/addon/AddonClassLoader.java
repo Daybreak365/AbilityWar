@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams;
 import daybreak.abilitywar.addon.Addon.AddonDescription;
 import daybreak.abilitywar.addon.exception.InitializationException;
 import daybreak.abilitywar.addon.exception.InvalidAddonException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,6 +62,14 @@ public class AddonClassLoader extends URLClassLoader {
 			throw new InvalidAddonException("public 생성자가 존재하지 않습니다.", ex);
 		}
 		loaders.add(this);
+	}
+
+	public URL getResource(String name) {
+		return this.findResource(name);
+	}
+
+	public Enumeration<URL> getResources(String name) throws IOException {
+		return this.findResources(name);
 	}
 
 	public static Set<AddonClassLoader> getLoaders() {

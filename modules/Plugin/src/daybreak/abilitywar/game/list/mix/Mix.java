@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
+import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -81,7 +82,7 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 	public void setAbility(final Class<? extends AbilityBase> first, final Class<? extends AbilityBase> second) throws ReflectiveOperationException {
 		removeAbility();
 		final AbilityRegistration synergyReg = SynergyFactory.getSynergy(first, second);
-		if (synergyReg != null) {
+		if (synergyReg != null && !Settings.isBlacklisted(synergyReg.getManifest().name())) {
 			this.synergy = (Synergy) create(synergyReg.getAbilityClass(), getParticipant());
 			this.synergy.setRestricted(false);
 		} else {
@@ -95,7 +96,7 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 	public void setAbility(final AbilityRegistration first, final AbilityRegistration second) throws ReflectiveOperationException {
 		removeAbility();
 		final AbilityRegistration synergyReg = SynergyFactory.getSynergy(first.getAbilityClass(), second.getAbilityClass());
-		if (synergyReg != null) {
+		if (synergyReg != null && !Settings.isBlacklisted(synergyReg.getManifest().name())) {
 			this.synergy = (Synergy) create(synergyReg.getAbilityClass(), getParticipant());
 			this.synergy.setRestricted(false);
 		} else {

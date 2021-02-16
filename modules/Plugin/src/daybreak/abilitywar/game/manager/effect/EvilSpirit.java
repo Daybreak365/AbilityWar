@@ -31,6 +31,9 @@ import java.util.function.Predicate;
 
 @EffectManifest(name = "악령", displayName = "§c악령", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.SIGHT_RESTRICTION
+}, description = {
+		"간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",
+		"플레이어를 타격한 대상에게 이 효과가 복사됩니다."
 })
 public class EvilSpirit extends AbstractGame.Effect implements Listener {
 

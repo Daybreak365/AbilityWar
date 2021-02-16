@@ -16,12 +16,15 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.EnchantLib;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -80,7 +83,7 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 
 		@Override
 		public void onStart() {
-			this.players = new ArrayList<>(Pumpkin.this.players.keySet());
+			this.players = new ArrayList<>(Pumpkin.this.helmets.keySet());
 			players.add(getPlayer());
 			count = 1;
 		}
@@ -148,33 +151,33 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	private Map<Player, ItemStack> players;
+	private Map<Player, ItemStack> helmets;
 
 	private final Duration durationTimer = new Duration(DURATION_CONFIG.getValue(), cooldownTimer) {
 
 		@Override
 		public void onDurationStart() {
-			players = new HashMap<>();
+			helmets = new HashMap<>();
 			for (Player p : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 30, 30, predicate)) {
-				players.put(p, p.getInventory().getHelmet());
+				helmets.put(p, getHelmet(p));
 			}
 			music.start();
 		}
 
 		@Override
 		public void onDurationProcess(int seconds) {
-			ItemStack pumpkin = getPumpkin(seconds);
-			players.keySet().forEach(p -> p.getInventory().setHelmet(pumpkin));
+			final ItemStack pumpkin = getPumpkin(seconds);
+			helmets.keySet().forEach(p -> p.getInventory().setHelmet(pumpkin));
 		}
 
 		@Override
 		public void onDurationEnd() {
-			players.forEach((Player p, ItemStack stack) -> p.getInventory().setHelmet(stack));
+			helmets.forEach((Player p, ItemStack stack) -> p.getInventory().setHelmet(stack));
 		}
 
 		@Override
 		public void onDurationSilentEnd() {
-			players.forEach((Player p, ItemStack stack) -> p.getInventory().setHelmet(stack));
+			helmets.forEach((Player p, ItemStack stack) -> p.getInventory().setHelmet(stack));
 		}
 
 		private ItemStack getPumpkin(int time) {
@@ -190,8 +193,45 @@ public class Pumpkin extends AbilityBase implements ActiveHandler {
 	};
 
 	@SubscribeEvent
+	private void onGetHelmet(final GetHelmetEvent e) {
+		if (helmets.containsKey(e.player)) e.setHelmet(helmets.get(e.player));
+	}
+
+	private static class GetHelmetEvent extends Event {
+
+		private static final HandlerList handlers = new HandlerList();
+		private final Player player;
+		private ItemStack helmet;
+
+		private GetHelmetEvent(final Player player) {
+			this.player = player;
+			this.helmet = player.getInventory().getHelmet();
+		}
+
+		public void setHelmet(ItemStack helmet) {
+			this.helmet = helmet;
+		}
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		@Override
+		public @NotNull HandlerList getHandlers() {
+			return handlers;
+		}
+
+	}
+
+	private ItemStack getHelmet(Player player) {
+		final GetHelmetEvent event = new GetHelmetEvent(player);
+		Bukkit.getPluginManager().callEvent(event);
+		return event.helmet;
+	}
+
+	@SubscribeEvent
 	private void onInventoryClick(InventoryClickEvent e) {
-		if (durationTimer.isRunning() && players.containsKey(e.getWhoClicked()) && e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.PUMPKIN && e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "호박")) {
+		if (durationTimer.isRunning() && helmets.containsKey(e.getWhoClicked()) && e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.PUMPKIN && e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GOLD + "호박")) {
 			e.setCancelled(true);
 		}
 	}

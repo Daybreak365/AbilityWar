@@ -35,11 +35,13 @@ import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftArrow;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -230,5 +232,10 @@ public class NMSImpl implements INMS {
 		if (world != null) {
 			nms.playerConnection.sendPacket(new PacketPlayOutWorldBorder(world.getWorldBorder(), EnumWorldBorderAction.INITIALIZE));
 		}
+	}
+
+	@Override
+	public void setInGround(Arrow arrow, boolean inGround) {
+		((CraftArrow) arrow).getHandle().inGround = inGround;
 	}
 }

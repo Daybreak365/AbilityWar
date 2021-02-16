@@ -9,17 +9,19 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityPreRestrictionEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
@@ -37,10 +39,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -58,6 +64,15 @@ import java.util.function.Predicate;
 		"모든 아이템이 되돌아옵니다."
 })
 public class VictoryBySword extends AbilityBase implements TargetHandler {
+
+	private static final ItemStack[] swords = new ItemStack[41];
+
+	static {
+		final ItemStack sword = MaterialX.WOODEN_SWORD.createItem();
+		for (int i = 0; i < 9; i++) {
+			swords[i] = sword;
+		}
+	}
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(VictoryBySword.class, "cooldown", 110,
 			"# 쿨타임") {
@@ -106,7 +121,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 	private static final Note G = Note.natural(0, Tone.G);
 
 	private static final RGB COLOR = new RGB(138, 25, 115);
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -179,6 +194,8 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		@Override
 		protected void onDurationStart() {
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+			getPlayer().getInventory().setContents(swords);
+			target.getInventory().setContents(swords);
 		}
 
 		@EventHandler
@@ -194,6 +211,20 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 		}
 
 		@EventHandler
+		public void onPlayerDropItem(PlayerDropItemEvent e) {
+			if (getPlayer().equals(e.getPlayer()) || target.equals(e.getPlayer())) {
+				e.setCancelled(true);
+			}
+		}
+
+		@EventHandler
+		public void onInventoryClick(InventoryClickEvent e) {
+			if (getPlayer().equals(e.getWhoClicked()) || target.equals(e.getWhoClicked())) {
+				e.setCancelled(true);
+			}
+		}
+
+		@EventHandler
 		public void onPlayerTeleport(PlayerTeleportEvent e) {
 			Player player = e.getPlayer();
 			if ((player.equals(getPlayer()) || player.equals(target)) && e.getTo() != null && !LocationUtil.isInCircle(center, e.getTo(), radius)) {
@@ -202,6 +233,22 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				} else {
 					e.setTo(center);
 				}
+			}
+		}
+
+		@EventHandler(ignoreCancelled = true)
+		public void onBlockPlace(BlockPlaceEvent e) {
+			if (LocationUtil.isInCircle(center, e.getBlock().getLocation(), radius)) {
+				e.setCancelled(true);
+				e.getPlayer().sendMessage("§c링 안에 블록을 설치할 수 없습니다.");
+			}
+		}
+
+		@EventHandler(ignoreCancelled = true)
+		public void onPlayerBucketEmpty(PlayerBucketEmptyEvent e) {
+			if (LocationUtil.isInCircle(center, e.getBlock().getLocation(), radius)) {
+				e.setCancelled(true);
+				e.getPlayer().sendMessage("§c링 안에 블록을 설치할 수 없습니다.");
 			}
 		}
 
@@ -219,6 +266,7 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 				if (damager.equals(getPlayer()) || damager.equals(target)) {
 					Player entityPlayer = (Player) entity;
 					e.setCancelled(false);
+					e.setDamage(e.getDamage() / 2);
 					SoundLib.PIANO.playInstrument(damager.equals(getPlayer()) ? getPlayer() : target, notes.get(Math.max(1, Math.min(9, (int) ((entityPlayer.getHealth() / entityPlayer.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) * 10)))));
 				} else {
 					e.setCancelled(true);
@@ -251,8 +299,6 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 		@Override
 		protected void onDurationProcess(int count) {
-			getPlayer().getInventory().clear();
-			target.getInventory().clear();
 			for (PotionEffects effect : PotionEffects.values()) {
 				effect.removePotionEffect(getPlayer());
 				effect.removePotionEffect(target);

@@ -3,10 +3,71 @@ package daybreak.abilitywar.utils.base.math;
 import daybreak.abilitywar.utils.base.math.LocationUtil.Locations;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
 public class VectorUtil {
+
+	public static final Zero ZERO = new Zero();
+
+	private static class Zero extends Vector {
+
+		private Zero() {
+			super();
+		}
+
+		@Override
+		public @NotNull Vector setX(int x) { return this; }
+
+		@Override
+		public @NotNull Vector setX(float x) { return this; }
+
+		@Override
+		public @NotNull Vector setX(double x) { return this; }
+
+		@Override
+		public @NotNull Vector setY(int y) { return this; }
+
+		@Override
+		public @NotNull Vector setY(double y) { return this; }
+
+		@Override
+		public @NotNull Vector setY(float y) { return this; }
+
+		@Override
+		public @NotNull Vector setZ(int z) { return this; }
+
+		@Override
+		public @NotNull Vector setZ(double z) { return this; }
+
+		@Override
+		public @NotNull Vector setZ(float z) { return this; }
+
+		@Override
+		public @NotNull Vector add(@NotNull Vector vec) { return this; }
+
+		@Override
+		public @NotNull Vector subtract(@NotNull Vector vec) { return this; }
+
+		@Override
+		public @NotNull Vector multiply(@NotNull Vector vec) { return this; }
+
+		@Override
+		public @NotNull Vector divide(@NotNull Vector vec) { return this; }
+
+		@Override
+		public @NotNull Vector multiply(int m) { return this; }
+
+		@Override
+		public @NotNull Vector multiply(double m) { return this; }
+
+		@Override
+		public @NotNull Vector multiply(float m) { return this; }
+
+		@Override
+		public @NotNull Vector midpoint(@NotNull Vector other) { return this; }
+	}
 
 	private VectorUtil() {}
 

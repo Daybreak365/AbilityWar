@@ -10,11 +10,9 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
-import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-@Support.Version(min = NMSVersion.v1_11_R1)
 @AbilityManifest(name = "투포환", rank = Rank.B, species = Species.HUMAN, explain = {
 		"아무 생명체나 철괴로 우클릭해 대상을 자신에게 태울 수 있습니다. $[COOLDOWN_CONFIG]",
 		"능력 사용중에는 신속 버프를 받고, 납치 대상은 지속 시간동안",

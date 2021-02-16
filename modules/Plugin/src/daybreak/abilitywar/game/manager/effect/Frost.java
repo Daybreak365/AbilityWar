@@ -42,7 +42,10 @@ public class Frost {
 
 	public static final EffectRegistration<ParticipantFrost> registration = EffectRegistry.registerEffect(ParticipantFrost.class);
 
-	@EffectManifest(name = "빙결", displayName = "§b빙결", method = ApplicationMethod.UNIQUE_LONGEST)
+	@EffectManifest(name = "빙결", displayName = "§b빙결", method = ApplicationMethod.UNIQUE_LONGEST, description = {
+			"몸이 얼어붙어 이동이 불가능해지고 대미지를 입지 않습니다.",
+			"얼음으로 인해 시야가 차단됩니다."
+	})
 	public static class ParticipantFrost extends Effect implements Listener {
 
 		private final Participant target;

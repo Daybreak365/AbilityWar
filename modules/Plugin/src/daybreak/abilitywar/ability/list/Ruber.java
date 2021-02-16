@@ -55,7 +55,7 @@ import java.util.function.Predicate;
 		" 감염시킵니다. §4(§c강화§4) §f6초간 §4혈사병§f에 감염시키고 대상을 출혈시킵니다.",
 		" $[PLAGUE_COOLDOWN_CONFIG]",
 		"§7상태 이상 §8- §4혈사병§f: 혈사병 지속 중 플레이어가 가지고 있는 모든 출혈 효과가",
-		" 멈추지 않습니다. 움직일 경우 최대 5초만큼 지속 시간이 증가하며, 혈사병이",
+		" 멈추지 않습니다. 움직일 경우 최대 2초만큼 지속 시간이 증가하며, 혈사병이",
 		" 종료되면 모든 출혈 효과가 함께 사라집니다."
 })
 public class Ruber extends AbilityBase implements ActiveHandler {

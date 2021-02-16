@@ -26,7 +26,6 @@ import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.Assassi
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.SniperMurderer;
 import daybreak.abilitywar.utils.annotations.Beta;
-import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
@@ -37,7 +36,6 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
@@ -93,7 +91,7 @@ import java.util.function.Predicate;
 
 })
 @Category(GameCategory.MINIGAME)
-@Support.Version(min = NMSVersion.v1_12_R1)
+
 @Beta
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
 

@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -58,5 +59,7 @@ public interface INMS {
 	IWorldBorder createWorldBorder(org.bukkit.WorldBorder bukkit);
 	void setWorldBorder(Player receiver, final IWorldBorder worldBorder);
 	void resetWorldBorder(Player receiver);
+
+	void setInGround(Arrow arrow, boolean inGround);
 
 }

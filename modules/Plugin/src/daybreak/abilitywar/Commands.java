@@ -22,6 +22,7 @@ import daybreak.abilitywar.config.wizard.KitPresetWizard;
 import daybreak.abilitywar.config.wizard.KitWizard;
 import daybreak.abilitywar.config.wizard.SpawnWizard;
 import daybreak.abilitywar.config.wizard.TeamPresetWizard;
+import daybreak.abilitywar.config.wizard.WorldResetWizard;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -32,8 +33,10 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.SpectatorManager;
+import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
 import daybreak.abilitywar.game.manager.gui.AbilityListGUI;
 import daybreak.abilitywar.game.manager.gui.BlackListGUI;
+import daybreak.abilitywar.game.manager.gui.EffectsListGUI;
 import daybreak.abilitywar.game.manager.gui.GameModeGUI;
 import daybreak.abilitywar.game.manager.gui.InstallGUI;
 import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
@@ -63,6 +66,7 @@ import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
+import daybreak.abilitywar.utils.base.minecraft.WorldReset;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
@@ -129,7 +133,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 			}
 
 			private void sendCommandHelp(CommandSender sender, String command, int page) {
-				final int allPage = 3;
+				final int allPage = 4;
 				switch (page) {
 					case 1:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
@@ -166,6 +170,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 								Formatter.formatCommand(command, "patch", "쾌적한 플레이를 위한 패치를 진행합니다.", true),
 								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true),
 								Formatter.formatCommand(command, "debug", "디버그 명령어를 도움말을 확인합니다.", true)});
+						break;
+					case 4:
+						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
+								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(command, "effects", "상태 이상 목록 GUI를 엽니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -454,6 +463,13 @@ public class Commands implements CommandExecutor, TabCompleter {
 							} else
 								Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
 						}
+						return true;
+					}
+				});
+				addSubCommand("worldreset", new Command(Condition.PLAYER) {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						new WorldResetWizard((Player) sender, plugin).openGUI(1);
 						return true;
 					}
 				});
@@ -1220,6 +1236,29 @@ public class Commands implements CommandExecutor, TabCompleter {
 				return true;
 			}
 		});
+		mainCommand.addSubCommand("effects", new Command() {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (args.length == 0) {
+					if (sender instanceof Player) new EffectsListGUI((Player) sender, AbilityWar.getPlugin()).openGUI(1); else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " effects <상태 이상>");
+				} else {
+					final String name = String.join(" ", args);
+					if (EffectRegistry.isRegistered(name)) {
+
+					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 능력입니다.");
+				}
+				return true;
+			}
+		});
+		mainCommand.addSubCommand("worldreset", new Command(Condition.OP) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				sender.sendMessage(Messager.defaultPrefix + "월드 초기화 시작");
+				WorldReset.resetWorlds();
+				sender.sendMessage(Messager.defaultPrefix + "월드 초기화 완료");
+				return true;
+			}
+		});
 	}
 
 	@Override
@@ -1234,8 +1273,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 				|| label.equalsIgnoreCase("va") || label.equalsIgnoreCase("능력자")) {
 			switch (args.length) {
 				case 1:
-					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "synergies", "abtip", "skip", "anew",
-							"config", "util", "script", "gamemode", "install", "team", "specialthanks", "addon", "patch", "debug");
+					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "synergies", "effects", "abtip", "skip", "anew",
+							"config", "util", "script", "gamemode", "worldreset", "install", "team", "specialthanks", "addon", "patch", "debug");
 					if (args[0].isEmpty()) {
 						return subCommands;
 					} else {
@@ -1244,7 +1283,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					}
 				case 2:
 					if (args[0].equalsIgnoreCase("config")) {
-						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability", "games", "teampreset", "kitpreset", "blacklist", "developer");
+						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability", "games", "worldreset", "teampreset", "kitpreset", "blacklist", "developer");
 						if (args[1].isEmpty()) {
 							return configs;
 						} else {

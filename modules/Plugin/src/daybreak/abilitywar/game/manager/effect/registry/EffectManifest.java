@@ -13,5 +13,6 @@ public @interface EffectManifest {
 	String displayName();
 	ApplicationMethod method() default ApplicationMethod.MULTIPLE;
 	EffectType[] type() default {};
+	String[] description() default {};
 
 }

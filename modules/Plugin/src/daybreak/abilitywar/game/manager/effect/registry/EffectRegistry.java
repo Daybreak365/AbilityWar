@@ -1,16 +1,29 @@
 package daybreak.abilitywar.game.manager.effect.registry;
 
 import com.google.common.base.Preconditions;
+import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.Provider;
+import daybreak.abilitywar.addon.AddonClassLoader;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Bleed;
+import daybreak.abilitywar.game.manager.effect.EvilSpirit;
+import daybreak.abilitywar.game.manager.effect.Frost;
+import daybreak.abilitywar.game.manager.effect.Hemophilia;
+import daybreak.abilitywar.game.manager.effect.Infection;
+import daybreak.abilitywar.game.manager.effect.Rooted;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,8 +32,18 @@ public class EffectRegistry {
 
 	private EffectRegistry() {}
 
-	private static final Map<String, EffectRegistration<?>> usedNames = new LinkedHashMap<>();
-	private static final Map<Class<? extends Effect>, EffectRegistration<?>> registered = new HashMap<>();
+	private static final Map<String, EffectRegistration<?>> usedNames;
+	private static final Map<Class<? extends Effect>, EffectRegistration<?>> registered;
+
+	static {
+		usedNames = new LinkedHashMap<>();
+		registered = new HashMap<>();
+		for (Class<?> clazz : new Class<?>[]{Bleed.class, EvilSpirit.class, Frost.class, Hemophilia.class, Rooted.class, Stun.class, Infection.class}) {
+			try {
+				Class.forName(clazz.getName());
+			} catch (ClassNotFoundException ignored) {}
+		}
+	}
 
 	public static <E extends Effect> EffectRegistration<E> registerEffect(final Class<E> clazz) {
 		if (registered.containsKey(clazz)) throw new IllegalArgumentException(clazz.getName() + " 효과는 이미 등록되었습니다.");
@@ -41,15 +64,54 @@ public class EffectRegistry {
 		return registered.get(clazz);
 	}
 
+	public static boolean isRegistered(Class<? extends Effect> clazz) {
+		return registered.containsKey(clazz);
+	}
+
+	public static boolean isRegistered(String name) {
+		return usedNames.containsKey(name);
+	}
+
+	public static Collection<EffectRegistration<?>> values() {
+		return Collections.unmodifiableCollection(registered.values());
+	}
+
 	public static class EffectRegistration<E extends Effect> {
 
 		private final Class<E> clazz;
+		private final Provider provider;
 		private final @Nullable Constructor<E> constructor;
 		private final Map<String, Constructor<E>> constructors = new HashMap<>();
 		private final EffectManifest manifest;
 
 		private EffectRegistration(Class<E> clazz) throws NoSuchMethodException {
 			this.clazz = Preconditions.checkNotNull(clazz);
+			if (clazz.getClassLoader() instanceof AddonClassLoader) {
+				this.provider = ((AddonClassLoader) clazz.getClassLoader()).getAddon();
+			} else {
+				Provider provider;
+				try {
+					final JavaPlugin javaPlugin = JavaPlugin.getProvidingPlugin(clazz);
+					if (javaPlugin instanceof AbilityWar) {
+						provider = AbilityWar.getPlugin();
+					} else {
+						provider = new Provider() {
+							@Override
+							public JavaPlugin getInstance() {
+								return javaPlugin;
+							}
+
+							@Override
+							public String getName() {
+								return javaPlugin.getName();
+							}
+						};
+					}
+				} catch (IllegalArgumentException e) {
+					provider = AbilityWar.getPlugin();
+				}
+				this.provider = provider;
+			}
 			{
 				Constructor<E> constructor;
 				try {
@@ -82,6 +144,10 @@ public class EffectRegistry {
 
 		public boolean isTypeOf(final Class<? extends Effect> effectClass) {
 			return effectClass.isAssignableFrom(this.clazz);
+		}
+
+		public Provider getProvider() {
+			return provider;
 		}
 
 		public Constructor<? extends Effect> getConstructor() {

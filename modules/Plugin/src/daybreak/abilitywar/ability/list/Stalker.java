@@ -124,7 +124,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 			for (int i = 0; i < 10; i++) {
 				ParticleLib.SPELL_MOB.spawnParticle(playerLocation.clone().add(Vector.getRandom()), BLACK);
 			}
-			getPlayer().setVelocity(targetLocation.toVector().subtract(playerLocation.toVector()).multiply(0.7));
+			getPlayer().setVelocity(targetLocation.toVector().subtract(playerLocation.toVector()).normalize().multiply(3));
 			if (playerLocation.distanceSquared(targetLocation) < 4.0) {
 				stop(false);
 			}
@@ -144,6 +144,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 			getPlayer().setGameMode(originalMode);
 			getPlayer().setVelocity(new Vector());
 			getPlayer().setFlySpeed(flySpeed);
+			getPlayer().setFlying(false);
 			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
 	}.setPeriod(TimeUnit.TICKS, 1).register();

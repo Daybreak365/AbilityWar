@@ -10,8 +10,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
-import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -23,11 +23,9 @@ import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -62,7 +60,7 @@ import java.util.function.Predicate;
 		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 처형",
 		"능력 사용 중에는 주변의 생명체 수와 관계 없이 4명 이상의 효과를 받습니다."
 })
-@Support.Version(min = NMSVersion.v1_11_R1)
+
 public class ShowTime extends Synergy implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "cooldown", 40,

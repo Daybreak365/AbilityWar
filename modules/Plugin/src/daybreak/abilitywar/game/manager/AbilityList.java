@@ -168,6 +168,8 @@ public class AbilityList {
 		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
 		registerAbility(Liberator.class);
 		registerAbility(Magnet.class);
+		registerAbility(Bellum.class);
+		registerAbility(Eos.class);
 	}
 
 	/**

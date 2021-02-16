@@ -19,6 +19,7 @@ import daybreak.abilitywar.game.list.mix.MixGame;
 import daybreak.abilitywar.game.list.mix.blind.MixBlindGame;
 import daybreak.abilitywar.game.list.mix.changemix.ChangeMix;
 import daybreak.abilitywar.game.list.mix.debug.MixDebugMode;
+import daybreak.abilitywar.game.list.mix.synergy.game.SynergyGame;
 import daybreak.abilitywar.game.list.mix.triplemix.TripleMixGame;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.oneability.OneAbility;
@@ -72,6 +73,7 @@ public class GameFactory {
 		registerMode(TripleMixGame.class);
 		registerMode(MixBlindGame.class);
 		registerMode(BaskinRobbins.class);
+		registerMode(SynergyGame.class);
 		if (DeveloperSettings.isEnabled()) {
 			registerMode(DebugMode.class);
 			registerMode(MixDebugMode.class);

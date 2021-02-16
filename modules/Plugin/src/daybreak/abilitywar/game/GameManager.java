@@ -2,7 +2,6 @@ package daybreak.abilitywar.game;
 
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.game.manager.GameFactory;
@@ -10,6 +9,7 @@ import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration.Flag;
 import daybreak.abilitywar.game.manager.GameFactory.GeneralRegistration;
 import daybreak.abilitywar.game.manager.GameFactory.TeamGameRegistration;
+
 import java.lang.reflect.InvocationTargetException;
 
 public class GameManager {
@@ -50,9 +50,7 @@ public class GameManager {
 			if (e.getCause() != null && e.getCause() instanceof IllegalArgumentException) {
 				throw (IllegalArgumentException) e.getCause();
 			}
-			if (DeveloperSettings.isEnabled()) {
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 		Configuration.modifyProperty(ConfigNodes.GAME_MODE, StandardGame.class.getName());
 		return new StandardGame().start();

@@ -2,7 +2,9 @@ package daybreak.abilitywar.game.specialthanks;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import daybreak.abilitywar.AbilityWar;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
+import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
@@ -11,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -20,15 +21,37 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 
 public class SpecialThanks {
 
-	private static final Inventory common = Bukkit.createInventory(null, 9);
 	private static final Map<String, SkinInfo> skinInfos = new HashMap<>();
+	private static final Inventory common = Bukkit.createInventory(null, 9);
+	private static final Deque<String> queue = new LinkedList<>();
+	private static final SimpleTimer loader = new SimpleTimer(TaskType.NORMAL, 1) {
+		@Override
+		protected void run(int count) {
+			if (!queue.isEmpty()) {
+				try {
+					common.setItem(1, Skulls.createSkull(queue.remove()));
+				} catch (NoSuchElementException e) {
+					stop(false);
+				}
+			}
+		}
+		@Override
+		protected void onEnd() {
+			if (!queue.isEmpty()) {
+				start();
+			}
+		}
+	}.setInitialDelay(TimeUnit.SECONDS, 2);
 
 	static {
 		CompletableFuture.runAsync(new Runnable() {
@@ -238,12 +261,8 @@ public class SpecialThanks {
 				public void run() {
 					try {
 						SpecialThank.this.name = MojangAPI.getNickname(uuid);
-						new BukkitRunnable() {
-							@Override
-							public void run() {
-								common.setItem(1, Skulls.createSkull(SpecialThank.this.name));
-							}
-						}.runTask(AbilityWar.getPlugin());
+						queue.add(SpecialThank.this.name);
+						loader.start();
 						registerSkinInfo(displayName, uuid);
 					} catch (IOException e) {
 						SpecialThank.this.name = null;
@@ -254,6 +273,10 @@ public class SpecialThanks {
 			for (int i = 0; i < description.length; i++) {
 				this.description[i] = ChatColor.WHITE + description[i];
 			}
+		}
+
+		public String getDisplayName() {
+			return displayName;
 		}
 
 		public String getName() {

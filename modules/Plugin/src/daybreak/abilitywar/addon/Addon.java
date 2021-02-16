@@ -87,7 +87,7 @@ public abstract class Addon implements Provider {
 					this.displayName = description.getProperty("displayName", null);
 					this.main = description.getProperty("main", "");
 					this.version = description.getProperty("version", "");
-					this.minVersion = description.containsKey("minVersion") ? Enums.getIfPresent(NMSVersion.class, description.getProperty("minVersion")).orNull() : NMSVersion.v1_9_R1;
+					this.minVersion = description.containsKey("minVersion") ? Enums.getIfPresent(NMSVersion.class, description.getProperty("minVersion")).orNull() : NMSVersion.v1_12_R1;
 					if (name.isEmpty() || main.isEmpty() || version.isEmpty()) {
 						throw new InvalidDescriptionException(jarFile.getName() + ": 올바르지 않은 addon.yml입니다.");
 					}

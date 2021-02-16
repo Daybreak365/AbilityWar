@@ -32,7 +32,7 @@ import java.util.UUID;
 @GameManifest(name = "폭탄 돌리기", description = {
 
 })
-@Support.Version(min = NMSVersion.v1_11_R1)
+
 @Beta
 public class TNTTag extends AbstractGame implements Listener {
 

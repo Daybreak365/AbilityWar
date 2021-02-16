@@ -20,6 +20,7 @@ import daybreak.abilitywar.music.christmas.ChristmasMusic;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import daybreak.abilitywar.utils.base.minecraft.WorldReset;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -137,6 +138,9 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 	@Override
 	protected void onEnd() {
 		HandlerList.unregisterAll(listener);
+		if (Settings.isAutoWorldResetEnabled()) {
+			WorldReset.resetWorlds();
+		}
 		super.onEnd();
 	}
 

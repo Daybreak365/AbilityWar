@@ -160,8 +160,11 @@ public class AbilityFactory {
 		// v2.4.2
 		//registerAbility("daybreak.abilitywar.ability.list.redbeard." + ServerVersion.getName() + ".RedBeard");
 		registerAbility(Liberator.class);
-		// v2.4.3
+		// v2.4.4
 		registerAbility(Magnet.class);
+		// v2.4.5
+		registerAbility(Bellum.class);
+		registerAbility(Eos.class);
 
 
 		// 게임모드 전용

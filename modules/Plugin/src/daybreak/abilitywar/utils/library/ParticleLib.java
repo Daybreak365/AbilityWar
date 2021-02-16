@@ -216,7 +216,7 @@ public class ParticleLib {
 			if (ServerVersion.getVersion() >= 13) {
 				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, block.getBlockData());
 			} else {
-				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(block.getType(), block.getData()));
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, extra, block.getState().getData());
 			}
 		}
 
@@ -224,7 +224,7 @@ public class ParticleLib {
 			if (ServerVersion.getVersion() >= 13) {
 				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, block.getBlockData());
 			} else {
-				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, new MaterialData(block.getType(), block.getData()));
+				this.spawnParticle(location, offsetX, offsetY, offsetZ, count, block.getState().getData());
 			}
 		}
 
@@ -248,7 +248,7 @@ public class ParticleLib {
 			if (ServerVersion.getVersion() >= 13) {
 				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, block.getBlockData());
 			} else {
-				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, new MaterialData(block.getType(), block.getData()));
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, extra, block.getState().getData());
 			}
 		}
 
@@ -256,7 +256,7 @@ public class ParticleLib {
 			if (ServerVersion.getVersion() >= 13) {
 				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, block.getBlockData());
 			} else {
-				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, new MaterialData(block.getType(), block.getData()));
+				this.spawnParticle(player, location, offsetX, offsetY, offsetZ, count, block.getState().getData());
 			}
 		}
 

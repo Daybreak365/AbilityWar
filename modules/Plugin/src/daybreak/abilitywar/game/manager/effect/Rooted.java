@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,14 +19,14 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-@EffectManifest(name = "기절", displayName = "§e기절", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "이동 불가", displayName = "§a이동 불가", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.MOVEMENT_RESTRICTION
 }, description = {
-		"이동과 시야 전환이 불가능해집니다."
+		"이동이 불가능해지나, 시야 전환은 가능합니다."
 })
-public class Stun extends AbstractGame.Effect implements Listener {
+public class Rooted extends AbstractGame.Effect implements Listener {
 
-	public static final EffectRegistration<Stun> registration = EffectRegistry.registerEffect(Stun.class);
+	public static final EffectRegistration<Rooted> registration = EffectRegistry.registerEffect(Rooted.class);
 
 	public static void apply(Participant participant, TimeUnit timeUnit, int duration) {
 		registration.apply(participant, timeUnit, duration);
@@ -36,7 +37,7 @@ public class Stun extends AbstractGame.Effect implements Listener {
 	private int stack = 0;
 	private boolean direction = true;
 
-	public Stun(Participant participant, TimeUnit timeUnit, int duration) {
+	public Rooted(Participant participant, TimeUnit timeUnit, int duration) {
 		participant.getGame().super(registration, participant, timeUnit.toTicks(duration));
 		this.participant = participant;
 		final Player player = participant.getPlayer();
@@ -46,7 +47,7 @@ public class Stun extends AbstractGame.Effect implements Listener {
 		hologram.setInvulnerable(true);
 		NMS.removeBoundingBox(hologram);
 		hologram.setCustomNameVisible(true);
-		hologram.setCustomName("§c기절!");
+		hologram.setCustomName("§a이동 불가!");
 		setPeriod(TimeUnit.TICKS, 1);
 	}
 
@@ -58,7 +59,12 @@ public class Stun extends AbstractGame.Effect implements Listener {
 	@EventHandler
 	private void onPlayerMove(final PlayerMoveEvent e) {
 		if (e.getPlayer().getUniqueId().equals(participant.getPlayer().getUniqueId())) {
-			e.setTo(e.getFrom());
+			final Location from = e.getFrom(), to = e.getTo();
+			if (to != null) {
+				to.setX(from.getX());
+				to.setY(from.getY());
+				to.setZ(from.getZ());
+			}
 		}
 	}
 
@@ -66,9 +72,9 @@ public class Stun extends AbstractGame.Effect implements Listener {
 	protected void run(int count) {
 		super.run(count);
 		if (hologram.isValid()) {
-			if (direction) stack++; else stack--;
-			if (stack <= 0 || stack >= 30) {
+			if (++stack > 30) {
 				this.direction = !direction;
+				this.stack = 0;
 			}
 			hologram.teleport(participant.getPlayer().getLocation().clone().add(0, 2.2 + (stack * 0.008), 0));
 		}

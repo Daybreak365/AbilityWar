@@ -131,7 +131,7 @@ public class Ferda extends AbilityBase implements ActiveHandler {
 	};
 	private final int range = RANGE_CONFIG.getValue();
 	private final double particleRange = (range / 3.0) * 2;
-	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue()), leftCool = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), 60), leftCool = new Cooldown(COOLDOWN_CONFIG.getValue(), 60);
 	private CradleOfLife cradleOfLife = null;
 	private SelfPurification selfPurification = null;
 

@@ -38,7 +38,7 @@ import java.util.Map.Entry;
 @AbilityManifest(name = "염인", rank = Rank.S, species = Species.HUMAN, explain = {
 		""
 })
-@Support.Version(min = NMSVersion.v1_12_R1)
+
 @Beta
 public class FlameMan extends Synergy implements ActiveHandler {
 

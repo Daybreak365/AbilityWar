@@ -13,8 +13,6 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
-import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -64,7 +62,7 @@ public class SurvivalInstinct extends AbilityBase {
 		invincibility.start();
 		getPlayer().setHealth(1);
 		NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
-		if (ServerVersion.isAboveOrEqual(NMSVersion.v1_11_R1)) NMS.broadcastEntityEffect(getPlayer(), (byte) 35);
+		NMS.broadcastEntityEffect(getPlayer(), (byte) 35);
 		final Vector playerLocation = getPlayer().getLocation().toVector();
 		for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
 			entity.setVelocity(entity.getLocation().toVector().subtract(playerLocation).normalize().multiply(2).setY(0));

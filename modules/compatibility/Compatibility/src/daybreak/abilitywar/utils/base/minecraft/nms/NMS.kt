@@ -9,6 +9,7 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.WorldBorder
 import org.bukkit.entity.ArmorStand
+import org.bukkit.entity.Arrow
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
@@ -180,6 +181,11 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun resetWorldBorder(receiver: Player) {
 			INSTANCE.resetWorldBorder(receiver)
+		}
+
+		@JvmStatic
+		override fun setInGround(arrow: Arrow, inGround: Boolean) {
+			INSTANCE.setInGround(arrow, inGround)
 		}
 	}
 }

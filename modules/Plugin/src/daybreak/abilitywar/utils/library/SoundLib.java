@@ -1045,7 +1045,7 @@ public class SoundLib {
 		}
 
 		public void playSound(Location location) {
-			this.playSound(location, .65f, 1);
+			this.playSound(location, .45f, 1);
 		}
 
 		public void playSound(Player player, Location location, float volume, float pitch) {

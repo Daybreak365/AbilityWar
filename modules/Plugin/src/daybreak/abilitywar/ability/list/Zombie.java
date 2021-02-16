@@ -1,6 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
@@ -9,23 +8,16 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.SubscribeEvent.Priority;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.registry.ApplicationMethod;
-import daybreak.abilitywar.game.manager.effect.registry.EffectManifest;
-import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
-import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectRegistration;
-import daybreak.abilitywar.game.manager.effect.registry.EffectType;
+import daybreak.abilitywar.game.manager.effect.Infection;
 import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
-import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -35,20 +27,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 @AbilityManifest(name = "좀비", rank = Rank.A, species = Species.UNDEAD, explain = {
@@ -59,7 +46,7 @@ import java.util.Set;
 		"§7상태 이상 §8- §5감염§f: 간헐적으로 시야가 돌아가며, 대미지를 25% 줄여받습니다.",
 		"감염 효과를 중복으로 받으면 지속 시간이 계속 쌓입니다."
 })
-@Support.Version(min = NMSVersion.v1_9_R1, max = NMSVersion.v1_14_R1)
+@Support.Version(min = NMSVersion.v1_12_R1, max = NMSVersion.v1_14_R1)
 public class Zombie extends AbilityBase implements TargetHandler {
 
 	private static final SettingObject<Integer> COOLDOWN = abilitySettings.new SettingObject<Integer>(Zombie.class, "cooldown", 100, "# 쿨타임") {
@@ -187,7 +174,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			if (zombies.contains(e.getEntity())) {
 				e.setCancelled(true);
 			} else if (zombies.contains(e.getDamager()) && getGame().isParticipating(e.getEntity().getUniqueId())) {
-				infect(getGame().getParticipant(e.getEntity().getUniqueId()), TimeUnit.TICKS, 20);
+				Infection.apply(getGame().getParticipant(e.getEntity().getUniqueId()), TimeUnit.TICKS, 20);
 				e.setDamage(e.getDamage() / 2);
 			}
 			if (getPlayer().equals(e.getEntity())) {
@@ -221,79 +208,6 @@ public class Zombie extends AbilityBase implements TargetHandler {
 			this.target = (Player) entity;
 			skill.start();
 		}
-	}
-
-	public static final EffectRegistration<Infection> INFECTION_REGISTRATION = EffectRegistry.registerEffect(Infection.class);
-
-	private void infect(Participant participant, TimeUnit timeUnit, int duration) {
-		INFECTION_REGISTRATION.apply(participant, timeUnit, duration);
-	}
-
-	private static final Random random = new Random();
-
-	@EffectManifest(name = "감염", displayName = "§5감염", method = ApplicationMethod.UNIQUE_STACK, type = {
-			EffectType.SIGHT_CONTROL
-	})
-	public static class Infection extends Effect implements Listener {
-
-		private final Participant participant;
-
-		public Infection(final Participant participant, final TimeUnit timeUnit, final int duration) {
-			participant.getGame().super(INFECTION_REGISTRATION, participant, timeUnit.toTicks(duration) / 4);
-			this.participant = participant;
-			setPeriod(TimeUnit.TICKS, 4);
-		}
-
-		@EventHandler
-		private void onPlayerDeath(PlayerDeathEvent e) {
-			if (participant.getPlayer().getUniqueId().equals(e.getEntity().getUniqueId())) {
-				stop(false);
-			}
-		}
-
-		@EventHandler
-		private void onEntityDamage(final EntityDamageEvent e) {
-			if (participant.getPlayer().equals(e.getEntity())) {
-				e.setDamage(e.getDamage() * .75);
-			}
-		}
-
-		@Override
-		protected void onStart() {
-			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-		}
-
-		@Override
-		protected void run(int count) {
-			super.run(count);
-			if (Math.random() <= 0.65) {
-				final Player player = participant.getPlayer();
-				final Location location = player.getLocation();
-				float yaw = location.getYaw() + random.nextInt(130) - 65;
-				if (yaw > 180 || yaw < -180) {
-					float mod = yaw % 180;
-					if (mod < 0) {
-						yaw = 180 + mod;
-					} else if (mod > 0) {
-						yaw = -180 + mod;
-					}
-				}
-				NMS.rotateHead(player, player, yaw, location.getPitch() + random.nextInt(90) - 45);
-			}
-		}
-
-		@Override
-		protected void onEnd() {
-			HandlerList.unregisterAll(this);
-			super.onEnd();
-		}
-
-		@Override
-		protected void onSilentEnd() {
-			HandlerList.unregisterAll(this);
-			super.onSilentEnd();
-		}
-
 	}
 
 }

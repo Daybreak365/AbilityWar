@@ -250,6 +250,10 @@ public class Configuration {
 			return get(ConfigNodes.GAME_DURATION_TIMER_BEHAVIOR);
 		}
 
+		public static boolean isAutoWorldResetEnabled() {
+			return get(ConfigNodes.WORLD_RESET_ON_GAME_END);
+		}
+
 		public static boolean isBlacklisted(String abilityName) {
 			return getBlackList().contains(abilityName);
 		}
@@ -355,12 +359,11 @@ public class Configuration {
 
 		}
 
-		@SuppressWarnings("unchecked")
 		public static Class<? extends AbstractGame> getGameMode() {
 			try {
 				Class<?> clazz = ClassUtil.forName(get(ConfigNodes.GAME_MODE));
 				if (AbstractGame.class.isAssignableFrom(clazz)) {
-					return (Class<? extends AbstractGame>) clazz;
+					return clazz.asSubclass(AbstractGame.class);
 				}
 			} catch (ClassNotFoundException ignored) {
 			}
