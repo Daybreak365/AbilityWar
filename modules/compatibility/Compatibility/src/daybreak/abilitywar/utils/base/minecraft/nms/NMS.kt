@@ -14,6 +14,7 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.Item
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.entity.Projectile
 
 class NMS private constructor() {
 	companion object INSTANCE : INMS {
@@ -178,14 +179,30 @@ class NMS private constructor() {
 			INSTANCE.setWorldBorder(receiver, worldBorder)
 		}
 
-		@JvmStatic
-		override fun resetWorldBorder(receiver: Player) {
-			INSTANCE.resetWorldBorder(receiver)
-		}
+        @JvmStatic
+        override fun resetWorldBorder(receiver: Player) {
+            INSTANCE.resetWorldBorder(receiver)
+        }
 
-		@JvmStatic
-		override fun setInGround(arrow: Arrow, inGround: Boolean) {
-			INSTANCE.setInGround(arrow, inGround)
-		}
-	}
+        @JvmStatic
+        override fun setInGround(arrow: Arrow, inGround: Boolean) {
+            INSTANCE.setInGround(arrow, inGround)
+        }
+
+        @JvmStatic
+        override fun isArrow(entity: Entity): Boolean {
+            return INSTANCE.isArrow(entity)
+        }
+
+        @JvmStatic
+        override fun getPickupStatus(arrow: Projectile): PickupStatus {
+            return INSTANCE.getPickupStatus(arrow)
+        }
+
+        @JvmStatic
+        override fun setPickupStatus(arrow: Projectile, pickupStatus: PickupStatus) {
+            INSTANCE.setPickupStatus(arrow, pickupStatus)
+        }
+
+    }
 }

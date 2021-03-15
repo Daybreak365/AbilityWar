@@ -90,6 +90,9 @@ public class OneAbility extends Game implements DefaultKitHandler {
 							if (tip != null) {
 								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
 							}
+							if (ability.hasSummarize()) {
+								player.sendMessage("§e/aw sum§f으로 능력 요약을 확인하세요.");
+							}
 						} catch (SecurityException | IllegalArgumentException | ReflectiveOperationException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
@@ -155,7 +158,7 @@ public class OneAbility extends Game implements DefaultKitHandler {
 						"§cOneAbility §f- §6단일전",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#5908"
+						"§9디스코드 §7: §f새벽§7#0833"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

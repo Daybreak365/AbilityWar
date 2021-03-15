@@ -211,7 +211,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 							"§4MurderMystery §f- §c머더 미스터리",
 							"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 							"§b개발자 §7: §fDaybreak 새벽",
-							"§9디스코드 §7: §f새벽§7#5908")) {
+							"§9디스코드 §7: §f새벽§7#0833")) {
 						Bukkit.broadcastMessage(line);
 					}
 					break;

@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -39,7 +40,7 @@ import java.util.function.Predicate;
 })
 public class Bind extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "cooldown", 25, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "cooldown", 40, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -62,7 +63,7 @@ public class Bind extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> MAX_SOLIDITY_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "max-solidity", 4, "# 최대 강도") {
+	public static final SettingObject<Integer> MAX_SOLIDITY_CONFIG = synergySettings.new SettingObject<Integer>(Bind.class, "max-solidity", 3, "# 최대 강도") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -77,7 +78,7 @@ public class Bind extends Synergy implements ActiveHandler {
 			MaterialX.GREEN_STAINED_GLASS,
 			MaterialX.BLUE_STAINED_GLASS
 	};
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 
 	private final int maxSolidity = MAX_SOLIDITY_CONFIG.getValue();
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();

@@ -19,13 +19,13 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.ProgressBar;
 import daybreak.abilitywar.utils.base.Seasons;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -109,7 +109,7 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 	public static final RGB[] CHRISTMAS_COLORS = {RGB.of(255, 122, 124), RGB.of(159, 214, 154)};
 
 	private final int amount = 25;
-	private final Circle top = Circle.of(1, amount), bottom = Circle.of(1, amount);
+	private final Circle circle = Circle.of(1, amount);
 	private final AbilityTimer particleShow = new AbilityTimer(stunDuration * 20) {
 
 		private double y;
@@ -137,14 +137,14 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 				}
 
 				if (Seasons.isChristmas()) {
-					for (Location location : top.toLocations(target.getLocation().add(0, y, 0)))
+					for (Location location : circle.toLocations(target.getLocation().add(0, y, 0)))
 						ParticleLib.REDSTONE.spawnParticle(location, random.pick(CHRISTMAS_COLORS));
-					for (Location location : bottom.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
+					for (Location location : circle.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
 						ParticleLib.REDSTONE.spawnParticle(location, random.pick(CHRISTMAS_COLORS));
 				} else {
-					for (Location location : top.toLocations(target.getLocation().add(0, y, 0)))
+					for (Location location : circle.toLocations(target.getLocation().add(0, y, 0)))
 						ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
-					for (Location location : bottom.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
+					for (Location location : circle.toLocations(target.getLocation().add(0, 2.0 - y, 0)))
 						ParticleLib.REDSTONE.spawnParticle(location, PURPLE);
 				}
 			}
@@ -173,9 +173,10 @@ public class Hacker extends AbilityBase implements ActiveHandler {
 		protected void onEnd() {
 			if (target != null) {
 				NMS.clearTitle(getPlayer());
-
-				int X = (int) target.getLocation().getX(), Y = (int) target.getLocation().getY(), Z = (int) target.getLocation().getZ();
-				getPlayer().sendMessage("§e" + target.getName() + "§f님은 §aX " + X + "§f, §aY " + Y + "§f, §aZ " + Z + "§f에 있습니다.");
+				getPlayer().sendMessage("§e" + target.getName() + "§f님은 " +
+						"§aX " + ((int) target.getLocation().getX()) + "§f, " +
+						"§aY " + ((int) target.getLocation().getY()) + "§f, " +
+						"§aZ " + ((int) target.getLocation().getZ()) + "§f에 있습니다.");
 
 				target.sendMessage("§5해킹당했습니다!");
 				Stun.apply(getGame().getParticipant(target), TimeUnit.SECONDS, stunDuration);

@@ -15,14 +15,19 @@ import java.lang.reflect.Field;
 
 public class EntityHook extends EntityFishingHook implements HookEntity {
 
-	private static final DataWatcherObject<Integer> e;
+	private static final DataWatcherObject<Integer> HOOKED_ENTITY;
 	private static final Field hooked;
 
 	static {
 		try {
-			final Field field = EntityFishingHook.class.getDeclaredField("e");
+			Field field;
+			try {
+				field = EntityFishingHook.class.getDeclaredField("HOOKED_ENTITY");
+			} catch (NoSuchFieldException e) {
+				field = EntityFishingHook.class.getDeclaredField("e");
+			}
 			field.setAccessible(true);
-			e = (DataWatcherObject<Integer>) field.get(null);
+			HOOKED_ENTITY = (DataWatcherObject<Integer>) field.get(null);
 			hooked = EntityFishingHook.class.getDeclaredField("hooked");
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -37,8 +42,9 @@ public class EntityHook extends EntityFishingHook implements HookEntity {
 		hooked.setAccessible(true);
 		try {
 			hooked.set(this, target);
-		} catch (IllegalAccessException ignored) {}
-		this.getDataWatcher().set(e, target.getId() + 1);
+		} catch (IllegalAccessException ignored) {
+		}
+		this.getDataWatcher().set(HOOKED_ENTITY, target.getId() + 1);
 		setPosition(location.getX(), location.getY(), location.getZ());
 		world.addEntity(this);
 	}
@@ -49,15 +55,16 @@ public class EntityHook extends EntityFishingHook implements HookEntity {
 		hooked.setAccessible(true);
 		try {
 			hooked.set(this, target);
-		} catch (IllegalAccessException ignored) {}
-		this.getDataWatcher().set(e, target.getId() + 1);
+		} catch (IllegalAccessException ignored) {
+		}
+		this.getDataWatcher().set(HOOKED_ENTITY, target.getId() + 1);
 		setPosition(target.locX(), target.locY(), target.locZ());
 		world.addEntity(this);
 	}
 
 	@Override
 	public void tick() {
-		this.getDataWatcher().set(e, target.getId() + 1);
+		this.getDataWatcher().set(HOOKED_ENTITY, target.getId() + 1);
 	}
 
 	@Override

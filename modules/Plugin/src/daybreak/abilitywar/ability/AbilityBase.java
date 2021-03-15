@@ -10,7 +10,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
-import daybreak.abilitywar.ability.event.AbilityPreTargetEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.ability.AbilitySettings;
@@ -38,13 +37,12 @@ import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -166,7 +164,7 @@ public abstract class AbilityBase {
 	private final AbstractGame game;
 	private final AbilityRegistration registration;
 	private final AbilityManifest manifest;
-	private String[] explanation = null;
+	private String[] explanation = null, summarize = null;
 	private final Multimap<Class<? extends Event>, EventObserver> eventhandlers = HashMultimap.create();
 	private final Set<AbilityTimer> timers = new QueueOnIterateHashSet<>(), runningTimers = new QueueOnIterateHashSet<>();
 	private final Queue<AbilityTimer> pausedTimers = new LinkedList<>();
@@ -191,7 +189,7 @@ public abstract class AbilityBase {
 			final Pair<Method, SubscribeEvent> pair = entry.getValue();
 			final SubscribeEvent subscriber = pair.getRight();
 			final Method method = pair.getLeft();
-			final EventObserver observer = new EventObserver(entry.getKey(), subscriber.priority()) {
+			final EventObserver observer = new EventObserver(entry.getKey(), subscriber.eventPriority(), subscriber.priority()) {
 				@Override
 				protected void onEvent(final Event event) {
 					if (isRestricted()) return;
@@ -222,16 +220,16 @@ public abstract class AbilityBase {
 	}
 
 	/**
-	 *
-	 * @param clazz				이벤트 클래스
-	 * @param onlyRelevant		이 능력 또는 이 능력의 주인과 관련 없는 이벤트 무시 여부
-	 * @param ignoreCancelled	취소된 이벤트 무시 여부
-	 * @param priority			이벤트 우선 순위
+	 * @param clazz           이벤트 클래스
+	 * @param onlyRelevant    이 능력 또는 이 능력의 주인과 관련 없는 이벤트 무시 여부
+	 * @param ignoreCancelled 취소된 이벤트 무시 여부
+	 * @param eventPriority   이벤트 우선 순위
+	 * @param priority        이벤트 우선 순위
 	 */
-	protected <T extends Event> void subscribeEvent(final Class<T> clazz, final EventConsumer<T> consumer, final boolean onlyRelevant, final boolean ignoreCancelled, final int priority) {
+	protected <T extends Event> void subscribeEvent(final Class<T> clazz, final EventConsumer<T> consumer, final boolean onlyRelevant, final boolean ignoreCancelled, final EventPriority eventPriority, final int priority) {
 		Preconditions.checkNotNull(clazz);
 		Preconditions.checkNotNull(consumer);
-		final EventObserver observer = new EventObserver(clazz, priority) {
+		final EventObserver observer = new EventObserver(clazz, eventPriority, priority) {
 			@Override
 			protected void onEvent(final Event event) {
 				if (isRestricted()) return;
@@ -254,29 +252,18 @@ public abstract class AbilityBase {
 		game.getEventManager().register(observer);
 	}
 
-	public interface EventConsumer<T> {
-		void onEvent(final T event);
+	/**
+	 * @param clazz           이벤트 클래스
+	 * @param onlyRelevant    이 능력 또는 이 능력의 주인과 관련 없는 이벤트 무시 여부
+	 * @param ignoreCancelled 취소된 이벤트 무시 여부
+	 * @param priority        이벤트 우선 순위
+	 */
+	protected <T extends Event> void subscribeEvent(final Class<T> clazz, final EventConsumer<T> consumer, final boolean onlyRelevant, final boolean ignoreCancelled, final int priority) {
+		this.subscribeEvent(clazz, consumer, onlyRelevant, ignoreCancelled, EventPriority.HIGHEST, priority);
 	}
 
-	protected <E extends Entity> void subscribeTarget(final Class<E> entityType, final Function<? super E, Boolean> function) {
-		final EventObserver observer = new EventObserver(PlayerInteractAtEntityEvent.class, 5) {
-			@Override
-			@SuppressWarnings("unchecked")
-			protected void onEvent(Event event) {
-				if (isRestricted() || !(event instanceof PlayerInteractAtEntityEvent)) return;
-				final PlayerInteractAtEntityEvent e = (PlayerInteractAtEntityEvent) event;
-				if (!getPlayer().equals(e.getPlayer()) || e.isCancelled()) return;
-				final Entity rightClicked = e.getRightClicked();
-				if (!entityType.isAssignableFrom(rightClicked.getClass())) return;
-				final AbilityPreTargetEvent targetEvent = new AbilityPreTargetEvent(AbilityBase.this, e.getHand());
-				Bukkit.getPluginManager().callEvent(targetEvent);
-				if (!targetEvent.isCancelled()) {
-					if (function.apply((E) rightClicked)) {
-
-					}
-				}
-			}
-		};
+	public interface EventConsumer<T> {
+		void onEvent(final T event);
 	}
 
 	public enum Update {
@@ -358,6 +345,35 @@ public abstract class AbilityBase {
 			@Override
 			public String next() {
 				return ROUND_BRACKET.replaceAll(explanation[cursor++], fieldValueProvider);
+			}
+		};
+	}
+
+	public boolean hasSummarize() {
+		return manifest.summarize().length != 0;
+	}
+
+	public final Iterator<String> getSummarize() {
+		if (this.summarize == null) {
+			this.summarize = new String[manifest.summarize().length];
+			System.arraycopy(manifest.summarize(), 0, this.summarize, 0, this.summarize.length);
+			for (int i = 0; i < this.summarize.length; i++) {
+				this.summarize[i] = SQUARE_BRACKET.replaceAll(this.summarize[i], fieldValueProvider);
+			}
+		}
+
+		final String[] summarize = this.summarize;
+		return new Iterator<String>() {
+			private int cursor = 0;
+
+			@Override
+			public boolean hasNext() {
+				return cursor < summarize.length;
+			}
+
+			@Override
+			public String next() {
+				return ROUND_BRACKET.replaceAll(summarize[cursor++], fieldValueProvider);
 			}
 		};
 	}

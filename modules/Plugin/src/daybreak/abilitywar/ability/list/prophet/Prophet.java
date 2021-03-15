@@ -50,11 +50,14 @@ public class Prophet extends AbilityBase implements TargetHandler, ActiveHandler
 
 	};
 
+	private final Religions religions;
+
 	public Prophet(Participant participant) {
 		super(participant);
 		if (!getGame().hasModule(Religions.class)) {
 			getGame().addModule(new Religions());
 		}
+		this.religions = new Religions();
 	}
 
 	private final int maxBelivers = getGame().getParticipants().size() / 2, minBelivers = getGame().getParticipants().size() / 4;

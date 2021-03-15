@@ -233,6 +233,12 @@ public class Eos extends AbilityBase implements ActiveHandler {
 			}
 			lastLocation = newLocation;
 			getPlayer().setVelocity(direction);
+			if (count % 2 != 0) {
+				final Location base = newLocation.clone();
+				base.setDirection(direction);
+				new Cut(base, (state = !state) ? 25 : -25).start();
+				SoundLib.ENTITY_WITHER_SHOOT.playSound(base);
+			}
 		}
 
 		@Override

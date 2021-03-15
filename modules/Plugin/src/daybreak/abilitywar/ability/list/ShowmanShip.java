@@ -126,7 +126,7 @@ public class ShowmanShip extends AbilityBase {
 	@SubscribeEvent(priority = 6, ignoreCancelled = true)
 	private void playerExecution(final EntityDamageByEntityEvent e) {
 		final Entity entity = e.getEntity();
-		if (!getPlayer().equals(e.getEntity()) && getPlayer().equals(getDamager(e.getDamager())) && entity instanceof LivingEntity) {
+		if (!getPlayer().equals(e.getEntity()) && getPlayer().equals(getDamager(e.getDamager())) && entity instanceof LivingEntity && getPoint(7, 7) >= 4) {
 			final LivingEntity livingEntity = (LivingEntity) entity;
 			if (livingEntity.getHealth() < (livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 3.3333333333) && !livingEntity.isDead() && Damages.canDamage(livingEntity, DamageCause.MAGIC, Double.MAX_VALUE)) {
 				execute(livingEntity, false);

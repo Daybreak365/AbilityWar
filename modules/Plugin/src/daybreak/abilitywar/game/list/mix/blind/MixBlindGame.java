@@ -243,7 +243,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 						"§0Blind §f- §8블라인드 믹스",
 						"§7버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§7개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#5908"
+						"§9디스코드 §7: §f새벽§7#0833"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

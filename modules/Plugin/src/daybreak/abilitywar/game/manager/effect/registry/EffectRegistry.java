@@ -1,6 +1,7 @@
 package daybreak.abilitywar.game.manager.effect.registry;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.Provider;
 import daybreak.abilitywar.addon.AddonClassLoader;
@@ -83,6 +84,7 @@ public class EffectRegistry {
 		private final @Nullable Constructor<E> constructor;
 		private final Map<String, Constructor<E>> constructors = new HashMap<>();
 		private final EffectManifest manifest;
+		private final ImmutableSet<EffectType> effectType;
 
 		private EffectRegistration(Class<E> clazz) throws NoSuchMethodException {
 			this.clazz = Preconditions.checkNotNull(clazz);
@@ -130,12 +132,14 @@ public class EffectRegistry {
 					if (types.length >= 4 && types[0] == Participant.class && types[1] == TimeUnit.class && types[2] == int.class) {
 						constructors.put(annotation.name(), constructor);
 					}
-				} catch (ClassCastException ignored) {}
+				} catch (ClassCastException ignored) {
+				}
 			}
 			final EffectManifest manifest = clazz.getAnnotation(EffectManifest.class);
 			if (manifest == null) throw new IllegalArgumentException("EffectManifest가 없는 효과입니다.");
 			this.manifest = manifest;
 			Preconditions.checkNotNull(manifest.name());
+			this.effectType = ImmutableSet.copyOf(manifest.type());
 		}
 
 		public Class<? extends Effect> getEffectClass() {
@@ -156,6 +160,10 @@ public class EffectRegistry {
 
 		public EffectManifest getManifest() {
 			return manifest;
+		}
+
+		public ImmutableSet<EffectType> getEffectType() {
+			return effectType;
 		}
 
 		public E apply(final @NotNull Participant participant, final @NotNull TimeUnit timeUnit, final int duration) {

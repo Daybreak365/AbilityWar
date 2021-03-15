@@ -65,7 +65,7 @@ public class CrazyAssassin extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> DAMAGE_CONFIG = synergySettings.new SettingObject<Double>(CrazyAssassin.class, "damage", 0.9,
+	public static final SettingObject<Double> DAMAGE_CONFIG = synergySettings.new SettingObject<Double>(CrazyAssassin.class, "damage", 0.75,
 			"# 타당 대미지") {
 
 		@Override

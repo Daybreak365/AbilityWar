@@ -69,6 +69,9 @@ public abstract class AbilitySelect extends GameTimer {
 			if (tip != null) {
 				player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
 			}
+			if (participant.getAbility().hasSummarize()) {
+				player.sendMessage("§e/aw check s§8(§7um§8)§f으로 능력 요약을 확인하세요.");
+			}
 		}
 	}
 

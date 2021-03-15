@@ -7,6 +7,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
 import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
+import daybreak.abilitywar.utils.base.minecraft.nms.PickupStatus;
 import net.minecraft.server.v1_13_R1.AxisAlignedBB;
 import net.minecraft.server.v1_13_R1.DataWatcherObject;
 import net.minecraft.server.v1_13_R1.DataWatcherRegistry;
@@ -50,6 +51,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 
 public class NMSImpl implements INMS {
 
@@ -248,5 +250,22 @@ public class NMSImpl implements INMS {
 	@Override
 	public void setInGround(Arrow arrow, boolean inGround) {
 		((CraftArrow) arrow).getHandle().inGround = inGround;
+	}
+
+	@Override
+	public boolean isArrow(Entity entity) {
+		return entity instanceof Arrow;
+	}
+
+	@Override
+	public void setPickupStatus(Projectile arrow, PickupStatus pickupStatus) {
+		if (!isArrow(arrow)) throw new IllegalArgumentException("arrow must be an instance of Arrow");
+		((Arrow) arrow).setPickupStatus(Arrow.PickupStatus.values()[pickupStatus.ordinal()]);
+	}
+
+	@Override
+	public PickupStatus getPickupStatus(Projectile arrow) {
+		if (!isArrow(arrow)) throw new IllegalArgumentException("arrow must be an instance of Arrow");
+		return PickupStatus.values()[((Arrow) arrow).getPickupStatus().ordinal()];
 	}
 }

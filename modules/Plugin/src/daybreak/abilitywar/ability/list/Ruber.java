@@ -14,6 +14,7 @@ import daybreak.abilitywar.game.manager.effect.Hemophilia;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
@@ -23,7 +24,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,12 +51,11 @@ import java.util.function.Predicate;
 		"§7철괴 우클릭 §8- §c흡혈§f: 상대를 바라보고 이 능력을 사용하면 체력을 반 칸",
 		" 흡혈합니다. §4(§c강화§4) §f체력을 한 칸 흡혈하고 대상을 3초간 출혈시킵니다.",
 		" $[COOLDOWN_CONFIG]",
-		"§7철괴 좌클릭 §8- §c전염병 창궐§f: 주변 10칸 이내의 모든 플레이어를 3초간 §4혈사병§f에",
+		"§7철괴 좌클릭 §8- §c전염병 창궐§f: 주변 10칸 이내의 모든 플레이어를 4초간 §4혈사병§f에",
 		" 감염시킵니다. §4(§c강화§4) §f6초간 §4혈사병§f에 감염시키고 대상을 출혈시킵니다.",
 		" $[PLAGUE_COOLDOWN_CONFIG]",
 		"§7상태 이상 §8- §4혈사병§f: 혈사병 지속 중 플레이어가 가지고 있는 모든 출혈 효과가",
-		" 멈추지 않습니다. 움직일 경우 최대 2초만큼 지속 시간이 증가하며, 혈사병이",
-		" 종료되면 모든 출혈 효과가 함께 사라집니다."
+		" 멈추지 않습니다. 혈사병이 종료되면 모든 출혈 효과가 함께 사라집니다."
 })
 public class Ruber extends AbilityBase implements ActiveHandler {
 
@@ -88,7 +87,7 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	public static final SettingObject<Integer> PLAGUE_RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "plague-radius", 10,
+	public static final SettingObject<Integer> PLAGUE_RADIUS_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "plague-radius", 8,
 			"# 전염병 범위") {
 
 		@Override
@@ -140,7 +139,8 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 	private void onParticipantBleed(final ParticipantBleedEvent e) {
 		if (getParticipant().equals(e.getParticipant())) return;
 		final Location playerLocation = getPlayer().getLocation(), targetLocation = e.getPlayer().getLocation();
-		if (playerLocation.getWorld() != targetLocation.getWorld() || playerLocation.distanceSquared(targetLocation) > 400) return;
+		if (playerLocation.getWorld() != targetLocation.getWorld() || playerLocation.distanceSquared(targetLocation) > 169)
+			return;
 		new Transfusion(e.getParticipant(), false, e.getAmount() / 2, false).start();
 	}
 
@@ -149,7 +149,7 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 		if (material == Material.IRON_INGOT) {
 			if (clickType == ClickType.RIGHT_CLICK) {
 				if (cooldown.isCooldown()) return false;
-				final Player target = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 20, predicate);
+				final Player target = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 15, predicate);
 				if (target != null) {
 					if (Damages.canDamage(target, getPlayer(), DamageCause.MAGIC, 1)) {
 						final Participant participant = getGame().getParticipant(target);
@@ -168,9 +168,9 @@ public class Ruber extends AbilityBase implements ActiveHandler {
 					final Participant participant = getGame().getParticipant(target);
 					if (addStack(participant)) {
 						Bleed.apply(participant, TimeUnit.SECONDS, 3, 5);
-						Hemophilia.apply(participant, TimeUnit.SECONDS, 10);
+						Hemophilia.apply(participant, TimeUnit.SECONDS, 6);
 					} else {
-						Hemophilia.apply(participant, TimeUnit.SECONDS, 5);
+						Hemophilia.apply(participant, TimeUnit.SECONDS, 4);
 					}
 					SoundLib.ENTITY_EVOKER_PREPARE_ATTACK.playSound(target);
 				}

@@ -26,7 +26,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -75,7 +74,7 @@ public class MixGame extends AbstractMix {
 						"§5MixAbility §f- §d믹스 능력자 전쟁",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b모드 개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#5908"
+						"§9디스코드 §7: §f새벽§7#0833"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

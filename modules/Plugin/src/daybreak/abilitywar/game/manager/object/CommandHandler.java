@@ -17,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,7 +91,7 @@ public interface CommandHandler {
 				for (Participant participant : GameManager.getGame().getParticipants()) {
 					if (participant.hasAbility()) {
 						count++;
-						String name = participant.getAbility().getName();
+						final String name = participant.getAbility().getName();
 						sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: §c" + name);
 					}
 				}
@@ -108,9 +107,9 @@ public interface CommandHandler {
 				if (GameManager.isGameRunning()) {
 					final AbstractGame game = GameManager.getGame();
 					if (game.isParticipating(player)) {
-						final Participant participant = game.getParticipant(player);
-						if (participant.hasAbility()) {
-							for (String line : Formatter.formatAbilityInfo(participant.getAbility())) {
+						final AbilityBase ability = game.getParticipant(player).getAbility();
+						if (ability != null) {
+							for (String line : Formatter.formatAbilityInfo(ability)) {
 								player.sendMessage(line);
 							}
 						} else {
@@ -124,14 +123,31 @@ public interface CommandHandler {
 				}
 			}
 			break;
+			case ABILITY_SUMMARIZE: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final AbilityBase ability = game.getParticipant(player).getAbility();
+						if (ability != null) {
+							if (ability.hasSummarize()) {
+								for (String line : Formatter.formatSummarize(ability)) {
+									player.sendMessage(line);
+								}
+							} else Messager.sendErrorMessage(sender, "능력 요약이 작성되지 않은 능력입니다.");
+						} else Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
+					} else Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다.");
+				} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+			}
+			break;
 			case TIP_CHECK: {
 				final Player player = (Player) sender;
 				if (GameManager.isGameRunning()) {
 					final AbstractGame game = GameManager.getGame();
 					if (game.isParticipating(player)) {
-						final Participant participant = game.getParticipant(player);
-						if (participant.hasAbility()) {
-							new AbilityTipGUI(player, participant.getAbility().getRegistration(), plugin).openGUI(1);
+						final AbilityBase ability = game.getParticipant(player).getAbility();
+						if (ability != null) {
+							new AbilityTipGUI(player, ability.getRegistration(), plugin).openGUI(1);
 						} else {
 							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
 						}
@@ -157,6 +173,7 @@ public interface CommandHandler {
 		ABI,
 		ABLIST,
 		ABILITY_CHECK,
+		ABILITY_SUMMARIZE,
 		TIP_CHECK
 	}
 

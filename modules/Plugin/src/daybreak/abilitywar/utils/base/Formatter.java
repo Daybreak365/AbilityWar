@@ -74,6 +74,19 @@ public class Formatter {
 		return list;
 	}
 
+	public static List<String> formatSummarize(AbilityBase ability) {
+		final Provider provider = ability.getRegistration().getProvider();
+		final String providerName = provider instanceof Addon ? ((Addon) provider).getDisplayName() : null;
+		final List<String> list = Messager.asList(
+				formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 요약"),
+				"§b" + ability.getName() + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName() + (providerName != null ? " §7| §f" + providerName : ""));
+		for (Iterator<String> iterator = ability.getSummarize(); iterator.hasNext(); ) {
+			list.add(iterator.next());
+		}
+		list.add("§a---------------------------------");
+		return list;
+	}
+
 	public static List<String> formatTip(AbilityRegistration registration) {
 		final Tip tip = registration.getTip();
 		final List<String> tips = tip != null ? tip.tips : Collections.emptyList();

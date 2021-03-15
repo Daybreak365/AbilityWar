@@ -71,7 +71,7 @@ public class WarGame extends Game implements DefaultKitHandler, Winnable, Observ
 						"§cAbilityWar §f- §6능력자 전쟁",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#5908"
+						"§9디스코드 §7: §f새벽§7#0833"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

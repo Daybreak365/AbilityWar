@@ -235,7 +235,6 @@ public class Bellum extends AbilityBase implements ActiveHandler {
 			this.bossBar = Bukkit.createBossBar("기력", BarColor.YELLOW, BarStyle.SEGMENTED_6);
 			setPeriod(TimeUnit.TICKS, 1);
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
-			start();
 		}
 
 		private boolean consumeEnergy(int amount) {
@@ -307,4 +306,10 @@ public class Bellum extends AbilityBase implements ActiveHandler {
 
 	}
 
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			energy.start();
+		}
+	}
 }

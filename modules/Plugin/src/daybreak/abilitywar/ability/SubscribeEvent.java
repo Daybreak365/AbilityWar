@@ -1,5 +1,7 @@
 package daybreak.abilitywar.ability;
 
+import org.bukkit.event.EventPriority;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,6 +19,10 @@ public @interface SubscribeEvent {
 	}
 
 	boolean onlyRelevant() default false;
+
 	boolean ignoreCancelled() default false;
+
+	EventPriority eventPriority() default EventPriority.HIGHEST;
+
 	int priority() default Priority.NORMAL;
 }

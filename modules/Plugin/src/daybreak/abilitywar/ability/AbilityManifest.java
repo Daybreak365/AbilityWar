@@ -50,7 +50,12 @@ public @interface AbilityManifest {
 	}
 
 	String name();
+
 	Rank rank();
+
 	Species species();
+
 	String[] explain() default {};
+
+	String[] summarize() default {};
 }

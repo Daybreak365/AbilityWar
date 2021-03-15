@@ -71,7 +71,7 @@ public class Ferda extends AbilityBase implements ActiveHandler {
 	private static final Object CRADLE_OF_LIFE_DURATION = new Object() {
 		@Override
 		public String toString() {
-			return String.valueOf((RANGE_CONFIG.getValue() + 60) / 10);
+			return String.valueOf((RANGE_CONFIG.getValue() + 40) / 10);
 		}
 	};
 
@@ -524,7 +524,7 @@ public class Ferda extends AbilityBase implements ActiveHandler {
 			}
 		};
 		private CradleOfLife() {
-			super(TaskType.REVERSE, range + 60);
+			super(TaskType.REVERSE, range + 40);
 			setPeriod(TimeUnit.TICKS, 2);
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 		}
@@ -560,7 +560,7 @@ public class Ferda extends AbilityBase implements ActiveHandler {
 		private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
 			if (getPlayer().equals(e.getEntity())) {
 				final Entity damager = getDamager(e.getDamager());
-				if (damager != null && strictPredicate.test(damager)) {
+				if (damager != null && strictPredicate.test(damager) && LocationUtil.isInCircle(center, damager.getLocation(), range)) {
 					new Root((Player) damager);
 				}
 			}

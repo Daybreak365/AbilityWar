@@ -58,7 +58,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "damage", 30, "# 대미지") {
+	public static final SettingObject<Integer> DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(DeathGrasp.class, "damage", 15, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -185,13 +185,10 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 			getPlayer().setVelocity(target.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(3.5));
 		}
 	}.setPeriod(TimeUnit.TICKS, 4).register();
-	private final AbilityTimer Skill = new AbilityTimer(4) {
-
-		private Player target;
+	private final AbilityTimer skill = new AbilityTimer(4) {
 
 		@Override
 		public void onStart() {
-			this.target = lastVictim;
 			noFallDamage = true;
 			getPlayer().setVelocity(getPlayer().getVelocity().add(new Vector(0, 4, 0)));
 		}
@@ -223,7 +220,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 							SoundLib.ENTITY_WITHER_SPAWN.playSound(player);
 						}
 						SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer());
-						Skill.start();
+						skill.start();
 						cooldownTimer.start();
 						return true;
 					} else {
@@ -254,12 +251,10 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 	public void onPlayerMove(PlayerMoveEvent e) {
 		if (e.getPlayer().equals(getPlayer())) {
 			if (skillEnabled) {
-				Block b = getPlayer().getLocation().getBlock();
-				Block db = getPlayer().getLocation().subtract(0, 1, 0).getBlock();
-
-				if (!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
+				final Block block = getPlayer().getLocation().getBlock(), downBlock = getPlayer().getLocation().subtract(0, 1, 0).getBlock();
+				if (!block.getType().equals(Material.AIR) || !downBlock.getType().equals(Material.AIR)) {
 					skillEnabled = false;
-					final double damage = DamageConfig.getValue();
+					final double damage = DAMAGE_CONFIG.getValue();
 					for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
 						if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
 						d.damage(damage, getPlayer());

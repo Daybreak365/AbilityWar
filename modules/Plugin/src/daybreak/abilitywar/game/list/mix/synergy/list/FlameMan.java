@@ -9,13 +9,11 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.utils.annotations.Beta;
-import daybreak.abilitywar.utils.annotations.Support;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
-import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -36,7 +34,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @AbilityManifest(name = "염인", rank = Rank.S, species = Species.HUMAN, explain = {
-		""
+		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
+		"철괴를 우클릭하면 주변을 마그마 지형으로 바꿉니다. $[COOLDOWN_CONFIG]",
+		"신속하게 이동하며 지나가는 모든 곳에 불이 붙습니다. 화염 피해를 받지 않습니다."
 })
 
 @Beta

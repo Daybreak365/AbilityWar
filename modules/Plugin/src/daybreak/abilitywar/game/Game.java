@@ -181,6 +181,9 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 							if (tip != null) {
 								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
 							}
+							if (ability.hasSummarize()) {
+								player.sendMessage("§e/aw sum§f으로 능력 요약을 확인하세요.");
+							}
 						} catch (ReflectiveOperationException | SecurityException | IllegalArgumentException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");
 							logger.error("문제가 발생한 능력: " + ChatColor.AQUA + abilityClass.getName());
@@ -202,6 +205,9 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 							final Tip tip = ability.getRegistration().getTip();
 							if (tip != null) {
 								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
+							}
+							if (ability.hasSummarize()) {
+								player.sendMessage("§e/aw sum§f으로 능력 요약을 확인하세요.");
 							}
 						} catch (SecurityException | ReflectiveOperationException | IllegalArgumentException e) {
 							logger.error(ChatColor.YELLOW + participant.getPlayer().getName() + ChatColor.WHITE + "님에게 능력을 할당하는 도중 오류가 발생하였습니다.");

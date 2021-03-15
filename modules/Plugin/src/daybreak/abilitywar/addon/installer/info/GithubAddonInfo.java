@@ -16,6 +16,8 @@ import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
+import daybreak.abilitywar.utils.base.minecraft.inventory.Inventories;
+import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -70,7 +72,8 @@ public class GithubAddonInfo implements AddonInfo {
 				final AddonVersion addonVersion = new AddonVersion(element.getAsJsonObject());
 				mapBuilder.put(addonVersion.tag, addonVersion);
 				listBuilder.add(addonVersion);
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+			}
 		}
 		this.versions = listBuilder.build();
 		this.versionMap = mapBuilder.build();
@@ -79,6 +82,7 @@ public class GithubAddonInfo implements AddonInfo {
 		this.displayName = json.get("displayName").getAsString();
 		this.developer = json.get("developer").getAsString();
 		this.icon = MojangAPI.getNickname(json.get("icon").getAsString().replaceAll("-", ""));
+		Inventories.common.setItem(0, Skulls.createSkull(icon));
 		if (json.has("links") && json.get("links").isJsonArray()) {
 			for (JsonElement link : json.get("links").getAsJsonArray()) {
 				developerLinks.add(new Link(link.getAsJsonObject()));

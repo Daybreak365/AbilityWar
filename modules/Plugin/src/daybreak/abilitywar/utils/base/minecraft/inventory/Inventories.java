@@ -1,8 +1,10 @@
 package daybreak.abilitywar.utils.base.minecraft.inventory;
 
 import kotlin.NotImplementedError;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
@@ -10,10 +12,13 @@ import org.jetbrains.annotations.Nullable;
 
 public class Inventories {
 
-	private Inventories() {}
+	public static final Inventory common = Bukkit.createInventory(null, 9);
+
+	private Inventories() {
+	}
 
 	public static void setItem(final @NotNull PlayerInventory inventory, final @NotNull EquipmentSlot slot, final @Nullable ItemStack item) {
-		switch(slot) {
+		switch (slot) {
 			case HAND:
 				inventory.setItemInMainHand(item);
 				break;

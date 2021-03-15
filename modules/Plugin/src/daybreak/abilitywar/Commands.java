@@ -110,7 +110,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					sender.sendMessage(Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"));
 					sender.sendMessage("§e버전 §7: §f" + plugin.getDescription().getVersion());
 					sender.sendMessage("§b개발자 §7: §fDaybreak 새벽");
-					sender.sendMessage("§9디스코드 §7: §f새벽§7#5908");
+					sender.sendMessage("§9디스코드 §7: §f새벽§7#0833");
 					sender.sendMessage("§3§o/" + command + " help §7§o로 명령어 도움말을 확인하세요.");
 					return true;
 				}
@@ -164,17 +164,19 @@ public class Commands implements CommandExecutor, TabCompleter {
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(command, "abtip", "자신의 능력 팁을 확인합니다.", true),
 								Formatter.formatCommand(command, "abtip [능력]", "[능력] 능력의 팁을 확인합니다.", true),
+								Formatter.formatCommand(command, "sum", "능력 요악을 확인합니다.", false),
 								Formatter.formatCommand(command, "synergies", "능력자 전쟁 시너지 목록을 확인합니다.", false),
 								Formatter.formatCommand(command, "synergies [시너지]", "[시너지] 시너지의 정보를 확인합니다.", false),
 								Formatter.formatCommand(command, "install", "버전 목록 및 설치 GUI를 엽니다.", true),
 								Formatter.formatCommand(command, "patch", "쾌적한 플레이를 위한 패치를 진행합니다.", true),
-								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true),
-								Formatter.formatCommand(command, "debug", "디버그 명령어를 도움말을 확인합니다.", true)});
+								Formatter.formatCommand(command, "addon", "추천 애드온 목록 GUI를 엽니다.", true)});
 						break;
 					case 4:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"),
 								"§b/" + command + " help <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
-								Formatter.formatCommand(command, "effects", "상태 이상 목록 GUI를 엽니다.", true)});
+								Formatter.formatCommand(command, "debug", "디버그 명령어를 도움말을 확인합니다.", true),
+								Formatter.formatCommand(command, "effects", "상태 이상 목록 GUI를 엽니다.", true),
+								Formatter.formatCommand(command, "discord", "디스코드", false)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -298,12 +300,22 @@ public class Commands implements CommandExecutor, TabCompleter {
 						sender.sendMessage("§a---------------------------------");
 						final AbilityManifest manifest = registration.getManifest();
 						sender.sendMessage("§b" + manifest.name() + " " + manifest.rank().getRankName() + " " + manifest.species().getSpeciesName());
-						for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
+						for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext(); ) {
 							sender.sendMessage(ChatColor.RESET + iterator.next());
 						}
 						sender.sendMessage("§2§m§l-----------------------------");
-					} else Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 시너지입니다.");
+					} else
+						Messager.sendErrorMessage(sender, name + KoreanUtil.getJosa(name, Josa.은는) + " 존재하지 않는 시너지입니다.");
 				}
+				return true;
+			}
+		});
+		mainCommand.addSubCommand("sum", new Command(Condition.PLAYER) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (GameManager.isGameRunning()) {
+					GameManager.getGame().executeCommand(CommandType.ABILITY_SUMMARIZE, sender, command, args, plugin);
+				} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
 				return true;
 			}
 		});
@@ -1259,6 +1271,18 @@ public class Commands implements CommandExecutor, TabCompleter {
 				return true;
 			}
 		});
+		mainCommand.addSubCommand("discord", new Command() {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (args.length == 0) {
+					sender.sendMessage(Formatter.formatTitle(ChatColor.DARK_AQUA, ChatColor.WHITE, "디스코드"));
+					sender.sendMessage("§b개발자 DM§7: §f새벽§7#0833");
+					sender.sendMessage("§b디스코드§7: §fhttps://discord.gg/zK9ZJFBcwf");
+					return true;
+				}
+				return false;
+			}
+		});
 	}
 
 	@Override
@@ -1273,8 +1297,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 				|| label.equalsIgnoreCase("va") || label.equalsIgnoreCase("능력자")) {
 			switch (args.length) {
 				case 1:
-					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "synergies", "effects", "abtip", "skip", "anew",
-							"config", "util", "script", "gamemode", "worldreset", "install", "team", "specialthanks", "addon", "patch", "debug");
+					List<String> subCommands = Messager.asList("start", "stop", "check", "yes", "no", "abilities", "synergies", "effects", "abtip", "sum", "skip", "anew",
+							"config", "util", "script", "gamemode", "worldreset", "install", "team", "specialthanks", "addon", "patch", "debug", "discord");
 					if (args[0].isEmpty()) {
 						return subCommands;
 					} else {

@@ -70,6 +70,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public abstract class AbstractGame extends SimpleTimer implements IGame, Listener, CommandHandler {
 
@@ -411,10 +412,23 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 		}
 
 		public void removeEffects(final EffectRegistration<?> registration) {
-			for (final Iterator<Effect> iterator = effects.get(registration).iterator(); iterator.hasNext();) {
+			for (final Iterator<Effect> iterator = effects.get(registration).iterator(); iterator.hasNext(); ) {
 				final Effect effect = iterator.next();
 				iterator.remove();
 				effect.stop(true);
+			}
+		}
+
+		/**
+		 * predicate가 true를 반환하면 remove
+		 */
+		public void removeEffects(final Predicate<Effect> predicate) {
+			for (final Iterator<Effect> iterator = effects.values().iterator(); iterator.hasNext(); ) {
+				final Effect effect = iterator.next();
+				if (predicate.test(effect)) {
+					iterator.remove();
+					effect.stop(true);
+				}
 			}
 		}
 
@@ -911,6 +925,9 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			participant.effects.remove(registration, this);
 		}
 
+		public EffectRegistration<?> getRegistration() {
+			return registration;
+		}
 	}
 
 }

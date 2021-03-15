@@ -15,20 +15,28 @@ import org.bukkit.plugin.EventExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @ModuleBase(EventManager.class)
 public final class EventManager implements ListenerModule {
 
-	private final Observers observers = new Observers(EventPriority.HIGH);
+	private final Map<EventPriority, Observers> observers = new EnumMap<>(EventPriority.class);
+
+	public EventManager() {
+		for (EventPriority priority : EventPriority.values()) {
+			observers.put(priority, new Observers(priority));
+		}
+	}
 
 	@SuppressWarnings("unchecked")
-	private Class<? extends Event> getHandlerListDeclaringClass(Class<? extends Event> eventClass) {
+	private static Class<? extends Event> getHandlerListDeclaringClass(Class<? extends Event> eventClass) {
 		for (Field field : FieldUtil.getAllFields(eventClass, HandlerList.class)) {
 			return (Class<? extends Event>) field.getDeclaringClass();
 		}
@@ -36,20 +44,22 @@ public final class EventManager implements ListenerModule {
 	}
 
 	public void register(final EventObserver observer) {
-		observers.register(observer);
+		observers.get(observer.eventPriority).register(observer);
 	}
 
 	public void unregister(final EventObserver observer) {
-		observers.unregister(observer);
+		observers.get(observer.eventPriority).unregister(observer);
 	}
 
 	public abstract static class EventObserver {
 
 		protected final Class<? extends Event> eventClass;
+		protected final EventPriority eventPriority;
 		protected final int priority;
 
-		public EventObserver(final Class<? extends Event> eventClass, final int priority) {
+		public EventObserver(final Class<? extends Event> eventClass, final EventPriority eventPriority, final int priority) {
 			this.eventClass = eventClass;
+			this.eventPriority = eventPriority;
 			this.priority = priority;
 		}
 
@@ -133,12 +143,12 @@ public final class EventManager implements ListenerModule {
 		@Override
 		public void execute(@NotNull Listener listener, @NotNull Event event) throws EventException {
 			final Class<? extends Event> eventClass = event.getClass();
-			if (observers.containsKey(eventClass)) {
-				observers.iterationStarted();
-				for (EventObserver value : observers.getNotNull(eventClass).values()) {
+			if (containsKey(eventClass)) {
+				iterationStarted();
+				for (EventObserver value : getNotNull(eventClass).values()) {
 					value.onEvent(event);
 				}
-				observers.iterationEnded();
+				iterationEnded();
 			}
 		}
 

@@ -11,6 +11,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 
 public interface INMS {
 
@@ -56,10 +57,19 @@ public interface INMS {
 	void setCamera(Player receiver, Entity entity);
 
 	IWorldBorder createWorldBorder(final World world);
+
 	IWorldBorder createWorldBorder(org.bukkit.WorldBorder bukkit);
+
 	void setWorldBorder(Player receiver, final IWorldBorder worldBorder);
+
 	void resetWorldBorder(Player receiver);
 
 	void setInGround(Arrow arrow, boolean inGround);
+
+	boolean isArrow(Entity entity);
+
+	PickupStatus getPickupStatus(Projectile arrow);
+
+	void setPickupStatus(Projectile arrow, PickupStatus pickupStatus);
 
 }

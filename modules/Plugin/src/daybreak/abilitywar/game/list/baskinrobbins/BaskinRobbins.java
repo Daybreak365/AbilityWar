@@ -86,7 +86,7 @@ public class BaskinRobbins extends AbstractGame {
 				Bukkit.broadcastMessage("§5BaskinRobbins §f- §d배스킨 라빈스 31");
 				Bukkit.broadcastMessage("§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion());
 				Bukkit.broadcastMessage("§b개발자 §7: §fDaybreak 새벽");
-				Bukkit.broadcastMessage("§9디스코드 §7: §f새벽§7#5908");
+				Bukkit.broadcastMessage("§9디스코드 §7: §f새벽§7#0833");
 				break;
 			}
 			case 2: {

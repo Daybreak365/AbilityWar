@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringJoiner;
 
-@AbilityManifest(name = "믹스", rank = Rank.SPECIAL, species = Species.OTHERS, explain = "$(EXPLAIN)")
+@AbilityManifest(name = "믹스", rank = Rank.SPECIAL, species = Species.OTHERS, explain = "$(EXPLAIN)", summarize = "$(SUMMARIZE)")
 public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 
 	private Synergy synergy = null;
@@ -56,6 +56,47 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 				joiner.add("§b" + ability.getName() + " §f[" + (ability.isRestricted() ? "§7능력 비활성화됨" : "§a능력 활성화됨") + "§f] " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
 				for (final Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
 					joiner.add(ChatColor.RESET + iterator.next());
+				}
+			} else {
+				joiner.add("§f능력이 없습니다.");
+			}
+		}
+	};
+
+	private final Object SUMMARIZE = new Object() {
+		@Override
+		public String toString() {
+			final StringJoiner joiner = new StringJoiner("\n");
+			joiner.add("§a---------------------------------");
+			if (synergy != null) {
+				final Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+				joiner.add("§f시너지: §a" + base.getLeft().getManifest().name() + " §f+ §a" + base.getRight().getManifest().name());
+				joiner.add("§a---------------------------------");
+				joiner.add("§b" + synergy.getName() + " " + synergy.getRank().getRankName() + " " + synergy.getSpecies().getSpeciesName());
+				if (synergy.hasSummarize()) {
+					for (final Iterator<String> iterator = synergy.getExplanation(); iterator.hasNext(); ) {
+						joiner.add(ChatColor.RESET + iterator.next());
+					}
+				} else {
+					joiner.add("§f요약이 작성되지 않은 능력입니다.");
+				}
+			} else {
+				formatSummarize(joiner, first);
+				joiner.add("§a---------------------------------");
+				formatSummarize(joiner, second);
+			}
+			return joiner.toString();
+		}
+
+		private void formatSummarize(final StringJoiner joiner, final AbilityBase ability) {
+			if (ability != null) {
+				joiner.add("§b" + ability.getName() + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName());
+				if (ability.hasSummarize()) {
+					for (final Iterator<String> iterator = ability.getSummarize(); iterator.hasNext(); ) {
+						joiner.add(ChatColor.RESET + iterator.next());
+					}
+				} else {
+					joiner.add("§f요약이 작성되지 않은 능력입니다.");
 				}
 			} else {
 				joiner.add("§f능력이 없습니다.");
@@ -105,6 +146,16 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 			this.second = create(second, getParticipant());
 			this.second.setRestricted(false);
 		}
+	}
+
+	public void setSynergy(final AbilityRegistration synergy) throws ReflectiveOperationException {
+		if (!Synergy.class.isAssignableFrom(synergy.getAbilityClass())) {
+			throw new IllegalArgumentException("시너지 능력이 아닙니다.");
+		}
+		if (Settings.isBlacklisted(synergy.getManifest().name())) return;
+		removeAbility();
+		this.synergy = (Synergy) create(synergy.getAbilityClass(), getParticipant());
+		this.synergy.setRestricted(false);
 	}
 
 	@Override

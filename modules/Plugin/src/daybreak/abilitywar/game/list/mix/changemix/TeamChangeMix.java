@@ -116,7 +116,7 @@ public class TeamChangeMix extends AbstractTeamMix implements Winnable {
 				msg.add("§5§l체인지! §d§l믹스 §f§l전쟁");
 				msg.add("§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion());
 				msg.add("§b모드 개발자 §7: §fDaybreak 새벽");
-				msg.add("§9디스코드 §7: §f새벽§7#5908");
+				msg.add("§9디스코드 §7: §f새벽§7#0833");
 
 				GameCreditEvent event = new GameCreditEvent(this);
 				Bukkit.getPluginManager().callEvent(event);

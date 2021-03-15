@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.module.DeathManager;
@@ -77,7 +78,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 		}
 
 	};
-	public static final SettingObject<Integer> DURATION_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "duration", 10,
+	public static final SettingObject<Integer> DURATION_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "duration", 6,
 			"# 쿨타임") {
 
 		@Override
@@ -95,7 +96,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 	};
 	private static final int radius = 7;
 	private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 	private final Duration skillTimer = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
 		@Override
 		protected void onDurationStart() {

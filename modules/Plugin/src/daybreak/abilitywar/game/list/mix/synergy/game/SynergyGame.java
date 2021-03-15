@@ -9,6 +9,7 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.addon.Addon;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.Game;
@@ -16,11 +17,16 @@ import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.game.event.GameCreditEvent;
-import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
+import daybreak.abilitywar.game.list.mix.Mix;
+import daybreak.abilitywar.game.list.mix.MixAbilityGUI;
+import daybreak.abilitywar.game.list.mix.gui.MixTipGUI;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
+import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.DefaultKitHandler;
+import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.InfiniteDurability;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.utils.annotations.Beta;
@@ -28,6 +34,8 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.library.SoundLib;
@@ -43,6 +51,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,25 +71,6 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 
 	public SynergyGame() {
 		super(PlayerCollector.EVERY_PLAYER_EXCLUDING_SPECTATORS());
-	}
-
-	private static List<String> formatSynergyInfo(Synergy synergy) {
-		final Provider provider = synergy.getRegistration().getProvider();
-		final String providerName = provider instanceof Addon ? ((Addon) provider).getDisplayName() : null;
-		final List<String> list = Messager.asList(
-				Formatter.formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
-				"§b" + synergy.getName() + " " + (synergy.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " " + synergy.getRank().getRankName() + " " + synergy.getSpecies().getSpeciesName() + (providerName != null ? " §7| §f" + providerName : ""));
-
-		list.add("§a---------------------------------");
-		final Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
-		list.add("§f시너지: §a" + base.getLeft().getManifest().name() + " §f+ §a" + base.getRight().getManifest().name());
-		list.add("§a---------------------------------");
-		list.add("§b" + synergy.getName() + " " + synergy.getRank().getRankName() + " " + synergy.getSpecies().getSpeciesName());
-		for (Iterator<String> iterator = synergy.getExplanation(); iterator.hasNext(); ) {
-			list.add(iterator.next());
-		}
-		list.add("§a---------------------------------");
-		return list;
 	}
 
 	@Override
@@ -120,7 +110,7 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 						"§5SynergyGame §f- §d시너지 능력자 전쟁",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b모드 개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#5908"
+						"§9디스코드 §7: §f새벽§7#0833"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);
@@ -221,6 +211,29 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 	}
 
 	@Override
+	protected @NotNull DeathManager newDeathManager() {
+		return new DeathManager(this) {
+			@Override
+			protected String getRevealMessage(Participant victim) {
+				final Mix mix = (Mix) victim.getAbility();
+				if (mix.hasAbility()) {
+					if (mix.hasSynergy()) {
+						final Synergy synergy = mix.getSynergy();
+						final Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+						final String name = synergy.getName() + " (" + base.getLeft().getManifest().name() + " + " + base.getRight().getManifest().name() + ")";
+						return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
+					} else {
+						final String name = mix.getFirst().getName() + " + " + mix.getSecond().getName();
+						return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님의 능력은 §e" + name + "§f" + KoreanUtil.getJosa(name, KoreanUtil.Josa.이었였) + "습니다.";
+					}
+				} else {
+					return "§f[§c능력§f] §c" + victim.getPlayer().getName() + "§f님은 능력이 없습니다.";
+				}
+			}
+		};
+	}
+
+	@Override
 	public AbilitySelect newAbilitySelect() {
 		return new AbilitySelect(this, getParticipants(), Settings.getAbilityChangeCount()) {
 
@@ -254,6 +267,9 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 							final Tip tip = ability.getRegistration().getTip();
 							if (tip != null) {
 								player.sendMessage("§e/aw abtip§f으로 능력 팁을 확인하세요.");
+							}
+							if (ability.hasSummarize()) {
+								player.sendMessage("§e/aw sum§f으로 능력 요약을 확인하세요.");
 							}
 						} catch (SecurityException | ReflectiveOperationException | IllegalArgumentException e) {
 							e.printStackTrace();
@@ -304,9 +320,22 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 				final Player player = (Player) sender;
 				if (isParticipating(player)) {
 					final SynergyParticipant participant = getParticipant(player);
-					if (participant.hasAbility()) {
-						for (String line : formatSynergyInfo(participant.getAbility())) {
-							player.sendMessage(line);
+					final Mix mix = participant.getAbility();
+					if (mix.hasAbility()) {
+						if (mix.hasSynergy()) {
+							player.sendMessage(Formatter.formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"));
+							final Synergy synergy = mix.getSynergy();
+							final Provider provider = synergy.getRegistration().getProvider();
+							final String providerName = provider instanceof Addon ? ((Addon) provider).getDisplayName() : null;
+							player.sendMessage("§b" + synergy.getName() + " " + (synergy.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " " + synergy.getRank().getRankName() + " " + synergy.getSpecies().getSpeciesName() + (providerName != null ? " §7| §f" + providerName : ""));
+							for (final Iterator<String> iterator = participant.getAbility().getExplanation(); iterator.hasNext(); ) {
+								player.sendMessage(iterator.next());
+							}
+							player.sendMessage("§a---------------------------------");
+						} else {
+							for (final String explanation : Formatter.formatAbilityInfo(mix)) {
+								player.sendMessage(explanation);
+							}
 						}
 					} else {
 						Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다.");
@@ -317,23 +346,116 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 			}
 			break;
 			case ABI: {
-				sender.sendMessage("아몰라 쓰지마");
+				if (args.length == 0) {
+					if (sender instanceof Player)
+						Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> §7또는 §f/" + command + " util abi <대상/@a> [능력], [능력]");
+					else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [능력], [능력]");
+					return;
+				}
+				if (args.length == 1) {
+					if (sender instanceof Player) {
+						Player player = (Player) sender;
+						if (args[0].equalsIgnoreCase("@a")) {
+							new MixAbilityGUI(player, this, plugin).openGUI(1);
+						} else {
+							Player targetPlayer = Bukkit.getPlayerExact(args[0]);
+							if (targetPlayer != null) {
+								AbstractGame game = GameManager.getGame();
+								if (game.isParticipating(targetPlayer)) {
+									new MixAbilityGUI(player, game.getParticipant(targetPlayer), this, plugin).openGUI(1);
+								} else
+									Messager.sendErrorMessage(player, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+							} else
+								Messager.sendErrorMessage(player, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+						}
+					} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " util abi <대상/@a> [능력], [능력]");
+				} else {
+					final String[] names = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).split(",");
+					if (names.length != 2) {
+						Messager.sendErrorMessage(sender, "능력이 두 개 보다 많이 입력되었거나 적게 입력되었습니다.");
+						return;
+					}
+					names[0] = names[0].trim();
+					names[1] = names[1].trim();
+					if (AbilityList.isRegistered(names[0])) {
+						if (AbilityList.isRegistered(names[1])) {
+							if (args[0].equalsIgnoreCase("@a")) {
+								try {
+									for (SynergyParticipant participant : getParticipants()) {
+										participant.getAbility().setAbility(AbilityList.getByString(names[0]), AbilityList.getByString(names[1]));
+									}
+									Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
+								} catch (ReflectiveOperationException e) {
+									Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
+									if (DeveloperSettings.isEnabled()) e.printStackTrace();
+								}
+							} else {
+								Player targetPlayer = Bukkit.getPlayerExact(args[0]);
+								if (targetPlayer != null) {
+									if (isParticipating(targetPlayer)) {
+										try {
+											getParticipant(targetPlayer).getAbility().setAbility(AbilityList.getByString(names[0]), AbilityList.getByString(names[1]));
+											Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 능력을 임의로 부여하였습니다.");
+										} catch (ReflectiveOperationException e) {
+											Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
+											if (DeveloperSettings.isEnabled()) e.printStackTrace();
+										}
+									} else
+										Messager.sendErrorMessage(sender, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
+								} else
+									Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+							}
+						} else
+							Messager.sendErrorMessage(sender, names[1] + KoreanUtil.getJosa(names[1], Josa.은는) + " 존재하지 않는 능력입니다.");
+					} else
+						Messager.sendErrorMessage(sender, names[0] + KoreanUtil.getJosa(names[0], Josa.은는) + " 존재하지 않는 능력입니다.");
+				}
 			}
 			break;
 			case ABLIST: {
 				sender.sendMessage("§2===== §a능력자 목록 §2=====");
 				int count = 0;
 				for (AbstractGame.Participant participant : GameManager.getGame().getParticipants()) {
-					final AbilityBase ability = participant.getAbility();
-					if (ability == null) continue;
-					count++;
-					final Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(ability.getRegistration());
-					String name = "§e" + ability.getName() + " §f(§c" + base.getLeft().getManifest().name() + " §f+ §c" + base.getRight().getManifest().name() + "§f)";
-					sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: " + name);
+					Mix mix = (Mix) participant.getAbility();
+					if (mix.hasAbility()) {
+						count++;
+						if (mix.hasSynergy()) {
+							Synergy synergy = mix.getSynergy();
+							Pair<AbilityRegistration, AbilityRegistration> base = SynergyFactory.getSynergyBase(synergy.getRegistration());
+							String name = "§e" + synergy.getName() + " §f(§c" + base.getLeft().getManifest().name() + " §f+ §c" + base.getRight().getManifest().name() + "§f)";
+							sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: " + name);
+						} else {
+							sender.sendMessage("§e" + count + ". §f" + participant.getPlayer().getName() + " §7: §c" + mix.getFirst().getName() + " §f+ §c" + mix.getSecond().getName());
+						}
+					}
 				}
 				if (count == 0) sender.sendMessage("§f능력자가 발견되지 않았습니다.");
 				sender.sendMessage("§2========================");
 				Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 참가자들의 능력을 확인하였습니다.");
+			}
+			break;
+			case TIP_CHECK: {
+				final Player player = (Player) sender;
+				if (GameManager.isGameRunning()) {
+					final AbstractGame game = GameManager.getGame();
+					if (game.isParticipating(player)) {
+						final SynergyParticipant participant = getParticipant(player);
+						final Mix mix = participant.getAbility();
+						if (mix.hasAbility()) {
+							if (mix.hasSynergy()) {
+								new AbilityTipGUI(player, mix.getSynergy().getRegistration(), plugin).openGUI(1);
+							} else {
+								new MixTipGUI(player, mix, plugin).openGUI();
+							}
+						} else {
+							Messager.sendErrorMessage(sender, "능력이 할당되지 않았습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
+						}
+					} else {
+						Messager.sendErrorMessage(sender, "게임에 참가하고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
+					}
+				} else {
+					Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다. §8(§7/aw abtip <능력> 명령어를 사용하세요.§8)");
+				}
 			}
 			break;
 			default:
@@ -345,7 +467,7 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 	public class SynergyParticipant extends Participant {
 
 		private final Attributes attributes = new Attributes();
-		private Synergy ability = null;
+		private Mix mix = null;
 
 		protected SynergyParticipant(@NotNull Player player) {
 			super(player);
@@ -353,35 +475,30 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 
 		@Override
 		public boolean hasAbility() {
-			return ability != null;
+			return true;
 		}
 
 		@Override
-		@Nullable
-		public Synergy getAbility() {
-			return ability;
+		@NotNull
+		public Mix getAbility() {
+			if (mix == null) mix = new Mix(this);
+			return mix;
 		}
 
 		@Override
 		public void setAbility(AbilityRegistration registration) throws ReflectiveOperationException {
 			if (!Synergy.class.isAssignableFrom(registration.getAbilityClass()))
 				throw new IllegalArgumentException("ability must be instance of Synergy");
-			final Synergy oldAbility = removeAbility();
-			final Synergy ability = (Synergy) AbilityBase.create(registration, this);
-			ability.setRestricted(false);
-			this.ability = ability;
-			Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, oldAbility, ability));
+			if (mix == null) mix = new Mix(this);
+			mix.setSynergy(registration);
 		}
 
 		@Override
 		@Nullable
-		public Synergy removeAbility() {
-			final Synergy ability = this.ability;
-			if (ability != null) {
-				ability.destroy();
-				this.ability = null;
-			}
-			return ability;
+		public Mix removeAbility() {
+			if (mix == null) mix = new Mix(this);
+			mix.removeAbility();
+			return mix;
 		}
 
 		@Override
