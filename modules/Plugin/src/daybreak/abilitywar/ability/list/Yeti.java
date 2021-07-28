@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @AbilityManifest(name = "설인", rank = Rank.S, species = Species.HUMAN, explain = {
-		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
-		"철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]"
+		"눈과 얼음 위에서 §6힘§f, §b신속, §3저항 §f버프를 받습니다. 철괴를 우클릭하면 주변 지역을",
+		"눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]"
 })
 public class Yeti extends AbilityBase implements ActiveHandler {
 
@@ -66,8 +66,9 @@ public class Yeti extends AbilityBase implements ActiveHandler {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
-				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
-				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 1, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 0, true);
+				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
 			}
 		}
 

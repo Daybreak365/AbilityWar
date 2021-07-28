@@ -56,7 +56,7 @@ public class DummyImpl extends EntityPlayer implements IDummy {
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		getDataWatcher().set(new DataWatcherObject<>(13, DataWatcherRegistry.a), SKIN_BIT_LAYER);
+		getDataWatcher().set(new DataWatcherObject<>(16, DataWatcherRegistry.a), SKIN_BIT_LAYER);
 		new BukkitRunnable() {
 			@Override
 			public void run() {

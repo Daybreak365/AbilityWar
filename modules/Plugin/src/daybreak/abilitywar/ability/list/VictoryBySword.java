@@ -39,6 +39,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -244,9 +245,16 @@ public class VictoryBySword extends AbilityBase implements TargetHandler {
 
 		@EventHandler(ignoreCancelled = true)
 		public void onPlayerBucketEmpty(PlayerBucketEmptyEvent e) {
-			if (LocationUtil.isInCircle(center, e.getBlock().getLocation(), radius)) {
+			if (LocationUtil.isInCircle(center, e.getBlockClicked().getLocation(), radius)) {
 				e.setCancelled(true);
 				e.getPlayer().sendMessage("§c링 안에 블록을 설치할 수 없습니다.");
+			}
+		}
+
+		@EventHandler(ignoreCancelled = true)
+		public void onBlockPhysics(BlockPhysicsEvent e) {
+			if (LocationUtil.isInCircle(center, e.getBlock().getLocation(), radius)) {
+				e.setCancelled(true);
 			}
 		}
 

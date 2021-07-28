@@ -122,7 +122,6 @@ public class AbilityList {
 		registerAbility(Virtus.class);
 		registerAbility(Nex.class);
 		registerAbility(Ira.class);
-		registerAbility(Clown.class);
 		registerAbility(Magician.class);
 		registerAbility(Emperor.class);
 		registerAbility(Pumpkin.class);
@@ -170,6 +169,8 @@ public class AbilityList {
 		registerAbility(Magnet.class);
 		registerAbility(Bellum.class);
 		registerAbility(Eos.class);
+		registerAbility(Morpheus.class);
+		registerAbility("daybreak.abilitywar.ability.list.clown." + ServerVersion.getName() + ".Clown");
 	}
 
 	/**

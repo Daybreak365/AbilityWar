@@ -8,8 +8,14 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IDamages {
 
+	boolean damageExplosion(@NotNull Entity entity, @NotNull Entity source, float damage);
+
+	boolean damageThorn(@NotNull Entity entity, @NotNull LivingEntity damager, float damage);
+
 	boolean damageArrow(@NotNull Entity entity, @NotNull LivingEntity shooter, float damage);
+
 	boolean damageFixed(@NotNull Entity entity, @NotNull LivingEntity damager, float damage);
+
 	boolean damageMagic(@NotNull Entity entity, @Nullable Player damager, boolean ignoreArmor, float damage);
 
 }

@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability;
 
+import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 
 import java.lang.annotation.ElementType;
@@ -25,4 +26,6 @@ public @interface SubscribeEvent {
 	EventPriority eventPriority() default EventPriority.HIGHEST;
 
 	int priority() default Priority.NORMAL;
+
+	Class<? extends Event>[] childs() default {};
 }

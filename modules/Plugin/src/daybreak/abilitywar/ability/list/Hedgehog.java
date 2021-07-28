@@ -17,6 +17,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -78,10 +79,10 @@ public class Hedgehog extends AbilityBase {
 		@Override
 		protected void run(int count) {
 			if (!getPlayer().isDead()) {
-				final double damage = DAMAGE_CONFIG.getValue();
+				final float damage = (float) ((double) DAMAGE_CONFIG.getValue());
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, getPlayer().getWorld(), boundingBox, predicate)) {
 					livingEntity.setNoDamageTicks(0);
-					livingEntity.damage(damage, getPlayer());
+					Damages.damageThorn(livingEntity, getPlayer(), damage);
 				}
 			}
 		}

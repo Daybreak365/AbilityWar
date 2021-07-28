@@ -18,6 +18,7 @@
         <module>modules/compatibility/v1_16_R1</module>
         <module>modules/compatibility/v1_16_R2</module>
         <module>modules/compatibility/v1_16_R3</module>
+        <module>modules/compatibility/v1_17_R1</module>
         <module>modules/Patch</module>
         <module>modules/Plugin</module>
         <module>modules/Jar</module>
@@ -25,17 +26,18 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <revision>2.5.0</revision>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
+        <java.version>16</java.version>
+        <revision>3.0.0-dev</revision>
         <bukkit-api.version>1.15.2-R0.1-SNAPSHOT</bukkit-api.version>
         <guava.version>30.1-jre</guava.version>
-        <kotlin.version>1.4.21</kotlin.version>
-        <noteblockapi.version>1.6.1</noteblockapi.version>
+        <kotlin.version>1.5.20</kotlin.version>
         <annotations.version>20.1.0</annotations.version>
     </properties>
 
     <build>
+        <defaultGoal>clean package</defaultGoal>
         <sourceDirectory>src</sourceDirectory>
         <pluginManagement>
             <plugins>
@@ -44,7 +46,6 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <configuration>
                         <archive>
-                            <compress>false</compress>
                             <addMavenDescriptor>false</addMavenDescriptor>
                             <manifest>
                                 <addClasspath>false</addClasspath>

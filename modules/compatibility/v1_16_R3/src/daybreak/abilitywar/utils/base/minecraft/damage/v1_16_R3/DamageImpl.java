@@ -8,6 +8,8 @@ import net.minecraft.server.v1_16_R3.EntityDamageSourceIndirect;
 import net.minecraft.server.v1_16_R3.EntityLiving;
 import net.minecraft.server.v1_16_R3.EntityPotion;
 import net.minecraft.server.v1_16_R3.EntityTypes;
+import net.minecraft.server.v1_16_R3.Explosion;
+import net.minecraft.server.v1_16_R3.Explosion.Effect;
 import net.minecraft.server.v1_16_R3.ItemStack;
 import net.minecraft.server.v1_16_R3.Items;
 import net.minecraft.server.v1_16_R3.MovingObjectPosition;
@@ -21,6 +23,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DamageImpl implements IDamages {
+	@Override
+	public boolean damageExplosion(@NotNull Entity entity, @NotNull Entity source, float damage) {
+		final net.minecraft.server.v1_16_R3.Entity nmsEntity = ((CraftEntity) entity).getHandle(), nmsSource = ((CraftEntity) source).getHandle();
+		final Explosion explosion = new Explosion(
+				nmsEntity.world, nmsSource, null, null,
+				nmsSource.locX(), nmsSource.locY(), nmsSource.locZ(), 0f, false, Effect.NONE
+		);
+		return nmsEntity.damageEntity(explosion.b(), damage);
+	}
+
+	@Override
+	public boolean damageThorn(@NotNull Entity entity, @NotNull LivingEntity damager, float damage) {
+		return ((CraftEntity) entity).getHandle().damageEntity(new EntityDamageSource("thorns", ((CraftLivingEntity) damager).getHandle()) {
+			{
+				x();
+				setMagic();
+			}
+		}, damage);
+	}
+
 	@Override
 	public boolean damageArrow(@NotNull Entity entity, @NotNull LivingEntity shooter, float damage) {
 		final net.minecraft.server.v1_16_R3.Entity nmsEntity = ((CraftEntity) entity).getHandle();

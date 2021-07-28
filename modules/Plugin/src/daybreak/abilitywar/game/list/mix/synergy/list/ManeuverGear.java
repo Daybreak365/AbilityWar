@@ -16,6 +16,8 @@ import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.annotations.Beta;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
@@ -23,7 +25,6 @@ import daybreak.abilitywar.utils.base.minecraft.ability.list.grapplinghook.HookE
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,10 +38,10 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
@@ -48,17 +49,21 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @AbilityManifest(name = "입체 기동 장치", rank = Rank.L, species = Species.HUMAN, explain = {
-		"후크는 한 번에 최대 4개를 보유할 수 있으며, 첫 번째 후크 사용 후 10초가 지나면",
-		"후크 4개가 모두 충전됩니다. 철괴를 우클릭하면 바라보는 방향으로 후크를",
-		"발사합니다. 후크가 블록 또는 플레이어에 고정되면 빠르게 해당 위치로 이동하며, 웅크려서",
-		"취소하고 그 자리에 멈출 수 있습니다. 목적지에 도착했을 때 그 자리에 최대 6초간",
-		"고정되며, 웅크려서 후크 고정을 풀고 바라보는 방향으로 짧게 돌진할 수 있습니다.",
-		"5칸 이내의 플레이어를 바라본 상태로 돌진했다면, 해당 플레이어를 기절시키고",
-		"최대 체력에 비례하여 대미지를 입힙니다. 낙하 대미지를 받지 않습니다."
+		"§7충전 §8- §3후크§f: 최대 $[MAX_CHARGE]개까지 보유할 수 있으며, 후크를 모두 사용한 후 25초가 지나면",
+		" 후크가 모두 충전됩니다.",
+		"§7철괴 우클릭 §8- §3후크 발사§f: 바라보는 방향으로 후크를 발사합니다. 블록 또는 적에게",
+		" 고정되면, 빠르게 목표 지점으로 이동합니다. 적에게 고정됐다면 목표 지점",
+		" 도달 후 §3급습 §f효과가 즉시 적용됩니다. 단, 너무 가까이에서는 적에게 후크를",
+		" 고정할 수 없습니다.",
+		"§7웅크리기 §8- §3절단§f/§3급습§f: 사용 중인 후크를 끊고 그 자리에 멈춥니다. 주위에 벽이나",
+		" 지면이 있다면 바라보는 방향으로 짧게 도약합니다. §3/§f 5칸 이내의 적을 바라본",
+		" 상태로 도약한 경우, 해당 적을 기절시키고 최대 체력 비례 피해를 입힙니다.",
+		"§7패시브 §8- §3가벼운 착지§f: 낙하 피해를 입지 않습니다."
 })
+@Beta
 public class ManeuverGear extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> MAX_CHARGE = synergySettings.new SettingObject<Integer>(ManeuverGear.class, "max-charge", 4,
+	public static final SettingObject<Integer> MAX_CHARGE = abilitySettings.new SettingObject<Integer>(ManeuverGear.class, "max-charge", 8,
 			"# 후크 최대 충전",
 			"# 기본값: 4") {
 
@@ -68,18 +73,6 @@ public class ManeuverGear extends Synergy implements ActiveHandler {
 		}
 
 	};
-
-	public ManeuverGear(Participant participant) {
-		super(participant);
-	}
-
-	@SubscribeEvent(onlyRelevant = true)
-	private void onEntityDamage(final EntityDamageEvent e) {
-		if (e.getCause() == DamageCause.FALL) {
-			e.setCancelled(true);
-		}
-	}
-
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {
@@ -101,8 +94,70 @@ public class ManeuverGear extends Synergy implements ActiveHandler {
 			return true;
 		}
 	};
-
 	private final int maxCharge = MAX_CHARGE.getValue();
+	private final Charge charge = new Charge();
+	private final Set<UUID> attacked = new HashSet<>();
+	private final Moves moves = new Moves();
+	protected Hook hook = null;
+
+	public ManeuverGear(Participant participant) {
+		super(participant);
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onEntityDamage(final EntityDamageEvent e) {
+		if (e.getCause() == DamageCause.FALL) {
+			e.setCancelled(true);
+		}
+	}
+
+	@Override
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (clickType == ClickType.RIGHT_CLICK) {
+			if (material == Material.IRON_INGOT) {
+				if (hook == null) {
+					if (charge.charges > 0) {
+						this.hook = new Hook(getPlayer().getEyeLocation(), getPlayer().getLocation().getDirection()) {
+							@Override
+							public boolean consume(double x, double y, double z) {
+								if (ManeuverGear.this.charge.subtractCharge(1)) {
+									moves.addMove(new Move(new Location(getPlayer().getWorld(), x, y, z)));
+									SoundLib.ENTITY_FISHING_BOBBER_RETRIEVE.playSound(getPlayer());
+								}
+								return true;
+							}
+
+							@Override
+							public boolean consume(Player player) {
+								if (ManeuverGear.this.charge.subtractCharge(1)) {
+									moves.addMove(new Move(player));
+									SoundLib.ENTITY_FISHING_BOBBER_RETRIEVE.playSound(getPlayer());
+								}
+								return true;
+							}
+						};
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@SubscribeEvent(ignoreCancelled = true, onlyRelevant = true)
+	private void onToggleSneak(final PlayerToggleSneakEvent e) {
+		if (e.isSneaking()) {
+			moves.cut();
+		}
+	}
+
+	@Override
+	protected void onUpdate(Update update) {
+		if (update == Update.RESTRICTION_CLEAR) {
+			moves.start();
+			charge.actionbarChannel.update(charge.toString());
+		}
+	}
 
 	private class Charge extends AbilityTimer {
 
@@ -114,11 +169,13 @@ public class ManeuverGear extends Synergy implements ActiveHandler {
 			setBehavior(RestrictionBehavior.PAUSE_RESUME);
 		}
 
-		private boolean subtractCharge() {
-			if (charges > 0) {
-				charges = Math.max(0, charges - 1);
-				start();
+		private boolean subtractCharge(int amount) {
+			if (!isRunning() && charges > 0) {
+				charges = Math.max(0, charges - amount);
 				actionbarChannel.update(toString());
+				if (charges == 0) {
+					start();
+				}
 				return true;
 			} else return false;
 		}
@@ -150,128 +207,85 @@ public class ManeuverGear extends Synergy implements ActiveHandler {
 		}
 	}
 
-	private final Charge charge = new Charge();
-	private final Set<UUID> attacked = new HashSet<>();
+	private class Moves extends AbilityTimer {
 
-	protected Hook hook = null;
-	private Move move = null;
+		private final LinkedList<Move> moves = new LinkedList<>();
 
-	@Override
-	public boolean ActiveSkill(Material material, ClickType clickType) {
-		if (clickType == ClickType.RIGHT_CLICK) {
-			if (material == Material.IRON_INGOT) {
-				if (hook == null && move == null) {
-					if (charge.charges > 0) {
-						this.hook = new Hook(getPlayer().getEyeLocation(), getPlayer().getLocation().getDirection()) {
-							@Override
-							public boolean consume(double x, double y, double z) {
-								if (move == null) {
-									if (ManeuverGear.this.charge.subtractCharge()) {
-										ManeuverGear.this.move = new Move(new Location(getPlayer().getWorld(), x, y, z));
-										SoundLib.ENTITY_FISHING_BOBBER_RETRIEVE.playSound(getPlayer());
-									}
-								}
-								return true;
-							}
-
-							@Override
-							public boolean consume(Player player) {
-								if (ManeuverGear.this.charge.subtractCharge()) {
-									ManeuverGear.this.move = new Move(player);
-									SoundLib.ENTITY_FISHING_BOBBER_RETRIEVE.playSound(getPlayer());
-								}
-								return true;
-							}
-						};
-						return true;
-					}
-				}
-			}
+		public void addMove(final Move move) {
+			moves.add(move);
 		}
-		return false;
-	}
 
-	@SubscribeEvent(ignoreCancelled = true, onlyRelevant = true)
-	private void onToggleSneak(final PlayerToggleSneakEvent e) {
-		if (move != null) {
-			if (move.dash) {
-				move.stop(false);
+		private Moves() {
+			super();
+			setPeriod(TimeUnit.TICKS, 1);
+			start();
+		}
+
+		private boolean canDash() {
+			final Block block = getPlayer().getLocation().getBlock();
+			for (int x = -1; x <= 1; x++)
+				for (int y = -1; y <= 0; y++)
+					for (int z = -1; z <= 1; z++) {
+						if (!(x == 0 && y == 0 && z == 0) && block.getRelative(x, y, z).getType().isSolid())
+							return true;
+					}
+			return false;
+		}
+
+		public void cut() {
+			if (moves.isEmpty()) return;
+			final Move move = moves.remove();
+			move.entityHook.die();
+			if (canDash()) {
 				final Player lookingAt = LocationUtil.getEntityLookingAt(Player.class, getPlayer(), 5, .5, predicate);
-				getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.65));
 				if (lookingAt != null) {
-					SoundLib.ENTITY_PLAYER_ATTACK_KNOCKBACK.playSound(getPlayer());
-					SoundLib.ENTITY_PLAYER_HURT.playSound(getPlayer());
-					if (attacked.add(lookingAt.getUniqueId())) {
-						lookingAt.damage(lookingAt.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .45, getPlayer());
-						Stun.apply(getGame().getParticipant(lookingAt), TimeUnit.TICKS, 35);
-					} else {
-						lookingAt.damage(lookingAt.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .2, getPlayer());
-						Stun.apply(getGame().getParticipant(lookingAt), TimeUnit.TICKS, 20);
-					}
+					attack(lookingAt);
+				} else {
+					getPlayer().setVelocity(getPlayer().getLocation().getDirection().multiply(1.65));
 				}
-			} else {
-				move.stop(true);
 			}
 		}
-	}
 
-	private class Move extends AbilityTimer {
-
-		private final @Nullable Player target;
-		private final Supplier<Location> targetLoc;
-		private final HookEntity entityHook;
-		private boolean dash = false;
-
-		private Move(final Location targetLoc) {
-			super(TaskType.NORMAL, 260);
-			setPeriod(TimeUnit.TICKS, 1);
-			this.targetLoc = new Supplier<Location>() {
+		public void attack(Player player) {
+			getPlayer().setVelocity(player.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().multiply(1.25));
+			SoundLib.ENTITY_PLAYER_ATTACK_KNOCKBACK.playSound(getPlayer());
+			SoundLib.ENTITY_PLAYER_HURT.playSound(getPlayer());
+			if (attacked.add(player.getUniqueId())) {
+				player.damage(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .45, getPlayer());
+				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, 45);
+			} else {
+				player.damage(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .3, getPlayer());
+				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, 35);
+			}
+			new AbilityTimer(40) {
 				@Override
-				public Location get() {
-					return targetLoc;
+				protected void run(int count) {
+					if (getPlayer().getLocation().distanceSquared(player.getLocation()) <= 4) {
+						getPlayer().setVelocity(new Vector());
+						stop(false);
+					}
 				}
-			};
-			this.entityHook = Hooks.createHook(getPlayer(), targetLoc);
-			this.target = null;
-			start();
-		}
-
-		private Move(final Player player) {
-			super(TaskType.NORMAL, 260);
-			setPeriod(TimeUnit.TICKS, 1);
-			this.targetLoc = new Supplier<Location>() {
-				@Override
-				public Location get() {
-					return player.getLocation();
-				}
-			};
-			this.entityHook = Hooks.createHook(getPlayer(), player);
-			this.target = player;
-			start();
+			}.setPeriod(TimeUnit.TICKS, 1).start();
 		}
 
 		@Override
 		protected void run(int count) {
-			final Location targetLoc = this.targetLoc.get();
-			if (!getPlayer().getWorld().equals(targetLoc.getWorld())) {
-				stop(true);
-				return;
+			if (moves.isEmpty()) return;
+			final Vector vector = new Vector(), locVec = getPlayer().getLocation().toVector();
+			for (final Iterator<Move> iterator = moves.iterator(); iterator.hasNext(); ) {
+				final Move move = iterator.next();
+				final Location target = move.target.get();
+				if (!getPlayer().getWorld().equals(target.getWorld())) {
+					move.entityHook.die();
+					iterator.remove();
+				} else {
+					vector.add(target.toVector().subtract(locVec));
+				}
 			}
 			getPlayer().setFallDistance(0f);
-			final double distanceSquared = getPlayer().getLocation().distanceSquared(targetLoc);
-			if (distanceSquared <= 9) {
-				if (!dash) {
-					this.dash = true;
-					SoundLib.BLOCK_METAL_STEP.playSound(getPlayer());
-					if (getCount() < 140) {
-						setCount(140);
-					}
-					return;
-				}
-			} else {
-				this.dash = false;
-			}
-			getPlayer().setVelocity(VectorUtil.validateVector(targetLoc.toVector().subtract(getPlayer().getLocation().toVector()).normalize()).multiply(dash ? .1 : (distanceSquared >= 36 ? 3 : 1)));
+			final double length = vector.length();
+			getPlayer().setVelocity(VectorUtil.validateVector(vector.normalize().multiply(length <= 4 ? (length <= 2 ? .05 : .35) : .7)));
+
 		}
 
 		@Override
@@ -281,36 +295,59 @@ public class ManeuverGear extends Synergy implements ActiveHandler {
 
 		@Override
 		protected void onSilentEnd() {
-			entityHook.die();
-			ManeuverGear.this.move = null;
+			for (final Iterator<Move> iterator = moves.iterator(); iterator.hasNext(); ) {
+				final Move move = iterator.next();
+				iterator.remove();
+				move.entityHook.die();
+			}
 		}
 	}
 
-	@Override
-	protected void onUpdate(Update update) {
-		if (update == Update.RESTRICTION_CLEAR) {
-			charge.actionbarChannel.update(charge.toString());
+	private class Move {
+
+		private final Supplier<Location> target;
+		private final HookEntity entityHook;
+
+		private Move(final Location targetLoc) {
+			this.target = new Supplier<Location>() {
+				@Override
+				public Location get() {
+					return targetLoc;
+				}
+			};
+			this.entityHook = Hooks.createHook(getPlayer(), targetLoc);
 		}
+
+		private Move(final Player player) {
+			this.target = new Supplier<Location>() {
+				@Override
+				public Location get() {
+					return player.getLocation();
+				}
+			};
+			this.entityHook = Hooks.createHook(getPlayer(), player);
+		}
+
 	}
 
 	protected abstract class Hook extends AbilityTimer {
 
 		private final CustomEntity entity;
 		private final Vector forward;
+		private Location lastLocation;
 
 		public Hook(Location startLocation, Vector hookVelocity) {
-			super(8);
+			super(5);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
-			this.forward = hookVelocity.multiply(16);
+			this.forward = hookVelocity.multiply(6);
 			this.lastLocation = startLocation;
 			start();
 		}
 
 		protected abstract boolean consume(double x, double y, double z);
-		protected abstract boolean consume(Player player);
 
-		private Location lastLocation;
+		protected abstract boolean consume(Player player);
 
 		@Override
 		protected void run(int i) {
@@ -345,6 +382,7 @@ public class ManeuverGear extends Synergy implements ActiveHandler {
 					}
 				}
 				for (Player player : LocationUtil.getConflictingEntities(Player.class, getPlayer().getWorld(), entity.getBoundingBox(), predicate)) {
+					if (player.getLocation().distanceSquared(getPlayer().getLocation()) <= 9) continue;
 					if (consume(player)) {
 						stop(false);
 						return;

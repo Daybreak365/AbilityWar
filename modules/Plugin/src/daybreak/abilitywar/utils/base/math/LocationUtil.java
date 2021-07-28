@@ -27,17 +27,20 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.function.Predicate;
 
-/**
- * Location Util
- *
- * @author Daybreak 새벽
- */
 public class LocationUtil {
 
 	private LocationUtil() {
 	}
 
 	private static final double TWO_PI = 6.283185307179586D;
+
+	public static boolean isBehind(final Entity criterion, final Entity entity) {
+		return dotDirection(criterion, entity) > 0;
+	}
+
+	private static double dotDirection(final Entity criterion, final Entity entity) {
+		return criterion.getLocation().toVector().subtract(entity.getLocation().toVector()).dot(criterion.getLocation().getDirection());
+	}
 
 	public static float getYaw(Vector vector) {
 		return (float) Math.toDegrees((Math.atan2(-vector.getX(), vector.getZ()) + TWO_PI) % TWO_PI);

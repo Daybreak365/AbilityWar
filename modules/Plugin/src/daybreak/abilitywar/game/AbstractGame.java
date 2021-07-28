@@ -432,6 +432,14 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			}
 		}
 
+		public void removeEffects() {
+			for (final Iterator<Effect> iterator = effects.values().iterator(); iterator.hasNext(); ) {
+				final Effect effect = iterator.next();
+				iterator.remove();
+				effect.stop(true);
+			}
+		}
+
 		@Override
 		public void update(GameUpdate update) {
 			if (update.equals(GameUpdate.END)) {

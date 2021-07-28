@@ -39,64 +39,77 @@ class Damages private constructor() {
 
 		@JvmStatic
 		fun getFinalDamage(victim: LivingEntity, damage: Double, flags: Int): Double {
-			var damage = damage
-			if (Flag.hasFlag(flags, Flag.ARMOR)) {
-				val armorStrength = victim.getAttribute(Attribute.GENERIC_ARMOR)?.value ?: .0
-				val armorToughness = victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS)?.value ?: .0
-				damage -= damage - (damage * (1.0 - (armorStrength - damage / (2.0 + armorToughness / 4.0)).coerceIn(armorStrength * .2, 20.0) / 25.0))
-			}
-			if (Flag.hasFlag(flags, Flag.RESISTANCE)) {
-				val resistance = victim.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)
-				if (resistance != null) {
-					damage -= damage - damage * (25 - (resistance.amplifier + 1) * 5) / 25.0
-				}
-			}
-			if (Flag.hasFlag(flags, Flag.ENCHANTMENT)) {
-				var protection = 0
-				victim.equipment?.armorContents?.forEach {
-					if (it != null) {
-						protection += it.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL)
-					}
-				}
-				if (protection > 0) {
-					damage -= damage - (damage * (1.0 - protection.coerceIn(0, 20) / 25.0))
-				}
-			}
-			if (Flag.hasFlag(flags, Flag.ABSORPTION)) {
-				damage -= (damage - max(damage - NMS.getAbsorptionHearts(victim), 0.0)).coerceAtLeast(0.0)
-			}
-			return damage
-		}
+            var damage = damage
+            if (Flag.hasFlag(flags, Flag.ARMOR)) {
+                val armorStrength = victim.getAttribute(Attribute.GENERIC_ARMOR)?.value ?: .0
+                val armorToughness = victim.getAttribute(Attribute.GENERIC_ARMOR_TOUGHNESS)?.value ?: .0
+                damage -= damage - (damage * (1.0 - (armorStrength - damage / (2.0 + armorToughness / 4.0)).coerceIn(
+                    armorStrength * .2,
+                    20.0
+                ) / 25.0))
+            }
+            if (Flag.hasFlag(flags, Flag.RESISTANCE)) {
+                val resistance = victim.getPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)
+                if (resistance != null) {
+                    damage -= damage - damage * (25 - (resistance.amplifier + 1) * 5) / 25.0
+                }
+            }
+            if (Flag.hasFlag(flags, Flag.ENCHANTMENT)) {
+                var protection = 0
+                victim.equipment?.armorContents?.forEach {
+                    if (it != null) {
+                        protection += it.getEnchantmentLevel(Enchantment.PROTECTION_ENVIRONMENTAL)
+                    }
+                }
+                if (protection > 0) {
+                    damage -= damage - (damage * (1.0 - protection.coerceIn(0, 20) / 25.0))
+                }
+            }
+            if (Flag.hasFlag(flags, Flag.ABSORPTION)) {
+                damage -= (damage - max(damage - NMS.getAbsorptionHearts(victim), 0.0)).coerceAtLeast(0.0)
+            }
+            return damage
+        }
 
-		@JvmStatic
-		override fun damageArrow(entity: Entity, shooter: LivingEntity, damage: Float): Boolean {
-			return INSTANCE.damageArrow(entity, shooter, damage)
-		}
+        @JvmStatic
+        override fun damageExplosion(entity: Entity, source: Entity, damage: Float): Boolean {
+            return INSTANCE.damageExplosion(entity, source, damage)
+        }
 
-		@JvmStatic
-		override fun damageFixed(entity: Entity, damager: LivingEntity, damage: Float): Boolean {
-			return INSTANCE.damageFixed(entity, damager, damage)
-		}
+        @JvmStatic
+        override fun damageThorn(entity: Entity, damager: LivingEntity, damage: Float): Boolean {
+            return INSTANCE.damageThorn(entity, damager, damage)
+        }
 
-		@JvmStatic
-		override fun damageMagic(entity: Entity, damager: Player?, ignoreArmor: Boolean, damage: Float): Boolean {
-			return INSTANCE.damageMagic(entity, damager, ignoreArmor, damage)
-		}
+        @JvmStatic
+        override fun damageArrow(entity: Entity, shooter: LivingEntity, damage: Float): Boolean {
+            return INSTANCE.damageArrow(entity, shooter, damage)
+        }
 
-		private fun <T : EntityDamageEvent> canDamage(event: T, victim: Entity): Boolean {
-			Bukkit.getPluginManager().callEvent(event)
-			return if (event.isCancelled) false else {
-				if (victim is Player) {
-					val gameMode = victim.gameMode
-					gameMode == SURVIVAL || gameMode == ADVENTURE
-				} else true
-			}
-		}
+        @JvmStatic
+        override fun damageFixed(entity: Entity, damager: LivingEntity, damage: Float): Boolean {
+            return INSTANCE.damageFixed(entity, damager, damage)
+        }
 
-		@JvmStatic
-		fun canDamage(victim: Entity, damager: Entity, damageCause: DamageCause, damage: Double): Boolean {
-			return canDamage(EntityDamageByEntityEvent(damager, victim, damageCause, damage), victim)
-		}
+        @JvmStatic
+        override fun damageMagic(entity: Entity, damager: Player?, ignoreArmor: Boolean, damage: Float): Boolean {
+            return INSTANCE.damageMagic(entity, damager, ignoreArmor, damage)
+        }
+
+        private fun <T : EntityDamageEvent> canDamage(event: T, victim: Entity): Boolean {
+            Bukkit.getPluginManager().callEvent(event)
+            return if (event.isCancelled) false else {
+                if (victim is Player) {
+                    val gameMode = victim.gameMode
+                    gameMode == SURVIVAL || gameMode == ADVENTURE
+                } else true
+            }
+        }
+
+        @JvmStatic
+        fun canDamage(victim: Entity, damager: Entity, damageCause: DamageCause, damage: Double): Boolean {
+            return canDamage(EntityDamageByEntityEvent(damager, victim, damageCause, damage), victim)
+        }
 
 		@JvmStatic
 		fun canDamage(victim: Entity, damageCause: DamageCause, damage: Double): Boolean {

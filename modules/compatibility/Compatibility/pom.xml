@@ -55,7 +55,7 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
-							<jvmTarget>1.8</jvmTarget>
+							<jvmTarget>16</jvmTarget>
 							<args>-Xjvm-default=compatibility</args>
 						</configuration>
 					</execution>

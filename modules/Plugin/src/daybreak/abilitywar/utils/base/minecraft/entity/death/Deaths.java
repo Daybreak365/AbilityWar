@@ -1,9 +1,9 @@
 package daybreak.abilitywar.utils.base.minecraft.entity.death;
 
 import com.google.common.collect.ImmutableMap;
-import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.Entities;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
@@ -185,6 +185,16 @@ public class Deaths {
 					return "§c" + dead.getName() + "§f" + getJosa(dead, Josa.이가) + " " + formatName(killer) + "§f에게 마법으로 살해당했습니다.";
 				}
 				return "§c" + dead.getName() + "§f" + getJosa(dead, Josa.이가) + " 마법으로 살해당했습니다.";
+			}
+		});
+		builder.put(DamageCause.THORNS, new Messages() {
+			@Override
+			public String getMessage(@NotNull Player dead, @NotNull EntityDamageEvent damageEvent) {
+				final Player killer = dead.getKiller();
+				if (killer != null) {
+					return "§c" + dead.getName() + "§f" + getJosa(dead, Josa.이가) + " " + formatName(killer) + "§f에게 찔려 죽었습니다.";
+				}
+				return "§c" + dead.getName() + "§f" + getJosa(dead, Josa.이가) + " 찔려 죽었습니다.";
 			}
 		});
 		handlers = builder.build();

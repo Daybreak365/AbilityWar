@@ -15,6 +15,7 @@ import org.bukkit.plugin.EventExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @ModuleBase(EventManager.class)
 public final class EventManager implements ListenerModule {
@@ -56,11 +58,17 @@ public final class EventManager implements ListenerModule {
 		protected final Class<? extends Event> eventClass;
 		protected final EventPriority eventPriority;
 		protected final int priority;
+		protected final List<Class<? extends Event>> childs;
 
-		public EventObserver(final Class<? extends Event> eventClass, final EventPriority eventPriority, final int priority) {
+		public EventObserver(final Class<? extends Event> eventClass, final EventPriority eventPriority, final int priority, final List<Class<? extends Event>> childs) {
 			this.eventClass = eventClass;
 			this.eventPriority = eventPriority;
 			this.priority = priority;
+			this.childs = childs.isEmpty() ? childs : childs.stream().filter(eventClass::isAssignableFrom).distinct().collect(Collectors.toList());
+		}
+
+		public EventObserver(final Class<? extends Event> eventClass, final EventPriority eventPriority, final int priority) {
+			this(eventClass, eventPriority, priority, Collections.emptyList());
 		}
 
 		protected abstract void onEvent(Event event);
@@ -117,12 +125,18 @@ public final class EventManager implements ListenerModule {
 		}
 
 		private void register0(final EventObserver observer) {
-			final SetMultimap<Integer, EventObserver> priorityMap = getNotNull(observer.eventClass);
-			final Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(observer.eventClass);
+			register1(observer.eventClass, observer);
+			for (Class<? extends Event> child : observer.childs) {
+				register1(child, observer);
+			}
+		}
+
+		private void register1(final Class<? extends Event> eventClass, final EventObserver observer) {
+			final Class<? extends Event> handlerDeclaringClass = getHandlerListDeclaringClass(eventClass);
 			if (handlerDeclaringClass != null && registeredEvents.add(handlerDeclaringClass)) {
 				Bukkit.getPluginManager().registerEvent(handlerDeclaringClass, EventManager.this, this.eventPriority, this, AbilityWar.getPlugin());
 			}
-			priorityMap.put(observer.priority, observer);
+			getNotNull(eventClass).put(observer.priority, observer);
 		}
 
 		private void unregister(final EventObserver observer) {

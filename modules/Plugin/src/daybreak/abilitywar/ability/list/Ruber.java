@@ -59,7 +59,7 @@ import java.util.function.Predicate;
 })
 public class Ruber extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "cooldown", 6,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ruber.class, "cooldown", 8,
 			"# 흡혈 쿨타임") {
 
 		@Override

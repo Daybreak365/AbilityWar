@@ -108,12 +108,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.koca2000</groupId>
-            <artifactId>NoteBlockAPI</artifactId>
-            <version>${noteblockapi.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>${annotations.version}</version>
@@ -139,35 +133,19 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmTarget>1.8</jvmTarget>
-                            <args>-Xjvm-default=compatibility</args>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
+                <goals>
+                </goals>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -181,7 +159,6 @@
                                     <include>org.jetbrains.kotlin:**</include>
                                     <include>com.google.guava:guava</include>
                                     <include>com.google.code.gson:gson</include>
-                                    <include>com.github.koca2000:NoteBlockAPI</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -195,13 +172,6 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
-                                        <exclude>com/xxmicloxx/NoteBlockAPI/**.class</exclude>
-                                        <exclude>com/xxmicloxx/NoteBlockAPI/bukkit/</exclude>
-                                        <exclude>com/xxmicloxx/NoteBlockAPI/songplayer/</exclude>
-                                        <exclude>com/xxmicloxx/NoteBlockAPI/event/</exclude>
-                                        <exclude>com/xxmicloxx/NoteBlockAPI/model/NotePitch.class</exclude>
-                                        <exclude>com/xxmicloxx/NoteBlockAPI/model/playmode/</exclude>
-                                        <exclude>com/xxmicloxx/NoteBlockAPI/utils/TimeUtils.class</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

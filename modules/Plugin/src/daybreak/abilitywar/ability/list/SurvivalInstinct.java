@@ -70,7 +70,7 @@ public class SurvivalInstinct extends AbilityBase {
 		PotionEffects.SPEED.addPotionEffect(getPlayer(), 100, 1, true);
 	}
 
-	@SubscribeEvent(onlyRelevant = true, priority = 6, ignoreCancelled = true)
+	@SubscribeEvent(onlyRelevant = true, priority = 6, ignoreCancelled = true, childs = {EntityDamageByBlockEvent.class})
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (!invincibility.started) {
 			if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
@@ -80,11 +80,6 @@ public class SurvivalInstinct extends AbilityBase {
 		} else if (invincibility.isRunning()) {
 			e.setCancelled(true);
 		}
-	}
-
-	@SubscribeEvent(onlyRelevant = true, priority = 6, ignoreCancelled = true)
-	private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
-		onEntityDamage(e);
 	}
 
 	@SubscribeEvent(priority = 6, ignoreCancelled = true)

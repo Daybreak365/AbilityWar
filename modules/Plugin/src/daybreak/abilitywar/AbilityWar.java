@@ -16,7 +16,6 @@ import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.game.specialthanks.SpecialThanks;
-import daybreak.abilitywar.music.christmas.ChristmasMusic;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -64,12 +63,13 @@ public class AbilityWar extends JavaPlugin implements Provider {
 			public void run() {
 				Installer installer = null;
 				try {
-					installer = new Installer("DayBreak365", "AbilityWar", AbilityWar.this);
-					Messager.sendConsoleMessage("버전 목록을 모두 불러왔습니다.");
-				} catch (IOException | InterruptedException | ExecutionException ignore) {}
+					installer = new Installer("Daybreak365", "AbilityWar", AbilityWar.this);
+					Messager.sendConsoleMessage("버전 목록을 불러왔습니다.");
+				} catch (IOException | InterruptedException | ExecutionException ignore) {
+				}
 				AbilityWar.this.installer = installer;
 				Addons.load();
-				Messager.sendConsoleMessage("추천 애드온 목록을 모두 불러왔습니다.");
+				Messager.sendConsoleMessage("추천 애드온 목록을 불러왔습니다.");
 			}
 		});
 	}
@@ -88,8 +88,7 @@ public class AbilityWar extends JavaPlugin implements Provider {
 	@Override
 	public void onEnable() {
 		if (!ServerVersion.compatVersion(this)) return;
-		Messager.sendConsoleMessage("Server Version: " + Bukkit.getBukkitVersion());
-		Bukkit.getPluginCommand("AbilityWar").setExecutor(commands);
+		getCommand("AbilityWar").setExecutor(commands);
 
 		AddonLoader.loadAll();
 		AddonLoader.enableAll();
@@ -97,7 +96,6 @@ public class AbilityWar extends JavaPlugin implements Provider {
 		try {
 			Class.forName(FastMath.class.getName());
 			Class.forName(SpecialThanks.class.getName());
-			Class.forName(ChristmasMusic.class.getName());
 		} catch (Exception ignored) {
 		}
 

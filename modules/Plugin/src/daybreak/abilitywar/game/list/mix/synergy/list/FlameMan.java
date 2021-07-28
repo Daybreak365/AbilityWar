@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @AbilityManifest(name = "염인", rank = Rank.S, species = Species.HUMAN, explain = {
-		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
+		"마그마와 용암 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
 		"철괴를 우클릭하면 주변을 마그마 지형으로 바꿉니다. $[COOLDOWN_CONFIG]",
 		"신속하게 이동하며 지나가는 모든 곳에 불이 붙습니다. 화염 피해를 받지 않습니다."
 })

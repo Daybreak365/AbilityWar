@@ -95,7 +95,6 @@ public class AbilityFactory {
 		registerAbility(Virtus.class);
 		registerAbility(Nex.class);
 		registerAbility(Ira.class);
-		registerAbility(Clown.class);
 		registerAbility(Magician.class);
 		registerAbility(Emperor.class);
 		registerAbility(Pumpkin.class);
@@ -165,6 +164,9 @@ public class AbilityFactory {
 		// v2.4.5
 		registerAbility(Bellum.class);
 		registerAbility(Eos.class);
+		// v2.6.0
+		registerAbility(Morpheus.class);
+		registerAbility("daybreak.abilitywar.ability.list.clown." + ServerVersion.getName() + ".Clown");
 
 
 		// 게임모드 전용

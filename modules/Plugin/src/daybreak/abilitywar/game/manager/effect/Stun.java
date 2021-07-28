@@ -10,7 +10,10 @@ import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry.EffectReg
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
+import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -66,11 +69,13 @@ public class Stun extends AbstractGame.Effect implements Listener {
 	protected void run(int count) {
 		super.run(count);
 		if (hologram.isValid()) {
-			if (direction) stack++; else stack--;
+			if (direction) stack++;
+			else stack--;
 			if (stack <= 0 || stack >= 30) {
 				this.direction = !direction;
 			}
-			hologram.teleport(participant.getPlayer().getLocation().clone().add(0, 2.2 + (stack * 0.008), 0));
+			final Location location = participant.getPlayer().getLocation().clone().add(0, (ServerVersion.isAboveOrEqual(NMSVersion.v1_17_R1) ? 4 : 2) + (stack * 0.008), 0);
+			hologram.teleport(location);
 		}
 	}
 

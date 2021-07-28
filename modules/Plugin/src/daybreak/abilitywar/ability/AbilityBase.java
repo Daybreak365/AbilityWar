@@ -49,6 +49,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -189,7 +190,7 @@ public abstract class AbilityBase {
 			final Pair<Method, SubscribeEvent> pair = entry.getValue();
 			final SubscribeEvent subscriber = pair.getRight();
 			final Method method = pair.getLeft();
-			final EventObserver observer = new EventObserver(entry.getKey(), subscriber.eventPriority(), subscriber.priority()) {
+			final EventObserver observer = new EventObserver(entry.getKey(), subscriber.eventPriority(), subscriber.priority(), Arrays.asList(subscriber.childs())) {
 				@Override
 				protected void onEvent(final Event event) {
 					if (isRestricted()) return;

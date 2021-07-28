@@ -11,13 +11,19 @@ import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
+import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.utils.base.Formatter;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 @AbilityManifest(name = "이열치열", rank = Rank.B, species = Species.HUMAN, explain = {
-		"§c화염 §f대미지를 받을 때, 대미지만큼 체력을 회복합니다."
+		"§7패시브 §8- §c이열치열§f: §c화염 §f피해를 입을 때, 피해만큼 체력을 회복합니다.",
+		"§7철괴 우클릭 §8- §c불사지르기§f: 8초간 몸에 불을 붙입니다. $[COOLDOWN_CONFIG]"
 })
 @Tips(tip = {
 		"모든 화염 대미지를 카운터, 거기에 더해 회복까지 할 수 있습니다.",
@@ -29,7 +35,24 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 				"조심하세요!"
 		})
 }, stats = @Stats(offense = Level.ZERO, survival = Level.THREE, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.THREE), difficulty = Difficulty.EASY)
-public class FireFightWithFire extends AbilityBase {
+public class FireFightWithFire extends AbilityBase implements ActiveHandler {
+
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Flector.class, "cooldown", 20,
+			"# 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+
+	};
+
+	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 
 	public FireFightWithFire(Participant participant) {
 		super(participant);
@@ -45,4 +68,13 @@ public class FireFightWithFire extends AbilityBase {
 		}
 	}
 
+	@Override
+	public boolean ActiveSkill(Material material, ClickType clickType) {
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
+			getPlayer().setFireTicks(160);
+			cooldown.start();
+			return true;
+		}
+		return false;
+	}
 }
