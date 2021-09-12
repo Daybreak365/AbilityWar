@@ -1,8 +1,6 @@
 package daybreak.abilitywar.ability.event;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.ability.AbilityBase.ClickType;
-import org.bukkit.Material;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 

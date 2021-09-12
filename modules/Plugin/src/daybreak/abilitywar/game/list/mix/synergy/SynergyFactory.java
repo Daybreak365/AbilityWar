@@ -32,6 +32,7 @@ import daybreak.abilitywar.ability.list.Terrorist;
 import daybreak.abilitywar.ability.list.TimeRewind;
 import daybreak.abilitywar.ability.list.Virus;
 import daybreak.abilitywar.ability.list.Yeti;
+import daybreak.abilitywar.ability.list.grapplinghook.GrapplingHook;
 import daybreak.abilitywar.game.list.mix.synergy.list.AbsoluteZero;
 import daybreak.abilitywar.game.list.mix.synergy.list.Bind;
 import daybreak.abilitywar.game.list.mix.synergy.list.BlackKnight;
@@ -42,6 +43,7 @@ import daybreak.abilitywar.game.list.mix.synergy.list.DoubleSniper;
 import daybreak.abilitywar.game.list.mix.synergy.list.EventHorizon;
 import daybreak.abilitywar.game.list.mix.synergy.list.FlameMan;
 import daybreak.abilitywar.game.list.mix.synergy.list.Grudge;
+import daybreak.abilitywar.game.list.mix.synergy.list.ManeuverGear;
 import daybreak.abilitywar.game.list.mix.synergy.list.Meteor;
 import daybreak.abilitywar.game.list.mix.synergy.list.NexAssassin;
 import daybreak.abilitywar.game.list.mix.synergy.list.Pandemic;
@@ -89,7 +91,7 @@ public class SynergyFactory {
 		registerSynergy(Ghost.class, Curse.class, Grudge.class);
 		registerSynergy(Lazyness.class, Lazyness.class, SuperLazy.class);
 		registerSynergy(Canis.class, Canis.class, BlackKnight.class);
-		//registerSynergy(GrapplingHook.class, GrapplingHook.class, ManeuverGear.class);
+		registerSynergy(GrapplingHook.class, GrapplingHook.class, ManeuverGear.class);
 		registerSynergy(Assassin.class, Loki.class, CrazyAssassin.class);
 	}
 

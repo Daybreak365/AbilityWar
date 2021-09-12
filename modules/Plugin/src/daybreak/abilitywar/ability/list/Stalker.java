@@ -11,10 +11,10 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.GameMode;
@@ -37,13 +37,14 @@ import java.util.List;
 import java.util.Set;
 
 @AbilityManifest(name = "스토커", rank = Rank.A, species = Species.HUMAN, explain = {
-		"§7패시브 §8- §c오직 너만을§f: 같은 플레이어를 계속 공격하면 스택이 쌓이며 §8실명 §f효과를",
-		"§f줍니다. 스택이 쌓일 때마다 다른 모든 스킬의 쿨타임이 스택만큼 감소하며, 대상",
-		"§f플레이어에게 주는 추가 대미지가 0.15씩 증가합니다.",
+		"§7패시브 §8- §c오직 너만을§f: 같은 대상을 계속 공격하면 스택이 쌓이며 §8실명§f시킵니다.",
+		" 스택이 쌓일 때마다 다른 모든 스킬의 쿨타임이 스택만큼 감소하며, 대상",
+		" 플레이어에게 주는 추가 대미지가 0.2씩 증가합니다.",
 		"§7철괴 우클릭 §8- §c오직 나만이§f: 순간 벽을 통과할 수 있고 타게팅되지 않는 상태로",
-		"§f변하여 마지막으로 타격한 플레이어에게 빠르게 돌진합니다. $[COOLDOWN_CONFIG]",
+		" 변하여 마지막으로 타격한 플레이어에게 빠르게 돌진하며 대상을 §8실명§f시킵니다.",
+		" $[COOLDOWN_CONFIG]",
 		"§7검 우클릭 §8- §c간 보기§f: 마지막으로 타격한 플레이어에게 작게",
-		"§f돌진합니다. $[LEFT_COOLDOWN_CONFIG]"
+		" 돌진합니다. $[LEFT_COOLDOWN_CONFIG]"
 })
 public class Stalker extends AbilityBase implements ActiveHandler {
 
@@ -125,6 +126,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				ParticleLib.SPELL_MOB.spawnParticle(playerLocation.clone().add(Vector.getRandom()), BLACK);
 			}
 			getPlayer().setVelocity(targetLocation.toVector().subtract(playerLocation.toVector()).normalize().multiply(3));
+			PotionEffects.BLINDNESS.addPotionEffect(target, 10000, 0, true);
 			if (playerLocation.distanceSquared(targetLocation) < 4.0) {
 				stop(false);
 			}
@@ -146,6 +148,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 			getPlayer().setFlySpeed(flySpeed);
 			getPlayer().setFlying(false);
 			getParticipant().attributes().TARGETABLE.setValue(true);
+			PotionEffects.BLINDNESS.removePotionEffect(target);
 		}
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 
@@ -208,7 +211,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				SOUND_RUNNABLES.get((int) (ceil - ((Math.ceil(ceil / SOUND_RUNNABLES.size()) - 1) * SOUND_RUNNABLES.size())) - 1).run();
 				if (cooldownTimer.isRunning()) cooldownTimer.setCount(Math.max(0, cooldownTimer.getCount() - stack));
 				PotionEffects.BLINDNESS.addPotionEffect(victim, 30, 0, true);
-				e.setDamage(e.getDamage() + (stack * .15));
+				e.setDamage(e.getDamage() + (stack * .2));
 			}
 		}
 	}

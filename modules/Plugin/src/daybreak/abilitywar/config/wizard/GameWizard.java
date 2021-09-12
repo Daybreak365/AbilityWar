@@ -2,6 +2,7 @@ package daybreak.abilitywar.config.wizard;
 
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.utils.base.Messager;
@@ -23,7 +24,8 @@ import java.util.List;
 
 public class GameWizard extends SettingWizard {
 
-	private final ItemStack AUTO_SKIP = new CustomSkullBuilder("dd993b8c13588919b9f8b42db065d5adfe78af182815b4e6f0f91ba683deac9").displayName("§b자동 스킵").build(),
+	private final ItemStack BETA_ABILITY = new ItemBuilder(MaterialX.REDSTONE).displayName("§b베타 능력 사용 여부").build(),
+			AUTO_SKIP = new CustomSkullBuilder("dd993b8c13588919b9f8b42db065d5adfe78af182815b4e6f0f91ba683deac9").displayName("§b자동 스킵").build(),
 			WRECK = new ItemBuilder(MaterialX.NETHER_STAR).displayName("§bWRECK").build(),
 			SHIELD_COOLDOWN = new ItemBuilder(MaterialX.SHIELD).displayName("§b방패 쿨타임").build(),
 			BOW_COOLDOWN = new ItemBuilder(MaterialX.SPECTRAL_ARROW).displayName("§b활 쿨타임").build(),
@@ -117,6 +119,16 @@ public class GameWizard extends SettingWizard {
 					LEVEL.setItemMeta(levelMeta);
 
 					gui.setItem(i, LEVEL);
+				}
+				break;
+				case 18: {
+					if (DeveloperSettings.isEnabled()) {
+						final ItemMeta meta = BETA_ABILITY.getItemMeta();
+						meta.setLore(Arrays.asList("§a활성화 §f하면 능력 추첨시 베타 능력이 추첨됩니다.",
+								"", "§7상태 : " + (Settings.isUsingBetaAbility() ? "§a활성화" : "§c비활성화")));
+						BETA_ABILITY.setItemMeta(meta);
+						gui.setItem(i, BETA_ABILITY);
+					}
 				}
 				break;
 				case 20: {
@@ -254,6 +266,10 @@ public class GameWizard extends SettingWizard {
 		if (currentItem != null) {
 			if (currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName()) {
 				switch (currentItem.getItemMeta().getDisplayName()) {
+					case "§b베타 능력 사용 여부":
+						Configuration.modifyProperty(ConfigNodes.GAME_USE_BETA_ABILITY, !Settings.isUsingBetaAbility());
+						show();
+						break;
 					case "§b자동 스킵":
 						switch (e.getClick()) {
 							case RIGHT:

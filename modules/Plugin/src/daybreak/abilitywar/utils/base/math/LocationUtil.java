@@ -307,7 +307,7 @@ public class LocationUtil {
 
 	/**
 	 * 중점에서 가장 가까이에 있는 특정 타입의 엔티티를 반환합니다.
-	 * 가장 가까이에 있는 특정 타입의 엔티티를 찾을 수 없을 경우 null을 반환합니다.
+	 * 가장 가까이에 있는 해당 타입의 엔티티를 찾을 수 없을 경우 null을 반환합니다.
 	 *
 	 * @param entityType 탐색할 엔티티 타입
 	 * @param center     중점
@@ -315,16 +315,49 @@ public class LocationUtil {
 	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
 	 */
 	@SuppressWarnings("unchecked")
+	@Nullable
 	public static <T extends Entity> T getNearestEntity(Class<T> entityType, Location center, Predicate<? super T> predicate) {
 		double distance = Double.MAX_VALUE;
 		T current = null;
 
 		final Location centerLocation = center.clone();
+		if (center.getWorld() == null) return null;
 		for (Entity e : center.getWorld().getEntities()) {
 			if (entityType.isAssignableFrom(e.getClass())) {
 				@SuppressWarnings("unchecked") T entity = (T) e;
 				double compare = centerLocation.distanceSquared(entity.getLocation());
 				if (compare < distance && (predicate == null || predicate.test(entity))) {
+					distance = compare;
+					current = entity;
+				}
+			}
+		}
+
+		return current;
+	}
+
+	/**
+	 * 중점에서 가장 멀리에 있는 특정 타입의 엔티티를 반환합니다.
+	 * 멀리에 있는 해당 타입의 엔티티를 찾을 수 없을 경우 null 반환합니다.
+	 *
+	 * @param entityType 탐색할 엔티티 타입
+	 * @param center     중점
+	 * @param predicate  커스텀 조건
+	 * @return 중점에서 가장 가까이에 있는 특정 타입의 엔티티
+	 */
+	@SuppressWarnings("unchecked")
+	@Nullable
+	public static <T extends Entity> T getFarthestEntity(Class<T> entityType, Location center, Predicate<? super T> predicate) {
+		double distance = Double.MIN_VALUE;
+		T current = null;
+
+		final Location centerLocation = center.clone();
+		if (center.getWorld() == null) return null;
+		for (Entity e : center.getWorld().getEntities()) {
+			if (entityType.isAssignableFrom(e.getClass())) {
+				@SuppressWarnings("unchecked") T entity = (T) e;
+				double compare = centerLocation.distanceSquared(entity.getLocation());
+				if (compare > distance && (predicate == null || predicate.test(entity))) {
 					distance = compare;
 					current = entity;
 				}

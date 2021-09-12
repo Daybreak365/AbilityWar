@@ -46,7 +46,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @AbilityManifest(name = "그래플링 훅", rank = Rank.L, species = Species.HUMAN, explain = {
-		"§7충전 §8- §3후크§f: 최대 $[MAX_CHARGE]개까지 보유할 수 있으며, 후크를 모두 사용한 후 25초가 지나면",
+		"§7충전 §8- §3후크§f: 최대 $[MAX_CHARGE]개까지 보유할 수 있으며, 후크를 모두 사용한 후 20초가 지나면",
 		" 후크가 모두 충전됩니다.",
 		"§7철괴 우클릭 §8- §3후크 발사§f: 바라보는 방향으로 후크를 발사합니다. 블록 또는 적에게",
 		" 고정되면, 빠르게 목표 지점으로 이동합니다. 적에게 고정됐다면 목표 지점",

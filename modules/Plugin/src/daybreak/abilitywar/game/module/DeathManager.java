@@ -142,9 +142,14 @@ public class DeathManager implements ListenerModule {
 	 * @param participant 작업을 처리할 참가자
 	 */
 	public final void eliminate(Participant participant) {
-		Player player = participant.getPlayer();
-		player.kickPlayer(Messager.defaultPrefix + "\n" + "§f탈락하셨습니다.");
-		Bukkit.broadcastMessage("§c" + player.getName() + "§f님이 탈락하셨습니다.");
+		final Player player = participant.getPlayer();
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				player.kickPlayer(Messager.defaultPrefix + "\n" + "§f탈락하셨습니다.");
+				Bukkit.broadcastMessage("§c" + player.getName() + "§f님이 탈락하셨습니다.");
+			}
+		}.runTask(AbilityWar.getPlugin());
 	}
 
 	/**

@@ -34,11 +34,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @AbilityManifest(name = "염인", rank = Rank.S, species = Species.HUMAN, explain = {
-		"마그마와 용암 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
+		"마그마와 용암 위에서 §6힘§f, §3저항 §f버프를 받습니다.",
 		"철괴를 우클릭하면 주변을 마그마 지형으로 바꿉니다. $[COOLDOWN_CONFIG]",
 		"신속하게 이동하며 지나가는 모든 곳에 불이 붙습니다. 화염 피해를 받지 않습니다."
 })
-
 @Beta
 public class FlameMan extends Synergy implements ActiveHandler {
 
@@ -77,8 +76,8 @@ public class FlameMan extends Synergy implements ActiveHandler {
 		public void run(int count) {
 			Block block = getPlayer().getLocation().getBlock(), belowBlock = getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN);
 			if (MaterialX.LAVA.compare(block) || MaterialX.LAVA.compare(belowBlock) || block.getType() == Material.LAVA || belowBlock.getType() == Material.LAVA || MaterialX.MAGMA_BLOCK.compare(belowBlock)) {
-				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
-				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 0, true);
+				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
 			}
 		}
 	}.setPeriod(TimeUnit.TICKS, 1).register();

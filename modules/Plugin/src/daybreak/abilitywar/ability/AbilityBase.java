@@ -77,15 +77,17 @@ public abstract class AbilityBase {
 			private final Function<String, String> valueProvider = new Function<String, String>() {
 				@Override
 				public String apply(String string) {
-					try {
-						final Field field = registration.getAbilityClass().getDeclaredField(string);
-						if (Modifier.isStatic(field.getModifiers())) {
-							try {
-								return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
-							} catch (IllegalAccessException ignored) {
+					Class<?> finding = registration.getAbilityClass();
+					while (finding != null && finding != AbilityBase.class) {
+						try {
+							final Field field = finding.getDeclaredField(string);
+							if (Modifier.isStatic(field.getModifiers())) {
+								try {
+									return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
+								} catch (IllegalAccessException ignored) {}
 							}
-						}
-					} catch (NoSuchFieldException ignored) {
+						} catch (NoSuchFieldException ignored) {}
+						finding = finding.getSuperclass();
 					}
 					return "?";
 				}
@@ -142,20 +144,21 @@ public abstract class AbilityBase {
 	private final Function<String, String> fieldValueProvider = new Function<String, String>() {
 		@Override
 		public String apply(String string) {
-			try {
-				final Field field = AbilityBase.this.getClass().getDeclaredField(string);
-				if (Modifier.isStatic(field.getModifiers())) {
-					try {
-						return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
-					} catch (IllegalAccessException ignored) {
+			Class<?> finding = registration.getAbilityClass();
+			while (finding != null && finding != AbilityBase.class) {
+				try {
+					final Field field = finding.getDeclaredField(string);
+					if (Modifier.isStatic(field.getModifiers())) {
+						try {
+							return String.valueOf(ReflectionUtil.setAccessible(field).get(null));
+						} catch (IllegalAccessException ignored) {}
+					} else {
+						try {
+							return String.valueOf(ReflectionUtil.setAccessible(field).get(AbilityBase.this));
+						} catch (IllegalAccessException ignored) {}
 					}
-				} else {
-					try {
-						return String.valueOf(ReflectionUtil.setAccessible(field).get(AbilityBase.this));
-					} catch (IllegalAccessException ignored) {
-					}
-				}
-			} catch (NoSuchFieldException ignored) {
+				} catch (NoSuchFieldException ignored) {}
+				finding = finding.getSuperclass();
 			}
 			return "?";
 		}

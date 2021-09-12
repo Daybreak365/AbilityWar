@@ -50,8 +50,10 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 @AbilityManifest(name = "시간 역행", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7철괴 우클릭 §9- §b시간 역행§f: 시간을 역행해 $[TIME_CONFIG]초 전으로 돌아갑니다. 역행 중에는",
-		" 어떠한 피해도 입지 않으며, 타게팅의 대상이 되지 않습니다. $[COOLDOWN_CONFIG]"
+		"§7철괴 우클릭 §8- §b시간 역행§f: 시간을 역행해 $[TIME_CONFIG]초 전으로 돌아갑니다. 역행 중에는",
+		" 어떠한 피해도 입지 않으며, 타게팅의 대상이 되지 않습니다. $[COOLDOWN_CONFIG]",
+		"§7패시브 §8- §b완벽한 타이밍§f: 시간 역행이 사용 가능한 상태에서 §c죽을 위기§f에 처하면",
+		" 자동으로 시간을 역행합니다."
 })
 public class TimeRewind extends AbilityBase implements ActiveHandler {
 
@@ -92,11 +94,20 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	@Override
 	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && rewind == null && !cooldown.isCooldown()) {
-			new Rewind().start();
+		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && rewind == null) {
+			rewind();
 			return true;
 		}
 		return false;
+	}
+
+	@SubscribeEvent(onlyRelevant = true, priority = 6, ignoreCancelled = true, childs = {EntityDamageByBlockEvent.class, EntityDamageByEntityEvent.class})
+	private void onEntityDamage(EntityDamageEvent e) {
+		if (getPlayer().getHealth() - e.getFinalDamage() <= 0) {
+			if (rewind()) {
+				e.setCancelled(true);
+			}
+		}
 	}
 
 	@SubscribeEvent
@@ -115,6 +126,12 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 
 	private final LimitedPushingList<Moment> moments = new LimitedPushingList<>(time * 10);
 	private Rewind rewind = null;
+
+	private boolean rewind() {
+		if (rewind != null || cooldown.isCooldown()) return false;
+		new Rewind().start();
+		return true;
+	}
 
 	private class Rewind extends AbilityTimer implements Listener {
 
@@ -224,7 +241,7 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 			moments.add(new Moment());
 			if (!cooldown.isRunning()) {
 				int momentCount = 0;
-				final ListIterator<Moment> listIterator = moments.listIterator(moments.size() - 1);
+				final ListIterator<Moment> listIterator = new LinkedList<>(moments).listIterator(moments.size() - 1);
 				if (!listIterator.hasPrevious()) return;
 				listIterator.previous();
 				while (listIterator.hasPrevious()) {
@@ -269,6 +286,8 @@ public class TimeRewind extends AbilityBase implements ActiveHandler {
 	protected void onUpdate(Update update) {
 		if (update == Update.RESTRICTION_CLEAR) {
 			saveData.start();
+		} else if (update == Update.RESTRICTION_SET) {
+			moments.clear();
 		}
 	}
 

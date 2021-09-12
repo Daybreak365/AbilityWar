@@ -6,11 +6,15 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
+import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
+import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Fear;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -35,10 +39,31 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "광대", rank = Rank.A, species = Species.HUMAN, explain = {
-
+@AbilityManifest(name = "광대", rank = Rank.S, species = Species.HUMAN, explain = {
+		"§7철괴 우클릭 §8- §5환상§f: 바라보는 방향으로 순간이동하고 3초간 §b은신§f합니다. 이후 4초",
+		" 이내에 능력을 재사용하면 순간이동 전의 위치로 복귀하고 주위 다섯 칸 이내의",
+		" 모든 플레이어를 3초 동안 공포에 빠뜨리고 3초간 §b은신§f합니다. $[COOLDOWN_CONFIG]",
+		"§7패시브 §8- §5암습§f: 플레이어를 후방에서 타격하면 1.5초간 공포에 빠뜨리고 추가",
+		" 대미지를 줍니다. 유닛별 쿨타임§8(§710초§8)§f이 적용됩니다.",
+		"§7특수 효과 §8- §b은신§f: 갑옷 및 손에 들고 있는 아이템이 보이지 않으며, 몸이",
+		" 투명해집니다."
 })
 public abstract class AbstractClown extends AbilityBase implements ActiveHandler {
+
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(AbstractClown.class, "cooldown", 35,
+			"# 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+
+	};
 
 	private final Predicate<Entity> predicate = new Predicate<Entity>() {
 		@Override
@@ -105,6 +130,9 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 	}
 
 	private final Map<UUID, Long> lastFear = new HashMap<>();
+	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
+
+	private final int unitCooldown = (int) (10000 * Wreck.calculateDecreasedAmount(25));
 
 	@SubscribeEvent
 	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
@@ -112,9 +140,10 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 			Participant entity = getGame().getParticipant(e.getEntity().getUniqueId());
 			if (LocationUtil.isBehind(e.getEntity(), getPlayer())) {
 				final long current = System.currentTimeMillis();
-				if (current - lastFear.getOrDefault(entity.getPlayer().getUniqueId(), 0L) >= 10000) {
+				if (current - lastFear.getOrDefault(entity.getPlayer().getUniqueId(), 0L) >= unitCooldown) {
 					lastFear.put(entity.getPlayer().getUniqueId(), current);
 					Fear.apply(entity, TimeUnit.TICKS, 30, getPlayer());
+					e.setDamage(e.getDamage() * 1.35);
 					for (Note note : notes) {
 						SoundLib.CHIME.playInstrument(entity.getPlayer(), note);
 						SoundLib.CHIME.playInstrument(getPlayer(), note);
@@ -127,7 +156,7 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
-			if (teleport == null) {
+			if (teleport == null && !cooldown.isCooldown()) {
 				Block lastEmpty = null;
 				try {
 					for (BlockIterator iterator = new BlockIterator(getPlayer().getWorld(), getPlayer().getLocation().toVector(), getPlayer().getLocation().getDirection(), 1, 10); iterator.hasNext(); ) {
@@ -166,6 +195,7 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 					}.setPeriod(TimeUnit.TICKS, 1).start();
 					clown.hide();
 					clown.getPlayer().teleport(teleport.dest);
+					clown.getPlayer().setFallDistance(0);
 				}
 
 				@Override
@@ -181,6 +211,7 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 
 				@Override
 				public void onEnd(AbstractClown clown, Teleport teleport) {
+					clown.cooldown.start();
 					clown.teleport = null;
 					teleport.actionbarChannel.unregister();
 				}
@@ -191,7 +222,7 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 					clown.hide();
 					clown.getPlayer().teleport(teleport.start);
 					SoundLib.ENTITY_WITHER_SPAWN.playSound(teleport.start, .45f, 2);
-					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, teleport.start, 6, clown.predicate)) {
+					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, teleport.start, 5, clown.predicate)) {
 						PotionEffects.BLINDNESS.addPotionEffect(player, 80, 0, true);
 						Fear.apply(clown.getGame().getParticipant(player), TimeUnit.SECONDS, 3, clown.getPlayer());
 					}
@@ -200,6 +231,7 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 				@Override
 				public void onEnd(AbstractClown clown, Teleport teleport) {
 					clown.show();
+					clown.cooldown.start();
 					clown.teleport = null;
 					teleport.actionbarChannel.unregister();
 				}

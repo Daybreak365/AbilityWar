@@ -41,17 +41,17 @@ import java.util.List;
 import java.util.Set;
 
 @AbilityManifest(name = "플렉터", rank = Rank.S, species = Species.HUMAN, explain = {
-		"발사체를 바라본 상태로 검을 휘둘러 해당 발사체를",
-		"튕겨낼 수 있습니다. 본인이 발사한 발사체는 튕겨낼 수 없으며,",
-		"다른 플레이어가 발사한 발사체를 튕겨낼 경우 §e♥ §f만큼의",
-		"§e추가 체력§f을 얻습니다. §e추가 체력§f은 5칸 이상 얻을 수 없습니다.",
-		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 주변의 모든 투사체를 튕겨냅니다. $[COOLDOWN_CONFIG]"
+		"§7패시브 §8- §b튕겨내기§f: 발사체를 바라본 상태로 검을 휘두르면 해당 발사체를",
+		" 튕겨냅니다§8(§7본인이 발사한 발사체는 불가능§8)§f. 플레이어가 발사한 발사체를",
+		" 튕겨낼 경우 §e흡수 체력§7(§f최대 5칸§7)§f 한 칸을 추가로 얻습니다.",
+		"§7철괴 우클릭 §8- §b견고한 수비§f: $[DURATION_CONFIG]초간 주변 8칸 이내의 모든 발사체를",
+		" 튕겨냅니다. $[COOLDOWN_CONFIG]"
 })
 @Tips(tip = {
 		"멀리서 날아오는 화살, 더 이상 맞을 필요가 없습니다. 모두 튕겨내",
 		"추가 체력으로 만들어버리세요. 화살 뿐만 아니라 관통 화살, 스나이퍼,",
 		"로렘이 발사하는 파티클로 된 발사체도 튕겨낼 수 있습니다. 직접",
-		"튕겨내기 귀찮다면 액티브 스킬을 이용해 일정 시간동안 자동으로",
+		"튕겨내기 힘들다면 액티브 스킬을 이용해 일정 시간동안 자동으로",
 		"튕겨낼 수도 있습니다."
 }, strong = {
 		@Description(subject = "발사체 돌려보내기", explain = {
@@ -170,7 +170,7 @@ public class Flector extends AbilityBase implements ActiveHandler {
 					projectile.removeMetadata("flector", AbilityWar.getPlugin());
 				}
 			}
-			projectile.setVelocity(playerDirection ? getPlayer().getLocation().getDirection().multiply(2.2 * NMS.getAttackCooldown(getPlayer())) : projectile.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().add(projectile.getVelocity().multiply(-1)));
+			projectile.setVelocity(playerDirection ? getPlayer().getLocation().getDirection().multiply(2.2) : projectile.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().add(projectile.getVelocity().multiply(-1)));
 			projectile.setMetadata("flector", new FixedMetadataValue(AbilityWar.getPlugin(), getPlayer().getUniqueId()));
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			ParticleLib.SWEEP_ATTACK.spawnParticle(projectile.getLocation());
@@ -183,7 +183,7 @@ public class Flector extends AbilityBase implements ActiveHandler {
 
 	private boolean deflect(Deflectable deflectable, boolean playerDirection) {
 		if (deflectable != null && !getPlayer().equals(deflectable.getShooter())) {
-			deflectable.onDeflect(getParticipant(), playerDirection ? getPlayer().getLocation().getDirection().multiply(2.2 * NMS.getAttackCooldown(getPlayer())) : deflectable.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().add(deflectable.getDirection().multiply(-1)));
+			deflectable.onDeflect(getParticipant(), playerDirection ? getPlayer().getLocation().getDirection().multiply(2.2) : deflectable.getLocation().toVector().subtract(getPlayer().getLocation().toVector()).normalize().add(deflectable.getDirection().multiply(-1)));
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			ParticleLib.SWEEP_ATTACK.spawnParticle(deflectable.getLocation());
 			if (deflectable.getShooter() instanceof Player)

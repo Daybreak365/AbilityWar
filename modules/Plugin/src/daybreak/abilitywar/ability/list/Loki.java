@@ -44,9 +44,8 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "로키", rank = Rank.S, species = Species.GOD, explain = {
 		"다른 플레이어를 근접 공격해 스택을 쌓을 수 있습니다. 스택이 쌓일 때마다 대상을",
 		"중심으로 하여 마지막으로 이동한 방향으로 짧게 순간이동합니다. 스택이 다섯 개",
-		"쌓이면 스택이 초기화되고 반대 방향으로 순간이동합니다. 모든 근접 공격 대미지가",
-		"20% 감소합니다. 다른 플레이어를 바라본 상태로 철괴를 우클릭하면 대상의 등 뒤로",
-		"순간이동합니다. $[COOLDOWN_CONFIG]"
+		"쌓이면 스택이 초기화되고 반대 방향으로 순간이동합니다. 다른 플레이어를 바라본",
+		"상태로 철괴를 우클릭하면 대상의 등 뒤로 순간이동합니다. $[COOLDOWN_CONFIG]"
 })
 public class Loki extends AbilityBase implements ActiveHandler {
 
@@ -208,7 +207,6 @@ public class Loki extends AbilityBase implements ActiveHandler {
 					e.setDamage(e.getDamage() * 1.4);
 				}
 			} else new Stack((Player) e.getEntity()).start();
-			e.setDamage(e.getDamage() * .8);
 		}
 	}
 

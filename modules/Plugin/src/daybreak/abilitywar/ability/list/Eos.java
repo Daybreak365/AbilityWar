@@ -38,6 +38,7 @@ import org.bukkit.util.Vector;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "에오스", rank = Rank.A, species = Species.GOD, explain = {
@@ -119,7 +120,7 @@ public class Eos extends AbilityBase implements ActiveHandler {
 		final long current = System.currentTimeMillis();
 		if (current - lastClick >= 250) {
 			this.lastClick = current;
-			new Cut(getPlayer().getLocation().clone().add(0, 1.5, 0), (state = !state) ? 25 : -25).start();
+			new Cut(getPlayer().getLocation().clone().add(0, 1.5, 0), (state = !state) ? 25 : -25, null).start();
 			SoundLib.ENTITY_WITHER_SHOOT.playSound(getPlayer().getLocation());
 		}
 	}
@@ -148,20 +149,22 @@ public class Eos extends AbilityBase implements ActiveHandler {
 		private final Location base;
 		private final double angle;
 		private final int sharpness;
+		private final Consumer<LivingEntity> onDamage;
 
-		private Cut(Location base, double angle) {
+		private Cut(Location base, double angle, Consumer<LivingEntity> onDamage) {
 			super(angle < 0 ? TaskType.REVERSE : TaskType.NORMAL, 3);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.base = base;
 			this.angle = angle;
 			this.sharpness = getPlayer().getInventory().getItemInMainHand().getEnchantmentLevel(Enchantment.DAMAGE_ALL);
+			this.onDamage = onDamage;
 		}
 
 		@Override
 		protected void run(int count) {
 			final Vector direction = base.getDirection().setY(0).normalize(), axis = VectorUtil.rotateAroundAxisY(direction.clone(), 90);
-			for (int i = 0; i < 15; i++) {
-				final double radians = 0.06981317007977318307694763073954 * ((count - 1) * 15 + i);
+			for (int i = 0; i < 10; i++) {
+				final double radians = 0.10471975511965977461542144610932 * ((count - 1) * 10 + i);
 				final double cos = FastMath.cos(radians), sin = FastMath.sin(radians);
 				for (Component component : components) {
 					final Location loc = base.clone().add(
@@ -175,6 +178,7 @@ public class Eos extends AbilityBase implements ActiveHandler {
 					boundingBox.setCenter(loc);
 					for (LivingEntity entity : LocationUtil.getConflictingEntities(LivingEntity.class, getPlayer().getWorld(), boundingBox, predicate)) {
 						Damages.damageMagic(entity, getPlayer(), false, (float) EnchantLib.getDamageWithSharpnessEnchantment(getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue(), sharpness));
+						if (onDamage != null) onDamage.accept(entity);
 					}
 				}
 			}
@@ -236,7 +240,7 @@ public class Eos extends AbilityBase implements ActiveHandler {
 			if (count % 2 != 0) {
 				final Location base = newLocation.clone();
 				base.setDirection(direction);
-				new Cut(base, (state = !state) ? 25 : -25).start();
+				new Cut(base, (state = !state) ? 25 : -25, null).start();
 				SoundLib.ENTITY_WITHER_SHOOT.playSound(base);
 			}
 		}

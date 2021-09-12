@@ -10,32 +10,38 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
+import kotlin.ranges.RangesKt;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
 import org.bukkit.Note.Tone;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "뮤즈", rank = Rank.S, species = Species.GOD, explain = {
-		"철괴를 우클릭하면 뮤즈가 주변 지역을 축복하여",
-		"모두가 대미지를 받지 않는 지역을 만들어냅니다. $[COOLDOWN_CONFIG]",
-		"지역은 점점 줄어들며, 지속 시간이 끝나면 사라집니다."
+		"§7철괴 우클릭 §8- §d축복§f: 자신을 중심으로 모두가 대미지를 받지 않는 지역을",
+		" 만들어내며, 지역은 점차 축소됩니다. 지역 내에서 무시된 피해량의 10%만큼",
+		" 체력을 회복하고, 체력이 가득 찬 경우 §e흡수 체력§7(§f최대 5칸§7)§f으로 회복합니다."
 })
 public class Muse extends AbilityBase implements ActiveHandler {
 
@@ -178,32 +184,27 @@ public class Muse extends AbilityBase implements ActiveHandler {
 		return false;
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(ignoreCancelled = true, priority = 6, childs = {EntityDamageByEntityEvent.class, EntityDamageByBlockEvent.class})
 	public void onEntityDamage(EntityDamageEvent e) {
 		if (center != null) {
 			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void onEntityDamage(EntityDamageByEntityEvent e) {
-		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
-				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
-				e.setCancelled(true);
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void onEntityDamage(EntityDamageByBlockEvent e) {
-		if (center != null) {
-			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
-				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
-				e.setCancelled(true);
+				final double amount = e.getFinalDamage() / 10;
+				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), amount, RegainReason.CUSTOM);
+				Bukkit.getPluginManager().callEvent(event);
+				if (!event.isCancelled()) {
+					final double maxHealth = getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+					final double empty = maxHealth - getPlayer().getHealth();
+					if (empty >= event.getAmount()) {
+						getPlayer().setHealth(RangesKt.coerceIn(getPlayer().getHealth() + event.getAmount(), 0, maxHealth));
+					} else {
+						getPlayer().setHealth(maxHealth);
+						if (NMS.getAbsorptionHearts(getPlayer()) < 10) {
+							NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + (float) (event.getAmount() - empty), 10));
+						}
+					}
+				}
 			}
 		}
 	}

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 @AbilityManifest(name = "다이스 갓", rank = Rank.A, species = Species.GOD, explain = {
-		"철괴를 우클릭하면 §c재생 §f/ §6힘 §f/ §3저항 §f/ §5시듦 §f/ §8구속 §f/ §7나약함 §f효과 중 하나를",
+		"철괴를 우클릭하면 §c재생 §f/ §6힘 §f/ §3저항 §f/ §b신속 §f/ §8구속 §f/ §7나약함 §f효과 중 하나를",
 		"7초간 받습니다. $[COOLDOWN_CONFIG]",
 		"공격을 받았을 때 1/6 확률로 대미지를 받는 대신 대미지만큼 체력을 회복합니다."
 })
@@ -87,8 +87,8 @@ public class DiceGod extends AbilityBase implements ActiveHandler {
 			new PlayerConsumer() {
 				@Override
 				public void accept(Player player) {
-					player.sendMessage("§5시듦 §f효과를 받습니다.");
-					PotionEffects.WITHER.addPotionEffect(player, 140, 1, true);
+					player.sendMessage("§b신속 §f효과를 받습니다.");
+					PotionEffects.SPEED.addPotionEffect(player, 140, 1, true);
 				}
 			},
 			new PlayerConsumer() {

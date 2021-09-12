@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame;
@@ -265,7 +266,7 @@ public abstract class AbilitySelect extends GameTimer {
 			public List<Class<? extends AbilityBase>> collect(Class<? extends AbstractGame> game) {
 				final List<Class<? extends AbilityBase>> abilities = new ArrayList<>();
 				for (AbilityRegistration registration : AbilityList.values()) {
-					if (!Settings.isBlacklisted(registration.getManifest().name()) && registration.isAvailable(game)) {
+					if (!Settings.isBlacklisted(registration.getManifest().name()) && registration.isAvailable(game) && (Settings.isUsingBetaAbility() || !registration.hasFlag(Flag.BETA))) {
 						abilities.add(registration.getAbilityClass());
 					}
 				}

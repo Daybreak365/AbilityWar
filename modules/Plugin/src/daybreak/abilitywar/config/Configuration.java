@@ -258,6 +258,10 @@ public class Configuration {
 			return getBlackList().contains(abilityName);
 		}
 
+		public static boolean isUsingBetaAbility() {
+			return get(ConfigNodes.GAME_USE_BETA_ABILITY);
+		}
+
 		public static void addBlacklist(Collection<String> abilityNames) {
 			Set<String> set = getBlackList();
 			if (set.addAll(abilityNames)) {

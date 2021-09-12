@@ -82,7 +82,7 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = abilitySettings.new SettingObject<Integer>(Nex.class, "damage", 20, "# 대미지") {
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Nex.class, "damage", 20, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -229,7 +229,7 @@ public class Nex extends AbilityBase implements ActiveHandler {
 	}
 
 	private void ability() {
-		final double damage = DamageConfig.getValue();
+		final double damage = DAMAGE_CONFIG.getValue();
 		for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
 			if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
 			d.damage(damage, getPlayer());

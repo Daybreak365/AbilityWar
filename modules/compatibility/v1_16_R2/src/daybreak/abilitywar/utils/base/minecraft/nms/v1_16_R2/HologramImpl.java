@@ -3,7 +3,6 @@ package daybreak.abilitywar.utils.base.minecraft.nms.v1_16_R2;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import net.minecraft.server.v1_16_R2.EntityArmorStand;
-import net.minecraft.server.v1_16_R2.EntityPlayer;
 import net.minecraft.server.v1_16_R2.IChatBaseComponent;
 import net.minecraft.server.v1_16_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_16_R2.PacketPlayOutEntityDestroy;

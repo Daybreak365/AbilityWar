@@ -50,7 +50,7 @@ import java.util.function.Predicate;
 		"철괴를 좌클릭하면 자신이 보고 있는 방향으로 §b얼음§f을 날립니다. $[LEFT_COOLDOWN_CONFIG]",
 		"§b얼음§f에 맞은 생명체는 2초간 얼어붙으며, 대미지를 입지 않습니다.",
 		"주변을 지나가는 발사체들이 모두 얼어붙어 바닥으로 떨어집니다.",
-		"눈과 얼음 위에서 §6힘§f, §b신속 §f버프를 받습니다.",
+		"눈과 얼음 위에서 §6힘§f, §b신속§f, §3저항 §f버프를 받습니다.",
 		"철괴를 우클릭하면 주변을 눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]",
 		"우클릭 능력 사용시 주위에 있었던 모든 플레이어를 6초간 얼립니다."
 })
@@ -102,8 +102,9 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			Material m = getPlayer().getLocation().getBlock().getType();
 			Material bm = getPlayer().getLocation().subtract(0, 1, 0).getBlock().getType();
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
-				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 2, true);
-				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
+				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 1, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 0, true);
+				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
 			}
 		}
 

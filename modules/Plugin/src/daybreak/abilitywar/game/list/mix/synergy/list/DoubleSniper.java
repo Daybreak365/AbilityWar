@@ -196,14 +196,16 @@ public class DoubleSniper extends Synergy {
 						block.breakNaturally();
 						SoundLib.BLOCK_GLASS_BREAK.playSound(block.getLocation(), 3, 1);
 					} else {
-						location.getWorld().createExplosion(location, 2);
+						ParticleLib.EXPLOSION_NORMAL.spawnParticle(location);
+						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(location, .5f, 1f);
 						stop(false);
 						return;
 					}
 				}
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(livingEntity)) {
-						Damages.damageArrow(livingEntity, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
+						Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithPowerEnchantment((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 20.0, powerEnchant) * 0.08));
+						livingEntity.setNoDamageTicks(0);
 						stop(false);
 						return;
 					}

@@ -29,7 +29,7 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.6.1</version>
-        <goals/>
+        <goals />
         <configuration>
           <source>16</source>
           <target>16</target>

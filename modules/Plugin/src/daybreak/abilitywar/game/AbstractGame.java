@@ -52,6 +52,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -67,6 +68,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -385,6 +387,18 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 									}
 								}
 							}
+						}
+					}
+				}
+
+				@EventHandler
+				public void onPlayerDeath(PlayerDeathEvent e) {
+					final Player player = e.getEntity();
+					if (player.equals(getPlayer())) {
+						for (final Iterator<Entry<EffectRegistration<?>, Effect>> iterator = effects.entries().iterator(); iterator.hasNext();) {
+							final Entry<EffectRegistration<?>, Effect> entry = iterator.next();
+							iterator.remove();
+							entry.getValue().stop(false);
 						}
 					}
 				}

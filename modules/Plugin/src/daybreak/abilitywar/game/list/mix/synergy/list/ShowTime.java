@@ -53,7 +53,7 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "쇼 타임", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
-		"능력으로 인해 깔린 레드 카펫 위에 있을 때 같은 월드의 모든 생명체가",
+		"능력으로 인해 깔린 레드 카펫 위에 있을 때 주변 35칸 이내의 모든 생명체가",
 		"자신을 바라보며, 깔린 레드 카펫은 $[DURATION_CONFIG]초 후 사라집니다.",
 		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받으며,",
 		"플레이어는 1명, 플레이어가 아닌 생명체는 0.2명 취급합니다.",
@@ -64,6 +64,25 @@ import java.util.function.Predicate;
 
 public class ShowTime extends Synergy implements ActiveHandler {
 
+	private final Predicate<Entity> predicate = new Predicate<Entity>() {
+		@Override
+		public boolean test(Entity entity) {
+			if (entity.equals(getPlayer())) return false;
+			if (entity instanceof Player) {
+				if (!getGame().isParticipating(entity.getUniqueId())
+						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+					return false;
+				}
+				if (getGame() instanceof Teamable) {
+					final Teamable teamGame = (Teamable) getGame();
+					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+				}
+			}
+			return true;
+		}
+	};
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(ShowTime.class, "cooldown", 40,
 			"# 쿨타임") {
 
@@ -142,7 +161,7 @@ public class ShowTime extends Synergy implements ActiveHandler {
 		protected void onDurationProcess(int seconds) {
 			Block block = getPlayer().getLocation().getBlock();
 			if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
-				for (LivingEntity entity : getPlayer().getWorld().getLivingEntities()) {
+				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 35, 35, predicate)) {
 					if (getPlayer().equals(entity)) continue;
 					for (Player player : Bukkit.getOnlinePlayers()) {
 						Vector direction = getPlayer().getEyeLocation().toVector().subtract(entity.getEyeLocation().toVector());

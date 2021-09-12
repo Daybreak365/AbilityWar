@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 @AbilityManifest(name = "설인", rank = Rank.S, species = Species.HUMAN, explain = {
-		"눈과 얼음 위에서 §6힘§f, §b신속, §3저항 §f버프를 받습니다. 철괴를 우클릭하면 주변 지역을",
+		"눈과 얼음 위에서 §6힘§f, §b신속§f, §3저항 §f버프를 받습니다. 철괴를 우클릭하면 주변 지역을",
 		"눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]"
 })
 public class Yeti extends AbilityBase implements ActiveHandler {

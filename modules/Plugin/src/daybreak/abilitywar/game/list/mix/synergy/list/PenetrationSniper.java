@@ -180,7 +180,7 @@ public class PenetrationSniper extends Synergy {
 				if (victim instanceof LivingEntity) {
 					((LivingEntity) victim).setNoDamageTicks(0);
 				}
-				victim.damage(5, damager);
+				victim.damage(10, damager);
 			}
 		};
 		OnHitBehavior GRAVITY = new OnHitBehavior() {
@@ -208,7 +208,7 @@ public class PenetrationSniper extends Synergy {
 						return true;
 					}
 				})) {
-					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(0.75));
+					entity.setVelocity(victim.getLocation().toVector().subtract(entity.getLocation().toVector()).multiply(1.25));
 				}
 				final Participant participant = ability.getGame().getParticipant(victim.getUniqueId());
 				if (participant != null) {
@@ -221,7 +221,7 @@ public class PenetrationSniper extends Synergy {
 			public void onHit(PenetrationSniper ability, Damageable damager, Damageable victim) {
 				Vector vector = damager.getLocation().toVector().subtract(victim.getLocation().toVector()).multiply(-1);
 				if (vector.length() > 0.01) {
-					vector.normalize().multiply(2);
+					vector.normalize().multiply(3);
 				}
 				victim.setVelocity(vector.setY(0));
 			}
