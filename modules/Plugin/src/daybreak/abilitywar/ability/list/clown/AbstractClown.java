@@ -15,6 +15,7 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.library.ParticleLib;
@@ -180,85 +181,85 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
 		return false;
 	}
 
-	private class Teleport extends AbilityTimer {
-
-		private enum Phase {
-			HIDE(3, false, "§7은신") {
-				@Override
-				public void onStart(AbstractClown clown, Teleport teleport) {
-					ParticleLib.CLOUD.spawnParticle(clown.getPlayer().getLocation(), .5, .5, .5, 20, 0);
-					clown.new AbilityTimer(TaskType.NORMAL, 5) {
-						@Override
-						protected void run(int count) {
-							SoundLib.ENTITY_WITCH_AMBIENT.playSound(clown.getPlayer().getLocation(), .45f, 2);
-						}
-					}.setPeriod(TimeUnit.TICKS, 1).start();
-					clown.hide();
-					clown.getPlayer().teleport(teleport.dest);
-					clown.getPlayer().setFallDistance(0);
-				}
-
-				@Override
-				public void onEnd(AbstractClown clown, Teleport teleport) {
-					clown.show();
-					teleport.phase = Phase.IDLE;
-					teleport.start();
-				}
-			}, IDLE(4, true, "§b귀환 가능") {
-				@Override
-				public void onStart(AbstractClown clown, Teleport teleport) {
-				}
-
-				@Override
-				public void onEnd(AbstractClown clown, Teleport teleport) {
-					clown.cooldown.start();
-					clown.teleport = null;
-					teleport.actionbarChannel.unregister();
-				}
-			}, AFTER_RETURN(3, false, "§7은신") {
-				@Override
-				public void onStart(AbstractClown clown, Teleport teleport) {
-					ParticleLib.CLOUD.spawnParticle(clown.getPlayer().getLocation(), .5, .5, .5, 20, 0);
-					clown.hide();
-					clown.getPlayer().teleport(teleport.start);
-					SoundLib.ENTITY_WITHER_SPAWN.playSound(teleport.start, .45f, 2);
-					for (Player player : LocationUtil.getEntitiesInCircle(Player.class, teleport.start, 5, clown.predicate)) {
-						PotionEffects.BLINDNESS.addPotionEffect(player, 80, 0, true);
-						Fear.apply(clown.getGame().getParticipant(player), TimeUnit.SECONDS, 3, clown.getPlayer());
+	private enum Phase {
+		HIDE(3, false, "§7은신") {
+			@Override
+			public void onStart(AbstractClown clown, Teleport teleport) {
+				ParticleLib.CLOUD.spawnParticle(clown.getPlayer().getLocation(), .5, .5, .5, 20, 0);
+				clown.new AbilityTimer(TaskType.NORMAL, 5) {
+					@Override
+					protected void run(int count) {
+						SoundLib.ENTITY_WITCH_AMBIENT.playSound(clown.getPlayer().getLocation(), .45f, 2);
 					}
+				}.setPeriod(TimeUnit.TICKS, 1).start();
+				clown.hide();
+				clown.getPlayer().teleport(teleport.dest);
+				clown.getPlayer().setFallDistance(0);
+			}
+
+			@Override
+			public void onEnd(AbstractClown clown, Teleport teleport) {
+				clown.show();
+				teleport.phase = Phase.IDLE;
+				teleport.start();
+			}
+		}, IDLE(4, true, "§b귀환 가능") {
+			@Override
+			public void onStart(AbstractClown clown, Teleport teleport) {
+			}
+
+			@Override
+			public void onEnd(AbstractClown clown, Teleport teleport) {
+				clown.cooldown.start();
+				clown.teleport = null;
+				teleport.actionbarChannel.unregister();
+			}
+		}, AFTER_RETURN(3, false, "§7은신") {
+			@Override
+			public void onStart(AbstractClown clown, Teleport teleport) {
+				ParticleLib.CLOUD.spawnParticle(clown.getPlayer().getLocation(), .5, .5, .5, 20, 0);
+				clown.hide();
+				clown.getPlayer().teleport(teleport.start);
+				SoundLib.ENTITY_WITHER_SPAWN.playSound(teleport.start, .45f, 2);
+				for (Player player : LocationUtil.getEntitiesInCircle(Player.class, teleport.start, 5, clown.predicate)) {
+					PotionEffects.BLINDNESS.addPotionEffect(player, 80, 0, true);
+					Fear.apply(clown.getGame().getParticipant(player), TimeUnit.SECONDS, 3, clown.getPlayer());
 				}
-
-				@Override
-				public void onEnd(AbstractClown clown, Teleport teleport) {
-					clown.show();
-					clown.cooldown.start();
-					clown.teleport = null;
-					teleport.actionbarChannel.unregister();
-				}
-			};
-
-			private final int count;
-			private final boolean canReturn;
-			private final String state;
-
-			Phase(int count, boolean canReturn, String state) {
-				this.count = count;
-				this.canReturn = canReturn;
-				this.state = state;
 			}
 
-			public int getCount() {
-				return count;
+			@Override
+			public void onEnd(AbstractClown clown, Teleport teleport) {
+				clown.show();
+				clown.cooldown.start();
+				clown.teleport = null;
+				teleport.actionbarChannel.unregister();
 			}
+		};
 
-			public boolean canReturn() {
-				return canReturn;
-			}
+		private final int count;
+		private final boolean canReturn;
+		private final String state;
 
-			public abstract void onStart(AbstractClown clown, Teleport teleport);
-
-			public abstract void onEnd(AbstractClown clown, Teleport teleport);
+		Phase(int count, boolean canReturn, String state) {
+			this.count = count;
+			this.canReturn = canReturn;
+			this.state = state;
 		}
+
+		public int getCount() {
+			return count;
+		}
+
+		public boolean canReturn() {
+			return canReturn;
+		}
+
+		public abstract void onStart(AbstractClown clown, Teleport teleport);
+
+		public abstract void onEnd(AbstractClown clown, Teleport teleport);
+	}
+
+	private class Teleport extends AbilityTimer {
 
 		private Phase phase = Phase.HIDE;
 		private final Location start, dest;
