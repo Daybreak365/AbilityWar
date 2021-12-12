@@ -13,6 +13,7 @@ import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -22,7 +23,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Crescent;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
@@ -123,11 +123,11 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 	private void updateTime(World world) {
 		final long diff = 15000 - world.getTime();
 		if (diff < 0) {
-			if (-diff > 1000) world.setTime(world.getTime() - 1500);
-			else world.setTime(world.getTime() + diff);
+			if (-diff > 2000) world.setTime(world.getTime() - 1500);
+			else world.setTime(15000);
 		} else if (diff > 0) {
-			if (diff > 1000) world.setTime(world.getTime() + 1500);
-			else world.setTime(world.getTime() + diff);
+			if (diff > 2000) world.setTime(world.getTime() + 1500);
+			else world.setTime(15000);
 		}
 	}
 

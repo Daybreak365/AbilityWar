@@ -19,11 +19,14 @@ import daybreak.abilitywar.game.specialthanks.SpecialThanks;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
+import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
+import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.installer.Installer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -34,7 +37,7 @@ import java.util.logging.Level;
 /**
  * @author Daybreak 새벽
  */
-public class AbilityWar extends JavaPlugin implements Provider {
+public class AbilityWar extends JavaPlugin implements Provider, Listener {
 
 	static {
 		ConfigurationSerialization.registerClass(AbilityKit.class);
@@ -89,6 +92,7 @@ public class AbilityWar extends JavaPlugin implements Provider {
 	public void onEnable() {
 		if (!ServerVersion.compatVersion(this)) return;
 		getCommand("AbilityWar").setExecutor(commands);
+		Bukkit.getPluginManager().registerEvents(this, this);
 
 		AddonLoader.loadAll();
 		AddonLoader.enableAll();
@@ -121,7 +125,12 @@ public class AbilityWar extends JavaPlugin implements Provider {
 				ScriptManager.loadAll();
 			}
 		});
-		Messager.sendConsoleMessage("플러그인이 활성화되었습니다. §8(§7" + ServerVersion.getName() + "§8)");
+		Messager.sendConsoleMessage("플러그인이 활성화되었습니다. §8(§7" + ServerType.getServerType() + " " + ServerVersion.getName() + "§8)");
+		if (ServerType.getServerType() != ServerType.PAPER) {
+			Messager.sendConsoleMessage("Paper 서버 사용을 추천드립니다. " + (
+					ServerVersion.isAboveOrEqual(NMSVersion.v1_17_R1) ? "https://papermc.io/downloads" : "https://papermc.io/legacy"
+			));
+		}
 	}
 
 	@Override

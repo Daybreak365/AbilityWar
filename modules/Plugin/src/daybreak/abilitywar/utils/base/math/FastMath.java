@@ -54,12 +54,12 @@ public class FastMath {
 		else return 0;
 	}
 
-	public static double cos(double radians) {
-		return sin(radians + 1.57079632679489661923);
+	public static double cos(double a) {
+		return sin(a + 1.57079632679489661923);
 	}
 
-	public static double tan(double radians) {
-		return sin(radians) / cos(radians);
+	public static double tan(double a) {
+		return sin(a) / cos(a);
 	}
 
 	public static int gcd(int a, int b) {

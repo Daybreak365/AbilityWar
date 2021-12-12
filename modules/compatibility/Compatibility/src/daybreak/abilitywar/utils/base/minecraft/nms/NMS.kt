@@ -203,6 +203,5 @@ class NMS private constructor() {
         override fun setPickupStatus(arrow: Projectile, pickupStatus: PickupStatus) {
             INSTANCE.setPickupStatus(arrow, pickupStatus)
         }
-
-    }
+	}
 }

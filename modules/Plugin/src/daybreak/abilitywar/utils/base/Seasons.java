@@ -22,4 +22,12 @@ public class Seasons {
 		return dayOfMonth >= 18;
 	}
 
+	/**
+	 * 연말연시 시즌: 12월 1일 ~ 1월 1일
+	 * @return  크리스마스 시즌일 경우 true, 아닐 경우 false
+	 */
+	public static boolean isFestive() {
+		return calendar.get(Calendar.MONTH) == Calendar.DECEMBER || (calendar.get(Calendar.MONTH) == Calendar.JANUARY && calendar.get(Calendar.DAY_OF_MONTH) == 1);
+	}
+
 }

@@ -112,6 +112,12 @@
             <artifactId>annotations</artifactId>
             <version>${annotations.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.koca2000</groupId>
+            <artifactId>NoteBlockAPI</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -159,6 +165,7 @@
                                     <include>org.jetbrains.kotlin:**</include>
                                     <include>com.google.guava:guava</include>
                                     <include>com.google.code.gson:gson</include>
+                                    <include>com.github.koca2000:NoteBlockAPI</include>
                                 </includes>
                             </artifactSet>
                             <relocations>

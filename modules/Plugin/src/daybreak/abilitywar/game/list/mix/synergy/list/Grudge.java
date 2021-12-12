@@ -7,18 +7,18 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.manager.effect.EvilSpirit;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
-import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -33,6 +33,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.EntityEquipment;
+
+import java.util.function.Predicate;
 
 @AbilityManifest(name = "원한", rank = Rank.B, species = Species.OTHERS, explain = {
 		"죽을 때 나를 죽인 플레이어의 저주 인형을 내 위치에 만들어냅니다. 저주 인형은",
@@ -68,8 +70,9 @@ public class Grudge extends Synergy {
 		}
 	};
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onPlayerDeath(final PlayerDeathEvent e) {
+	@SubscribeEvent
+	private void onPlayerDeath(final ParticipantDeathEvent e) {
+		if (!getParticipant().equals(e.getParticipant())) return;
 		final Player killer = getPlayer().getKiller();
 		if (killer != null && predicate.test(killer)) {
 			new VoodooDoll(this, getGame().getParticipant(killer)).start();

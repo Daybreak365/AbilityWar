@@ -171,6 +171,7 @@ public class AbilityList {
 		registerAbility(Eos.class);
 		registerAbility(Morpheus.class);
 		registerAbility("daybreak.abilitywar.ability.list.clown." + ServerVersion.getName() + ".Clown");
+		registerAbility("daybreak.abilitywar.ability.list.soul." + ServerVersion.getName() + ".Soul");
 	}
 
 	/**
@@ -187,7 +188,7 @@ public class AbilityList {
 		try {
 			registerAbility(Class.forName(className).asSubclass(AbilityBase.class));
 		} catch (ClassNotFoundException e) {
-			logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + className + " §f클래스는 존재하지 않습니다."));
+			logger.debug(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + className + " §f클래스는 존재하지 않습니다."));
 		} catch (ClassCastException e) {
 			logger.error(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + className + " §f클래스는 AbilityBase를 확장하지 않습니다."));
 		}

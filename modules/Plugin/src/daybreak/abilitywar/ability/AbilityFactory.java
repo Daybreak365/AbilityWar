@@ -168,6 +168,8 @@ public class AbilityFactory {
 		registerAbility(Morpheus.class);
 		registerAbility("daybreak.abilitywar.ability.list.clown." + ServerVersion.getName() + ".Clown");
 
+		// v3.0.2
+		registerAbility("daybreak.abilitywar.ability.list.soul." + ServerVersion.getName() + ".Soul");
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
@@ -242,7 +244,7 @@ public class AbilityFactory {
 		try {
 			registerAbility(Class.forName(className).asSubclass(AbilityBase.class));
 		} catch (ClassNotFoundException e) {
-			logger.error("§e" + className + " §f클래스는 존재하지 않습니다.");
+			logger.debug("§e" + className + " §f클래스는 존재하지 않습니다.");
 		} catch (ClassCastException e) {
 			logger.error("§e" + className + " §f클래스는 AbilityBase를 확장하지 않습니다.");
 		}

@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityBase.Duration;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest;
+import daybreak.abilitywar.ability.event.AbilityCooldownResetEvent;
 import daybreak.abilitywar.addon.installer.AddonsGUI;
 import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.config.Configuration;
@@ -677,6 +678,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 						if (GameManager.isGameRunning()) {
 							if (args.length == 0) {
 								GameManager.getGame().stopTimers(Cooldown.CooldownTimer.class);
+								for (Participant participant : GameManager.getGame().getParticipants()) {
+									if (participant.hasAbility()) {
+										Bukkit.getPluginManager().callEvent(new AbilityCooldownResetEvent(participant.getAbility()));
+									}
+								}
 								Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 능력 쿨타임을 모두 초기화하였습니다.");
 							} else {
 								final Player target = Bukkit.getPlayerExact(args[0]);
@@ -690,6 +696,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 													timer.stop(false);
 												}
 											}
+											Bukkit.getPluginManager().callEvent(new AbilityCooldownResetEvent(ability));
 										}
 										Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 §f" + target.getName() + "§a님의 능력 쿨타임을 초기화하였습니다.");
 									} else Messager.sendErrorMessage(sender, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");

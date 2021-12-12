@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.specialthanks;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class SpecialThanks {
@@ -54,6 +56,11 @@ public class SpecialThanks {
 		}
 	}
 
+	public static final ImmutableSet<UUID> developers = ImmutableSet.of(
+			UUID.fromString("107f4338-b6aa-4710-8774-8b7ef8170414"),
+			UUID.fromString("f6cef082-9b7e-48c1-a973-532389b6e3e1"),
+			UUID.fromString("ecb53e2f-fdf3-4089-ae34-86cff3fc5f34")
+	);
 	private static final Category DEVELOPER = new Category("§3개발자", new CustomSkullBuilder("bd9f18c9d85f92f72f864d67c1367e9a45dc10f371549c46a4d4dd9e4f13ff4").build())
 			.addSpecialThanks(
 					new SpecialThank("레인스타", "f6cef0829b7e48c1a973532389b6e3e1",
@@ -95,7 +102,8 @@ public class SpecialThanks {
 							"능력 테스트에 도움을 주셨습니다. 자신의 애드온을",
 							"만들겠다며 도전했지만, 모종의 이유§8(§7귀찮음§8, §7어려움§8)§f로 인하여",
 							"하나의 능력만 개발된 채 방치된 상태입니다. 언젠가는 개발 완료되어",
-							"추천 애드온 목록에서 볼 수 있기를 기대합니다."
+							"추천 애드온 목록에서 볼 수 있기를 기대합니다.",
+							"2021년 9월 7일 군대에 입대하셨습니다. 충성!"
 					)
 			)
 			.addSpecialThanks(

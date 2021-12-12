@@ -34,6 +34,7 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.SoundLib;
+import kotlin.ranges.RangesKt;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -423,7 +424,7 @@ public abstract class AbilityBase {
 	 * 이 능력이 사용되는 게임을 반환합니다.
 	 */
 	@NotNull
-	protected final AbstractGame getGame() {
+	public final AbstractGame getGame() {
 		return game;
 	}
 
@@ -581,7 +582,7 @@ public abstract class AbilityBase {
 		private CooldownTimer timer;
 
 		public Cooldown(final int cooldown, final String name, final int maxDecrease) {
-			this.cooldown = (int) (Wreck.isEnabled(getGame()) ? cooldown * Wreck.calculateDecreasedAmount(Math.min(100, Math.max(0, maxDecrease))) : cooldown);
+			this.cooldown = (int) (Wreck.isEnabled(getGame()) ? cooldown * Wreck.calculateDecreasedAmount(RangesKt.coerceIn(maxDecrease, 0, 100)) : cooldown);
 			this.timer = new CooldownTimer(this.cooldown);
 			this.name = name;
 		}

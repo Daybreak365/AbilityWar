@@ -78,6 +78,9 @@ public class Bellum extends AbilityBase implements ActiveHandler {
 			return String.valueOf((100 + getValue()) / 100.0);
 		}
 	};
+
+	public static final SettingObject<Boolean> BLOCK_BREAK_CONFIG = abilitySettings.new SettingObject<>(Bellum.class, "break-block", true, "# 정면 돌파 사용 시 블록 파괴");
+
 	private static final ItemStack EMPTY = new ItemStack(Material.AIR);
 	private final Energy energy = new Energy(360);
 	private final double beatDamageModifier = (100 + BEAT_DAMAGE_CONFIG.getValue()) / 100.0;
@@ -164,6 +167,7 @@ public class Bellum extends AbilityBase implements ActiveHandler {
 			final Location playerLocation = getPlayer().getLocation();
 			final Vector direction = playerLocation.getDirection().setY(0).normalize();
 			if (isBlockObstructing()) {
+				final boolean breakBlock = BLOCK_BREAK_CONFIG.getValue();
 				final Set<Block> broke = new HashSet<>();
 				for (double h = -2.5; h <= 2.5; h += 0.5) {
 					for (int v = 0; v <= 3; v++) {
@@ -172,10 +176,12 @@ public class Bellum extends AbilityBase implements ActiveHandler {
 							final Block block = base.clone().add(direction.clone().multiply(i)).getBlock();
 							if (!block.isEmpty() && !BlockX.isIndestructible(block.getType()) && !block.isLiquid() && block.getType().isSolid() && broke.add(block)) {
 								ParticleLib.BLOCK_CRACK.spawnParticle(block.getLocation(), .5, .5, .5, 10, block);
-								final BlockBreakEvent event = new BlockBreakEvent(block, getPlayer());
-								Bukkit.getPluginManager().callEvent(event);
-								if (!event.isCancelled()) {
-									block.breakNaturally(EMPTY);
+								if (breakBlock) {
+									final BlockBreakEvent event = new BlockBreakEvent(block, getPlayer());
+									Bukkit.getPluginManager().callEvent(event);
+									if (!event.isCancelled()) {
+										block.breakNaturally(EMPTY);
+									}
 								}
 								for (Player player : LocationUtil.getNearbyEntities(Player.class, block.getLocation(), 2, 2, predicate)) {
 									player.damage(10, getPlayer());

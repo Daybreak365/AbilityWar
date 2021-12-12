@@ -15,7 +15,10 @@ import daybreak.abilitywar.game.module.Invincibility;
 import daybreak.abilitywar.game.module.ScoreboardManager;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.game.module.ZeroTick;
+import daybreak.abilitywar.music.MusicRadio;
+import daybreak.abilitywar.music.Songs;
 import daybreak.abilitywar.utils.base.Messager;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.WorldReset;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
@@ -330,6 +333,28 @@ public abstract class Game extends AbstractGame implements AbilitySelect.Handler
 				participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Settings.getDefaultMaxHealth());
 				participant.getPlayer().setHealth(participant.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			}
+		}
+		if (Seasons.isFestive()) {
+			new MusicRadio(Songs.getRandom(Songs.Category.XMAS)).start();
+			new GameTimer(TaskType.NORMAL, 4) {
+				@Override
+				protected void onStart() {
+					for (Player player : Bukkit.getOnlinePlayers()) {
+						NMS.sendTitle(player, "", "행복한 §c연§2말§c연§2시 §f보내세요!", 10, 80, 0);
+					}
+				}
+				@Override
+				protected void onEnd() {
+					onSilentEnd();
+				}
+				@Override
+				protected void onSilentEnd() {
+					for (Player player : Bukkit.getOnlinePlayers()) {
+						NMS.clearTitle(player);
+					}
+				}
+			}.start();
+			Bukkit.broadcastMessage("행복한 §c연§2말§c연§2시 §f보내세요! §8(§7노래 끄기: 주크박스/소리 블록 0%§8)");
 		}
 		super.startGame();
 	}

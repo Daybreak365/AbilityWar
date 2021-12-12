@@ -31,8 +31,8 @@
         <version>3.6.1</version>
         <goals />
         <configuration>
-          <source>16</source>
-          <target>16</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
       <plugin>
@@ -51,6 +51,7 @@
                   <include>org.jetbrains.kotlin:**</include>
                   <include>com.google.guava:guava</include>
                   <include>com.google.code.gson:gson</include>
+                  <include>com.github.koca2000:NoteBlockAPI</include>
                 </includes>
               </artifactSet>
               <relocations>

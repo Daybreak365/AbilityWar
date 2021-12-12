@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "광대", rank = Rank.S, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "광대", rank = Rank.A, species = Species.HUMAN, explain = {
 		"§7철괴 우클릭 §8- §5환상§f: 바라보는 방향으로 순간이동하고 3초간 §b은신§f합니다. 이후 4초",
 		" 이내에 능력을 재사용하면 순간이동 전의 위치로 복귀하고 주위 다섯 칸 이내의",
 		" 모든 플레이어를 3초 동안 공포에 빠뜨리고 3초간 §b은신§f합니다. $[COOLDOWN_CONFIG]",

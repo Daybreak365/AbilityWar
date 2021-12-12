@@ -1100,6 +1100,12 @@ public class SoundLib {
 			}
 		}
 
+		public void stopSound(Player player) {
+			if (this.sound != null) {
+				player.stopSound(this.sound);
+			}
+		}
+
 	}
 
 	public static final SimpleInstrument BANJO = new SimpleInstrument(BLOCK_NOTE_BLOCK_BANJO);

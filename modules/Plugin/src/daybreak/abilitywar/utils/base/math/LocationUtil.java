@@ -32,7 +32,12 @@ public class LocationUtil {
 	private LocationUtil() {
 	}
 
+	private static final Random random = new Random();
 	private static final double TWO_PI = 6.283185307179586D;
+
+	public static boolean isInFront(final Entity criterion, final Entity entity) {
+		return dotDirection(criterion, entity) <= 0;
+	}
 
 	public static boolean isBehind(final Entity criterion, final Entity entity) {
 		return dotDirection(criterion, entity) > 0;
@@ -288,6 +293,15 @@ public class LocationUtil {
 			}
 		}
 		return blocks;
+	}
+
+	public static Location getRandomLocation(Location center, double radius) {
+		return floorY(new Location(
+				center.getWorld(),
+				center.getX() + (random.nextDouble() * radius * FastMath.cos(random.nextDouble() * TWO_PI)),
+				center.getY(),
+				center.getZ() + (random.nextDouble() * radius * FastMath.sin(random.nextDouble() * TWO_PI))
+		));
 	}
 
 	public static Locations getRandomLocations(Random random, Location center, double radius, int amount) {
