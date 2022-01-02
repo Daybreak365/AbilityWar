@@ -1,5 +1,6 @@
 package daybreak.abilitywar.ability.list;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
@@ -22,6 +23,9 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
+import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import kotlin.ranges.RangesKt;
 import org.bukkit.Bukkit;
@@ -36,9 +40,12 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -51,18 +58,30 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "버서커", rank = Rank.S, species = Species.HUMAN, explain = {
-		"§7철괴 우클릭 §8- §c불굴의 의지§f: $[MAX_DURATION_CONFIG]초간 이동을 방해하는 모든 상태 이상을 해제하고",
-		" 이동 속도가 65% 증가하며, 지속 시간 내에 하는 다음 공격이 강화되어 100%의",
-		" 추가 피해를 입힙니다. 지속 도중 능력을 다시 사용하거나 강화 피해를 입히면",
-		" 스킬이 즉시 종료되며, 스킬이 종료된 이후 스킬이 지속된 시간에 비례해",
-		" 그로기 상태§8(§7공격 불능§8)§f가 됩니다. $[COOLDOWN_CONFIG]",
+		"§7철괴 우클릭 §8- §c불굴의 의지§f: $[MAX_DURATION_CONFIG]초간 이동을 방해하는 모든 §5상태 이상§f을 해제하고",
+		" 이동 속도가 65% 증가하며, 근접 공격이 강화되어 $[DAMAGE_FACTOR_CONFIG]%의 추가 피해를 입힙니다.",
+		" 불굴의 의지가 지속되는 도중에는 체력이 반 칸 아래로 떨어지지 않습니다.",
+		" 지속 도중 능력을 다시 사용하거나 강화 피해를 입히면 스킬이 즉시 종료되며,",
+		" 스킬이 종료된 이후 스킬이 지속된 시간에 비례해 그로기 상태 §8(§7공격 불능§8)§f가",
+		" 됩니다. $[COOLDOWN_CONFIG]",
 		"§7패시브 §8- §c전사의 피§f: 원거리 공격력이 절반으로 감소합니다. 5칸 밖의 적에게",
-		" 받는 대미지를 최대 75%까지 거리에 따라 줄여받습니다."
+		" 받는 대미지를 최대 75%까지 거리에 따라 줄여받습니다. 잃은 체력에 비례하여",
+		" 입히는 근접 대미지가 1.35배까지 증가합니다."
 })
 public class Berserker extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> MAX_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "max-duration", 8,
 			"# 불굴의 의지 최대 지속 (초 단위)") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+
+	};
+
+	public static final SettingObject<Integer> DAMAGE_FACTOR_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "damage-factor", 100,
+			"# 불굴의 의지 추가 대미지 계수", "# 125인 경우 125% 추가 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -105,15 +124,30 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		super(participant);
 	}
 
+	@SubscribeEvent(ignoreCancelled = true)
+	private void onPlayerAttack(final EntityDamageByEntityEvent e) {
+		if (getPlayer().equals(e.getDamager())) {
+			Bukkit.broadcastMessage(e.getDamage() + "b");
+			e.setDamage(e.getDamage() * (1 + ((1 - getPlayer().getHealth() / getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) * .35)));
+			Bukkit.broadcastMessage(e.getDamage() + "a");
+		}
+	}
+
 	public class WillOfIron extends AbilityTimer implements Listener {
 
 		private final BossBar bossBar;
-		private int count = 0;
+		private int count = 0, attacks;
+		private final IWorldBorder worldBorder;
 
-		private WillOfIron(int duration) {
+		private WillOfIron(int duration, int attacks) {
 			super(TaskType.NORMAL, duration * 20);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.bossBar = Bukkit.createBossBar("불굴의 의지", BarColor.RED, BarStyle.SEGMENTED_6);
+			Preconditions.checkArgument(attacks > 0, "'attacks' must be 1 or greater");
+			this.attacks = attacks;
+			this.worldBorder = NMS.createWorldBorder(getPlayer().getWorld().getWorldBorder());
+			worldBorder.setWarningDistance(Integer.MAX_VALUE);
+			NMS.setWorldBorder(getPlayer(), worldBorder);
 			Berserker.this.willOfIron = this;
 		}
 
@@ -145,8 +179,36 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		@EventHandler(ignoreCancelled = true)
 		private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
 			if (getPlayer().equals(e.getDamager())) {
-				e.setDamage(e.getDamage() * 2);
-				stop(false);
+				e.setDamage(e.getDamage() * (1 + (DAMAGE_FACTOR_CONFIG.getValue() / 100.0)));
+				final Entity entity = e.getEntity();
+				entity.getWorld().strikeLightningEffect(entity.getLocation());
+				if (--attacks <= 0) {
+					new Groggy(60 + willOfIron.count / 3).start();
+					stop(false);
+				}
+			}
+			onEntityDamage(e);
+		}
+
+		@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+		private void onEntityDamageByBlock(EntityDamageByBlockEvent e) {
+			onEntityDamage(e);
+		}
+
+		@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+		private void onEntityDamage(EntityDamageEvent e) {
+			if (getPlayer().equals(e.getEntity()) && getPlayer().getHealth() - e.getFinalDamage() <= 0) {
+				e.setCancelled(true);
+				getPlayer().setHealth(1);
+				NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
+			}
+		}
+
+		@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+		private void onPlayerSetHealth(PlayerSetHealthEvent e) {
+			if (e.getHealth() <= 0.0) {
+				e.setHealth(1);
+				e.setCancelled(true);
 			}
 		}
 
@@ -191,12 +253,12 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 		protected void onEnd() {
 			bossBar.removeAll();
 			cooldown.start();
-			new Groggy(40 + willOfIron.count / 2).start();
 			onSilentEnd();
 		}
 
 		@Override
 		protected void onSilentEnd() {
+			NMS.resetWorldBorder(getPlayer());
 			HandlerList.unregisterAll(this);
 			Berserker.this.willOfIron = null;
 			bossBar.removeAll();
@@ -291,7 +353,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 				willOfIron.cancel();
 			} else if (groggy == null) {
 				if (!cooldown.isCooldown()) {
-					new WillOfIron(maxDuration).start();
+					new WillOfIron(maxDuration, 1).start();
 				}
 			}
 		}

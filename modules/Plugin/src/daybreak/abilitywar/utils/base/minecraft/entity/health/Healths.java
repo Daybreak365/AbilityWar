@@ -10,7 +10,7 @@ public class Healths {
 	private Healths() {}
 
 	public static double setHealth(final Player player, final double health) {
-		final PlayerSetHealthEvent event = new PlayerSetHealthEvent(player, Math.max(Math.min(health, player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()), 0.0));
+		final PlayerSetHealthEvent event = new PlayerSetHealthEvent(player, health);
 		Bukkit.getPluginManager().callEvent(event);
 		if (!event.isCancelled()) {
 			player.setHealth(Math.min(event.getHealth(), player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
