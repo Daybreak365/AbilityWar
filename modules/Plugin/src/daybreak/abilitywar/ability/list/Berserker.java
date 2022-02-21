@@ -127,9 +127,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent(ignoreCancelled = true)
 	private void onPlayerAttack(final EntityDamageByEntityEvent e) {
 		if (getPlayer().equals(e.getDamager())) {
-			Bukkit.broadcastMessage(e.getDamage() + "b");
 			e.setDamage(e.getDamage() * (1 + ((1 - getPlayer().getHealth() / getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) * .35)));
-			Bukkit.broadcastMessage(e.getDamage() + "a");
 		}
 	}
 
