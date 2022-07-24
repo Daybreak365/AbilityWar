@@ -276,10 +276,10 @@ public class GrapplingHook extends AbilityBase implements ActiveHandler {
 			SoundLib.ENTITY_PLAYER_HURT.playSound(getPlayer());
 			if (attacked.add(player.getUniqueId())) {
 				player.damage(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .45, getPlayer());
-				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, weaken ? 25 : 45);
+				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, weaken ? 15 : 45);
 			} else {
 				player.damage(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * .3, getPlayer());
-				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, weaken ? 15 : 35);
+				Stun.apply(getGame().getParticipant(player), TimeUnit.TICKS, weaken ? 7 : 35);
 			}
 			new AbilityTimer(40) {
 				@Override

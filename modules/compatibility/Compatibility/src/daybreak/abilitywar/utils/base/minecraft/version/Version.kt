@@ -30,7 +30,8 @@ enum class NMSVersion(override val version: Int, override val release: Int) : IV
 	v1_16_R1(16, 1),
 	v1_16_R2(16, 2),
 	v1_16_R3(16, 3),
-	v1_17_R1(17, 1);
+	v1_17_R1(17, 1),
+	v1_19_R1(19, 1);
 }
 
 class ServerVersion private constructor() {

@@ -12,32 +12,40 @@ import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Oppress;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
+import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
+import daybreak.abilitywar.utils.library.PotionEffects;
+import kotlin.ranges.RangesKt;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Damageable;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "카오스", rank = Rank.L, species = Species.GOD, explain = {
-		"태초의 신 카오스.",
-		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 짙은 암흑 속으로 주변",
-		"$[DURATION_CONFIG]칸 이내의 모든 물체와 생명체들을 끌어당기며",
-		"대미지를 줍니다. $[COOLDOWN_CONFIG]"
+		"§7철괴 우클릭 §f- §8흡수§f: 카오스가 $[DURATION_CONFIG]초간 주변 $[DURATION_CONFIG]칸 이내의 모든 생명체를 §5실명시키고§f,",
+		"중앙으로 §5끌어당기며§f, 주기적으로 §c고정 피해§f를 입힙니다. $[COOLDOWN_CONFIG]",
+		"§8[§3질량§f-§e에너지 §f동등성§8] §f입힌 피해의 §a50%§f를 자신의 체력으로 전환하여 §a회복§f합니다.",
+		"§8[§e빛§f조차 빠져나갈 수 없는§8] §f범위 내 모든 플레이어의 §5능력을 비활성화§f합니다.",
+		"§7상태 이상 §f- §8제압§f: 능력이 비활성화됩니다."
 })
 @Tips(tip = {
-		"어떤 적이던 상관 없이 카오스의 능력은 유용할 것입니다.",
-		"단, 상대가 강력한 이동기를 가지고 있지만 않다면 말이죠."
+		"어떤 적이던 상관 없이 카오스의 능력은 유용할 것입니다."
 }, strong = {
 		@Description(subject = "강력한 군중 제어", explain = {
 				"상대가 강력한 돌진기나 텔레포트 스킬이 있는 것이 아니라면,",
@@ -45,12 +53,6 @@ import java.util.function.Predicate;
 				"생명체를 한 곳으로 몰아넣어 대미지를 주세요!"
 		})
 }, weak = {
-		@Description(subject = "강력한 돌진기", explain = {
-				"강력한 돌진기가 있는 능력자는 카오스를 벗어날 수도 있습니다."
-		}),
-		@Description(subject = "순간 이동 스킬", explain = {
-				"순간 이동 스킬이 있다면 더욱 쉽게 카오스를 벗어날 수 있을 것입니다."
-		}),
 		@Description(subject = "상대의 공격", explain = {
 				"끌어 당겨서 움직이기 힘들게 하는 것이지, 시야를 돌리지 못하게 막는 것이",
 				"아닙니다. 항상 상대의 공격을 조심하십시오."
@@ -144,9 +146,30 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 				ParticleLib.REDSTONE.spawnParticle(loc, BLACK);
 			}
 			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, center, distance, distance, predicate)) {
-				if (entity instanceof Damageable) ((Damageable) entity).damage(1);
+				if (entity instanceof Player) {
+					final Participant participant = getGame().getParticipant(entity.getUniqueId());
+					Oppress.apply(participant, TimeUnit.TICKS, 5);
+				}
+				if (count % 3 == 0) {
+					if (entity instanceof LivingEntity) {
+						final LivingEntity livingEntity = (LivingEntity) entity;
+						PotionEffects.BLINDNESS.addPotionEffect(livingEntity, 30, 1, true);
+						livingEntity.setNoDamageTicks(0);
+						Damages.damageFixed(livingEntity, getPlayer(), 0.3f);
+						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.15f, RegainReason.CUSTOM);
+						Bukkit.getPluginManager().callEvent(event);
+						if (!event.isCancelled()) {
+							getPlayer().setHealth(RangesKt.coerceIn(getPlayer().getHealth() + event.getAmount(), 0, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+						}
+					}
+				}
 				entity.setVelocity(center.toVector().subtract(entity.getLocation().toVector()).multiply(0.7));
 			}
+		}
+
+		@Override
+		protected void onDurationEnd() {
+			super.onDurationEnd();
 		}
 
 	}.setPeriod(TimeUnit.TICKS, 1);

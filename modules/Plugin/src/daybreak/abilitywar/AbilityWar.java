@@ -13,6 +13,7 @@ import daybreak.abilitywar.config.serializable.team.TeamPreset;
 import daybreak.abilitywar.config.serializable.team.TeamPreset.TeamScheme;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
+import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.game.specialthanks.SpecialThanks;
@@ -100,7 +101,12 @@ public class AbilityWar extends JavaPlugin implements Provider, Listener {
 		try {
 			Class.forName(FastMath.class.getName());
 			Class.forName(SpecialThanks.class.getName());
+			Class.forName(AbilityList.class.getName());
+		} catch (NoClassDefFoundError ignored) {
+			ignored.printStackTrace();
+			ignored.getCause().printStackTrace();
 		} catch (Exception ignored) {
+
 		}
 
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {

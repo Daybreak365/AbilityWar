@@ -464,7 +464,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 							if (sender instanceof Player) {
 								new BlackListGUI((Player) sender, plugin).openGUI(1);
 							} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " config blacklist [대상]");
-						} else if ("synergy".equalsIgnoreCase(args[0])) {
+						} else if ("synergy".equalsIgnoreCase(args[0]) || "synergies".equalsIgnoreCase(args[0])) {
 							if (sender instanceof Player) {
 								new SynergyBlackListGUI((Player) sender, plugin).openGUI(1);
 							}

@@ -111,7 +111,8 @@ public class SpecialThanks {
 							"§7엔샤님",
 							"테스트 서버에 놀러오는 플레이어와 능력자 플러그인 테스터",
 							"그 사이의 누군가입니다. 현재 마인크래프트에서 언택트 세계일주",
-							"프로젝트를 진행하고 있습니다. 과연 올해 안에는 완료할 수 있을까요?"
+							"프로젝트를 진행하고 있습니다. 과연 올해 안에는 완료할 수 있을까요?",
+							"...그 후 1년이 지났습니다."
 					)
 			)
 			.addSpecialThanks(
@@ -150,8 +151,7 @@ public class SpecialThanks {
 			)
 			.addSpecialThanks(
 					new SpecialThank("잠뜰", "d152a00b7ef346a0b5312a77740a3777",
-							"§7잠뜰님",
-							""
+							"§7잠뜰님"
 					)
 			)
 			.addSpecialThanks(
@@ -197,6 +197,16 @@ public class SpecialThanks {
 			.addSpecialThanks(
 					new SpecialThank("빠이어곰", "53a21633738243ae9f7956b67ffed044",
 							"§7빠이어곰님"
+					)
+			);
+
+	private static final Category ETC = new Category("§7기타", new CustomSkullBuilder("148a8c55891dec76764449f57ba677be3ee88a06921ca93b6cc7c9611a7af").build())
+			.addSpecialThanks(
+					new SpecialThank("윤하루", "507fc49666fb43489200251f48bf4719",
+							"§7윤하루님",
+							"이 플러그인을 이용한 최초의 서버팩을 만드신 분입니다.",
+							"슬프게도 현재는 림프종으로 인하여 투병 생활을 하시는 중입니다.",
+							"빠른 쾌유를 빕니다."
 					)
 			);
 
