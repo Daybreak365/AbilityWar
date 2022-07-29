@@ -14,6 +14,7 @@ import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
 import daybreak.abilitywar.ability.event.AbilityActiveSkillEvent;
 import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
+import daybreak.abilitywar.ability.event.AbilityPreTargetEvent;
 import daybreak.abilitywar.config.game.GameSettings;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.event.GameEndEvent;
@@ -377,11 +378,17 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 														return;
 
 													this.lastClick = current;
-													((TargetHandler) ability).TargetSkill(material, targetPlayer);
+													final AbilityPreTargetEvent event = new AbilityPreTargetEvent(ability);
+													if (!event.isCancelled()) {
+														((TargetHandler) ability).TargetSkill(material, targetPlayer);
+													}
 												}
 											} else {
 												this.lastClick = current;
-												((TargetHandler) ability).TargetSkill(material, (LivingEntity) targetEntity);
+												final AbilityPreTargetEvent event = new AbilityPreTargetEvent(ability);
+												if (!event.isCancelled()) {
+													((TargetHandler) ability).TargetSkill(material, (LivingEntity) targetEntity);
+												}
 											}
 										}
 									}

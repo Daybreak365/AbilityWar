@@ -19,6 +19,7 @@ import daybreak.abilitywar.ability.list.Chaos;
 import daybreak.abilitywar.ability.list.Curse;
 import daybreak.abilitywar.ability.list.DarkVision;
 import daybreak.abilitywar.ability.list.Demigod;
+import daybreak.abilitywar.ability.list.Developer;
 import daybreak.abilitywar.ability.list.DevilBoots;
 import daybreak.abilitywar.ability.list.DiceGod;
 import daybreak.abilitywar.ability.list.Emperor;
@@ -239,6 +240,7 @@ public class AbilityList {
 		registerAbility(Morpheus.class);
 		registerAbility("daybreak.abilitywar.ability.list.clown." + ServerVersion.getName() + ".Clown");
 		registerAbility("daybreak.abilitywar.ability.list.soul." + ServerVersion.getName() + ".Soul");
+		registerAbility(Developer.class);
 	}
 
 	/**

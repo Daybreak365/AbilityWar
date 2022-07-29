@@ -20,7 +20,7 @@ import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
-import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import kotlin.ranges.RangesKt;
@@ -31,6 +31,8 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 import org.jetbrains.annotations.NotNull;
@@ -155,11 +157,22 @@ public class Chaos extends AbilityBase implements ActiveHandler {
 						final LivingEntity livingEntity = (LivingEntity) entity;
 						PotionEffects.BLINDNESS.addPotionEffect(livingEntity, 30, 1, true);
 						livingEntity.setNoDamageTicks(0);
-						Damages.damageFixed(livingEntity, getPlayer(), 0.3f);
-						final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.15f, RegainReason.CUSTOM);
-						Bukkit.getPluginManager().callEvent(event);
-						if (!event.isCancelled()) {
-							getPlayer().setHealth(RangesKt.coerceIn(getPlayer().getHealth() + event.getAmount(), 0, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+						{
+							final EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(getPlayer(), livingEntity, DamageCause.ENTITY_ATTACK, 0.3f);
+							Bukkit.getPluginManager().callEvent(event);
+							if (!event.isCancelled()) {
+								livingEntity.setNoDamageTicks(livingEntity.getMaximumNoDamageTicks());
+								livingEntity.setHealth(Math.max(0, livingEntity.getHealth() - 0.3f));
+								NMS.broadcastEntityEffect(livingEntity, (byte) 2);
+								livingEntity.setLastDamageCause(event);
+							}
+						}
+						{
+							final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), 0.15f, RegainReason.CUSTOM);
+							Bukkit.getPluginManager().callEvent(event);
+							if (!event.isCancelled()) {
+								getPlayer().setHealth(RangesKt.coerceIn(getPlayer().getHealth() + event.getAmount(), 0, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
+							}
 						}
 					}
 				}

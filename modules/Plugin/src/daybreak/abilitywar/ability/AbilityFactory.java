@@ -22,6 +22,7 @@ import daybreak.abilitywar.ability.list.Chaos;
 import daybreak.abilitywar.ability.list.Curse;
 import daybreak.abilitywar.ability.list.DarkVision;
 import daybreak.abilitywar.ability.list.Demigod;
+import daybreak.abilitywar.ability.list.Developer;
 import daybreak.abilitywar.ability.list.DevilBoots;
 import daybreak.abilitywar.ability.list.DiceGod;
 import daybreak.abilitywar.ability.list.Emperor;
@@ -237,6 +238,9 @@ public class AbilityFactory {
 
 		// v3.0.2
 		registerAbility("daybreak.abilitywar.ability.list.soul." + ServerVersion.getName() + ".Soul");
+
+		// v3.2.1
+		registerAbility(Developer.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

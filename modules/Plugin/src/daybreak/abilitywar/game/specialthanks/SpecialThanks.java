@@ -131,6 +131,11 @@ public class SpecialThanks {
 							"신규 게임 모드 테스팅에 도움을 주셨습니다.",
 							"§7한 마디§8: §f시그다."
 					)
+			)
+			.addSpecialThanks(
+					new SpecialThank("짭둑", "f6a71f6c0b7a4a9181c32278c6851dd3",
+							"§7짭둑님"
+					)
 			);
 
 	private static final Category STREAMER = new Category("§a스트리머", new CustomSkullBuilder("148a8c55891dec76764449f57ba677be3ee88a06921ca93b6cc7c9611a7af").build())
@@ -200,18 +205,25 @@ public class SpecialThanks {
 					)
 			);
 
-	private static final Category ETC = new Category("§7기타", new CustomSkullBuilder("148a8c55891dec76764449f57ba677be3ee88a06921ca93b6cc7c9611a7af").build())
+	private static final Category WIKI_EDITOR = new Category("§2위키 편집자", new CustomSkullBuilder("879e54cbe87867d14b2fbdf3f1870894352048dfecd962846dea893b2154c85").build())
 			.addSpecialThanks(
-					new SpecialThank("윤하루", "507fc49666fb43489200251f48bf4719",
-							"§7윤하루님",
-							"이 플러그인을 이용한 최초의 서버팩을 만드신 분입니다.",
-							"슬프게도 현재는 림프종으로 인하여 투병 생활을 하시는 중입니다.",
-							"빠른 쾌유를 빕니다."
+					new SpecialThank("배리티", "8295674138fa432aa29c6c648f55e9ee",
+							"§7배리티님"
+					)
+			)
+			.addSpecialThanks(
+					new SpecialThank("여울", "ab5b45cd55c14ed2a46086f63c29caf7",
+							"§7여울님"
+					)
+			)
+			.addSpecialThanks(
+					new SpecialThank("에나", "17d890b9a3704fd69a5bf942dc767a81",
+							"§7에나님"
 					)
 			);
 
 	public static final Category[] categories = {
-			DEVELOPER, TESTER, STREAMER
+			DEVELOPER, TESTER, STREAMER, WIKI_EDITOR
 	};
 
 	private SpecialThanks() {

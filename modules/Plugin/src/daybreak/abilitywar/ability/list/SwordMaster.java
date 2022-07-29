@@ -10,7 +10,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -28,6 +27,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.library.MaterialX;
+import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -61,21 +61,6 @@ import java.util.function.Predicate;
 @Support.Server(ServerType.PAPER)
 public class SwordMaster extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> BACKSTEP_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "backstep-cooldown", 10,
-			"# 백스텝 쿨타임") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-
-	};
-
 	public static final SettingObject<Integer> ULTIMATE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(SwordMaster.class, "ultimate-cooldown", 50,
 			"# 궁극기 쿨타임") {
 
@@ -96,7 +81,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			:
 			ImmutableSet.of(MaterialX.WOODEN_SWORD.getMaterial(), Material.STONE_SWORD, Material.IRON_SWORD, MaterialX.GOLDEN_SWORD.getMaterial(), Material.DIAMOND_SWORD);
 	private static final EulerAngle DEFAULT_EULER_ANGLE = new EulerAngle(Math.toRadians(-10), 0, 0);
-	private final Cooldown backstepCool = new Cooldown(BACKSTEP_COOLDOWN_CONFIG.getValue(), CooldownDecrease._25), ultimateCool = new Cooldown(ULTIMATE_COOLDOWN_CONFIG.getValue());
+	private final Cooldown ultimateCool = new Cooldown(ULTIMATE_COOLDOWN_CONFIG.getValue());
 	private final int stacksToCharge = 3, maxSwords = 10;
 	private final Circle[] circles = newCircleArray(maxSwords);
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
@@ -159,9 +144,11 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerMove(PlayerMoveEvent e) {
-		if (getPlayer().getVelocity().getY() > 0.4 && getPlayer().isSneaking() && !backstepCool.isCooldown()) {
-			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(-1).setY(0.45));
-			backstepCool.start();
+		if (getPlayer().getVelocity().getY() > 0.4 && getPlayer().isSneaking() && swords.swords.size() >= 3) {
+			getPlayer().setVelocity(getPlayer().getLocation().getDirection().normalize().multiply(-2).setY(0.35));
+			swords.shoot();
+			swords.shoot();
+			swords.shoot();
 		}
 	}
 
@@ -356,11 +343,18 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 			armorStand.setRightArmPose(DEFAULT_EULER_ANGLE);
 		}
 
+		public Location getLocation() {
+			final Vector direction = getPlayer().getLocation().getDirection().setY(0).normalize();
+			final Vector right = VectorUtil.rotateAroundAxisY(direction.clone(), -90);
+			return armorStand.getLocation().add(0, 0.8, 0).add(right.multiply(0.4)).add(direction.multiply(0.45));
+		}
+
 		private void shoot(Vector vector, float yaw, float pitch) {
+			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			this.direction = vector.normalize();
 			this.swordEntity = new SwordEntity(owner.getWorld(), owner.getLocation().getX(), owner.getLocation().getY(), owner.getLocation().getZ());
 			armorStand.setRightArmPose(new EulerAngle(Math.toRadians(pitch - 10), 0, 0));
-			armorStand.teleport(owner.getLocation());
+			armorStand.teleport(owner.getEyeLocation().subtract(getLocation().subtract(armorStand.getLocation())));
 			this.skillHandler = new SkillHandler() {
 				private final Vector right = VectorUtil.rotateAroundAxisY(direction.clone(), -90).multiply(0.4);
 
@@ -368,7 +362,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 				public void run(final int count) {
 					for (int i = 0; i < 2; i++) {
 						final Location location = armorStand.getLocation().add(direction);
-						final Location swordLocation = location.clone().add(0, 0.8, 0).add(direction.clone().multiply(0.75)).add(right);
+						final Location swordLocation = getLocation();
 						final Block block = swordLocation.getBlock();
 						if (!block.isEmpty() && block.getType().isSolid()) {
 							final Location nextLoc = swordLocation.clone().add(direction);
@@ -427,6 +421,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 
 			public SwordEntity(World world, double x, double y, double z) {
 				getGame().super(world, x, y, z);
+				resizeBoundingBox(-.6, -.6, -.6, .6, .6, .6);
 			}
 
 			@Override
