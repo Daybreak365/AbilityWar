@@ -207,8 +207,8 @@ public class SpecialThanks {
 
 	private static final Category WIKI_EDITOR = new Category("§2위키 편집자", new CustomSkullBuilder("879e54cbe87867d14b2fbdf3f1870894352048dfecd962846dea893b2154c85").build())
 			.addSpecialThanks(
-					new SpecialThank("배리티", "8295674138fa432aa29c6c648f55e9ee",
-							"§7배리티님"
+					new SpecialThank("베리티", "8295674138fa432aa29c6c648f55e9ee",
+							"§7베리티님"
 					)
 			)
 			.addSpecialThanks(
