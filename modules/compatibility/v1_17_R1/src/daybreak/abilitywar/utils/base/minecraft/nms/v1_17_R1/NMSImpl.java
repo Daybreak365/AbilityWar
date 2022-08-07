@@ -8,6 +8,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
 import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import daybreak.abilitywar.utils.base.minecraft.nms.PickupStatus;
+import daybreak.abilitywar.utils.base.minecraft.nms.SteeringDirection;
 import net.minecraft.network.chat.IChatBaseComponent.ChatSerializer;
 import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
 import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
@@ -25,6 +26,7 @@ import net.minecraft.network.syncher.DataWatcherRegistry;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.EnumHand;
+import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.item.ItemCooldown;
 import net.minecraft.world.item.ItemCooldown.Info;
 import net.minecraft.world.level.border.WorldBorder;
@@ -49,6 +51,8 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+
+import java.lang.reflect.Field;
 
 public class NMSImpl implements INMS {
 
@@ -258,4 +262,32 @@ public class NMSImpl implements INMS {
 		if (!isArrow(arrow)) throw new IllegalArgumentException("arrow must be an instance of AbstractArrow");
 		return PickupStatus.values()[((AbstractArrow) arrow).getPickupStatus().ordinal()];
 	}
+
+	private static final Field JUMPING;
+
+	static {
+		try {
+			JUMPING = EntityLiving.class.getDeclaredField("bn");
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public boolean isJumpingInVehicle(LivingEntity livingEntity) {
+		final EntityLiving nms = ((CraftLivingEntity) livingEntity).getHandle();
+		try {
+			JUMPING.setAccessible(true);
+			return (boolean) JUMPING.get(nms);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public SteeringDirection getSteeringDirection(LivingEntity livingEntity) {
+		final EntityLiving nms = ((CraftLivingEntity) livingEntity).getHandle();
+		return SteeringDirection.get(nms.bo, nms.bq);
+	}
+
 }

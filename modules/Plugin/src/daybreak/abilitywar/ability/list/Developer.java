@@ -58,7 +58,7 @@ import java.util.function.Predicate;
         " 부여받은 능력이 남아있다면 자동으로 버립니다. 재설정으로 부여받은 능력의 모든",
         " 쿨타임이 빠르게 종료됩니다.",
         "§7아이템 버리기 §f- §3종료§f/§3디버깅§f: 재설정으로 부여받은 능력을 버리고 재설정 대기",
-        " 시간을 단축합니다. §3/§f 이후 주위 10칸 이내의 모든 플레이어를 4초간 §5속박§f하고,",
+        " 시간을 단축합니다. §3/§f 이후 주위 10칸 이내의 모든 플레이어를 2.5초간 §5속박§f하고,",
         " 체력을 §d4hp§f + 주위의 플레이어 당 §d1hp§f만큼 §a회복§f합니다."
 })
 public class Developer extends AbilityBase implements ActiveHandler, TargetHandler {
@@ -259,7 +259,7 @@ public class Developer extends AbilityBase implements ActiveHandler, TargetHandl
                 final List<Player> players = LocationUtil.getEntitiesInCircle(Player.class, getPlayer().getLocation(), 10, predicate);
                 for (Player player : players) {
                     final Participant participant = getGame().getParticipant(player);
-                    Rooted.apply(participant, TimeUnit.SECONDS, 4);
+                    Rooted.apply(participant, TimeUnit.TICKS, 50);
                     new AbilityTimer(TaskType.NORMAL, 20) {
                         @Override
                         protected void run(int count) {

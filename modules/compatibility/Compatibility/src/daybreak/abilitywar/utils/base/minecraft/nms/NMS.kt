@@ -8,13 +8,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.WorldBorder
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.Arrow
-import org.bukkit.entity.Entity
-import org.bukkit.entity.Item
-import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
-import org.bukkit.entity.Projectile
+import org.bukkit.entity.*
 
 class NMS private constructor() {
 	companion object INSTANCE : INMS {
@@ -203,5 +197,15 @@ class NMS private constructor() {
         override fun setPickupStatus(arrow: Projectile, pickupStatus: PickupStatus) {
             INSTANCE.setPickupStatus(arrow, pickupStatus)
         }
+
+		@JvmStatic
+		override fun isJumpingInVehicle(livingEntity: LivingEntity): Boolean {
+			return INSTANCE.isJumpingInVehicle(livingEntity)
+		}
+
+		@JvmStatic
+		override fun getSteeringDirection(livingEntity: LivingEntity): SteeringDirection {
+			return INSTANCE.getSteeringDirection(livingEntity)
+		}
 	}
 }

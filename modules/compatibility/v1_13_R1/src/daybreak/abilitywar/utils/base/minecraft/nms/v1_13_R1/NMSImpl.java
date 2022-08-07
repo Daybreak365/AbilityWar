@@ -8,6 +8,7 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
 import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import daybreak.abilitywar.utils.base.minecraft.nms.PickupStatus;
+import daybreak.abilitywar.utils.base.minecraft.nms.SteeringDirection;
 import net.minecraft.server.v1_13_R1.AxisAlignedBB;
 import net.minecraft.server.v1_13_R1.DataWatcherObject;
 import net.minecraft.server.v1_13_R1.DataWatcherRegistry;
@@ -52,6 +53,8 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+
+import java.lang.reflect.Field;
 
 public class NMSImpl implements INMS {
 
@@ -268,4 +271,32 @@ public class NMSImpl implements INMS {
 		if (!isArrow(arrow)) throw new IllegalArgumentException("arrow must be an instance of Arrow");
 		return PickupStatus.values()[((Arrow) arrow).getPickupStatus().ordinal()];
 	}
+
+	private static final Field JUMPING;
+
+	static {
+		try {
+			JUMPING = EntityLiving.class.getDeclaredField("bg");
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public boolean isJumpingInVehicle(LivingEntity livingEntity) {
+		final EntityLiving nms = ((CraftLivingEntity) livingEntity).getHandle();
+		try {
+			JUMPING.setAccessible(true);
+			return (boolean) JUMPING.get(nms);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public SteeringDirection getSteeringDirection(LivingEntity livingEntity) {
+		final EntityLiving nms = ((CraftLivingEntity) livingEntity).getHandle();
+		return SteeringDirection.get(nms.bh, nms.bj);
+	}
+
 }

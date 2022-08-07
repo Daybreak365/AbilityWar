@@ -76,6 +76,7 @@ import daybreak.abilitywar.ability.list.VictoryBySword;
 import daybreak.abilitywar.ability.list.Virtus;
 import daybreak.abilitywar.ability.list.Virus;
 import daybreak.abilitywar.ability.list.Void;
+import daybreak.abilitywar.ability.list.Xenon;
 import daybreak.abilitywar.ability.list.Yeti;
 import daybreak.abilitywar.ability.list.Zeus;
 import daybreak.abilitywar.ability.list.Zombie;
@@ -87,6 +88,7 @@ import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -241,6 +243,7 @@ public class AbilityList {
 		registerAbility("daybreak.abilitywar.ability.list.clown." + ServerVersion.getName() + ".Clown");
 		registerAbility("daybreak.abilitywar.ability.list.soul." + ServerVersion.getName() + ".Soul");
 		registerAbility(Developer.class);
+		registerAbility(Xenon.class);
 	}
 
 	/**
@@ -255,7 +258,7 @@ public class AbilityList {
 	 */
 	public static void registerAbility(String className) {
 		try {
-			registerAbility(Class.forName(className).asSubclass(AbilityBase.class));
+			registerAbility(ReflectionUtil.ClassUtil.forName(className).asSubclass(AbilityBase.class));
 		} catch (ClassNotFoundException e) {
 			logger.debug(e.getMessage() != null && !e.getMessage().isEmpty() ? e.getMessage() : ("§e" + className + " §f클래스는 존재하지 않습니다."));
 		} catch (ClassCastException e) {

@@ -66,4 +66,7 @@ public interface INMS {
 	PickupStatus getPickupStatus(Projectile arrow);
 	void setPickupStatus(Projectile arrow, PickupStatus pickupStatus);
 
+	boolean isJumpingInVehicle(LivingEntity livingEntity);
+	SteeringDirection getSteeringDirection(LivingEntity livingEntity);
+
 }

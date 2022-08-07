@@ -79,6 +79,7 @@ import daybreak.abilitywar.ability.list.VictoryBySword;
 import daybreak.abilitywar.ability.list.Virtus;
 import daybreak.abilitywar.ability.list.Virus;
 import daybreak.abilitywar.ability.list.Void;
+import daybreak.abilitywar.ability.list.Xenon;
 import daybreak.abilitywar.ability.list.Yeti;
 import daybreak.abilitywar.ability.list.Zeus;
 import daybreak.abilitywar.ability.list.Zombie;
@@ -242,6 +243,9 @@ public class AbilityFactory {
 		// v3.2.1
 		registerAbility(Developer.class);
 
+		// v3.2.2
+		registerAbility(Xenon.class);
+
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드
 		registerAbility(SquirtGun.class);
@@ -313,7 +317,7 @@ public class AbilityFactory {
 	 */
 	public static void registerAbility(String className) {
 		try {
-			registerAbility(Class.forName(className).asSubclass(AbilityBase.class));
+			registerAbility(ReflectionUtil.ClassUtil.forName(className).asSubclass(AbilityBase.class));
 		} catch (ClassNotFoundException e) {
 			logger.debug("§e" + className + " §f클래스는 존재하지 않습니다.");
 		} catch (ClassCastException e) {
