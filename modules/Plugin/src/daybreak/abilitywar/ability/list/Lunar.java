@@ -54,6 +54,10 @@ import java.util.function.Predicate;
 		"이 공격으로 표식을 다섯 개 이상 쌓으면 해당 공격은 1.4배의 대미지를 냅니다.",
 		"§7철괴 우클릭 §8- §e월광§f: 주변 6칸 내의 모든 생명체에게 표식 두 개를 부여하고",
 		"4초간의 구속 디버프를 줍니다. 밤에만 사용할 수 있습니다. $[COOLDOWN_CONFIG]"
+}, summarize = {
+		"적에게 §a근접 공격§f 시 §e표식§f을 쌓아 내게 §e끌어당기고§f 시간을 점점 §9밤§f으로 바꿉니다.",
+		"§e표식이 5개§f가 되면 피해를 §c1.4배§f 증가시키고 대상을 잠시 §e기절§f시킵니다.",
+		"§9밤§f에 §7철괴 우클릭§f 시 주변 생명체들에게 §e표식 2개§f와 §8구속§f 디버프를 부여합니다."
 })
 public class Lunar extends AbilityBase implements ActiveHandler {
 

@@ -32,6 +32,8 @@ import java.util.function.Predicate;
 		"철괴를 우클릭하면 $[DISTANCE_CONFIG]칸 이내에 있는 생명체 $[TELEPORT_COUNT_CONFIG]명(마리)에게 이동하며",
 		"각각 $[DAMAGE_CONFIG]의 대미지를 줍니다. $[COOLDOWN_CONFIG]",
 		"대미지를 받은 생명체는 3초간 추가로 출혈 피해를 입습니다."
+}, summarize = {
+		"§7철괴 우클릭§f 시 주변 생명체들에게 §d연속 이동§f하며 베고 §c출혈§f시킵니다."
 })
 @Tips(tip = {
 		"텔레포트로 적에게 빠르게 접근하고, 출혈로 추가 대미지를 주면서 적이 도망가지",

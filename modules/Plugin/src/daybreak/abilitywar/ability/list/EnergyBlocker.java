@@ -13,9 +13,9 @@ import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
@@ -33,6 +33,9 @@ import java.util.Random;
 		"철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다. 피해 정도를 변경한 이후",
 		"한 번 이상 공격을 받아야만 다시 피해 정도를 뒤바꿀 수 있습니다.",
 		"$[PARTICLE_NOTICE]"
+}, summarize = {
+		"§a근거리§f나 §b원거리§f 피해를 §e1§7/§e3§f배로 받고, 그 반대는 §c2§f배로 받습니다.",
+		"피해를 입으면 §7철괴 우클릭§f으로 §a근§7/§b원§f거리 피해 배수를 서로 바꿉니다."
 })
 @Tips(tip = {
 		"근접 공격과 원거리 공격을 번갈아 가며 방어할 수 있지만,",

@@ -28,6 +28,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 		"지금 받을 대미지와 회복을 3초 뒤의 나에게 미루고, 넉백을 무시합니다.",
 		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.75배로 줄여 받습니다.",
 		"$[COOLDOWN_CONFIG]"
+}, summarize = {
+		"§c피해§f와 §a회복§f을 3초 뒤로 미룹니다.",
+		"미뤄진 모든 §c피해§f를 §7철괴 우클릭§f으로 즉시 §30.75§f배로 줄여 받을 수 있습니다."
 })
 public class Lazyness extends AbilityBase implements ActiveHandler {
 

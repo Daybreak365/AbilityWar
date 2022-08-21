@@ -42,6 +42,9 @@ import java.util.function.Predicate;
 		"자동으로 내려지며, 지속 시간이 끝나기 전에 스스로 내릴 수 없습니다.",
 		"능력 사용 중 철괴를 좌클릭하면 지속 시간을 즉시 끝냅니다.",
 		"지속 시간이 종료되면 대상을 바라보는 방향으로 던집니다."
+}, summarize = {
+		"§7생명체에 대고 철괴 우클릭§f 시 대상을 납치해 들쳐멥니다.",
+		"이후 5초 이내에 §7철괴 좌클릭§f으로 바라보는 방향으로 대상을 던집니다."
 })
 public class Kidnap extends AbilityBase implements ActiveHandler {
 

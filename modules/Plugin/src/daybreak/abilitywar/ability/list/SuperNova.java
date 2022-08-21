@@ -29,6 +29,8 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "초신성", rank = Rank.B, species = Species.OTHERS, explain = {
 		"치명적인 피해를 입은 마지막 순간에 큰 폭발을 일으킵니다.",
 		"폭발은 적에게 최대 체력에 비례하는 피해를 입힙니다."
+}, summarize = {
+		"치명적인 피해를 받으면 §c거대한 폭발§f을 일으킵니다."
 })
 public class SuperNova extends AbilityBase {
 

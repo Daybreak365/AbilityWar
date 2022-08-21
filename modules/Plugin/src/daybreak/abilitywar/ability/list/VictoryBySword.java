@@ -61,6 +61,11 @@ import java.util.function.Predicate;
 		"진검승부 중에는 대상의 능력이 비활성화 되며, 상호 간의 공격 피해",
 		"외의 피해는 입지 않습니다. $[DURATION_CONFIG]초가 지나거나 둘 중 하나가 죽은 경우",
 		"체력, 인벤토리 등이 능력 사용 전의 상태로 되돌아갑니다."
+}, summarize = {
+		"§7적을 대고 철괴를 우클릭§f하여 대상과의 §c진검승부§f를 시작합니다.",
+		"두 플레이어는 갑옷 없이 풀 체력에 §6나무 검§f으로만 싸우며, 상대의 능력이 비활성화됩니다.",
+		"이때 §5링§f이 생성되어 서로 §5링§f을 벗어나지 못합니다.",
+		"양측의 공격만이 인정되고, 승자는 원상태로 되돌아옵니다."
 })
 public class VictoryBySword extends AbilityBase implements TargetHandler {
 

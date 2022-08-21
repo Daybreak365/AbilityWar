@@ -11,13 +11,13 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Seasons;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Line;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -30,6 +30,8 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "동기화", rank = Rank.S, species = Species.OTHERS, explain = {
 		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 높이 상관 없이 10칸 이내에 있는 모든 플레이어의",
 		"체력을 평균값으로 서서히 맞춥니다. $[COOLDOWN_CONFIG]"
+}, summarize = {
+		"§7철괴 우클릭§f 시 일정 시간동안 범위 내 모든 플레이어들의 §d체력§f을 §a평균값§f으로 맞춥니다."
 })
 public class Synchronize extends AbilityBase implements ActiveHandler {
 

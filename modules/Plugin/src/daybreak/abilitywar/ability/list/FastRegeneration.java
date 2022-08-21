@@ -28,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 @AbilityManifest(name = "빠른 회복", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 빠른 회복 능력을 사용합니다. $[COOLDOWN_CONFIG]",
 		"능력 사용 중 체력을 빠르게 회복하며, 체력이 적을수록 더 빨리 회복합니다."
+}, summarize = {
+		"§7철괴 우클릭§f 시 잠시간 잃은 체력에 비례하여 §a더 빠르게§f 체력을 §d회복§f합니다."
 })
 @Tips(tip = {
 		"전투가 시작하기 전에, 전투 중에, 전투가 끝난 후에 등 언제",

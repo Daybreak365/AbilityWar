@@ -65,6 +65,12 @@ import java.util.function.Predicate;
 		"보호합니다. 지속 중에는 어떠한 대미지도 받지 않지만, 이동할 수 없습니다.",
 		"나무가 모두 자라나면 나를 포함한 주위 $[RANGE_CONFIG]칸 이내의 모든 생명체는 체력을 3 만큼",
 		"회복합니다. $[COOLDOWN_CONFIG]"
+}, summarize = {
+		"§7철괴 우클릭§f 시 주변 적들을 §6뿌리§f에 가두어 이동 불가 및 무적으로 만듭니다.",
+		"구속된 적들의 §d회복 효과§f는 §a지역§f 내 구속되지 않은 플레이어들에게 분배됩니다.",
+		"§a지역§f이 유지되는 동안엔 날 공격한 자를 §6뿌리§f에 가둡니다.",
+		"§7철괴 좌클릭§f 시 §2나무§f가 되어 이동 불가 및 무적이 되고,",
+		"자신과 주변 생명체들을 §d회복§f시킵니다."
 })
 public class Ferda extends AbilityBase implements ActiveHandler {
 

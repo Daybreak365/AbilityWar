@@ -29,6 +29,8 @@ import java.util.function.Predicate;
 		"게임 중 단 한 번 §c치명적인 공격§f을 받았을 때 체력을 §c반 칸 §f남기고 살아납니다.",
 		"능력이 발동되면 주변의 생명체들을 모두 밀쳐내고 §b신속 II §f효과를 5초간 받으며,",
 		"4초간 §d무적§f/§d공격 불능 §f상태가 됩니다."
+}, summarize = {
+		"§c§n단 한 번§f 치명적인 피해를 체력 반 칸으로 줄이고 §3무적§f, §7공격 불가§f, §b신속§f 효과를 받습니다."
 })
 public class SurvivalInstinct extends AbilityBase {
 

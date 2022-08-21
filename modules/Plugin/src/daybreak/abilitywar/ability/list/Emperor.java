@@ -43,6 +43,8 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "황제", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내 앞에 있는 모든",
 		"생명체와 물체를 밀쳐냅니다. $[COOLDOWN_CONFIG]"
+}, summarize = {
+		"§7철괴 우클릭§f 시 전방으로 돌진하는 §e방패 부대§f를 출격시켜 엔티티들을 §b밀쳐냅니다§f."
 })
 @Tips(tip = {
 		"위협적인 상대가 다가올 때, 상대의 스킬에 당했을 때 방패 부대를",

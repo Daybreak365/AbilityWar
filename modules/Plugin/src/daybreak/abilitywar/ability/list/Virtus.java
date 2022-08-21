@@ -22,6 +22,9 @@ import org.jetbrains.annotations.NotNull;
 		"철괴를 우클릭하면 다음 $[DURATION_CONFIG]초간 받는 대미지가 75% 감소합니다. $[COOLDOWN_CONFIG]",
 		"넉백 또는 끌어당겨지는 효과를 기본적으로 줄여 받으며, 능력 사용 중에는",
 		"효과가 증폭됩니다."
+}, summarize = {
+		"§5벡터§8(§e그랩 §3/ §b넉백§8)§f 영향을 줄여 받습니다.",
+		"§7철괴 우클릭§f 시 잠시간 대미지를 75% 감소시키고, §5벡터§f 영향을 더욱 줄입니다."
 })
 public class Virtus extends AbilityBase implements ActiveHandler {
 

@@ -48,196 +48,198 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "유명 인사", rank = Rank.C, species = Species.HUMAN, explain = {
-		"철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
-		"능력 사용 중 레드 카펫 위에 있으면 주변 $[DISTANCE_CONFIG]칸 이내의 모든 생명체가",
-		"자신을 바라보며, 넉백 또는 끌어당겨지는 효과를 줄여 받습니다. 깔린 레드 카펫은",
-		"$[DURATION_CONFIG]초 후 사라집니다."
+        "철괴를 우클릭하면 레드 카펫이 천천히 앞으로 나아가며 깔립니다. $[COOLDOWN_CONFIG]",
+        "능력 사용 중 레드 카펫 위에 있으면 주변 $[DISTANCE_CONFIG]칸 이내의 모든 생명체가",
+        "자신을 바라보며, 넉백 또는 끌어당겨지는 효과를 줄여 받습니다. 깔린 레드 카펫은",
+        "$[DURATION_CONFIG]초 후 사라집니다."
+}, summarize = {
+        "§7철괴 우클릭§f 시 전방에 §c레드 카펫§f을 깔고 위에 서면 주변 생명체들이 자신을 바라봅니다."
 })
 @Tips(tip = {
-		"주위 사람들의 관심을 끌기 딱 좋은 능력입니다.",
-		"도망가는 상대가 나만 바라보도록 해 도망가기 어렵게 하는 플레이를",
-		"펼칠 수도 있습니다. 만약 팀전을 플레이 중이라면, 모든 적이 나를",
-		"바라보게 해 팀원들을 지키는 탱킹 플레이를 할 수도 있습니다."
+        "주위 사람들의 관심을 끌기 딱 좋은 능력입니다.",
+        "도망가는 상대가 나만 바라보도록 해 도망가기 어렵게 하는 플레이를",
+        "펼칠 수도 있습니다. 만약 팀전을 플레이 중이라면, 모든 적이 나를",
+        "바라보게 해 팀원들을 지키는 탱킹 플레이를 할 수도 있습니다."
 }, strong = {
-		@Description(subject = "관심 받기", explain = {
-				"상대가 나에게 싸움 중이더라도, 도망가는 중이더라도 관심을",
-				"손쉽게 받을 수 있습니다. 마음 속을 따듯한 관심으로 채우세요!"
-		})
+        @Description(subject = "관심 받기", explain = {
+                "상대가 나에게 싸움 중이더라도, 도망가는 중이더라도 관심을",
+                "손쉽게 받을 수 있습니다. 마음 속을 따듯한 관심으로 채우세요!"
+        })
 }, weak = {
-		@Description(subject = "공격 노출", explain = {
-				"능력을 사용하는 순간 주위의 모든 플레이어가 나를 바라보게 되며,",
-				"모두가 당신을 공격하게 될 것입니다."
-		})
+        @Description(subject = "공격 노출", explain = {
+                "능력을 사용하는 순간 주위의 모든 플레이어가 나를 바라보게 되며,",
+                "모두가 당신을 공격하게 될 것입니다."
+        })
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.SIX, mobility = Level.ZERO, utility = Level.FOUR), difficulty = Difficulty.EASY)
 public class Celebrity extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "cooldown", 40,
-			"# 쿨타임") {
+    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "cooldown", 40,
+            "# 쿨타임") {
 
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 0;
-		}
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
+        }
 
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
+        @Override
+        public String toString() {
+            return Formatter.formatCooldown(getValue());
+        }
 
-	};
+    };
 
-	public static final SettingObject<Double> DISTANCE_CONFIG = abilitySettings.new SettingObject<Double>(Celebrity.class, "distance", 10.0,
-			"# 능력 거리") {
+    public static final SettingObject<Double> DISTANCE_CONFIG = abilitySettings.new SettingObject<Double>(Celebrity.class, "distance", 10.0,
+            "# 능력 거리") {
 
-		@Override
-		public boolean condition(Double value) {
-			return value > 0;
-		}
+        @Override
+        public boolean condition(Double value) {
+            return value > 0;
+        }
 
-	};
+    };
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "duration", 5,
-			"# 쿨타임") {
+    public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Celebrity.class, "duration", 5,
+            "# 쿨타임") {
 
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 1;
-		}
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 1;
+        }
 
-	};
+    };
 
-	private static final Random random = new Random();
-	private static final MaterialX[] materials = Seasons.isChristmas() ? new MaterialX[] {
-			MaterialX.RED_CARPET,
-			MaterialX.GREEN_CARPET
-	} : new MaterialX[] {
-			MaterialX.RED_CARPET
-	};
+    private static final Random random = new Random();
+    private static final MaterialX[] materials = Seasons.isChristmas() ? new MaterialX[]{
+            MaterialX.RED_CARPET,
+            MaterialX.GREEN_CARPET
+    } : new MaterialX[]{
+            MaterialX.RED_CARPET
+    };
 
-	private static final double radians = Math.toRadians(90);
+    private static final double radians = Math.toRadians(90);
 
-	public Celebrity(Participant participant) {
-		super(participant);
-	}
+    public Celebrity(Participant participant) {
+        super(participant);
+    }
 
-	private final Predicate<Entity> predicate = new Predicate<Entity>() {
-		@Override
-		public boolean test(Entity entity) {
-			if (entity.equals(getPlayer())) return false;
-			if (entity instanceof Player) {
-				if (!getGame().isParticipating(entity.getUniqueId())
-						|| (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-						|| !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-					return false;
-				}
-				if (getGame() instanceof Teamable) {
-					final Teamable teamGame = (Teamable) getGame();
-					final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
-					return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
-				}
-			}
-			return true;
-		}
-	};
+    private final Predicate<Entity> predicate = new Predicate<Entity>() {
+        @Override
+        public boolean test(Entity entity) {
+            if (entity.equals(getPlayer())) return false;
+            if (entity instanceof Player) {
+                if (!getGame().isParticipating(entity.getUniqueId())
+                        || (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
+                        || !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
+                    return false;
+                }
+                if (getGame() instanceof Teamable) {
+                    final Teamable teamGame = (Teamable) getGame();
+                    final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
+                    return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
+                }
+            }
+            return true;
+        }
+    };
 
-	private final double distance = DISTANCE_CONFIG.getValue();
-	private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
-	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
-	private final Duration skillTimer = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
-		@Override
-		protected void onDurationStart() {
-			final World world = getPlayer().getWorld();
-			final Location playerLocation = getPlayer().getLocation();
-			Vector direction = playerLocation.getDirection().clone().normalize();
-			Locations locations = new Locations();
-			for (Vector vector : Line.between(playerLocation, playerLocation.clone().add(direction), 2)) {
-				final double originX = vector.getX();
-				final double originZ = vector.getZ();
-				locations.add(playerLocation.clone().add(vector.clone()
-						.setX(rotateX(originX, originZ, radians))
-						.setZ(rotateZ(originX, originZ, radians))));
-				locations.add(playerLocation.clone().add(vector.clone()
-						.setX(rotateX(originX, originZ, radians * 3))
-						.setZ(rotateZ(originX, originZ, radians * 3))));
-			}
-			direction.multiply(0.75);
-			new AbilityTimer(30) {
-				final Set<String> set = new HashSet<>();
-				final MaterialX material = random.pick(materials);
+    private final double distance = DISTANCE_CONFIG.getValue();
+    private final Map<Block, IBlockSnapshot> carpets = new HashMap<>();
+    private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+    private final Duration skillTimer = new Duration(DURATION_CONFIG.getValue() * 20, cooldownTimer) {
+        @Override
+        protected void onDurationStart() {
+            final World world = getPlayer().getWorld();
+            final Location playerLocation = getPlayer().getLocation();
+            Vector direction = playerLocation.getDirection().clone().normalize();
+            Locations locations = new Locations();
+            for (Vector vector : Line.between(playerLocation, playerLocation.clone().add(direction), 2)) {
+                final double originX = vector.getX();
+                final double originZ = vector.getZ();
+                locations.add(playerLocation.clone().add(vector.clone()
+                        .setX(rotateX(originX, originZ, radians))
+                        .setZ(rotateZ(originX, originZ, radians))));
+                locations.add(playerLocation.clone().add(vector.clone()
+                        .setX(rotateX(originX, originZ, radians * 3))
+                        .setZ(rotateZ(originX, originZ, radians * 3))));
+            }
+            direction.multiply(0.75);
+            new AbilityTimer(30) {
+                final Set<String> set = new HashSet<>();
+                final MaterialX material = random.pick(materials);
 
-				@Override
-				protected void run(int count) {
-					locations.add(direction);
-					for (Location location : locations) {
-						if (set.add(location.getBlockX() + ":" + location.getBlockZ())) {
-							final Block block = world.getBlockAt(
-									location.getBlockX(),
-									LocationUtil.getFloorYAt(world, playerLocation.getY(), location.getBlockX(), location.getBlockZ()),
-									location.getBlockZ()
-							);
-							if (!carpets.containsKey(block)) {
-								carpets.put(block, Blocks.createSnapshot(block));
-								BlockX.setType(block, material);
-							}
-						}
-					}
-				}
-			}.setPeriod(TimeUnit.TICKS, 2).start();
-		}
+                @Override
+                protected void run(int count) {
+                    locations.add(direction);
+                    for (Location location : locations) {
+                        if (set.add(location.getBlockX() + ":" + location.getBlockZ())) {
+                            final Block block = world.getBlockAt(
+                                    location.getBlockX(),
+                                    LocationUtil.getFloorYAt(world, playerLocation.getY(), location.getBlockX(), location.getBlockZ()),
+                                    location.getBlockZ()
+                            );
+                            if (!carpets.containsKey(block)) {
+                                carpets.put(block, Blocks.createSnapshot(block));
+                                BlockX.setType(block, material);
+                            }
+                        }
+                    }
+                }
+            }.setPeriod(TimeUnit.TICKS, 2).start();
+        }
 
-		@Override
-		protected void onDurationProcess(int seconds) {
-			final Block block = getPlayer().getLocation().getBlock();
-			if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
-				for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate)) {
-					for (Player player : Bukkit.getOnlinePlayers()) {
-						Vector direction = getPlayer().getEyeLocation().toVector().subtract(entity.getEyeLocation().toVector());
-						NMS.rotateHead(player, entity, LocationUtil.getYaw(direction), LocationUtil.getPitch(direction));
-					}
-				}
-			}
-		}
+        @Override
+        protected void onDurationProcess(int seconds) {
+            final Block block = getPlayer().getLocation().getBlock();
+            if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
+                for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), distance, distance, predicate)) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        Vector direction = getPlayer().getEyeLocation().toVector().subtract(entity.getEyeLocation().toVector());
+                        NMS.rotateHead(player, entity, LocationUtil.getYaw(direction), LocationUtil.getPitch(direction));
+                    }
+                }
+            }
+        }
 
-		@Override
-		protected void onDurationEnd() {
-			for (IBlockSnapshot snapshot : carpets.values()) {
-				snapshot.apply();
-			}
-			carpets.clear();
-		}
+        @Override
+        protected void onDurationEnd() {
+            for (IBlockSnapshot snapshot : carpets.values()) {
+                snapshot.apply();
+            }
+            carpets.clear();
+        }
 
-		@Override
-		protected void onDurationSilentEnd() {
-			for (IBlockSnapshot snapshot : carpets.values()) {
-				snapshot.apply();
-			}
-			carpets.clear();
-		}
-	}.setPeriod(TimeUnit.TICKS, 1);
+        @Override
+        protected void onDurationSilentEnd() {
+            for (IBlockSnapshot snapshot : carpets.values()) {
+                snapshot.apply();
+            }
+            carpets.clear();
+        }
+    }.setPeriod(TimeUnit.TICKS, 1);
 
-	@Override
-	public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
-		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skillTimer.isDuration() && !cooldownTimer.isCooldown()) {
-			skillTimer.start();
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean ActiveSkill(@NotNull Material material, @NotNull ClickType clickType) {
+        if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !skillTimer.isDuration() && !cooldownTimer.isCooldown()) {
+            skillTimer.start();
+            return true;
+        }
+        return false;
+    }
 
-	private double rotateX(double x, double z, double radians) {
-		return (x * FastMath.cos(radians)) + (z * FastMath.sin(radians));
-	}
+    private double rotateX(double x, double z, double radians) {
+        return (x * FastMath.cos(radians)) + (z * FastMath.sin(radians));
+    }
 
-	private double rotateZ(double x, double z, double radians) {
-		return (-x * FastMath.sin(radians)) + (z * FastMath.cos(radians));
-	}
+    private double rotateZ(double x, double z, double radians) {
+        return (-x * FastMath.sin(radians)) + (z * FastMath.cos(radians));
+    }
 
-	@SubscribeEvent(onlyRelevant = true)
-	private void onPlayerVelocity(final PlayerVelocityEvent e) {
-		final Block block = getPlayer().getLocation().getBlock();
-		if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
-			e.setVelocity(e.getPlayer().getVelocity().multiply(.45));
-		}
-	}
+    @SubscribeEvent(onlyRelevant = true)
+    private void onPlayerVelocity(final PlayerVelocityEvent e) {
+        final Block block = getPlayer().getLocation().getBlock();
+        if (carpets.containsKey(block) || carpets.containsKey(block.getRelative(BlockFace.DOWN))) {
+            e.setVelocity(e.getPlayer().getVelocity().multiply(.45));
+        }
+    }
 
 }

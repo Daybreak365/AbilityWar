@@ -45,6 +45,11 @@ import java.util.Set;
 		" $[COOLDOWN_CONFIG]",
 		"§7검 우클릭 §8- §c간 보기§f: 마지막으로 타격한 플레이어에게 작게",
 		" 돌진합니다. $[LEFT_COOLDOWN_CONFIG]"
+}, summarize = {
+		"동일 대상을 연속으로 공격하면 스택을 중첩합니다. 스택 × §c0.2§f의 추가 대미지를 입히고,",
+		"스택 수만큼 §7철괴 우클릭 §c쿨타임§f을 줄입니다. 공격 대상을 바꾸면 스택은 초기화됩니다.",
+		"§7철괴 우클릭§f 시 §3관전 상태§f로 대상에게 이동합니다. 이동 간 대상은 §8실명§f에 걸립니다.",
+		"§7검 우클릭§f 시 대상에게 조금 돌진합니다."
 })
 public class Stalker extends AbilityBase implements ActiveHandler {
 

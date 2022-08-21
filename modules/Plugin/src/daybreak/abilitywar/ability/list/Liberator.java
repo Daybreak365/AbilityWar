@@ -10,6 +10,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.VectorUtil;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
@@ -19,7 +20,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -57,6 +57,11 @@ import java.util.NoSuchElementException;
 		"§7패시브 §8- §c분리§f: §c해방 §f중 모든 피해를 50%만 입고, 나머지 50%의 피해는 §c회귀 §f시에",
 		" 받습니다. 단, §c회귀§f하며 입히는 추가 피해로 대상 플레이어가 사망한 경우 50%의",
 		" 피해를 받지 않습니다."
+}, summarize = {
+		"§7철괴 우클릭§f 시 §b영혼§f만이 돌진합니다. 이 §c해방 상태§f는 10초간 §3/§f 재사용 전까지 유지됩니다.",
+		"§c해방§f간 받는 피해가 절반이 되고, §9타게팅 불가§f 상태입니다. 이후 §c해방§f이 끝나면",
+		"적에게 입힌 피해의 25%를 다시 가하고, 받지 않은 §c나머지 절반의 피해§f를 받습니다.",
+		"단, §c회귀§f 피해로 적 처치 시 나머지 절반의 피해를 받지 않습니다."
 })
 public class Liberator extends AbilityBase implements ActiveHandler {
 

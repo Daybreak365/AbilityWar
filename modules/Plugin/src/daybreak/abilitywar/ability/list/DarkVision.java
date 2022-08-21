@@ -26,6 +26,8 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "심안", rank = Rank.B, species = Species.HUMAN, explain = {
 		"앞이 보이지 않는 대신, 주위 $[DISTANCE_CONFIG]칸 안에 있는 모든 생명체는",
 		"발광 효과가 적용됩니다. 또한, 빠른 속도로 이동할 수 있습니다."
+}, summarize = {
+		"영구적인 §8실명§f 상태지만 이동 속도가 §b빠르고§f 주변 적을 §e§l발광§f시킵니다."
 })
 @Tips(tip = {
 		"실명 효과로 인해 앞이 보이지 않지만, 적에게 걸리는 발광 효과 덕분에",

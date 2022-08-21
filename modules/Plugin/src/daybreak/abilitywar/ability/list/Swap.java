@@ -35,6 +35,9 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "스왑", rank = Rank.B, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 $[DURATION_CONFIG]초간 주변 $[DISTANCE_CONFIG]칸 이내에 있는 모든 플레이어의 핫바 슬롯을",
 		"임의로 변경하고 본인을 제외한 플레이어의 슬롯을 $[LOCK_DURATION_CONFIG]초간 고정합니다. $[COOLDOWN_CONFIG]",
+}, summarize = {
+		"§7철괴 우클릭§f 시 $[DURATION_CONFIG]초간 주변 모든 플레이어의 핫바 슬롯을 무작위로 바꾸고,",
+		"자신 외 플레이어는 마지막으로 바뀐 슬롯으로 $[LOCK_DURATION_CONFIG]초간 §3고정§f시킵니다."
 })
 public class Swap extends AbilityBase implements ActiveHandler {
 

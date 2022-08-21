@@ -56,6 +56,12 @@ import java.util.function.Predicate;
 		" $[PLAGUE_COOLDOWN_CONFIG]",
 		"§7상태 이상 §8- §4혈사병§f: 혈사병 지속 중 플레이어가 가지고 있는 모든 출혈 효과가",
 		" 멈추지 않습니다. 혈사병이 종료되면 모든 출혈 효과가 함께 사라집니다."
+}, summarize = {
+		"대상에게 쓰는 세 번째마다의 스킬 효과가 강화됩니다.",
+		"§7적을 바라보고 철괴를 우클릭§f하면 대상에게서 체력을 반 칸 §c흡혈§f합니다.",
+		"§4(§c강화§4)§f 한 칸 §c흡혈§f하며 3초간 §c출혈§f시킵니다.",
+		"§7철괴 좌클릭§f 시 주변 적들을 4초간 §c출혈§f이 멎지 않는 §4혈사병§f을 감염시킵니다.",
+		"§4(§c강화§4)§f 6초간 §4혈사병§f을 감염시키고 §c출혈§f도 부여합니다."
 })
 public class Ruber extends AbilityBase implements ActiveHandler {
 

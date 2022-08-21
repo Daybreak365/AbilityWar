@@ -34,6 +34,9 @@ import java.util.function.Predicate;
 		"철괴를 우클릭하면 주변에 번개를 떨어뜨리며 폭발을 일으킵니다. $[COOLDOWN_CONFIG]",
 		"번개를 맞은 플레이어는 3초간 기절합니다.",
 		"번개, 폭발 피해를 입지 않습니다."
+}, summarize = {
+		"§7철괴 우클릭§f으로 주변에 §b번개§f를 내리치고 적들을 3초간 §e기절§f시킵니다.",
+		"번개와 폭발 피해를 무시합니다."
 })
 public class Zeus extends AbilityBase implements ActiveHandler {
 

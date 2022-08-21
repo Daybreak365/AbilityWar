@@ -41,6 +41,8 @@ import java.util.function.Predicate;
 		"철괴를 우클릭하면 주변 30블록 내에 있었던 플레이어들에게 $[DURATION_CONFIG]초간",
 		"귀속 저주가 걸린 호박을 씌웁니다. $[COOLDOWN_CONFIG]",
 		"§5♪ §f호박 같은 네 얼굴 §5♪"
+}, summarize = {
+		"§7철괴 우클릭§f 시 주변 적들 머리에 벗을 수 없는 §6호박§f을 15초간 씌웁니다."
 })
 public class Pumpkin extends AbilityBase implements ActiveHandler {
 

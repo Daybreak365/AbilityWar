@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.collect.Pair;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
@@ -19,7 +20,6 @@ import daybreak.abilitywar.utils.base.math.geometry.Wing;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
 import org.bukkit.Bukkit;
@@ -46,6 +46,9 @@ import java.util.function.Predicate;
 		"체력을 §c반칸§f씩 $[DURATION_CONFIG]번 흡혈합니다. $[COOLDOWN_CONFIG]",
 		"§e밤§f에는 쿨타임이 더 빠르게 끝나며, 체력을 매번 §c반칸§f씩 더 흡혈해",
 		"§c한칸§f씩 흡혈합니다. 능력 사용 중에는 땅 위에서 느리게 날 수 있습니다."
+}, summarize = {
+		"§7철괴 우클릭§f 시 저공 비행하며 광범위 내 생명체들의 체력을 §c흡혈§f합니다.",
+		"§9밤§f에는 §c쿨타임§f이 줄어들고 §c흡혈량§f이 2배가 됩니다."
 })
 public class Vampire extends AbilityBase implements ActiveHandler {
 

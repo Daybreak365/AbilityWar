@@ -52,6 +52,10 @@ import java.util.function.Predicate;
 		"투사체를 쏘고 난 후 일정 시간동안 재장전을 하며, 재장전 중에는",
 		"활을 쏠 수 없습니다. 활을 들고 있을 경우 빠르게 이동할 수 없으며,",
 		"이동이 제한됩니다."
+}, summarize = {
+		"§7활 발사 시§f 직선적이고 초고속의 §b특수 투사체§f를 발사합니다.",
+		"§b투사체§f는 §b유리계 블록§f을 부수나 생명체와 지형지물에 가로막힙니다.",
+		"§6활§f을 들고 있으면 이동이 극히 §c제한§f됩니다."
 })
 public class Sniper extends AbilityBase {
 

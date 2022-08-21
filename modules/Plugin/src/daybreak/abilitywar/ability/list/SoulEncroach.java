@@ -13,13 +13,13 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Points;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages;
 import daybreak.abilitywar.utils.base.minecraft.damage.Damages.INSTANCE.Flag;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
 import org.bukkit.Bukkit;
@@ -52,6 +52,11 @@ import java.util.function.Predicate;
 		"대상을 죽일 경우 잃은 체력의 절반을 회복하고 능력 쿨타임이 즉시 초기화되며,",
 		"주변 $[DISTANCE_CONFIG]칸 이내의 가장 가까운 플레이어가 자동으로 대상으로 설정되고",
 		"다음 스킬이 강화됩니다."
+}, summarize = {
+		"자신이 마지막으로 공격한 적이 7칸 내에 있다면 §7철괴 우클릭§f 스킬을 사용 가능합니다.",
+		"사용 시 대상의 §b영혼§f에 잠식하여 §b타게팅 불가§f 상태가 됩니다.",
+		"웅크리거나 자동 잠식 해제 시 대상에게 대상의 잃은 체력 비례 피해를 입히고,",
+		"이 피해로 처치 시 자신의 빈 체력 절반을 §d회복§f하고, 다음 §c쿨타임§f을 초기화합니다."
 })
 public class SoulEncroach extends AbilityBase implements ActiveHandler {
 

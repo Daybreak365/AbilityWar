@@ -42,6 +42,9 @@ import java.util.function.Predicate;
 		"§7철괴 우클릭 §8- §d축복§f: 자신을 중심으로 모두가 대미지를 받지 않는 지역을",
 		" 만들어내며, 지역은 점차 축소됩니다. 지역 내에서 무시된 피해량의 10%만큼",
 		" 체력을 회복하고, 체력이 가득 찬 경우 §e흡수 체력§7(§f최대 5칸§7)§f으로 회복합니다."
+}, summarize = {
+		"§7철괴 우클릭§f으로 §b무적 지대§f를 생성합니다. §b지역§f은 점차 축소됩니다.",
+		"§b지역§f 내에서 무시된 피해량 일부를 §d회복§f하고, 5칸까지 §e흡수 체력§f으로 오버힐 가능합니다."
 })
 public class Muse extends AbilityBase implements ActiveHandler {
 

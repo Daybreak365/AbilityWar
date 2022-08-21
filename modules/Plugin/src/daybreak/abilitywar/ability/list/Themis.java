@@ -26,6 +26,8 @@ import java.util.function.Predicate;
 		"정의의 여신 테미스.",
 		"다른 플레이어를 살해한 플레이어에게 죄 스택을 1씩 부여하며, 죄 스택이 쌓인",
 		"플레이어를 공격할 때 §c스택 §7x §c$[multiplier]§f만큼의 추가 대미지를 줍니다."
+}, summarize = {
+		"적이 §c죽인 플레이어 수§f에 비례해 추가 피해를 입힙니다."
 })
 public class Themis extends AbilityBase {
 

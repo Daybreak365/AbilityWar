@@ -57,6 +57,10 @@ import java.util.function.Predicate;
 		" 바닥에 닿으면 고정됩니다. 웅크린채로 철괴를 좌클릭하면 날아가고 있는 모든",
 		" 얼음을 그 자리에서 고정합니다. 고정된 얼음은 4초 뒤 깨지며 대미지를 줍니다.",
 		"§7패시브 §8- §b냉기§f: 주변을 지나가는 발사체들이 모두 얼어붙습니다.",
+}, summarize = {
+		"§7철괴 좌클릭§f으로 §b얼음§f을 던져 생명체를 §3빙결§f시킵니다. 지면에 닿은 §b얼음§f은 고정됩니다.",
+		"§7웅크린 채 철괴 좌클릭§f으로 §b얼음§f을 고정 가능합니다. §3고정된 얼음§f은 잠시 후 §c폭발§f합니다.",
+		"자신 주변의 일반 투사체는 §b얼어붙습니다§f."
 })
 public class Khazhad extends AbilityBase implements ActiveHandler {
 

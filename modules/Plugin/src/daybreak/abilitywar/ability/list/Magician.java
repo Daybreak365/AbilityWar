@@ -33,6 +33,8 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "마술사", rank = Rank.A, species = Species.HUMAN, explain = {
 		"활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게",
 		"최대체력의 30% 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[COOLDOWN_CONFIG]"
+}, summarize = {
+		"화살 적중 위치의 주변 생명체들에게 §c최대 체력 비례 피해§f를 입히고 §d위치를 뒤섞습니다§f."
 })
 public class Magician extends AbilityBase {
 

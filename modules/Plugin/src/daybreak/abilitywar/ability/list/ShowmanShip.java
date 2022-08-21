@@ -44,6 +44,10 @@ import java.util.function.Predicate;
 		"플레이어는 1명, 플레이어가 아닌 생명체는 $[ENTITY_COUNT]명 취급합니다.",
 		"§a0명 이상, 2명 미만 §7: §f나약함  §a2명 이상, 4명 미만 §7: §f힘 II",
 		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 공격시 처형"
+}, summarize = {
+		"자신 외 주변 생명체 수§8(§7플레이어 1, 이외 0.2§8)§f에 따라 효과를 받습니다.",
+		"§a2명 미만 §f: §7나약함 §a2명 이상 4명 미만 §f:  §6힘 II§f",
+		"§a4명 이상 §f: §6힘 III§f 및 §c체력 30% 미만§f의 적 공격 시 §4처형§f"
 })
 public class ShowmanShip extends AbilityBase {
 

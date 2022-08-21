@@ -27,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 		"§7철괴 우클릭 §8(§7토글§8) §8- §5리버스§f: 자신을 중심으로 반지름 $[RADIUS_CONFIG]의 리버스 지대를",
 		" 생성하거나, 재사용하여 제거할 수 있습니다. 리버스 지대 안의 플레이어들은",
 		" 모든 §5넉백 §f또는 §5끌어당겨지는 §f효과를 반대로 받습니다."
+}, summarize = {
+		"§7철괴 우클릭§f으로 §2리버스 지대§f를 켜고 끕니다.",
+		"§2리버스 지대§f 내 모든 §e그랩 §3/ §b넉백 §f효과가 §a역방향§f이 됩니다."
 })
 public class Reverse extends AbilityBase implements ActiveHandler {
 

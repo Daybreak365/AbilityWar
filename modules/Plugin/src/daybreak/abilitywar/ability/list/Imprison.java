@@ -12,13 +12,13 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
-import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.Observer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
 import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.BlockX;
 import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Material;
@@ -44,6 +44,11 @@ import java.util.function.Predicate;
 		"15초마다 §e강도 스택§f이 1씩 오르며, 최대 4 스택을 모을 수 있습니다. 모은 §e강도 스택§f은",
 		"능력을 사용하면 초기화됩니다. 능력으로 생성될 유리구의 크기를 철괴를 들고,",
 		"웅크린 상태로 마우스 휠을 이용하여 조절할 수 있습니다."
+}, summarize = {
+		"§7철괴 우클릭§f 시 바라보고 있는 대상을 §b유리구§f에 가둡니다.",
+		"§7철괴 좌클릭§f 시 자신 주변에 §b유리구§f를 칩니다.",
+		"매 15초마다 다음에 사용하는 §b유리구§f가 더 §3튼튼§f해지며, 4번까지 중첩됩니다.",
+		"§7철괴를 들고 웅크린 뒤 마우스 휠§f로 크기를 조절할 수 있습니다."
 })
 public class Imprison extends AbilityBase implements ActiveHandler {
 

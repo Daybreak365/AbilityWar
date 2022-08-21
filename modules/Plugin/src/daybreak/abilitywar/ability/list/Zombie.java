@@ -45,6 +45,10 @@ import java.util.Set;
 		"다른 플레이어가 나를 공격할 경우 좀비의 타겟이 그 플레이어로 변경됩니다.",
 		"§7상태 이상 §8- §5감염§f: 간헐적으로 시야가 돌아가며, 대미지를 25% 줄여받습니다.",
 		"감염 효과를 중복으로 받으면 지속 시간이 계속 쌓입니다."
+}, summarize = {
+		"§7다른 플레이어에게 철괴를 우클릭§f하면 대상을 추격하는 §2좀§3비§f 무리를 소환합니다.",
+		"§2좀§3비§f는 피해를 입힐 때 적을 §5감염§f시키며, 나를 공격한 자를 우선 추격합니다.",
+		"§3[§5감염§3]§f 간헐적으로 시야가 돌아가고 받는 피해가 25% 감소합니다."
 })
 @Support.Version(min = NMSVersion.v1_12_R1, max = NMSVersion.v1_14_R1)
 public class Zombie extends AbilityBase implements TargetHandler {

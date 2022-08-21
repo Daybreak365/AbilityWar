@@ -24,6 +24,8 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 @AbilityManifest(name = "이열치열", rank = Rank.B, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c이열치열§f: §c화염 §f피해를 입을 때, 피해만큼 체력을 회복합니다.",
 		"§7철괴 우클릭 §8- §c불사지르기§f: 8초간 몸에 불을 붙입니다. $[COOLDOWN_CONFIG]"
+}, summarize = {
+		"§c화염 피해§f를 §a역회복§f합니다. §7철괴 우클릭§f 시 신체를 §c발화§f시킵니다."
 })
 @Tips(tip = {
 		"모든 화염 대미지를 카운터, 거기에 더해 회복까지 할 수 있습니다.",

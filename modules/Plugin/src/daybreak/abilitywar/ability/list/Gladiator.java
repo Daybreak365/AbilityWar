@@ -47,6 +47,9 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "글래디에이터", rank = Rank.S, species = Species.HUMAN, explain = {
 		"상대를 철괴 우클릭하면 부술 수 없는 투기장이 생성되며 §e흡수§f/§3저항 §f효과를 얻고,",
 		"상대와 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
+}, summarize = {
+		"상대를 철괴 우클릭하면 부술 수 없는 투기장이 생성되며 §e흡수§f/§3저항 §f효과를 얻고,",
+		"상대와 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
 })
 @Tips(tip = {
 		"다른 사람의 방해 없이, 유리한 1:1 전투를 펼치고 싶다면 글래디에이터를",

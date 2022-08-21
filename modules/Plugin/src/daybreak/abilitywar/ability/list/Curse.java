@@ -16,13 +16,13 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,6 +43,9 @@ import java.util.function.Predicate;
 		"지속되는 저주 인형을 내 위치에 만들어내며, 저주 인형이 대미지를 입을 경우",
 		"대미지의 일부가 상대에게 전이됩니다. $[COOLDOWN_CONFIG]",
 		"대상의 체력이 적을수록 더욱 큰 대미지를 입힐 수 있습니다."
+}, summarize = {
+		"13칸 이내의 적을 §7철괴로 우클릭§f하여 대상의 §b영혼§f을 일정 시간 뽑아냅니다.",
+		"§b영혼§f에게 입힌 피해는 영혼 주인의 §d체력§f에 반비례하여 대상에게 전이됩니다."
 })
 @Tips(tip = {
 		"저주 인형을 만들어 상대를 고통스럽게 하십시오. 한 번 저주 인형이",
