@@ -9,7 +9,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class ParticipantEffectApplyEvent extends ParticipantEvent implements Cancellable {
+public class ParticipantPreEffectApplyEvent extends ParticipantEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
@@ -17,7 +17,7 @@ public class ParticipantEffectApplyEvent extends ParticipantEvent implements Can
 	private boolean cancelled = false;
 	private int duration;
 
-	public ParticipantEffectApplyEvent(@NotNull AbstractGame.Participant who, final @NotNull EffectRegistry.EffectRegistration<?> effectType, final @NotNull TimeUnit timeUnit, final int duration) {
+	public ParticipantPreEffectApplyEvent(@NotNull AbstractGame.Participant who, final @NotNull EffectRegistry.EffectRegistration<?> effectType, final @NotNull TimeUnit timeUnit, final int duration) {
 		super(who);
 		this.effectType = effectType;
 		this.duration = timeUnit.toTicks(duration);

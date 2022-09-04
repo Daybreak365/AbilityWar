@@ -14,7 +14,8 @@ import daybreak.abilitywar.game.manager.effect.Hemophilia;
 import daybreak.abilitywar.game.manager.effect.Infection;
 import daybreak.abilitywar.game.manager.effect.Rooted;
 import daybreak.abilitywar.game.manager.effect.Stun;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantNewEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -167,15 +168,17 @@ public class EffectRegistry {
 		}
 
 		public E apply(final @NotNull Participant participant, final @NotNull TimeUnit timeUnit, final int duration) {
-			final ParticipantEffectApplyEvent event = new ParticipantEffectApplyEvent(participant, this, timeUnit, duration);
-			Bukkit.getPluginManager().callEvent(event);
-			if (event.isCancelled()) return null;
-			final E applied = manifest.method().tryApply(this, participant, TimeUnit.TICKS, event.getDuration());
+			final ParticipantPreEffectApplyEvent preEvent = new ParticipantPreEffectApplyEvent(participant, this, timeUnit, duration);
+			Bukkit.getPluginManager().callEvent(preEvent);
+			if (preEvent.isCancelled()) return null;
+			final E applied = manifest.method().tryApply(this, participant, TimeUnit.TICKS, preEvent.getDuration());
 			if (applied != null) return applied;
 			try {
 				if (constructor != null) {
-					final E newEffect = constructor.newInstance(participant, TimeUnit.TICKS, event.getDuration());
+					final E newEffect = constructor.newInstance(participant, TimeUnit.TICKS, preEvent.getDuration());
 					newEffect.start();
+					final ParticipantNewEffectApplyEvent newEvent = new ParticipantNewEffectApplyEvent(participant, newEffect);
+					Bukkit.getPluginManager().callEvent(newEvent);
 					return newEffect;
 				} else return null;
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -185,7 +188,7 @@ public class EffectRegistry {
 		}
 
 		public E apply(final @NotNull Participant participant, final @NotNull TimeUnit timeUnit, final int duration, final String constructorName, final Object... args) {
-			final ParticipantEffectApplyEvent event = new ParticipantEffectApplyEvent(participant, this, timeUnit, duration);
+			final ParticipantPreEffectApplyEvent event = new ParticipantPreEffectApplyEvent(participant, this, timeUnit, duration);
 			Bukkit.getPluginManager().callEvent(event);
 			if (event.isCancelled()) return null;
 			final E applied = manifest.method().tryApply(this, participant, TimeUnit.TICKS, event.getDuration());

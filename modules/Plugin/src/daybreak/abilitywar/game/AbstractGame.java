@@ -420,6 +420,12 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 		@NotNull
 		@SuppressWarnings("unchecked")
+		public Collection<Effect> getEffects() {
+			return Collections.unmodifiableCollection(effects.values());
+		}
+
+		@NotNull
+		@SuppressWarnings("unchecked")
 		public <E extends Effect> Collection<E> getEffects(final EffectRegistration<E> registration) {
 			return (Collection<E>) effects.get(registration);
 		}

@@ -13,7 +13,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
-import daybreak.abilitywar.game.manager.effect.event.ParticipantEffectApplyEvent;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
@@ -237,7 +237,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
         }
 
         @EventHandler
-        private void onEffectApply(final ParticipantEffectApplyEvent e) {
+        private void onEffectApply(final ParticipantPreEffectApplyEvent e) {
             if (getParticipant().equals(e.getParticipant())) {
                 final ImmutableSet<EffectType> effectType = e.getEffectType().getEffectType();
                 if (effectType.contains(EffectType.MOVEMENT_RESTRICTION) || effectType.contains(EffectType.MOVEMENT_INTERRUPT)) {
