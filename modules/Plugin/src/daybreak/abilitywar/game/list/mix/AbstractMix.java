@@ -356,12 +356,12 @@ public abstract class AbstractMix extends Game implements DefaultKitHandler {
 
 		@Override
 		public void addParticipant(Player player) throws UnsupportedOperationException {
-			throw new UnsupportedOperationException("참가자를 추가할 수 없습니다.");
+			participants.putIfAbsent(player.getUniqueId().toString(), new MixParticipant(player));
 		}
 
 		@Override
 		public void removeParticipant(UUID uuid) throws UnsupportedOperationException {
-			throw new UnsupportedOperationException("참가자를 제거할 수 없습니다.");
+			participants.remove(uuid.toString());
 		}
 
 	}
