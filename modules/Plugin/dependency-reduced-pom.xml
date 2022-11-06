@@ -51,6 +51,7 @@
                   <include>org.jetbrains.kotlin:**</include>
                   <include>com.google.guava:guava</include>
                   <include>com.google.code.gson:gson</include>
+                  <include>org.bstats:**</include>
                   <include>com.github.koca2000:NoteBlockAPI</include>
                 </includes>
               </artifactSet>
@@ -58,6 +59,10 @@
                 <relocation>
                   <pattern>com.google</pattern>
                   <shadedPattern>daybreak.google</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.bstats</pattern>
+                  <shadedPattern>daybreak.bstats</shadedPattern>
                 </relocation>
               </relocations>
               <filters>

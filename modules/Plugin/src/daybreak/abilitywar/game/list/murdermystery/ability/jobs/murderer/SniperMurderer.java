@@ -8,6 +8,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.boundary.CenteredBoundingBox;
@@ -15,7 +16,6 @@ import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import daybreak.abilitywar.utils.library.SoundLib;
 import daybreak.abilitywar.utils.library.item.ItemLib;
@@ -146,7 +146,7 @@ public class SniperMurderer extends AbstractMurderer {
 			super(160);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.boundingBox = CenteredBoundingBox.of(startLocation, -.75, -.75, -.75, .75, .75, .75);
+			this.boundingBox = CenteredBoundingBox.of(startLocation, -1, -1, -1, 1, 1, 1);
 			this.forward = arrowVelocity.multiply(10);
 			this.color = color;
 			this.lastLocation = startLocation;
@@ -154,7 +154,7 @@ public class SniperMurderer extends AbstractMurderer {
 				@Override
 				public boolean test(Entity entity) {
 					if (entity.equals(getPlayer())) return false;
-					return !(entity instanceof Player) && getGame().isParticipating(entity.getUniqueId())
+					return (entity instanceof Player) && getGame().isParticipating(entity.getUniqueId())
 							&& !((MurderMystery) getGame()).isDead(entity.getUniqueId())
 							&& getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue();
 				}

@@ -91,7 +91,6 @@ import java.util.function.Predicate;
 
 })
 @Category(GameCategory.MINIGAME)
-
 @Beta
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
 

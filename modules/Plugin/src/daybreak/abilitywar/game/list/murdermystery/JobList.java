@@ -16,6 +16,7 @@ import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMu
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.SniperMurderer;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;

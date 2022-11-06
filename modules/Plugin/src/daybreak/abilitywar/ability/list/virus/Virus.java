@@ -1,4 +1,4 @@
-package daybreak.abilitywar.ability.list;
+package daybreak.abilitywar.ability.list.virus;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityManifest;
@@ -22,10 +22,14 @@ public class Virus extends AbilityBase {
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerDeath(ParticipantDeathEvent e) {
 		final Player killer = getPlayer().getKiller();
-		if (killer != null && GameManager.getGame().isParticipating(killer)) {
-			try {
-				getGame().getParticipant(killer).setAbility(Virus.class);
-			} catch (ReflectiveOperationException ignored) {}
+		final Participant killerParticipant = GameManager.getGame().getParticipant(killer);
+		if (killer != null && killerParticipant != null) {
+			final VirusInfectionEvent event = new VirusInfectionEvent(this, killerParticipant);
+			if (!event.isCancelled()) {
+				try {
+					getGame().getParticipant(killer).setAbility(Virus.class);
+				} catch (ReflectiveOperationException ignored) {}
+			}
 		}
 	}
 

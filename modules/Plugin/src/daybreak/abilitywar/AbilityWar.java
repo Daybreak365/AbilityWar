@@ -24,6 +24,7 @@ import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import daybreak.abilitywar.utils.installer.Installer;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -49,10 +50,18 @@ public class AbilityWar extends JavaPlugin implements Provider, Listener {
 
 	private static final Logger logger = Logger.getLogger(AbilityWar.class);
 	private static AbilityWar plugin;
+	private static Metrics metrics;
 
 	public static AbilityWar getPlugin() {
 		if (plugin != null) {
 			return plugin;
+		}
+		throw new IllegalStateException("플러그인이 아직 초기화되지 않았습니다.");
+	}
+
+	public static Metrics getMetrics() {
+		if (metrics != null) {
+			return metrics;
 		}
 		throw new IllegalStateException("플러그인이 아직 초기화되지 않았습니다.");
 	}
@@ -62,6 +71,7 @@ public class AbilityWar extends JavaPlugin implements Provider, Listener {
 
 	public AbilityWar() {
 		plugin = this;
+		metrics = new Metrics(this, 16623);
 		CompletableFuture.runAsync(new Runnable() {
 			@Override
 			public void run() {

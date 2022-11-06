@@ -129,6 +129,7 @@ public class SpecialThanksGUI implements Listener {
 			final int slot = e.getSlot();
 			if (category == null) {
 				if (currentItem == null) return;
+				if (slot >= SpecialThanks.categories.length) return;
 				this.category = SpecialThanks.categories[slot];
 				openGUI();
 			} else {
