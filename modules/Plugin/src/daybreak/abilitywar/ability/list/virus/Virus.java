@@ -8,6 +8,7 @@ import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @AbilityManifest(name = "바이러스", rank = Rank.C, species = Species.OTHERS, explain = {
@@ -25,6 +26,7 @@ public class Virus extends AbilityBase {
 		final Participant killerParticipant = GameManager.getGame().getParticipant(killer);
 		if (killer != null && killerParticipant != null) {
 			final VirusInfectionEvent event = new VirusInfectionEvent(this, killerParticipant);
+			Bukkit.getPluginManager().callEvent(event);
 			if (!event.isCancelled()) {
 				try {
 					getGame().getParticipant(killer).setAbility(Virus.class);
