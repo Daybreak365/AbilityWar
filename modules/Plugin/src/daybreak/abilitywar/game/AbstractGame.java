@@ -378,16 +378,16 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 														return;
 
 													this.lastClick = current;
-													final AbilityPreTargetEvent event = new AbilityPreTargetEvent(ability);
+													final AbilityPreTargetEvent event = new AbilityPreTargetEvent(ability, material, targetPlayer);
 													if (!event.isCancelled()) {
-														((TargetHandler) ability).TargetSkill(material, targetPlayer);
+														((TargetHandler) ability).TargetSkill(event.getMaterial(), event.getTarget());
 													}
 												}
 											} else {
 												this.lastClick = current;
-												final AbilityPreTargetEvent event = new AbilityPreTargetEvent(ability);
+												final AbilityPreTargetEvent event = new AbilityPreTargetEvent(ability, material, (LivingEntity) targetEntity);
 												if (!event.isCancelled()) {
-													((TargetHandler) ability).TargetSkill(material, (LivingEntity) targetEntity);
+													((TargetHandler) ability).TargetSkill(event.getMaterial(), event.getTarget());
 												}
 											}
 										}
