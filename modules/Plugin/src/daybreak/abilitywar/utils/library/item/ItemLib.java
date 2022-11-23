@@ -3,9 +3,6 @@ package daybreak.abilitywar.utils.library.item;
 import com.google.common.base.Enums;
 import daybreak.abilitywar.utils.base.Hashes;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
@@ -15,6 +12,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Item 라이브러리
@@ -238,6 +239,29 @@ public class ItemLib {
 			}
 			return true;
 		} else return false;
+	}
+
+	public static boolean hasSpace(Inventory inventory, ItemStack item) {
+		final ItemStack[] contents = inventory.getContents();
+		final int maxStackSize = item.getType().getMaxStackSize();
+		int amount = item.getAmount();
+		for (int i = 0; i < contents.length; i++) {
+			final ItemStack stack = contents[i];
+			if (stack == null || stack.getType() == Material.AIR) {
+				if (amount <= maxStackSize) {
+					amount = 0;
+					break;
+				} else amount -= maxStackSize;
+			} else {
+				if (!stack.isSimilar(item)) continue;
+				final int diff = maxStackSize - stack.getAmount();
+				if (diff >= amount) {
+					amount = 0;
+					break;
+				} else amount -= diff;
+			}
+		}
+		return amount <= 0;
 	}
 
 	public static boolean removeItem(Inventory inventory, Material type, int amount) {

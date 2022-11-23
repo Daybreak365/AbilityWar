@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.ability.decorator.TargetHandler;
+import daybreak.abilitywar.ability.event.AbilityPreActiveSkillEvent;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -14,6 +15,7 @@ import daybreak.abilitywar.game.list.mix.synergy.Synergy;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.collect.SetUnion;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -135,17 +137,75 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 	}
 
 	public void setAbility(final AbilityRegistration first, final AbilityRegistration second) throws ReflectiveOperationException {
-		removeAbility();
-		final AbilityRegistration synergyReg = SynergyFactory.getSynergy(first.getAbilityClass(), second.getAbilityClass());
+		setAbility(first.getAbilityClass(), second.getAbilityClass());
+	}
+
+	public void setFirst(final Class<? extends AbilityBase> first) throws ReflectiveOperationException {
+		if (this.first != null) {
+			this.first.destroy();
+			this.first = null;
+		}
+		final AbilityRegistration synergyReg;
+		if (hasSynergy()) {
+			synergyReg = SynergyFactory.getSynergy(first, SynergyFactory.getSynergyBase(synergy.getRegistration()).getRight().getAbilityClass());
+			this.synergy.destroy();
+			this.synergy = null;
+		} else {
+			if (this.second != null) {
+				synergyReg = SynergyFactory.getSynergy(first, this.second.getClass());
+				if (synergyReg != null) {
+					this.second.destroy();
+					this.second = null;
+				}
+			} else {
+				synergyReg = null;
+			}
+		}
 		if (synergyReg != null && !Settings.isBlacklisted(synergyReg.getManifest().name())) {
 			this.synergy = (Synergy) create(synergyReg.getAbilityClass(), getParticipant());
 			this.synergy.setRestricted(false);
 		} else {
 			this.first = create(first, getParticipant());
 			this.first.setRestricted(false);
+		}
+	}
+
+	public void setSecond(final Class<? extends AbilityBase> second) throws ReflectiveOperationException {
+		if (this.second != null) {
+			this.second.destroy();
+			this.second = null;
+		}
+		final AbilityRegistration synergyReg;
+		if (hasSynergy()) {
+			synergyReg = SynergyFactory.getSynergy(SynergyFactory.getSynergyBase(synergy.getRegistration()).getLeft().getAbilityClass(), second);
+			this.synergy.destroy();
+			this.synergy = null;
+		} else {
+			if (this.first != null) {
+				synergyReg = SynergyFactory.getSynergy(this.first.getClass(), second);
+				if (synergyReg != null) {
+					this.first.destroy();
+					this.first = null;
+				}
+			} else {
+				synergyReg = null;
+			}
+		}
+		if (synergyReg != null && !Settings.isBlacklisted(synergyReg.getManifest().name())) {
+			this.synergy = (Synergy) create(synergyReg.getAbilityClass(), getParticipant());
+			this.synergy.setRestricted(false);
+		} else {
 			this.second = create(second, getParticipant());
 			this.second.setRestricted(false);
 		}
+	}
+
+	public void setFirst(final AbilityRegistration first) throws ReflectiveOperationException {
+		setFirst(first.getAbilityClass());
+	}
+
+	public void setSecond(final AbilityRegistration second) throws ReflectiveOperationException {
+		setSecond(second.getAbilityClass());
 	}
 
 	public void setSynergy(final AbilityRegistration synergy) throws ReflectiveOperationException {
@@ -220,11 +280,28 @@ public class Mix extends AbilityBase implements ActiveHandler, TargetHandler {
 	public boolean ActiveSkill(@NotNull Material material, @NotNull AbilityBase.ClickType clickType) {
 		if (hasAbility()) {
 			if (synergy != null) {
-				return synergy instanceof ActiveHandler && ((ActiveHandler) synergy).ActiveSkill(material, clickType);
+				if (synergy instanceof ActiveHandler) {
+					final AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(synergy, material, clickType);
+					Bukkit.getPluginManager().callEvent(preEvent);
+					if (preEvent.isCancelled()) return false;
+					else return ((ActiveHandler) synergy).ActiveSkill(material, clickType);
+				} else return false;
 			} else {
 				boolean abilityUsed = false;
-				if (first instanceof ActiveHandler && ((ActiveHandler) first).ActiveSkill(material, clickType)) abilityUsed = true;
-				if (second instanceof ActiveHandler && ((ActiveHandler) second).ActiveSkill(material, clickType)) abilityUsed = true;
+				if (first instanceof ActiveHandler) {
+					final AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(first, material, clickType);
+					Bukkit.getPluginManager().callEvent(preEvent);
+					if (!preEvent.isCancelled() && ((ActiveHandler) first).ActiveSkill(material, clickType)) {
+						abilityUsed = true;
+					}
+				}
+				if (second instanceof ActiveHandler) {
+					final AbilityPreActiveSkillEvent preEvent = new AbilityPreActiveSkillEvent(second, material, clickType);
+					Bukkit.getPluginManager().callEvent(preEvent);
+					if (!preEvent.isCancelled() && ((ActiveHandler) second).ActiveSkill(material, clickType)) {
+						abilityUsed = true;
+					}
+				}
 				return abilityUsed;
 			}
 		}
