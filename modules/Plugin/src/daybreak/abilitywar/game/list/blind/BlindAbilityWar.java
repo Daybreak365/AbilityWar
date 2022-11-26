@@ -409,6 +409,12 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 				}
 			}
 			break;
+			case ABILITY_SUMMARIZE: {
+				if (GameManager.isGameRunning()) {
+					Messager.sendErrorMessage(sender, "이 게임에서 사용할 수 없는 명령어입니다.");
+				} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+			}
+			break;
 			case TIP_CHECK: {
 				final Player player = (Player) sender;
 				if (GameManager.isGameRunning()) {
