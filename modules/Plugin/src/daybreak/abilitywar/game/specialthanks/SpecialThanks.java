@@ -169,14 +169,6 @@ public class SpecialThanks {
 					)
 			)
 			.addSpecialThanks(
-					new SpecialThank("리더", "25cc5950b380499dbe681817b7d40a37",
-							"§7리더님",
-							"리더쉽과 통솔력을 담당하고 있는 스트리머입니다.",
-							"능력자 플러그인으로 재미있고 활기찬 방송을 진행해주셨습니다.",
-							"§8새벽이 방송에 등장할 때마다 시청자들에게 인사를 시키는..."
-					)
-			)
-			.addSpecialThanks(
 					new SpecialThank("김종겜", "e21490bf19e64fcc8d3c763ed3bff789",
 							"§7김종겜님",
 							"능력자 플러그인을 이용해 독보적인 시스템을 개발하여",

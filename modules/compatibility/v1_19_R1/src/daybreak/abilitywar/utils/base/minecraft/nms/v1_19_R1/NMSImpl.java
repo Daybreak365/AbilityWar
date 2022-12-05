@@ -146,7 +146,7 @@ public class NMSImpl implements INMS {
 	@Override
 	public void setArrowsInBody(Player player, int count) {
 		if (count < 0) throw new IllegalStateException("count cannot be negative.");
-		((net.minecraft.world.entity.Entity) ((CraftPlayer) player).getHandle()).getEntityData().set(new DataWatcherObject<>(11, DataWatcherRegistry.INT), count);
+		((net.minecraft.world.entity.Entity) ((CraftPlayer) player).getHandle()).getEntityData().set(new DataWatcherObject<>(12, DataWatcherRegistry.INT), count);
 	}
 
 	@Override
