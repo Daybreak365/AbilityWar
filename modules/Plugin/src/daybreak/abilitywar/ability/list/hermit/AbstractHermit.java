@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.A
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.TaskType;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Arrow;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -49,6 +50,7 @@ public abstract class AbstractHermit extends AbilityBase {
         actionbarChannel.update("§7은신 중");
         getParticipant().attributes().TARGETABLE.setValue(false);
         hide0();
+        NMS.setArrowsInBody(getPlayer(), 0);
     }
 
     private void show() {
