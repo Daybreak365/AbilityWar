@@ -17,6 +17,8 @@ import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.script.manager.ScriptManager;
 import daybreak.abilitywar.game.specialthanks.SpecialThanks;
+import daybreak.abilitywar.patch.Patchable;
+import daybreak.abilitywar.patch.list.Patches;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.FastMath;
@@ -139,6 +141,10 @@ public class AbilityWar extends JavaPlugin implements Provider, Listener {
 					gameSetting.update();
 				}
 				ScriptManager.loadAll();
+				for (final Patchable patch : Patches.VALUES) {
+					if (!patch.isValid() || patch.isApplied()) continue;
+					patch.apply();
+				}
 			}
 		});
 		Messager.sendConsoleMessage("플러그인이 활성화되었습니다. §8(§7" + ServerType.getServerType() + " " + ServerVersion.getName() + "§8)");
