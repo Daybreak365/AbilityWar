@@ -1,6 +1,5 @@
 package daybreak.abilitywar.game.list.murdermystery;
 
-import com.google.common.collect.ImmutableList;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
@@ -20,12 +19,6 @@ import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
 import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
-import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Doctor;
-import daybreak.abilitywar.game.list.murdermystery.ability.jobs.innocent.Police;
-import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.AssassinMurderer;
-import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMurderer;
-import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.SniperMurderer;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
@@ -91,19 +84,11 @@ import java.util.function.Predicate;
 
 })
 @Category(GameCategory.MINIGAME)
-@Beta
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
 
-	public static final List<Class<? extends AbilityBase>> JOB_ABILITIES = ImmutableList.<Class<? extends AbilityBase>>builder()
-			.add(Police.class)
-			.add(Doctor.class)
-			.build();
+	static final List<AbilityRegistration> JOB_ABILITIES = new ArrayList<>();
+	static final List<AbilityRegistration> MURDER_JOB_ABILITIES = new ArrayList<>();
 
-	public static final List<Class<? extends AbilityBase>> MURDER_JOB_ABILITIES = ImmutableList.<Class<? extends AbilityBase>>builder()
-			.add(AssassinMurderer.class)
-			.add(BlackMurderer.class)
-			.add(SniperMurderer.class)
-			.build();
 	private static final Random random = new Random();
 	private static final ItemStack AIR = new ItemStack(Material.AIR);
 	private final Set<UUID> deadPlayers = new HashSet<>();
@@ -122,11 +107,11 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		return deadPlayers.contains(uniqueId);
 	}
 
-	public static Class<? extends AbilityBase> getRandomJob() {
+	public static AbilityRegistration getRandomJob() {
 		return JOB_ABILITIES.get(random.nextInt(JOB_ABILITIES.size()));
 	}
 
-	public static Class<? extends AbilityBase> getRandomMurderJob() {
+	public static AbilityRegistration getRandomMurderJob() {
 		return MURDER_JOB_ABILITIES.get(random.nextInt(MURDER_JOB_ABILITIES.size()));
 	}
 
