@@ -106,7 +106,6 @@ public class AbilityWar extends JavaPlugin implements Provider, Listener {
 		if (!ServerVersion.compatVersion(this)) return;
 		getCommand("AbilityWar").setExecutor(commands);
 		Bukkit.getPluginManager().registerEvents(this, this);
-
 		AddonLoader.loadAll();
 		AddonLoader.enableAll();
 

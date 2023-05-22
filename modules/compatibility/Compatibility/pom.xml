@@ -8,7 +8,7 @@
     <version>${revision}</version>
 
     <parent>
-        <groupId>daybreak.abilitywar</groupId>
+        <groupId>kr.daybreak</groupId>
         <artifactId>AbilityWar-Parent</artifactId>
         <version>${revision}</version>
         <relativePath>../../../pom.xml</relativePath>
@@ -23,7 +23,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>daybreak.abilitywar</groupId>
+            <groupId>kr.daybreak</groupId>
 			<artifactId>Common</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>

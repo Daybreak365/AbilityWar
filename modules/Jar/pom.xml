@@ -8,7 +8,7 @@
 	<version>${revision}</version>
 
 	<parent>
-		<groupId>daybreak.abilitywar</groupId>
+		<groupId>kr.daybreak</groupId>
 		<artifactId>AbilityWar-Parent</artifactId>
 		<version>${revision}</version>
 		<relativePath>../../pom.xml</relativePath>
@@ -27,73 +27,73 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>Plugin</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_12_R1</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_13_R1</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_13_R2</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_14_R1</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_15_R1</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_16_R1</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_16_R2</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_16_R3</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_17_R1</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_19_R1</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>daybreak.abilitywar</groupId>
+			<groupId>kr.daybreak</groupId>
 			<artifactId>v1_19_R2</artifactId>
 			<version>${revision}</version>
 			<scope>compile</scope>
@@ -115,7 +115,7 @@
 						<configuration>
 							<artifactSet>
 								<includes>
-									<include>daybreak.abilitywar:**</include>
+									<include>kr.daybreak:**</include>
 								</includes>
 							</artifactSet>
 							<filters>

@@ -30,4 +30,13 @@ public class Seasons {
 		return calendar.get(Calendar.MONTH) == Calendar.DECEMBER || (calendar.get(Calendar.MONTH) == Calendar.JANUARY && calendar.get(Calendar.DAY_OF_MONTH) == 1);
 	}
 
+	/**
+	 * 만우절 시즌: 4월 1일 ~ 4월 3일
+	 * @return  만우절 시즌일 경우 true, 아닐 경우 false
+	 */
+	public static boolean isAprilFools() {
+		final int day = calendar.get(Calendar.DAY_OF_MONTH);
+		return calendar.get(Calendar.MONTH) == Calendar.APRIL && day <= 3;
+	}
+
 }

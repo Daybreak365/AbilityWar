@@ -4,7 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.ability.AbilityManifest;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameUpdate;
 import daybreak.abilitywar.game.AbstractGame.Observer;
@@ -219,7 +219,7 @@ public class AbilityGUI implements Listener, Observer {
 						}
 					} catch (SecurityException | IllegalArgumentException | ReflectiveOperationException ex) {
 						Messager.sendErrorMessage(p, "설정 도중 오류가 발생하였습니다.");
-						if (DeveloperSettings.isEnabled()) ex.printStackTrace();
+						if (AprilSettings.isEnabled()) ex.printStackTrace();
 					}
 					p.closeInventory();
 				} else {

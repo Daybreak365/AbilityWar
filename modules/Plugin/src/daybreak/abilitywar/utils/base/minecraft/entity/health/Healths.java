@@ -18,4 +18,8 @@ public class Healths {
 		return player.getHealth();
 	}
 
+	public static double getMaxHealth(final Player player) {
+		return player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+	}
+
 }

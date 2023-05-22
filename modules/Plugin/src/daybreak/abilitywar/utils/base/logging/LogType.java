@@ -1,6 +1,6 @@
 package daybreak.abilitywar.utils.base.logging;
 
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import org.bukkit.ChatColor;
 
 public abstract class LogType {
@@ -8,7 +8,7 @@ public abstract class LogType {
 	public static final LogType DEBUG = new LogType(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "디버그" + ChatColor.DARK_GRAY + "]") {
 		@Override
 		protected boolean isLoggable() {
-			return DeveloperSettings.isEnabled();
+			return AprilSettings.isEnabled();
 		}
 	};
 

@@ -9,7 +9,7 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Tip;
 import daybreak.abilitywar.addon.Addon;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.Game;
@@ -387,7 +387,7 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 									Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
 								} catch (ReflectiveOperationException e) {
 									Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
-									if (DeveloperSettings.isEnabled()) e.printStackTrace();
+									if (AprilSettings.isEnabled()) e.printStackTrace();
 								}
 							} else {
 								Player targetPlayer = Bukkit.getPlayerExact(args[0]);
@@ -398,7 +398,7 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 											Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 능력을 임의로 부여하였습니다.");
 										} catch (ReflectiveOperationException e) {
 											Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
-											if (DeveloperSettings.isEnabled()) e.printStackTrace();
+											if (AprilSettings.isEnabled()) e.printStackTrace();
 										}
 									} else
 										Messager.sendErrorMessage(sender, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");

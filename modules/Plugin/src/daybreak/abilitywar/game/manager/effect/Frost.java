@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.manager.effect;
 
+import com.google.common.collect.MapMaker;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Effect;
@@ -48,10 +49,17 @@ public class Frost {
 	})
 	public static class ParticipantFrost extends Effect implements Listener {
 
+		private static final Map<Location, ParticipantFrost> frosts = new MapMaker().weakValues().makeMap();
+
+		public static ParticipantFrost getFrost(Location location) {
+			return frosts.get(location);
+		}
+
 		private final Participant target;
 		private final Block[] blocks = new Block[2];
 		private final IBlockSnapshot[] snapshots = new IBlockSnapshot[2];
 		private final Location teleport;
+		public boolean noDamage = true;
 
 		public ParticipantFrost(Participant target, TimeUnit timeUnit, int duration) {
 			target.getGame().super(registration, target, timeUnit.toTicks(duration));
@@ -59,6 +67,10 @@ public class Frost {
 			this.target = target;
 			blocks[0] = target.getPlayer().getEyeLocation().getBlock();
 			blocks[1] = blocks[0].getRelative(BlockFace.DOWN);
+
+			frosts.put(blocks[0].getLocation(), this);
+			frosts.put(blocks[1].getLocation(), this);
+
 			if (ServerVersion.getVersion() >= 10) target.getPlayer().setInvulnerable(true);
 			for (int i = 0; i < 2; i++) {
 				snapshots[i] = Blocks.createSnapshot(blocks[i]);
@@ -84,7 +96,7 @@ public class Frost {
 
 		@EventHandler
 		private void onEntityDamage(EntityDamageEvent e) {
-			if (e.getEntity().equals(target.getPlayer())) {
+			if (e.getEntity().equals(target.getPlayer()) && noDamage) {
 				e.setCancelled(true);
 			}
 		}
@@ -124,6 +136,8 @@ public class Frost {
 			for (int i = 0; i < 2; i++) {
 				snapshots[i].apply();
 			}
+			frosts.remove(blocks[0].getLocation());
+			frosts.remove(blocks[1].getLocation());
 		}
 
 	}

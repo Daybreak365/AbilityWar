@@ -8,7 +8,7 @@
     <version>${revision}</version>
 
     <parent>
-        <groupId>daybreak.abilitywar</groupId>
+        <groupId>kr.daybreak</groupId>
         <artifactId>AbilityWar-Parent</artifactId>
         <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
@@ -91,13 +91,13 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>daybreak.abilitywar</groupId>
+            <groupId>kr.daybreak</groupId>
             <artifactId>Compatibility</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>daybreak.abilitywar</groupId>
+            <groupId>kr.daybreak</groupId>
             <artifactId>Patch</artifactId>
             <version>${revision}</version>
             <scope>compile</scope>
@@ -175,7 +175,7 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>daybreak.abilitywar:**</include>
+                                    <include>kr.daybreak:**</include>
                                     <include>org.jetbrains.kotlin:**</include>
                                     <include>com.google.guava:guava</include>
                                     <include>com.google.code.gson:gson</include>

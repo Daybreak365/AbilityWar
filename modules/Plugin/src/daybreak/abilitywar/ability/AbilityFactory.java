@@ -38,6 +38,7 @@ import daybreak.abilitywar.ability.list.Flector;
 import daybreak.abilitywar.ability.list.Flora;
 import daybreak.abilitywar.ability.list.Ghost;
 import daybreak.abilitywar.ability.list.Ghoul;
+import daybreak.abilitywar.ability.list.Glacier;
 import daybreak.abilitywar.ability.list.Gladiator;
 import daybreak.abilitywar.ability.list.Hacker;
 import daybreak.abilitywar.ability.list.Hedgehog;
@@ -245,6 +246,9 @@ public class AbilityFactory {
 
 		// v3.2.2
 		registerAbility(Xenon.class);
+
+		// v3.3.2
+		registerAbility(Glacier.class);
 
 		// 게임모드 전용
 		// 즐거운 여름휴가 게임모드

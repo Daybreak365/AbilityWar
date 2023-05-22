@@ -102,6 +102,7 @@ public class Khazhad extends AbilityBase implements ActiveHandler {
 									SoundLib.BLOCK_GLASS_BREAK.playSound(relative.getLocation());
 									ParticleLib.BLOCK_CRACK.spawnParticle(relative.getLocation(), 0, 0, 0, 1, 0.001, relative);
 									for (Player nearby : LocationUtil.getNearbyEntities(Player.class, relative.getLocation(), 4, 4, predicate)) {
+										if (nearby.equals(getPlayer())) continue;
 										Damages.damageMagic(nearby, getPlayer(), false, 7.5f);
 									}
 								}

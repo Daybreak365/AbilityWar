@@ -12,6 +12,7 @@ import daybreak.abilitywar.addon.installer.AddonsGUI;
 import daybreak.abilitywar.addon.installer.info.Addons;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.wizard.AbilitySettingWizard;
@@ -68,10 +69,12 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.math.NumberUtil;
 import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.WorldReset;
+import daybreak.abilitywar.utils.base.minecraft.entity.health.Healths;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -492,12 +495,12 @@ public class Commands implements CommandExecutor, TabCompleter {
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (!typed.containsKey(sender.getName())) {
 							typed.put(sender.getName(), System.currentTimeMillis());
-							if (DeveloperSettings.isEnabled()) {
-								sender.sendMessage("§f정말 §3개발자 설정§f을 §c비활성화§f하려면 §e/" + command + " config developer §f명령어를");
+							if (AprilSettings.isEnabled()) {
+								sender.sendMessage("§f정말 §3개발자 설정§f을 §c비활성화§f하려면 §e/" + command + " config developer §f명령어를 다시 사용하세요.");
 							} else {
 								sender.sendMessage("§3개발자 설정§f을 §a활성화§f하면 테스트 중인 §3베타 §f능력, 게임 모드 등이 §a활성화§f되며,");
 								sender.sendMessage("§f'§3베타§f'는 현재 실험 중이며, 불안정하거나 오류가 있을 수 있다는 것을 의미합니다.");
-								sender.sendMessage("§f정말 §3개발자 설정§f을 §a활성화§f하려면 §e/" + command + " config developer §f명령어를");
+								sender.sendMessage("§f정말 §3개발자 설정§f을 §a활성화§f하려면 §e/" + command + " config developer §f명령어를 다시 사용하세요.");
 							}
 							sender.sendMessage("§710초 §f안에 다시 한번 입력해주세요. §8(§7설정이 변경될 때 서버가 리로드됩니다.§8)");
 						} else {
@@ -1026,6 +1029,28 @@ public class Commands implements CommandExecutor, TabCompleter {
 						return true;
 					}
 				});
+				addSubCommand("sethealth", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						if (args.length > 1) {
+							final Player target = Bukkit.getPlayerExact(args[0]);
+							if (target != null) {
+								try {
+									double health = Double.valueOf(args[1]);
+									if (health < 0) {
+										Messager.sendErrorMessage(sender, "체력은 0 이상의 수로 입력되어야 합니다.");
+										return true;
+									}
+									health = Healths.setHealth(target, health);
+									sender.sendMessage("§f" + target.getName() + "§a의 체력을 §e" + health + "§a" + KoreanUtil.getJosa(String.valueOf(health), Josa.으로로) + " 설정했습니다.");
+								} catch (NumberFormatException e) {
+									 Messager.sendErrorMessage(sender, "체력은 0 이상의 수로 입력되어야 합니다.");
+								}
+							} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug sethealth <대상> <체력>");
+						return true;
+					}
+				});
 				addSubCommand("respawn", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -1061,7 +1086,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 								"§b/" + label + " debug <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(label + " debug", "dummy", "연습용 봇 명령어 도움말을 확인합니다.", true),
 								Formatter.formatCommand(label + " debug", "gravitate <대상>", "대상이 중력에 영향받도록 설정합니다.", true),
-								Formatter.formatCommand(label + " debug", "respawn <대상>", "사망한 대상을 리스폰시킵니다.", true)});
+								Formatter.formatCommand(label + " debug", "respawn <대상>", "사망한 대상을 리스폰시킵니다.", true),
+								Formatter.formatCommand(label + " debug", "sethealth <대상> <체력>", "대상의 체력을 설정합니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -1272,9 +1298,20 @@ public class Commands implements CommandExecutor, TabCompleter {
 		mainCommand.addSubCommand("worldreset", new Command(Condition.OP) {
 			@Override
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
-				sender.sendMessage(Messager.defaultPrefix + "월드 초기화 시작");
-				WorldReset.resetWorlds();
-				sender.sendMessage(Messager.defaultPrefix + "월드 초기화 완료");
+				if (args.length == 0) {
+					sender.sendMessage(Messager.defaultPrefix + "월드 초기화 시작");
+					WorldReset.resetWorlds();
+					sender.sendMessage(Messager.defaultPrefix + "월드 초기화 완료");
+				} else {
+					final World world = Bukkit.getWorld(args[0]);
+					if (world == null) {
+						sender.sendMessage(Messager.defaultPrefix + args[0] + KoreanUtil.getJosa(args[0], Josa.은는) +  " 없는 월드입니다.");
+						return true;
+					}
+					sender.sendMessage(Messager.defaultPrefix + world.getName() + " 월드 초기화 시작");
+					WorldReset.resetWorld(world);
+					sender.sendMessage(Messager.defaultPrefix + world.getName() + " 월드 초기화 완료");
+				}
 				return true;
 			}
 		});
@@ -1347,7 +1384,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 							return commands;
 						}
 					} else if (args[0].equalsIgnoreCase("debug")) {
-						final List<String> commands = Messager.asList("dummy", "gravitate", "respawn");
+						final List<String> commands = Messager.asList("dummy", "gravitate", "respawn", "sethealth");
 						if (args[1].isEmpty()) {
 							return commands;
 						} else {

@@ -3,7 +3,7 @@ package daybreak.abilitywar.game.manager;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.game.GameSettings.Setting;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.Category;
@@ -74,7 +74,7 @@ public class GameFactory {
 		registerMode(MixBlindGame.class);
 		registerMode(BaskinRobbins.class);
 		registerMode(SynergyGame.class);
-		if (DeveloperSettings.isEnabled()) {
+		if (AprilSettings.isEnabled()) {
 			registerMode(DebugMode.class);
 			registerMode(MixDebugMode.class);
 		}
@@ -103,7 +103,7 @@ public class GameFactory {
 				final GameRegistration<?> registration = new GeneralRegistration<>(gameClass);
 				final String name = registration.getManifest().name();
 				if (!usedNames.containsKey(name)) {
-					if (!registration.hasFlag(Flag.BETA) || DeveloperSettings.isEnabled()) {
+					if (!registration.hasFlag(Flag.BETA) || AprilSettings.isEnabled()) {
 						registeredModes.put(gameClass, registration);
 						usedNames.put(name, registration);
 						for (String alias : registration.aliases) {

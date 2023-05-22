@@ -4,7 +4,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.Category;
@@ -555,7 +555,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 							Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 직업을 임의로 부여하였습니다.");
 						} catch (ReflectiveOperationException e) {
 							Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
-							if (DeveloperSettings.isEnabled()) e.printStackTrace();
+							if (AprilSettings.isEnabled()) e.printStackTrace();
 						}
 					} else {
 						final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
@@ -567,7 +567,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 									Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 직업을 임의로 부여하였습니다.");
 								} catch (ReflectiveOperationException e) {
 									Messager.sendErrorMessage(sender, "직업 설정 도중 오류가 발생하였습니다.");
-									if (DeveloperSettings.isEnabled()) e.printStackTrace();
+									if (AprilSettings.isEnabled()) e.printStackTrace();
 								}
 							} else Messager.sendErrorMessage(sender, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");
 						} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");

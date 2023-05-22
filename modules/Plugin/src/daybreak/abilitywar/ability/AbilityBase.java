@@ -23,9 +23,11 @@ import daybreak.abilitywar.game.module.EventManager;
 import daybreak.abilitywar.game.module.EventManager.EventObserver;
 import daybreak.abilitywar.game.module.Wreck;
 import daybreak.abilitywar.utils.base.BracketReplacer;
+import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
 import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
+import daybreak.abilitywar.utils.base.color.RainbowText;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.Observer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -105,11 +107,20 @@ public abstract class AbilityBase {
 			public String next() {
 				final int index = cursor;
 				cursor++;
-				final String line = explanation[index];
-				if (registration.getExplain().needsReplace(index)) {
-					return ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(line, valueProvider), valueProvider);
+				if (Seasons.isAprilFools()) {
+					final String line = explanation[index];
+					if (registration.getExplain().needsReplace(index)) {
+						return new RainbowText(ChatColor.stripColor(ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(line, valueProvider), valueProvider))).getText();
+					} else {
+						return new RainbowText(ChatColor.stripColor(line)).getText();
+					}
 				} else {
-					return line;
+					final String line = explanation[index];
+					if (registration.getExplain().needsReplace(index)) {
+						return ROUND_BRACKET.replaceAll(SQUARE_BRACKET.replaceAll(line, valueProvider), valueProvider);
+					} else {
+						return line;
+					}
 				}
 			}
 		};
@@ -349,7 +360,11 @@ public abstract class AbilityBase {
 
 			@Override
 			public String next() {
-				return ROUND_BRACKET.replaceAll(explanation[cursor++], fieldValueProvider);
+				if (Seasons.isAprilFools()) {
+					return new RainbowText(ChatColor.stripColor(ROUND_BRACKET.replaceAll(explanation[cursor++], fieldValueProvider))).getText();
+				} else {
+					return ROUND_BRACKET.replaceAll(explanation[cursor++], fieldValueProvider);
+				}
 			}
 		};
 	}

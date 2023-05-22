@@ -363,6 +363,17 @@ public class Configuration {
 
 		}
 
+		public static class AprilSettings {
+
+			private AprilSettings() {
+			}
+
+			public static boolean isEnabled() {
+				return get(ConfigNodes.DEVELOPER);
+			}
+
+		}
+
 		public static Class<? extends AbstractGame> getGameMode() {
 			try {
 				Class<?> clazz = ClassUtil.forName(get(ConfigNodes.GAME_MODE));

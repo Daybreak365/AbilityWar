@@ -4,7 +4,7 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
 import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
@@ -44,7 +44,7 @@ public class JobList {
 		final AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 		if (registration != null) {
 			if (!jobs.containsKey(name)) {
-				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
+				if (registration.hasFlag(Flag.BETA) && !AprilSettings.isEnabled()) return;
 				jobs.put(name, registration);
 				registered.add(registration);
 			} else {
@@ -59,7 +59,7 @@ public class JobList {
 		final AbilityRegistration registration = AbilityFactory.getRegistration(abilityClass);
 		if (registration != null) {
 			if (!jobs.containsKey(name)) {
-				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
+				if (registration.hasFlag(Flag.BETA) && !AprilSettings.isEnabled()) return;
 				jobs.put(name, registration);
 				registered.add(registration);
 				(type == CharacterType.INNOCENT ? MurderMystery.JOB_ABILITIES : MurderMystery.MURDER_JOB_ABILITIES).add(registration);

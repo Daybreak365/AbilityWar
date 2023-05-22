@@ -84,14 +84,6 @@ public class SpecialThanks {
 
 	private static final Category TESTER = new Category("§e테스터", new CustomSkullBuilder("b33598437e313329eb141a13e92d9b0349aabe5c6482a5dde7b73753634aba").build())
 			.addSpecialThanks(
-					new SpecialThank("루르", "2dcb3299e24049adb8bb554d862bd7be",
-							"§7루르님",
-							"능력 테스트 및 리뷰에 도움을 주셨습니다.",
-							"때때로 자신의 컨셉에 잡아먹혀 헛소리를 하긴 하지만, 능력자",
-							"개발에 많은 도움이 되었습니다."
-					)
-			)
-			.addSpecialThanks(
 					new SpecialThank("퀘네", "101ceb32a2bc4dbd9d32291c86b66eca",
 							"§7퀘네님",
 							"능력자 개발 중반 테스팅에 도움을 주신 분입니다.",
@@ -114,7 +106,8 @@ public class SpecialThanks {
 							"테스트 서버에 놀러오는 플레이어와 능력자 플러그인 테스터",
 							"그 사이의 누군가입니다. 현재 마인크래프트에서 언택트 세계일주",
 							"프로젝트를 진행하고 있습니다. 과연 올해 안에는 완료할 수 있을까요?",
-							"...그 후 1년이 지났습니다."
+							"...그 후 1년이 지났습니다.",
+							"... 2년이 지난 2022년 12월 30일, 드디어 파랜드 도착!"
 					)
 			)
 			.addSpecialThanks(

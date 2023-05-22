@@ -2,7 +2,7 @@ package daybreak.abilitywar.config.wizard;
 
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.utils.base.Messager;
@@ -122,7 +122,7 @@ public class GameWizard extends SettingWizard {
 				}
 				break;
 				case 18: {
-					if (DeveloperSettings.isEnabled()) {
+					if (AprilSettings.isEnabled()) {
 						final ItemMeta meta = BETA_ABILITY.getItemMeta();
 						meta.setLore(Arrays.asList("§a활성화 §f하면 능력 추첨시 베타 능력이 추첨됩니다.",
 								"", "§7상태 : " + (Settings.isUsingBetaAbility() ? "§a활성화" : "§c비활성화")));

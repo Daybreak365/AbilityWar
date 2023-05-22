@@ -1,7 +1,7 @@
 package daybreak.abilitywar.game.manager.object;
 
 import daybreak.abilitywar.ability.AbilityBase;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
@@ -61,7 +61,7 @@ public interface CommandHandler {
 								Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f모든 참가자§a에게 능력을 임의로 부여하였습니다.");
 							} catch (ReflectiveOperationException e) {
 								Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
-								if (DeveloperSettings.isEnabled()) e.printStackTrace();
+								if (AprilSettings.isEnabled()) e.printStackTrace();
 							}
 						} else {
 							final Player targetPlayer = Bukkit.getPlayerExact(args[0]);
@@ -73,7 +73,7 @@ public interface CommandHandler {
 										Bukkit.broadcastMessage("§e" + sender.getName() + "§a님이 §f" + targetPlayer.getName() + "§a님에게 능력을 임의로 부여하였습니다.");
 									} catch (ReflectiveOperationException e) {
 										Messager.sendErrorMessage(sender, "능력 설정 도중 오류가 발생하였습니다.");
-										if (DeveloperSettings.isEnabled()) e.printStackTrace();
+										if (AprilSettings.isEnabled()) e.printStackTrace();
 									}
 								} else
 									Messager.sendErrorMessage(sender, targetPlayer.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");

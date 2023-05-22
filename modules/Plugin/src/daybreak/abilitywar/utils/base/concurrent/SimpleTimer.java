@@ -168,6 +168,15 @@ public class SimpleTimer {
 	protected void onResume() {}
 	protected void onCountSet() {}
 
+	private void run0(final int count) {
+		if (observers != null) {
+			for (final Observer observer : observers) {
+				observer.run(count);
+			}
+		}
+		run(count);
+	}
+
 	public enum TaskType {
 		INFINITE {
 			@Override
@@ -187,7 +196,7 @@ public class SimpleTimer {
 
 					@Override
 					public void run() {
-						simpleTimer.run(++count);
+						simpleTimer.run0(++count);
 					}
 				};
 			}
@@ -210,7 +219,7 @@ public class SimpleTimer {
 
 					@Override
 					public void run() {
-						if (count < maximumCount) simpleTimer.run(++count); else simpleTimer.stop(false);
+						if (count < maximumCount) simpleTimer.run0(++count); else simpleTimer.stop(false);
 					}
 				};
 			}
@@ -233,7 +242,7 @@ public class SimpleTimer {
 
 					@Override
 					public void run() {
-						if (count > 1) simpleTimer.run(--count); else simpleTimer.stop(false);
+						if (count > 1) simpleTimer.run0(--count); else simpleTimer.stop(false);
 					}
 				};
 			}
@@ -254,6 +263,8 @@ public class SimpleTimer {
 		default void onSilentEnd() {}
 		default void onPause() {}
 		default void onResume() {}
+
+		default void run(final int count) {}
 
 	}
 

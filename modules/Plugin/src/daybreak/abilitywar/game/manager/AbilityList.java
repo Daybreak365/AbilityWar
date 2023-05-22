@@ -35,6 +35,7 @@ import daybreak.abilitywar.ability.list.Flector;
 import daybreak.abilitywar.ability.list.Flora;
 import daybreak.abilitywar.ability.list.Ghost;
 import daybreak.abilitywar.ability.list.Ghoul;
+import daybreak.abilitywar.ability.list.Glacier;
 import daybreak.abilitywar.ability.list.Gladiator;
 import daybreak.abilitywar.ability.list.Hacker;
 import daybreak.abilitywar.ability.list.Hedgehog;
@@ -83,7 +84,7 @@ import daybreak.abilitywar.ability.list.grapplinghook.GrapplingHook;
 import daybreak.abilitywar.ability.list.magnet.Magnet;
 import daybreak.abilitywar.ability.list.prophet.Prophet;
 import daybreak.abilitywar.ability.list.virus.Virus;
-import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
+import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
 import daybreak.abilitywar.game.list.standard.StandardGame;
 import daybreak.abilitywar.utils.base.logging.Logger;
@@ -137,7 +138,7 @@ public class AbilityList {
 		if (registration != null) {
 			final String name = registration.getManifest().name();
 			if (!abilities.containsKey(name)) {
-				if (registration.hasFlag(Flag.BETA) && !DeveloperSettings.isEnabled()) return;
+				if (registration.hasFlag(Flag.BETA) && !AprilSettings.isEnabled()) return;
 				abilities.put(name, registration);
 				registered.add(registration);
 				final char[] chars = name.toCharArray();
@@ -244,6 +245,7 @@ public class AbilityList {
 		registerAbility("daybreak.abilitywar.ability.list.soul." + ServerVersion.getName() + ".Soul");
 		registerAbility(Developer.class);
 		registerAbility(Xenon.class);
+		registerAbility(Glacier.class);
 	}
 
 	/**

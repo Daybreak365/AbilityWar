@@ -29,8 +29,8 @@ import java.util.Map.Entry;
 		"눈과 얼음 위에서 §6힘§f, §b신속§f, §3저항 §f버프를 받습니다. 철괴를 우클릭하면 주변 지역을",
 		"눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]"
 }, summarize = {
-		"§7철괴 우클릭§f으로 주변에 §b번개§f를 내리치고 적들을 3초간 §e기절§f시킵니다.",
-		"번개와 폭발 피해를 무시합니다."
+		"눈과 얼음 위에서 §6힘§f, §b신속§f, §3저항 §f버프를 받습니다. 철괴를 우클릭하면 주변 지역을",
+		"눈 지형으로 바꿉니다. $[COOLDOWN_CONFIG]"
 })
 public class Yeti extends AbilityBase implements ActiveHandler {
 

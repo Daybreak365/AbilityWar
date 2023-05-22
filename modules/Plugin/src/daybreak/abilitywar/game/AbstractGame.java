@@ -960,6 +960,10 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			participant.effects.remove(registration, this);
 		}
 
+		public Participant getParticipant() {
+			return participant;
+		}
+
 		public EffectRegistration<?> getRegistration() {
 			return registration;
 		}

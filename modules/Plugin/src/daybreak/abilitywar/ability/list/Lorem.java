@@ -13,13 +13,12 @@ import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
-import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
-import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -44,14 +43,12 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -69,16 +66,15 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "로렘", rank = Rank.S, species = Species.HUMAN, explain = {
 		"기본적으로 근접 공격을 할 수 없습니다. 검을 휘두르면 바라보는 방향으로",
-		"검기를 발사합니다. 검기를 생명체에 적중시킨 경우 대미지를 주고 움직이던",
-		"방향으로 도약하며, 한 생명체에 검기를 네 번 적중시킬 때마다 강력한 대미지를",
-		"줍니다. 대상이 5칸 이내에 있는 경우, 검기의 대미지가 약해집니다. 검기를",
-		"빗맞춘 경우, 2초간 탈진 상태에 빠지며 탈진 중에는 움직임이 둔해지고 공격이",
-		"불가능해집니다."
+		"검기를 날립니다. 검기를 생명체에 적중시킨 경우 피해를 입히고 움직이던",
+		"방향으로 짧게 도약하며, 한 생명체에 검기를 세 번 적중시킬 때마다 강력한",
+		"피해를 입힙니다. 검기를 빗맞춘 경우 1.5초간 §5기절§f하고 7초간 §c탈진 §f상태에",
+		"빠집니다. §c탈진 §f중에는 검기를 날리지 않고 근접 공격이 가능해지며,",
+		"이동 속도가 느려집니다."
 }, summarize = {
 		"§c근접 공격 불가§f. 그 대신 §3검을 휘두르면§f 검기를 발사합니다. 검기 적중 시",
-		"최근 이동 방향으로 돌진합니다. 대상당 §c4회 적중§f마다 §4강력한 피해§f를 입힙니다.",
-		"검기는 적중 대상과 가까울 경우 피해량이 감소합니다.",
-		"검기를 빗맞히면 잠시간 이동력 대폭 감소 및 검기 스킬이 사라집니다."
+		"최근 이동 방향으로 돌진합니다. 대상당 §c3회 적중§f마다 §4강력한 피해§f를 입힙니다.",
+		"검기를 빗맞히면 잠시간 능력이 비활성화되고 대미지 약해짐."
 })
 @Tips(tip = {
 		"카이팅이 이 능력의 핵심입니다. 검기는 가까운 곳에서는 대미지가 약해지기",
@@ -101,8 +97,8 @@ import java.util.function.Predicate;
 		})
 }, weak = {
 		@Description(subject = "근접전", explain = {
-				"기본적으로 근접 공격을 할 수 없고, 근접에서는 능력이 약해지기 때문에",
-				"근접전에 매우 취약합니다. 상대방과 가까운 거리에 있다면, 능력을 이용해",
+				"기본적으로 근접 공격을 할 수 없고, 근접에서는 능력의 강점이 하나 사라지기에",
+				"근접전에 취약합니다. 상대방과 가까운 거리에 있다면, 능력을 이용해",
 				"거리를 벌리세요."
 		}),
 		@Description(subject = "빠른 상대", explain = {
@@ -117,20 +113,6 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.FIVE, crowdControl = Level.ZERO, mobility = Level.SIX, utility = Level.ZERO), difficulty = Difficulty.HARD)
 public class Lorem extends AbilityBase {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lorem.class, "cooldown", 10,
-			"# 스킬 쿨타임") {
-
-		@Override
-		public boolean condition(Integer value) {
-			return value >= 1;
-		}
-
-		@Override
-		public String toString() {
-			return Formatter.formatCooldown(getValue());
-		}
-	};
-
 	private static final RGB COLOUR = RGB.of(50, 129, 168);
 	private static final Set<Material> swords;
 
@@ -143,7 +125,6 @@ public class Lorem extends AbilityBase {
 	}
 
 	private final Map<UUID, Stack> stackMap = new HashMap<>();
-	private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), 35);
 	private Bullet bullet = null;
 	private Exhaustion exhaustion = null;
 	private double dx, dz;
@@ -161,6 +142,7 @@ public class Lorem extends AbilityBase {
 
 	@SubscribeEvent
 	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
+		if (exhaustion != null) return;
 		if (getPlayer().equals(e.getDamager()) && (e.getCause() == DamageCause.ENTITY_ATTACK || e.getCause() == DamageCause.ENTITY_SWEEP_ATTACK)) {
 			e.setCancelled(true);
 			if (swords.contains(getPlayer().getInventory().getItemInMainHand().getType())) {
@@ -171,6 +153,7 @@ public class Lorem extends AbilityBase {
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onPlayerInteract(final PlayerInteractEvent e) {
+		if (exhaustion != null) return;
 		if (e.getItem() != null && swords.contains(e.getItem().getType())) {
 			if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 				ability();
@@ -189,7 +172,7 @@ public class Lorem extends AbilityBase {
 	}
 
 	private void ability() {
-		if (cooldown.isCooldown() || exhaustion != null || bullet != null) return;
+		if (exhaustion != null || bullet != null) return;
 		final ItemStack mainHand = getPlayer().getInventory().getItemInMainHand();
 		if (swords.contains(mainHand.getType())) {
 			new Bullet(getPlayer(), getPlayer().getLocation().clone().add(0, 1.5, 0), getPlayer().getLocation().getDirection().multiply(.4), mainHand.getEnchantmentLevel(Enchantment.DAMAGE_ALL), getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue(), COLOUR).start();
@@ -205,9 +188,9 @@ public class Lorem extends AbilityBase {
 		return false;
 	}
 
-	private void startCooldown() {
-		cooldown.start();
-		new Exhaustion(TimeUnit.TICKS, 40).start();
+	private void startExhaustion() {
+		Stun.apply(getParticipant(), TimeUnit.TICKS, 30);
+		new Exhaustion(TimeUnit.TICKS, 20 * 7).start();
 	}
 
 	public class Bullet extends AbilityTimer {
@@ -285,7 +268,7 @@ public class Lorem extends AbilityBase {
 				final Block block = location.getBlock();
 				final Material type = block.getType();
 				if (type.isSolid()) {
-					startCooldown();
+					startExhaustion();
 					stop(true);
 					return;
 				}
@@ -310,7 +293,7 @@ public class Lorem extends AbilityBase {
 
 		@Override
 		protected void onEnd() {
-			startCooldown();
+			startExhaustion();
 			entity.remove();
 			Lorem.this.bullet = null;
 		}
@@ -363,7 +346,7 @@ public class Lorem extends AbilityBase {
 			super(30);
 			setPeriod(TimeUnit.TICKS, 4);
 			this.entity = entity;
-			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§3◆", stack).concat(Strings.repeat("§3◇", 4 - stack)));
+			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§3◆", stack).concat(Strings.repeat("§3◇", 3 - stack)));
 			hologram.display(getPlayer());
 			stackMap.put(entity.getUniqueId(), this);
 			addStack();
@@ -377,8 +360,8 @@ public class Lorem extends AbilityBase {
 		private boolean addStack() {
 			setCount(30);
 			stack++;
-			hologram.setText(Strings.repeat("§3◆", stack).concat(Strings.repeat("§3◇", 4 - stack)));
-			if (stack >= 4) {
+			hologram.setText(Strings.repeat("§3◆", stack).concat(Strings.repeat("§3◇", 3 - stack)));
+			if (stack >= 3) {
 				stop(false);
 				return true;
 			}
@@ -417,20 +400,6 @@ public class Lorem extends AbilityBase {
 		protected void run(int count) {
 			channel.update("§3탈진§7: §f" + (count / (20.0 / getPeriod())) + "초");
 			PotionEffects.SLOW.addPotionEffect(getPlayer(), 3, 2, true);
-		}
-
-		@EventHandler
-		private void onPlayerMove(PlayerMoveEvent e) {
-			if (!e.getPlayer().equals(getPlayer())) return;
-			final double fromY = e.getFrom().getY(), toY = e.getTo().getY();
-			if (toY > fromY) {
-				e.getTo().setY(fromY);
-			}
-		}
-
-		@EventHandler
-		private void onShootBow(final EntityShootBowEvent e) {
-			if (e.getEntity().equals(getPlayer())) e.setCancelled(true);
 		}
 
 		@Override

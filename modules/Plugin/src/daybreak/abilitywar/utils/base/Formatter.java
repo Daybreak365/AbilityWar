@@ -9,6 +9,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.addon.Addon;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.team.interfaces.Members;
+import daybreak.abilitywar.utils.base.color.RainbowText;
 import daybreak.abilitywar.utils.installer.Installer.VersionObject;
 import org.bukkit.ChatColor;
 
@@ -68,7 +69,11 @@ public class Formatter {
 				formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
 				"§b" + ability.getName() + " " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " " + ability.getRank().getRankName() + " " + ability.getSpecies().getSpeciesName() + (providerName != null ? " §7| §f" + providerName : ""));
 		for (Iterator<String> iterator = ability.getExplanation(); iterator.hasNext(); ) {
-			list.add(iterator.next());
+			if (Seasons.isAprilFools()) {
+				list.add(new RainbowText(ChatColor.stripColor(iterator.next())).getText());
+			} else {
+				list.add(iterator.next());
+			}
 		}
 		list.add("§a---------------------------------");
 		return list;
