@@ -15,14 +15,19 @@ import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.BlackMu
 import daybreak.abilitywar.game.list.murdermystery.ability.jobs.murderer.SniperMurderer;
 import daybreak.abilitywar.utils.base.logging.Logger;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class JobList {
+
+	static final List<AbilityRegistration> JOB_ABILITIES = new ArrayList<>();
+	static final List<AbilityRegistration> MURDER_JOB_ABILITIES = new ArrayList<>();
 
 	private JobList() {
 	}
@@ -62,7 +67,7 @@ public class JobList {
 				if (registration.hasFlag(Flag.BETA) && !AprilSettings.isEnabled()) return;
 				jobs.put(name, registration);
 				registered.add(registration);
-				(type == CharacterType.INNOCENT ? MurderMystery.JOB_ABILITIES : MurderMystery.MURDER_JOB_ABILITIES).add(registration);
+				(type == CharacterType.INNOCENT ? JOB_ABILITIES : MURDER_JOB_ABILITIES).add(registration);
 			} else {
 				logger.debug("§e" + abilityClass.getName() + " §f능력은 겹치는 이름이 있어 등록되지 않았습니다.");
 			}

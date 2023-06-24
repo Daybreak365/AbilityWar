@@ -29,6 +29,7 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.FireworkUtil;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
@@ -75,7 +76,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -85,9 +85,6 @@ import java.util.function.Predicate;
 })
 @Category(GameCategory.MINIGAME)
 public class MurderMystery extends AbstractGame implements Observer, Winnable {
-
-	static final List<AbilityRegistration> JOB_ABILITIES = new ArrayList<>();
-	static final List<AbilityRegistration> MURDER_JOB_ABILITIES = new ArrayList<>();
 
 	private static final Random random = new Random();
 	private static final ItemStack AIR = new ItemStack(Material.AIR);
@@ -108,11 +105,11 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	}
 
 	public static AbilityRegistration getRandomJob() {
-		return JOB_ABILITIES.get(random.nextInt(JOB_ABILITIES.size()));
+		return random.pick(JobList.JOB_ABILITIES);
 	}
 
 	public static AbilityRegistration getRandomMurderJob() {
-		return MURDER_JOB_ABILITIES.get(random.nextInt(MURDER_JOB_ABILITIES.size()));
+		return random.pick(JobList.MURDER_JOB_ABILITIES);
 	}
 
 	public boolean addGold(final Participant participant) {

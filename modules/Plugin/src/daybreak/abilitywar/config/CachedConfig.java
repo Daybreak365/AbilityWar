@@ -4,6 +4,8 @@ import daybreak.abilitywar.config.interfaces.Cacher;
 import daybreak.abilitywar.config.interfaces.Node;
 import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +14,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import org.bukkit.configuration.InvalidConfigurationException;
 
 public class CachedConfig<N extends Enum<N> & Node> {
 
@@ -22,14 +23,14 @@ public class CachedConfig<N extends Enum<N> & Node> {
 
 	private final File file;
 	private long lastModified;
-	private final CommentedConfiguration config;
+	private final FileConfiguration config;
 
 	protected CachedConfig(final Class<N> enumClass, final String filePath) throws IOException, InvalidConfigurationException {
 		this.cache = new EnumMap<>(enumClass);
 		this.nodes = enumClass.getEnumConstants();
 		this.file = FileUtil.newFile(filePath);
 		this.lastModified = Long.MIN_VALUE;
-		this.config = new CommentedConfiguration(file);
+		this.config = new FileConfiguration(file);
 	}
 
 	public void update() throws IOException, InvalidConfigurationException {
@@ -65,13 +66,14 @@ public class CachedConfig<N extends Enum<N> & Node> {
 					cache.put(node, new Cache(false, node.getDefault()));
 				}
 			}
-			config.addComment(node.getPath(), node.getComments());
+			//config.addComment(node.getPath(), node.getComments());
+			//v3.3.4: CommentedConfiguration 관련 오류 다수 발생에 따라 주석 처리
 		}
 		config.save();
 		lastModified = file.lastModified();
 	}
 
-	public CommentedConfiguration getConfig() {
+	public FileConfiguration getConfig() {
 		return config;
 	}
 

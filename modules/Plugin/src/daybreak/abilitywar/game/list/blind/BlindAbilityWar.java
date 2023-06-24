@@ -75,7 +75,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 	private static final Logger logger = Logger.getLogger(BlindAbilityWar.class);
 
 	private static final Random random = new Random();
-	private final GameTimer blindRoulette = new GameTimer(TaskType.INFINITE, -1) {
+	public final GameTimer blindRoulette = new GameTimer(TaskType.INFINITE, -1) {
 		@Override
 		protected void run(int count) {
 			final List<Participant> participants = new ArrayList<>(getParticipants().size());
@@ -185,10 +185,22 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 	private static List<String> getBlindInfo(AbilityBase ability) {
 		List<String> list = Messager.asList(
 				Formatter.formatTitle(32, ChatColor.GREEN, ChatColor.YELLOW, "능력 정보"),
-				"§b§kBLIND§r " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " §8§k---§r §7§kBLIND§r",
+				"§b" + getBlindedName(ability.getRegistration()) + "§r " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " §8§k---§r §7§kBLIND§r",
 				"§kBLINDBLINDBLINDBLINDBLINDBLIND");
 		list.add("§a---------------------------------");
 		return list;
+	}
+
+	public static String getBlindedName(AbilityRegistration ability) {
+		final StringBuilder builder = new StringBuilder();
+		for (char c : ability.getManifest().name().toCharArray()) {
+			if (c == ' ') {
+				builder.append(' ');
+			} else {
+				builder.append('●');
+			}
+		}
+		return builder.toString();
 	}
 
 	@Override

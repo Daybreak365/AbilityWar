@@ -1,14 +1,15 @@
 package daybreak.abilitywar.config.kitpreset;
 
 import daybreak.abilitywar.config.CachedConfig;
-import daybreak.abilitywar.config.CommentedConfiguration;
 import daybreak.abilitywar.config.Configuration;
+import daybreak.abilitywar.config.FileConfiguration;
 import daybreak.abilitywar.config.serializable.AbilityKit;
 import daybreak.abilitywar.config.serializable.KitPreset;
-import java.io.IOException;
-import java.util.List;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.IOException;
+import java.util.List;
 
 public class KitConfiguration extends CachedConfig<KitNodes> {
 
@@ -29,7 +30,7 @@ public class KitConfiguration extends CachedConfig<KitNodes> {
 	@SuppressWarnings("unchecked")
 	private KitConfiguration() throws IOException, InvalidConfigurationException {
 		super(KitNodes.class, "kits.yml");
-		final CommentedConfiguration configuration = Configuration.getConfig();
+		final FileConfiguration configuration = Configuration.getConfig();
 		if (configuration.isSet("게임.기본템")) {
 			final List<KitPreset> list = getList(KitNodes.KIT_PRESET, KitPreset.class);
 			final KitPreset kitPreset = new KitPreset((List<ItemStack>) configuration.getList("게임.기본템"));

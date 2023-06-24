@@ -14,6 +14,7 @@ import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
+import daybreak.abilitywar.game.list.blind.BlindAbilityWar;
 import daybreak.abilitywar.game.list.mix.AbstractMix;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.synergy.Synergy;
@@ -79,7 +80,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 	private static final Logger logger = Logger.getLogger(MixBlindGame.class);
 
 	private static final Random random = new Random();
-	private final GameTimer blindRoulette = new GameTimer(TaskType.INFINITE, -1) {
+	public final GameTimer blindRoulette = new GameTimer(TaskType.INFINITE, -1) {
 		@Override
 		protected void run(int count) {
 			final List<MixParticipant> participants = new ArrayList<>(getParticipants().size());
@@ -192,9 +193,11 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 		info.add("§b믹스 §f[" + (mix.isRestricted() ? "§7능력 비활성화됨" : "§a능력 활성화됨") + "§f] §cSPECIAL 등급 §8기타");
 		info.add("§a---------------------------------");
 		if (mix.hasSynergy()) {
-			info.add("§f시너지: §a§kBLIND§r §f+ §a§kBLIND§r");
+			final Synergy synergy = mix.getSynergy();
+			final Pair<AbilityRegistration, AbilityRegistration> synergyBase = SynergyFactory.getSynergyBase(synergy.getRegistration());
+			info.add("§f시너지: §a" + BlindAbilityWar.getBlindedName(synergyBase.getLeft()) + "§r §f+ §a" + BlindAbilityWar.getBlindedName(synergyBase.getRight()) + "§r");
 			info.add("§a---------------------------------");
-			info.add("§b§kBLIND§r " + (mix.getSynergy().isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " §8§k---§r §7§kBLIND§r");
+			info.add("§b" + BlindAbilityWar.getBlindedName(synergy.getRegistration()) + "§r " + (mix.getSynergy().isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " §8§k---§r §7§kBLIND§r");
 			info.add("§kBLINDBLINDBLINDBLINDBLINDBLIND");
 			info.add("§a---------------------------------");
 		} else {
@@ -207,7 +210,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 	private static List<String> getBlindInfo(AbilityBase ability) {
 		if (ability != null) {
 			return Arrays.asList(
-					"§b§kBLIND§r " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " §8§k---§r §7§kBLIND§r",
+					"§b" + BlindAbilityWar.getBlindedName(ability.getRegistration()) + "§r " + (ability.isRestricted() ? "§f[§7능력 비활성화됨§f]" : "§f[§a능력 활성화됨§f]") + " §8§k---§r §7§kBLIND§r",
 					"§kBLINDBLINDBLINDBLINDBLINDBLIND",
 					"§a---------------------------------"
 			);

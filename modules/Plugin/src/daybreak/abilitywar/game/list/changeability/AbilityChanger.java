@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.list.changeability;
 
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
+import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration.Flag;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -53,7 +54,7 @@ public class AbilityChanger implements Module {
 	private List<AbilityRegistration> setupAbilities() {
 		final List<AbilityRegistration> list = new ArrayList<>();
 		for (final AbilityRegistration registration : AbilityList.values()) {
-			if (!Settings.isBlacklisted(registration.getManifest().name())) {
+			if (!Settings.isBlacklisted(registration.getManifest().name()) && (Settings.isUsingBetaAbility() || !registration.hasFlag(Flag.BETA))) {
 				list.add(registration);
 			}
 		}

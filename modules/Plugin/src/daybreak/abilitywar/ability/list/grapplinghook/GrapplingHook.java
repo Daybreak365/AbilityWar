@@ -75,6 +75,17 @@ public class GrapplingHook extends AbilityBase implements ActiveHandler {
 
     };
 
+    public static final SettingObject<Integer> RECHARGE_COODLOWN = abilitySettings.new SettingObject<Integer>(GrapplingHook.class, "recharge-cooldown", 25,
+            "# 후크 재충전 쿨타임",
+            "# 기본값: 25") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 1;
+        }
+
+    };
+
     public GrapplingHook(Participant participant) {
         super(participant);
     }
@@ -116,7 +127,7 @@ public class GrapplingHook extends AbilityBase implements ActiveHandler {
         private int charges = maxCharge;
 
         private Charge() {
-            super(TaskType.REVERSE, (int) (20 * Wreck.calculateDecreasedAmount(25)));
+            super(TaskType.REVERSE, (int) (20 * Wreck.calculateDecreasedAmount(RECHARGE_COODLOWN.getValue())));
             setBehavior(RestrictionBehavior.PAUSE_RESUME);
         }
 

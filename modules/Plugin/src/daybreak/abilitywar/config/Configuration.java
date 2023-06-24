@@ -32,7 +32,7 @@ public class Configuration {
 	private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 	private static File file = null;
 	private static long lastModified;
-	private static CommentedConfiguration config = null;
+	private static FileConfiguration config = null;
 	private static boolean error = false;
 
 	public static boolean isError() {
@@ -48,7 +48,7 @@ public class Configuration {
 			try {
 				file = FileUtil.newFile("Config.yml");
 				lastModified = file.lastModified();
-				config = new CommentedConfiguration(file);
+				config = new FileConfiguration(file);
 			} catch (IOException | InvalidConfigurationException e) {
 				error = true;
 			}
@@ -86,13 +86,14 @@ public class Configuration {
 					cache.put(node, new Cache(false, node.getDefault()));
 				}
 			}
-			config.addComment(node.getPath(), node.getComments());
+			//config.addComment(node.getPath(), node.getComments());
+			//v3.3.4: CommentedConfiguration 관련 오류 다수 발생에 따라 주석 처리
 		}
 		config.save();
 		lastModified = file.lastModified();
 	}
 
-	public static CommentedConfiguration getConfig() {
+	public static FileConfiguration getConfig() {
 		return config;
 	}
 
@@ -105,7 +106,7 @@ public class Configuration {
 				try {
 					file = FileUtil.newFile("Config.yml");
 					lastModified = file.lastModified();
-					config = new CommentedConfiguration(file);
+					config = new FileConfiguration(file);
 					update();
 				} catch (IOException | InvalidConfigurationException e) {
 					error = true;

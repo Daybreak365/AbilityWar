@@ -8,6 +8,7 @@ import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
+import daybreak.abilitywar.ability.event.AbilityCooldownEndEvent;
 import daybreak.abilitywar.ability.event.AbilityDestroyEvent;
 import daybreak.abilitywar.ability.event.AbilityEvent;
 import daybreak.abilitywar.ability.event.AbilityRestrictionEvent;
@@ -721,6 +722,7 @@ public abstract class AbilityBase {
 			public void onEnd() {
 				getPlayer().sendMessage("§a능력을 다시 사용할 수 있습니다.");
 				actionbarChannel.update("§a능력을 다시 사용할 수 있습니다.", 2);
+				Bukkit.getPluginManager().callEvent(new AbilityCooldownEndEvent(AbilityBase.this, Cooldown.this));
 			}
 
 			@Override

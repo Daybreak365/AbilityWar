@@ -4,11 +4,13 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import com.google.common.collect.TreeBasedTable;
 import daybreak.abilitywar.config.Cache;
-import daybreak.abilitywar.config.CommentedConfiguration;
+import daybreak.abilitywar.config.FileConfiguration;
 import daybreak.abilitywar.config.interfaces.Configurable;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.utils.base.logging.Logger;
+import org.bukkit.configuration.InvalidConfigurationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -16,7 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.bukkit.configuration.InvalidConfigurationException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -44,9 +45,9 @@ public class GameSettings {
 			}
 		}
 		this.lastModified = configFile.lastModified();
-		CommentedConfiguration config;
+		FileConfiguration config;
 		try {
-			config = new CommentedConfiguration(configFile);
+			config = new FileConfiguration(configFile);
 		} catch (IOException | InvalidConfigurationException e) {
 			config = null;
 			this.error = true;
@@ -56,7 +57,7 @@ public class GameSettings {
 	}
 
 	private final File configFile;
-	private final CommentedConfiguration config;
+	private final FileConfiguration config;
 
 	public static Collection<GameSettings> getGameSettings() {
 		return gameSettings.values();
@@ -122,7 +123,8 @@ public class GameSettings {
 				config.set(setting.getPath(), setting.getDefaultValue());
 				cache.put(setting, new Cache(false, setting.getDefaultValue()));
 			}
-			config.addComment(setting.getPath(), setting.getComments());
+			//config.addComment(setting.getPath(), setting.getComments());
+			//v3.3.4: CommentedConfiguration 관련 오류 다수 발생에 따라 주석 처리
 		}
 		config.save();
 	}
