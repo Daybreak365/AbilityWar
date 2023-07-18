@@ -263,6 +263,10 @@ public class Configuration {
 			return get(ConfigNodes.GAME_USE_BETA_ABILITY);
 		}
 
+		public static boolean isLiteModeEnabled() {
+			return get(ConfigNodes.GAME_LITE_MODE);
+		}
+
 		public static void addBlacklist(Collection<String> abilityNames) {
 			Set<String> set = getBlackList();
 			if (set.addAll(abilityNames)) {

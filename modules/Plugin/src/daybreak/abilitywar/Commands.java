@@ -15,6 +15,7 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
+import daybreak.abilitywar.config.kitpreset.KitConfiguration.KitSettings;
 import daybreak.abilitywar.config.wizard.AbilitySettingWizard;
 import daybreak.abilitywar.config.wizard.DeathWizard;
 import daybreak.abilitywar.config.wizard.GameSettingWizard;
@@ -404,6 +405,25 @@ public class Commands implements CommandExecutor, TabCompleter {
 						return true;
 					}
 				});
+				addSubCommand("akitcheck", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						final Map<String, Object> map = KitSettings.getAbilityKit().serialize();
+						sender.sendMessage(Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력별 킷이 설정된 능력 목록"));
+						int i = 1;
+						for (String className : map.keySet()) {
+							try {
+								final Class<?> clazz = Class.forName(className);
+								final AbilityManifest manifest = clazz.getDeclaredAnnotation(AbilityManifest.class);
+								if (manifest != null) {
+									sender.sendMessage("§6" + i + "§f: §e" + manifest.name());
+									i++;
+								}
+							} catch (ClassNotFoundException e) {}
+						}
+						return true;
+					}
+				});
 				addSubCommand("spawn", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -538,24 +558,25 @@ public class Commands implements CommandExecutor, TabCompleter {
 								"§b/" + label + " config <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
 								Formatter.formatCommand(label + " config", "kit", "능력자 전쟁 기본템을 설정합니다.", true),
 								Formatter.formatCommand(label + " config", "kit <능력 이름>", "능력별 기본템을 설정합니다.", true),
+								Formatter.formatCommand(label + " config", "akitcheck", "능력별 기본템이 설정된 능력들을 확인합니다.", true),
 								Formatter.formatCommand(label + " config", "spawn", "능력자 전쟁 스폰을 설정합니다.", true),
 								Formatter.formatCommand(label + " config", "inv", "초반 무적을 설정합니다.", true),
-								Formatter.formatCommand(label + " config", "game", "게임의 전반적인 부분들을 설정합니다.", true),
-								Formatter.formatCommand(label + " config", "death", "플레이어 사망에 관련된 콘피그를 설정합니다.", true)});
+								Formatter.formatCommand(label + " config", "game", "게임의 전반적인 부분들을 설정합니다.", true)});
 						break;
 					case 2:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
 								"§b/" + label + " config <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(label + " config", "death", "플레이어 사망에 관련된 콘피그를 설정합니다.", true),
 								Formatter.formatCommand(label + " config", "ability", "능력별 설정을 변경합니다.", true),
 								Formatter.formatCommand(label + " config", "games", "게임별 설정을 변경합니다.", true),
 								Formatter.formatCommand(label + " config", "teampreset", "팀 프리셋 설정 GUI를 엽니다.", true),
-								Formatter.formatCommand(label + " config", "kitpreset", "기본 아이템 프리셋 설정 GUI를 엽니다.", true),
-								Formatter.formatCommand(label + " config", "blacklist", "능력 블랙리스트 설정 GUI를 엽니다.", true),
-								Formatter.formatCommand(label + " config", "blacklist [능력]", "[능력] 능력의 블랙 상태를 토글합니다.", true)});
+								Formatter.formatCommand(label + " config", "kitpreset", "기본 아이템 프리셋 설정 GUI를 엽니다.", true)});
 						break;
 					case 3:
 						sender.sendMessage(new String[]{Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁 콘피그"),
 								"§b/" + label + " config <페이지> §7로 더 많은 명령어를 확인하세요! ( §b" + page + " 페이지 §7/ §b" + allPage + " 페이지 §7)",
+								Formatter.formatCommand(label + " config", "blacklist", "능력 블랙리스트 설정 GUI를 엽니다.", true),
+								Formatter.formatCommand(label + " config", "blacklist [능력]", "[능력] 능력의 블랙 상태를 토글합니다.", true),
 								Formatter.formatCommand(label + " config", "blacklist synergy", "시너지 블랙리스트 설정 GUI를 엽니다.", true),
 								Formatter.formatCommand(label + " config", "developer", "개발자 모드를 토글합니다.", true)});
 						break;
@@ -1351,7 +1372,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					}
 				case 2:
 					if (args[0].equalsIgnoreCase("config")) {
-						List<String> configs = Messager.asList("kit", "spawn", "inv", "game", "death", "ability", "games", "worldreset", "teampreset", "kitpreset", "blacklist", "developer");
+						List<String> configs = Messager.asList("kit", "akitcheck", "spawn", "inv", "game", "death", "ability", "games", "worldreset", "teampreset", "kitpreset", "blacklist", "developer");
 						if (args[1].isEmpty()) {
 							return configs;
 						} else {

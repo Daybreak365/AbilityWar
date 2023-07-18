@@ -185,7 +185,13 @@ public class KitWizard extends SettingWizard {
 				e.setCancelled(true);
 			} else if (e.getSlot() == 53) {
 				e.setCancelled(true);
-				KitConfiguration.getInstance().modifyProperty(KitNodes.KIT, new KitPreset());
+				if (registration == null) {
+					KitConfiguration.getInstance().modifyProperty(KitNodes.KIT, new KitPreset());
+				} else {
+					KitSettings.getAbilityKit().removeKits(registration.getAbilityClass().getName());
+					kitPreset.set(KitSettings.getKit());
+					KitConfiguration.getInstance().updateProperty(KitNodes.ABILITY_KIT);
+				}
 				show();
 			}
 		}

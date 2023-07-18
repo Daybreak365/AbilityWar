@@ -41,7 +41,8 @@ public class GameWizard extends SettingWizard {
 			DURATION_TIMER_BEHAVIOR = new ItemBuilder(MaterialX.CLOCK).displayName("§b지속 타이머 작업").build(),
 			ABILITY_DRAW = new ItemBuilder(MaterialX.DISPENSER).displayName("§b능력 추첨").build(),
 			MAXHEALTH = new ItemBuilder(MaterialX.GOLDEN_APPLE).displayName("§b기본 최대 체력").build(),
-			ABILITY_CHANGE_COUNT = new CustomSkullBuilder("c9327a4573977cd378f06d1f832e907f5f66dbe5ea88ff1c3689ad958b7e7").displayName("§b능력 변경 횟수").build();
+			ABILITY_CHANGE_COUNT = new CustomSkullBuilder("c9327a4573977cd378f06d1f832e907f5f66dbe5ea88ff1c3689ad958b7e7").displayName("§b능력 변경 횟수").build(),
+			LITEMODE = new ItemBuilder(MaterialX.FEATHER).displayName("§b라이트 모드").build();
 
 	public GameWizard(Player player, Plugin plugin) {
 		super(player, 45, "§2§l게임 진행 설정", plugin);
@@ -176,6 +177,17 @@ public class GameWizard extends SettingWizard {
 					CLEAR_WEATHER.setItemMeta(clearWeatherMeta);
 
 					gui.setItem(i, CLEAR_WEATHER);
+				}
+				break;
+				case 26: {
+					ItemMeta meta = LITEMODE.getItemMeta();
+					meta.setLore(Messager.asList(
+							"§a활성화 §f하면 일부 게임모드에서 복잡한 능력이",
+							"§f뽑히지 않도록 설정하며, 각종 간단한 능력들을 추가합니다.",
+							"", "§7상태 : " + (Settings.isLiteModeEnabled() ? "§a활성화" : "§c비활성화")));
+					LITEMODE.setItemMeta(meta);
+
+					gui.setItem(i, LITEMODE);
 				}
 				break;
 				case 30: {
@@ -356,6 +368,10 @@ public class GameWizard extends SettingWizard {
 						break;
 					case "§b맑은 날씨 고정":
 						Configuration.modifyProperty(ConfigNodes.GAME_CLEAR_WEATHER, !Settings.getClearWeather());
+						show();
+						break;
+					case "§b라이트 모드":
+						Configuration.modifyProperty(ConfigNodes.GAME_LITE_MODE, !Settings.isLiteModeEnabled());
 						show();
 						break;
 					case "§b시각 효과":

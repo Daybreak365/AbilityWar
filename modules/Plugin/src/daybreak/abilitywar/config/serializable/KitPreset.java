@@ -1,16 +1,17 @@
 package daybreak.abilitywar.config.serializable;
 
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class KitPreset {
 
@@ -124,6 +125,14 @@ public class KitPreset {
 
 	public void setItems(@NotNull List<ItemStack> items) {
 		this.items = items;
+	}
+
+	public void set(@NotNull KitPreset kitPreset) {
+		setHelmet(kitPreset.getHelmet());
+		setChestplate(kitPreset.getChestplate());
+		setLeggings(kitPreset.getLeggings());
+		setBoots(kitPreset.getBoots());
+		setItems(kitPreset.getItems());
 	}
 
 	public Map<String, Object> toMap() {

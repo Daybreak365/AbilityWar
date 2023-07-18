@@ -10,6 +10,7 @@ import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.list.lite.LiteAbilities;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
@@ -265,7 +266,7 @@ public abstract class AbilitySelect extends GameTimer {
 			@Override
 			public List<Class<? extends AbilityBase>> collect(Class<? extends AbstractGame> game) {
 				final List<Class<? extends AbilityBase>> abilities = new ArrayList<>();
-				for (AbilityRegistration registration : AbilityList.values()) {
+				for (AbilityRegistration registration : (Settings.isLiteModeEnabled() ? LiteAbilities.values() : AbilityList.values())) {
 					if (!Settings.isBlacklisted(registration.getManifest().name()) && registration.isAvailable(game) && (Settings.isUsingBetaAbility() || !registration.hasFlag(Flag.BETA))) {
 						abilities.add(registration.getAbilityClass());
 					}
