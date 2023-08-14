@@ -9,13 +9,18 @@ import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil;
+import daybreak.abilitywar.utils.base.language.korean.KoreanUtil.Josa;
 import daybreak.abilitywar.utils.base.math.FastMath;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
@@ -23,6 +28,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 		"모든 시민을 죽이세요!",
 		"살인자의 검으로 상대를 죽일 경우 5초간 투명 효과를 받습니다.",
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
+		"암살자가 시민을 죽일 때 킬 메시지가 뜨지 않습니다.",
 		"웅크리면 투명해지고, 웅크리지 않으면 불투명해집니다."
 })
 public class AssassinMurderer extends AbstractMurderer {
@@ -90,6 +96,19 @@ public class AssassinMurderer extends AbstractMurderer {
 							getPlayer().getInventory().setItem(2, Items.NORMAL_BOW.getStack());
 						}
 					}
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent(eventPriority = EventPriority.HIGHEST)
+	private void onPlayerDeath(final PlayerDeathEvent e) {
+		final Player dead = e.getEntity();
+		if (getPlayer().equals(dead.getKiller())) {
+			e.setDeathMessage(null);
+			for (Participant participant : getGame().getParticipants()) {
+				if (participant.getAbility() instanceof AbstractMurderer) {
+					participant.getPlayer().sendMessage("§8" + dead.getName() + "§7" + KoreanUtil.getJosa(dead.getName(), Josa.이가) + " 죽었습니다.");
 				}
 			}
 		}

@@ -10,13 +10,14 @@ import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery.ArrowKillEvent;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractInnocent;
+import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer.MurderEvent;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -28,8 +29,8 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "시민: 의사", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
-		"금 좌클릭으로 금 6개를 소모해 2.5초간 y에 상관 없이 주변 5칸 이내에서",
-		"플레이어가 죽지 못하게 합니다."
+		"금 좌클릭으로 금 6개를 소모해 4초간 y에 상관 없이 주변 7칸 이내에서",
+		"시민이 죽지 못하게 합니다."
 })
 public class Doctor extends AbstractInnocent {
 
@@ -67,34 +68,40 @@ public class Doctor extends AbstractInnocent {
 
 	@SubscribeEvent
 	private void onArrowKill(final ArrowKillEvent e) {
-		if (duration.isRunning() && e.getTarget().getPlayer().getLocation().distanceSquared(getPlayer().getLocation()) <= 25) {
-			e.setCancelled(true);
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					NMS.broadcastEntityEffect(e.getTarget().getPlayer(), (byte) 35);
-				}
-			}.runTaskLater(AbilityWar.getPlugin(), 3L);
+		if (duration.isRunning() && e.getTarget().getPlayer().getLocation().distanceSquared(getPlayer().getLocation()) <= 49) {
+			final Participant target = getGame().getParticipant(e.getTarget().getPlayer());
+			if (!(target.getAbility() instanceof AbstractMurderer)) {
+				e.setCancelled(true);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						NMS.broadcastEntityEffect(e.getTarget().getPlayer(), (byte) 35);
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 3L);
+			}
 		}
 	}
 
 	@SubscribeEvent
 	private void onArrowKill(final MurderEvent e) {
-		if (duration.isRunning() && e.getTarget().getPlayer().getLocation().distanceSquared(getPlayer().getLocation()) <= 25) {
-			e.setCancelled(true);
-			new BukkitRunnable() {
-				@Override
-				public void run() {
-					NMS.broadcastEntityEffect(e.getTarget().getPlayer(), (byte) 35);
-				}
-			}.runTaskLater(AbilityWar.getPlugin(), 3L);
+		if (duration.isRunning() && e.getTarget().getPlayer().getLocation().distanceSquared(getPlayer().getLocation()) <= 49) {
+			final Participant target = e.getTarget();
+			if (!(target.getAbility() instanceof AbstractMurderer)) {
+				e.setCancelled(true);
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						NMS.broadcastEntityEffect(e.getTarget().getPlayer(), (byte) 35);
+					}
+				}.runTaskLater(AbilityWar.getPlugin(), 3L);
+			}
 		}
 	}
 
 	private static final Circle CIRCLE = Circle.of(5, 60);
 	private static final RGB color = RGB.of(0, 0, 0);
 
-	private final Duration duration = new Duration(15) {
+	private final Duration duration = new Duration(20) {
 		@Override
 		protected void onDurationProcess(int count) {
 			for (final Location loc : CIRCLE.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {

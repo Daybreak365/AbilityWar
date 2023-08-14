@@ -442,8 +442,9 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 			e.setCancelled(true);
 			Participant participant = getParticipant(e.getEntity().getUniqueId());
 			if (getGold(participant) < 64 && e.getItem().getItemStack().isSimilar(Items.GOLD.getStack())) {
+				final int amount = e.getItem().getItemStack().getAmount();
 				e.getItem().remove();
-				addGold(participant);
+				addGold(participant, amount);
 			}
 		}
 	}

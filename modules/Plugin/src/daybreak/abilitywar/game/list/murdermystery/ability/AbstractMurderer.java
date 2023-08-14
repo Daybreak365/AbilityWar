@@ -120,7 +120,7 @@ public abstract class AbstractMurderer extends AbstractJob {
 		private final AbstractMurderer murderer;
 		private final Participant target;
 
-		private MurderEvent(final AbstractMurderer murderer, final Participant target) {
+		public MurderEvent(final AbstractMurderer murderer, final Participant target) {
 			this.murderer = murderer;
 			this.target = target;
 		}
