@@ -2,6 +2,8 @@ name: AbilityWar
 main: daybreak.abilitywar.AbilityWar
 version: ${project.version}
 
+softdepend: [Skript]
+
 commands:
   abilitywar:
     description: AbilityWar 메인 명령어
