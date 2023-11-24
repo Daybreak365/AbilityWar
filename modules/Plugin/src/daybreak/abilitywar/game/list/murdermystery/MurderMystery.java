@@ -14,6 +14,7 @@ import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
+import daybreak.abilitywar.game.list.murdermystery.ability.AbstractDetective;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractJob;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
@@ -339,7 +340,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 		final Player killer = entity.getKiller();
 		if (isParticipating(entity.getUniqueId())) {
 			Participant entityPart = getParticipant(entity.getUniqueId());
-			if (entityPart.hasAbility() && entityPart.getAbility() instanceof Detective) {
+			if (entityPart.hasAbility() && entityPart.getAbility() instanceof AbstractDetective) {
 				new GameTimer(TaskType.INFINITE, -1) {
 					private final Location center = entityPart.getPlayer().getLocation();
 					private final Predicate<Entity> predicate = new Predicate<Entity>() {

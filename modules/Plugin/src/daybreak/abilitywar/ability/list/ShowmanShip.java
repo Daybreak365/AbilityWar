@@ -40,13 +40,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 @AbilityManifest(name = "쇼맨쉽", rank = Rank.B, species = Species.HUMAN, explain = {
-		"주변 7칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
+		"주변 10칸 이내에 있는 생명체 수에 따라 효과를 받습니다.",
 		"플레이어는 1명, 플레이어가 아닌 생명체는 $[ENTITY_COUNT]명 취급합니다.",
-		"§a0명 이상, 2명 미만 §7: §f나약함  §a2명 이상, 4명 미만 §7: §f힘 II",
+		"§a2명 이상, 4명 미만 §7: §f힘 II",
 		"§a4명 이상 §7: §f힘 III 및 체력이 30% 미만인 적 공격시 처형"
 }, summarize = {
 		"자신 외 주변 생명체 수§8(§7플레이어 1, 이외 0.2§8)§f에 따라 효과를 받습니다.",
-		"§a2명 미만 §f: §7나약함 §a2명 이상 4명 미만 §f:  §6힘 II§f",
+		"§a2명 이상 4명 미만 §f:  §6힘 II§f",
 		"§a4명 이상 §f: §6힘 III§f 및 §c체력 30% 미만§f의 적 공격 시 §4처형§f"
 })
 public class ShowmanShip extends AbilityBase {
@@ -71,7 +71,7 @@ public class ShowmanShip extends AbilityBase {
 	private static final Type[] types = {
 			Type.BALL_LARGE, Type.STAR
 	};
-	private static final int radius = 7;
+	private static final int radius = 10;
 	private static final RGB WEAK = new RGB(214, 255, 212), POWER = new RGB(255, 184, 150), POWERFUL = new RGB(255, 59, 59);
 	private static final Circle circle = Circle.of(radius, 100);
 
@@ -175,7 +175,6 @@ public class ShowmanShip extends AbilityBase {
 			final RGB color;
 			final Location playerLocation = getPlayer().getLocation();
 			if (point < 2) {
-				PotionEffects.WEAKNESS.addPotionEffect(getPlayer(), 4, 0, true);
 				color = WEAK;
 			} else if (point >= 2 && point < 4) {
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 4, 1, true);

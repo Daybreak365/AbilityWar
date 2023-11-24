@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "머더: 스나이퍼", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"모든 시민을 죽이세요!",
 		"살인자의 검으로 상대를 죽일 경우 5초간 투명 효과를 받습니다.",
-		"금 우클릭으로 금 20개를 소모해 활과 화살을 얻을 수 있습니다.",
+		"금 우클릭으로 금 15개를 소모해 활과 화살을 얻을 수 있습니다.",
 		"활을 쏠 때 매우 빠른 속도로 나아가는 특수한 투사체를 쏩니다.",
 		"투사체는 하나의 대상만 공격할 수 있고, 블록에 닿으면 소멸합니다.",
 		"단, 유리나 유리 판과 같은 블록은 뚫고 지나갑니다."
@@ -120,7 +120,7 @@ public class SniperMurderer extends AbstractMurderer {
 		if (Items.isGold(e.getItem())) {
 			if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				final MurderMystery murderMystery = (MurderMystery) getGame();
-				if (murderMystery.consumeGold(getParticipant(), 20)) {
+				if (murderMystery.consumeGold(getParticipant(), 15)) {
 					if (!addArrow()) {
 						murderMystery.addGold(getParticipant());
 					} else {

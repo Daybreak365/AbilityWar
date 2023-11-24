@@ -12,10 +12,10 @@ import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery.ArrowKillEvent;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer.MurderEvent;
 import daybreak.abilitywar.utils.base.ProgressBar;
+import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
-import daybreak.abilitywar.utils.base.color.RGB;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.block.Action;
@@ -30,7 +30,7 @@ import org.bukkit.inventory.PlayerInventory;
 		"흔적의 색이 30초마다 빨간색 -> 검붉은색 -> 검은색의 순서로 바뀝니다.",
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다."
 })
-public class Detective extends AbstractInnocent {
+public class Detective extends AbstractDetective {
 
 	private final ActionbarChannel actionbarChannel = newActionbarChannel();
 
