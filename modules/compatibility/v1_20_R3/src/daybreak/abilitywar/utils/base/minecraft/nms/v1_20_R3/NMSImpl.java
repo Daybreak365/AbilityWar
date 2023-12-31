@@ -1,36 +1,47 @@
-package daybreak.abilitywar.utils.base.minecraft.nms.v1_15_R1;
+package daybreak.abilitywar.utils.base.minecraft.nms.v1_20_R3;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import daybreak.abilitywar.utils.base.minecraft.MojangAPI;
 import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.*;
-import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
-import net.minecraft.server.v1_15_R1.*;
-import net.minecraft.server.v1_15_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_15_R1.ItemCooldown.Info;
-import net.minecraft.server.v1_15_R1.PacketPlayInClientCommand.EnumClientCommand;
-import net.minecraft.server.v1_15_R1.PacketPlayOutEntity.PacketPlayOutEntityLook;
-import net.minecraft.server.v1_15_R1.PacketPlayOutTitle.EnumTitleAction;
-import net.minecraft.server.v1_15_R1.PacketPlayOutWorldBorder.EnumWorldBorderAction;
+import net.minecraft.network.chat.IChatBaseComponent.ChatSerializer;
+import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.protocol.game.PacketPlayInClientCommand.EnumClientCommand;
+import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook;
+import net.minecraft.network.syncher.DataWatcherObject;
+import net.minecraft.network.syncher.DataWatcherRegistry;
+import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.server.network.ServerPlayerConnection;
+import net.minecraft.world.EnumHand;
+import net.minecraft.world.entity.EntityLiving;
+import net.minecraft.world.item.ItemCooldown;
+import net.minecraft.world.item.ItemCooldown.Info;
+import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.phys.AxisAlignedBB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_15_R1.entity.*;
-import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R3.entity.*;
+import org.bukkit.craftbukkit.v1_20_R3.profile.CraftPlayerProfile;
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Base64;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.UUID;
 
 import static daybreak.abilitywar.utils.base.minecraft.item.Skulls.LINK_HEAD;
@@ -40,14 +51,14 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void respawn(Player player) {
-		((CraftPlayer) player).getHandle().playerConnection.a(new PacketPlayInClientCommand(EnumClientCommand.PERFORM_RESPAWN));
+		((CraftPlayer) player).getHandle().connection.handleClientCommand(new PacketPlayInClientCommand(EnumClientCommand.PERFORM_RESPAWN));
 	}
 
 	@Override
 	public void clearTitle(Player player) {
-		final PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+		final PlayerConnection connection = ((CraftPlayer) player).getHandle().connection;
 		if (connection == null) return;
-		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.CLEAR, null));
+		((ServerPlayerConnection) connection).send(new ClientboundClearTitlesPacket(false));
 	}
 
 	@Override
@@ -57,25 +68,25 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void sendActionbar(Player player, String string, int fadeIn, int stay, int fadeOut) {
-		final PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+		final PlayerConnection connection = ((CraftPlayer) player).getHandle().connection;
 		if (connection == null) return;
-		connection.sendPacket(new PacketPlayOutTitle(fadeIn, stay, fadeOut));
-		connection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.ACTIONBAR, ChatSerializer.a("{\"text\":\"" + string + "\"}"), fadeIn, stay, fadeOut));
+		((ServerPlayerConnection) connection).send(new ClientboundSetTitlesAnimationPacket(fadeIn, stay, fadeOut));
+		((ServerPlayerConnection) connection).send(new ClientboundSetActionBarTextPacket(ChatSerializer.fromJson("{\"text\":\"" + string + "\"}")));
 	}
 
 	@Override
 	public float getAttackCooldown(Player player) {
-		return ((CraftPlayer) player).getHandle().s(0f);
+		return ((CraftHumanEntity) player).getHandle().getAttackStrengthScale(0f);
 	}
 
 	@Override
 	public void rotateHead(Player receiver, Entity entity, float yaw, float pitch) {
-		final PlayerConnection connection = ((CraftPlayer) receiver).getHandle().playerConnection;
+		final PlayerConnection connection = ((CraftPlayer) receiver).getHandle().connection;
 		if (connection == null) return;
-		connection.sendPacket(new PacketPlayOutEntityTeleport(((CraftEntity) entity).getHandle()));
+		((ServerPlayerConnection) connection).send(new PacketPlayOutEntityTeleport(((CraftEntity) entity).getHandle()));
 		final byte fixedYaw = (byte) (yaw * (256F / 360F));
-		connection.sendPacket(new PacketPlayOutEntityLook(entity.getEntityId(), fixedYaw, (byte) (pitch * (256F / 360F)), entity.isOnGround()));
-		connection.sendPacket(new PacketPlayOutEntityHeadRotation(((CraftEntity) entity).getHandle(), fixedYaw));
+		((ServerPlayerConnection) connection).send(new PacketPlayOutEntityLook(entity.getEntityId(), fixedYaw, (byte) (pitch * (256F / 360F)), entity.isOnGround()));
+		((ServerPlayerConnection) connection).send(new PacketPlayOutEntityHeadRotation(((CraftEntity) entity).getHandle(), fixedYaw));
 	}
 
 	@Override
@@ -100,23 +111,23 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public float getAbsorptionHearts(LivingEntity livingEntity) {
-		return ((CraftLivingEntity) livingEntity).getHandle().getAbsorptionHearts();
+		return ((CraftLivingEntity) livingEntity).getHandle().getAbsorptionAmount();
 	}
 
 	@Override
 	public void setAbsorptionHearts(LivingEntity livingEntity, float absorptionHearts) {
-		((CraftLivingEntity) livingEntity).getHandle().setAbsorptionHearts(absorptionHearts);
+		((CraftLivingEntity) livingEntity).getHandle().setAbsorptionAmount(absorptionHearts);
 	}
 
 	@Override
 	public void broadcastEntityEffect(Entity entity, byte status) {
-		final net.minecraft.server.v1_15_R1.Entity nmsEntity = ((CraftEntity) entity).getHandle();
-		nmsEntity.getWorld().broadcastEntityEffect(nmsEntity, status);
+		final net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
+		nmsEntity.level().broadcastEntityEvent(nmsEntity, status);
 	}
 
 	@Override
 	public void setLocation(Entity entity, double x, double y, double z, float yaw, float pitch) {
-		((CraftEntity) entity).getHandle().setLocation(x, y, z, yaw, pitch);
+		((CraftEntity) entity).getHandle().absMoveTo(x, y, z, yaw, pitch);
 	}
 
 	@Override
@@ -127,7 +138,7 @@ public class NMSImpl implements INMS {
 	@Override
 	public void setArrowsInBody(Player player, int count) {
 		if (count < 0) throw new IllegalStateException("count cannot be negative.");
-		((CraftPlayer) player).getHandle().getDataWatcher().set(new DataWatcherObject<>(11, DataWatcherRegistry.b), count);
+		((net.minecraft.world.entity.Entity) ((CraftPlayer) player).getHandle()).getEntityData().set(new DataWatcherObject<>(12, DataWatcherRegistry.INT), count);
 	}
 
 	@Override
@@ -142,54 +153,52 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void setCooldown(Player player, Material material, int ticks) {
-		((CraftPlayer) player).getHandle().getCooldownTracker().setCooldown(CraftMagicNumbers.getItem(material), ticks);
+		((CraftHumanEntity) player).getHandle().getCooldowns().addCooldown(CraftMagicNumbers.getItem(material), ticks);
 	}
 
 	@Override
 	public boolean hasCooldown(Player player, Material material) {
-		return ((CraftPlayer) player).getHandle().getCooldownTracker().hasCooldown(CraftMagicNumbers.getItem(material));
+		return ((CraftHumanEntity) player).getHandle().getCooldowns().isOnCooldown(CraftMagicNumbers.getItem(material));
 	}
 
 	@Override
 	public int getCooldown(Player player, Material material) {
-		final ItemCooldown cooldownTracker = ((CraftPlayer) player).getHandle().getCooldownTracker();
+		final ItemCooldown cooldownTracker = ((CraftHumanEntity) player).getHandle().getCooldowns();
 		final Info cooldown = cooldownTracker.cooldowns.get(CraftMagicNumbers.getItem(material));
-		return cooldown == null ? 0 : Math.max(0, cooldown.endTick - cooldownTracker.currentTick);
+		return cooldown == null ? 0 : Math.max(0, cooldown.endTime - cooldownTracker.tickCount);
 	}
 
 	@Override
 	public void fakeCollect(Entity entity, Item item) {
 		final PacketPlayOutCollect packet = new PacketPlayOutCollect(item.getEntityId(), entity.getEntityId(), item.getItemStack().getAmount());
 		for (final CraftPlayer player : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
-			final PlayerConnection connection = player.getHandle().playerConnection;
+			final PlayerConnection connection = player.getHandle().connection;
 			if (connection == null) continue;
-			connection.sendPacket(packet);
+			((ServerPlayerConnection) connection).send(packet);
 		}
 	}
 
 	@Override
 	public void clearActiveItem(LivingEntity livingEntity) {
-		((CraftLivingEntity) livingEntity).getHandle().clearActiveItem();
+		((CraftLivingEntity) livingEntity).getHandle().stopUsingItem();
 	}
 
 	@Override
 	public void swingHand(LivingEntity livingEntity, Hand hand) {
-		final EntityLiving nmsEntity = ((CraftLivingEntity) livingEntity).getHandle();
-		final PacketPlayOutAnimation packet = new PacketPlayOutAnimation(nmsEntity, hand == Hand.MAIN_HAND ? 0 : 3);
-		((WorldServer) nmsEntity.getWorld()).getChunkProvider().broadcastIncludingSelf(nmsEntity, packet);
+		((CraftLivingEntity) livingEntity).getHandle().swing(hand == Hand.MAIN_HAND ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND, true);
 	}
 
 	@Override
 	public EntityBoundingBox getBoundingBox(Entity entity) {
-		final net.minecraft.server.v1_15_R1.Entity nmsEntity = ((CraftEntity) entity).getHandle();
+		final net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 		final AxisAlignedBB boundingBox = nmsEntity.getBoundingBox();
-		final double locX = nmsEntity.locX(), locY = nmsEntity.locY(), locZ = nmsEntity.locZ();
+		final double locX = nmsEntity.getX(), locY = nmsEntity.getY(), locZ = nmsEntity.getZ();
 		return new EntityBoundingBox(entity, boundingBox.minX - locX, boundingBox.minY - locY, boundingBox.minZ - locZ, boundingBox.maxX - locX, boundingBox.maxY - locY, boundingBox.maxZ - locZ);
 	}
 
 	@Override
 	public void setCamera(Player receiver, Entity entity) {
-		((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(new PacketPlayOutCamera(((CraftEntity) entity).getHandle()));
+		((ServerPlayerConnection) ((CraftPlayer) receiver).getHandle().connection).send(new PacketPlayOutCamera(((CraftEntity) entity).getHandle()));
 	}
 
 	@Override
@@ -213,15 +222,15 @@ public class NMSImpl implements INMS {
 	@Override
 	public void setWorldBorder(Player receiver, final IWorldBorder worldBorder) {
 		if (!(worldBorder instanceof WorldBorder)) throw new IllegalArgumentException();
-		((CraftPlayer) receiver).getHandle().playerConnection.sendPacket(new PacketPlayOutWorldBorder((WorldBorder) worldBorder, EnumWorldBorderAction.INITIALIZE));
+		((ServerPlayerConnection) ((CraftPlayer) receiver).getHandle().connection).send(new ClientboundInitializeBorderPacket((WorldBorder) worldBorder));
 	}
 
 	@Override
 	public void resetWorldBorder(Player receiver) {
 		final EntityPlayer nms = ((CraftPlayer) receiver).getHandle();
-		final net.minecraft.server.v1_15_R1.World world = nms.getWorld();
+		final net.minecraft.world.level.World world = ((net.minecraft.world.entity.Entity) nms).level();
 		if (world != null) {
-			nms.playerConnection.sendPacket(new PacketPlayOutWorldBorder(world.getWorldBorder(), EnumWorldBorderAction.INITIALIZE));
+			((ServerPlayerConnection) nms.connection).send(new ClientboundInitializeBorderPacket(world.getWorldBorder()));
 		}
 	}
 
@@ -251,7 +260,7 @@ public class NMSImpl implements INMS {
 
 	static {
 		try {
-			JUMPING = EntityLiving.class.getDeclaredField("jumping");
+			JUMPING = EntityLiving.class.getDeclaredField("bn");
 		} catch (NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
@@ -271,7 +280,29 @@ public class NMSImpl implements INMS {
 	@Override
 	public SteeringDirection getSteeringDirection(LivingEntity livingEntity) {
 		final EntityLiving nms = ((CraftLivingEntity) livingEntity).getHandle();
-		return SteeringDirection.get(nms.aZ, nms.bb);
+		return SteeringDirection.get(nms.xxa, nms.zza);
+	}
+
+	private static final Method PROFILE_SET_PROPERTY;
+
+	static {
+		try {
+			PROFILE_SET_PROPERTY = CraftPlayerProfile.class.getDeclaredMethod("setProperty", String.class, Property.class);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public SkullMeta setOwningPlayer(SkullMeta skullMeta, String name) {
+		final PlayerProfile profile = Bukkit.getServer().createPlayerProfile(UUID.randomUUID(), name);
+		PROFILE_SET_PROPERTY.setAccessible(true);
+		try {
+			final SkinInfo skin = MojangAPI.getSkin(name);
+			PROFILE_SET_PROPERTY.invoke(profile, "textures", new Property("textures", skin.getValue(), skin.getSignature()));
+		} catch (IOException | ReflectiveOperationException ignored) {}
+		skullMeta.setOwnerProfile(profile);
+		return skullMeta;
 	}
 
 	@Override
@@ -283,11 +314,13 @@ public class NMSImpl implements INMS {
 		if (url.isEmpty()) return stack;
 		if (!url.startsWith(LINK_HEAD)) url = LINK_HEAD + url;
 		final SkullMeta meta = (SkullMeta) stack.getItemMeta();
-		final GameProfile profile = new GameProfile(UUID.randomUUID(), url);
-		profile.getProperties().put("textures", new Property("textures", new String(Base64.getEncoder().encode(("{textures:{SKIN:{url:\"" + url + "\"}}}").getBytes()))));
+		final PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), url);
+		final PlayerTextures textures = profile.getTextures();
 		try {
-			ReflectionUtil.FieldUtil.setValue(meta.getClass(), meta, "profile", profile);
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ignored) {}
+			textures.setSkin(new URL(url));
+		} catch (MalformedURLException ignored) {}
+		profile.setTextures(textures);
+		meta.setOwnerProfile(profile);
 		stack.setItemMeta(meta);
 		customSkulls.put(key, stack);
 		return stack;

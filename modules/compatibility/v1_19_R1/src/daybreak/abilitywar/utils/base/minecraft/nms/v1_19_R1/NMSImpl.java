@@ -2,25 +2,12 @@ package daybreak.abilitywar.utils.base.minecraft.nms.v1_19_R1;
 
 import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
-import daybreak.abilitywar.utils.base.minecraft.nms.Hand;
-import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
-import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
-import daybreak.abilitywar.utils.base.minecraft.nms.INMS;
-import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
-import daybreak.abilitywar.utils.base.minecraft.nms.PickupStatus;
-import daybreak.abilitywar.utils.base.minecraft.nms.SteeringDirection;
+import daybreak.abilitywar.utils.base.minecraft.nms.*;
+import daybreak.abilitywar.utils.library.MaterialX;
 import net.minecraft.network.chat.IChatBaseComponent.ChatSerializer;
-import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
-import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
-import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
-import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
-import net.minecraft.network.protocol.game.PacketPlayInClientCommand;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.protocol.game.PacketPlayInClientCommand.EnumClientCommand;
-import net.minecraft.network.protocol.game.PacketPlayOutCamera;
-import net.minecraft.network.protocol.game.PacketPlayOutCollect;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.syncher.DataWatcherObject;
 import net.minecraft.network.syncher.DataWatcherRegistry;
 import net.minecraft.server.level.EntityPlayer;
@@ -37,23 +24,22 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArrow;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.entity.*;
 import org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers;
-import org.bukkit.entity.AbstractArrow;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
+
+import static daybreak.abilitywar.utils.base.minecraft.item.Skulls.LINK_HEAD;
+import static daybreak.abilitywar.utils.base.minecraft.item.Skulls.customSkulls;
 
 public class NMSImpl implements INMS {
 
@@ -290,4 +276,26 @@ public class NMSImpl implements INMS {
 		final EntityLiving nms = ((CraftLivingEntity) livingEntity).getHandle();
 		return SteeringDirection.get(nms.xxa, nms.zza);
 	}
+
+	@Override
+	public ItemStack createCustomSkull(@NotNull String url) {
+		final String key = url.startsWith(LINK_HEAD) ? url.substring(LINK_HEAD.length()) : url;
+		final org.bukkit.inventory.ItemStack cachedSkull = customSkulls.getIfPresent(key);
+		if (cachedSkull != null) return cachedSkull;
+		final ItemStack stack = MaterialX.PLAYER_HEAD.createItem();
+		if (url.isEmpty()) return stack;
+		if (!url.startsWith(LINK_HEAD)) url = LINK_HEAD + url;
+		final SkullMeta meta = (SkullMeta) stack.getItemMeta();
+		final PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID(), url);
+		final PlayerTextures textures = profile.getTextures();
+		try {
+			textures.setSkin(new URL(url));
+		} catch (MalformedURLException ignored) {}
+		profile.setTextures(textures);
+		meta.setOwnerProfile(profile);
+		stack.setItemMeta(meta);
+		customSkulls.put(key, stack);
+		return stack;
+	}
+
 }

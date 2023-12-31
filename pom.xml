@@ -21,6 +21,7 @@
         <module>modules/compatibility/v1_17_R1</module>
         <module>modules/compatibility/v1_19_R1</module>
         <module>modules/compatibility/v1_19_R2</module>
+        <module>modules/compatibility/v1_20_R3</module>
         <module>modules/Patch</module>
         <module>modules/Plugin</module>
         <module>modules/Jar</module>
@@ -38,7 +39,7 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <revision>3.3.9</revision>
+        <revision>3.4.0</revision>
         <bukkit-api.version>1.15.2-R0.1-SNAPSHOT</bukkit-api.version>
         <guava.version>30.1-jre</guava.version>
         <kotlin.version>1.5.20</kotlin.version>

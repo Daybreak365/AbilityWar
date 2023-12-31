@@ -12,8 +12,10 @@ import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.entity.health.event.PlayerSetHealthEvent;
+import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.PotionEffects;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -21,14 +23,16 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.util.Vector;
 
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "생존 본능", rank = Rank.B, species = Species.HUMAN, explain = {
-		"게임 중 단 한 번 §c치명적인 공격§f을 받았을 때 체력을 §c반 칸 §f남기고 살아납니다.",
-		"능력이 발동되면 주변의 생명체들을 모두 밀쳐내고 §b신속 II §f효과를 5초간 받으며,",
-		"4초간 §d무적§f/§d공격 불능 §f상태가 됩니다."
+		"게임 중 단 한 번 §c치명적인 공격§f을 받았을 때 체력을 §c세 칸 §f남기고 살아납니다.",
+		"능력이 발동되면 주변의 생명체들을 모두 밀쳐내고 §b신속 III §f효과를 5초간 받으며,",
+		"4초간 §d무적§f/§d공격 불능 §f상태가 됩니다.",
+		"다른 플레이어를 처치할 경우, 능력이 초기화되어 한 번 더 사용할 수 있습니다."
 }, summarize = {
 		"§c§n단 한 번§f 치명적인 피해를 체력 반 칸으로 줄이고 §3무적§f, §7공격 불가§f, §b신속§f 효과를 받습니다."
 })
@@ -62,14 +66,14 @@ public class SurvivalInstinct extends AbilityBase {
 
 	private void ability() {
 		invincibility.start();
-		getPlayer().setHealth(1);
+		getPlayer().setHealth(Math.min(6, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
 		NMS.broadcastEntityEffect(getPlayer(), (byte) 2);
 		NMS.broadcastEntityEffect(getPlayer(), (byte) 35);
 		final Vector playerLocation = getPlayer().getLocation().toVector();
 		for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), 6, 6, predicate)) {
 			entity.setVelocity(entity.getLocation().toVector().subtract(playerLocation).normalize().multiply(2).setY(0));
 		}
-		PotionEffects.SPEED.addPotionEffect(getPlayer(), 100, 1, true);
+		PotionEffects.SPEED.addPotionEffect(getPlayer(), 100, 2, true);
 	}
 
 	@SubscribeEvent(onlyRelevant = true, priority = 6, ignoreCancelled = true, childs = {EntityDamageByBlockEvent.class})
@@ -102,14 +106,25 @@ public class SurvivalInstinct extends AbilityBase {
 		}
 	}
 
+	@SubscribeEvent
+	private void onPlayerDeath(PlayerDeathEvent e) {
+		if (getPlayer().equals(e.getEntity().getKiller()) && invincibility.started) {
+			getPlayer().sendMessage("§d능력을 다시 사용할 수 있습니다!");
+			invincibility.started = false;
+		}
+	}
+
 	private class Invincibility extends AbilityTimer {
 
+		private final IWorldBorder worldBorder;
 		private final ActionbarChannel actionbarChannel = newActionbarChannel();
 		private boolean started = false;
 
 		private Invincibility(final int ticks) {
 			super(ticks);
 			setPeriod(TimeUnit.TICKS, 1);
+			this.worldBorder = NMS.createWorldBorder(getPlayer().getWorld().getWorldBorder());
+			worldBorder.setWarningDistance(Integer.MAX_VALUE);
 		}
 
 		@Override
@@ -121,6 +136,7 @@ public class SurvivalInstinct extends AbilityBase {
 		@Override
 		protected void onStart() {
 			started = true;
+			NMS.setWorldBorder(getPlayer(), worldBorder);
 		}
 
 		@Override
@@ -135,13 +151,8 @@ public class SurvivalInstinct extends AbilityBase {
 
 		@Override
 		protected void onSilentEnd() {
-			actionbarChannel.unregister();
-			getRestriction().new Condition() {
-				@Override
-				public boolean condition() {
-					return true;
-				}
-			}.register();
+			actionbarChannel.update(null);
+			NMS.resetWorldBorder(getPlayer());
 		}
 	}
 

@@ -113,9 +113,9 @@ public class AbilityWar extends JavaPlugin implements Provider, Listener {
 			Class.forName(FastMath.class.getName());
 			Class.forName(SpecialThanks.class.getName());
 			Class.forName(AbilityList.class.getName());
-		} catch (NoClassDefFoundError ignored) {
-			ignored.printStackTrace();
-			ignored.getCause().printStackTrace();
+		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			e.getCause().printStackTrace();
 		} catch (Exception ignored) {
 
 		}

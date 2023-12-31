@@ -4,11 +4,7 @@ import daybreak.abilitywar.utils.base.minecraft.server.ServerType;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import kotlin.annotation.MustBeDocumented;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 public class Support {
 
@@ -20,7 +16,7 @@ public class Support {
 	public @interface Version {
 		NMSVersion min();
 
-		NMSVersion max() default NMSVersion.v1_19_R2;
+		NMSVersion max() default NMSVersion.v1_20_R3;
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)

@@ -4,8 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>v1_19_R2</artifactId>
-    <version>${revision}</version>
+    <artifactId>v1_20_R3</artifactId>
 
     <parent>
         <groupId>kr.daybreak</groupId>
@@ -18,7 +17,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -49,7 +48,7 @@
                         </goals>
                         <id>remap-members</id>
                         <configuration>
-                            <srgIn>org.spigotmc:minecraft-server:1.19.3-R0.1-SNAPSHOT:csrg:maps-spigot-members</srgIn>
+                            <srgIn>org.spigotmc:minecraft-server:1.20.4-R0.1-SNAPSHOT:csrg:maps-spigot-members</srgIn>
                             <remappedArtifactId>remapped</remappedArtifactId>
                             <reverse>true</reverse>
                         </configuration>

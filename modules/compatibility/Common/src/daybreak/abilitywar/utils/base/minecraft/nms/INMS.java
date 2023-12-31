@@ -5,13 +5,10 @@ import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
 public interface INMS {
 
@@ -68,5 +65,12 @@ public interface INMS {
 
 	boolean isJumpingInVehicle(LivingEntity livingEntity);
 	SteeringDirection getSteeringDirection(LivingEntity livingEntity);
+
+	default SkullMeta setOwningPlayer(final SkullMeta skullMeta, final String name) {
+		skullMeta.setOwningPlayer(new FakePlayer(name));
+		return skullMeta;
+	}
+
+	ItemStack createCustomSkull(@NotNull String url);
 
 }

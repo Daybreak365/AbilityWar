@@ -9,6 +9,8 @@ import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.WorldBorder
 import org.bukkit.entity.*
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.SkullMeta
 
 class NMS private constructor() {
 	companion object INSTANCE : INMS {
@@ -206,6 +208,16 @@ class NMS private constructor() {
 		@JvmStatic
 		override fun getSteeringDirection(livingEntity: LivingEntity): SteeringDirection {
 			return INSTANCE.getSteeringDirection(livingEntity)
+		}
+
+		@JvmStatic
+		override fun setOwningPlayer(skullMeta: SkullMeta, name: String): SkullMeta {
+			return INSTANCE.setOwningPlayer(skullMeta, name)
+		}
+
+		@JvmStatic
+		override fun createCustomSkull(url: String): ItemStack {
+			return INSTANCE.createCustomSkull(url)
 		}
 	}
 }
