@@ -1,6 +1,5 @@
 package daybreak.abilitywar.ability.list;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
@@ -15,8 +14,6 @@ import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.manager.effect.registry.EffectType;
-import daybreak.abilitywar.game.module.DeathManager;
-import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -61,22 +58,19 @@ import java.util.function.Predicate;
         "§7철괴 우클릭 §8- §c불굴의 의지§f: $[MAX_DURATION_CONFIG]초간 이동을 방해하는 모든 §5상태 이상§f을 해제하고",
         " 이동 속도가 65% 증가하며, 근접 공격이 강화되어 $[DAMAGE_FACTOR_CONFIG]%의 추가 피해를 입힙니다.",
         " 불굴의 의지가 지속되는 도중에는 체력이 반 칸 아래로 떨어지지 않습니다.",
-        " 지속 도중 능력을 다시 사용하거나 강화 피해를 입히면 스킬이 즉시 종료되며,",
-        " 스킬이 종료된 이후 스킬이 지속된 시간에 비례해 그로기 상태 §8(§7공격 불능§8)§f가",
-        " 됩니다. $[COOLDOWN_CONFIG]",
+        " $[COOLDOWN_CONFIG]",
         "§7패시브 §8- §c전사의 피§f: 원거리 공격력이 절반으로 감소합니다. 5칸 밖의 적에게",
         " 받는 대미지를 최대 75%까지 거리에 따라 줄여받습니다. 잃은 체력에 비례하여",
         " 입히는 근접 대미지가 1.35배까지 증가합니다."
 }, summarize = {
         "§7철괴 우클릭§f 시 일정 시간 §c불사신§f이 되어 §5이동계 상태이상§f을 해제합니다.",
         "§c불사신§f이 되면 §b이동 속도§f와 §c근접 공격력§f이 대폭 증가합니다.",
-        "§7재사용 시§f나 §a근접 피해§f를 입히면 해제되고 §b유지 시간§f에 비례해 §7공격 불능§f이 됩니다.",
         "주고받는 §b원거리 피해§f가 §3감소§f됩니다. §a근거리 공격력§f이 §c잃은 체력§f에 비례하여 증가합니다."
 })
 public class Berserker extends AbilityBase implements ActiveHandler {
 
-    public static final SettingObject<Integer> MAX_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "max-duration", 8,
-            "# 불굴의 의지 최대 지속 (초 단위)") {
+    public static final SettingObject<Integer> MAX_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "duration", 3,
+            "# 불굴의 의지 지속 시간 (초 단위)") {
 
         @Override
         public boolean condition(Integer value) {
@@ -85,7 +79,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
     };
 
-    public static final SettingObject<Integer> DAMAGE_FACTOR_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "damage-factor", 100,
+    public static final SettingObject<Integer> DAMAGE_FACTOR_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "factor-damage", 15,
             "# 불굴의 의지 추가 대미지 계수", "# 125인 경우 125% 추가 대미지") {
 
         @Override
@@ -95,7 +89,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
     };
 
-    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "cooldown", 60,
+    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "ability_cooldown", 150,
             "# 불굴의 의지 쿨타임") {
 
         @Override
@@ -122,8 +116,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
     private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
     private WillOfIron willOfIron = null;
-    private Groggy groggy = null;
-    private final int maxDuration = MAX_DURATION_CONFIG.getValue();
+    private final int duration = MAX_DURATION_CONFIG.getValue();
 
     public Berserker(Participant participant) {
         super(participant);
@@ -139,15 +132,12 @@ public class Berserker extends AbilityBase implements ActiveHandler {
     public class WillOfIron extends AbilityTimer implements Listener {
 
         private final BossBar bossBar;
-        private int count = 0, attacks;
         private final IWorldBorder worldBorder;
 
-        private WillOfIron(int duration, int attacks) {
-            super(TaskType.NORMAL, duration * 20);
+        private WillOfIron(int duration) {
+            super(TaskType.REVERSE, duration * 20);
             setPeriod(TimeUnit.TICKS, 1);
             this.bossBar = Bukkit.createBossBar("불굴의 의지", BarColor.RED, BarStyle.SEGMENTED_6);
-            Preconditions.checkArgument(attacks > 0, "'attacks' must be 1 or greater");
-            this.attacks = attacks;
             this.worldBorder = NMS.createWorldBorder(getPlayer().getWorld().getWorldBorder());
             worldBorder.setWarningDistance(Integer.MAX_VALUE);
             NMS.setWorldBorder(getPlayer(), worldBorder);
@@ -156,7 +146,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
         @Override
         protected void onStart() {
-            bossBar.setProgress(0);
+            bossBar.setProgress(1);
             bossBar.addPlayer(getPlayer());
             bossBar.setVisible(true);
             Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
@@ -175,7 +165,6 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
         @Override
         protected void run(int count) {
-            this.count++;
             bossBar.setProgress(RangesKt.coerceIn(count / (double) getMaximumCount(), 0, 1));
         }
 
@@ -185,10 +174,6 @@ public class Berserker extends AbilityBase implements ActiveHandler {
                 e.setDamage(e.getDamage() * (1 + (DAMAGE_FACTOR_CONFIG.getValue() / 100.0)));
                 final Entity entity = e.getEntity();
                 entity.getWorld().strikeLightningEffect(entity.getLocation());
-                if (--attacks <= 0) {
-                    new Groggy(60 + willOfIron.count / 3).start();
-                    stop(false);
-                }
             }
             onEntityDamage(e);
         }
@@ -280,106 +265,17 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
     }
 
-    private class Groggy extends AbilityTimer implements Listener {
-
-        private final BossBar bossBar;
-
-        private Groggy(final int ticks) {
-            super(TaskType.REVERSE, ticks);
-            setPeriod(TimeUnit.TICKS, 1);
-            this.bossBar = Bukkit.createBossBar("그로기§8(§7공격 불능§8)", BarColor.WHITE, BarStyle.SEGMENTED_6);
-            Berserker.this.groggy = this;
-        }
-
-        @Override
-        protected void onStart() {
-            bossBar.setProgress(0);
-            bossBar.addPlayer(getPlayer());
-            bossBar.setVisible(true);
-            Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
-        }
-
-        @EventHandler
-        private void onPlayerJoin(final PlayerJoinEvent e) {
-            if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId()) && isRunning()) {
-                bossBar.addPlayer(e.getPlayer());
-            }
-        }
-
-        @EventHandler
-        private void onPlayerQuit(final PlayerQuitEvent e) {
-            if (getPlayer().getUniqueId().equals(e.getPlayer().getUniqueId())) {
-                bossBar.removePlayer(e.getPlayer());
-            }
-        }
-
-        @EventHandler
-        private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-            if (getPlayer().equals(getDamager(e.getDamager()))) {
-                e.setCancelled(true);
-            }
-        }
-
-        @Override
-        protected void run(int count) {
-            bossBar.setProgress(RangesKt.coerceIn(count / (double) getMaximumCount(), 0, 1));
-        }
-
-        @Override
-        protected void onEnd() {
-            onSilentEnd();
-        }
-
-        @Override
-        protected void onSilentEnd() {
-            bossBar.removeAll();
-            HandlerList.unregisterAll(this);
-            Berserker.this.groggy = null;
-        }
-
-        @Override
-        protected void onPause() {
-            bossBar.removeAll();
-        }
-
-        @Override
-        protected void onResume() {
-            bossBar.addPlayer(getPlayer());
-        }
-
-    }
-
     @Override
     public boolean ActiveSkill(Material material, ClickType clickType) {
         if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK) {
             if (willOfIron != null) {
                 willOfIron.cancel();
-            } else if (groggy == null) {
-                if (!cooldown.isCooldown()) {
-                    new WillOfIron(maxDuration, 1).start();
-                }
+            } else if (!cooldown.isCooldown()) {
+                new WillOfIron(duration).start();
             }
         }
         return false;
     }
-
-    private final Predicate<Entity> predicate = new Predicate<Entity>() {
-        @Override
-        public boolean test(Entity entity) {
-            if (entity.equals(getPlayer())) return false;
-            if (!getGame().isParticipating(entity.getUniqueId())
-                    || (getGame() instanceof DeathManager.Handler && ((DeathManager.Handler) getGame()).getDeathManager().isExcluded(entity.getUniqueId()))
-                    || !getGame().getParticipant(entity.getUniqueId()).attributes().TARGETABLE.getValue()) {
-                return false;
-            }
-            if (getGame() instanceof Teamable) {
-                final Teamable teamGame = (Teamable) getGame();
-                final Participant entityParticipant = teamGame.getParticipant(entity.getUniqueId()), participant = getParticipant();
-                return !teamGame.hasTeam(entityParticipant) || !teamGame.hasTeam(participant) || (!teamGame.getTeam(entityParticipant).equals(teamGame.getTeam(participant)));
-            }
-            return true;
-        }
-    };
 
     private long lastParticle = System.currentTimeMillis();
 

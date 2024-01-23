@@ -78,10 +78,10 @@ public class DamageImpl implements IDamages {
 		final net.minecraft.server.level.EntityPlayer nmsDamager = damager != null ? ((CraftPlayer) damager).getHandle() : null;
 		final Holder<DamageType> magicHolder;
 		try {
-			final Field dtField = DamageSources.class.getDeclaredField("damageTypes");
+			final Field dtField = DamageSources.class.getDeclaredField("a");
 			dtField.setAccessible(true);
 			final Object damageTypes = dtField.get(((CraftEntity) entity).getHandle().damageSources());
-			magicHolder = (Holder<DamageType>) IRegistry.class.getDeclaredMethod("getHolderOrThrow", ResourceKey.class).invoke(damageTypes, DamageTypes.MAGIC);
+			magicHolder = (Holder<DamageType>) IRegistry.class.getDeclaredMethod("f", ResourceKey.class).invoke(damageTypes, DamageTypes.MAGIC);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
