@@ -106,7 +106,7 @@ public class ChangeAbilityWar extends Game implements Winnable, DefaultKitHandle
 				msg.add("§5§l체인지! §d§l능력 §f§l전쟁");
 				msg.add("§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion());
 				msg.add("§b모드 개발자 §7: §fDaybreak 새벽");
-				msg.add("§9디스코드 §7: §f새벽§7#0833");
+				msg.add("§9디스코드 §7: §fsaebyeog");
 
 				GameCreditEvent event = new GameCreditEvent(this);
 				Bukkit.getPluginManager().callEvent(event);

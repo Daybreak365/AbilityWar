@@ -38,13 +38,8 @@ import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Note;
+import org.bukkit.*;
 import org.bukkit.Note.Tone;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,11 +50,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @GameManifest(name = "블라인드 믹스", description = {
 		"§f블라인드와 믹스 능력자의 조합!", "",
@@ -246,7 +237,7 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 						"§0Blind §f- §8블라인드 믹스",
 						"§7버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§7개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#0833"
+						"§9디스코드 §7: §fsaebyeog"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

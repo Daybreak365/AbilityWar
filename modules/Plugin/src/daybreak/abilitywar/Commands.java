@@ -16,16 +16,7 @@ import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.Configuration.Settings.DeveloperSettings;
 import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.kitpreset.KitConfiguration.KitSettings;
-import daybreak.abilitywar.config.wizard.AbilitySettingWizard;
-import daybreak.abilitywar.config.wizard.DeathWizard;
-import daybreak.abilitywar.config.wizard.GameSettingWizard;
-import daybreak.abilitywar.config.wizard.GameWizard;
-import daybreak.abilitywar.config.wizard.InvincibilityWizard;
-import daybreak.abilitywar.config.wizard.KitPresetWizard;
-import daybreak.abilitywar.config.wizard.KitWizard;
-import daybreak.abilitywar.config.wizard.SpawnWizard;
-import daybreak.abilitywar.config.wizard.TeamPresetWizard;
-import daybreak.abilitywar.config.wizard.WorldResetWizard;
+import daybreak.abilitywar.config.wizard.*;
 import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -37,13 +28,7 @@ import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.GameFactory.GameRegistration;
 import daybreak.abilitywar.game.manager.SpectatorManager;
 import daybreak.abilitywar.game.manager.effect.registry.EffectRegistry;
-import daybreak.abilitywar.game.manager.gui.AbilityListGUI;
-import daybreak.abilitywar.game.manager.gui.BlackListGUI;
-import daybreak.abilitywar.game.manager.gui.EffectsListGUI;
-import daybreak.abilitywar.game.manager.gui.GameModeGUI;
-import daybreak.abilitywar.game.manager.gui.InstallGUI;
-import daybreak.abilitywar.game.manager.gui.SpectatorGUI;
-import daybreak.abilitywar.game.manager.gui.SynergyListGUI;
+import daybreak.abilitywar.game.manager.gui.*;
 import daybreak.abilitywar.game.manager.gui.tip.AbilityTipGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.game.manager.object.CommandHandler;
@@ -85,13 +70,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -115,7 +94,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 					sender.sendMessage(Formatter.formatTitle(ChatColor.GOLD, ChatColor.YELLOW, "능력자 전쟁"));
 					sender.sendMessage("§e버전 §7: §f" + plugin.getDescription().getVersion());
 					sender.sendMessage("§b개발자 §7: §fDaybreak 새벽");
-					sender.sendMessage("§9디스코드 §7: §f새벽§7#0833");
+					sender.sendMessage("§9디스코드 §7: §fsaebyeog");
 					sender.sendMessage("§3§o/" + command + " help §7§o로 명령어 도움말을 확인하세요.");
 					return true;
 				}
@@ -1341,7 +1320,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 			protected boolean onCommand(CommandSender sender, String command, String[] args) {
 				if (args.length == 0) {
 					sender.sendMessage(Formatter.formatTitle(ChatColor.DARK_AQUA, ChatColor.WHITE, "디스코드"));
-					sender.sendMessage("§b개발자 DM§7: §f새벽§7#0833");
+					sender.sendMessage("§b개발자 DM§7: §fsaebyeog");
 					sender.sendMessage("§b디스코드§7: §fhttps://discord.gg/zK9ZJFBcwf");
 					return true;
 				}

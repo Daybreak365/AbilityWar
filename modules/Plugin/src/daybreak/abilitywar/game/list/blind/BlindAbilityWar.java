@@ -7,12 +7,8 @@ import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.DeathSettings;
 import daybreak.abilitywar.config.game.GameSettings;
-import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.*;
 import daybreak.abilitywar.game.AbstractGame.Observer;
-import daybreak.abilitywar.game.Game;
-import daybreak.abilitywar.game.GameAliases;
-import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -33,13 +29,8 @@ import daybreak.abilitywar.utils.base.logging.Logger;
 import daybreak.abilitywar.utils.base.minecraft.PlayerCollector;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Note;
+import org.bukkit.*;
 import org.bukkit.Note.Tone;
-import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -230,7 +221,7 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 						"§0Blind §f- §8블라인드 능력 전쟁",
 						"§7버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§7개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#0833"
+						"§9디스코드 §7: §fsaebyeog"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

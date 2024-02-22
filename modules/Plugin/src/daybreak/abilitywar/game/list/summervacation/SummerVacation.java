@@ -91,7 +91,7 @@ public class SummerVacation extends Game implements Winnable, DefaultKitHandler 
 				for (String msg : Arrays.asList("§eSummer Vacation §f- §c여름 휴가",
 						"§e플러그인 버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b모드 개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#0833")) {
+						"§9디스코드 §7: §fsaebyeog")) {
 					Bukkit.broadcastMessage(msg);
 				}
 				break;

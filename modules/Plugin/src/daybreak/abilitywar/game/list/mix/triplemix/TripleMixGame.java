@@ -73,7 +73,7 @@ public class TripleMixGame extends AbstractTripleMix implements DefaultKitHandle
 						"§5TripleMix §f- §d트리플 믹스",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b모드 개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#0833"
+						"§9디스코드 §7: §fsaebyeog"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

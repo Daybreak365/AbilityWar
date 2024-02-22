@@ -5,21 +5,15 @@ import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
-import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.*;
 import daybreak.abilitywar.game.AbstractGame.Observer;
-import daybreak.abilitywar.game.Category;
 import daybreak.abilitywar.game.Category.GameCategory;
-import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.interfaces.Winnable;
-import daybreak.abilitywar.game.list.murdermystery.ability.AbstractDetective;
-import daybreak.abilitywar.game.list.murdermystery.ability.AbstractJob;
-import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
-import daybreak.abilitywar.game.list.murdermystery.ability.Detective;
-import daybreak.abilitywar.game.list.murdermystery.ability.Innocent;
-import daybreak.abilitywar.game.list.murdermystery.ability.Murderer;
+import daybreak.abilitywar.game.list.murdermystery.ability.*;
+import daybreak.abilitywar.game.list.murdermystery.event.ConsumeGoldEvent;
+import daybreak.abilitywar.game.list.murdermystery.event.PreAddGoldEvent;
+import daybreak.abilitywar.game.list.murdermystery.event.PreConsumeGoldEvent;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
@@ -34,11 +28,7 @@ import daybreak.abilitywar.utils.base.random.Random;
 import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Arrow;
@@ -48,13 +38,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -68,17 +52,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 @GameManifest(name = "머더 미스터리", description = {
@@ -120,9 +94,13 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	private boolean addGold(final Participant participant, final boolean message) {
 		final int gold = getGold(participant);
 		if (gold < 64) {
-			goldPoints.put(participant, gold + 1);
+			final PreAddGoldEvent preAddGoldEvent = new PreAddGoldEvent(participant, 1);
+			Bukkit.getPluginManager().callEvent(preAddGoldEvent);
+			if (preAddGoldEvent.isCancelled()) return false;
+			final int earn = RangesKt.coerceAtMost(preAddGoldEvent.getAmount(), 64 - gold);
+			goldPoints.put(participant, gold + earn);
 			updateGold(participant);
-			if (message) participant.getPlayer().sendMessage("§6+ §e1 금");
+			if (message) participant.getPlayer().sendMessage("§6+ §e" + earn + " 금");
 			return true;
 		} else return false;
 	}
@@ -130,19 +108,27 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 	public int addGold(final Participant participant, final int amount) {
 		final int gold = getGold(participant);
 		if (gold != 64) {
-			final int earn = RangesKt.coerceAtMost(amount, 64 - gold);
+			final PreAddGoldEvent preAddGoldEvent = new PreAddGoldEvent(participant, amount);
+			Bukkit.getPluginManager().callEvent(preAddGoldEvent);
+			if (preAddGoldEvent.isCancelled()) return amount;
+			final int earn = RangesKt.coerceAtMost(preAddGoldEvent.getAmount(), 64 - gold);
 			goldPoints.put(participant, gold + earn);
 			updateGold(participant);
 			participant.getPlayer().sendMessage("§6+ §e" + earn + " 금");
-			return amount - earn;
+			return preAddGoldEvent.getAmount() - earn;
 		} else return amount;
 	}
 
 	public boolean consumeGold(Participant participant, int amount) {
 		final int gold = getGold(participant);
-		if (gold >= amount) {
-			goldPoints.put(participant, gold - amount);
+		final PreConsumeGoldEvent preConsumeGoldEvent = new PreConsumeGoldEvent(participant, amount);
+		Bukkit.getPluginManager().callEvent(preConsumeGoldEvent);
+		if (preConsumeGoldEvent.isCancelled()) return false;
+		if (gold >= preConsumeGoldEvent.getAmount()) {
+			goldPoints.put(participant, gold - preConsumeGoldEvent.getAmount());
 			updateGold(participant);
+			final ConsumeGoldEvent consumeGoldEvent = new ConsumeGoldEvent(participant, preConsumeGoldEvent.getAmount());
+			Bukkit.getPluginManager().callEvent(consumeGoldEvent);
 			return true;
 		} else return false;
 	}
@@ -193,7 +179,7 @@ public class MurderMystery extends AbstractGame implements Observer, Winnable {
 							"§4MurderMystery §f- §c머더 미스터리",
 							"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 							"§b개발자 §7: §fDaybreak 새벽",
-							"§9디스코드 §7: §f새벽§7#0833")) {
+							"§9디스코드 §7: §fsaebyeog")) {
 						Bukkit.broadcastMessage(line);
 					}
 					break;

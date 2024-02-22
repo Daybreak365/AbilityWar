@@ -9,7 +9,6 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
-import daybreak.abilitywar.config.enums.CooldownDecrease;
 import daybreak.abilitywar.game.AbstractGame.Effect;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
@@ -89,7 +88,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
 
     };
 
-    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "ability_cooldown", 150,
+    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Berserker.class, "ability_cooldown", 90,
             "# 불굴의 의지 쿨타임") {
 
         @Override
@@ -114,7 +113,7 @@ public class Berserker extends AbilityBase implements ActiveHandler {
         } else return damager;
     }
 
-    private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
+    private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue());
     private WillOfIron willOfIron = null;
     private final int duration = MAX_DURATION_CONFIG.getValue();
 

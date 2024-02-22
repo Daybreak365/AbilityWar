@@ -11,11 +11,7 @@ import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.config.Configuration.Settings;
 import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
-import daybreak.abilitywar.game.AbstractGame;
-import daybreak.abilitywar.game.Game;
-import daybreak.abilitywar.game.GameManager;
-import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.ParticipantStrategy;
+import daybreak.abilitywar.game.*;
 import daybreak.abilitywar.game.event.GameCreditEvent;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.MixAbilityGUI;
@@ -50,16 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @GameManifest(name = "시너지 능력자", description = {
 		""
@@ -110,7 +97,7 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 						"§5SynergyGame §f- §d시너지 능력자 전쟁",
 						"§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion(),
 						"§b모드 개발자 §7: §fDaybreak 새벽",
-						"§9디스코드 §7: §f새벽§7#0833"
+						"§9디스코드 §7: §fsaebyeog"
 				);
 
 				GameCreditEvent event = new GameCreditEvent(this);

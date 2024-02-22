@@ -4,13 +4,9 @@ import com.google.common.base.Strings;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.ability.AbilityBase;
 import daybreak.abilitywar.ability.AbilityFactory.AbilityRegistration;
-import daybreak.abilitywar.game.AbstractGame;
+import daybreak.abilitywar.game.*;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
-import daybreak.abilitywar.game.Category;
 import daybreak.abilitywar.game.Category.GameCategory;
-import daybreak.abilitywar.game.GameAliases;
-import daybreak.abilitywar.game.GameManifest;
-import daybreak.abilitywar.game.ParticipantStrategy;
 import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -29,14 +25,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @GameManifest(name = "배스킨 라빈스 31", description = {
 		"§f어디선가 많이 본 게임!"
@@ -86,7 +75,7 @@ public class BaskinRobbins extends AbstractGame {
 				Bukkit.broadcastMessage("§5BaskinRobbins §f- §d배스킨 라빈스 31");
 				Bukkit.broadcastMessage("§e버전 §7: §f" + AbilityWar.getPlugin().getDescription().getVersion());
 				Bukkit.broadcastMessage("§b개발자 §7: §fDaybreak 새벽");
-				Bukkit.broadcastMessage("§9디스코드 §7: §f새벽§7#0833");
+				Bukkit.broadcastMessage("§9디스코드 §7: §fsaebyeog");
 				break;
 			}
 			case 2: {
