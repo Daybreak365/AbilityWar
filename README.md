@@ -19,10 +19,11 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
     - AbilityWar를 로컬 Maven 레포지터리에 설치하려면 `mvn clean install` 명령을 실행하세요.
 - **Craftbukkit Dependency**
     - AbilityWar 빌드시 다음 버전의 craftbukkit dependency가 필요합니다.
-      - **1.12.2**, **1.13**, **1.13.2**, **1.14.4**, **1.15**, **1.16.1**, **1.16.2**, **1.16.5**, **1.17.1**, **1.19**
+      - **1.12.2**, **1.13**, **1.13.2**, **1.14.4**, **1.15**, **1.16.1**, **1.16.2**, **1.16.5**, **1.17.1**, **1.19**, **1.20.4**
       - 최신 버전이 아닐 경우 **1.9.2**, **1.9.4**, **1.10.2**, **1.11.2**도 필요할 수 있음
     - [최신 버전의 BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar)를 내려받은 후 `java -jar BuildTools.jar --rev <version>` 명령을 이용하여 각 버전의 craftbukkit을 빌드한 후 local maven repository에 install 해주세요.
-    - **1.19** 버전의 경우, CraftBukkit/pom.xml에서 specialsource plugin을 제거한 후 clean install 해주세요.
+    - craftbukkit는 bukkit에 의존하므로 bukkit을 먼저 install 해야할 수 있습니다.
+    - **1.19** 이상 버전의 경우, CraftBukkit/pom.xml에서 specialsource plugin을 제거한 후 clean install 해주세요.
 
 **🔗 Download**
 
@@ -30,7 +31,8 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 
 | 마인크래프트 버전 | 권장 플러그인 버전 |
 |:----:|:----:|
-| MC 1.20 | 지원 X |
+| MC 1.20.4 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
+| MC 1.20 ~ 1.20.3 | 지원 X |
 | MC 1.19.x (Paper) | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
 | MC 1.17.x | [v3.0.0](https://github.com/DayBreak365/AbilityWar/releases/tag/20210912) |
 | MC 1.12.x ~ 1.16.x | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
