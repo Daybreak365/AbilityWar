@@ -17,11 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class SpecialThanks {
@@ -98,6 +94,16 @@ public class SpecialThanks {
 							"하나의 능력만 개발된 채 방치된 상태입니다. 언젠가는 개발 완료되어",
 							"추천 애드온 목록에서 볼 수 있기를 기대합니다.",
 							"2021년 9월 7일 군대에 입대하셨습니다. 충성!"
+					)
+			)
+			.addSpecialThanks(
+					new SpecialThank("루르", "2dcb3299e24049adb8bb554d862bd7be",
+							"§7루르님",
+							"능력 테스트에 도움을 주셨습니다. 광대 역할을 맡고 계십니다.",
+							"§7Oh, 내가 웃고 있나요? (think it's funny)",
+							"§7모두 거짓이겠죠 (think it's funny)",
+							"§7날 보는 이들의 눈빛 속에는 (oh)",
+							"§7슬픔이 젖어 있는데 (don't u worry)"
 					)
 			)
 			.addSpecialThanks(
