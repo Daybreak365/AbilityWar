@@ -10,8 +10,8 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.entity.projectile.EntityArrow;
 import net.minecraft.world.entity.projectile.EntityPotion;
+import net.minecraft.world.entity.projectile.EntityTippedArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion;
@@ -47,7 +47,7 @@ public class DamageImpl implements IDamages {
 	public boolean damageArrow(@NotNull Entity entity, @NotNull LivingEntity shooter, float damage) {
 		final net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
 		final EntityLiving nmsShooter = ((CraftLivingEntity) shooter).getHandle();
-		return nmsEntity.hurt(((CraftEntity) entity).getHandle().damageSources().arrow(new EntityArrow(EntityTypes.ARROW, ((net.minecraft.world.entity.Entity) nmsShooter).level(), ItemStack.EMPTY) {
+		return nmsEntity.hurt(((CraftEntity) entity).getHandle().damageSources().arrow(new EntityTippedArrow(EntityTypes.ARROW, ((net.minecraft.world.entity.Entity) nmsShooter).level()) {
 			@Override
 			protected void onHit(MovingObjectPosition movingObjectPosition) {
 			}
