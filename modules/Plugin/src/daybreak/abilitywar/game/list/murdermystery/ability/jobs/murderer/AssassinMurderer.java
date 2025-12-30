@@ -29,7 +29,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 		"살인자의 검으로 상대를 죽일 경우 5초간 투명 효과를 받습니다.",
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
 		"암살자가 시민을 죽일 때 킬 메시지가 뜨지 않습니다.",
-		"웅크리면 투명해지고, 웅크리지 않으면 불투명해집니다."
+		"웅크리면 투명해지고, 그만 웅크리면 투명 지속시간이 반감합니다."
 })
 public class AssassinMurderer extends AbstractMurderer {
 
@@ -39,10 +39,12 @@ public class AssassinMurderer extends AbstractMurderer {
 		super(participant);
 	}
 
-	private final Cooldown cooldown = new Cooldown(20);
-	private final Duration skill = new Duration(7, cooldown) {
+	private final Cooldown cooldown = new Cooldown(10);
+	private boolean halfDuration = false;
+	private final Duration skill = new Duration(8, cooldown) {
 		@Override
 		protected void onDurationStart() {
+			halfDuration = false;
 			NMS.setInvisible(getPlayer(), true);
 			final Location center = getPlayer().getLocation();
 			final double radians = Math.toRadians(random.nextDouble() * 360);
@@ -122,8 +124,9 @@ public class AssassinMurderer extends AbstractMurderer {
 			getPlayer().getInventory().setArmorContents(null);
 			NMS.setArrowsInBody(getPlayer(), 0);
 			SoundLib.ENTITY_SILVERFISH_AMBIENT.playSound(getPlayer().getLocation(), 0.5f, 1f);
-		} else if (skill.isRunning()) {
-			skill.stop(false);
+		} else if (skill.isRunning() && !halfDuration) {
+			halfDuration = true;
+			skill.setCount(skill.getCount() / 2);
 		}
 	}
 

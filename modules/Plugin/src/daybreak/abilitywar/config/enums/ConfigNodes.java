@@ -60,6 +60,8 @@ public enum ConfigNodes {
 	GAME_DEATH_AUTO_RESPAWN("게임.사망.자동리스폰", true,
 			"# 게임 진행 중 사망 시 자동 리스폰 여부",
 			"# true로 설정하면 게임이 시작되고 난 후 사망할 경우 플레이어를 자동으로 리스폰시킵니다."),
+	GAME_DEATH_CUSTOM_DEATH_MESSAGE("게임.사망.커스텀메시지", true,
+			"# 사망 시 커스텀 사망 메시지 출력 여부"),
 	GAME_CLEAR_WEATHER("게임.맑은날씨", false,
 			"# 맑은 날씨 고정 여부",
 			"# true로 설정하면 게임이 진행되는 동안 맑은 날씨로 고정됩니다."),

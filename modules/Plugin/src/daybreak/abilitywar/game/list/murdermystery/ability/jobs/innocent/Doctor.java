@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
@@ -13,6 +14,7 @@ import daybreak.abilitywar.game.list.murdermystery.ability.AbstractInnocent;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer.MurderEvent;
 import daybreak.abilitywar.game.module.DeathManager;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
@@ -30,9 +32,24 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "시민: 의사", rank = Rank.SPECIAL, species = Species.HUMAN, explain = {
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
 		"금 좌클릭으로 금 6개를 소모해 4초간 y에 상관 없이 주변 7칸 이내에서",
-		"시민이 죽지 못하게 합니다."
+		"시민이 죽지 못하게 합니다. $[COOLDOWN_CONFIG]"
 })
 public class Doctor extends AbstractInnocent {
+
+	public static final AbilitySettings.SettingObject<Integer> COOLDOWN_CONFIG = mmAbilitySettings.new SettingObject<Integer>(Doctor.class, "cooldown", 6,
+			"# 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+		@Override
+		public String toString() {
+			return Formatter.formatCooldown(getValue());
+		}
+
+	};
 
 	public Doctor(Participant participant) {
 		super(participant);
@@ -101,7 +118,8 @@ public class Doctor extends AbstractInnocent {
 	private static final Circle CIRCLE = Circle.of(5, 60);
 	private static final RGB color = RGB.of(0, 0, 0);
 
-	private final Duration duration = new Duration(20) {
+	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final Duration duration = new Duration(20, cooldownTimer) {
 		@Override
 		protected void onDurationProcess(int count) {
 			for (final Location loc : CIRCLE.toLocations(getPlayer().getLocation()).floor(getPlayer().getLocation().getY())) {

@@ -1,13 +1,17 @@
 package daybreak.abilitywar.game.list.murdermystery.ability;
 
 import daybreak.abilitywar.ability.AbilityBase;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
+import daybreak.abilitywar.utils.base.io.FileUtil;
 import daybreak.abilitywar.utils.base.random.Random;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class AbstractJob extends AbilityBase {
+
+	public static final AbilitySettings mmAbilitySettings = new AbilitySettings(FileUtil.newFile("murder-abilitysettings.yml"));
 
 	protected final Random random = new Random();
 

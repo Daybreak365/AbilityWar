@@ -16,12 +16,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 
 public class Configuration {
@@ -353,6 +349,10 @@ public class Configuration {
 
 			public static boolean getAutoRespawn() {
 				return get(ConfigNodes.GAME_DEATH_AUTO_RESPAWN);
+			}
+
+			public static boolean getCustomDeathMessage() {
+				return get(ConfigNodes.GAME_DEATH_CUSTOM_DEATH_MESSAGE);
 			}
 
 		}

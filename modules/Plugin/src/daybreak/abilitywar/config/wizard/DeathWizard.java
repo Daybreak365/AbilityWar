@@ -6,8 +6,6 @@ import daybreak.abilitywar.config.enums.ConfigNodes;
 import daybreak.abilitywar.config.enums.OnDeath;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.library.MaterialX;
-import java.util.Arrays;
-import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -16,11 +14,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DeathWizard extends SettingWizard {
 
 	private static final ItemStack eliminate;
 	private static final ItemStack abilityReveal;
 	private static final ItemStack autoRespawn;
+	private static final ItemStack customDeathMessage;
 
 	static {
 		eliminate = new ItemStack(Material.DIAMOND_SWORD);
@@ -37,6 +39,11 @@ public class DeathWizard extends SettingWizard {
 		ItemMeta autoRespawnMeta = autoRespawn.getItemMeta();
 		autoRespawnMeta.setDisplayName("§b자동 리스폰");
 		autoRespawn.setItemMeta(autoRespawnMeta);
+
+		customDeathMessage = MaterialX.BOOK.createItem();
+		ItemMeta customDeathMessageMeta = customDeathMessage.getItemMeta();
+		customDeathMessageMeta.setDisplayName("§b커스텀 사망 메시지");
+		customDeathMessage.setItemMeta(autoRespawnMeta);
 	}
 
 	public DeathWizard(Player player, Plugin plugin) {
@@ -47,7 +54,7 @@ public class DeathWizard extends SettingWizard {
 	void openGUI(Inventory gui) {
 		for (int i = 0; i < 27; i++) {
 			switch (i) {
-				case 11: {
+				case 10: {
 					ItemMeta meta = eliminate.getItemMeta();
 					List<String> lore = Messager.asList("§f게임 진행 중 플레이어가 사망했을 때 어떤 작업을 수행할지 설정합니다.", "");
 					OnDeath operation = DeathSettings.getOperation();
@@ -61,7 +68,7 @@ public class DeathWizard extends SettingWizard {
 					gui.setItem(i, eliminate);
 					break;
 				}
-				case 13: {
+				case 12: {
 					ItemMeta meta = abilityReveal.getItemMeta();
 					meta.setLore(Messager.asList(
 							"§a활성화§f하면 게임이 시작되고 난 후 사망할 경우 플레이어의 능력을 공개합니다.",
@@ -71,7 +78,7 @@ public class DeathWizard extends SettingWizard {
 					gui.setItem(i, abilityReveal);
 					break;
 				}
-				case 15: {
+				case 14: {
 					ItemMeta meta = autoRespawn.getItemMeta();
 					meta.setLore(Messager.asList(
 							"§a활성화§f하면 게임이 시작되고 난 후 사망할 경우 플레이어를 자동으로 리스폰시킵니다.",
@@ -79,6 +86,16 @@ public class DeathWizard extends SettingWizard {
 							"§7상태 : " + (DeathSettings.getAutoRespawn() ? "§a활성화" : "§c비활성화")));
 					autoRespawn.setItemMeta(meta);
 					gui.setItem(i, autoRespawn);
+					break;
+				}
+				case 16: {
+					ItemMeta meta = customDeathMessage.getItemMeta();
+					meta.setLore(Messager.asList(
+							"§a활성화§f하면 플레이어 사망 시에 커스텀 사망 메시지를 출력합니다.",
+							"",
+							"§7상태 : " + (DeathSettings.getCustomDeathMessage() ? "§a활성화" : "§c비활성화")));
+					customDeathMessage.setItemMeta(meta);
+					gui.setItem(i, customDeathMessage);
 					break;
 				}
 				default:
@@ -106,6 +123,10 @@ public class DeathWizard extends SettingWizard {
 					break;
 				case "§b자동 리스폰":
 					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_AUTO_RESPAWN, !DeathSettings.getAutoRespawn());
+					show();
+					break;
+				case "§b커스텀 사망 메시지":
+					Configuration.modifyProperty(ConfigNodes.GAME_DEATH_CUSTOM_DEATH_MESSAGE, !DeathSettings.getCustomDeathMessage());
 					show();
 					break;
 			}

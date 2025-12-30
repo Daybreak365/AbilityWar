@@ -40,7 +40,10 @@ public class DeathManager implements ListenerModule {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public final void onPlayerDeath(final PlayerDeathEvent e) {
 		final Player dead = e.getEntity();
-		e.setDeathMessage(getDeathMessage(dead));
+
+		if (DeathSettings.getCustomDeathMessage()) {
+			e.setDeathMessage(getDeathMessage(dead));
+		}
 
 		if (autoRespawn) {
 			new BukkitRunnable() {

@@ -146,7 +146,7 @@ public class SniperMurderer extends AbstractMurderer {
 			super(160);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.boundingBox = CenteredBoundingBox.of(startLocation, -1, -1, -1, 1, 1, 1);
+			this.boundingBox = CenteredBoundingBox.of(startLocation, -.5, -.5, -.5, .5, .5, .5);
 			this.forward = arrowVelocity.multiply(10);
 			this.color = color;
 			this.lastLocation = startLocation;
