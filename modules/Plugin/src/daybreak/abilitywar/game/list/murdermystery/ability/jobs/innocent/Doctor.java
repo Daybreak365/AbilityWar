@@ -144,7 +144,7 @@ public class Doctor extends AbstractInnocent {
 				}
 			} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 				final MurderMystery murderMystery = (MurderMystery) getGame();
-				if (!duration.isDuration() && murderMystery.consumeGold(getParticipant(), 6)) {
+				if (!cooldownTimer.isCooldown() && !duration.isDuration() && murderMystery.consumeGold(getParticipant(), 6)) {
 					getPlayer().sendMessage("§a의술 §f능력을 사용했습니다.");
 					duration.start();
 				}

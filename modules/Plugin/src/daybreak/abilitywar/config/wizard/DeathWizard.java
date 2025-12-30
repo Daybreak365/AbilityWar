@@ -43,7 +43,7 @@ public class DeathWizard extends SettingWizard {
 		customDeathMessage = MaterialX.BOOK.createItem();
 		ItemMeta customDeathMessageMeta = customDeathMessage.getItemMeta();
 		customDeathMessageMeta.setDisplayName("§b커스텀 사망 메시지");
-		customDeathMessage.setItemMeta(autoRespawnMeta);
+		customDeathMessage.setItemMeta(customDeathMessageMeta);
 	}
 
 	public DeathWizard(Player player, Plugin plugin) {
