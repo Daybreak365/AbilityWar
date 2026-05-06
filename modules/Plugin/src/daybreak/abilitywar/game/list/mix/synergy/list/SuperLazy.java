@@ -12,13 +12,11 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Arrow;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -82,12 +80,6 @@ public class SuperLazy extends Synergy implements ActiveHandler {
 			e.getDamager().remove();
 		}
 		onEntityDamage(e);
-	}
-
-	@SubscribeEvent(ignoreCancelled = true, onlyRelevant = true, priority = Priority.HIGHEST)
-	private void onEntityRegainHealth(final EntityRegainHealthEvent e) {
-		e.setCancelled(true);
-		new RegainTimer(e.getAmount());
 	}
 
 	@SubscribeEvent(ignoreCancelled = true, priority = Priority.HIGHEST)
@@ -160,38 +152,6 @@ public class SuperLazy extends Synergy implements ActiveHandler {
 			if (this.equals(lastDamage)) {
 				lastDamage = null;
 			}
-			channel.unregister();
-		}
-
-	}
-
-	private class RegainTimer extends AbilityTimer {
-
-		private final ActionbarChannel channel;
-		private final double health;
-
-		private RegainTimer(double health) {
-			super(6);
-			this.channel = newActionbarChannel();
-			this.health = health;
-			start();
-		}
-
-		@Override
-		protected void run(int count) {
-			channel.update(ChatColor.YELLOW.toString() + count + ChatColor.WHITE + "초: " + ChatColor.GREEN.toString() + "+" + (Math.round(health * 100.0) / 100.0));
-		}
-
-		@Override
-		protected void onEnd() {
-			if (!getPlayer().isDead()) {
-				getPlayer().setHealth(Math.max(0, Math.min(getPlayer().getHealth() + health, getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())));
-			}
-			channel.unregister();
-		}
-
-		@Override
-		protected void onSilentEnd() {
 			channel.unregister();
 		}
 

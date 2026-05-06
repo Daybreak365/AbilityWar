@@ -28,22 +28,16 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "절대 영도", rank = Rank.S, species = Species.OTHERS, explain = {
@@ -93,7 +87,6 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 		}
 
 	};
-	private static final Set<LivingEntity> frozenEntities = new HashSet<>();
 
 	private final AbilityTimer buff = new AbilityTimer() {
 
@@ -248,15 +241,13 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 							return true;
 						}
 					});
-					BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock);
+					BoundingBox boundingBox = EntityBoundingBox.of(fallingBlock).expand(.5, .5, .5, .5, .5, .5);
 					new AbilityTimer() {
 						@Override
 						protected void run(int count) {
 							if (fallingBlock.isValid() && !fallingBlock.isDead()) {
 								for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, fallingBlock.getWorld(), boundingBox, predicate)) {
-									if (frozenEntities.add(livingEntity)) {
-										Frost.apply(getGame(), livingEntity, TimeUnit.SECONDS, 2);
-									}
+									Frost.apply(getGame(), livingEntity, TimeUnit.SECONDS, 2);
 								}
 							} else {
 								stop(false);

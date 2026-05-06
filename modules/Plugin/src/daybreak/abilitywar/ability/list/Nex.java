@@ -82,7 +82,7 @@ public class Nex extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Nex.class, "damage", 20, "# 대미지") {
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Nex.class, "damage", 25, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {

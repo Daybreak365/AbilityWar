@@ -52,7 +52,7 @@ import java.util.function.Predicate;
 public class Assassin extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> DISTANCE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "distance", 8,
-			"# 스킬 대미지") {
+			"# 사거리") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -61,7 +61,7 @@ public class Assassin extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "damage", 8,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Assassin.class, "damage", 10,
 			"# 스킬 대미지") {
 
 		@Override

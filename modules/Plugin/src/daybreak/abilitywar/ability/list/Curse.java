@@ -91,6 +91,16 @@ public class Curse extends AbilityBase implements ActiveHandler {
 
 	};
 
+	public static final SettingObject<Double> DAMAGE_MULTIPLY = abilitySettings.new SettingObject<Double>(Curse.class, "damage-multiply", 4.5,
+			"# 피해 배율") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
 	public Curse(Participant participant) {
 		super(participant);
 	}
@@ -115,6 +125,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 		}
 	};
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final double damageMultiply = DAMAGE_MULTIPLY.getValue();
 
 	private static final RGB BLACK = RGB.of(1, 1, 1);
 
@@ -199,7 +210,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
 			e.setCancelled(true);
-			target.damage(e.getDamage() * (2.3 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
+			target.damage(e.getDamage() * (damageMultiply * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
 			if (e.getDamager() instanceof Player) {
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound((Player) e.getDamager());
 			}
@@ -215,7 +226,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	private void onEntityDamage(EntityDamageEvent e) {
 		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
 			e.setCancelled(true);
-			target.damage(e.getDamage() * (2.3 * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
+			target.damage(e.getDamage() * (damageMultiply * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
 		}
 	}
 

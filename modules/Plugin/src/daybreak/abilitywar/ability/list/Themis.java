@@ -37,7 +37,7 @@ public class Themis extends AbilityBase {
 		super(participant);
 	}
 
-	private final double multiplier = Math.floor(Math.max(.5, (1d - (Math.max(0, getGame().getParticipants().size() - 4) / 50d)) * 2) * 100) / 100;
+	private final double multiplier = Math.floor(Math.max(.5, (1d - (Math.max(0, getGame().getParticipants().size() - 4) / 50d)) * 5) * 100) / 100;
 	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
 		@Override
 		public boolean test(Entity entity) {

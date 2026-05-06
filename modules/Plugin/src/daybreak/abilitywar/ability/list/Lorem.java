@@ -37,7 +37,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -56,12 +55,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "로렘", rank = Rank.S, species = Species.HUMAN, explain = {
@@ -263,13 +257,6 @@ public class Lorem extends AbilityBase {
 				final Location location = iterator.next();
 				entity.setLocation(location);
 				if (!isRunning()) {
-					return;
-				}
-				final Block block = location.getBlock();
-				final Material type = block.getType();
-				if (type.isSolid()) {
-					startExhaustion();
-					stop(true);
 					return;
 				}
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {

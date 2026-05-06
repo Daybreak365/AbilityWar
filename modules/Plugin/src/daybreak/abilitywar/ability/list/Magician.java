@@ -23,16 +23,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "마술사", rank = Rank.A, species = Species.HUMAN, explain = {
 		"활을 쐈을 때, 화살이 맞은 위치에서 5칸 범위 내에 있는 생명체들에게",
-		"최대체력의 30% 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[COOLDOWN_CONFIG]"
+		"최대체력의 $[DAMAGE_CONFIG]% 만큼의 대미지를 추가로 입히고 위치를 뒤바꿉니다. $[COOLDOWN_CONFIG]"
 }, summarize = {
 		"화살 적중 위치의 주변 생명체들에게 §c최대 체력 비례 피해§f를 입히고 §d위치를 뒤섞습니다§f."
 })
@@ -53,11 +49,22 @@ public class Magician extends AbilityBase {
 
 	};
 
+	public static final SettingObject<Integer> DAMAGE_CONFIG = abilitySettings.new SettingObject<Integer>(Magician.class, "damage", 45,
+			"# 최대 체력 비례 피해량") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+
 	public Magician(Participant participant) {
 		super(participant);
 	}
 
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._25);
+	private final double damage = DAMAGE_CONFIG.getValue() * 0.01;
 	private final Circle circle = Circle.of(5, 70);
 
 	private final Predicate<Entity> ONLY_PARTICIPANTS = new Predicate<Entity>() {
@@ -82,7 +89,7 @@ public class Magician extends AbilityBase {
 						locationMap.put(damageable, damageable.getLocation());
 						if (!damageable.equals(getPlayer())) {
 							if (LocationUtil.isInCircle(center, damageable.getLocation(), 5)) {
-								damageable.damage((damageable instanceof Attributable ? ((Attributable) damageable).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : 0) * 0.3, getPlayer());
+								damageable.damage((damageable instanceof Attributable ? ((Attributable) damageable).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : 0) * damage, getPlayer());
 								if (damageable instanceof Player) {
 									SoundLib.ENTITY_ILLUSIONER_CAST_SPELL.playSound((Player) damageable);
 								}

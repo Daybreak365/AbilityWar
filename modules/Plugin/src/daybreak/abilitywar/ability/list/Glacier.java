@@ -37,8 +37,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -183,16 +183,6 @@ public class Glacier extends AbilityBase implements ActiveHandler {
         }
     }
 
-    @SubscribeEvent
-    private void onChat(AsyncPlayerChatEvent e) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Frost.apply(getParticipant(), TimeUnit.SECONDS, 10);
-            }
-        }.runTask(AbilityWar.getPlugin());
-    }
-
     @SubscribeEvent(onlyRelevant = true)
     private void onEffectApply(ParticipantNewEffectApplyEvent e) {
         if (e.getEffect().getRegistration() == Frost.registration) {
@@ -202,7 +192,10 @@ public class Glacier extends AbilityBase implements ActiveHandler {
                 public void run(int count) {
                     effect.setCount(Math.max(0, effect.getCount() - 2));
                     final double healthLoss = Healths.getMaxHealth(getPlayer()) - getPlayer().getHealth();
-                    Healths.setHealth(getPlayer(), getPlayer().getHealth() + (healthLoss / 100));
+                    final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), (healthLoss / 100), EntityRegainHealthEvent.RegainReason.MAGIC);
+                    if (!event.isCancelled()) {
+                        Healths.setHealth(getPlayer(), getPlayer().getHealth() + event.getAmount());
+                    }
                 }
             });
         }

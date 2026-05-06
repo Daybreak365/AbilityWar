@@ -108,7 +108,7 @@ public class ExpertOfFall extends AbilityBase {
 					FallingBlocks.spawnFallingBlock(belowBlock.getLocation().add(0, 1, 0), belowBlock.getType(), false, getPlayer().getLocation().toVector().subtract(belowBlock.getLocation().toVector()).multiply(-0.1).setY(Math.random()), Behavior.FALSE);
 				}
 				for (Damageable damageable : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 4, 4, predicate)) {
-					damageable.damage(Math.min(getPlayer().getFallDistance() / 0.85, 25) * (1 - (getPlayer().getLocation().distanceSquared(damageable.getLocation()) / 16)), getPlayer());
+					damageable.damage(Math.min(getPlayer().getFallDistance() / 0.75, 40) * (1 - (getPlayer().getLocation().distanceSquared(damageable.getLocation()) / 16)), getPlayer());
 				}
 			}
 		}

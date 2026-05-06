@@ -13,7 +13,6 @@ import daybreak.abilitywar.game.manager.effect.Rooted;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
-import daybreak.abilitywar.utils.annotations.Beta;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -47,9 +46,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "솔라", rank = Rank.A, species = Species.OTHERS, explain = {
+@AbilityManifest(name = "솔라", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §f광명§f: 표식이 부여된 생명체는 이동 속도가 느려지며, 세계의 시간을 점점",
-		" 낮으로 바꿉니다. 표식이 세 개 이상 쌓이면 대상의 표식이 초기화되고 대상을",
+		" 낮으로 바꿉니다. 표식이 네 개 이상 쌓이면 대상의 표식이 초기화되고 대상을",
 		" 1초간 §5속박§f시키며, 흑점 폭발의 쿨타임이 10초 단축되고 §e흡수 체력§8(§7최대 6칸§8)",
 		" 반 칸을 얻습니다. 10초간 표식이 추가로 쌓이지 않으면 표식이 초기화됩니다.",
 		"§7공격 무기 §8- §f빛의 검§f: 대상을 근접 공격하면 광명 표식을 하나 부여합니다.",
@@ -58,7 +57,6 @@ import java.util.function.Predicate;
 		" 4초간 §5실명§f시킵니다. 이후 자신은 §e흡수 체력§8(§7최대 6칸§8)§f 한 칸 반을 얻습니다.",
 		" 낮에만 사용할 수 있습니다. $[COOLDOWN_CONFIG]"
 })
-@Beta
 public class Solar extends AbilityBase implements ActiveHandler {
 
 	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lunar.class, "cooldown", 30,
@@ -263,7 +261,7 @@ public class Solar extends AbilityBase implements ActiveHandler {
 			super(40);
 			setPeriod(TimeUnit.TICKS, 4);
 			this.entity = entity;
-			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 3 - stack)));
+			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 4 - stack)));
 			hologram.display(getPlayer());
 			stackMap.put(entity.getUniqueId(), this);
 			addStack();
@@ -279,8 +277,8 @@ public class Solar extends AbilityBase implements ActiveHandler {
 			updateTime(getPlayer().getWorld());
 			setCount(40);
 			stack++;
-			hologram.setText(Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 3 - stack)));
-			if (stack >= 3) {
+			hologram.setText(Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 4 - stack)));
+			if (stack >= 4) {
 				stop(false);
 				if (cooldownTimer.isRunning()) cooldownTimer.setCount(Math.max(cooldownTimer.getCount() - 10, 0));
 				if (entity instanceof Player && NMS.getAbsorptionHearts(getPlayer()) < 12) {

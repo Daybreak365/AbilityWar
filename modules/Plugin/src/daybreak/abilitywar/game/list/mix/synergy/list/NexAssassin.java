@@ -59,7 +59,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> NEX_DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "nex-damage", 20, "# 대미지") {
+	public static final SettingObject<Integer> NEX_DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "nex-damage", 30, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -88,7 +88,7 @@ public class NexAssassin extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "assassin-damage", 9,
+	public static final SettingObject<Integer> DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(NexAssassin.class, "assassin-damage", 12,
 			"# 스킬 대미지") {
 
 		@Override

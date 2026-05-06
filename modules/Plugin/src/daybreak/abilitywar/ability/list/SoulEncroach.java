@@ -22,11 +22,7 @@ import daybreak.abilitywar.utils.base.minecraft.damage.Damages.INSTANCE.Flag;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Note;
+import org.bukkit.*;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
@@ -212,7 +208,7 @@ public class SoulEncroach extends AbilityBase implements ActiveHandler {
 	}.setPeriod(TimeUnit.TICKS, 3).register();
 
 	private double getDamage() {
-		return lastVictim == null ? 0.0 : Math.max(1, (21.5 * (1 - (lastVictim.getHealth() / lastVictim.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()))) * (1 + (killCount * 0.15)));
+			return lastVictim == null ? 0.0 : Math.max(1, (33 * (1 - (lastVictim.getHealth() / lastVictim.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()))) * (1 + (killCount * 0.15)));
 	}
 
 	private final Duration skillTimer = new Duration(60) {

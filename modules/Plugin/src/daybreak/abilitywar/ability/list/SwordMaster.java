@@ -200,7 +200,7 @@ public class SwordMaster extends AbilityBase implements ActiveHandler {
 		public void addCount() {
 			if (++count > stacksToCharge) {
 				charge = null;
-				swords.add(new Sword(stack, getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue() / 1.5));
+				swords.add(new Sword(stack, getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue() / 1.2));
 				actionbarChannel.update(formatActionbarMessage(0));
 				return;
 			}

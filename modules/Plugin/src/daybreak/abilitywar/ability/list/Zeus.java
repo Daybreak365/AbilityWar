@@ -21,11 +21,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Circle;
 import daybreak.abilitywar.utils.library.SoundLib;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -46,7 +42,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "제우스", rank = Rank.S, species = Species.GOD, explain = {
+@AbilityManifest(name = "제우스", rank = Rank.L, species = Species.GOD, explain = {
 		"§7패시브 §8- §e하늘의 지배자§f: §5제압§f되지 않습니다. §b공중§f에 있는 동안 타게팅의 대상이",
 		" 되지 않습니다. 낙하 피해를 입지 않습니다.",
 		"§7웅크리기 §8- §e행차§f: 이동을 방해하는 모든 상태 이상을 해제하고, 이후 6초간 비행할",

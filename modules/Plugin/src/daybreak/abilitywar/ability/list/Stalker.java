@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-@AbilityManifest(name = "스토커", rank = Rank.A, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "스토커", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §c오직 너만을§f: 같은 대상을 계속 공격하면 스택이 쌓이며 §8실명§f시킵니다.",
 		" 스택이 쌓일 때마다 다른 모든 스킬의 쿨타임이 스택만큼 감소하며, 대상",
 		" 플레이어에게 주는 추가 대미지가 0.2씩 증가합니다.",

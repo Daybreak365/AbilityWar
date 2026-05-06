@@ -57,7 +57,7 @@ public class Meteor extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(Meteor.class, "damage", 20, "# 대미지") {
+	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(Meteor.class, "damage", 40, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {

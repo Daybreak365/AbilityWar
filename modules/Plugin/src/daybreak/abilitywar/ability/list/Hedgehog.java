@@ -39,7 +39,7 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.THREE, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.ZERO, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Hedgehog extends AbilityBase {
 
-	public static final SettingObject<Double> DAMAGE_CONFIG = abilitySettings.new SettingObject<Double>(Hedgehog.class, "damage", 2.0,
+	public static final SettingObject<Double> DAMAGE_CONFIG = abilitySettings.new SettingObject<Double>(Hedgehog.class, "damage", 7.0,
 			"# 대미지") {
 
 		@Override

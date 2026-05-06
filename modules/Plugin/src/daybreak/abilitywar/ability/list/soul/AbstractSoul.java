@@ -30,12 +30,7 @@ import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import kotlin.ranges.RangesKt;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Note;
+import org.bukkit.*;
 import org.bukkit.Note.Tone;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -87,7 +82,7 @@ import java.util.function.Predicate;
 })
 public abstract class AbstractSoul extends AbilityBase implements ActiveHandler {
 
-    public static final SettingObject<Integer> GRASP_COOLDOWN = abilitySettings.new SettingObject<Integer>(AbstractSoul.class, "grasp-cooldown", 8,
+    public static final SettingObject<Integer> GRASP_COOLDOWN = abilitySettings.new SettingObject<Integer>(AbstractSoul.class, "grasp-cooldown", 10,
             "# 오싹한 힘 쿨타임") {
 
         @Override
@@ -102,7 +97,7 @@ public abstract class AbstractSoul extends AbilityBase implements ActiveHandler 
 
     };
 
-    public static final SettingObject<Integer> GHOST_FORM_COOLDOWN = abilitySettings.new SettingObject<Integer>(AbstractSoul.class, "ghost-form-cooldown", 2,
+    public static final SettingObject<Integer> GHOST_FORM_COOLDOWN = abilitySettings.new SettingObject<Integer>(AbstractSoul.class, "ghost-form-cooldown", 3,
             "# 유령화 쿨타임") {
 
         @Override
