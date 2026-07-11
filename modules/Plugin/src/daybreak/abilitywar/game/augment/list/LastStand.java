@@ -2,6 +2,7 @@ package daybreak.abilitywar.game.augment.list;
 
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.augment.AbstractAugment;
+import daybreak.abilitywar.game.augment.AugmentManifest;
 import daybreak.abilitywar.game.augment.AugmentRarity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,9 +14,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@AugmentManifest(key = "last_stand", name = "최후의 저항", rarity = AugmentRarity.PRISMATIC, description = "죽음에 이르는 피해를 한 번 버티고 5초간 강해집니다.")
 public class LastStand extends AbstractAugment {
 	private final Set<UUID> used = new HashSet<>();
-	public LastStand() { super("last_stand", "최후의 저항", AugmentRarity.PRISMATIC, "죽음에 이르는 피해를 한 번 버티고 5초간 강해집니다."); }
 	@EventHandler(ignoreCancelled = true) public void onDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player)) return;
 		final Player player = (Player) event.getEntity();

@@ -1,5 +1,6 @@
 package daybreak.abilitywar.game.augment;
 
+import com.google.common.base.Preconditions;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -10,37 +11,38 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractAugment implements Augment, Listener {
 
-	private final String key;
-	private final String displayName;
-	private final AugmentRarity rarity;
-	private final String description;
+	private final AugmentManifest manifest;
 	private AugmentContext context;
 
-	protected AbstractAugment(@NotNull String key, @NotNull String displayName, @NotNull AugmentRarity rarity, @NotNull String description) {
-		this.key = key;
-		this.displayName = displayName;
-		this.rarity = rarity;
-		this.description = description;
+	protected AbstractAugment() {
+		if (!getClass().isAnnotationPresent(AugmentManifest.class)) {
+			throw new IllegalArgumentException("AugmentManifest가 없는 증강입니다.");
+		}
+		this.manifest = getClass().getAnnotation(AugmentManifest.class);
+		Preconditions.checkNotNull(manifest.key());
+		Preconditions.checkNotNull(manifest.name());
+		Preconditions.checkNotNull(manifest.rarity());
+		Preconditions.checkNotNull(manifest.description());
 	}
 
 	@Override
 	public final String getKey() {
-		return key;
+		return manifest.key();
 	}
 
 	@Override
 	public final String getDisplayName() {
-		return displayName;
+		return manifest.name();
 	}
 
 	@Override
 	public final AugmentRarity getRarity() {
-		return rarity;
+		return manifest.rarity();
 	}
 
 	@Override
 	public final String getDescription() {
-		return description;
+		return manifest.description();
 	}
 
 	@Override
