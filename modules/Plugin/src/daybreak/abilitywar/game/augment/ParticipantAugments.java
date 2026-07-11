@@ -37,6 +37,16 @@ public class ParticipantAugments implements AugmentContext {
 		return participantAugments != null && participantAugments.contains(augment);
 	}
 
+	public boolean hasAugment(@NotNull Participant participant, @NotNull String key) {
+		final Set<Augment> participantAugments = augments.get(participant);
+		if (participantAugments != null) {
+			for (Augment augment : participantAugments) {
+				if (augment.getKey().equals(key)) return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public void addAugment(@NotNull Participant participant, @NotNull Augment augment) {
 		Set<Augment> participantAugments = augments.get(participant);
