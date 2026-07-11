@@ -11,6 +11,7 @@ import daybreak.abilitywar.game.Category.GameCategory;
 import daybreak.abilitywar.game.GameAliases;
 import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.TeamSupport;
+import daybreak.abilitywar.game.list.augment.AugmentWarGame;
 import daybreak.abilitywar.game.list.baskinrobbins.BaskinRobbins;
 import daybreak.abilitywar.game.list.blind.BlindAbilityWar;
 import daybreak.abilitywar.game.list.changeability.ChangeAbilityWar;
@@ -63,6 +64,7 @@ public class GameFactory {
 	static {
 		registerMode(StandardGame.class);
 		registerMode(WarGame.class);
+		registerMode(AugmentWarGame.class);
 		registerMode(ChangeAbilityWar.class);
 		registerMode(SummerVacation.class);
 		registerMode(MixGame.class);
