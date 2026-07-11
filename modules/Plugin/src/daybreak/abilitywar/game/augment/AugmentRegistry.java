@@ -1,5 +1,9 @@
 package daybreak.abilitywar.game.augment;
 
+import daybreak.abilitywar.AbilityWar;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +23,15 @@ public class AugmentRegistry {
 			throw new IllegalArgumentException("Duplicated augment key: " + augment.getKey());
 		}
 		augments.put(augment.getKey(), augment);
+		if (augment instanceof Listener) {
+			Bukkit.getPluginManager().registerEvents((Listener) augment, AbilityWar.getPlugin());
+		}
+	}
+
+	public void unregisterListeners() {
+		for (Augment augment : augments.values()) {
+			if (augment instanceof Listener) HandlerList.unregisterAll((Listener) augment);
+		}
 	}
 
 	@Nullable
