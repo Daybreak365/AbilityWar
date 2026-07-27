@@ -73,7 +73,7 @@ public class FireFightWithFire extends AbilityBase implements ActiveHandler {
 	@Override
 	public boolean ActiveSkill(Material material, ClickType clickType) {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
-			getPlayer().setFireTicks(160);
+			getPlayer().setFireTicks(getPlayer().getFireTicks() + (getPlayer().getFireTicks() > 0 ? 160 : 180));
 			cooldown.start();
 			return true;
 		}

@@ -28,6 +28,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,8 @@ import java.util.Map;
 		"다른 플레이어가 나를 공격하거나, 내가 다른 플레이어를 공격한 경우",
 		"전투 시간이 연장됩니다. 전투에 참여한 플레이어를 공격한 플레이어,",
 		"전투에 참여한 플레이어가 공격한 플레이어는 모두",
-		"전투에 참여한 것으로 간주됩니다. $[COOLDOWN_CONFIG]"
+		"전투에 참여한 것으로 간주됩니다. $[COOLDOWN_CONFIG]",
+		"이렇게 되돌아간 시간의 절반만큼, 타게팅되지 않는 무적 상태가 됩니다."
 })
 public class TimeLoop extends Synergy {
 
@@ -61,6 +63,8 @@ public class TimeLoop extends Synergy {
 	};
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Map<Participant, PlayerLogger> loggers = new HashMap<>();
+	private int timeStack = 0;
+	private final DecimalFormat df = new DecimalFormat("0.0");
 
 	private final AbilityTimer save = new AbilityTimer() {
 		@Override
@@ -78,24 +82,56 @@ public class TimeLoop extends Synergy {
 		}
 	}
 
-	private final ActionbarChannel actionbarChannel = newActionbarChannel();
-	private final AbilityTimer inCombat = new AbilityTimer(10) {
+	private final ActionbarChannel actionbarChannel = newActionbarChannel(), actionbarChannel2 = newActionbarChannel();
+	private final AbilityTimer inCombat = new AbilityTimer(200) {
 		@Override
 		protected void onStart() {
+			timeStack = 0;
 			loggers.put(getParticipant(), new PlayerLogger(getPlayer()));
 			actionbarChannel.update("§a전투 중");
 		}
 
 		@Override
 		protected void run(int count) {
+			timeStack++;
 		}
 
 		@Override
 		protected void onEnd() {
 			loggers.clear();
 			actionbarChannel.update("§a전투 종료", 2);
+			timeStack = 0;
 		}
-	}.register();
+	}.setPeriod(TimeUnit.TICKS, 1).register();
+
+	private final AbilityTimer invincible = new AbilityTimer(200) {
+
+		@Override
+		protected void onStart() {
+			this.setCount(timeStack / 2);
+			actionbarChannel2.update("§3무적§7: §b" + df.format(timeStack / 40.0) + "초");
+			timeStack = 0;
+			getParticipant().attributes().TARGETABLE.setValue(false);
+		}
+
+		@Override
+		protected void run(int count) {
+			getParticipant().attributes().TARGETABLE.setValue(false);
+			actionbarChannel2.update("§3무적§7: §b" + df.format(count / 20.0) + "초");
+		}
+
+		@Override
+		protected void onEnd() {
+			onSilentEnd();
+		}
+
+		@Override
+		protected void onSilentEnd() {
+			getParticipant().attributes().TARGETABLE.setValue(true);
+			actionbarChannel2.update(null);
+		}
+
+	}.setPeriod(TimeUnit.TICKS, 1).register();
 
 	public TimeLoop(Participant participant) {
 		super(participant);
@@ -115,6 +151,9 @@ public class TimeLoop extends Synergy {
 
 	@SubscribeEvent(priority = 6)
 	public void onEntityDamage(EntityDamageEvent e) {
+		if (e.getEntity().equals(getPlayer()) && invincible.isRunning()) {
+			e.setCancelled(true);
+		}
 		if (e.getEntity() instanceof Player) {
 			Player entity = (Player) e.getEntity();
 			if (getGame().isParticipating(entity)) {
@@ -145,7 +184,7 @@ public class TimeLoop extends Synergy {
 				if (!loggers.containsKey(dParticipant)) {
 					loggers.put(dParticipant, new PlayerLogger(damager));
 				}
-				if (inCombat.isRunning()) inCombat.setCount(10);
+				if (inCombat.isRunning()) inCombat.setCount(200);
 				else inCombat.start();
 				return;
 			}
@@ -157,7 +196,7 @@ public class TimeLoop extends Synergy {
 				if (!loggers.containsKey(eParticipant)) {
 					loggers.put(eParticipant, new PlayerLogger(entity));
 				}
-				if (inCombat.isRunning()) inCombat.setCount(10);
+				if (inCombat.isRunning()) inCombat.setCount(200);
 				else inCombat.start();
 				return;
 			}

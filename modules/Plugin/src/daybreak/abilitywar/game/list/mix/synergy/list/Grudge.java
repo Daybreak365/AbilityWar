@@ -158,7 +158,7 @@ public class Grudge extends Synergy {
 			if (e.getEntity().equals(doll)) {
 				e.setCancelled(true);
 				final Player targetPlayer = target.getPlayer();
-				targetPlayer.damage(e.getDamage() * (2.3 * (1 / Math.max(targetPlayer.getHealth(), 0.01))), doll);
+				targetPlayer.damage(e.getDamage() * (5.5 * (1 / Math.max(targetPlayer.getHealth(), 0.01))), doll);
 				EvilSpirit.apply(target, TimeUnit.SECONDS, 6);
 			}
 		}

@@ -21,7 +21,6 @@ import org.bukkit.attribute.Attribute;
         " 대신 회복하는 §e흡수 체력§f이 절반으로 감소하며, 능력 사용 시 즉시 투여합니다.",
         " 일곱 번의 투여가 끝난 후, 40초간 투여를 중단합니다."
 })
-@Beta
 public class Xenon extends AbilityBase implements ActiveHandler {
 
     public Xenon(Participant participant) throws IllegalStateException {

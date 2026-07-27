@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 })
 public class Virtus extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Virtus.class, "duration", 5,
+	public static final SettingObject<Integer> DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Virtus.class, "duration", 6,
 			"# 능력 지속시간") {
 
 		@Override

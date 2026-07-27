@@ -97,7 +97,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			if (m.equals(Material.SNOW) || bm.equals(Material.SNOW) || bm.equals(Material.SNOW_BLOCK) || bm.equals(Material.ICE) || bm.equals(Material.PACKED_ICE)) {
 				PotionEffects.SPEED.addPotionEffect(getPlayer(), 5, 1, true);
 				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 0, true);
-				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
+				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 1, true);
 			}
 		}
 

@@ -13,6 +13,7 @@ import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.manager.effect.EvilSpirit;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
@@ -25,7 +26,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.BlockIterator;
@@ -178,13 +178,13 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 	};
 
 	@SubscribeEvent
-	private void onPlayerDeath(final PlayerDeathEvent e) {
-		final Player entity = e.getEntity();
-		if (!getPlayer().equals(entity) && predicate.test(entity)) {
-			if (!getPlayer().equals(entity.getKiller())) return;
+	private void onParticipantDeath(final ParticipantDeathEvent e) {
+		final Player player = e.getPlayer();
+		if (!getPlayer().equals(player)) {
+			if (!getPlayer().equals(player.getKiller())) return;
 			this.currentCooldown = 0;
 			cooldownTimer.setCooldown(0, 0);
-		} else if (getPlayer().equals(entity)) {
+		} else if (getPlayer().equals(player)) {
 			final Player killer = getPlayer().getKiller();
 			if (killer == null || getPlayer().equals(killer) || !predicate.test(getPlayer().getKiller())) return;
 			EvilSpirit.apply(getGame().getParticipant(killer), TimeUnit.SECONDS, 30);

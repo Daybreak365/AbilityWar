@@ -91,7 +91,7 @@ public class SuperNova extends AbilityBase {
 			}.setPeriod(TimeUnit.TICKS, 1).start();
 			for (Player player : LocationUtil.getNearbyEntities(Player.class, center, size, size, predicate)) {
 				player.setNoDamageTicks(0);
-				Damages.damageExplosion(player, getPlayer(), (float) (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 1.35));
+				Damages.damageExplosion(player, getPlayer(), (float) (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() * 1.6));
 			}
 			new SimpleTimer(TaskType.REVERSE, 10) {
 				@Override

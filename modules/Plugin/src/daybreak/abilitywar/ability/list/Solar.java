@@ -49,18 +49,18 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "솔라", rank = Rank.L, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §f광명§f: 표식이 부여된 생명체는 이동 속도가 느려지며, 세계의 시간을 점점",
 		" 낮으로 바꿉니다. 표식이 네 개 이상 쌓이면 대상의 표식이 초기화되고 대상을",
-		" 1초간 §5속박§f시키며, 흑점 폭발의 쿨타임이 10초 단축되고 §e흡수 체력§8(§7최대 6칸§8)",
+		" 1초간 §5속박§f시키며, 흑점 폭발의 쿨타임이 $[DECREASE_COOLDOWN_CONFIG]초 단축되고 §e흡수 체력§8(§7최대 6칸§8)",
 		" 반 칸을 얻습니다. 10초간 표식이 추가로 쌓이지 않으면 표식이 초기화됩니다.",
 		"§7공격 무기 §8- §f빛의 검§f: 대상을 근접 공격하면 광명 표식을 하나 부여합니다.",
-		" 이 공격으로 표식을 세 개 쌓으면 해당 공격은 1.4배의 대미지를 냅니다.",
+		" 이 공격으로 표식을 네 개 쌓으면 해당 공격은 1.25배의 대미지를 냅니다.",
 		"§7철괴 우클릭 §8- §f흑점 폭발§f: 주변 7칸 내의 모든 생명체에게 표식 두 개를 부여하고",
-		" 4초간 §5실명§f시킵니다. 이후 자신은 §e흡수 체력§8(§7최대 6칸§8)§f 한 칸 반을 얻습니다.",
+		" $[BLIND_DURATION_CONFIG]초간 §5실명§f시킵니다. 이후 자신은 §e흡수 체력§8(§7최대 6칸§8)§f 한 칸 반을 얻습니다.",
 		" 낮에만 사용할 수 있습니다. $[COOLDOWN_CONFIG]"
 })
 public class Solar extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Lunar.class, "cooldown", 30,
-			"# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Solar.class, "cooldown", 50,
+			"# 쿨타임", "# 최대 쿨타임 감소: 50%") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -74,8 +74,29 @@ public class Solar extends AbilityBase implements ActiveHandler {
 
 	};
 
+	public static final SettingObject<Integer> DECREASE_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Solar.class, "decrease-cooldown", 5,
+			"# 감소 쿨타임") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+
+	public static final SettingObject<Integer> BLINDNESS_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Solar.class, "blindness-duration", 4,
+			"# 실명 지속 시간") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+
 	private static final Crescent crescent = Crescent.of(1, 20);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue(), 50);
+	private final int decreaseCooldown = DECREASE_COOLDOWN_CONFIG.getValue(), blind = BLINDNESS_DURATION_CONFIG.getValue() * 20;
 
 	public Solar(Participant participant) {
 		super(participant);
@@ -162,7 +183,7 @@ public class Solar extends AbilityBase implements ActiveHandler {
 			particleSide *= -1;
 			if (stackMap.containsKey(e.getEntity().getUniqueId())) {
 				if (stackMap.get(e.getEntity().getUniqueId()).addStack()) {
-					e.setDamage(e.getDamage() * 1.4);
+					e.setDamage(e.getDamage() * 1.25);
 					if (getGame().isParticipating(e.getEntity().getUniqueId()))
 						Rooted.apply(getGame().getParticipant(e.getEntity().getUniqueId()), TimeUnit.TICKS, 20);
 				}
@@ -212,7 +233,7 @@ public class Solar extends AbilityBase implements ActiveHandler {
 				NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 3f, 12));
 			}
 			for (LivingEntity entity : LocationUtil.getNearbyEntities(LivingEntity.class, getPlayer().getLocation(), radius, radius, predicate)) {
-				PotionEffects.BLINDNESS.addPotionEffect(entity, 80, 0, true);
+				PotionEffects.BLINDNESS.addPotionEffect(entity, blind, 0, true);
 				entity.setFireTicks(200);
 				if (stackMap.containsKey(entity.getUniqueId())) {
 					Stack stack = stackMap.get(entity.getUniqueId());
@@ -258,7 +279,7 @@ public class Solar extends AbilityBase implements ActiveHandler {
 		private int stack = 0;
 
 		private Stack(LivingEntity entity) {
-			super(40);
+			super(50);
 			setPeriod(TimeUnit.TICKS, 4);
 			this.entity = entity;
 			this.hologram = NMS.newHologram(entity.getWorld(), entity.getLocation().getX(), entity.getLocation().getY() + entity.getEyeHeight() + 0.6, entity.getLocation().getZ(), Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 4 - stack)));
@@ -274,13 +295,14 @@ public class Solar extends AbilityBase implements ActiveHandler {
 		}
 
 		private boolean addStack() {
+			if (this.getCount() > 48) return false;
 			updateTime(getPlayer().getWorld());
-			setCount(40);
+			setCount(50);
 			stack++;
 			hologram.setText(Strings.repeat("§e●", stack).concat(Strings.repeat("§e○", 4 - stack)));
 			if (stack >= 4) {
 				stop(false);
-				if (cooldownTimer.isRunning()) cooldownTimer.setCount(Math.max(cooldownTimer.getCount() - 10, 0));
+				if (cooldownTimer.isRunning()) cooldownTimer.setCount(Math.max(cooldownTimer.getCount() - decreaseCooldown, 0));
 				if (entity instanceof Player && NMS.getAbsorptionHearts(getPlayer()) < 12) {
 					NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 1f, 12));
 				}

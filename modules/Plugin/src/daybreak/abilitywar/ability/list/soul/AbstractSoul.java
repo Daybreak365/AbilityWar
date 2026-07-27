@@ -69,9 +69,9 @@ import java.util.function.Predicate;
         " §5당겨§f옵니다. $[GRASP_COOLDOWN]",
         "§7철괴 우클릭 §8- §b공포 그 자체 §8(§7두려움 4 소모§8)§f: 주변 10칸 이내의 모든 적을 3초간",
         " §5공포§f에 빠뜨리고, 가장 가까운 적을 따라가는 유령 여섯을 소환합니다.",
-        " 유령은 4초 뒤 사라지면서 주변에 각각 1.5의 고정 피해를 입힙니다.",
+        " 유령은 4초 뒤 사라지면서 주변에 각각 $[VINDICTIVE_DAMAGE]의 고정 피해를 입힙니다.",
         "§7더블 점프 §8- §b유령화 §8(§7두려움 1 소모§8)§f: 3초간 타게팅 불가능한 유령 상태로 변하여",
-        " 앞으로 돌진합니다. 지속시간이 끝날 때, 주변 6칸 이내의 적들을 1.5초간 §5공포§f에",
+        " 앞으로 돌진합니다. 지속시간이 끝날 때, 주변 6칸 이내의 적들을 1.2초간 §5공포§f에",
         " 빠뜨립니다.",
         "§7패시브 §8- §b유령의 몸§f: 낙하 피해를 입지 않습니다."
 }, summarize = {
@@ -97,7 +97,7 @@ public abstract class AbstractSoul extends AbilityBase implements ActiveHandler 
 
     };
 
-    public static final SettingObject<Integer> GHOST_FORM_COOLDOWN = abilitySettings.new SettingObject<Integer>(AbstractSoul.class, "ghost-form-cooldown", 3,
+    public static final SettingObject<Integer> GHOST_FORM_COOLDOWN = abilitySettings.new SettingObject<Integer>(AbstractSoul.class, "ghost-form-cooldown", 2,
             "# 유령화 쿨타임") {
 
         @Override
@@ -108,6 +108,16 @@ public abstract class AbstractSoul extends AbilityBase implements ActiveHandler 
         @Override
         public String toString() {
             return Formatter.formatCooldown(getValue());
+        }
+
+    };
+
+    public static final SettingObject<Double> VINDICTIVE_DAMAGE = abilitySettings.new SettingObject<Double>(AbstractSoul.class, "vindictive-damage", 1.2,
+            "# 공포 그 자체 피해량") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
         }
 
     };
@@ -127,6 +137,7 @@ public abstract class AbstractSoul extends AbilityBase implements ActiveHandler 
     private static final RGB SPIRIT = RGB.of(80, 196, 217);
     private static final Set<Material> swords;
     private static final Circle circle = Circle.of(0.5, 20);
+    private final double vindictiveDamage = VINDICTIVE_DAMAGE.getValue();
 
     static {
         if (MaterialX.NETHERITE_SWORD.isSupported()) {
@@ -403,7 +414,7 @@ public abstract class AbstractSoul extends AbilityBase implements ActiveHandler 
                         }
                         SoundLib.ENTITY_WITHER_SPAWN.playSound(getPlayer().getLocation());
                         for (int i = 0; i < 6; i++) {
-                            new Vindictive(40, LocationUtil.floorY(LocationUtil.getRandomLocation(getPlayer().getLocation(), 5)), Color.RED, 1.5f).start();
+                            new Vindictive(40, LocationUtil.floorY(LocationUtil.getRandomLocation(getPlayer().getLocation(), 5)), Color.RED, (float) vindictiveDamage).start();
                         }
                     } else getPlayer().sendMessage("§7주위§f에 §b대상§f이 없습니다.");
                 } else getPlayer().sendMessage("§b두려움§f이 부족합니다.");
@@ -493,7 +504,7 @@ public abstract class AbstractSoul extends AbilityBase implements ActiveHandler 
             for (Player nearby : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 7, 7, predicate)) {
                 final Participant participant = getGame().getParticipant(nearby);
                 if (participant != null) {
-                    Fear.apply(participant, TimeUnit.TICKS, 30, getPlayer());
+                    Fear.apply(participant, TimeUnit.TICKS, 24, getPlayer());
                 }
             }
         }

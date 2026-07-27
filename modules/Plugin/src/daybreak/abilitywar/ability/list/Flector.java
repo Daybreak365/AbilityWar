@@ -43,7 +43,7 @@ import java.util.Set;
 @AbilityManifest(name = "플렉터", rank = Rank.S, species = Species.HUMAN, explain = {
 		"§7패시브 §8- §b튕겨내기§f: 발사체를 바라본 상태로 검을 휘두르면 해당 발사체를",
 		" 튕겨냅니다§8(§7본인이 발사한 발사체는 불가능§8)§f. 플레이어가 발사한 발사체를",
-		" 튕겨낼 경우 §e흡수 체력§7(§f최대 5칸§7)§f 한 칸을 추가로 얻습니다.",
+		" 튕겨낼 경우 §e흡수 체력§7(§f최대 10칸§7)§f 한 칸 반을 추가로 얻습니다.",
 		"§7철괴 우클릭 §8- §b견고한 수비§f: $[DURATION_CONFIG]초간 주변 8칸 이내의 모든 발사체를",
 		" 튕겨냅니다. $[COOLDOWN_CONFIG]"
 }, summarize = {
@@ -178,7 +178,7 @@ public class Flector extends AbilityBase implements ActiveHandler {
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			ParticleLib.SWEEP_ATTACK.spawnParticle(projectile.getLocation());
 			if (projectile.getShooter() instanceof Player)
-				NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 2, 10));
+				NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 3, Math.max(NMS.getAbsorptionHearts(getPlayer()), 20)));
 			return true;
 		}
 		return false;
@@ -190,7 +190,7 @@ public class Flector extends AbilityBase implements ActiveHandler {
 			SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 			ParticleLib.SWEEP_ATTACK.spawnParticle(deflectable.getLocation());
 			if (deflectable.getShooter() instanceof Player)
-				NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 2, 10));
+				NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 3, Math.max(NMS.getAbsorptionHearts(getPlayer()), 20)));
 			return true;
 		}
 		return false;

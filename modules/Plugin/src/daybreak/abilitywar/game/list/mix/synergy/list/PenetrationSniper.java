@@ -245,7 +245,7 @@ public class PenetrationSniper extends Synergy {
 		private final Predicate<Entity> predicate;
 
 		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int powerEnchant, OnHitBehavior onHitBehavior, RGB color, RGB abilityColor) {
-			super(80);
+			super(40);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
@@ -309,7 +309,7 @@ public class PenetrationSniper extends Synergy {
 				}
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable) && damageable.isValid() && !damageable.isDead() && !attacked.contains(damageable)) {
-						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
+						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min(((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ())) / 100.0, 15), powerEnchant));
 						onHitBehavior.onHit(PenetrationSniper.this, shooter, damageable);
 						attacked.add(damageable);
 					}

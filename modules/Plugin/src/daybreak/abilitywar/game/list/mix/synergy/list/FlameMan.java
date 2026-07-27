@@ -76,7 +76,7 @@ public class FlameMan extends Synergy implements ActiveHandler {
 		public void run(int count) {
 			Block block = getPlayer().getLocation().getBlock(), belowBlock = getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN);
 			if (MaterialX.LAVA.compare(block) || MaterialX.LAVA.compare(belowBlock) || block.getType() == Material.LAVA || belowBlock.getType() == Material.LAVA || MaterialX.MAGMA_BLOCK.compare(belowBlock)) {
-				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 0, true);
+				PotionEffects.INCREASE_DAMAGE.addPotionEffect(getPlayer(), 5, 1, true);
 				PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 5, 0, true);
 			}
 		}

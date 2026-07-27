@@ -23,7 +23,7 @@ public class VirusInfectionEvent extends AbilityEvent implements Cancellable {
     private final Virus virus;
     private final Participant target;
 
-    VirusInfectionEvent(Virus virus, Participant target) {
+    public VirusInfectionEvent(Virus virus, Participant target) {
         super(virus);
         this.virus = virus;
         this.target = target;

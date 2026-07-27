@@ -52,7 +52,7 @@ import org.jetbrains.annotations.NotNull;
 }, stats = @Stats(offense = Level.ZERO, survival = Level.ZERO, crowdControl = Level.ZERO, mobility = Level.TEN, utility = Level.ZERO), difficulty = Difficulty.EASY)
 public class Feather extends AbilityBase implements ActiveHandler {
 
-    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Feather.class, "cooldown", 80,
+    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Feather.class, "cooldown", 70,
             "# 쿨타임") {
 
         @Override

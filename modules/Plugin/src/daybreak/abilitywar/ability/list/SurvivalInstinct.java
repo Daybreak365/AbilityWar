@@ -7,6 +7,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -23,7 +24,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.util.Vector;
 
 import java.util.function.Predicate;
@@ -107,8 +107,8 @@ public class SurvivalInstinct extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	private void onPlayerDeath(PlayerDeathEvent e) {
-		if (getPlayer().equals(e.getEntity().getKiller()) && invincibility.started) {
+	private void onParticipantDeath(ParticipantDeathEvent e) {
+		if (getPlayer().equals(e.getPlayer().getKiller()) && invincibility.started) {
 			getPlayer().sendMessage("§d능력을 다시 사용할 수 있습니다!");
 			invincibility.started = false;
 		}

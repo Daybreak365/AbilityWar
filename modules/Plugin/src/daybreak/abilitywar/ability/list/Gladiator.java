@@ -36,6 +36,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 import java.util.HashMap;
@@ -45,10 +46,11 @@ import java.util.Random;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "글래디에이터", rank = Rank.S, species = Species.HUMAN, explain = {
-		"상대를 철괴 우클릭하면 부술 수 없는 투기장이 생성되며 §e흡수§f/§3저항 §f효과를 얻고,",
-		"상대와 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
+		"상대를 철괴 우클릭하면 부술 수 없는 투기장이 생성됩니다. $[COOLDOWN_CONFIG]",
+		"투기장은 20초간 유지되며, §b신속§f/§e흡수§f/§3저항 §f효과를 얻고,",
+		"상대와 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다."
 }, summarize = {
-		"상대를 철괴 우클릭하면 부술 수 없는 투기장이 생성되며 §e흡수§f/§3저항 §f효과를 얻고,",
+		"상대를 철괴 우클릭하면 부술 수 없는 투기장이 생성되며 각종 효과를 얻고,",
 		"상대와 본인을 제외한 모든 생명체를 투기장 밖으로 날려보냅니다. $[COOLDOWN_CONFIG]"
 })
 @Tips(tip = {
@@ -179,7 +181,8 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 				if (count == 27) {
 					final Location teleport = center.clone().add(0, 1, 0);
 					getPlayer().teleport(teleport);
-					PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 400, 2, true);
+					PotionEffects.SPEED.addPotionEffect(getPlayer(), 400, 0, true);
+					PotionEffects.ABSORPTION.addPotionEffect(getPlayer(), 400, 3, true);
 					PotionEffects.DAMAGE_RESISTANCE.addPotionEffect(getPlayer(), 400, 0, true);
 					target.teleport(teleport);
 				}
@@ -203,6 +206,16 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		}
 
 		@EventHandler
+		private void onBlockPlace(BlockPlaceEvent e) {
+			Location loc = e.getBlock().getLocation();
+
+			if (isInArena(loc) && !getPlayer().equals(e.getPlayer())) {
+				e.setCancelled(true);
+				e.getPlayer().sendMessage("§c투기장§f 내에서는 설치할 수 없습니다!");
+			}
+		}
+
+		@EventHandler
 		private void onExplode(BlockExplodeEvent e) {
 			e.blockList().removeIf(saves::containsKey);
 		}
@@ -210,6 +223,15 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 		@EventHandler
 		private void onExplode(EntityExplodeEvent e) {
 			e.blockList().removeIf(saves::containsKey);
+		}
+
+		private boolean isInArena(Location loc) {
+			if (!loc.getWorld().equals(center.getWorld())) return false;
+
+			double dx = loc.getX() - center.getX();
+			double dz = loc.getZ() - center.getZ();
+
+			return dx * dx + dz * dz <= 100 && loc.getY() >= center.getY() && loc.getY() <= center.getY() + 6;
 		}
 
 		@Override
@@ -232,6 +254,7 @@ public class Gladiator extends AbilityBase implements TargetHandler {
 			saves.clear();
 			HandlerList.unregisterAll(this);
 		}
+
 	}
 
 	@Override

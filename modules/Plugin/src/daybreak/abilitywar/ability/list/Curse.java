@@ -210,7 +210,7 @@ public class Curse extends AbilityBase implements ActiveHandler {
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		if (skill.isRunning() && e.getEntity().equals(armorStand)) {
 			e.setCancelled(true);
-			target.damage(e.getDamage() * (damageMultiply * (1 / Math.max(target.getHealth(), 0.01))), armorStand);
+			target.damage(e.getDamage() * (damageMultiply * (1 / Math.max(target.getHealth(), 0.01))), getPlayer());
 			if (e.getDamager() instanceof Player) {
 				SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound((Player) e.getDamager());
 			}

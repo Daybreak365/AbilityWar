@@ -292,6 +292,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		}
 
 		private boolean addStack() {
+			if (this.getCount() > 28) return false;
 			updateTime(getPlayer().getWorld());
 			setCount(30);
 			stack++;

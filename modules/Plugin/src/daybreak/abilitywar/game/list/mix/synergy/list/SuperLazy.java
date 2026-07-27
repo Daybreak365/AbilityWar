@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @AbilityManifest(name = "귀차니즘", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
 		"지금 받을 대미지와 회복을 6초 뒤의 나에게 미루고, 넉백을 무시합니다.",
-		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.75배로 줄여 받습니다.",
+		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.6배로 줄여 받습니다.",
 		"$[COOLDOWN_CONFIG]"
 })
 public class SuperLazy extends Synergy implements ActiveHandler {
@@ -92,7 +92,7 @@ public class SuperLazy extends Synergy implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			if (!timers.isEmpty()) {
 				for (DamageTimer timer : timers) {
-					timer.damage *= 0.75;
+					timer.damage *= 0.6;
 					timer.stop(false);
 				}
 				cooldownTimer.start();

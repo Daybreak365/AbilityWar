@@ -88,7 +88,7 @@ public class Ferda extends AbilityBase implements ActiveHandler {
 		}
 	};
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ferda.class, "cooldown", 80, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ferda.class, "cooldown", 60, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {

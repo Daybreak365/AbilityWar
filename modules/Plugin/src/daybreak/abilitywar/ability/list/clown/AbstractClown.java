@@ -45,7 +45,7 @@ import java.util.function.Predicate;
         " 이내에 능력을 재사용하면 순간이동 전의 위치로 복귀하고 주위 다섯 칸 이내의",
         " 모든 플레이어를 3초 동안 공포에 빠뜨리고 3초간 §b은신§f합니다. $[COOLDOWN_CONFIG]",
         "§7패시브 §8- §5암습§f: 플레이어를 후방에서 타격하면 1.5초간 공포에 빠뜨리고 추가",
-        " 대미지를 줍니다. 유닛별 쿨타임§8(§710초§8)§f이 적용됩니다.",
+        " 대미지를 줍니다. 유닛별 쿨타임§8(§7$[UNIT_COOLDOWN_CONFIG]초§8)§f이 적용됩니다.",
         "§7특수 효과 §8- §b은신§f: 갑옷 및 손에 들고 있는 아이템이 보이지 않으며, 몸이",
         " 투명해집니다."
 }, summarize = {
@@ -66,6 +66,16 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
         @Override
         public String toString() {
             return Formatter.formatCooldown(getValue());
+        }
+
+    };
+
+    public static final SettingObject<Integer> UNIT_COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(AbstractClown.class, "unit-cooldown", 10,
+            "# 쿨타임") {
+
+        @Override
+        public boolean condition(Integer value) {
+            return value >= 0;
         }
 
     };
@@ -137,7 +147,7 @@ public abstract class AbstractClown extends AbilityBase implements ActiveHandler
     private final Map<UUID, Long> lastFear = new HashMap<>();
     private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), CooldownDecrease._50);
 
-    private final int unitCooldown = (int) (10000 * Wreck.calculateDecreasedAmount(25));
+    private final int unitCooldown = (int) (UNIT_COOLDOWN_CONFIG.getValue() * 1000 * Wreck.calculateDecreasedAmount(25));
 
     @SubscribeEvent
     private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {

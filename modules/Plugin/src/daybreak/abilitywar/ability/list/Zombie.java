@@ -18,10 +18,13 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -31,6 +34,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,6 +117,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 	private final Set<org.bukkit.entity.Zombie> zombies = new HashSet<>(zombieCount);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN.getValue());
 	private Player target;
+	private Random random = new Random();
 	private final Duration skill = new Duration(DURATION.getValue() * 20, cooldownTimer) {
 
 		@Override
@@ -125,6 +130,19 @@ public class Zombie extends AbilityBase implements TargetHandler {
 				}
 				zombie.setBaby(false);
 				zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.65);
+				if (random.nextInt(5) == 0) {
+					Material material = Material.AIR;
+					switch(random.nextInt(4)) {
+						case 0: material = MaterialX.IRON_SWORD.getMaterial(); break;
+						case 1: material = MaterialX.IRON_AXE.getMaterial(); break;
+						case 2: material = MaterialX.DIAMOND_SWORD.getMaterial(); break;
+						case 3: material = MaterialX.DIAMOND_AXE.getMaterial(); break;
+						default: material = MaterialX.IRON_SWORD.getMaterial(); break;
+					}
+					ItemStack itemStack = new ItemStack(material, 1);
+					if (random.nextBoolean()) itemStack.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, random.nextInt(5));
+					zombie.getEquipment().setItemInMainHand(itemStack);
+				}
 				zombies.add(zombie);
 			}
 			for (org.bukkit.entity.Zombie zombie : zombies) {
