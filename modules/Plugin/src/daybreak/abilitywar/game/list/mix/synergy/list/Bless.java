@@ -41,8 +41,8 @@ import java.util.function.Predicate;
 		"철괴를 우클릭하면 광범위한 지역을 축복하여",
 		"모두가 대미지를 받지 않는 지역을 만들어냅니다. $[COOLDOWN_CONFIG]",
 		"지역은 점점 줄어들며, 지속 시간이 끝나면 사라집니다.",
-		"지역 내에서 무시된 피해량의 50%만큼 체력을 회복하고,",
-		"체력이 가득 찬 경우 §e흡수 체력§7(§f최대 5칸§7)§f으로 회복합니다.",
+		"지역 내에서 무시된 피해량만큼 체력을 회복하고,",
+		"체력이 가득 찬 경우 §e흡수 체력§f으로 회복합니다.",
 })
 public class Bless extends Synergy implements ActiveHandler {
 
@@ -189,7 +189,7 @@ public class Bless extends Synergy implements ActiveHandler {
 			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
-				final double amount = e.getFinalDamage() / 2;
+				final double amount = e.getFinalDamage();
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), amount, EntityRegainHealthEvent.RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {
@@ -199,9 +199,7 @@ public class Bless extends Synergy implements ActiveHandler {
 						getPlayer().setHealth(RangesKt.coerceIn(getPlayer().getHealth() + event.getAmount(), 0, maxHealth));
 					} else {
 						getPlayer().setHealth(maxHealth);
-						if (NMS.getAbsorptionHearts(getPlayer()) < 10) {
-							NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + (float) (event.getAmount() - empty), 10));
-						}
+						NMS.setAbsorptionHearts(getPlayer(), NMS.getAbsorptionHearts(getPlayer()) + (float) (event.getAmount() - empty));
 					}
 				}
 			}

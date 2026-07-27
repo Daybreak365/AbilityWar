@@ -271,10 +271,11 @@ public class TimeLoop extends Synergy {
 		private final AbilityTimer rewind = new AbilityTimer(100) {
 			@Override
 			protected void onStart() {
-				Bukkit.getPluginManager().registerEvents(listener, AbilityWar.getPlugin());
+                Bukkit.getPluginManager().registerEvents(listener, AbilityWar.getPlugin());
 			}
 			@Override
 			public void run(int seconds) {
+                inCombat.setCount(inCombat.getCount() + 1);
 				PlayerData data = playerDatas.pollLast();
 				if (data != null && !player.isDead()) {
 					data.apply();
@@ -291,7 +292,8 @@ public class TimeLoop extends Synergy {
 				SoundLib.BELL.playInstrument(player, Note.natural(0, Tone.D));
 				SoundLib.BELL.playInstrument(player, Note.sharp(0, Tone.F));
 				SoundLib.BELL.playInstrument(player, Note.natural(1, Tone.A));
-				inCombat.stop(false);
+				invincible.start();
+                inCombat.stop(false);
 			}
 			@Override
 			protected void onSilentEnd() {
