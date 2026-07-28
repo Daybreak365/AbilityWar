@@ -104,7 +104,7 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 			sphere.rotateAroundAxisX(3);
 			sphere.rotateAroundAxisY(3);
 			sphere.rotateAroundAxisZ(3);
-			if (seconds % 3 == 0) {
+			if (seconds % 4 == 0) {
 				for (Location loc : sphere.toLocations(center)) {
 					ParticleLib.REDSTONE.spawnParticle(loc, BLACK);
 				}

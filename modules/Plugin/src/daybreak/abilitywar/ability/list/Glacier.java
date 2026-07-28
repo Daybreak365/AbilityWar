@@ -51,15 +51,15 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "글래시어", rank = Rank.S, species = Species.HUMAN, explain = {
-        "§7공격 §8- §b결빙§7/§b쇄빙§f: §5빙결 §f상태가 아닌 적을 다섯 번 공격할 때마다 $[FROST_DURATION_CONFIG]초간",
-        " §5빙결§f시킵니다. §7/ §5빙결 §f상태인 적에게 근접 공격으로 피해를 입힐 수 있습니다.",
-        " §5빙결§f의 지속시간을 $[FROST_CONSUME]초 소모하여 $[TRUE_DAMAGE_CONFIG]의 고정 피해를 입히며, 공격 쿨타임이",
+        "§7공격 §8- §b결빙§7/§b쇄빙§f: §b§n빙결§f 상태가 아닌 적을 다섯 번 공격할 때마다 $[FROST_DURATION_CONFIG]초간",
+        " §b§n빙결§f시킵니다. §7/ §5빙결 §f상태인 적에게 근접 공격으로 피해를 입힐 수 있습니다.",
+        " §b§n빙결§f의 지속시간을 $[FROST_CONSUME]초 소모하여 $[TRUE_DAMAGE_CONFIG]의 고정 피해를 입히며, 공격 쿨타임이",
         " 적용되지 않습니다. §b쇄빙§f을 이용해 피해를 입힐 때마다 §b빙하기§f의 쿨타임을",
         " 1초씩 감소시킵니다.",
-        "§7패시브 §8- §b얼어붙은 심장§f: 본인의 §5빙결 §f상태이상이 빠르게 종료되며, §5빙결 §f상태에서",
+        "§7패시브 §8- §b얼어붙은 심장§f: 본인의 §b§n빙결§f 상태이상이 빠르게 종료되며, §b§n빙결§f 상태에서",
         " 매 초 잃은 체력에 비례해 체력을 회복합니다.",
         "§7철괴 우클릭 §8- §b빙하기§f: 본인을 포함한 주변 $[RANGE_CONFIG]칸 이내의 모든 플레이어를 $[DURATION_CONFIG]초간",
-        " §5빙결§f시킵니다. $[COOLDOWN_CONFIG]",
+        " §b§n빙결§f시킵니다. $[COOLDOWN_CONFIG]",
         "§a[§e능력 제공자§a] §dspace_kdd"
 })
 public class Glacier extends AbilityBase implements ActiveHandler {

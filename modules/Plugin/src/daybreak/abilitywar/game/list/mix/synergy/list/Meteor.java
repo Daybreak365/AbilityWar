@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 })
 public class Meteor extends Synergy implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Meteor.class, "cooldown", 120, "# 쿨타임") {
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = synergySettings.new SettingObject<Integer>(Meteor.class, "cooldown", 90, "# 쿨타임") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -57,7 +57,7 @@ public class Meteor extends Synergy implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> DamageConfig = synergySettings.new SettingObject<Integer>(Meteor.class, "damage", 40, "# 대미지") {
+	public static final SettingObject<Integer> DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(Meteor.class, "damage", 35, "# 대미지") {
 
 		@Override
 		public boolean condition(Integer value) {
@@ -215,7 +215,7 @@ public class Meteor extends Synergy implements ActiveHandler {
 
 				if (!b.getType().equals(Material.AIR) || !db.getType().equals(Material.AIR)) {
 					skillEnabled = false;
-					final double damage = DamageConfig.getValue();
+					final double damage = DAMAGE_CONFIG.getValue();
 					for (Damageable d : LocationUtil.getNearbyEntities(Damageable.class, getPlayer().getLocation(), 5, 5, predicate)) {
 						if (d instanceof Player) SoundLib.ENTITY_GENERIC_EXPLODE.playSound((Player) d);
 						d.damage(damage, getPlayer());

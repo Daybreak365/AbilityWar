@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 import java.util.function.Predicate;
 
-@EffectManifest(name = "악령", displayName = "§c악령", method = ApplicationMethod.UNIQUE_LONGEST, type = {
+@EffectManifest(name = "악령", displayName = "§7악령", method = ApplicationMethod.UNIQUE_STACK, type = {
 		EffectType.SIGHT_RESTRICTION
 }, description = {
 		"간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",

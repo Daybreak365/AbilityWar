@@ -71,7 +71,7 @@ public class PenetrationSniper extends Synergy {
 	private static final RGB PURPLE = new RGB(138, 9, 173);
 	private static final RGB YELLOW = new RGB(255, 246, 122);
 	private static final Sphere sphere = Sphere.of(4, 10);
-	private static final Circle CIRCLE = Circle.of(0.5, 15);
+	private static final Circle CIRCLE = Circle.of(0.5, 10);
 
 	private final AbilityTimer snipeMode = new AbilityTimer() {
 		@Override
@@ -282,6 +282,7 @@ public class PenetrationSniper extends Synergy {
 		@Override
 		protected void run(int i) {
 			Location newLocation = lastLocation.clone().add(forward);
+			int particleCount = 0;
 			for (Iterator<Location> iterator = new Iterator<Location>() {
 				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
 				private final int amount = (int) (vectorBetween.length() / 0.1);
@@ -314,10 +315,14 @@ public class PenetrationSniper extends Synergy {
 						attacked.add(damageable);
 					}
 				}
-				ParticleLib.REDSTONE.spawnParticle(location, color);
-				if (i % 2 == 0) {
-					ParticleLib.REDSTONE.spawnParticle(location.add(circle.next()), abilityColor);
+				if ((particleCount & 1) == 0) {
+					ParticleLib.REDSTONE.spawnParticle(location, color);
 				}
+
+				if ((particleCount & 3) == 0) {
+					ParticleLib.REDSTONE.spawnParticle(location.clone().add(circle.next()), abilityColor);
+				}
+				particleCount++;
 			}
 			lastLocation = newLocation;
 		}

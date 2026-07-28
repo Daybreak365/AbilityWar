@@ -26,6 +26,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.BlockIterator;
@@ -39,13 +41,13 @@ import java.util.function.Predicate;
 		"바라보는 방향으로 이동합니다. §c쿨타임 §7: §f$(currentCooldown)초",
 		"§7패시브 §8- §c혼§f: 유령화를 사용할 때마다 쿨타임이 $(cooldownIncrease)초씩 증가하며, 다른 플레이어를",
 		"죽일 경우 쿨타임이 0초로 초기화됩니다.",
-		"§7패시브 §8- §c악령§f: 나를 죽인 플레이어에게 약령 효과를 25초간 부여합니다.",
-		"§7악령 효과§f: 간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",
+		"§7패시브 §8- §c악령§f: 나를 공격한 적은 §7§n악령§f을 $[EVIL_SPIRIT_HIT_CONFIG]초, 죽인 적은 $[EVIL_SPIRIT_KILL_CONFIG]초간 받습니다.",
+		"§7§n악령 효과§f: 간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",
 		"플레이어를 타격한 대상에게도 이 효과가 부여됩니다."
 }, summarize = {
 		"§7철괴 우클릭§f 시 §3관전 상태§f로 돌진합니다.",
 		"스킬의 §c쿨타임§f은 사용 시마다 증가하고, 적 처치 시 초기화됩니다.",
-		"나를 죽인 대상은 §c악령§f 효과를 받습니다.",
+		"나를 때리거나 죽인 대상은 §c악령§f 효과를 받습니다.",
 		"§4[§c악령§4]§f 간헐적으로 환청 및 §8실명§f이 걸립니다. 소유자를 타격한 사람에게도 전염됩니다."
 })
 @Tips(tip = {
@@ -74,6 +76,26 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 
 	};
 
+	public static final SettingObject<Double> EVIL_SPIRIT_HIT_CONFIG = abilitySettings.new SettingObject<Double>(Ghost.class, "evilspirit-hit-duration", 1.2,
+			"# 피격 시 악령 지속 시간") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
+	public static final SettingObject<Double> EVIL_SPIRIT_KILL_CONFIG = abilitySettings.new SettingObject<Double>(Ghost.class, "evilspirit-kill-duration", 30.0,
+			"# 사망 시 악령 지속 시간") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
 	private static final Vector ZERO_VECTOR = new Vector();
 
 	public Ghost(Participant participant) throws IllegalStateException {
@@ -81,6 +103,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 	}
 
 	private final int cooldownIncrease = COOLDOWN_INCREASE_CONFIG.getValue();
+	private final int hitEvilSpiritDuration = (int) (EVIL_SPIRIT_HIT_CONFIG.getValue() * 20), killEvilSpiritDuration = (int) (EVIL_SPIRIT_KILL_CONFIG.getValue() * 20);
 	private Location targetLocation;
 	private final AbilityTimer skill = new AbilityTimer() {
 		private GameMode originalMode;
@@ -128,7 +151,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 			NMS.setInvisible(getPlayer(), false);
 		}
 	}.setPeriod(TimeUnit.TICKS, 1).register();
-	private final Cooldown cooldownTimer = new Cooldown(0, 15);
+	private final Cooldown cooldownTimer = new Cooldown(0);
 	private int currentCooldown = 0;
 
 	@SubscribeEvent(onlyRelevant = true)
@@ -187,7 +210,20 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 		} else if (getPlayer().equals(player)) {
 			final Player killer = getPlayer().getKiller();
 			if (killer == null || getPlayer().equals(killer) || !predicate.test(getPlayer().getKiller())) return;
-			EvilSpirit.apply(getGame().getParticipant(killer), TimeUnit.SECONDS, 30);
+			EvilSpirit.apply(getGame().getParticipant(killer), TimeUnit.TICKS, killEvilSpiritDuration);
+		}
+	}
+
+	@SubscribeEvent
+	private void onEntityDamageByEntity(final EntityDamageByEntityEvent e) {
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+
+		if (e.getEntity().equals(getPlayer()) && damager != null && !getPlayer().equals(damager)) {
+			if (getGame().isParticipating(damager)) EvilSpirit.apply(getGame().getParticipant(damager), TimeUnit.TICKS, hitEvilSpiritDuration);
 		}
 	}
 

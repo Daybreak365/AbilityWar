@@ -54,12 +54,12 @@ import java.util.function.Predicate;
 		"§7공격 무기 §8- §f빛의 검§f: 대상을 근접 공격하면 광명 표식을 하나 부여합니다.",
 		" 이 공격으로 표식을 네 개 쌓으면 해당 공격은 1.25배의 대미지를 냅니다.",
 		"§7철괴 우클릭 §8- §f흑점 폭발§f: 주변 7칸 내의 모든 생명체에게 표식 두 개를 부여하고",
-		" $[BLIND_DURATION_CONFIG]초간 §5실명§f시킵니다. 이후 자신은 §e흡수 체력§8(§7최대 6칸§8)§f 한 칸 반을 얻습니다.",
+		" $[BLINDNESS_DURATION_CONFIG]초간 §5실명§f시킵니다. 이후 자신은 §e흡수 체력§8(§7최대 6칸§8)§f 한 칸 반을 얻습니다.",
 		" 낮에만 사용할 수 있습니다. $[COOLDOWN_CONFIG]"
 })
 public class Solar extends AbilityBase implements ActiveHandler {
 
-	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Solar.class, "cooldown", 50,
+	public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Solar.class, "cooldown", 70,
 			"# 쿨타임", "# 최대 쿨타임 감소: 50%") {
 
 		@Override
@@ -84,7 +84,7 @@ public class Solar extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Integer> BLINDNESS_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Solar.class, "blindness-duration", 4,
+	public static final SettingObject<Integer> BLINDNESS_DURATION_CONFIG = abilitySettings.new SettingObject<Integer>(Solar.class, "blindness-duration", 3,
 			"# 실명 지속 시간") {
 
 		@Override

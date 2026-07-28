@@ -44,12 +44,12 @@ import org.bukkit.util.Vector;
 		"§7철괴 우클릭 §f- §c체내 효소§f: 자연 회복할 수 없습니다.",
 		"§7근접 공격 §f- §4할퀴기§f: 가한 피해량의 절반만큼 체력을 회복합니다. $[COOLDOWN_CONFIG]",
         " 쿨타임과 관계없이, 공격하면 대상의 주변으로 핏방울을 떨어뜨리고,",
-		" 핏방울을 줏으면 가한 피해량의 절반만큼의 체력을 회복합니다.",
-		"§7패시브 §f- §c식탐§f: 체력이 $[HEALTH_SCALE_CONFIG]% 이하인 적에게는 가하는 피해가 $[DAMAGE_INCREASE_CONFIGE]% 증가합니다."
+		" 핏방울을 줏으면 가한 피해량만큼의 체력을 회복합니다.",
+		"§7패시브 §f- §c식탐§f: 체력이 $[HEALTH_SCALE_CONFIG]% 이하인 적에게는 가하는 피해가 $[DAMAGE_INCREASE_CONFIG]% 증가합니다."
 })
 public class Ghoul extends AbilityBase {
 
-	public static final AbilitySettings.SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ghoul.class, "cooldown", 7,
+	public static final AbilitySettings.SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Ghoul.class, "cooldown", 5,
 			"# 쿨타임", "# 쿨타임 감소 최대치는 50%입니다.") {
 
 		@Override
@@ -74,7 +74,7 @@ public class Ghoul extends AbilityBase {
 
 	};
 
-	public static final AbilitySettings.SettingObject<Integer> DAMAGE_INCREASE_CONFIG = abilitySettings.new SettingObject<Integer>(Ghoul.class, "health-scale", 25,
+	public static final AbilitySettings.SettingObject<Integer> DAMAGE_INCREASE_CONFIG = abilitySettings.new SettingObject<Integer>(Ghoul.class, "damage-increase", 25,
 			"# 공격력 증가량 (%)") {
 
 		@Override
@@ -137,7 +137,7 @@ public class Ghoul extends AbilityBase {
                 cooldown.start();
             }
 
-			new Bloods(e.getEntity().getLocation(), (e.getEntity() instanceof Player) ? amount : amount * 0.5).start();
+			new Bloods(e.getEntity().getLocation(), (e.getEntity() instanceof Player) ? amount * 2 : amount).start();
 		}
 	}
 
@@ -186,7 +186,7 @@ public class Ghoul extends AbilityBase {
 		private final Random random = new Random();
 
 		public Bloods(Location location, Double heal) {
-			super(TaskType.REVERSE, 200);
+			super(TaskType.REVERSE, 300);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.location = location;
 			this.heal = heal;

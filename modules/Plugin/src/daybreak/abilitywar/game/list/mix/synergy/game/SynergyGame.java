@@ -13,6 +13,7 @@ import daybreak.abilitywar.config.Configuration.Settings.AprilSettings;
 import daybreak.abilitywar.config.Configuration.Settings.InvincibilitySettings;
 import daybreak.abilitywar.game.*;
 import daybreak.abilitywar.game.event.GameCreditEvent;
+import daybreak.abilitywar.game.event.participant.ParticipantAbilitySetEvent;
 import daybreak.abilitywar.game.list.mix.Mix;
 import daybreak.abilitywar.game.list.mix.MixAbilityGUI;
 import daybreak.abilitywar.game.list.mix.gui.MixTipGUI;
@@ -474,10 +475,13 @@ public class SynergyGame extends Game implements DefaultKitHandler {
 
 		@Override
 		public void setAbility(AbilityRegistration registration) throws ReflectiveOperationException {
-			if (!Synergy.class.isAssignableFrom(registration.getAbilityClass()))
-				throw new IllegalArgumentException("ability must be instance of Synergy");
 			if (mix == null) mix = new Mix(this);
-			mix.setSynergy(registration);
+			if (Synergy.class.isAssignableFrom(registration.getAbilityClass())) {
+				mix.setSynergy(registration);
+			} else {
+				mix.setAbility(registration, registration);
+				Bukkit.getPluginManager().callEvent(new ParticipantAbilitySetEvent(this, mix.getFirst(), mix.getSecond()));
+			}
 		}
 
 		@Override

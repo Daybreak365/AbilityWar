@@ -116,7 +116,7 @@ public class DoubleSniper extends Synergy {
 				new AbilityTimer(repeat) {
 					@Override
 					protected void run(int count) {
-						new Bullet(getPlayer(), arrow.getLocation(), getPlayer().getLocation().getDirection().normalize().multiply(e.getForce() + 0.4), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
+						new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
 					}
 				}.setPeriod(TimeUnit.TICKS, 1).start();

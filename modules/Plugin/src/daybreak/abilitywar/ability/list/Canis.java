@@ -339,9 +339,11 @@ public class Canis extends AbilityBase implements ActiveHandler {
 	private class Absorption extends AbilityTimer implements Listener {
 
 		private final float originalAbsorption;
+		private final double amount;
 
 		private Absorption(final double amount) {
-			super();
+			super(TaskType.REVERSE, Integer.MAX_VALUE);
+			this.amount = amount;
 			this.originalAbsorption = NMS.getAbsorptionHearts(getPlayer());
 			NMS.setAbsorptionHearts(getPlayer(), (float) (originalAbsorption + amount));
 			setPeriod(TimeUnit.TICKS, 1);
@@ -359,6 +361,7 @@ public class Canis extends AbilityBase implements ActiveHandler {
 		@Override
 		protected void onStart() {
 			Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
+			this.setCount((int) Math.ceil(amount / 2.0));
 		}
 
 		@Override
