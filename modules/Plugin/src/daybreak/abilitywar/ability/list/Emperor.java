@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "황제", rank = Rank.B, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "황제", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내 앞에 있는 모든",
 		"생명체와 물체를 밀쳐내고, $[OPPRESS_DURATION_CONFIG]초간 §c§n제압§f합니다. $[COOLDOWN_CONFIG]",
 		"§c§n제압§f된 대상에게 받는 피해량이 $[DAMAGE_DECREASE_CONFIG]% 감소합니다."
