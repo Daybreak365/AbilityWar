@@ -8,6 +8,8 @@ import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.list.murdermystery.Items;
 import daybreak.abilitywar.game.list.murdermystery.MurderMystery;
 import daybreak.abilitywar.game.list.murdermystery.ability.AbstractMurderer;
+import daybreak.abilitywar.game.list.murdermystery.event.ConsumeGoldEvent;
+import daybreak.abilitywar.game.list.murdermystery.event.PreConsumeGoldEvent;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.PotionEffects;
@@ -15,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.function.Predicate;
 
@@ -22,8 +25,8 @@ import java.util.function.Predicate;
 		"모든 시민을 죽이세요!",
 		"살인자의 검으로 상대를 죽일 경우 5초간 투명 효과를 받습니다.",
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
-		"금 좌클릭으로 금 5개를 소모해 4.5초간 머더 팀을 제외한 모든 플레이어를",
-		"실명시킵니다."
+		"금 좌클릭으로 금 5개를 소모해 4초간 머더 팀을 제외한 모든 플레이어를",
+		"실명시키고 금 소모를 막습니다."
 })
 public class BlackMurderer extends AbstractMurderer {
 
@@ -55,18 +58,25 @@ public class BlackMurderer extends AbstractMurderer {
 		}
 	}
 
-	private final Duration skill = new Duration(9) {
+	private final Duration skill = new Duration(8) {
 		@Override
 		protected void onDurationStart() {
 			Bukkit.broadcastMessage("§8암전.");
 			for (Participant participant : getGame().getParticipants()) {
 				if (participant.getAbility() instanceof AbstractMurderer || !predicate.test(participant.getPlayer())) continue;
-				PotionEffects.BLINDNESS.addPotionEffect(participant.getPlayer(), 60, 0, true);
+				PotionEffects.BLINDNESS.addPotionEffect(participant.getPlayer(), 80, 0, true);
 			}
 		}
 		@Override
 		protected void onDurationProcess(int count) {}
 	}.setPeriod(TimeUnit.TICKS, 10);
+
+	@SubscribeEvent
+	private void onConsumeGold(PreConsumeGoldEvent e) {
+		if (!(e.getParticipant().getAbility() instanceof AbstractMurderer) && e.getPlayer().hasPotionEffect(PotionEffectType.BLINDNESS)) {
+			e.setCancelled(true);
+		}
+	}
 
 	@SubscribeEvent(onlyRelevant = true)
 	private void onInteract(PlayerInteractEvent e) {

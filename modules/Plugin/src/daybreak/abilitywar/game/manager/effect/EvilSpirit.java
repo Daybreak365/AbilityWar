@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 import java.util.function.Predicate;
 
-@EffectManifest(name = "악령", displayName = "§7악령", method = ApplicationMethod.UNIQUE_STACK, type = {
+@EffectManifest(name = "악령", displayName = "§7악령", method = ApplicationMethod.UNIQUE_LONGEST, type = {
 		EffectType.SIGHT_RESTRICTION
 }, description = {
 		"간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",
@@ -45,7 +45,7 @@ public class EvilSpirit extends AbstractGame.Effect implements Listener {
 
 	private static final Random random = new Random();
 	private static final SimpleSound[] sounds = {
-			SoundLib.BLOCK_STONE_BREAK, SoundLib.BLOCK_GRASS_BREAK, SoundLib.BLOCK_GRAVEL_BREAK, SoundLib.BLOCK_STONE_PLACE, SoundLib.BLOCK_GRASS_PLACE, SoundLib.BLOCK_GRAVEL_PLACE
+			SoundLib.BLOCK_STONE_BREAK, SoundLib.BLOCK_GRASS_BREAK, SoundLib.BLOCK_GRAVEL_BREAK, SoundLib.BLOCK_STONE_PLACE, SoundLib.BLOCK_GRASS_PLACE, SoundLib.BLOCK_GRAVEL_PLACE, SoundLib.ENTITY_ARROW_SHOOT, SoundLib.ITEM_CHORUS_FRUIT_TELEPORT
 	};
 
 	private final Participant participant;

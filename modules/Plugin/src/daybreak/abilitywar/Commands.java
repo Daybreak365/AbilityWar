@@ -1051,22 +1051,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 						return true;
 					}
 				});
-				addSubCommand("respawn", new Command() {
-					@Override
-					protected boolean onCommand(CommandSender sender, String command, String[] args) {
-						if (args.length > 0) {
-							final Player target = Bukkit.getPlayerExact(args[0]);
-							if (target != null) {
-								if (target.isDead()) {
-									NMS.respawn(target);
-									sender.sendMessage("§f" + target.getName() + "§a" + KoreanUtil.getJosa(target.getName().replaceAll("_", ""), Josa.을를) + " 리스폰시켰습니다.");
-								} else Messager.sendErrorMessage(sender, target.getName() + KoreanUtil.getJosa(target.getName().replaceAll("_", ""), Josa.은는) + " 사망하지 않았습니다.");
-							} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0].replaceAll("_", ""), Josa.은는) + " 존재하지 않는 플레이어입니다.");
-						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug respawn <대상>");
-						return true;
-					}
-				});
-				addSubCommand("setAbsorption", new Command() {
+				addSubCommand("setabsorption", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
 						if (args.length > 1) {
@@ -1079,12 +1064,27 @@ public class Commands implements CommandExecutor, TabCompleter {
 										return true;
 									}
 									NMS.setAbsorptionHearts(target, absorption);
-									sender.sendMessage("§f" + target.getName() + "§a의 체력을 §e" + NMS.getAbsorptionHearts(target) + "§a" + KoreanUtil.getJosa(String.valueOf(NMS.getAbsorptionHearts(target)), Josa.으로로) + " 설정했습니다.");
+									sender.sendMessage("§f" + target.getName() + "§a의 흡수 체력을 §e" + NMS.getAbsorptionHearts(target) + "§a" + KoreanUtil.getJosa(String.valueOf(NMS.getAbsorptionHearts(target)), Josa.으로로) + " 설정했습니다.");
 								} catch (NumberFormatException e) {
 									Messager.sendErrorMessage(sender, "흡수 체력은 0 이상의 수로 입력되어야 합니다.");
 								}
 							} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
-						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug setAbsorption <대상> <흡수 체력>");
+						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug setabsorption <대상> <흡수 체력>");
+						return true;
+					}
+				});
+				addSubCommand("respawn", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						if (args.length > 0) {
+							final Player target = Bukkit.getPlayerExact(args[0]);
+							if (target != null) {
+								if (target.isDead()) {
+									NMS.respawn(target);
+									sender.sendMessage("§f" + target.getName() + "§a" + KoreanUtil.getJosa(target.getName().replaceAll("_", ""), Josa.을를) + " 리스폰시켰습니다.");
+								} else Messager.sendErrorMessage(sender, target.getName() + KoreanUtil.getJosa(target.getName().replaceAll("_", ""), Josa.은는) + " 사망하지 않았습니다.");
+							} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0].replaceAll("_", ""), Josa.은는) + " 존재하지 않는 플레이어입니다.");
+						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug respawn <대상>");
 						return true;
 					}
 				});
@@ -1109,7 +1109,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 								Formatter.formatCommand(label + " debug", "dummy", "연습용 봇 명령어 도움말을 확인합니다.", true),
 								Formatter.formatCommand(label + " debug", "gravitate <대상>", "대상이 중력에 영향받도록 설정합니다.", true),
 								Formatter.formatCommand(label + " debug", "respawn <대상>", "사망한 대상을 리스폰시킵니다.", true),
-								Formatter.formatCommand(label + " debug", "sethealth <대상> <체력>", "대상의 체력을 설정합니다.", true)});
+								Formatter.formatCommand(label + " debug", "sethealth <대상> <체력>", "대상의 체력을 설정합니다.", true),
+								Formatter.formatCommand(label + " debug", "setabsorption <대상> <흡수 체력>", "대상의 흡수 체력을 설정합니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -1406,7 +1407,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 							return commands;
 						}
 					} else if (args[0].equalsIgnoreCase("debug")) {
-						final List<String> commands = Messager.asList("dummy", "gravitate", "respawn", "sethealth");
+						final List<String> commands = Messager.asList("dummy", "gravitate", "respawn", "sethealth", "setabsorption");
 						if (args[1].isEmpty()) {
 							return commands;
 						} else {

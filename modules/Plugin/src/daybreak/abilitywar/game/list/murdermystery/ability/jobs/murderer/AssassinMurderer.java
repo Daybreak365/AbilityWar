@@ -29,11 +29,13 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 		"살인자의 검으로 상대를 죽일 경우 5초간 투명 효과를 받습니다.",
 		"금 우클릭으로 금 8개를 소모해 활과 화살을 얻을 수 있습니다.",
 		"암살자가 시민을 죽일 때 킬 메시지가 뜨지 않습니다.",
-		"웅크리면 투명해지고, 그만 웅크리면 투명 지속시간이 반감합니다."
+		"웅크리면 투명해지고 지정 불가가 되며, 그만 웅크리면 투명 지속시간이 반감합니다.",
+		"금 좌클릭으로 웅크릴 때 순간 이동할 지 정할 수 있습니다."
 })
 public class AssassinMurderer extends AbstractMurderer {
 
 	private static final int TELEPORT_RADIUS = 6;
+	private boolean teleport = true;
 
 	public AssassinMurderer(Participant participant) {
 		super(participant);
@@ -46,26 +48,28 @@ public class AssassinMurderer extends AbstractMurderer {
 		protected void onDurationStart() {
 			halfDuration = false;
 			NMS.setInvisible(getPlayer(), true);
-			final Location center = getPlayer().getLocation();
-			final double radians = Math.toRadians(random.nextDouble() * 360);
-			getPlayer().teleport(LocationUtil.floorY(new Location(
-					center.getWorld(),
-					center.getX() + (random.nextDouble() * TELEPORT_RADIUS * FastMath.cos(radians)),
-					center.getY(),
-					center.getZ() + (random.nextDouble() * TELEPORT_RADIUS * FastMath.sin(radians))
-			)));
+			if (teleport) {
+				final Location center = getPlayer().getLocation();
+				final double radians = Math.toRadians(random.nextDouble() * 360);
+				getPlayer().teleport(LocationUtil.floorY(new Location(
+						center.getWorld(),
+						center.getX() + (random.nextDouble() * TELEPORT_RADIUS * FastMath.cos(radians)),
+						center.getY(),
+						center.getZ() + (random.nextDouble() * TELEPORT_RADIUS * FastMath.sin(radians))
+				)));
+			}
+			getParticipant().attributes().TARGETABLE.setValue(false);
 		}
 		@Override
 		protected void onDurationProcess(int count) {
 			NMS.setInvisible(getPlayer(), true);
 		}
 		@Override
-		protected void onDurationEnd() {
-			NMS.setInvisible(getPlayer(), false);
-		}
+		protected void onDurationEnd() { onDurationSilentEnd();}
 		@Override
 		protected void onDurationSilentEnd() {
 			NMS.setInvisible(getPlayer(), false);
+			getParticipant().attributes().TARGETABLE.setValue(true);
 		}
 	};
 
@@ -99,6 +103,12 @@ public class AssassinMurderer extends AbstractMurderer {
 						}
 					}
 				}
+			}
+
+			if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+				teleport = !teleport;
+				getPlayer().sendMessage("§c순간 이동을 " + (teleport ? "" : "비") + "활성화합니다.");
+				SoundLib.ENTITY_BAT_TAKEOFF.playSound(getPlayer(), 1, 2);
 			}
 		}
 	}

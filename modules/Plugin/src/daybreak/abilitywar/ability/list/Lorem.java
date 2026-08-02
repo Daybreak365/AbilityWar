@@ -13,12 +13,14 @@ import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.game.manager.effect.Stun;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.game.team.interfaces.Teamable;
+import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
@@ -62,7 +64,7 @@ import java.util.function.Predicate;
 		"기본적으로 근접 공격을 할 수 없습니다. 검을 휘두르면 바라보는 방향으로",
 		"검기를 날립니다. 검기를 생명체에 적중시킨 경우 피해를 입히고 움직이던",
 		"방향으로 짧게 도약하며, 한 생명체에 검기를 세 번 적중시킬 때마다 강력한",
-		"피해를 입힙니다. 검기를 빗맞춘 경우 1초간 §e§n기절§f하고 5초간 §c탈진 §f상태에",
+		"피해를 입힙니다. 검기를 빗맞춘 경우 $[STUN_CONFIG]초간 §e§n기절§f하고 $[EXHAUSTION_CONFIG]초간 §c탈진 §f상태에",
 		"빠집니다. §c탈진 §f중에는 검기를 날리지 않고 근접 공격이 가능해지며,",
 		"이동 속도가 느려집니다."
 }, summarize = {
@@ -107,8 +109,53 @@ import java.util.function.Predicate;
 }, stats = @Stats(offense = Level.SIX, survival = Level.FIVE, crowdControl = Level.ZERO, mobility = Level.SIX, utility = Level.ZERO), difficulty = Difficulty.HARD)
 public class Lorem extends AbilityBase {
 
+	public static final AbilitySettings.SettingObject<Double> STUN_CONFIG = abilitySettings.new SettingObject<Double>(Lorem.class, "stun-duration", 1.0,
+			"# 기절 지속시간") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
+	public static final AbilitySettings.SettingObject<Double> EXHAUSTION_CONFIG = abilitySettings.new SettingObject<Double>(Lorem.class, "exhaustion-duration", 5.0,
+			"# 탈진 지속시간") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
+	public static final AbilitySettings.SettingObject<Double> DAMAGE_NORMAL_CONFIG = abilitySettings.new SettingObject<Double>(Lorem.class, "damage-normal", 0.8,
+			"# 기본 공격 피해량 배율") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
+	public static final AbilitySettings.SettingObject<Double> DAMAGE_STRONG_CONFIG = abilitySettings.new SettingObject<Double>(Lorem.class, "damage-strong", 1.8,
+			"# 강력한 공격 피해량 배율") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
 	private static final RGB COLOUR = RGB.of(50, 129, 168);
 	private static final Set<Material> swords;
+
+	private final int stunDuration = (int) (STUN_CONFIG.getValue() * 20);
+	private final int exhaustionDuration = (int) (EXHAUSTION_CONFIG.getValue() * 20);
+	private final double normalAttack = DAMAGE_NORMAL_CONFIG.getValue();
+	private final double strongAttack = DAMAGE_STRONG_CONFIG.getValue();
 
 	static {
 		if (MaterialX.NETHERITE_SWORD.isSupported()) {
@@ -183,8 +230,8 @@ public class Lorem extends AbilityBase {
 	}
 
 	private void startExhaustion() {
-		Stun.apply(getParticipant(), TimeUnit.TICKS, 20);
-		new Exhaustion(TimeUnit.TICKS, 20 * 5).start();
+		Stun.apply(getParticipant(), TimeUnit.TICKS, stunDuration);
+		new Exhaustion(TimeUnit.TICKS, exhaustionDuration).start();
 	}
 
 	public class Bullet extends AbilityTimer {
@@ -204,7 +251,7 @@ public class Lorem extends AbilityBase {
 			Lorem.this.bullet = this;
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
+			this.entity = new Bullet.ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.85, -.85, -.85, .85, .85, .85);
 			this.forward = arrowVelocity.multiply(10);
 			this.sharpnessEnchant = sharpnessEnchant;
 			this.damage = damage;
@@ -262,11 +309,11 @@ public class Lorem extends AbilityBase {
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, entity.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(livingEntity)) {
 						if (addStack(livingEntity)) {
-							Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant) * Math.max(0.25, Math.min(30, livingEntity.getLocation().distanceSquared(shooter.getLocation())) / 30) * 2));
+							Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant) * Math.max(0.25, Math.min(30, livingEntity.getLocation().distanceSquared(shooter.getLocation())) / 30) * strongAttack));
 							ParticleLib.BLOCK_CRACK.spawnParticle(livingEntity.getEyeLocation(), .3f, .3f, .3f, 15, MaterialX.REDSTONE_BLOCK);
 							SoundLib.ENTITY_PLAYER_ATTACK_SWEEP.playSound(getPlayer());
 						} else {
-							Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant) * Math.max(0.25, Math.min(30, livingEntity.getLocation().distanceSquared(shooter.getLocation())) / 30) * 0.6));
+							Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithSharpnessEnchantment(damage, sharpnessEnchant) * Math.max(0.25, Math.min(30, livingEntity.getLocation().distanceSquared(shooter.getLocation())) / 30) * normalAttack));
 						}
 						getPlayer().setVelocity(VectorUtil.validateVector(new Vector(dx, 0, dz).normalize().multiply(0.6)));
 						stop(true);
@@ -386,7 +433,7 @@ public class Lorem extends AbilityBase {
 		@Override
 		protected void run(int count) {
 			channel.update("§3탈진§7: §f" + (count / (20.0 / getPeriod())) + "초");
-			PotionEffects.SLOW.addPotionEffect(getPlayer(), 3, 2, true);
+			PotionEffects.SLOW.addPotionEffect(getPlayer(), 3, 1, true);
 		}
 
 		@Override

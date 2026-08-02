@@ -15,6 +15,7 @@ import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.manager.effect.EvilSpirit;
+import daybreak.abilitywar.game.manager.effect.event.ParticipantPreEffectApplyEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -76,7 +77,7 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 
 	};
 
-	public static final SettingObject<Double> EVIL_SPIRIT_HIT_CONFIG = abilitySettings.new SettingObject<Double>(Ghost.class, "evilspirit-hit-duration", 1.2,
+	public static final SettingObject<Double> EVIL_SPIRIT_HIT_CONFIG = abilitySettings.new SettingObject<Double>(Ghost.class, "evilspirit-hit-duration", 1.8,
 			"# 피격 시 악령 지속 시간") {
 
 		@Override
@@ -224,6 +225,13 @@ public class Ghost extends AbilityBase implements ActiveHandler {
 
 		if (e.getEntity().equals(getPlayer()) && damager != null && !getPlayer().equals(damager)) {
 			if (getGame().isParticipating(damager)) EvilSpirit.apply(getGame().getParticipant(damager), TimeUnit.TICKS, hitEvilSpiritDuration);
+		}
+	}
+
+	@SubscribeEvent(onlyRelevant = true)
+	private void onEffect(ParticipantPreEffectApplyEvent e) {
+		if (EvilSpirit.registration.equals(e.getEffectType())) {
+			e.setCancelled(true);
 		}
 	}
 
