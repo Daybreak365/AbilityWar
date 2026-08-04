@@ -40,11 +40,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "카오스", rank = Rank.L, species = Species.GOD, explain = {
-		"§7철괴 우클릭 §f- §8흡수§f: 카오스가 $[DURATION_CONFIG]초간 주변 $[DURATION_CONFIG]칸 이내의 모든 생명체를 §5실명시키고§f,",
+		"§7철괴 우클릭 §f- §8흡수§f: 카오스가 $[DURATION_CONFIG]초간 주변 $[DISTANCE_CONFIG]칸 이내의 모든 생명체를 §5실명시키고§f,",
 		"중앙으로 §5끌어당기며§f, 주기적으로 §c고정 피해§f를 입힙니다. $[COOLDOWN_CONFIG]",
 		"§8[§3질량§f-§e에너지 §f동등성§8] §f입힌 피해의 §a50%§f를 자신의 체력으로 전환하여 §a회복§f합니다.",
-		"§8[§e빛§f조차 빠져나갈 수 없는§8] §f범위 내 모든 플레이어의 §5능력을 비활성화§f합니다.",
-		"§7상태 이상 §f- §8제압§f: 능력이 비활성화됩니다."
+		"§8[§e빛§f조차 빠져나갈 수 없는§8] §f범위 내 모든 플레이어의 §5§n능력을 비활성화§f합니다.",
+		"§7상태 이상 §f- §8§n제압§f: 능력이 비활성화됩니다."
 }, summarize = {
 		"§7철괴 우클릭§f으로 §8블랙홀§f을 만들어 주변 생명체를 끌어들여 피해입히고 §5실명§f시킵니다.",
 		"§8블랙홀§f이 입힌 피해 절반을 §a회복§f하고, 끌어들인 대상의 능력을 §4비활성화§f합니다."

@@ -28,8 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 @AbilityManifest(name = "에너지 블로커", rank = Rank.A, species = Species.HUMAN, explain = {
-		"원거리 피해를 3분의 1로, 근거리 피해를 두 배로 받거나",
-		"원거리 피해를 두 배로, 근거리 피해를 3분의 1로 받을 수 있습니다.",
+		"원거리 피해를 3분의 1로, 근거리 피해를 1.5배로 받거나",
+		"원거리 피해를 1.5배로, 근거리 피해를 3분의 1로 받을 수 있습니다.",
 		"철괴를 우클릭하면 각각의 피해 정도를 뒤바꿉니다. 피해 정도를 변경한 이후",
 		"한 번 이상 공격을 받아야만 다시 피해 정도를 뒤바꿀 수 있습니다.",
 		"$[PARTICLE_NOTICE]"
@@ -125,10 +125,10 @@ public class EnergyBlocker extends AbilityBase implements ActiveHandler {
 			final Entity damager = getDamager(e.getDamager());
 			if (getPlayer().equals(damager)) return;
 			if (e.getCause() == DamageCause.PROJECTILE) {
-				e.setDamage(projectileBlocking ? e.getDamage() / 3 : (e.getDamage() * 2));
+				e.setDamage(projectileBlocking ? e.getDamage() / 3 : (e.getDamage() * 1.5));
 				this.canChange = true;
 			} else if (e.getCause() == DamageCause.ENTITY_ATTACK) {
-				e.setDamage(projectileBlocking ? e.getDamage() * 2 : (e.getDamage() / 3));
+				e.setDamage(projectileBlocking ? e.getDamage() * 1.5 : (e.getDamage() / 3));
 				this.canChange = true;
 			}
 		}

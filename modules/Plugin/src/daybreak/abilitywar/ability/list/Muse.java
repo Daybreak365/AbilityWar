@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 
 @AbilityManifest(name = "뮤즈", rank = Rank.S, species = Species.GOD, explain = {
 		"§7철괴 우클릭 §8- §d축복§f: 자신을 중심으로 모두가 대미지를 받지 않는 지역을",
-		" 만들어내며, 지역은 점차 축소됩니다. 지역 내에서 무시된 피해량의 10%만큼",
+		" 만들어내며, 지역은 점차 축소됩니다. 지역 내에서 무시된 피해량의 50%만큼",
 		" 체력을 회복하고, 체력이 가득 찬 경우 §e흡수 체력§7(§f최대 5칸§7)§f으로 회복합니다.",
 		" $[COOLDOWN_CONFIG]"
 }, summarize = {
@@ -194,7 +194,7 @@ public class Muse extends AbilityBase implements ActiveHandler {
 			if (LocationUtil.isInCircle(center, e.getEntity().getLocation(), currentRadius)) {
 				ParticleLib.HEART.spawnParticle(e.getEntity().getLocation(), 2, 2, 2, 5);
 				e.setCancelled(true);
-				final double amount = e.getFinalDamage() / 10;
+				final double amount = e.getFinalDamage() / 2;
 				final EntityRegainHealthEvent event = new EntityRegainHealthEvent(getPlayer(), amount, RegainReason.CUSTOM);
 				Bukkit.getPluginManager().callEvent(event);
 				if (!event.isCancelled()) {

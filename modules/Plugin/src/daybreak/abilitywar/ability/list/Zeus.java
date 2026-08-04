@@ -43,13 +43,13 @@ import java.util.List;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "제우스", rank = Rank.L, species = Species.GOD, explain = {
-		"§7패시브 §8- §e하늘의 지배자§f: §5제압§f되지 않습니다. §b공중§f에 있는 동안 타게팅의 대상이",
+		"§7패시브 §8- §e하늘의 지배자§f: §c§n제압§f되지 않습니다. §b공중§f에 있는 동안 타게팅의 대상이",
 		" 되지 않습니다. 낙하 피해를 입지 않습니다.",
 		"§7웅크리기 §8- §e행차§f: 이동을 방해하는 모든 상태 이상을 해제하고, 이후 6초간 비행할",
 		" 수 있습니다. 능력 지속 중 철괴 우클릭으로 지속 시간 1.5초를 소모해 바라보는",
 		" 지점에 §e번개§f를 떨어뜨리고 순간 이동할 수 있습니다. 비행을 시작하고 끝내는",
 		" 지점에서 주위에 §e번개§f를 떨어뜨립니다. 이 능력으로 인해 발생한 §e번개§f에 맞은",
-		" 플레이어는 1.5초간 기절합니다. $[COOLDOWN_CONFIG] (단, 다른 능력의 §c쿨타임§f이 종료될",
+		" 플레이어는 1.5초간 §e§n기절§f합니다. $[COOLDOWN_CONFIG] (단, 다른 능력의 §c쿨타임§f이 종료될",
 		" 때마다 §c쿨타임§f이 25% 감소)"
 })
 public class Zeus extends AbilityBase implements ActiveHandler {

@@ -54,7 +54,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "버서커", rank = Rank.S, species = Species.HUMAN, explain = {
-        "§7철괴 우클릭 §8- §c불굴의 의지§f: $[MAX_DURATION_CONFIG]초간 이동을 방해하는 모든 §5상태 이상§f을 해제하고",
+        "§7철괴 우클릭 §8- §c불굴의 의지§f: $[MAX_DURATION_CONFIG]초간 이동을 방해하는 모든 §5§n상태 이상§f을 해제하고",
         " 이동 속도가 65% 증가하며, 근접 공격이 강화되어 $[DAMAGE_FACTOR_CONFIG]%의 추가 피해를 입힙니다.",
         " 불굴의 의지가 지속되는 도중에는 체력이 반 칸 아래로 떨어지지 않습니다.",
         " $[COOLDOWN_CONFIG]",
@@ -62,7 +62,7 @@ import java.util.function.Predicate;
         " 받는 대미지를 최대 75%까지 거리에 따라 줄여받습니다. 잃은 체력에 비례하여",
         " 입히는 근접 대미지가 1.35배까지 증가합니다."
 }, summarize = {
-        "§7철괴 우클릭§f 시 일정 시간 §c불사신§f이 되어 §5이동계 상태이상§f을 해제합니다.",
+        "§7철괴 우클릭§f 시 일정 시간 §c불사신§f이 되어 §5§n이동계 상태이상§f을 해제합니다.",
         "§c불사신§f이 되면 §b이동 속도§f와 §c근접 공격력§f이 대폭 증가합니다.",
         "주고받는 §b원거리 피해§f가 §3감소§f됩니다. §a근거리 공격력§f이 §c잃은 체력§f에 비례하여 증가합니다."
 })

@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.SubscribeEvent.Priority;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame.CustomEntity;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
@@ -44,7 +45,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "더블 스나이퍼", rank = Rank.S, species = Species.HUMAN, explain = {
-		"활을 쏘면 매우 빠른 속도로 나아가는 특수한 투사체를 다섯 번 연속으로 쏩니다.",
+		"활을 쏘면 매우 빠른 속도로 나아가는 특수한 투사체를 $[REPEAT_CONFIG]번 연속으로 쏩니다.",
 		"투사체는 하나의 대상만 공격할 수 있고, 블록에 닿으면 폭발 후 소멸합니다.",
 		"단, 유리나 유리 판과 같은 블록은 뚫고 지나갑니다.",
 		"투사체를 쏘고 난 후 일정 시간동안 재장전을 하며, 재장전 중에는",
@@ -53,8 +54,30 @@ import java.util.function.Predicate;
 })
 public class DoubleSniper extends Synergy {
 
+	public static final AbilitySettings.SettingObject<Integer> REPEAT_CONFIG = synergySettings.new SettingObject<Integer>(DoubleSniper.class, "repeat-config", 5,
+			"# 투사체 연속 발사 횟수") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+
+	};
+
+	public static final AbilitySettings.SettingObject<Integer> DAMAGE_CONFIG = synergySettings.new SettingObject<Integer>(DoubleSniper.class, "damage-config", 70,
+			"# 투사체 피해량의 비율 (%)", "# 70이라면 투사체가 70%의 피해만 입힙니다.") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 0;
+		}
+
+	};
+
 	private static final Material GLASS_PANE = ServerVersion.getVersion() > 12 ? Material.valueOf("GLASS_PANE") : Material.valueOf("THIN_GLASS");
 	private static final RGB BULLET_COLOR = new RGB(43, 209, 224);
+	private final int repeat = REPEAT_CONFIG.getValue();
+	private final double damage = DAMAGE_CONFIG.getValue() * 0.01;
 
 	private final AbilityTimer snipeMode = new AbilityTimer() {
 		@Override
@@ -90,10 +113,10 @@ public class DoubleSniper extends Synergy {
 					ItemLib.removeItem(getPlayer().getInventory(), Material.ARROW, 1);
 				}
 				Arrow arrow = (Arrow) e.getProjectile();
-				new AbilityTimer(5) {
+				new AbilityTimer(repeat) {
 					@Override
 					protected void run(int count) {
-						new Bullet(getPlayer(), arrow.getLocation(), getPlayer().getLocation().getDirection().normalize().multiply(e.getForce() + 0.4), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
+						new Bullet(getPlayer(), arrow.getLocation(), arrow.getVelocity(), e.getBow().getEnchantmentLevel(Enchantment.ARROW_DAMAGE), BULLET_COLOR).start();
 						SoundLib.ENTITY_GENERIC_EXPLODE.playSound(getPlayer().getLocation(), 7, 1.75f);
 					}
 				}.setPeriod(TimeUnit.TICKS, 1).start();
@@ -204,7 +227,7 @@ public class DoubleSniper extends Synergy {
 				}
 				for (LivingEntity livingEntity : LocationUtil.getConflictingEntities(LivingEntity.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(livingEntity)) {
-						Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithPowerEnchantment((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 20.0, powerEnchant) * 0.08));
+						Damages.damageArrow(livingEntity, shooter, (float) (EnchantLib.getDamageWithPowerEnchantment(Math.min(((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ())) / 100.0, 15), powerEnchant) * damage));
 						livingEntity.setNoDamageTicks(0);
 						stop(false);
 						return;

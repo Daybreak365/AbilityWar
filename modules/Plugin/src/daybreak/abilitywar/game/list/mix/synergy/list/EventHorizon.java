@@ -104,8 +104,10 @@ public class EventHorizon extends Synergy implements ActiveHandler {
 			sphere.rotateAroundAxisX(3);
 			sphere.rotateAroundAxisY(3);
 			sphere.rotateAroundAxisZ(3);
-			for (Location loc : sphere.toLocations(center)) {
-				ParticleLib.REDSTONE.spawnParticle(loc, BLACK);
+			if (seconds % 4 == 0) {
+				for (Location loc : sphere.toLocations(center)) {
+					ParticleLib.REDSTONE.spawnParticle(loc, BLACK);
+				}
 			}
 			for (Entity entity : LocationUtil.getNearbyEntities(Entity.class, center, distance, distance, predicate)) {
 				if (!entity.equals(getPlayer()) && !entity.hasMetadata("EventHorizon")) {

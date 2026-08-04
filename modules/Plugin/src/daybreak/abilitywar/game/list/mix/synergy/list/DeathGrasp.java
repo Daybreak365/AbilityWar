@@ -285,7 +285,7 @@ public class DeathGrasp extends Synergy implements ActiveHandler {
 				SOUND_RUNNABLES.get(soundNumber).run();
 				cooldownTimer.setCount(Math.max(0, cooldownTimer.getCount() - stack));
 				PotionEffects.BLINDNESS.addPotionEffect(victim, 20, 0, true);
-				e.setDamage(e.getDamage() + (stack * .1));
+				e.setDamage(e.getDamage() + (stack * .2));
 			}
 		}
 	}

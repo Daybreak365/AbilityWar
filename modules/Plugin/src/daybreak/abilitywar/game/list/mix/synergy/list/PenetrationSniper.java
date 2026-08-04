@@ -71,7 +71,7 @@ public class PenetrationSniper extends Synergy {
 	private static final RGB PURPLE = new RGB(138, 9, 173);
 	private static final RGB YELLOW = new RGB(255, 246, 122);
 	private static final Sphere sphere = Sphere.of(4, 10);
-	private static final Circle CIRCLE = Circle.of(0.5, 15);
+	private static final Circle CIRCLE = Circle.of(0.5, 10);
 
 	private final AbilityTimer snipeMode = new AbilityTimer() {
 		@Override
@@ -245,7 +245,7 @@ public class PenetrationSniper extends Synergy {
 		private final Predicate<Entity> predicate;
 
 		private Bullet(LivingEntity shooter, Location startLocation, Vector arrowVelocity, int powerEnchant, OnHitBehavior onHitBehavior, RGB color, RGB abilityColor) {
-			super(80);
+			super(40);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
 			this.entity = new ArrowEntity(startLocation.getWorld(), startLocation.getX(), startLocation.getY(), startLocation.getZ()).resizeBoundingBox(-.75, -.75, -.75, .75, .75, .75);
@@ -282,6 +282,7 @@ public class PenetrationSniper extends Synergy {
 		@Override
 		protected void run(int i) {
 			Location newLocation = lastLocation.clone().add(forward);
+			int particleCount = 0;
 			for (Iterator<Location> iterator = new Iterator<Location>() {
 				private final Vector vectorBetween = newLocation.toVector().subtract(lastLocation.toVector()), unit = vectorBetween.clone().normalize().multiply(.1);
 				private final int amount = (int) (vectorBetween.length() / 0.1);
@@ -309,15 +310,19 @@ public class PenetrationSniper extends Synergy {
 				}
 				for (Damageable damageable : LocationUtil.getConflictingEntities(Damageable.class, shooter.getWorld(), entity.getBoundingBox(), predicate)) {
 					if (!shooter.equals(damageable) && damageable.isValid() && !damageable.isDead() && !attacked.contains(damageable)) {
-						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ()) / 10.0, 10), powerEnchant));
+						Damages.damageArrow(damageable, shooter, (float) EnchantLib.getDamageWithPowerEnchantment(Math.min(((forward.getX() * forward.getX()) + (forward.getY() * forward.getY()) + (forward.getZ() * forward.getZ())) / 100.0, 15), powerEnchant));
 						onHitBehavior.onHit(PenetrationSniper.this, shooter, damageable);
 						attacked.add(damageable);
 					}
 				}
-				ParticleLib.REDSTONE.spawnParticle(location, color);
-				if (i % 2 == 0) {
-					ParticleLib.REDSTONE.spawnParticle(location.add(circle.next()), abilityColor);
+				if ((particleCount & 1) == 0) {
+					ParticleLib.REDSTONE.spawnParticle(location, color);
 				}
+
+				if ((particleCount & 3) == 0) {
+					ParticleLib.REDSTONE.spawnParticle(location.clone().add(circle.next()), abilityColor);
+				}
+				particleCount++;
 			}
 			lastLocation = newLocation;
 		}

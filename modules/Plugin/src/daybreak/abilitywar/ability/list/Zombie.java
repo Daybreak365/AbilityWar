@@ -18,10 +18,13 @@ import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
+import daybreak.abilitywar.utils.base.random.Random;
+import daybreak.abilitywar.utils.library.MaterialX;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -31,6 +34,7 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,13 +45,13 @@ import java.util.Set;
 @AbilityManifest(name = "좀비", rank = Rank.A, species = Species.UNDEAD, explain = {
 		"좀비가 당신을 타게팅하지 않습니다. 다른 플레이어를 철괴로 우클릭하면 주변",
 		"$[RADIUS]칸 안에 무적 §5좀비§f $[ZOMBIE_COUNT]마리를 소환합니다. $[COOLDOWN]",
-		"능력으로 소환된 좀비에게 공격당한 플레이어는 1.5초간 §5감염 §f효과가 생기며,",
+		"능력으로 소환된 좀비에게 공격당한 플레이어는 1.5초간 §5§n감염§f 효과가 생기며,",
 		"다른 플레이어가 나를 공격할 경우 좀비의 타겟이 그 플레이어로 변경됩니다.",
-		"§7상태 이상 §8- §5감염§f: 간헐적으로 시야가 돌아가며, 대미지를 25% 줄여받습니다.",
-		"감염 효과를 중복으로 받으면 지속 시간이 계속 쌓입니다."
+		"§7상태 이상 §8- §5§n감염§f: 간헐적으로 시야가 돌아가며, 대미지를 25% 줄여받습니다.",
+		"§5§n감염§f 효과를 중복으로 받으면 지속 시간이 계속 쌓입니다."
 }, summarize = {
 		"§7다른 플레이어에게 철괴를 우클릭§f하면 대상을 추격하는 §2좀§3비§f 무리를 소환합니다.",
-		"§2좀§3비§f는 피해를 입힐 때 적을 §5감염§f시키며, 나를 공격한 자를 우선 추격합니다.",
+		"§2좀§3비§f는 피해를 입힐 때 적을 §5§n감염§f시키며, 나를 공격한 자를 우선 추격합니다.",
 		"§3[§5감염§3]§f 간헐적으로 시야가 돌아가고 받는 피해가 25% 감소합니다."
 })
 @Support.Version(min = NMSVersion.v1_12_R1, max = NMSVersion.v1_14_R1)
@@ -113,6 +117,7 @@ public class Zombie extends AbilityBase implements TargetHandler {
 	private final Set<org.bukkit.entity.Zombie> zombies = new HashSet<>(zombieCount);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN.getValue());
 	private Player target;
+	private Random random = new Random();
 	private final Duration skill = new Duration(DURATION.getValue() * 20, cooldownTimer) {
 
 		@Override
@@ -125,6 +130,19 @@ public class Zombie extends AbilityBase implements TargetHandler {
 				}
 				zombie.setBaby(false);
 				zombie.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.65);
+				if (random.nextInt(5) == 0) {
+					Material material = Material.AIR;
+					switch(random.nextInt(4)) {
+						case 0: material = MaterialX.IRON_SWORD.getMaterial(); break;
+						case 1: material = MaterialX.IRON_AXE.getMaterial(); break;
+						case 2: material = MaterialX.DIAMOND_SWORD.getMaterial(); break;
+						case 3: material = MaterialX.DIAMOND_AXE.getMaterial(); break;
+						default: material = MaterialX.IRON_SWORD.getMaterial(); break;
+					}
+					ItemStack itemStack = new ItemStack(material, 1);
+					if (random.nextBoolean()) itemStack.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, random.nextInt(5));
+					zombie.getEquipment().setItemInMainHand(itemStack);
+				}
 				zombies.add(zombie);
 			}
 			for (org.bukkit.entity.Zombie zombie : zombies) {

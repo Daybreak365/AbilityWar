@@ -42,8 +42,7 @@ import java.util.function.Predicate;
 		"살인자의 검으로 상대를 죽일 경우 5초간 투명 효과를 받습니다.",
 		"금 우클릭으로 금 15개를 소모해 활과 화살을 얻을 수 있습니다.",
 		"활을 쏠 때 매우 빠른 속도로 나아가는 특수한 투사체를 쏩니다.",
-		"투사체는 하나의 대상만 공격할 수 있고, 블록에 닿으면 소멸합니다.",
-		"단, 유리나 유리 판과 같은 블록은 뚫고 지나갑니다."
+		"투사체는 하나의 대상만 공격할 수 있고, 블록에 닿으면 소멸합니다."
 })
 public class SniperMurderer extends AbstractMurderer {
 
@@ -146,7 +145,7 @@ public class SniperMurderer extends AbstractMurderer {
 			super(160);
 			setPeriod(TimeUnit.TICKS, 1);
 			this.shooter = shooter;
-			this.boundingBox = CenteredBoundingBox.of(startLocation, -.5, -.5, -.5, .5, .5, .5);
+			this.boundingBox = CenteredBoundingBox.of(startLocation, -.6, -.6, -.6, .6, .6, .6);
 			this.forward = arrowVelocity.multiply(10);
 			this.color = color;
 			this.lastLocation = startLocation;
@@ -188,10 +187,7 @@ public class SniperMurderer extends AbstractMurderer {
 				final Block block = location.getBlock();
 				final Material type = block.getType();
 				if (type.isSolid()) {
-					if (ItemLib.STAINED_GLASS.compareType(type) || Material.GLASS == type || ItemLib.STAINED_GLASS_PANE.compareType(type) || type == GLASS_PANE) {
-						block.breakNaturally();
-						SoundLib.BLOCK_GLASS_BREAK.playSound(block.getLocation(), 3, 1);
-					} else if (RayTrace.hitsBlock(location.getWorld(), lastLocation.getX(), lastLocation.getY(), lastLocation.getZ(), location.getX(), location.getY(), location.getZ())) {
+					if (RayTrace.hitsBlock(location.getWorld(), lastLocation.getX(), lastLocation.getY(), lastLocation.getZ(), location.getX(), location.getY(), location.getZ())) {
 						stop(false);
 						return;
 					}

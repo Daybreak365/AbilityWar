@@ -5,6 +5,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.list.virus.Virus;
+import daybreak.abilitywar.ability.list.virus.VirusInfectionEvent;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
@@ -17,6 +18,7 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.math.geometry.Sphere;
 import daybreak.abilitywar.utils.library.ParticleLib;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -74,7 +76,11 @@ public class Pandemic extends Synergy {
 			for (Player player : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), size, size, predicate)) {
 				if (getGame().isParticipating(player)) {
 					try {
-						getGame().getParticipant(player).setAbility(Virus.class);
+						final VirusInfectionEvent event = new VirusInfectionEvent(null, getGame().getParticipant(player));
+						Bukkit.getPluginManager().callEvent(event);
+						if (!event.isCancelled()) {
+							getGame().getParticipant(player).setAbility(Virus.class);
+						}
 					} catch (ReflectiveOperationException ignored) {
 					}
 				}

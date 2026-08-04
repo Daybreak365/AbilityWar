@@ -197,10 +197,13 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 					duration.start();
 					return true;
 				}
-			} else if (clickType == ClickType.LEFT_CLICK) {
+			}
+			/**
+			else if (clickType == ClickType.LEFT_CLICK) {
 				new PowderKeg(getPlayer().getLocation());
 				return true;
 			}
+			 **/
 		}
 		return false;
 	}
@@ -256,7 +259,9 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 	}
 
 	private final FixedMetadataValue NULL_VALUE = new FixedMetadataValue(AbilityWar.getPlugin(), null);
-	private final Map<ArmorStand, PowderKeg> powderKegs = new HashMap<>();
+
+	/**
+	 private final Map<ArmorStand, PowderKeg> powderKegs = new HashMap<>();
 
 	private class PowderKeg extends AbilityTimer implements Listener {
 
@@ -346,5 +351,6 @@ public class Explosion extends AbilityBase implements ActiveHandler {
 			HandlerList.unregisterAll(this);
 		}
 	}
+	 **/
 
 }

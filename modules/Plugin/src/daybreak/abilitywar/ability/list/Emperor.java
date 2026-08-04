@@ -12,6 +12,7 @@ import daybreak.abilitywar.ability.Tips.Stats;
 import daybreak.abilitywar.ability.decorator.ActiveHandler;
 import daybreak.abilitywar.config.ability.AbilitySettings.SettingObject;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.manager.effect.Oppress;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -25,6 +26,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -40,11 +42,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-@AbilityManifest(name = "황제", rank = Rank.B, species = Species.HUMAN, explain = {
+@AbilityManifest(name = "황제", rank = Rank.A, species = Species.HUMAN, explain = {
 		"철괴를 우클릭하면 앞으로 돌진하는 방패 부대를 내보내 앞에 있는 모든",
-		"생명체와 물체를 밀쳐냅니다. $[COOLDOWN_CONFIG]"
+		"생명체와 물체를 밀쳐내고, $[OPPRESS_DURATION_CONFIG]초간 §c§n제압§f합니다. $[COOLDOWN_CONFIG]",
+		"§c§n제압§f된 대상에게 받는 피해량이 $[DAMAGE_DECREASE_CONFIG]% 감소합니다."
 }, summarize = {
-		"§7철괴 우클릭§f 시 전방으로 돌진하는 §e방패 부대§f를 출격시켜 엔티티들을 §b밀쳐냅니다§f."
+		"§7철괴 우클릭§f 시 전방으로 돌진하는 §e방패 부대§f를 출격시켜 엔티티들을 §b밀쳐냅니다§f.",
+		"밀쳐내진 적은 §c§n제압§f되고, §c§n제압§f된 적에게 받는 피해가 감소합니다."
 })
 @Tips(tip = {
 		"위협적인 상대가 다가올 때, 상대의 스킬에 당했을 때 방패 부대를",
@@ -68,6 +72,24 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 
 	};
 
+	public static final SettingObject<Double> OPPRESS_DURATION_CONFIG = abilitySettings.new SettingObject<Double>(Emperor.class, "oppress-duration", 5.0,
+			"# 제압 지속 시간") {
+
+		@Override
+		public boolean condition(Double value) {
+			return value >= 0;
+		}
+
+	};
+
+	public static final SettingObject<Integer> DAMAGE_DECREASE_CONFIG = abilitySettings.new SettingObject<Integer>(Emperor.class, "damage-decrease", 50,
+			"# 피해량 감소율 (%)") {
+
+		@Override
+		public boolean condition(Integer value) { return value >= 0; }
+
+	};
+
 	public Emperor(Participant participant) {
 		super(participant);
 	}
@@ -87,6 +109,8 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 
 	private static final double radians = Math.toRadians(90);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
+	private final double damageDecrease = 1 - (DAMAGE_DECREASE_CONFIG.getValue() * 0.01);
+	private final int oppressDuration = (int) (OPPRESS_DURATION_CONFIG.getValue() * 20);
 	private final Duration skill = new Duration(140, cooldownTimer) {
 
 		private Vector direction;
@@ -159,6 +183,10 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 			for (ArmorStand armorStand : armorStands) {
 				for (Entity entity : LocationUtil.getConflictingEntities(Entity.class, armorStand, predicate)) {
 					entity.setVelocity(push);
+					if (entity instanceof Player && predicate.test(entity)) {
+						Player player = (Player) entity;
+						Oppress.apply(getGame().getParticipant(player), TimeUnit.TICKS, oppressDuration);
+					}
 				}
 			}
 		}
@@ -205,6 +233,16 @@ public class Emperor extends AbilityBase implements ActiveHandler {
 	@SubscribeEvent
 	private void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
 		onEntityDamage(e);
+
+		Player damager = null;
+		if (e.getDamager() instanceof Projectile) {
+			Projectile projectile = (Projectile) e.getDamager();
+			if (projectile.getShooter() instanceof Player) damager = (Player) projectile.getShooter();
+		} else if (e.getDamager() instanceof Player) damager = (Player) e.getDamager();
+
+		if (e.getEntity().equals(getPlayer()) && damager != null) {
+			if (getGame().isParticipating(damager) && getGame().getParticipant(damager).hasEffect(Oppress.registration)) e.setDamage(e.getDamage() * damageDecrease);
+		}
 	}
 
 	@SubscribeEvent

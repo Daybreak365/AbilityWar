@@ -48,7 +48,7 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "루나", rank = Rank.A, species = Species.OTHERS, explain = {
 		"§7패시브 §8- §e달 표식§f: 다른 생명체에게 표식을 쌓을 때마다 나에게로 끌어오며,",
 		"세계의 시간을 점점 밤으로 바꿉니다. 표식이 다섯 개 이상 쌓이면 대상의 표식이",
-		"초기화되고 대상을 0.75초간 기절시키며, 월광의 쿨타임을 10초 단축합니다.",
+		"초기화되고 대상을 0.75초간 §e§n기절§f시키며, 월광의 쿨타임을 10초 단축합니다.",
 		"대상에게 6초간 표식이 추가로 쌓이지 않을 경우 표식이 초기화됩니다.",
 		"§7공격 무기 §8- §e명월도§f: 대상을 근접 공격할 때마다 대상에게 표식을 하나 쌓습니다.",
 		"이 공격으로 표식을 다섯 개 이상 쌓으면 해당 공격은 1.4배의 대미지를 냅니다.",
@@ -56,7 +56,7 @@ import java.util.function.Predicate;
 		"4초간의 구속 디버프를 줍니다. 밤에만 사용할 수 있습니다. $[COOLDOWN_CONFIG]"
 }, summarize = {
 		"적에게 §a근접 공격§f 시 §e표식§f을 쌓아 내게 §e끌어당기고§f 시간을 점점 §9밤§f으로 바꿉니다.",
-		"§e표식이 5개§f가 되면 피해를 §c1.4배§f 증가시키고 대상을 잠시 §e기절§f시킵니다.",
+		"§e표식이 5개§f가 되면 피해를 §c1.4배§f 증가시키고 대상을 잠시 §e§n기절§f시킵니다.",
 		"§9밤§f에 §7철괴 우클릭§f 시 주변 생명체들에게 §e표식 2개§f와 §8구속§f 디버프를 부여합니다."
 })
 public class Lunar extends AbilityBase implements ActiveHandler {
@@ -292,6 +292,7 @@ public class Lunar extends AbilityBase implements ActiveHandler {
 		}
 
 		private boolean addStack() {
+			if (this.getCount() > 28) return false;
 			updateTime(getPlayer().getWorld());
 			setCount(30);
 			stack++;

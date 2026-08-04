@@ -6,6 +6,7 @@ import daybreak.abilitywar.ability.AbilityManifest.Rank;
 import daybreak.abilitywar.ability.AbilityManifest.Species;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.game.AbstractGame.Participant;
+import daybreak.abilitywar.game.event.participant.ParticipantDeathEvent;
 import daybreak.abilitywar.game.module.DeathManager;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
@@ -14,7 +15,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.HashMap;
@@ -60,12 +60,10 @@ public class Themis extends AbilityBase {
 	}
 
 	@SubscribeEvent
-	private void onPlayerDeath(final PlayerDeathEvent e) {
-		final Player entity = e.getEntity();
-		if (killsMap.containsKey(entity.getUniqueId())) killsMap.get(entity.getUniqueId()).stop(true);
-		if (!ONLY_PARTICIPANTS.test(entity)) return;
-		final Player killer = entity.getKiller();
-		if (killer != null && !getPlayer().equals(killer) && !killer.equals(entity)) {
+	private void onParticipantDeath(final ParticipantDeathEvent e) {
+		if (killsMap.containsKey(e.getPlayer().getUniqueId())) killsMap.get(e.getPlayer().getUniqueId()).stop(true);
+		final Player killer = e.getPlayer().getKiller();
+		if (killer != null && !getPlayer().equals(killer) && !killer.equals(e.getPlayer())) {
 			if (!ONLY_PARTICIPANTS.test(killer)) return;
 			if (killsMap.containsKey(killer.getUniqueId())) {
 				killsMap.get(killer.getUniqueId()).addKills();

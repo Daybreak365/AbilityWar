@@ -177,6 +177,7 @@ public class Eos extends AbilityBase implements ActiveHandler {
 					ParticleLib.REDSTONE.spawnParticle(loc, component.color);
 					boundingBox.setCenter(loc);
 					for (LivingEntity entity : LocationUtil.getConflictingEntities(LivingEntity.class, getPlayer().getWorld(), boundingBox, predicate)) {
+						entity.setNoDamageTicks(0);
 						Damages.damageMagic(entity, getPlayer(), false, (float) EnchantLib.getDamageWithSharpnessEnchantment(getPlayer().getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue(), sharpness));
 						if (onDamage != null) onDamage.accept(entity);
 					}

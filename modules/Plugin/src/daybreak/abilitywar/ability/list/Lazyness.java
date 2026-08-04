@@ -26,11 +26,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @AbilityManifest(name = "지금의 일은 나중의 나에게", rank = AbilityManifest.Rank.A, species = AbilityManifest.Species.HUMAN, explain = {
 		"지금 받을 대미지와 회복을 3초 뒤의 나에게 미루고, 넉백을 무시합니다.",
-		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.75배로 줄여 받습니다.",
+		"철괴를 우클릭하면 미뤄진 모든 대미지를 지금 바로 0.65배로 줄여 받습니다.",
 		"$[COOLDOWN_CONFIG]"
 }, summarize = {
 		"§c피해§f와 §a회복§f을 3초 뒤로 미룹니다.",
-		"미뤄진 모든 §c피해§f를 §7철괴 우클릭§f으로 즉시 §30.75§f배로 줄여 받을 수 있습니다."
+		"미뤄진 모든 §c피해§f를 §7철괴 우클릭§f으로 즉시 §30.65§f배로 줄여 받을 수 있습니다."
 })
 public class Lazyness extends AbilityBase implements ActiveHandler {
 
@@ -115,7 +115,7 @@ public class Lazyness extends AbilityBase implements ActiveHandler {
 		if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldownTimer.isCooldown()) {
 			if (!timers.isEmpty()) {
 				for (DamageTimer timer : timers) {
-					timer.damage *= 0.75;
+					timer.damage *= 0.65;
 					timer.stop(false);
 				}
 				cooldownTimer.start();

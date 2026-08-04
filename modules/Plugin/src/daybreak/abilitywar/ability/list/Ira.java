@@ -21,7 +21,7 @@ public class Ira extends AbilityBase {
 
 	public static final SettingObject<Integer> ATTACK_CONFIG = abilitySettings.new SettingObject<Integer>(Ira.class, "attack-times", 2,
 			"# 몇번 공격을 당하면 폭발을 일으킬지 설정합니다.",
-			"# 기본값: 3") {
+			"# 기본값: 2") {
 
 		@Override
 		public boolean condition(Integer value) {

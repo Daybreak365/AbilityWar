@@ -51,21 +51,20 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "글래시어", rank = Rank.S, species = Species.HUMAN, explain = {
-        "§7공격 §8- §b결빙§7/§b쇄빙§f: §5빙결 §f상태가 아닌 적을 네 번 공격할 때마다 3초간",
-        " §5빙결§f시킵니다. §7/ §5빙결 §f상태인 적에게 근접 공격으로 피해를 입힐 수 있습니다.",
-        " §5빙결§f의 지속시간을 0.3초 소모하여 0.4의 고정 피해를 입히며, 공격 쿨타임이",
+        "§7공격 §8- §b결빙§7/§b쇄빙§f: §b§n빙결§f 상태가 아닌 적을 다섯 번 공격할 때마다 $[FROST_DURATION_CONFIG]초간",
+        " §b§n빙결§f시킵니다. §7/ §5빙결 §f상태인 적에게 근접 공격으로 피해를 입힐 수 있습니다.",
+        " §b§n빙결§f의 지속시간을 $[FROST_CONSUME]초 소모하여 $[TRUE_DAMAGE_CONFIG]의 고정 피해를 입히며, 공격 쿨타임이",
         " 적용되지 않습니다. §b쇄빙§f을 이용해 피해를 입힐 때마다 §b빙하기§f의 쿨타임을",
         " 1초씩 감소시킵니다.",
-        "§7패시브 §8- §b얼어붙은 심장§f: 본인의 §5빙결 §f상태이상이 빠르게 종료되며, §5빙결 §f상태에서",
+        "§7패시브 §8- §b얼어붙은 심장§f: 본인의 §b§n빙결§f 상태이상이 빠르게 종료되며, §b§n빙결§f 상태에서",
         " 매 초 잃은 체력에 비례해 체력을 회복합니다.",
-        "§7철괴 우클릭 §8- §b빙하기§f: 본인을 포함한 주변 8칸 이내의 모든 플레이어를 6초간",
-        " §5빙결§f시킵니다. $[COOLDOWN_CONFIG]",
+        "§7철괴 우클릭 §8- §b빙하기§f: 본인을 포함한 주변 $[RANGE_CONFIG]칸 이내의 모든 플레이어를 $[DURATION_CONFIG]초간",
+        " §b§n빙결§f시킵니다. $[COOLDOWN_CONFIG]",
         "§a[§e능력 제공자§a] §dspace_kdd"
 })
-@Beta
 public class Glacier extends AbilityBase implements ActiveHandler {
 
-    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Glacier.class, "cooldown", 60,
+    public static final SettingObject<Integer> COOLDOWN_CONFIG = abilitySettings.new SettingObject<Integer>(Glacier.class, "cooldown", 50,
             "# 쿨타임") {
 
         @Override
@@ -80,7 +79,63 @@ public class Glacier extends AbilityBase implements ActiveHandler {
 
     };
 
+    public static final SettingObject<Double> FROST_DURATION_CONFIG = abilitySettings.new SettingObject<Double>(Glacier.class, "frost-duration", 3.0,
+            "# 결빙 지속시간(초)") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+
+    public static final SettingObject<Double> FROST_CONSUME = abilitySettings.new SettingObject<Double>(Glacier.class, "frost-consume", 0.3,
+            "# 쇄빙 시 소모하는 결빙 지속시간(초)") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+
+    public static final SettingObject<Double> TRUE_DAMAGE_CONFIG = abilitySettings.new SettingObject<Double>(Glacier.class, "true-damage", 0.4,
+            "# 쇄빙 고정 피해") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+
+    public static final SettingObject<Double> RANGE_CONFIG = abilitySettings.new SettingObject<Double>(Glacier.class, "range", 8.0,
+            "# 빙하기 범위") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+
+    public static final SettingObject<Double> DURATION_CONFIG = abilitySettings.new SettingObject<Double>(Glacier.class, "duration", 6.0,
+            "# 빙하기 지속시간(초)") {
+
+        @Override
+        public boolean condition(Double value) {
+            return value >= 0;
+        }
+
+    };
+
     private final Cooldown cooldown = new Cooldown(COOLDOWN_CONFIG.getValue(), "빙하기", 0);
+
+    private final int frostDuration = (int) (FROST_DURATION_CONFIG.getValue() * 20);
+    private final int frostConsume = (int) (FROST_CONSUME.getValue() * 20);
+    private final double trueDamage = TRUE_DAMAGE_CONFIG.getValue();
+    private final double range = RANGE_CONFIG.getValue();
+    private final int duration = (int) (DURATION_CONFIG.getValue() * 20);
 
     private final Map<UUID, Stack> stacks = new HashMap<>();
     private final Predicate<Entity> predicate = new Predicate<Entity>() {
@@ -109,10 +164,10 @@ public class Glacier extends AbilityBase implements ActiveHandler {
     public boolean ActiveSkill(Material material, ClickType clickType) {
         if (material == Material.IRON_INGOT && clickType == ClickType.RIGHT_CLICK && !cooldown.isCooldown()) {
             cooldown.start();
-            for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), 8, 8, predicate)) {
-                Frost.apply(getGame().getParticipant(target), TimeUnit.SECONDS, 6);
+            for (Player target : LocationUtil.getNearbyEntities(Player.class, getPlayer().getLocation(), range, range, predicate)) {
+                Frost.apply(getGame().getParticipant(target), TimeUnit.TICKS, duration);
             }
-            Frost.apply(getParticipant(), TimeUnit.SECONDS, 6);
+            Frost.apply(getParticipant(), TimeUnit.TICKS, duration);
             return true;
         }
         return false;
@@ -142,7 +197,7 @@ public class Glacier extends AbilityBase implements ActiveHandler {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            Frost.apply(getGame().getParticipant(stack.getPlayer()), TimeUnit.SECONDS, 3);
+                            Frost.apply(getGame().getParticipant(stack.getPlayer()), TimeUnit.TICKS, frostDuration);
                         }
                     }.runTaskLater(AbilityWar.getPlugin(), 2L);
                 }
@@ -167,14 +222,14 @@ public class Glacier extends AbilityBase implements ActiveHandler {
             if (frost != null && frost.getParticipant() != getParticipant()) {
                 final Player target = frost.getParticipant().getPlayer();
                 frost.noDamage = false;
-                if (Damages.canDamage(target, getPlayer(), DamageCause.CUSTOM, 0.3)) {
-                    frost.setCount(frost.getCount() - 6);
+                if (Damages.canDamage(target, getPlayer(), DamageCause.CUSTOM, trueDamage)) {
+                    frost.setCount(frost.getCount() - frostConsume);
                     final Location loc = target.getLocation();
                     ParticleLib.BLOCK_CRACK.spawnParticle(loc, 1.5, 1.5, 1.5, 20, MaterialX.ICE);
                     SoundLib.BLOCK_GLASS_BREAK.playSound(loc, .45f, 0);
                     SoundLib.BLOCK_GLASS_BREAK.playSound(loc, .45f, 1);
                     SoundLib.BLOCK_GLASS_BREAK.playSound(loc, .45f, 2);
-                    target.setHealth(Math.max(0, target.getHealth() - .4));
+                    target.setHealth(Math.max(0, target.getHealth() - trueDamage));
                     NMS.broadcastEntityEffect(target, (byte) 2);
                     if (cooldown.isRunning()) cooldown.setCount(Math.max(cooldown.getCount() - 1, 0));
                 }
@@ -208,10 +263,10 @@ public class Glacier extends AbilityBase implements ActiveHandler {
         private int stack = 0;
 
         private Stack(Player player) {
-            super();
+            super(60);
             setPeriod(TimeUnit.TICKS, 4);
             this.player = player;
-            this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), Strings.repeat("§b✦", stack).concat(Strings.repeat("§b✧", 4 - stack)));
+            this.hologram = NMS.newHologram(player.getWorld(), player.getLocation().getX(), player.getLocation().getY() + player.getEyeHeight() + 0.6, player.getLocation().getZ(), Strings.repeat("§b✦", stack).concat(Strings.repeat("§b✧", 5 - stack)));
             hologram.display(Glacier.this.getPlayer());
             stacks.put(player.getUniqueId(), this);
             addStack();
@@ -227,9 +282,11 @@ public class Glacier extends AbilityBase implements ActiveHandler {
         }
 
         private boolean addStack() {
+            if (this.getCount() > 58) return false;
+            this.setCount(60);
             stack++;
-            hologram.setText(Strings.repeat("§b✦", stack).concat(Strings.repeat("§b✧", 4 - stack)));
-            if (stack >= 4) {
+            hologram.setText(Strings.repeat("§b✦", stack).concat(Strings.repeat("§b✧", 5 - stack)));
+            if (stack >= 5) {
                 stop(false);
                 return true;
             }

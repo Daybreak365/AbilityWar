@@ -39,9 +39,9 @@ import java.util.function.Predicate;
 @AbilityManifest(name = "원한", rank = Rank.B, species = Species.OTHERS, explain = {
 		"죽을 때 나를 죽인 플레이어의 저주 인형을 내 위치에 만들어냅니다. 저주 인형은",
 		"대상이 죽기 전까지 지속되며, 저주 인형이 대미지를 입을 경우 대미지의 일부가",
-		"상대에게 전이되고 약령 효과를 6초간 부여합니다. 대상의 체력이 적을수록 더욱",
+		"상대에게 전이되고 §7§n악령§f 효과를 6초간 부여합니다. 대상의 체력이 적을수록 더욱",
 		"큰 대미지를 입힐 수 있습니다.",
-		"§7악령 효과§f: 간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",
+		"§7§n악령 효과§f: 간헐적으로 시야가 차단되고 환청이 들립니다. 이 효과를 가지고 있는",
 		"플레이어를 타격한 대상에게도 이 효과가 부여됩니다."
 })
 public class Grudge extends Synergy {
@@ -158,7 +158,7 @@ public class Grudge extends Synergy {
 			if (e.getEntity().equals(doll)) {
 				e.setCancelled(true);
 				final Player targetPlayer = target.getPlayer();
-				targetPlayer.damage(e.getDamage() * (2.3 * (1 / Math.max(targetPlayer.getHealth(), 0.01))), doll);
+				targetPlayer.damage(e.getDamage() * (5.5 * (1 / Math.max(targetPlayer.getHealth(), 0.01))), doll);
 				EvilSpirit.apply(target, TimeUnit.SECONDS, 6);
 			}
 		}

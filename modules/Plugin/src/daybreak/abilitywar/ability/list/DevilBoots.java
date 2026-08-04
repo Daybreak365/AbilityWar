@@ -10,6 +10,7 @@ import daybreak.abilitywar.ability.Tips.Description;
 import daybreak.abilitywar.ability.Tips.Difficulty;
 import daybreak.abilitywar.ability.Tips.Level;
 import daybreak.abilitywar.ability.Tips.Stats;
+import daybreak.abilitywar.config.ability.AbilitySettings;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.AbstractGame.Participant.ActionbarNotification.ActionbarChannel;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
@@ -59,12 +60,22 @@ public class DevilBoots extends AbilityBase {
 		super(participant);
 	}
 
+	public static final AbilitySettings.SettingObject<Integer> SPEED_AMPLIFIER = abilitySettings.new SettingObject<Integer>(DevilBoots.class, "speed-amplifier", 1,
+			"# 신속 계수", "# 0부터 시작해, 0이 신속 I입니다.") {
+
+		@Override
+		public boolean condition(Integer value) {
+			return value >= 1;
+		}
+
+	};
+
 	private final Wet wet = new Wet(4);
 
 	private final AbilityTimer speed = new AbilityTimer() {
 		@Override
 		protected void run(int count) {
-			PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, 1, true);
+			PotionEffects.SPEED.addPotionEffect(getPlayer(), 20, SPEED_AMPLIFIER.getValue(), true);
 		}
 	}.register();
 

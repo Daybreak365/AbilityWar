@@ -83,6 +83,14 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 
 	};
 
+	public static final SettingObject<Double> BLINDNESS_DURATION_CONFIG = abilitySettings.new SettingObject<Double>(Stalker.class, "blindness-duration", 1.0,
+			"# 실명 지속 시간") {
+
+		@Override
+		public boolean condition(Double value) { return value >= 0; }
+
+	};
+
 	private static final Set<Material> swords;
 
 	static {
@@ -100,6 +108,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 	private static final RGB BLACK = new RGB(0, 0, 0);
 	private final Cooldown cooldownTimer = new Cooldown(COOLDOWN_CONFIG.getValue());
 	private final Cooldown rightCooldownTimer = new Cooldown(LEFT_COOLDOWN_CONFIG.getValue(), "돌진", 0);
+	private final int blindness = (int) (BLINDNESS_DURATION_CONFIG.getValue() * 20);
 	private final AbilityTimer skill = new AbilityTimer() {
 		private GameMode originalMode;
 		private Player target;
@@ -215,7 +224,7 @@ public class Stalker extends AbilityBase implements ActiveHandler {
 				final double ceil = Math.ceil(stack / 3.0);
 				SOUND_RUNNABLES.get((int) (ceil - ((Math.ceil(ceil / SOUND_RUNNABLES.size()) - 1) * SOUND_RUNNABLES.size())) - 1).run();
 				if (cooldownTimer.isRunning()) cooldownTimer.setCount(Math.max(0, cooldownTimer.getCount() - stack));
-				PotionEffects.BLINDNESS.addPotionEffect(victim, 30, 0, true);
+				PotionEffects.BLINDNESS.addPotionEffect(victim, blindness, 0, true);
 				e.setDamage(e.getDamage() + (stack * .2));
 			}
 		}

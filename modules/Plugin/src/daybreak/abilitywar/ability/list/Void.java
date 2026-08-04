@@ -16,6 +16,7 @@ import daybreak.abilitywar.utils.base.Formatter;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
+import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import daybreak.abilitywar.utils.library.SoundLib;
 import org.bukkit.Bukkit;
@@ -45,7 +46,8 @@ import java.util.function.Predicate;
 		"수 있습니다. 공허 차원문은 10초간 남으며, 12초에 한 번씩만 열 수 있습니다.",
 		"§7철괴 우클릭 §8- §5순간 이동§f: 철괴를 우클릭하면 보이드가 공허를 통하여",
 		"가장 가까이 있는 플레이어에게 순간 이동하고 $[INVINCIBILITY_DURATION_CONFIG]초간",
-		"타게팅 불가능 무적 상태에 돌입합니다. $[COOLDOWN_CONFIG]"
+		"타게팅 불가능 무적 상태에 돌입합니다. $[COOLDOWN_CONFIG]",
+		"또한 순간 이동할 때마다 흡수 체력을 두 칸(최대 세 칸) 얻습니다."
 }, summarize = {
 		"§d순간 이동§f 시마다 §5공허 차원문§f을 열어 남들이 내 §d순간 이동§f 위치를 넘어올 수 있습니다.",
 		"§7철괴 우클릭§f 시 가장 가까운 플레이어에게 §5순간 이동§f 후 잠시간 §3무적§f 상태가 됩니다."
@@ -140,6 +142,10 @@ public class Void extends AbilityBase implements ActiveHandler {
 		if (current - lastCreation >= 12000) {
 			this.lastCreation = current;
 			new Portal(e.getFrom(), e.getTo()).start();
+		}
+
+		if (NMS.getAbsorptionHearts(getPlayer()) <= 6) {
+			NMS.setAbsorptionHearts(getPlayer(), Math.min(NMS.getAbsorptionHearts(getPlayer()) + 4, 6));
 		}
 	}
 

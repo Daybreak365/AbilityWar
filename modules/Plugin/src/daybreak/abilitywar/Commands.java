@@ -1051,6 +1051,28 @@ public class Commands implements CommandExecutor, TabCompleter {
 						return true;
 					}
 				});
+				addSubCommand("setabsorption", new Command() {
+					@Override
+					protected boolean onCommand(CommandSender sender, String command, String[] args) {
+						if (args.length > 1) {
+							final Player target = Bukkit.getPlayerExact(args[0]);
+							if (target != null) {
+								try {
+									float absorption = Float.valueOf(args[1]);
+									if (absorption < 0) {
+										Messager.sendErrorMessage(sender, "흡수 체력은 0 이상의 수로 입력되어야 합니다.");
+										return true;
+									}
+									NMS.setAbsorptionHearts(target, absorption);
+									sender.sendMessage("§f" + target.getName() + "§a의 흡수 체력을 §e" + NMS.getAbsorptionHearts(target) + "§a" + KoreanUtil.getJosa(String.valueOf(NMS.getAbsorptionHearts(target)), Josa.으로로) + " 설정했습니다.");
+								} catch (NumberFormatException e) {
+									Messager.sendErrorMessage(sender, "흡수 체력은 0 이상의 수로 입력되어야 합니다.");
+								}
+							} else Messager.sendErrorMessage(sender, args[0] + KoreanUtil.getJosa(args[0], Josa.은는) + " 존재하지 않는 플레이어입니다.");
+						} else Messager.sendErrorMessage(sender, "사용법 §7: §f/" + command + " debug setabsorption <대상> <흡수 체력>");
+						return true;
+					}
+				});
 				addSubCommand("respawn", new Command() {
 					@Override
 					protected boolean onCommand(CommandSender sender, String command, String[] args) {
@@ -1087,7 +1109,8 @@ public class Commands implements CommandExecutor, TabCompleter {
 								Formatter.formatCommand(label + " debug", "dummy", "연습용 봇 명령어 도움말을 확인합니다.", true),
 								Formatter.formatCommand(label + " debug", "gravitate <대상>", "대상이 중력에 영향받도록 설정합니다.", true),
 								Formatter.formatCommand(label + " debug", "respawn <대상>", "사망한 대상을 리스폰시킵니다.", true),
-								Formatter.formatCommand(label + " debug", "sethealth <대상> <체력>", "대상의 체력을 설정합니다.", true)});
+								Formatter.formatCommand(label + " debug", "sethealth <대상> <체력>", "대상의 체력을 설정합니다.", true),
+								Formatter.formatCommand(label + " debug", "setabsorption <대상> <흡수 체력>", "대상의 흡수 체력을 설정합니다.", true)});
 						break;
 					default:
 						Messager.sendErrorMessage(sender, "존재하지 않는 페이지입니다.");
@@ -1384,7 +1407,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 							return commands;
 						}
 					} else if (args[0].equalsIgnoreCase("debug")) {
-						final List<String> commands = Messager.asList("dummy", "gravitate", "respawn", "sethealth");
+						final List<String> commands = Messager.asList("dummy", "gravitate", "respawn", "sethealth", "setabsorption");
 						if (args[1].isEmpty()) {
 							return commands;
 						} else {
