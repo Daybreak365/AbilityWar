@@ -2,3 +2,4 @@ https://pastebin.com/raw/shVMVVU2
 https://raw.githubusercontent.com/Daybreak365/SkAbi/master/addon.json
 https://raw.githubusercontent.com/Cokes86/CokesAddon/master/CokesAddon.json
 https://raw.githubusercontent.com/RainStar-RoS/RainStarAddon/master/RSdescript.json
+https://raw.githubusercontent.com/bkuenewbie/BkueAddon/refs/heads/master/BkueDesc.json
