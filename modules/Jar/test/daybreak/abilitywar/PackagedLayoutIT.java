@@ -17,6 +17,31 @@ import static org.junit.Assert.*;
 /** Verifies packaging ownership without changing the shaded addon-facing Plugin artifact. */
 public class PackagedLayoutIT {
     @Test
+    public void distributionContainsEveryRequiredAdapter() throws Exception {
+        try (ZipFile distribution = archive("packagedJar")) {
+            for (String version : System.getProperty("packagedAdapters").split(",")) {
+                for (String path : new String[] {
+                        "utils/base/minecraft/nms/" + version + "/NMSImpl.class",
+                        "utils/base/minecraft/nms/" + version + "/HologramImpl.class",
+                        "utils/base/minecraft/nms/" + version + "/DummyImpl.class",
+                        "utils/base/minecraft/damage/" + version + "/DamageImpl.class",
+                        "utils/base/minecraft/raytrace/" + version + "/RayTraceImpl.class",
+                        "ability/list/clown/" + version + "/Clown.class",
+                        "ability/list/hermit/" + version + "/Hermit.class",
+                        "ability/list/grapplinghook/" + version + "/HooksImpl.class"}) {
+                    assertNotNull("Missing adapter: " + path, distribution.getEntry("daybreak/abilitywar/" + path));
+                }
+            }
+            if (System.getProperty("packagedAdapters").contains("v1_12_R1")) {
+                for (String ability : new String[] {"scarecrow/v1_12_R1/ScareCrow", "soul/v1_12_R1/Soul"}) {
+                    assertNotNull("Missing legacy ability: " + ability,
+                            distribution.getEntry("daybreak/abilitywar/ability/list/" + ability + ".class"));
+                }
+            }
+        }
+    }
+
+    @Test
     public void distributionPreservesPluginAndAdapterClasses() throws Exception {
         try (ZipFile distribution = archive("packagedJar");
              ZipFile plugin = archive("pluginJar");
