@@ -19,6 +19,7 @@ import daybreak.abilitywar.utils.base.math.geometry.ImageVector.Point2D;
 import daybreak.abilitywar.utils.base.minecraft.entity.decorator.Deflectable;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
+import daybreak.abilitywar.utils.base.minecraft.raytrace.RayTrace;
 import daybreak.abilitywar.utils.library.ParticleLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -77,6 +78,8 @@ public class Magnet extends AbilityBase implements ActiveHandler {
 
 		private final Set<Entity> projectiles = new HashSet<>(), atMiddle = new HashSet<>();
 		private final ArmorStand armorStand;
+		private final Vector flightVelocity;
+		private boolean flying = true;
 
 		private Gadget() {
 			super(TaskType.NORMAL, durationInTicks);
@@ -86,7 +89,9 @@ public class Magnet extends AbilityBase implements ActiveHandler {
 			NMS.removeBoundingBox(armorStand);
 			armorStand.setVisible(false);
 			armorStand.getEquipment().setHelmet(HEAD);
-			armorStand.setVelocity(getPlayer().getLocation().getDirection().multiply(1.5));
+			// Marker armor stands do not run vanilla movement physics.
+			armorStand.setGravity(false);
+			this.flightVelocity = getPlayer().getLocation().getDirection().multiply(1.5);
 		}
 
 		@Override
@@ -118,12 +123,13 @@ public class Magnet extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void run(int count) {
-			if (count == 10) {
-				armorStand.setGravity(false);
-			}
+			if (!armorStand.isValid()) { stop(true); return; }
+			if (flying && count <= 10) moveGadget();
 			final Location center = getCenter();
 			projectiles.addAll(LocationUtil.getNearbyEntities(Projectile.class, center, 8, 8, null));
 			for (Entity projectile : projectiles) {
+				if (!projectile.isValid()) continue;
+				projectile.setGravity(false);
 				final boolean isAtMiddle = isAtMiddle(projectile), onGround = projectile.isOnGround();
 				if (atMiddle.contains(projectile)) {
 					if (!isAtMiddle) atMiddle.remove(projectile);
@@ -149,6 +155,22 @@ public class Magnet extends AbilityBase implements ActiveHandler {
 			}
 		}
 
+		private void moveGadget() {
+			final int steps = Math.max(1, (int) Math.ceil(flightVelocity.length() / .25));
+			final Vector step = flightVelocity.clone().multiply(1.0 / steps);
+			Location location = armorStand.getLocation();
+			for (int i = 0; i < steps; i++) {
+				final Location from = location.clone().add(0, 1.75, 0), to = from.clone().add(step);
+				if (RayTrace.hitsBlock(from.getWorld(), from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ())) {
+					flying = false;
+					break;
+				}
+				location.add(step);
+			}
+			armorStand.teleport(location);
+			flightVelocity.multiply(.98).setY(flightVelocity.getY() - .08);
+		}
+
 		private boolean isAtMiddle(Entity projectile) {
 			final Location center = getCenter();
 			return center.getWorld() == projectile.getWorld() && center.distanceSquared(projectile.getLocation()) <= 1;
@@ -170,6 +192,9 @@ public class Magnet extends AbilityBase implements ActiveHandler {
 
 		@Override
 		protected void onSilentEnd() {
+			for (Entity projectile : projectiles) {
+				if (projectile.isValid()) projectile.setGravity(true);
+			}
 			armorStand.remove();
 			HandlerList.unregisterAll(this);
 		}

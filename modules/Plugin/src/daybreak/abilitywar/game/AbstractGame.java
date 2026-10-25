@@ -31,7 +31,7 @@ import daybreak.abilitywar.game.module.EventManager;
 import daybreak.abilitywar.game.module.Module;
 import daybreak.abilitywar.game.module.ModuleBase;
 import daybreak.abilitywar.utils.base.Hashes;
-import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
+import daybreak.abilitywar.utils.base.collect.ManagedIterationHashSet;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.io.FileUtil;
@@ -70,6 +70,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -571,6 +572,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 			private final Set<ActionbarChannel> channels = Collections.synchronizedSet(new HashSet<>());
 			private String lastString = "";
+			private boolean contentsChanged;
 
 			private ActionbarNotification() {
 				super(TaskType.INFINITE, -1);
@@ -578,17 +580,22 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 			}
 
 			private void update() {
-				final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + " | ");
-				for (ActionbarChannel channel : channels) {
-					if (channel.string != null) {
-						joiner.add(channel.string);
+				String string = lastString;
+				if (contentsChanged) {
+					final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + " | ");
+					for (ActionbarChannel channel : channels) {
+						if (channel.string != null) {
+							joiner.add(channel.string);
+						}
 					}
+					string = joiner.toString();
 				}
-				final String string = joiner.toString();
+				// Repeated updates still refresh the client's display duration.
 				if (!string.isEmpty() || !lastString.isEmpty()) {
 					NMS.sendActionbar(getPlayer(), string, 0, 20, 20);
 					this.lastString = string;
 				}
+				contentsChanged = false;
 			}
 
 			@Override
@@ -598,6 +605,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 					if (channel.seconds > 0) {
 						if (--channel.seconds == 0) {
 							channel.string = null;
+							contentsChanged = true;
 							updated = true;
 						}
 					}
@@ -622,9 +630,11 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 				public ActionbarChannel() {
 					channels.add(this);
+					contentsChanged = true;
 				}
 
 				public ActionbarChannel update(String string) {
+					if (!Objects.equals(this.string, string)) contentsChanged = true;
 					this.string = string;
 					this.seconds = 0;
 					ActionbarNotification.this.update();
@@ -632,6 +642,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 				}
 
 				public ActionbarChannel update(String string, int seconds) {
+					if (!Objects.equals(this.string, string)) contentsChanged = true;
 					this.string = string;
 					this.seconds = seconds;
 					ActionbarNotification.this.update();
@@ -640,6 +651,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 				public void unregister() {
 					channels.remove(this);
+					contentsChanged = true;
 					ActionbarNotification.this.update();
 				}
 
@@ -653,7 +665,7 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 
 	}
 
-	private final Set<GameTimer> runningTimers = new QueueOnIterateHashSet<>();
+	private final Set<GameTimer> runningTimers = new ManagedIterationHashSet<>();
 
 	/**
 	 * 현재 실행중인 모든 {@link GameTimer}를 반환합니다.
@@ -668,20 +680,18 @@ public abstract class AbstractGame extends SimpleTimer implements IGame, Listene
 	 * @param type 종료할 타이머 타입
 	 */
 	public final void stopTimers(final @NotNull Class<? extends GameTimer> type) {
-		for (GameTimer gameTimer : runningTimers) {
+		runningTimers.forEach(gameTimer -> {
 			if (type.isAssignableFrom(gameTimer.getClass())) {
 				gameTimer.stop(false);
 			}
-		}
+		});
 	}
 
 	/**
 	 * 현재 실행중인 {@link GameTimer}를 모두 종료합니다.
 	 */
 	public final void stopTimers() {
-		for (GameTimer gameTimer : runningTimers) {
-			gameTimer.stop(true);
-		}
+		runningTimers.forEach(gameTimer -> gameTimer.stop(true));
 	}
 
 	public abstract class GameTimer extends daybreak.abilitywar.utils.base.concurrent.SimpleTimer {

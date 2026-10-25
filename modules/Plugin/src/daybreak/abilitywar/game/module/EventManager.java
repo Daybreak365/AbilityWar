@@ -148,7 +148,14 @@ public final class EventManager implements ListenerModule {
 		}
 
 		private void unregister0(final EventObserver observer) {
-			final Multimap<Integer, EventObserver> priorityMap = super.get(observer.eventClass);
+			unregister1(observer.eventClass, observer);
+			for (Class<? extends Event> child : observer.childs) {
+				unregister1(child, observer);
+			}
+		}
+
+		private void unregister1(final Class<? extends Event> eventClass, final EventObserver observer) {
+			final Multimap<Integer, EventObserver> priorityMap = super.get(eventClass);
 			if (priorityMap != null) {
 				priorityMap.remove(observer.priority, observer);
 			}
@@ -159,10 +166,13 @@ public final class EventManager implements ListenerModule {
 			final Class<? extends Event> eventClass = event.getClass();
 			if (containsKey(eventClass)) {
 				iterationStarted();
-				for (EventObserver value : getNotNull(eventClass).values()) {
-					value.onEvent(event);
+				try {
+					for (EventObserver value : getNotNull(eventClass).values()) {
+						value.onEvent(event);
+					}
+				} finally {
+					iterationEnded();
 				}
-				iterationEnded();
 			}
 		}
 

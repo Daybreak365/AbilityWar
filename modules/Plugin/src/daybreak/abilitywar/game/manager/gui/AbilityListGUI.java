@@ -28,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -35,7 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
 
 public class AbilityListGUI implements Listener, PagedGUI {
 
@@ -263,7 +263,7 @@ public class AbilityListGUI implements Listener, PagedGUI {
 	private int currentPage = 1;
 	private Inventory gui;
 	private SortType sortType = SortType.NAME;
-	private CompletableFuture<Void> asyncWork;
+	private final InventoryRenderTask renderTask;
 
 	@Override
 	public int getCurrentPage() {
@@ -273,6 +273,7 @@ public class AbilityListGUI implements Listener, PagedGUI {
 	public AbilityListGUI(Player player, Plugin plugin) {
 		this.plugin = plugin;
 		this.player = player;
+		this.renderTask = new InventoryRenderTask(plugin);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 		if (byName.size() != AbilityFactory.getRegistrations().size()) {
 			byName = new TreeSet<>(nameComparator);
@@ -288,41 +289,31 @@ public class AbilityListGUI implements Listener, PagedGUI {
 
 	@Override
 	public void openGUI(int page) {
-		if (asyncWork != null) {
-			asyncWork.cancel(true);
-			this.asyncWork = null;
-		}
+		renderTask.cancel();
 		int maxPage = ((byName.size() - 1) / 36) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
 		gui = Bukkit.createInventory(null, 54, "§0능력 목록");
 		this.currentPage = page;
+		final List<AbilityRegistration> pageValues = new ArrayList<>(36);
 		int count = 0;
 
-		for (AbilityRegistration registration : sortType.getIterable()) {
+		final SortType pageSortType = sortType;
+		for (AbilityRegistration registration : pageSortType.getIterable()) {
 			if (count / 36 == page - 1) {
-				gui.setItem(count % 36, sortType.getItem(registration, false));
+				pageValues.add(registration);
+				gui.setItem(count % 36, pageSortType.getItem(registration, false));
 			}
 			count++;
 		}
 
-		{
-			final int finalPage = page;
-			this.asyncWork = CompletableFuture.runAsync(new Runnable() {
-				@Override
-				public void run() {
-					int count = 0;
-
-					for (AbilityRegistration registration : sortType.getIterable()) {
-						if (currentPage != finalPage) break;
-						if (count / 36 == finalPage - 1) {
-							gui.setItem(count % 36, sortType.getItem(registration, true));
-						}
-						count++;
-					}
-				}
-			});
-		}
+		renderTask.render(gui, render -> {
+			int slot = 0;
+			for (AbilityRegistration registration : pageValues) {
+				if (!render.isCurrent()) break;
+				render.setItem(slot++, pageSortType.getItem(registration, true));
+			}
+		});
 
 		{
 			final ItemStack stack = new ItemStack(sortType.icon);
@@ -353,6 +344,7 @@ public class AbilityListGUI implements Listener, PagedGUI {
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if (e.getInventory().equals(this.gui)) {
+			renderTask.cancel();
 			HandlerList.unregisterAll(this);
 		}
 	}
@@ -360,6 +352,7 @@ public class AbilityListGUI implements Listener, PagedGUI {
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
 		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			renderTask.cancel();
 			HandlerList.unregisterAll(this);
 		}
 	}

@@ -10,6 +10,7 @@ import daybreak.abilitywar.game.AbstractGame.Observer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
 import daybreak.abilitywar.game.manager.AbilityList;
+import daybreak.abilitywar.game.manager.gui.InventoryRenderTask;
 import daybreak.abilitywar.utils.base.Messager;
 import daybreak.abilitywar.utils.base.minecraft.item.builder.ItemBuilder;
 import daybreak.abilitywar.utils.library.MaterialX;
@@ -30,13 +31,13 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.TreeMap;
-import java.util.concurrent.CompletableFuture;
 
 public class MixAbilityGUI implements Listener, Observer {
 
@@ -58,10 +59,11 @@ public class MixAbilityGUI implements Listener, Observer {
 	private int currentPage = 1;
 	private Inventory abilityGUI;
 	private AbilityRegistration firstAbility = null;
-	private CompletableFuture<Void> asyncWork;
+	private final InventoryRenderTask renderTask;
 
 	public MixAbilityGUI(@NotNull final Player player, @Nullable final Participant target, @NotNull final AbstractGame game, @NotNull final Plugin plugin) {
 		this.player = player;
+		this.renderTask = new InventoryRenderTask(plugin);
 		this.target = target;
 		game.attachObserver(this);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -77,10 +79,7 @@ public class MixAbilityGUI implements Listener, Observer {
 	}
 
 	public void openGUI(int page) {
-		if (asyncWork != null) {
-			asyncWork.cancel(true);
-			this.asyncWork = null;
-		}
+		renderTask.cancel();
 		int maxPage = ((values.size() - 1) / 36) + 1;
 		if (maxPage < page)
 			page = 1;
@@ -88,10 +87,12 @@ public class MixAbilityGUI implements Listener, Observer {
 			page = 1;
 		abilityGUI = Bukkit.createInventory(null, 54, "§c능력 부여");
 		currentPage = page;
+		final List<AbilityRegistration> pageValues = new ArrayList<>(36);
 		int count = 0;
 
 		for (Entry<String, AbilityRegistration> entry : values.entrySet()) {
 			if (count / 36 == page - 1) {
+				pageValues.add(entry.getValue());
 				AbilityRegistration registration = entry.getValue();
 				AbilityManifest manifest = registration.getManifest();
 				ItemStack stack = MaterialX.LIGHT_BLUE_STAINED_GLASS.createItem();
@@ -118,45 +119,33 @@ public class MixAbilityGUI implements Listener, Observer {
 			count++;
 		}
 
-		{
-			final int finalPage = page;
-			this.asyncWork = CompletableFuture.runAsync(new Runnable() {
-				@Override
-				public void run() {
-					int count = 0;
-
-					for (Entry<String, AbilityRegistration> entry : values.entrySet()) {
-						if (currentPage != finalPage) break;
-						if (count / 36 == finalPage - 1) {
-							AbilityRegistration registration = entry.getValue();
-							AbilityManifest manifest = registration.getManifest();
-							ItemStack stack = new ItemStack(Material.DIAMOND_BLOCK);
-							ItemMeta meta = stack.getItemMeta();
-							meta.setDisplayName("§b" + manifest.name());
-							StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
-							if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-							if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
-							if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
-							final List<String> lore = Messager.asList(
-									"§f등급: " + manifest.rank().getRankName(),
-									"§f종류: " + manifest.species().getSpeciesName(),
-									joiner.toString(),
-									"");
-							for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
-								lore.add(ChatColor.WHITE.toString().concat(iterator.next()));
-							}
-							lore.add("");
-							lore.add("§2» §f이 능력을 부여하려면 클릭하세요.");
-							meta.setLore(lore);
-							stack.setItemMeta(meta);
-							if (currentPage != finalPage) break;
-							abilityGUI.setItem(count % 36, stack);
-						}
-						count++;
-					}
+		renderTask.render(abilityGUI, render -> {
+			int slot = 0;
+			for (AbilityRegistration registration : pageValues) {
+				if (!render.isCurrent()) break;
+				AbilityManifest manifest = registration.getManifest();
+				ItemStack stack = new ItemStack(Material.DIAMOND_BLOCK);
+				ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§b" + manifest.name());
+				StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
+				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
+				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
+				final List<String> lore = Messager.asList(
+						"§f등급: " + manifest.rank().getRankName(),
+						"§f종류: " + manifest.species().getSpeciesName(),
+						joiner.toString(),
+						"");
+				for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
+					lore.add(ChatColor.WHITE.toString().concat(iterator.next()));
 				}
-			});
-		}
+				lore.add("");
+				lore.add("§2» §f이 능력을 부여하려면 클릭하세요.");
+				meta.setLore(lore);
+				stack.setItemMeta(meta);
+				render.setItem(slot++, stack);
+			}
+		});
 
 		abilityGUI.setItem(45, REMOVE_ABILITY);
 
@@ -180,6 +169,7 @@ public class MixAbilityGUI implements Listener, Observer {
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if (e.getInventory().equals(this.abilityGUI)) {
+			renderTask.cancel();
 			HandlerList.unregisterAll(this);
 		}
 	}
@@ -187,6 +177,7 @@ public class MixAbilityGUI implements Listener, Observer {
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
 		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			renderTask.cancel();
 			HandlerList.unregisterAll(this);
 		}
 	}

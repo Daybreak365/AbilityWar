@@ -1,6 +1,5 @@
 package daybreak.abilitywar.utils.library;
 
-import com.google.common.base.Enums;
 import daybreak.abilitywar.config.Configuration;
 import daybreak.abilitywar.utils.base.color.RGB;
 import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
@@ -99,7 +98,14 @@ public class ParticleLib {
 		protected final Particle particle;
 
 		private SimpleParticle(String name) {
-			this.particle = Enums.getIfPresent(Particle.class, name).orNull();
+			Particle resolved;
+            try {
+                // Let the server's legacy API conversion resolve renamed particles.
+                resolved = Particle.valueOf(name);
+            } catch (IllegalArgumentException e) {
+                resolved = null;
+            }
+            this.particle = resolved;
 		}
 
 		public <T> void spawnParticle(Player player, Location location, double offsetX, double offsetY, double offsetZ, int count, double extra, T customData) {

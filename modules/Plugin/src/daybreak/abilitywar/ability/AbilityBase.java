@@ -27,7 +27,7 @@ import daybreak.abilitywar.utils.base.BracketReplacer;
 import daybreak.abilitywar.utils.base.Seasons;
 import daybreak.abilitywar.utils.base.TimeUtil;
 import daybreak.abilitywar.utils.base.collect.Pair;
-import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
+import daybreak.abilitywar.utils.base.collect.ManagedIterationHashSet;
 import daybreak.abilitywar.utils.base.color.RainbowText;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer;
 import daybreak.abilitywar.utils.base.concurrent.SimpleTimer.Observer;
@@ -183,7 +183,7 @@ public abstract class AbilityBase {
 	private final AbilityManifest manifest;
 	private String[] explanation = null, summarize = null;
 	private final Multimap<Class<? extends Event>, EventObserver> eventhandlers = HashMultimap.create();
-	private final Set<AbilityTimer> timers = new QueueOnIterateHashSet<>(), runningTimers = new QueueOnIterateHashSet<>();
+	private final Set<AbilityTimer> timers = new ManagedIterationHashSet<>(), runningTimers = new ManagedIterationHashSet<>();
 	private final Queue<AbilityTimer> pausedTimers = new LinkedList<>();
 	private final List<ActionbarChannel> actionbarChannels = new LinkedList<>();
 	private final Restriction restriction;
@@ -306,9 +306,7 @@ public abstract class AbilityBase {
 		for (EventObserver eventObserver : eventhandlers.values()) {
 			game.getEventManager().unregister(eventObserver);
 		}
-		for (AbilityTimer abilityTimer : runningTimers) {
-			abilityTimer.stop(true);
-		}
+		runningTimers.forEach(abilityTimer -> abilityTimer.stop(true));
 		for (GameTimer timer : pausedTimers) {
 			timer.stop(true);
 		}
@@ -997,7 +995,7 @@ public abstract class AbilityBase {
 			if (this.isRestricted == state) return this.isRestricted;
 			this.isRestricted = state;
 			if (state) {
-				for (AbilityTimer timer : timers) {
+				timers.forEach(timer -> {
 					if (timer.getBehavior() == RestrictionBehavior.STOP) {
 						timer.stop(true);
 					} else {
@@ -1005,8 +1003,8 @@ public abstract class AbilityBase {
 							pausedTimers.add(timer);
 						}
 					}
-				}
-				for (AbilityTimer runningTimer : runningTimers) {
+				});
+				runningTimers.forEach(runningTimer -> {
 					if (runningTimer.getBehavior() == RestrictionBehavior.STOP) {
 						runningTimer.stop(true);
 					} else {
@@ -1014,7 +1012,7 @@ public abstract class AbilityBase {
 							pausedTimers.add(runningTimer);
 						}
 					}
-				}
+				});
 				for (ActionbarChannel channel : actionbarChannels) {
 					channel.update(null);
 				}

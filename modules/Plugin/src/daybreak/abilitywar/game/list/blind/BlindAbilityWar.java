@@ -720,11 +720,11 @@ public class BlindAbilityWar extends Game implements DefaultKitHandler, Winnable
 			@Override
 			protected void apply(Participant target, Participant castingTarget) {
 				if (target.hasAbility()) {
-					for (GameTimer timer : target.getAbility().getTimers()) {
+					target.getAbility().getTimers().forEach(timer -> {
 						if (timer instanceof Cooldown.CooldownTimer) {
 							timer.stop(false);
 						}
-					}
+					});
 				}
 			}
 

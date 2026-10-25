@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.base.concurrent;
 
 import daybreak.abilitywar.AbilityWar;
-import daybreak.abilitywar.utils.base.collect.QueueOnIterateHashSet;
+import daybreak.abilitywar.utils.base.collect.ManagedIterationHashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleTimer {
 
 	private final TaskType taskType;
-	private QueueOnIterateHashSet<Observer> observers = null;
+	private ManagedIterationHashSet<Observer> observers = null;
 
 	private Task task = null;
 	private BukkitTask bukkitTask = null;
@@ -24,7 +24,7 @@ public class SimpleTimer {
 
 	public void attachObserver(final Observer observer) {
 		if (observers == null) {
-			this.observers = new QueueOnIterateHashSet<>();
+			this.observers = new ManagedIterationHashSet<>();
 		}
 		observers.add(observer);
 	}
@@ -94,9 +94,7 @@ public class SimpleTimer {
 			this.task = taskType.newRunnable(this, maximumCount);
 			this.bukkitTask = Bukkit.getScheduler().runTaskTimer(AbilityWar.getPlugin(), task, initialDelay, period);
 			if (observers != null) {
-				for (final Observer observer : observers) {
-					observer.onStart();
-				}
+				observers.forEach(Observer::onStart);
 			}
 			onStart();
 			return true;
@@ -113,16 +111,12 @@ public class SimpleTimer {
 			}
 			if (silent) {
 				if (observers != null) {
-					for (final Observer observer : observers) {
-						observer.onSilentEnd();
-					}
+					observers.forEach(Observer::onSilentEnd);
 				}
 				onSilentEnd();
 			} else {
 				if (observers != null) {
-					for (final Observer observer : observers) {
-						observer.onEnd();
-					}
+					observers.forEach(Observer::onEnd);
 				}
 				onEnd();
 			}
@@ -136,9 +130,7 @@ public class SimpleTimer {
 			bukkitTask.cancel();
 			this.bukkitTask = null;
 			if (observers != null) {
-				for (final Observer observer : observers) {
-					observer.onPause();
-				}
+				observers.forEach(Observer::onPause);
 			}
 			onPause();
 			return true;
@@ -150,9 +142,7 @@ public class SimpleTimer {
 		if (isPaused()) {
 			this.bukkitTask = Bukkit.getScheduler().runTaskTimer(AbilityWar.getPlugin(), task, 0, period);
 			if (observers != null) {
-				for (final Observer observer : observers) {
-					observer.onResume();
-				}
+				observers.forEach(Observer::onResume);
 			}
 			onResume();
 			return true;
@@ -170,9 +160,7 @@ public class SimpleTimer {
 
 	private void run0(final int count) {
 		if (observers != null) {
-			for (final Observer observer : observers) {
-				observer.run(count);
-			}
+			observers.forEach(observer -> observer.run(count));
 		}
 		run(count);
 	}

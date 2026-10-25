@@ -694,11 +694,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 									if (game.isParticipating(target)) {
 										final AbilityBase ability = game.getParticipant(target).getAbility();
 										if (ability != null) {
-											for (GameTimer timer : ability.getTimers()) {
+											ability.getTimers().forEach(timer -> {
 												if (timer instanceof Cooldown.CooldownTimer) {
 													timer.stop(false);
 												}
-											}
+											});
 											Bukkit.getPluginManager().callEvent(new AbilityCooldownResetEvent(ability));
 										}
 										Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 §f" + target.getName() + "§a님의 능력 쿨타임을 초기화하였습니다.");
@@ -723,11 +723,11 @@ public class Commands implements CommandExecutor, TabCompleter {
 									if (game.isParticipating(target)) {
 										final AbilityBase ability = game.getParticipant(target).getAbility();
 										if (ability != null) {
-											for (GameTimer timer : ability.getTimers()) {
+											ability.getTimers().forEach(timer -> {
 												if (timer instanceof Duration.DurationTimer) {
 													timer.stop(true);
 												}
-											}
+											});
 										}
 										Bukkit.broadcastMessage("§f" + sender.getName() + "§a님이 §f" + target.getName() + "§a님의 능력 지속시간을 초기화하였습니다.");
 									} else Messager.sendErrorMessage(sender, target.getName() + "님은 탈락했거나 게임에 참여하지 않았습니다.");

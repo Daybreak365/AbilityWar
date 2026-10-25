@@ -26,13 +26,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
-import java.util.concurrent.CompletableFuture;
 
 public class SynergyListGUI implements Listener, PagedGUI {
 
@@ -62,7 +62,7 @@ public class SynergyListGUI implements Listener, PagedGUI {
 	private final Player player;
 	private int currentPage = 1;
 	private Inventory gui;
-	private CompletableFuture<Void> asyncWork;
+	private final InventoryRenderTask renderTask;
 
 	@Override
 	public int getCurrentPage() {
@@ -72,25 +72,25 @@ public class SynergyListGUI implements Listener, PagedGUI {
 	public SynergyListGUI(Player player, Plugin plugin) {
 		this.plugin = plugin;
 		this.player = player;
+		this.renderTask = new InventoryRenderTask(plugin);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 		checkCache();
 	}
 
 	@Override
 	public void openGUI(int page) {
-		if (asyncWork != null) {
-			asyncWork.cancel(true);
-			this.asyncWork = null;
-		}
+		renderTask.cancel();
 		int maxPage = ((synergies.size() - 1) / 36) + 1;
 		if (maxPage < page) page = 1;
 		if (page < 1) page = 1;
 		gui = Bukkit.createInventory(null, 54, "§0시너지 목록");
 		this.currentPage = page;
+		final List<Cell<AbilityRegistration, AbilityRegistration, AbilityRegistration>> pageValues = new ArrayList<>(36);
 		int count = 0;
 
 		for (Cell<AbilityRegistration, AbilityRegistration, AbilityRegistration> cell : synergies) {
 			if (count / 36 == page - 1) {
+				pageValues.add(cell);
 				final AbilityRegistration registration = cell.getValue();
 				final AbilityManifest manifest = registration.getManifest();
 				final ItemStack stack = MaterialX.WHITE_STAINED_GLASS.createItem();
@@ -116,43 +116,33 @@ public class SynergyListGUI implements Listener, PagedGUI {
 			count++;
 		}
 
-		{
-			final int finalPage = page;
-			this.asyncWork = CompletableFuture.runAsync(new Runnable() {
-				@Override
-				public void run() {
-					int count = 0;
-
-					for (Cell<AbilityRegistration, AbilityRegistration, AbilityRegistration> cell : synergies) {
-						if (count / 36 == finalPage - 1) {
-							final AbilityRegistration registration = cell.getValue();
-							final AbilityManifest manifest = registration.getManifest();
-							final ItemStack stack = new ItemStack(Material.IRON_BLOCK);
-							final ItemMeta meta = stack.getItemMeta();
-							meta.setDisplayName("§b" + manifest.name());
-							final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
-							if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
-							if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
-							if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
-							final List<String> lore = Messager.asList(
-									"§7" + cell.getRowKey().getManifest().name() + " §f+ §7" + cell.getColumnKey().getManifest().name(),
-									"§f등급: " + manifest.rank().getRankName(),
-									"§f종류: " + manifest.species().getSpeciesName(),
-									joiner.toString(),
-									"", "§7※ 팁을 보려면 클릭하세요.", "");
-							for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
-								lore.add(ChatColor.WHITE.toString().concat(iterator.next()));
-							}
-							meta.setLore(lore);
-							stack.setItemMeta(meta);
-							if (currentPage != finalPage) break;
-							gui.setItem(count % 36, stack);
-						}
-						count++;
-					}
+		renderTask.render(gui, render -> {
+			int slot = 0;
+			for (Cell<AbilityRegistration, AbilityRegistration, AbilityRegistration> cell : pageValues) {
+				if (!render.isCurrent()) break;
+				final AbilityRegistration registration = cell.getValue();
+				final AbilityManifest manifest = registration.getManifest();
+				final ItemStack stack = new ItemStack(Material.IRON_BLOCK);
+				final ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName("§b" + manifest.name());
+				final StringJoiner joiner = new StringJoiner(ChatColor.WHITE + ", ");
+				if (registration.hasFlag(Flag.ACTIVE_SKILL)) joiner.add(ChatColor.GREEN + "액티브");
+				if (registration.hasFlag(Flag.TARGET_SKILL)) joiner.add(ChatColor.GOLD + "타게팅");
+				if (registration.hasFlag(Flag.BETA)) joiner.add(ChatColor.DARK_AQUA + "베타");
+				final List<String> lore = Messager.asList(
+						"§7" + cell.getRowKey().getManifest().name() + " §f+ §7" + cell.getColumnKey().getManifest().name(),
+						"§f등급: " + manifest.rank().getRankName(),
+						"§f종류: " + manifest.species().getSpeciesName(),
+						joiner.toString(),
+						"", "§7※ 팁을 보려면 클릭하세요.", "");
+				for (final Iterator<String> iterator = AbilityBase.getExplanation(registration); iterator.hasNext();) {
+					lore.add(ChatColor.WHITE.toString().concat(iterator.next()));
 				}
-			});
-		}
+				meta.setLore(lore);
+				stack.setItemMeta(meta);
+				render.setItem(slot++, stack);
+			}
+		});
 
 		if (page > 1) {
 			gui.setItem(48, PREVIOUS_PAGE);
@@ -174,6 +164,7 @@ public class SynergyListGUI implements Listener, PagedGUI {
 	@EventHandler
 	private void onInventoryClose(InventoryCloseEvent e) {
 		if (e.getInventory().equals(this.gui)) {
+			renderTask.cancel();
 			HandlerList.unregisterAll(this);
 		}
 	}
@@ -181,6 +172,7 @@ public class SynergyListGUI implements Listener, PagedGUI {
 	@EventHandler
 	private void onQuit(PlayerQuitEvent e) {
 		if (e.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+			renderTask.cancel();
 			HandlerList.unregisterAll(this);
 		}
 	}

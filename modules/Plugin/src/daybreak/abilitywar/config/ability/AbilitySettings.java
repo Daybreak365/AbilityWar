@@ -109,7 +109,6 @@ public class AbilitySettings {
 		}
 
 		cache.clear();
-		lastModified = configFile.lastModified();
 		for (SettingObject<?> setting : settings.values()) {
 			final Object value = config.get(setting.getPath());
 			if (value != null) {
@@ -120,6 +119,7 @@ public class AbilitySettings {
 			}
 		}
 		config.save(configFile);
+		lastModified = configFile.lastModified();
 	}
 
 	public class SettingObject<T> implements Configurable<T> {

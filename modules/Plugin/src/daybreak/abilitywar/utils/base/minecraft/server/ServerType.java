@@ -1,7 +1,7 @@
 package daybreak.abilitywar.utils.base.minecraft.server;
 
-import com.google.common.base.Enums;
 import org.bukkit.Bukkit;
+import java.util.Locale;
 
 public enum ServerType {
 
@@ -14,9 +14,25 @@ public enum ServerType {
 		public static final ServerType INSTANCE;
 
 		static {
-			final String[] split = Bukkit.getVersion().split("-");
-			final String name = split[1].toUpperCase();
-			INSTANCE = Enums.getIfPresent(ServerType.class, name).or(name.equals("BUKKIT") ? CRAFTBUKKIT : UNKNOWN);
+			INSTANCE = resolve(Bukkit.getName(), Bukkit.getVersion());
+		}
+	}
+
+	public static ServerType resolve(String serverName, String serverVersion) {
+		final ServerType named = parse(serverName);
+		if (named != UNKNOWN) return named;
+		// Older servers identify their implementation in git-Paper-<build> etc.
+		final String[] split = serverVersion.split("-");
+		return split.length > 1 ? parse(split[1]) : UNKNOWN;
+	}
+
+	private static ServerType parse(String name) {
+		final String normalized = name.toUpperCase(Locale.ROOT);
+		if (normalized.equals("BUKKIT")) return CRAFTBUKKIT;
+		try {
+			return valueOf(normalized);
+		} catch (IllegalArgumentException e) {
+			return UNKNOWN;
 		}
 	}
 

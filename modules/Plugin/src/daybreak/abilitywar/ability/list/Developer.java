@@ -227,11 +227,11 @@ public class Developer extends AbilityBase implements ActiveHandler, TargetHandl
                 if (accelerate) setCount(getCount() + 4);
             }
             if (count % 5 == 0 && hasAbility()) {
-                for (GameTimer timer : ability.getRunningTimers()) {
+                ability.getRunningTimers().forEach(timer -> {
                     if (timer instanceof CooldownTimer) {
                         timer.setCount(timer.getCount() - 1);
                     }
-                }
+                });
             }
             bossBar.setProgress((double) (getMaximumCount() - count) / getMaximumCount());
         }
