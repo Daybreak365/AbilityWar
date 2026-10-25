@@ -1,0 +1,5 @@
+name: CompatibilitySmoke
+main: Smoke
+version: 1
+api-version: '26.3'
+depend: [AbilityWar]

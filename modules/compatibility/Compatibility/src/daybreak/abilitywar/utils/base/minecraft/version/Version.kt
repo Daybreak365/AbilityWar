@@ -1,6 +1,5 @@
 package daybreak.abilitywar.utils.base.minecraft.version
 
-import com.google.common.base.Enums
 import daybreak.abilitywar.utils.base.minecraft.version.NMSVersion.UNSUPPORTED
 import org.bukkit.Bukkit
 import org.bukkit.plugin.Plugin
@@ -33,16 +32,29 @@ enum class NMSVersion(override val version: Int, override val release: Int) : IV
 	v1_17_R1(17, 1),
 	v1_19_R1(19, 1),
 	v1_19_R2(19, 2),
-	v1_20_R3(20, 3);
+	v1_20_R3(20, 3),
+	v26_3(26, 3);
+
+	companion object {
+		// Paper's apiVersioning.json uses 26.3.build.<number>-<channel> or 26.3.local-SNAPSHOT.
+		private val RELEASE_26_3 = Regex("""26\.3(?:-R\d+\.\d+-SNAPSHOT|\.build\.\d+-[a-z]+|\.local-SNAPSHOT)?""")
+
+		/** Only select adapters for versions we actually implement. */
+		@JvmStatic
+		fun resolve(serverClassName: String, bukkitVersion: String): NMSVersion {
+			val packageVersion = serverClassName.split('.').getOrNull(3)
+			val legacy = values().firstOrNull { it.name == packageVersion && it != v26_3 }
+			if (legacy != null) return legacy
+			return if (RELEASE_26_3.matches(bukkitVersion)) v26_3 else UNSUPPORTED
+		}
+	}
 }
 
 class ServerVersion private constructor() {
 	companion object INSTANCE : IVersion {
 		private val logger = Logger.getLogger(ServerVersion::class.java.name)
 
-		private val INSTANCE: NMSVersion = with(Bukkit.getServer().javaClass.name.replace('.', ',').split(",".toRegex())) {
-			if (this.size >= 4) Enums.getIfPresent(NMSVersion::class.java, this[3]).or(UNSUPPORTED) else UNSUPPORTED
-		}
+		private val INSTANCE = NMSVersion.resolve(Bukkit.getServer().javaClass.name, Bukkit.getBukkitVersion())
 
 		@JvmStatic
 		override val version: Int
@@ -73,7 +85,7 @@ class ServerVersion private constructor() {
 					try {
 						PluginDescriptionFile::class.java.getDeclaredField("apiVersion").apply {
 							isAccessible = true
-							this[plugin.description] = "1.$version"
+							this[plugin.description] = if (INSTANCE == NMSVersion.v26_3) "26.3" else "1.$version"
 							isAccessible = false
 						}
 					} catch (ignored: ReflectiveOperationException) {
@@ -81,7 +93,7 @@ class ServerVersion private constructor() {
 				}
 				true
 			} else {
-				logger.log(Level.SEVERE, "플러그인이 지원하지 않는 버전을 이용하고 있습니다.")
+				logger.log(Level.SEVERE, "플러그인이 지원하지 않는 버전을 이용하고 있습니다. Bukkit=${Bukkit.getBukkitVersion()}, Server=${Bukkit.getVersion()}, Class=${Bukkit.getServer().javaClass.name}")
 				Bukkit.getPluginManager().disablePlugin(plugin)
 				false
 			}

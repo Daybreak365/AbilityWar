@@ -727,11 +727,11 @@ public class MixBlindGame extends AbstractMix implements Winnable, Observer {
 			@Override
 			protected void apply(MixParticipant target, MixParticipant castingTarget) {
 				if (target.hasAbility()) {
-					for (GameTimer timer : target.getAbility().getTimers()) {
+					target.getAbility().getTimers().forEach(timer -> {
 						if (timer instanceof Cooldown.CooldownTimer) {
 							timer.stop(false);
 						}
-					}
+					});
 				}
 			}
 

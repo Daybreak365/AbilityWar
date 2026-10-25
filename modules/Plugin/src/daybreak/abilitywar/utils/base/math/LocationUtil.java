@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -389,19 +390,15 @@ public class LocationUtil {
 	 * @return 엔티티 목록
 	 */
 	public static Entity[] collectEntities(Location center, int horizontal) {
-		Entity[] entities = new Entity[0];
+		final List<Entity> entities = new ArrayList<>();
 		final World world = center.getWorld();
 		final int maxX = (center.getBlockX() + horizontal) >> 4, maxZ = (center.getBlockZ() + horizontal) >> 4;
 		for (int x = (center.getBlockX() - horizontal) >> 4; x <= maxX; x++) {
 			for (int z = (center.getBlockZ() - horizontal) >> 4; z <= maxZ; z++) {
-				final Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
-				final Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
-				System.arraycopy(entities, 0, newEntities, 0, entities.length);
-				System.arraycopy(chunkEntities, 0, newEntities, entities.length, chunkEntities.length);
-				entities = newEntities;
+				Collections.addAll(entities, world.getChunkAt(x, z).getEntities());
 			}
 		}
-		return entities;
+		return entities.toArray(new Entity[entities.size()]);
 	}
 
 	/**
@@ -436,18 +433,14 @@ public class LocationUtil {
 	 * @return 엔티티 목록
 	 */
 	public static Entity[] collectEntities(Chunk center, int minX, int minZ, int maxX, int maxZ) {
-		Entity[] entities = new Entity[0];
+		final List<Entity> entities = new ArrayList<>();
 		final World world = center.getWorld();
 		for (int x = minX; x <= maxX; x++) {
 			for (int z = minZ; z <= maxZ; z++) {
-				final Entity[] chunkEntities = world.getChunkAt(x, z).getEntities();
-				final Entity[] newEntities = new Entity[entities.length + chunkEntities.length];
-				System.arraycopy(entities, 0, newEntities, 0, entities.length);
-				System.arraycopy(chunkEntities, 0, newEntities, entities.length, chunkEntities.length);
-				entities = newEntities;
+				Collections.addAll(entities, world.getChunkAt(x, z).getEntities());
 			}
 		}
-		return entities;
+		return entities.toArray(new Entity[entities.size()]);
 	}
 
 	/**

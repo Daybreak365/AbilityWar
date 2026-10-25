@@ -114,7 +114,6 @@ public class GameSettings {
 		}
 
 		cache.clear();
-		lastModified = configFile.lastModified();
 		for (Setting<?> setting : settings.values()) {
 			final Object value = config.get(setting.getPath());
 			if (value != null) {
@@ -127,6 +126,7 @@ public class GameSettings {
 			//v3.3.4: CommentedConfiguration 관련 오류 다수 발생에 따라 주석 처리
 		}
 		config.save();
+		lastModified = configFile.lastModified();
 	}
 
 	public abstract class Setting<T> implements Configurable<T> {

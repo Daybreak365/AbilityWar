@@ -1,6 +1,5 @@
 package daybreak.abilitywar.utils.library;
 
-import com.google.common.base.Enums;
 import daybreak.abilitywar.utils.base.minecraft.nms.Sounds;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -1016,17 +1015,26 @@ public class SoundLib {
 	public static final SimpleSound WEATHER_RAIN = new SimpleSound("WEATHER_RAIN");
 	public static final SimpleSound WEATHER_RAIN_ABOVE = new SimpleSound("WEATHER_RAIN_ABOVE");
 
+	// Sound became a registry-backed interface. Public constants also work on old enums.
+	private static Sound resolveSound(String name) {
+		try {
+			return (Sound) Sound.class.getField(name).get(null);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			return null;
+		}
+	}
+
 	public static class SimpleSound {
 
 		private final Sound sound;
 
 		private SimpleSound(String name) {
-			this.sound = Enums.getIfPresent(Sound.class, name).orNull();
+			this.sound = resolveSound(name);
 		}
 
 		private SimpleSound(String... names) {
 			for (String name : names) {
-				final Sound sound = Enums.getIfPresent(Sound.class, name).orNull();
+				final Sound sound = resolveSound(name);
 				if (sound == null) continue;
 				this.sound = sound;
 				return;
