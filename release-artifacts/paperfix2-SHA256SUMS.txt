@@ -1,0 +1,2 @@
+9254d474c4588b058164711ecf9d40c0b280f2e3d918fe62d8f45b756c25e307  AbilityWar-3.6.0-mc26.3-paperfix2.jar
+0208462afb3b09fa0e0ee159d40a0fc319587ed863f2685394d3b2e2372fb51c  AbilityWar-3.6.0-mc26.3-paperfix2-source.zip
