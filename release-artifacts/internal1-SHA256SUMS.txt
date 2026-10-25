@@ -1,0 +1,2 @@
+3e9440405a2d5f44eb1469739d4ce858aee01f0826ee17c1d1eb5d79d6dc488d  AbilityWar-3.6.0-mc26.3-internal1.jar
+160eff323edb53d9cfc209631267372fced381848b4273802f3f6a71c67a2103  AbilityWar-3.6.0-mc26.3-internal1-source.zip
