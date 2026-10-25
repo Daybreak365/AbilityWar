@@ -1,0 +1,2 @@
+0df718290642a7d432f306619740dbce833eaf8cca0f2a3996409b4a8eafa058  AbilityWar-3.6.0-mc26.3-gameplay2.jar
+663993e8fe9ad84b9f65d750582300dc7925966ada56da1e0cec38238f30d094  AbilityWar-3.6.0-mc26.3-gameplay2-source.zip
