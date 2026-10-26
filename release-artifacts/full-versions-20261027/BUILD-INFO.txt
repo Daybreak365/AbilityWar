@@ -1,0 +1,9 @@
+AbilityWar 26.0.0 full-version compatibility
+Source commit: de7b01a4e090777f4ce070cbf0435f8d2d42dd72
+Adapters: 28
+Maven checks: 52 passed
+Mapping converter checks: 4 passed
+Legacy adapters 1.12 through 1.16: 264 unchanged class files from verified official 3.6.0 release 20260804
+All 20 other adapters and shared code rebuilt from current sources.
+Legacy release SHA256: 3bf1b4cb445cf3bdd0f1e3e81dcbe864c5e49c29b8fc64b28dff0e3f63dfe720
+See compatibility-validation.md for exact runtime coverage and limits.
