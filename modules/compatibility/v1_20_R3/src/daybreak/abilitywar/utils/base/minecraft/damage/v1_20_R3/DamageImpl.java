@@ -52,7 +52,7 @@ public class DamageImpl implements IDamages {
 			protected void onHit(MovingObjectPosition movingObjectPosition) {
 			}
 			@Override
-			protected ItemStack getPickupItem() {
+			public ItemStack getPickupItem() {
 				return null;
 			}
 		}, nmsShooter), damage);
@@ -91,7 +91,7 @@ public class DamageImpl implements IDamages {
 	}
 
 	private EntityPotion setItem(final EntityPotion potion) {
-		potion.setItem(SPLASH_POTION);
+		((net.minecraft.world.entity.projectile.EntityProjectileThrowable) potion).setItem(SPLASH_POTION);
 		return potion;
 	}
 }

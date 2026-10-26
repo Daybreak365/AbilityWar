@@ -64,7 +64,7 @@ public final class LegacySmoke extends JavaPlugin {
     private void runChecks() {
         check("plugin version and legacy server detection", () -> {
             require(Bukkit.getPluginManager().getPlugin("AbilityWar").isEnabled());
-            require(Bukkit.getPluginManager().getPlugin("AbilityWar").getDescription().getVersion().equals("26.0.0"));
+            require(Bukkit.getPluginManager().getPlugin("AbilityWar").getDescription().getVersion().equals("26.0.1"));
             require(ServerVersion.getName().equals("v1_12_R1"));
         });
         for (String ability : new String[] {"hermit.Hermit", "clown.Clown", "scarecrow.ScareCrow", "soul.Soul"}) {

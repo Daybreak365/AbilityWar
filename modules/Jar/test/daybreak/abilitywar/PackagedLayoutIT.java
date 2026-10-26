@@ -44,10 +44,14 @@ public class PackagedLayoutIT {
     @Test
     public void distributionPreservesPluginAndAdapterClasses() throws Exception {
         try (ZipFile distribution = archive("packagedJar");
-             ZipFile plugin = archive("pluginJar");
-             ZipFile adapter = archive("modernAdapterJar")) {
+             ZipFile plugin = archive("pluginJar")) {
             assertClassesPreserved(plugin, distribution);
-            assertClassesPreserved(adapter, distribution);
+            for (String version : System.getProperty("compiledAdapters").split(",")) {
+                try (ZipFile adapter = new ZipFile(Paths.get(System.getProperty("adaptersDirectory"),
+                        version, "target", version + "-" + System.getProperty("artifactVersion") + ".jar").toFile())) {
+                    assertClassesPreserved(adapter, distribution);
+                }
+            }
             assertArrayEquals(read(plugin, "plugin.yml"), read(distribution, "plugin.yml"));
             assertNotNull(distribution.getEntry("daybreak/google/common/collect/Multimap.class"));
             assertNull(distribution.getEntry("com/google/common/collect/Multimap.class"));

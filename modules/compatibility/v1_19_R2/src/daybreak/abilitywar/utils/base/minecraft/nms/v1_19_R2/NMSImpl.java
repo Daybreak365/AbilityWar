@@ -4,7 +4,6 @@ import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.*;
 import daybreak.abilitywar.utils.library.MaterialX;
-import net.minecraft.network.chat.IChatBaseComponent.ChatSerializer;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.protocol.game.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook;
@@ -65,7 +64,7 @@ public class NMSImpl implements INMS {
 		final PlayerConnection connection = ((CraftPlayer) player).getHandle().connection;
 		if (connection == null) return;
 		connection.send(new ClientboundSetTitlesAnimationPacket(fadeIn, stay, fadeOut));
-		connection.send(new ClientboundSetActionBarTextPacket(ChatSerializer.fromJson("{\"text\":\"" + string + "\"}")));
+		connection.send(new ClientboundSetActionBarTextPacket(net.minecraft.network.chat.IChatBaseComponent.literal(string)));
 	}
 
 	@Override
@@ -215,8 +214,8 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void setWorldBorder(Player receiver, final IWorldBorder worldBorder) {
-		if (!(worldBorder instanceof WorldBorder)) throw new IllegalArgumentException();
-		((CraftPlayer) receiver).getHandle().connection.send(new ClientboundInitializeBorderPacket((WorldBorder) worldBorder));
+		if (!(worldBorder instanceof WorldBorderImpl)) throw new IllegalArgumentException();
+		((CraftPlayer) receiver).getHandle().connection.send(new ClientboundInitializeBorderPacket(((WorldBorderImpl) worldBorder).handle));
 	}
 
 	@Override

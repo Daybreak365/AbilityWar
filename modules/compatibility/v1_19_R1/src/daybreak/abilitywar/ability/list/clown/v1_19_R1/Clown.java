@@ -90,7 +90,7 @@ public class Clown extends AbstractClown {
 	@Override
 	protected void hide0() {
 		final CraftPlayer craftPlayer = (CraftPlayer) getPlayer();
-		((Entity) craftPlayer.getHandle()).getEntityData().set(new DataWatcherObject<>(13, DataWatcherRegistry.INT), 0);
+		craftPlayer.setArrowsInBody(0);
 		((Entity) craftPlayer.getHandle()).setInvisible(true);
 		injectSelf();
 		final PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), NULL_PAIR_LIST);

@@ -51,7 +51,7 @@ public class DamageImpl implements IDamages {
 			}
 
 			@Override
-			protected ItemStack getItemStack() {
+			public ItemStack getItemStack() {
 				return null;
 			}
 		}, nmsShooter), damage);

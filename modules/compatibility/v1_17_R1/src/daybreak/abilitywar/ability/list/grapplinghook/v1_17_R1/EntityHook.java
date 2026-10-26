@@ -47,11 +47,9 @@ public class EntityHook extends EntityFishingHook implements HookEntity {
 	}
 
 	@Override
-	public void a(GameEvent gameevent) {
-		if (gameevent == GameEvent.s) {
-			if (target instanceof EntityStand) target.die();
-		}
-		super.a(gameevent);
+	public void a(Entity.RemovalReason reason) {
+		if (target instanceof EntityStand) target.die();
+		super.a(reason);
 	}
 
 }

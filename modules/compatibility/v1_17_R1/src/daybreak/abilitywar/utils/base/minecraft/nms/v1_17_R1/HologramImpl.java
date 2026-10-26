@@ -3,7 +3,6 @@ package daybreak.abilitywar.utils.base.minecraft.nms.v1_17_R1;
 import daybreak.abilitywar.AbilityWar;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.network.chat.IChatBaseComponent.ChatSerializer;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
@@ -41,7 +40,7 @@ public class HologramImpl implements IHologram, Listener {
 		this.packetPlayOutEntityDestroy = new PacketPlayOutEntityDestroy(armorStand.getId());
 		armorStand.setInvisible(true);
 		armorStand.setCustomNameVisible(true);
-		armorStand.setCustomName(ChatSerializer.a("{\"text\":\"" + text + "\"}"));
+		armorStand.setCustomName(new net.minecraft.network.chat.ChatComponentText(text));
 		armorStand.setMarker(true);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
@@ -134,7 +133,7 @@ public class HologramImpl implements IHologram, Listener {
 	@Override
 	public void setText(String text) throws IllegalStateException {
 		if (viewers == null) throw new IllegalStateException("Hologram unregistered");
-		armorStand.setCustomName(ChatSerializer.a("{\"text\":\"" + text + "\"}"));
+		armorStand.setCustomName(new net.minecraft.network.chat.ChatComponentText(text));
 		for (CraftPlayer craftPlayer : viewers) {
 			craftPlayer.getHandle().b.sendPacket(new PacketPlayOutEntityMetadata(armorStand.getId(), armorStand.getDataWatcher(), true));
 		}

@@ -7,7 +7,6 @@ import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.*;
 import daybreak.abilitywar.utils.base.reflect.ReflectionUtil;
 import daybreak.abilitywar.utils.library.MaterialX;
-import net.minecraft.network.chat.IChatBaseComponent.ChatSerializer;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.protocol.game.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook;
@@ -65,7 +64,7 @@ public class NMSImpl implements INMS {
 		final PlayerConnection connection = ((CraftPlayer) player).getHandle().b;
 		if (connection == null) return;
 		connection.sendPacket(new ClientboundSetTitlesAnimationPacket(fadeIn, stay, fadeOut));
-		connection.sendPacket(new ClientboundSetActionBarTextPacket(ChatSerializer.a("{\"text\":\"" + string + "\"}")));
+		connection.sendPacket(new ClientboundSetActionBarTextPacket(new net.minecraft.network.chat.ChatComponentText(string)));
 	}
 
 	@Override
@@ -132,7 +131,7 @@ public class NMSImpl implements INMS {
 	@Override
 	public void setArrowsInBody(Player player, int count) {
 		if (count < 0) throw new IllegalStateException("count cannot be negative.");
-		((CraftPlayer) player).getHandle().getDataWatcher().set(new DataWatcherObject<>(11, DataWatcherRegistry.b), count);
+		player.setArrowsInBody(count);
 	}
 
 	@Override

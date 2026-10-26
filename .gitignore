@@ -16,3 +16,7 @@ out/
 .settings/
 .metadata/
 /bin/
+
+# Python build helpers
+__pycache__/
+*.pyc

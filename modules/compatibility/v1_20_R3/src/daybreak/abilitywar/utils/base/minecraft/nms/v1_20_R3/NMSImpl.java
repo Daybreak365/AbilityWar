@@ -6,7 +6,6 @@ import daybreak.abilitywar.utils.base.minecraft.SkinInfo;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.nms.*;
 import daybreak.abilitywar.utils.library.MaterialX;
-import net.minecraft.network.chat.IChatBaseComponent.ChatSerializer;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.protocol.game.PacketPlayInClientCommand.EnumClientCommand;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity.PacketPlayOutEntityLook;
@@ -71,7 +70,7 @@ public class NMSImpl implements INMS {
 		final PlayerConnection connection = ((CraftPlayer) player).getHandle().connection;
 		if (connection == null) return;
 		((ServerPlayerConnection) connection).send(new ClientboundSetTitlesAnimationPacket(fadeIn, stay, fadeOut));
-		((ServerPlayerConnection) connection).send(new ClientboundSetActionBarTextPacket(ChatSerializer.fromJson("{\"text\":\"" + string + "\"}")));
+		((ServerPlayerConnection) connection).send(new ClientboundSetActionBarTextPacket(net.minecraft.network.chat.IChatBaseComponent.literal(string)));
 	}
 
 	@Override
@@ -116,7 +115,16 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void setAbsorptionHearts(LivingEntity livingEntity, float absorptionHearts) {
-		((CraftLivingEntity) livingEntity).getHandle().setAbsorptionAmount(absorptionHearts);
+		if (!Float.isFinite(absorptionHearts) || absorptionHearts < 0) throw new IllegalArgumentException("absorptionHearts must be finite and non-negative");
+        final EntityLiving handle = ((CraftLivingEntity) livingEntity).getHandle();
+        final net.minecraft.world.entity.ai.attributes.AttributeModifiable maximum = handle.getAttribute(net.minecraft.world.entity.ai.attributes.GenericAttributes.MAX_ABSORPTION);
+        final UUID key = UUID.fromString("f01c3820-6347-4b1b-895d-4b604699ca04");
+        maximum.removeModifier(key);
+        if (absorptionHearts > maximum.getValue()) {
+            maximum.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(key,
+                    "AbilityWar absorption", absorptionHearts - maximum.getValue(), net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADDITION));
+        }
+        handle.setAbsorptionAmount(absorptionHearts);
 	}
 
 	@Override
@@ -221,8 +229,8 @@ public class NMSImpl implements INMS {
 
 	@Override
 	public void setWorldBorder(Player receiver, final IWorldBorder worldBorder) {
-		if (!(worldBorder instanceof WorldBorder)) throw new IllegalArgumentException();
-		((ServerPlayerConnection) ((CraftPlayer) receiver).getHandle().connection).send(new ClientboundInitializeBorderPacket((WorldBorder) worldBorder));
+		if (!(worldBorder instanceof WorldBorderImpl)) throw new IllegalArgumentException();
+		((ServerPlayerConnection) ((CraftPlayer) receiver).getHandle().connection).send(new ClientboundInitializeBorderPacket(((WorldBorderImpl) worldBorder).handle));
 	}
 
 	@Override
@@ -260,7 +268,7 @@ public class NMSImpl implements INMS {
 
 	static {
 		try {
-			JUMPING = EntityLiving.class.getDeclaredField("bn");
+			JUMPING = EntityLiving.class.getDeclaredField("bj");
 		} catch (NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}

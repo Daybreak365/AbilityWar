@@ -14,9 +14,9 @@ from zipfile import ZipFile, ZIP_DEFLATED
 
 RELEASE_TAG = "20260804"
 RELEASE_SHA256 = "3bf1b4cb445cf3bdd0f1e3e81dcbe864c5e49c29b8fc64b28dff0e3f63dfe720"
+# Adapters from 1.17 onward contain runtime fixes and must be rebuilt from source.
 VERSIONS = ("v1_12_R1", "v1_13_R1", "v1_13_R2", "v1_14_R1", "v1_15_R1",
-            "v1_16_R1", "v1_16_R2", "v1_16_R3", "v1_17_R1", "v1_19_R1",
-            "v1_19_R2", "v1_20_R3")
+            "v1_16_R1", "v1_16_R2", "v1_16_R3")
 ROOT = Path(__file__).resolve().parents[1]
 
 
