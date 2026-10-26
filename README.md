@@ -19,10 +19,12 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 
 **🔧 Build**
 - **Maven**
-    - AbilityWar 디렉토리에서 `mvn clean package` 명령을 실행하세요. 빌드된 플러그인 파일은 `modules/Jar/target` 폴더에서 찾을 수 있습니다.
+    - 배포용 통합 JAR은 `mvn -Dgpg.skip=true clean verify`로 빌드합니다. `modules/Jar/target/AbilityWar-26.0.0.jar`에 기존 지원 버전과 26.3 호환 모듈이 모두 포함됩니다.
     - AbilityWar를 로컬 Maven 레포지터리에 설치하려면 `mvn clean install` 명령을 실행하세요.
+    - 과거 CraftBukkit 빌드 의존성을 준비하기 어려운 경우, 변경되지 않은 공식 배포본의 호환 모듈을 재사용하는 [통합 패키징 방법](tools/README.md)을 이용할 수 있습니다.
 - **Minecraft 26.3**
-    - JDK 21로 Maven을 실행하고, JDK 25를 Maven toolchain에 등록한 뒤 `mvn -P minecraft-26.3 -Dgpg.skip=true clean verify`로 26.3 전용 JAR을 빌드하고 최종 파일을 검증합니다.
+    - Maven 실행은 JDK 21, 26.3 모듈 컴파일은 JDK 25 toolchain을 사용합니다. 통합 JAR의 서버 실행 Java 버전은 각 Minecraft 버전의 요구사항을 따릅니다. 26.3 서버는 Java 25가 필요합니다.
+    - `mvn -P minecraft-26.3 -Dgpg.skip=true clean verify`는 개발 검사용 **26.3 전용** 파일 `AbilityWar-26.0.0-mc26.3.jar`를 생성합니다. 구버전 서버에는 배포용 통합 JAR을 사용하세요.
     - CraftBukkit 26.3 의존성은 공식 BuildTools로 먼저 설치해야 합니다. [설치 및 서버 검증 방법](modules/compatibility/v26_3/README.md)을 참고하세요.
     - 기본 빌드는 기존 버전 모듈과 26.3을 모두 포함합니다.
 - **Craftbukkit Dependency**
@@ -39,7 +41,7 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 
 | 마인크래프트 버전 | 권장 플러그인 버전 |
 |:----:|:----:|
-| MC 26.3 | 이 브랜치에서 직접 빌드 (Java 25) |
+| MC 26.3 | 26.0.0 이상 (서버 Java 25) |
 | MC 1.20.4 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
 | MC 1.20 ~ 1.20.3 | 지원 X |
 | MC 1.19.x (Paper) | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |

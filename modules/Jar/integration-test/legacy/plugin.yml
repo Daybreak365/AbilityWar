@@ -1,0 +1,4 @@
+name: LegacySmoke
+main: LegacySmoke
+version: 1
+depend: [AbilityWar]
