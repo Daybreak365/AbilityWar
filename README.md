@@ -13,9 +13,19 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 새로운 도전, 무한한 가능성. 추가 개발은 모든 개발자에게 허용됩니다. 자신만의 Fork를 만들고 자신만의 Build를 만드세요.
 모두에게 알리고 싶은 참신한 코드를 작성했다면 Pull Request를 통해 플러그인에 기여해주세요.
 
-**📌 Versioning**
+**🔗 Download**
 
-26.0.0부터 연도별 버저닝을 사용합니다. 버전의 첫 번째 숫자는 출시 연도의 끝 두 자리를 나타내며, 26.0.0의 26은 2026년을 의미합니다.
+1.12.2 버전 사용을 권장드립니다.
+
+| 마인크래프트 버전 | 권장 플러그인 버전 |
+|:----:|:----:|
+| MC 26.1.x ~ 26.3 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) (서버 Java 25) |
+| MC 1.20.5 ~ 1.21.11 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) (서버 Java 21) |
+| MC 1.18.x ~ 1.20.4 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) (서버 Java 17 이상) |
+| MC 1.17.x | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
+| MC 1.12.2 ~ 1.16.x | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
+| MC 1.9.x ~ 1.11.x | [v2.4.4](https://github.com/DayBreak365/AbilityWar/releases/tag/20210130) |
+| MC 1.8.x | [v2.1.6.8-legacy](https://drive.google.com/uc?export=download&confirm=no_antivirus&id=1CYY7oH0IpEkH1vmL7--6fOfJ0skDgp3S) |
 
 **🔧 Build**
 - **Maven**
@@ -37,21 +47,3 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
     - [최신 버전의 BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar)를 내려받은 후 `java -jar BuildTools.jar --rev <version>` 명령을 이용하여 각 버전의 craftbukkit을 빌드한 후 local maven repository에 install 해주세요.
     - craftbukkit는 bukkit에 의존하므로 bukkit을 먼저 install 해야할 수 있습니다.
     - **1.18 ~ 1.20.4** 모듈에는 BuildTools의 `original-craftbukkit` 중간 산출물을 `remapped-members` classifier로 추가 설치합니다. 플러그인 제거 방식 대신 [정확한 버전별 설치 명령](tools/README.md#craftbukkit-1181204-의존성)을 참고하세요.
-
-**🔗 Download**
-
-1.12.2 버전 사용을 권장드립니다.
-
-| 마인크래프트 버전 | 권장 플러그인 버전 |
-|:----:|:----:|
-| MC 26.1.x ~ 26.3 | 26.0.1 통합 호환 패치 (서버 Java 25) |
-| MC 1.20.5 ~ 1.21.11 | 26.0.1 통합 호환 패치 (서버 Java 21) |
-| MC 1.18.x ~ 1.20.4 | 26.0.1 통합 호환 패치 (서버 Java 17 이상) |
-| MC 1.17.x | 26.0.1 통합 호환 패치 |
-| MC 1.12.2 ~ 1.16.x | 26.0.1 통합 호환 패치 |
-| MC 1.9.x ~ 1.11.x | [v2.4.4](https://github.com/DayBreak365/AbilityWar/releases/tag/20210130) |
-| MC 1.8.x | [v2.1.6.8-legacy](https://drive.google.com/uc?export=download&confirm=no_antivirus&id=1CYY7oH0IpEkH1vmL7--6fOfJ0skDgp3S) |
-
-통합 호환 패치의 대상은 Paper·Spigot·CraftBukkit 정식 버전입니다. 스냅샷·프리릴리스·향후 버전은 자동 지원하지 않습니다. 실제 실행 검사에는 구동기별로 제공되는 서버 빌드를 사용하며, 같은 내부 버전 계열을 사용하는 마이너 릴리스와 실행 검증 여부를 구분합니다. [공통 서버 검사](modules/Jar/integration-test/matrix/README.md)와 [빌드 안내](tools/README.md)를 참고하세요.
-
-실제로 실행한 구동기·버전, 자동 검사 결과 및 미검증 패치는 [호환 검증 기록](tools/compatibility-validation.md)에 정리했습니다.
