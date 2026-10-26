@@ -5,7 +5,7 @@ source_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repo_dir=$(cd -- "$source_dir/../../../.." && pwd)
 server_dir=$(cd -- "${1:?Usage: build.sh <unpacked CraftBukkit server directory> [AbilityWar.jar]}" && pwd)
 java_bin="${JAVA_HOME:?Set JAVA_HOME to JDK 25}/bin"
-plugin_jar="${2:-$repo_dir/modules/Jar/target/AbilityWar-26.0.0.jar}"
+plugin_jar="${2:-$repo_dir/modules/Jar/target/AbilityWar-26.0.1.jar}"
 output="$source_dir/../target/integration-test"
 mkdir -p "$output/classes"
 test -f "$plugin_jar"

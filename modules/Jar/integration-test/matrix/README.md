@@ -7,7 +7,7 @@
 ```sh
 JAVA_HOME=/path/to/jdk bash modules/Jar/integration-test/matrix/build.sh \
   /path/to/bukkit-1.15.2-R0.1-SNAPSHOT.jar \
-  modules/Jar/target/AbilityWar-26.0.0.jar
+  modules/Jar/target/AbilityWar-26.0.1.jar
 ```
 
 생성된 `modules/Jar/target/matrix-integration-test/MatrixSmoke.jar`와 검사 대상 AbilityWar JAR을 테스트 서버의 `plugins/`에 복사합니다. 해당 서버에 필요한 Java 버전으로 시작하고 `MATRIX SMOKE RESULT passed=... failed=0`을 확인합니다. 결과 줄이 없거나 기본 검사가 실패하면 성공으로 처리하지 않습니다. `-Dabilitywar.expectedAdapter=v1_18_R2`처럼 기대하는 어댑터를 명시할 수도 있습니다.

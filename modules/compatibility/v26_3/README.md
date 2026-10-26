@@ -27,7 +27,7 @@ JDK 25를 `~/.m2/toolchains.xml`에 등록합니다. 경로는 실제 설치 위
 mvn -P minecraft-26.3 -Dgpg.skip=true clean verify
 ```
 
-출력: `modules/Jar/target/AbilityWar-26.0.0-mc26.3.jar`. 이 프로필의 JAR은 **26.3 전용 개발 검사용**입니다. 배포용 통합 파일은 프로필 없이 `mvn -Dgpg.skip=true clean verify`로 빌드하는 `AbilityWar-26.0.0.jar`이며, 기존 버전별 모듈과 26.3을 모두 포함합니다. 각 버전의 CraftBukkit 의존성이 필요하며, [변경되지 않은 공식 호환 모듈 재사용](../../../tools/README.md)도 지원합니다. 기존 모듈의 Java 8 바이트코드 대상은 유지됩니다.
+출력: `modules/Jar/target/AbilityWar-26.0.1-mc26.3.jar`. 이 프로필의 JAR은 **26.3 전용 개발 검사용**입니다. 배포용 통합 파일은 프로필 없이 `mvn -Dgpg.skip=true clean verify`로 빌드하는 `AbilityWar-26.0.1.jar`이며, 기존 버전별 모듈과 26.3을 모두 포함합니다. 각 버전의 CraftBukkit 의존성이 필요하며, [변경되지 않은 공식 호환 모듈 재사용](../../../tools/README.md)도 지원합니다. 기존 모듈의 Java 8 바이트코드 대상은 유지됩니다.
 
 26.3 감지는 `Bukkit.getBukkitVersion()`을 사용합니다. CraftBukkit의 `26.3-R0.1-SNAPSHOT`, Paper의 `26.3.build.<번호>-<채널>` 및 `26.3.local-SNAPSHOT` 형식을 인식합니다. 다른 26.x 릴리스나 프리릴리스는 자동으로 지원 버전으로 취급하지 않습니다.
 
@@ -40,7 +40,7 @@ Shade가 JAR을 덮어쓰므로 Maven JAR 플러그인의 `forceCreation`을 활
 추가 서버 검사는 `integration-test`에 있는 별도 테스트 플러그인으로 실행합니다. **테스트용 월드에서만 실행하세요.** 엔티티와 블록을 만들고 검사가 끝나면 서버를 종료합니다. 배포 JAR에는 포함되지 않습니다.
 
 1. 별도 디렉토리에 CraftBukkit 26.3 서버를 준비하고 한 번 실행해 `bundler/`를 생성합니다. 서버 이용 약관을 확인하고 테스트 서버를 종료합니다.
-2. 저장소 루트에서 `JAVA_HOME=/path/to/jdk-25 bash modules/compatibility/v26_3/integration-test/build.sh /path/to/test-server`를 실행합니다. 기본값은 통합 JAR입니다. 26.3 전용 파일을 검사하려면 두 번째 인수로 `modules/Jar/target/AbilityWar-26.0.0-mc26.3.jar`를 지정합니다.
+2. 저장소 루트에서 `JAVA_HOME=/path/to/jdk-25 bash modules/compatibility/v26_3/integration-test/build.sh /path/to/test-server`를 실행합니다. 기본값은 통합 JAR입니다. 26.3 전용 파일을 검사하려면 두 번째 인수로 `modules/Jar/target/AbilityWar-26.0.1-mc26.3.jar`를 지정합니다.
 3. 검사 대상 CraftBukkit 또는 Paper 서버를 별도 테스트 디렉토리에 준비합니다. 배포 JAR과 생성된 `modules/compatibility/v26_3/target/integration-test/CompatibilitySmoke.jar`를 테스트 서버의 `plugins/`에 복사합니다.
 4. Java 25로 서버를 시작합니다. 로그에서 `SMOKE RESULT`의 `failed=0`과 각 `PASS`를 확인합니다. 서버 종료 코드 0만으로 성공을 판정하지 않습니다.
 

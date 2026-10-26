@@ -19,12 +19,12 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 
 **🔧 Build**
 - **Maven**
-    - 배포용 통합 JAR은 `mvn -Dgpg.skip=true clean verify`로 빌드합니다. `modules/Jar/target/AbilityWar-26.0.0.jar`에 1.12.2부터 26.3까지의 28개 호환 모듈이 모두 포함됩니다.
+    - 배포용 통합 JAR은 `mvn -Dgpg.skip=true clean verify`로 빌드합니다. `modules/Jar/target/AbilityWar-26.0.1.jar`에 1.12.2부터 26.3까지의 28개 호환 모듈이 모두 포함됩니다.
     - AbilityWar를 로컬 Maven 레포지터리에 설치하려면 `mvn clean install` 명령을 실행하세요.
     - 과거 CraftBukkit 빌드 의존성을 준비하기 어려운 경우, 변경되지 않은 공식 배포본의 호환 모듈을 재사용하는 [통합 패키징 방법](tools/README.md)을 이용할 수 있습니다.
 - **Minecraft 26.3**
     - Maven 실행은 JDK 21, 26.3 모듈 컴파일은 JDK 25 toolchain을 사용합니다. 통합 JAR의 서버 실행 Java 버전은 각 Minecraft 버전의 요구사항을 따릅니다. 26.3 서버는 Java 25가 필요합니다.
-    - `mvn -P minecraft-26.3 -Dgpg.skip=true clean verify`는 개발 검사용 **26.3 전용** 파일 `AbilityWar-26.0.0-mc26.3.jar`를 생성합니다. 구버전 서버에는 배포용 통합 JAR을 사용하세요.
+    - `mvn -P minecraft-26.3 -Dgpg.skip=true clean verify`는 개발 검사용 **26.3 전용** 파일 `AbilityWar-26.0.1-mc26.3.jar`를 생성합니다. 구버전 서버에는 배포용 통합 JAR을 사용하세요.
     - CraftBukkit 26.3 의존성은 공식 BuildTools로 먼저 설치해야 합니다. [설치 및 서버 검증 방법](modules/compatibility/v26_3/README.md)을 참고하세요.
     - 기본 빌드는 기존 버전, 1.18·1.19.4·1.20·1.21 계열 및 26.x 모듈을 모두 포함합니다.
 - **추가된 호환 모듈**
@@ -44,11 +44,11 @@ AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/Abi
 
 | 마인크래프트 버전 | 권장 플러그인 버전 |
 |:----:|:----:|
-| MC 26.1.x ~ 26.3 | 26.0.0 통합 호환 패치 (서버 Java 25) |
-| MC 1.20.5 ~ 1.21.11 | 26.0.0 통합 호환 패치 (서버 Java 21) |
-| MC 1.18.x ~ 1.20.4 | 26.0.0 통합 호환 패치 (서버 Java 17 이상) |
-| MC 1.17.x | 26.0.0 통합 호환 패치 |
-| MC 1.12.2 ~ 1.16.x | 26.0.0 통합 호환 패치 |
+| MC 26.1.x ~ 26.3 | 26.0.1 통합 호환 패치 (서버 Java 25) |
+| MC 1.20.5 ~ 1.21.11 | 26.0.1 통합 호환 패치 (서버 Java 21) |
+| MC 1.18.x ~ 1.20.4 | 26.0.1 통합 호환 패치 (서버 Java 17 이상) |
+| MC 1.17.x | 26.0.1 통합 호환 패치 |
+| MC 1.12.2 ~ 1.16.x | 26.0.1 통합 호환 패치 |
 | MC 1.9.x ~ 1.11.x | [v2.4.4](https://github.com/DayBreak365/AbilityWar/releases/tag/20210130) |
 | MC 1.8.x | [v2.1.6.8-legacy](https://drive.google.com/uc?export=download&confirm=no_antivirus&id=1CYY7oH0IpEkH1vmL7--6fOfJ0skDgp3S) |
 
