@@ -3,8 +3,8 @@ package daybreak.abilitywar.ability.list.grapplinghook.v1_19_R3;
 import daybreak.abilitywar.utils.base.minecraft.ability.list.grapplinghook.HookEntity;
 import daybreak.abilitywar.utils.base.minecraft.ability.list.grapplinghook.IHooks;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class HooksImpl implements IHooks {

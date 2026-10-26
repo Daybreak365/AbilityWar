@@ -9,7 +9,7 @@ import net.minecraft.world.phys.MovingObjectPosition.EnumMovingObjectType;
 import net.minecraft.world.phys.MovingObjectPositionBlock;
 import net.minecraft.world.phys.Vec3D;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 
 public class RayTraceImpl implements IRayTrace {
 	@Override

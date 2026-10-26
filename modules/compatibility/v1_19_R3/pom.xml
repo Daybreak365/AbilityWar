@@ -19,6 +19,7 @@
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>1.19.4-R0.1-SNAPSHOT</version>
+            <classifier>remapped-members</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -33,12 +34,7 @@
             <version>${revision}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

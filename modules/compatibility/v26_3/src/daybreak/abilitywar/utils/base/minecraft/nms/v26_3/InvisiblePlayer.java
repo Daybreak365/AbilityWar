@@ -18,10 +18,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import java.util.*;
+import java.util.function.Supplier;
 
 /** Per-viewer packets: never mutate a packet shared by the server's other viewers. */
 public final class InvisiblePlayer {
-	private final Player owner;
+	private final Supplier<Player> ownerSupplier;
+	private Player owner;
 	private final Map<UUID, Channel> channels = new HashMap<>();
 	private final String handlerName;
 	private volatile boolean hiding;
@@ -32,10 +34,30 @@ public final class InvisiblePlayer {
 			Pair.of(EquipmentSlot.CHEST, ItemStack.EMPTY), Pair.of(EquipmentSlot.HEAD, ItemStack.EMPTY));
 
 	public InvisiblePlayer(Player owner) {
-		this.owner = owner;
+		this(() -> owner);
+	}
+	public InvisiblePlayer(Supplier<Player> ownerSupplier) {
+		this.ownerSupplier = Objects.requireNonNull(ownerSupplier, "ownerSupplier");
+		this.owner = Objects.requireNonNull(ownerSupplier.get(), "owner");
 		this.handlerName = "abilitywar-invisible-" + UUID.randomUUID();
 	}
+	private void refreshOwner() {
+		final Player currentOwner = Objects.requireNonNull(ownerSupplier.get(), "owner");
+		if (currentOwner == owner) return;
+		// A reconnect replaces CraftPlayer and its entity ID. Rebuild every viewer's filter.
+		removeAllHandlers();
+		if (hiding) owner.setInvisible(previouslyInvisible);
+		owner = currentOwner;
+		if (hiding) {
+			// The reconnected player may have saved our invisibility flag while disconnecting.
+			// Keep the original state so show() can still restore it correctly.
+			owner.setArrowsInBody(0);
+			owner.setInvisible(true);
+			for (Player viewer : Bukkit.getOnlinePlayers()) add(viewer);
+		}
+	}
 	public void hide() {
+		refreshOwner();
 		if (!hiding) previouslyInvisible = owner.isInvisible();
 		hiding = true;
 		owner.setArrowsInBody(0);
@@ -43,6 +65,7 @@ public final class InvisiblePlayer {
 		for (Player viewer : Bukkit.getOnlinePlayers()) add(viewer);
 	}
 	public void add(Player viewer) {
+		refreshOwner();
 		if (!hiding || !viewer.isOnline() || channels.containsKey(viewer.getUniqueId())) return;
 		final CraftPlayer craft = (CraftPlayer) viewer;
 		final Channel channel = ChannelUtil.getChannel(craft.getHandle());
@@ -94,7 +117,14 @@ public final class InvisiblePlayer {
 			if (channel.pipeline().get(handlerName) != null) channel.pipeline().remove(handlerName);
 		});
 	}
+	private void removeAllHandlers() {
+		for (Channel channel : channels.values()) channel.eventLoop().execute(() -> {
+			if (channel.pipeline().get(handlerName) != null) channel.pipeline().remove(handlerName);
+		});
+		channels.clear();
+	}
 	public void show() {
+		refreshOwner();
 		if (!hiding) return;
 		hiding = false;
 		final net.minecraft.server.level.ServerPlayer handle = ((CraftPlayer) owner).getHandle();
@@ -104,10 +134,7 @@ public final class InvisiblePlayer {
 			remove(viewer);
 			((CraftPlayer) viewer).getHandle().connection.send(new ClientboundSetEquipmentPacket(owner.getEntityId(), equipment));
 		}
-		for (Channel channel : channels.values()) channel.eventLoop().execute(() -> {
-			if (channel.pipeline().get(handlerName) != null) channel.pipeline().remove(handlerName);
-		});
-		channels.clear();
+		removeAllHandlers();
 		owner.setInvisible(previouslyInvisible);
 	}
 }

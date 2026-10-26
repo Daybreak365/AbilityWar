@@ -8,9 +8,8 @@ import net.minecraft.world.entity.projectile.EntityFishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.IWorldWriter;
 import net.minecraft.world.level.World;
-import net.minecraft.world.level.gameevent.GameEvent;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity;
 import org.bukkit.entity.LivingEntity;
 
 public class EntityHook extends EntityFishingHook implements HookEntity {
@@ -48,15 +47,14 @@ public class EntityHook extends EntityFishingHook implements HookEntity {
 	}
 
 	@Override
-	public void gameEvent(GameEvent gameevent) {
-		if (gameevent == GameEvent.ENTITY_DIE) {
-			if (target instanceof EntityStand) target.discard();
-		}
-		super.gameEvent(gameevent);
+	public void remove(Entity.RemovalReason reason) {
+		if (target instanceof EntityStand) target.discard();
+		super.remove(reason);
 	}
 
 	@Override
 	public void die() {
+		if (target instanceof EntityStand) target.discard();
 		((Entity) this).discard();
 	}
 }

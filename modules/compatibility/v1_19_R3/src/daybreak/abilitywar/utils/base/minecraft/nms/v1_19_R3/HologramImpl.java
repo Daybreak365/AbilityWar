@@ -15,8 +15,8 @@ import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -44,7 +44,7 @@ public class HologramImpl implements IHologram, Listener {
 		this.packetPlayOutEntityDestroy = new PacketPlayOutEntityDestroy(((Entity) armorStand).getId());
 		armorStand.setInvisible(true);
 		((Entity) armorStand).setCustomNameVisible(true);
-		((Entity) armorStand).setCustomName(ChatSerializer.fromJson("{\"text\":\"" + text + "\"}"));
+		((Entity) armorStand).setCustomName(net.minecraft.network.chat.IChatBaseComponent.literal(text));
 		armorStand.setMarker(true);
 		Bukkit.getPluginManager().registerEvents(this, AbilityWar.getPlugin());
 	}
@@ -140,7 +140,7 @@ public class HologramImpl implements IHologram, Listener {
 	@Override
 	public void setText(String text) throws IllegalStateException {
 		if (viewers == null) throw new IllegalStateException("Hologram unregistered");
-		((Entity) armorStand).setCustomName(ChatSerializer.fromJson("{\"text\":\"" + text + "\"}"));
+		((Entity) armorStand).setCustomName(net.minecraft.network.chat.IChatBaseComponent.literal(text));
 		final List<b<?>> list = ((Entity) armorStand).getEntityData().getNonDefaultValues();
 		if (list != null) {
 			for (CraftPlayer craftPlayer : viewers) {

@@ -19,6 +19,7 @@
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>1.19.2-R0.1-SNAPSHOT</version>
+            <classifier>remapped-members</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>

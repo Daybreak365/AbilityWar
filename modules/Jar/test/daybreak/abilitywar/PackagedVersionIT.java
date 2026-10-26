@@ -9,12 +9,29 @@ import java.nio.file.Paths;
 import java.util.zip.ZipFile;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import static org.junit.Assert.*;
 
 /** Runs after shading, against the actual distributable rather than reactor classes. */
 public class PackagedVersionIT {
     private static final String PACKAGE = "daybreak/abilitywar/utils/base/minecraft/version/";
     private final Path jar = Paths.get(System.getProperty("packagedJar"));
+
+    @Test public void universalDistributionContainsEveryRecognizedVersion() throws Exception {
+        Set<String> packaged = new HashSet<>(Arrays.asList(System.getProperty("packagedAdapters").split(",")));
+        if (!packaged.contains("v1_12_R1")) return; // Explicit single-version developer profile.
+        try (URLClassLoader loader = new URLClassLoader(new URL[] {jar.toUri().toURL()}, null)) {
+            Class<?> version = loader.loadClass("daybreak.abilitywar.utils.base.minecraft.version.NMSVersion");
+            Set<String> recognized = new HashSet<>();
+            for (Object value : version.getEnumConstants()) {
+                String name = ((Enum<?>) value).name();
+                if (!name.equals("UNSUPPORTED")) recognized.add(name);
+            }
+            assertEquals("Resolver and universal packaging must cover the same adapters", recognized, packaged);
+        }
+    }
 
     @Test public void distributedJarRecognizesPaper222AndCraftBukkit() throws Exception {
         // No parent loader: stale classes in the final JAR cannot be masked by test dependencies.

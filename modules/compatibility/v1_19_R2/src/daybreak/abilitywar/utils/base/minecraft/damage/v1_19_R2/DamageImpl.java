@@ -38,8 +38,8 @@ public class DamageImpl implements IDamages {
 	public boolean damageThorn(@NotNull Entity entity, @NotNull LivingEntity damager, float damage) {
 		return ((CraftEntity) entity).getHandle().hurt(new EntityDamageSource("thorns", ((CraftLivingEntity) damager).getHandle()) {
 			{
-				setThorns();
-				setMagic();
+				((EntityDamageSource) this).setThorns();
+				((DamageSource) this).setMagic();
 			}
 		}, damage);
 	}
@@ -54,7 +54,7 @@ public class DamageImpl implements IDamages {
 			}
 
 			@Override
-			protected ItemStack getPickupItem() {
+			public ItemStack getPickupItem() {
 				return null;
 			}
 		}, nmsShooter), damage);
@@ -89,7 +89,7 @@ public class DamageImpl implements IDamages {
 	}
 
 	private EntityPotion setItem(final EntityPotion potion) {
-		potion.setItem(SPLASH_POTION);
+		((net.minecraft.world.entity.projectile.EntityProjectileThrowable) potion).setItem(SPLASH_POTION);
 		return potion;
 	}
 }

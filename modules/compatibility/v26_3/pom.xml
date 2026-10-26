@@ -41,7 +41,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
                 <configuration>
-                    <release>25</release>
+                    <!-- Older Paper remappers scan every class in the universal JAR. -->
+                    <release>21</release>
                     <jdkToolchain><version>25</version></jdkToolchain>
                 </configuration>
             </plugin>

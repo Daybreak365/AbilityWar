@@ -13,7 +13,7 @@ public class Hermit extends AbstractHermit {
 	private final InvisiblePlayer invisible;
 	public Hermit(Participant participant) {
 		super(participant);
-		invisible = new InvisiblePlayer(getPlayer());
+		invisible = new InvisiblePlayer(this::getPlayer);
 	}
 	@Override protected void hide0() { invisible.hide(); }
 	@Override protected void show0() { invisible.show(); }

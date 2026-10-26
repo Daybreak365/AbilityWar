@@ -15,7 +15,8 @@
 	</parent>
 
     <properties>
-        <packagedAdapters>v1_12_R1,v1_13_R1,v1_13_R2,v1_14_R1,v1_15_R1,v1_16_R1,v1_16_R2,v1_16_R3,v1_17_R1,v1_19_R1,v1_19_R2,v1_20_R3,v26_3</packagedAdapters>
+        <packagedAdapters>v1_12_R1,v1_13_R1,v1_13_R2,v1_14_R1,v1_15_R1,v1_16_R1,v1_16_R2,v1_16_R3,v1_17_R1,v1_19_R1,v1_19_R2,v1_20_R3,v26_3,v1_18_R1,v1_18_R2,v1_19_R3,v1_20_R1,v1_20_R2,v1_20_R4,v1_21_R1,v1_21_R2,v1_21_R3,v1_21_R4,v1_21_R5,v1_21_R6,v1_21_R7,v26_1,v26_2</packagedAdapters>
+        <compiledAdapters>v1_17_R1,v1_19_R1,v1_19_R2,v1_20_R3,v26_3,v1_18_R1,v1_18_R2,v1_19_R3,v1_20_R1,v1_20_R2,v1_20_R4,v1_21_R1,v1_21_R2,v1_21_R3,v1_21_R4,v1_21_R5,v1_21_R6,v1_21_R7,v26_1,v26_2</compiledAdapters>
     </properties>
 
 	<repositories>
@@ -70,7 +71,9 @@
                         <packagedAdapters>${packagedAdapters}</packagedAdapters>
                         <compatibilityClasses>${project.basedir}/../compatibility/Compatibility/target/classes</compatibilityClasses>
                         <pluginJar>${project.basedir}/../Plugin/target/Plugin-${project.version}.jar</pluginJar>
-                        <modernAdapterJar>${project.basedir}/../compatibility/v26_3/target/v26_3-${project.version}.jar</modernAdapterJar>
+                        <compiledAdapters>${compiledAdapters}</compiledAdapters>
+                        <adaptersDirectory>${project.basedir}/../compatibility</adaptersDirectory>
+                        <artifactVersion>${project.version}</artifactVersion>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -186,12 +189,103 @@
 					<version>${revision}</version>
 					<scope>compile</scope>
 				</dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_18_R1</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_18_R2</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_19_R3</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_20_R1</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_20_R2</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_20_R4</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_21_R1</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_21_R2</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_21_R3</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_21_R4</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_21_R5</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_21_R6</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v1_21_R7</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v26_1</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>kr.daybreak</groupId>
+                    <artifactId>v26_2</artifactId>
+                    <version>${revision}</version>
+                    <scope>compile</scope>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
             <id>minecraft-26.3</id>
             <properties>
                 <packagedAdapters>v26_3</packagedAdapters>
+                <compiledAdapters>v26_3</compiledAdapters>
             </properties>
             <build>
                 <finalName>AbilityWar-${project.version}-mc26.3</finalName>

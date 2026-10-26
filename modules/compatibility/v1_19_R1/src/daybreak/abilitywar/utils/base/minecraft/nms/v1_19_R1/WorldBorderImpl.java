@@ -4,32 +4,16 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IWorldBorder;
 import net.minecraft.world.level.border.WorldBorder;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-import org.jetbrains.annotations.NotNull;
 
-public class WorldBorderImpl extends WorldBorder implements IWorldBorder {
-
-	WorldBorderImpl(World world) {
-		this.world = ((CraftWorld) world).getHandle();
-	}
-
-	@Override
-	public void setWorld(@NotNull World world) {
-		this.world = ((CraftWorld) world).getHandle();
-	}
-
-	@Override
-	public void setDamageAmount(double amount) {
-		super.setDamagePerBlock(amount);
-	}
-
-	@Override
-	public void setDamageBuffer(double buffer) {
-		super.setDamageSafeZone(buffer);
-	}
-
-	@Override
-	public void setWarningDistance(int distance) {
-		super.setWarningBlocks(distance);
-	}
-
+/** Composition keeps the public interface names independent of NMS member remapping. */
+public class WorldBorderImpl implements IWorldBorder {
+	final WorldBorder handle = new WorldBorder();
+	WorldBorderImpl(World world) { setWorld(world); }
+	@Override public void setWorld(World world) { handle.world = ((CraftWorld) world).getHandle(); }
+	@Override public void setCenter(double x, double z) { handle.setCenter(x, z); }
+	@Override public void setDamageAmount(double amount) { handle.setDamagePerBlock(amount); }
+	@Override public void setDamageBuffer(double buffer) { handle.setDamageSafeZone(buffer); }
+	@Override public void setSize(double size) { handle.setSize(size); }
+	@Override public void setWarningDistance(int distance) { handle.setWarningBlocks(distance); }
+	@Override public void setWarningTime(int time) { handle.setWarningTime(time); }
 }

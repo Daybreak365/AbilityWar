@@ -90,7 +90,7 @@ public class Hermit extends AbstractHermit {
 	@Override
 	protected void hide0() {
 		final CraftPlayer craftPlayer = (CraftPlayer) getPlayer();
-		craftPlayer.getHandle().getDataWatcher().set(new DataWatcherObject<>(13, DataWatcherRegistry.b), 0);
+		craftPlayer.setArrowsInBody(0);
 		craftPlayer.getHandle().setInvisible(true);
 		injectSelf();
 		final PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(getPlayer().getEntityId(), NULL_PAIR_LIST);
