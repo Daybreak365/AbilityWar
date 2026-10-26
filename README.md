@@ -1,33 +1,47 @@
 # <img src="https://user-images.githubusercontent.com/39194432/96130737-475da400-0f33-11eb-9334-947ebd802aff.png">
 <img src="https://img.shields.io/github/v/release/DayBreak365/AbilityWar?style=flat-square"></img>
 <img src="https://img.shields.io/github/last-commit/DayBreak365/AbilityWar?style=flat-square"></img>
-### 개발: [Daybreak](https://github.com/DayBreak365)
+### 개발: [새벽 Saebyeok](https://github.com/DayBreak365)
 <br/>
 
-**📋 License**
+## **📋 License**
 
 AbilityWar는 [능력자 전쟁 라이선스](https://github.com/DayBreak365/AbilityWar/blob/master/LICENSE.md)에 따라 라이선스가 부여됩니다.
 
-**📎 Contribute**
+## **📎 Contribute**
 
 새로운 도전, 무한한 가능성. 추가 개발은 모든 개발자에게 허용됩니다. 자신만의 Fork를 만들고 자신만의 Build를 만드세요.
 모두에게 알리고 싶은 참신한 코드를 작성했다면 Pull Request를 통해 플러그인에 기여해주세요.
 
-**🔗 Download**
+## **🔗 Download**
 
-1.12.2 버전 사용을 권장드립니다.
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/01daab9e-f7c0-4eb6-bcf0-cbe47919fde7" width="500" alt="AbilityWar - 마인크래프트 버전별 권장 플러그인 버전"><br>
+  <a href="https://github.com/DayBreak365/AbilityWar/releases/latest">
+    <img src="https://github.com/user-attachments/assets/efd87999-bdc7-438d-b76c-9d5d6cea9a41" width="500" alt="MC 26.1.x ~ 26.3">
+  </a><br>
+  <a href="https://github.com/DayBreak365/AbilityWar/releases/latest">
+    <img src="https://github.com/user-attachments/assets/f18b3d05-11c6-49cd-80bd-4e3013923552" width="500" alt="MC 1.20.5 ~ 1.21.11">
+  </a><br>
+  <a href="https://github.com/DayBreak365/AbilityWar/releases/latest">
+    <img src="https://github.com/user-attachments/assets/f6c15e3a-62ae-4e01-9eef-57393edf895b" width="500" alt="MC 1.18.x ~ 1.20.4">
+  </a><br>
+  <a href="https://github.com/DayBreak365/AbilityWar/releases/latest">
+    <img src="https://github.com/user-attachments/assets/edd90746-020a-4364-9f00-52e93bbfe336" width="500" alt="MC 1.13.x ~ 1.17.x">
+  </a><br>
+  <a href="https://github.com/DayBreak365/AbilityWar/releases/latest">
+    <img src="https://github.com/user-attachments/assets/44152ef0-9b04-4975-b385-01c9d8f62f17" width="500" alt="MC 1.12.2 (권장)">
+  </a><br>
+  <a href="https://github.com/DayBreak365/AbilityWar/releases/tag/20210130">
+    <img src="https://github.com/user-attachments/assets/e3ae1756-b983-45cb-82e1-a3ff62bc0b81" width="500" alt="MC 1.9.x ~ 1.11.x">
+  </a><br>
+  <a href="https://drive.google.com/uc?export=download&amp;confirm=no_antivirus&amp;id=1CYY7oH0IpEkH1vmL7--6fOfJ0skDgp3S">
+    <img src="https://github.com/user-attachments/assets/bf2790c0-5337-408f-9e79-72da97123ad6" width="500" alt="MC 1.8.x">
+  </a>
+</p>
 
-| 마인크래프트 버전 | 권장 플러그인 버전 |
-|:----:|:----:|
-| MC 26.1.x ~ 26.3 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) (서버 Java 25) |
-| MC 1.20.5 ~ 1.21.11 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) (서버 Java 21) |
-| MC 1.18.x ~ 1.20.4 | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) (서버 Java 17 이상) |
-| MC 1.17.x | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
-| MC 1.12.2 ~ 1.16.x | [최신 버전](https://github.com/DayBreak365/AbilityWar/releases/latest) |
-| MC 1.9.x ~ 1.11.x | [v2.4.4](https://github.com/DayBreak365/AbilityWar/releases/tag/20210130) |
-| MC 1.8.x | [v2.1.6.8-legacy](https://drive.google.com/uc?export=download&confirm=no_antivirus&id=1CYY7oH0IpEkH1vmL7--6fOfJ0skDgp3S) |
 
-**🔧 Build**
+## **🔧 Build**
 - **Maven**
     - 배포용 통합 JAR은 `mvn -Dgpg.skip=true clean verify`로 빌드합니다. `modules/Jar/target/AbilityWar-26.0.1.jar`에 1.12.2부터 26.3까지의 28개 호환 모듈이 모두 포함됩니다.
     - AbilityWar를 로컬 Maven 레포지터리에 설치하려면 `mvn clean install` 명령을 실행하세요.
