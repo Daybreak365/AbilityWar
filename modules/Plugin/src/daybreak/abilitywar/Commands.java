@@ -21,6 +21,7 @@ import daybreak.abilitywar.game.AbstractGame;
 import daybreak.abilitywar.game.AbstractGame.GameTimer;
 import daybreak.abilitywar.game.AbstractGame.Participant;
 import daybreak.abilitywar.game.GameManager;
+import daybreak.abilitywar.game.list.augment.AugmentWarGame;
 import daybreak.abilitywar.game.list.mix.synergy.SynergyFactory;
 import daybreak.abilitywar.game.list.mix.synergy.game.SynergyBlackListGUI;
 import daybreak.abilitywar.game.manager.AbilityList;
@@ -125,6 +126,7 @@ public class Commands implements CommandExecutor, TabCompleter {
 								Formatter.formatCommand(command, "start", "게임을 시작시킵니다.", true),
 								Formatter.formatCommand(command, "stop", "게임을 중지시킵니다.", true),
 								Formatter.formatCommand(command, "check", "자신의 능력을 확인합니다.", false),
+								Formatter.formatCommand(command, "augment", "증강 선택 GUI를 엽니다.", false),
 								Formatter.formatCommand(command, "yes", "자신의 능력을 확정합니다.", false),
 								Formatter.formatCommand(command, "no", "자신의 능력을 변경합니다.", false),
 								Formatter.formatCommand(command, "abilities", "능력자 전쟁 능력 목록을 확인합니다.", false),
@@ -204,6 +206,17 @@ public class Commands implements CommandExecutor, TabCompleter {
 				if (GameManager.isGameRunning()) {
 					GameManager.getGame().executeCommand(CommandType.ABILITY_CHECK, sender, command, args, plugin);
 				} else Messager.sendErrorMessage(sender, "게임이 진행되고 있지 않습니다.");
+				return true;
+			}
+		});
+		mainCommand.addSubCommand("augment", new Command(Condition.PLAYER) {
+			@Override
+			protected boolean onCommand(CommandSender sender, String command, String[] args) {
+				if (GameManager.isGameOf(AugmentWarGame.class)) {
+					((AugmentWarGame) GameManager.getGame()).openAugmentGUI((Player) sender);
+				} else {
+					Messager.sendErrorMessage(sender, "증강 능력자 전쟁 게임에서만 사용할 수 있습니다.");
+				}
 				return true;
 			}
 		});
