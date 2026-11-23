@@ -11,6 +11,7 @@
 1. 공식 [20260804 릴리스](https://github.com/Daybreak365/AbilityWar/releases/tag/20260804)의 `AbilityWar-3.6.0.jar`를 준비합니다.
 2. `git fetch origin tag 20260804`로 기준 소스를 가져옵니다.
 3. `python3 tools/install-legacy-adapters.py /path/to/AbilityWar-3.6.0.jar`를 실행합니다. 별도 Maven 로컬 저장소를 쓰는 경우 `--repository /path/to/repository`를 지정합니다.
+   이전 스크립트로 26.0.1을 빌드한 환경에서도 이 단계를 다시 실행하세요. 같은 좌표에 저장된 기존 모듈에 빠졌던 `block/preflat`과 `block/flat` 클래스가 복구됩니다.
 4. JDK 21과 JDK 25 toolchain을 준비하고 다음 명령을 실행합니다.
 
 ```sh

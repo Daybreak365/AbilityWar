@@ -3,12 +3,16 @@ package daybreak.abilitywar;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -16,6 +20,39 @@ import static org.junit.Assert.*;
 
 /** Verifies packaging ownership without changing the shaded addon-facing Plugin artifact. */
 public class PackagedLayoutIT {
+    @Test
+    public void distributionContainsClassesFromEveryAdapterSourceTree() throws IOException {
+        try (ZipFile distribution = archive("packagedJar")) {
+            for (String version : System.getProperty("packagedAdapters").split(",")) {
+                Path source = Paths.get(System.getProperty("adaptersDirectory"), version, "src");
+                try (Stream<Path> files = Files.walk(source)) {
+                    files.filter(path -> path.toString().endsWith(".java")).forEach(path -> {
+                        String name = source.relativize(path).toString().replace(File.separatorChar, '/');
+                        String entry = name.substring(0, name.length() - ".java".length()) + ".class";
+                        assertNotNull("Missing class from " + version + ": " + entry, distribution.getEntry(entry));
+                    });
+                }
+            }
+        }
+    }
+
+    @Test
+    public void distributionContainsBlockSnapshotImplementations() throws IOException {
+        try (ZipFile distribution = archive("packagedJar")) {
+            assertBlockAdapter(distribution, "flat");
+            if (System.getProperty("packagedAdapters").contains("v1_12_R1")) {
+                assertBlockAdapter(distribution, "preflat");
+            }
+        }
+    }
+
+    private static void assertBlockAdapter(ZipFile distribution, String layout) {
+        String prefix = "daybreak/abilitywar/utils/base/minecraft/block/" + layout + "/";
+        for (String name : new String[] {"BlocksImpl.class", "BlockSnapshotImpl.class"}) {
+            assertNotNull("Missing block adapter: " + prefix + name, distribution.getEntry(prefix + name));
+        }
+    }
+
     @Test
     public void distributionContainsEveryRequiredAdapter() throws Exception {
         try (ZipFile distribution = archive("packagedJar")) {

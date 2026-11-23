@@ -3,6 +3,7 @@ import daybreak.abilitywar.ability.AbilityFactory;
 import daybreak.abilitywar.ability.AbilityManifest;
 import daybreak.abilitywar.ability.SubscribeEvent;
 import daybreak.abilitywar.ability.list.Canis;
+import daybreak.abilitywar.ability.list.Yeti;
 import daybreak.abilitywar.ability.list.magnet.Magnet;
 import daybreak.abilitywar.game.Game;
 import daybreak.abilitywar.game.AbstractGame.Participant;
@@ -11,6 +12,7 @@ import daybreak.abilitywar.game.GameManifest;
 import daybreak.abilitywar.game.manager.GameFactory;
 import daybreak.abilitywar.game.manager.AbilityList;
 import daybreak.abilitywar.game.manager.effect.Fear;
+import daybreak.abilitywar.game.manager.effect.Frost;
 import daybreak.abilitywar.game.manager.gui.AbilityGUI;
 import daybreak.abilitywar.game.manager.gui.AbilityListGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
@@ -19,6 +21,9 @@ import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
 import daybreak.abilitywar.utils.base.minecraft.nms.NMS;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Leaves;
 import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -309,8 +314,62 @@ public final class GameplaySmoke {
             require(remaining<absorptionAtDismount,"Original absorption did not decrease");
             plugin.getLogger().info("Original Canis absorption: "+absorptionAtDismount+" -> "+remaining);
         });
+        Block leaves = origin.clone().add(1, -1, 0).getBlock();
+        Block ground = origin.clone().add(0, -1, 1).getBlock();
+        at(462, "Yeti activates on a mixed surface", () -> {
+            player.teleport(origin);
+            ability(Yeti.class);
+            Leaves data = (Leaves) Material.OAK_LEAVES.createBlockData();
+            data.setPersistent(true);
+            leaves.setBlockData(data);
+            ground.setType(Material.STONE);
+            Yeti yeti = (Yeti) game.getParticipant(player).getAbility();
+            require(yeti.ActiveSkill(Material.IRON_INGOT, AbilityBase.ClickType.RIGHT_CLICK), "Yeti failed to start");
+        });
+        at(468, "Yeti restores leaves and snow while preserving player edits", () -> {
+            Block snow = leaves.getRelative(BlockFace.UP);
+            require(leaves.getType() == Material.GREEN_WOOL && snow.getType() == Material.SNOW, "Leaves not covered");
+            require(ground.getType() == Material.SNOW_BLOCK, "Ground not covered");
+            ground.setType(Material.DIAMOND_BLOCK);
+            game.getParticipant(player).removeAbility();
+            require(leaves.getType() == Material.OAK_LEAVES && ((Leaves) leaves.getBlockData()).isPersistent(), "Lost original leaves");
+            require(snow.isEmpty() && ground.getType() == Material.DIAMOND_BLOCK, "Snow or edited ground restored incorrectly");
+        });
+        at(470, "Frost restores participant blocks and previous invulnerability", () -> {
+            player.teleport(origin);
+            Block head = player.getEyeLocation().getBlock(), feet = head.getRelative(BlockFace.DOWN);
+            for (boolean invulnerable : new boolean[] {false, true}) {
+                player.setInvulnerable(invulnerable);
+                Frost.apply(game.getParticipant(player), TimeUnit.TICKS, 20);
+                var frost = game.getParticipant(player).getPrimaryEffect(Frost.registration);
+                require(frost != null && player.isInvulnerable(), "Frost did not protect participant");
+                require(head.getType() == Material.ICE && feet.getType() == Material.ICE, "Ice missing");
+                frost.stop(invulnerable);
+                require(player.isInvulnerable() == invulnerable, "Frost changed prior invulnerability");
+                require(head.isEmpty() && feet.isEmpty() && Frost.ParticipantFrost.getFrost(head.getLocation()) == null, "Frost left ice or a lookup behind");
+            }
+            player.setInvulnerable(false);
+        });
+        at(472, "Frost expires on a mob and allows damage and reapplication", () -> {
+            Cow cow = world.spawn(origin.clone().add(3, 0, 0), Cow.class);
+            cow.setAI(false);
+            Frost.apply(game, cow, TimeUnit.TICKS, 4);
+            require(cow.isInvulnerable(), "Frost did not protect mob");
+            at(8, "mob can take damage after Frost", () -> {
+                try {
+                    require(!cow.isInvulnerable(), "Mob remained invulnerable");
+                    double health = cow.getHealth();
+                    cow.damage(1);
+                    require(cow.getHealth() < health, "Mob took no damage after Frost");
+                    Frost.apply(game, cow, TimeUnit.TICKS, 2);
+                    require(cow.isInvulnerable(), "Frost could not be reapplied");
+                } finally {
+                    cow.remove();
+                }
+            });
+        });
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             check.accept("gameplay cleanup", () -> {game.stop();playerTicks.cancel();dummy.remove();other.remove();world.removePluginChunkTickets(plugin);});done.run();
-        },480);
+        },495);
     }
 }

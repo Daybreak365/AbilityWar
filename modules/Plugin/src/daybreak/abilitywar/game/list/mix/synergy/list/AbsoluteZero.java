@@ -16,28 +16,21 @@ import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
 import daybreak.abilitywar.utils.base.math.LocationUtil;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks;
 import daybreak.abilitywar.utils.base.minecraft.FallingBlocks.Behavior;
-import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
-import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
+import daybreak.abilitywar.utils.base.minecraft.block.SnowTerrain;
 import daybreak.abilitywar.utils.base.minecraft.boundary.BoundingBox;
 import daybreak.abilitywar.utils.base.minecraft.boundary.EntityBoundingBox;
-import daybreak.abilitywar.utils.library.BlockX;
-import daybreak.abilitywar.utils.library.MaterialX;
 import daybreak.abilitywar.utils.library.PotionEffects;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Predicate;
 
 @AbilityManifest(name = "절대 영도", rank = Rank.S, species = Species.OTHERS, explain = {
@@ -103,7 +96,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 
 	}.setPeriod(TimeUnit.TICKS, 1).register();
 
-	private final Map<Block, IBlockSnapshot> blockData = new HashMap<>();
+	private final SnowTerrain terrain = new SnowTerrain();
 
 	private final int range = RangeConfig.getValue();
 	private final AbilityTimer iceMaker = new AbilityTimer(range) {
@@ -123,24 +116,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			World world = getPlayer().getWorld();
 			for (Block block : LocationUtil.getBlocks2D(center, count, true, false, true)) {
 				block = world.getBlockAt(block.getX(), LocationUtil.getFloorYAt(world, playerLocation.getY(), block.getX(), block.getZ()), block.getZ());
-				Block belowBlock = block.getRelative(BlockFace.DOWN);
-				Material type = belowBlock.getType();
-				if (type == Material.WATER) {
-					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
-					belowBlock.setType(Material.PACKED_ICE);
-				} else if (type == Material.LAVA) {
-					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
-					belowBlock.setType(Material.OBSIDIAN);
-				} else if (MaterialX.ACACIA_LEAVES.compare(belowBlock) || MaterialX.BIRCH_LEAVES.compare(belowBlock) || MaterialX.DARK_OAK_LEAVES.compare(belowBlock)
-						|| MaterialX.JUNGLE_LEAVES.compare(belowBlock) || MaterialX.OAK_LEAVES.compare(belowBlock) || MaterialX.SPRUCE_LEAVES.compare(belowBlock)) {
-					BlockX.setType(belowBlock, MaterialX.GREEN_WOOL);
-				} else {
-					blockData.putIfAbsent(belowBlock, Blocks.createSnapshot(belowBlock));
-					belowBlock.setType(Material.SNOW_BLOCK);
-				}
-
-				blockData.putIfAbsent(block, Blocks.createSnapshot(block));
-				block.setType(Material.SNOW);
+				terrain.cover(block);
 			}
 			count++;
 		}
@@ -213,12 +189,7 @@ public class AbsoluteZero extends Synergy implements ActiveHandler {
 			buff.start();
 			passive.start();
 		} else if (update == Update.ABILITY_DESTROY) {
-			for (Entry<Block, IBlockSnapshot> entry : blockData.entrySet()) {
-				Block key = entry.getKey();
-				if (key.getType() == Material.PACKED_ICE || key.getType() == Material.OBSIDIAN || key.getType() == Material.SNOW_BLOCK || key.getType() == Material.SNOW) {
-					entry.getValue().apply();
-				}
-			}
+			terrain.restore();
 		}
 	}
 
