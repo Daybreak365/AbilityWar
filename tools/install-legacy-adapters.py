@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reuse unchanged adapters from the verified official 3.6.0 distribution.
 
-Only version-specific classes are installed; shared code is always rebuilt.
+Only classes owned by the verified adapter modules are installed.
 This is an optional packaging path when historical CraftBukkit build dependencies
 are unavailable. The normal full-source Maven build remains supported.
 """
@@ -38,14 +38,20 @@ def main():
     if not revision or any(c in revision for c in "/\\"):
         raise SystemExit("Invalid Maven revision")
     with ZipFile(args.release_jar) as archive:
+        entries = set(archive.namelist())
         classes = {}
         for version in VERSIONS:
-            names = [n for n in archive.namelist() if n.startswith("daybreak/abilitywar/")
-                     and ("/" + version + "/") in n and n.endswith(".class")]
-            required = "daybreak/abilitywar/utils/base/minecraft/nms/" + version + "/NMSImpl.class"
-            if required not in names:
-                raise SystemExit("Missing adapter in official release: " + version)
-            classes[version] = names
+            source = ROOT / "modules/compatibility" / version / "src"
+            owners = {path.relative_to(source).with_suffix("").as_posix() for path in source.rglob("*.java")}
+            if not owners:
+                raise SystemExit("No adapter sources found for " + version)
+            missing = {owner + ".class" for owner in owners} - entries
+            if missing:
+                raise SystemExit("Missing classes for " + version + ": " + ", ".join(sorted(missing)))
+            # The block adapters live in flat/ and preflat/. Include nested and
+            # anonymous classes alongside their owning source regardless of package.
+            classes[version] = sorted(name for name in entries if name.endswith(".class")
+                                      and name[:-6].partition("$")[0] in owners)
         for version, names in classes.items():
             destination = args.repository / "kr/daybreak" / version / revision
             destination.mkdir(parents=True, exist_ok=True)

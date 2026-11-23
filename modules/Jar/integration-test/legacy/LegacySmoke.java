@@ -8,6 +8,8 @@ import daybreak.abilitywar.game.manager.effect.Fear;
 import daybreak.abilitywar.game.manager.gui.AbilityListGUI;
 import daybreak.abilitywar.game.manager.object.AbilitySelect;
 import daybreak.abilitywar.utils.base.concurrent.TimeUnit;
+import daybreak.abilitywar.utils.base.minecraft.block.Blocks;
+import daybreak.abilitywar.utils.base.minecraft.block.IBlockSnapshot;
 import daybreak.abilitywar.utils.base.minecraft.item.Skulls;
 import daybreak.abilitywar.utils.base.minecraft.nms.IDummy;
 import daybreak.abilitywar.utils.base.minecraft.nms.IHologram;
@@ -16,6 +18,8 @@ import daybreak.abilitywar.utils.base.minecraft.version.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -64,7 +68,7 @@ public final class LegacySmoke extends JavaPlugin {
     private void runChecks() {
         check("plugin version and legacy server detection", () -> {
             require(Bukkit.getPluginManager().getPlugin("AbilityWar").isEnabled());
-            require(Bukkit.getPluginManager().getPlugin("AbilityWar").getDescription().getVersion().equals("26.0.1"));
+            require(Bukkit.getPluginManager().getPlugin("AbilityWar").getDescription().getVersion().equals("26.0.2"));
             require(ServerVersion.getName().equals("v1_12_R1"));
         });
         for (String ability : new String[] {"hermit.Hermit", "clown.Clown", "scarecrow.ScareCrow", "soul.Soul"}) {
@@ -79,6 +83,20 @@ public final class LegacySmoke extends JavaPlugin {
         check("magnet registration", () -> require(AbilityFactory.isRegistered(Magnet.class)));
         check("legacy custom skull NMS", () -> require(Skulls.createCustomSkull("c3832ce7fbf00dd0eaa537918612cd2f2e9a2a2a8b6ec5821932d38768f955ce9") != null));
         final Location origin = Bukkit.getWorlds().get(0).getSpawnLocation().add(0, 10, 0);
+        check("legacy block snapshot restores wool color", () -> {
+            Block block = origin.getBlock();
+            BlockState original = block.getState();
+            try {
+                block.setType(Material.WOOL);
+                block.setData((byte) 13);
+                IBlockSnapshot greenWool = Blocks.createSnapshot(block);
+                block.setType(Material.STONE);
+                greenWool.apply();
+                require(block.getType() == Material.WOOL && block.getData() == 13);
+            } finally {
+                original.update(true, false);
+            }
+        });
         check("legacy hologram lifecycle", () -> {
             IHologram hologram = NMS.newHologram(origin.getWorld(), origin.getX(), origin.getY(), origin.getZ(), "legacy");
             try {
