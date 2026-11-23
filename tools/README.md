@@ -1,8 +1,8 @@
 # 통합 JAR 패키징
 
-일반적인 전체 소스 빌드는 아래 안내에 따라 각 모듈의 서버 의존성을 준비한 후 저장소 루트에서 `mvn -Dgpg.skip=true clean verify`로 실행합니다. 출력은 `modules/Jar/target/AbilityWar-26.0.1.jar`이며, 1.12.2부터 26.3까지의 정식 릴리스 계열에 대응하는 총 28개 호환 모듈을 포함합니다. 서버 종류와 버전별 검사 범위는 아래 검증 기록을 확인하세요.
+일반적인 전체 소스 빌드는 아래 안내에 따라 각 모듈의 서버 의존성을 준비한 후 저장소 루트에서 `mvn -Dgpg.skip=true clean verify`로 실행합니다. 출력은 `modules/Jar/target/AbilityWar-26.0.2.jar`이며, 1.12.2부터 26.3까지의 정식 릴리스 계열에 대응하는 총 28개 호환 모듈을 포함합니다. 서버 종류와 버전별 검사 범위는 아래 검증 기록을 확인하세요.
 
-`minecraft-26.3` 프로필은 기존 모듈을 제외하는 개발 검사용 구성입니다. 이때 출력은 `AbilityWar-26.0.1-mc26.3.jar`로 구분됩니다. 최종 JAR 검사는 통합 구성의 모든 호환 모듈과 1.12용 광대·은둔자·허수아비·소울 클래스가 포함되어 있는지 확인합니다.
+`minecraft-26.3` 프로필은 기존 모듈을 제외하는 개발 검사용 구성입니다. 이때 출력은 `AbilityWar-26.0.2-mc26.3.jar`로 구분됩니다. 최종 JAR 검사는 통합 구성의 모든 호환 모듈과 1.12용 광대·은둔자·허수아비·소울 클래스가 포함되어 있는지 확인합니다.
 
 ## 공식 배포본의 변경되지 않은 호환 모듈 재사용
 
@@ -11,7 +11,7 @@
 1. 공식 [20260804 릴리스](https://github.com/Daybreak365/AbilityWar/releases/tag/20260804)의 `AbilityWar-3.6.0.jar`를 준비합니다.
 2. `git fetch origin tag 20260804`로 기준 소스를 가져옵니다.
 3. `python3 tools/install-legacy-adapters.py /path/to/AbilityWar-3.6.0.jar`를 실행합니다. 별도 Maven 로컬 저장소를 쓰는 경우 `--repository /path/to/repository`를 지정합니다.
-   이전 스크립트로 26.0.1을 빌드한 환경에서도 이 단계를 다시 실행하세요. 같은 좌표에 저장된 기존 모듈에 빠졌던 `block/preflat`과 `block/flat` 클래스가 복구됩니다.
+   26.0.1을 빌드한 환경에서도 이 단계를 다시 실행하세요. 수정된 스크립트는 `block/preflat`과 `block/flat` 구현을 포함한 모듈을 26.0.2 좌표에 설치합니다.
 4. JDK 21과 JDK 25 toolchain을 준비하고 다음 명령을 실행합니다.
 
 ```sh
